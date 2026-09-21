@@ -2,7 +2,9 @@
 # FUSION Foundation
 
 # no need for a complex versioning scheme, just increment
-SCRIPT_VERSION=10
+SCRIPT_VERSION=11
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/isolatedGateway.sh" || exit 1
 
 # historically grown, changing this would break stuff
 BASE_DIR="/home/$USER"
@@ -26,17 +28,6 @@ while getopts ":d" opt; do
 done
 
 [ $DEBUG_MODE -eq 1 ] && set -x
-
-scriptUpdate() {
-    # get the first 150 bytes and extract the script version
-    remoteVersion="$(curl -fsSL -r 0-150 "https://raw.githubusercontent.com/FUSIONFoundation/efsn/master/QuickNodeSetup/fsnNode.sh" | grep -Po '(?<=SCRIPT_VERSION=)[0-9]+')"
-    # prevent an error if the version number can't be read
-    if [ -n "$remoteVersion" ]; then
-        if [ $SCRIPT_VERSION -lt $remoteVersion ]; then
-            echo "tbd"
-        fi
-    fi
-}
 
 distroChecks() {
     if ! command -v lsb_release >/dev/null 2>&1; then
@@ -101,7 +92,7 @@ sanityChecks() {
     if [ -z "$BASH" ]; then
         echo "${txtred}The setup script has to be run in the bash shell.${txtrst}"
         echo "Please run it again in bash:"
-        echo "bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/FUSIONFoundation/efsn/master/QuickNodeSetup/fsnNode.sh)\""
+        echo "bash QuickNodeSetup/fsnNode.sh"
         exit 1
     fi
 
@@ -111,7 +102,7 @@ sanityChecks() {
         if sudo [ -f "/home/root/fusion-node/node.json" ]; then
             echo "${txtred}Warning: The setup script was originally run with root privileges.${txtrst}"
             echo "We suggest you to run it again as user root or by invoking sudo:"
-            echo "sudo bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/FUSIONFoundation/efsn/master/QuickNodeSetup/fsnNode.sh)\""
+            echo "Use the original account for legacy nodes. Historical recovery requires a normal Ubuntu user."
             echo
             local question="${txtylw}Are you sure you want to continue as user $USER?${txtrst} [Y/n] "
             askToContinue "$question"
@@ -168,6 +159,7 @@ getDockerImageName() {
 }
 
 checkUpdate() {
+    isIsolatedGateway && return 1
     local nodetype="$(getCfgValue 'nodeType')"
     local testnet="$(getCfgValue 'testnet')"
     local imagename="$(getDockerImageName $nodetype $testnet)"
@@ -359,9 +351,10 @@ updateExplorerListing() {
 initConfig() {
     local question
 
-    # purge existing node data; the user was warned about this,
-    # he can reconfigure the node if that's not what he wants
-    sudo rm -rf "$BASE_DIR/fusion-node/"
+    if [ -e "$BASE_DIR/fusion-node" ]; then
+        echo "Existing node data is preserved. Use configuration or isolated gateway setup instead."
+        return 1
+    fi
 
     echo
     echo "${txtylw}Please select the node type to install:${txtrst}"
@@ -439,8 +432,7 @@ initConfig() {
     askToContinue "$question"
     if [ $? -eq 0 ]; then
         if [ ! -f "/etc/systemd/system/fusion.service" ]; then
-            sudo curl -fsSL "https://raw.githubusercontent.com/FUSIONFoundation/efsn/master/QuickNodeSetup/fusion.service" \
-                -o "/etc/systemd/system/fusion.service"
+            installNodeService || return 1
         fi
         sudo systemctl daemon-reload
         sudo systemctl -q enable fusion
@@ -455,27 +447,17 @@ initConfig() {
 }
 
 removeContainer() {
-    # only try to stop the container if it's running
-    [ "$(sudo docker container inspect -f "{{.State.Running}}" fusion 2>/dev/null)" = "true" ] && stopNode
-    # remove container and base images no matter what
-    echo
-    echo "${txtylw}Removing container and base images${txtrst}"
-    sudo docker rm fusion >/dev/null 2>&1
-    # mainnet images
-    sudo docker rmi fusionnetwork/minerandlocalgateway \
-        fusionnetwork/efsn \
-        fusionnetwork/gateway >/dev/null 2>&1
-    sudo docker rmi fusionnetwork/minerandlocalgateway2 \
-        fusionnetwork/efsn2 \
-        fusionnetwork/gateway2 >/dev/null 2>&1
-    # testnet images
-    sudo docker rmi fusionnetwork/testnet-minerandlocalgateway \
-        fusionnetwork/testnet-efsn \
-        fusionnetwork/testnet-gateway >/dev/null 2>&1
-    echo "${txtgrn}✓${txtrst} Removed container and base images"
+    if sudo docker container inspect fusion >/dev/null 2>&1; then
+        sudo docker stop --time 300 fusion >/dev/null || return 1
+        sudo docker rm fusion >/dev/null || return 1
+    fi
 }
 
 createContainer() {
+    if [ -d "$BASE_DIR/fusion-node/efsn" ]; then
+        echo "Legacy data directory preserved. Move it into data/efsn while the node is stopped before continuing."
+        return 1
+    fi
     # read configuration files
     echo
     echo "${txtylw}Reading node configuration${txtrst}"
@@ -545,19 +527,6 @@ createContainer() {
             $testnet \
             -e "$nodename"
 
-        # workaround for the breaking change introduced with https://github.com/FUSIONFoundation/efsn/commit/8fab78ee3872be05cda3c53db24a49ddea0dfe98
-        # originally the gateway did not use an entrypoint script which defined a data subdirectory; this prevents two things:
-        # 1) orphaned chaindata wasting disk space
-        # 2) a full resync because chaindata is gone
-        if [ -d "$BASE_DIR/fusion-node/efsn" ]; then
-            if [ -d "$BASE_DIR/fusion-node/data/efsn" ]; then
-                sudo rm -rf "$BASE_DIR/fusion-node/efsn/"
-            else
-                sudo mkdir -p "$BASE_DIR/fusion-node/data/"
-                sudo mv "$BASE_DIR/fusion-node/efsn/" "$BASE_DIR/fusion-node/data/efsn"
-            fi
-            sudo rm -rf "$BASE_DIR/fusion-node/efsn.ipc" "$BASE_DIR/fusion-node/keystore/"
-        fi
 
     else
         echo "${txtred}Invalid node type${txtrst}"
@@ -577,6 +546,9 @@ createContainer() {
 }
 
 startNode() {
+    if isIsolatedGateway; then
+        validateIsolatedGateway || return 1
+    fi
     echo
     echo "${txtylw}Starting the node${txtrst}"
     sudo docker start fusion >/dev/null
@@ -589,6 +561,7 @@ startNode() {
         echo "---------------------------------------------------------------"
     else
         echo "${txtred}Node failed to start${txtrst}"
+        return 1
     fi
 }
 
@@ -596,11 +569,12 @@ stopNode() {
     echo
     echo "${txtylw}Stopping the node${txtrst}"
     echo "This might take a moment, please wait..."
-    sudo docker stop fusion >/dev/null
+    sudo docker stop --time 300 fusion >/dev/null
     if [ $? -eq 0 ]; then
         echo "${txtgrn}✓${txtrst} Node stopped"
     else
         echo "${txtred}Node failed to stop${txtrst}"
+        return 1
     fi
 }
 
@@ -611,20 +585,10 @@ installNode() {
     echo "| Node Installation |"
     echo "---------------------"
 
-    if [ -d "$BASE_DIR/fusion-node" ]; then
-        echo
-        echo "${txtylw}You already seem to have a node installed in $BASE_DIR/fusion-node.${txtrst}"
-        echo "It will be stopped and its configuration and chaindata will be purged."
-        echo "This means it has to sync from scratch again, which could take a while."
-        echo "Please look into the \"configure node\" menu if you want to change node"
-        echo "configuration settings which don't require a full reset."
-        echo
-        local question="${txtylw}Are you sure you want to continue?${txtrst} [Y/n] "
-        askToContinue "$question"
-        if [ $? -eq 1 ]; then
-            echo "${txtred}✓${txtrst} Installation cancelled"
-            return 1
-        fi
+    if [ -e "$BASE_DIR/fusion-node" ]; then
+        echo "Existing data is preserved. Use Configure node or Set up isolated historical gateway."
+        pauseScript
+        return 1
     fi
 
     mkdir -p "$BASE_DIR/"
@@ -660,10 +624,10 @@ installNode() {
 
     echo
     echo "<<< Installing node >>>"
-    initConfig
-    removeContainer
-    createContainer
-    startNode
+    initConfig || return 1
+    removeContainer || return 1
+    createContainer || return 1
+    startNode || return 1
     echo
     echo "<<< ${txtgrn}✓${txtrst} Installed node >>>"
     echo
@@ -671,45 +635,34 @@ installNode() {
 }
 
 deinstallNode() {
-    [ $DEBUG_MODE -ne 1 ] && clear
-    echo
-    echo "-----------------------"
-    echo "| Node Deinstallation |"
-    echo "-----------------------"
-
-    if [ -d "$BASE_DIR/fusion-node" ]; then
-        echo
-        echo "You already seem to have a node installed in $BASE_DIR/fusion-node."
-        echo "It will be stopped and its configuration and chaindata will be purged."
-        echo
-        local question="${txtylw}Are you sure you want to continue?${txtrst} [Y/n] "
-        askToContinue "$question"
-        if [ $? -eq 1 ]; then
-            echo "${txtred}✓${txtrst} Deinstallation cancelled"
-            return 1
-        fi
+    echo "Remove the node container and disable auto-start? All data and configuration will be kept."
+    askToContinue "Continue? [y/n] " || return 1
+    sudo systemctl disable fusion 2>/dev/null || true
+    if [ "$(systemctl is-active fusion 2>/dev/null)" = "active" ]; then
+        sudo systemctl stop fusion || return 1
     fi
-
-    echo
-    echo "<<< Deinstalling node >>>"
-    sudo rm -rf "$BASE_DIR/fusion-node/"
-    removeContainer
-    sudo systemctl -q stop fusion
-    sudo systemctl -q disable fusion
-    sudo systemctl daemon-reload
-    sudo rm -f "/etc/systemd/system/fusion.service"
-    echo
-    echo "<<< ${txtgrn}✓${txtrst} Deinstalled node >>>"
-    echo
+    removeContainer || return 1
+    echo "Node removed. Data and configuration remain in $BASE_DIR/fusion-node."
     pauseScript
 }
 
 updateNode() {
+    if isIsolatedGateway; then
+        echo "Use isolated gateway setup to rebuild from this checkout. It leaves the node stopped."
+        return 1
+    fi
     echo
     echo "<<< Updating node >>>"
-    removeContainer
-    createContainer
-    startNode
+    local imagename
+    imagename="$(getDockerImageName "$(getCfgValue 'nodeType')" "$(getCfgValue 'testnet')")"
+    if [ -z "$imagename" ]; then
+        echo "Invalid node type; existing container preserved."
+        return 1
+    fi
+    sudo docker pull "$imagename" || return 1
+    removeContainer || return 1
+    createContainer || return 1
+    startNode || return 1
     echo
     echo "<<< ${txtgrn}✓${txtrst} Updated node >>>"
 }
@@ -849,6 +802,11 @@ change_wallet() {
 }
 
 change_autostart() {
+    if isIsolatedGateway; then
+        echo "Auto-start is disabled during historical recovery. Start the gateway explicitly."
+        pauseScript
+        return 1
+    fi
     local state="$(systemctl show fusion -p UnitFileState --value)"
     # just making the output a bit nicer
     local statemsg
@@ -862,10 +820,8 @@ change_autostart() {
         echo "<<< Changing auto-start setting >>>"
         # if auto-start wasn't enabled during installation, state will be empty here
         if [ "$state" != "enabled" ]; then
-            # download systemd service unit definition if it doesn't exist yet
             if [ ! -f "/etc/systemd/system/fusion.service" ]; then
-                sudo curl -fsSL "https://raw.githubusercontent.com/FUSIONFoundation/efsn/master/QuickNodeSetup/fusion.service" \
-                    -o "/etc/systemd/system/fusion.service"
+                installNodeService || return 1
             fi
             # reload systemd service unit definitions
             sudo systemctl daemon-reload
@@ -885,6 +841,11 @@ change_autostart() {
 }
 
 change_explorer() {
+    if isIsolatedGateway; then
+        echo "Official node reporting is disabled for the isolated gateway."
+        pauseScript
+        return 1
+    fi
     local nodename="$(getCfgValue 'nodeName')"
     if [ -n "$nodename" ]; then
         echo
@@ -971,15 +932,17 @@ show_menus_init() {
     echo "-----------------------"
     echo
     echo "${txtylw}1. Install node and dependencies"
-    echo "2. Exit to shell${txtrst}"
+    echo "2. Exit to shell"
+    echo "3. Set up isolated historical gateway (from this checkout)${txtrst}"
     echo
 }
 
 read_options_init() {
     local input
-    read -n1 -r -s -p "Select option [1-2] " input
+    read -n1 -r -s -p "Select option [1-3] " input
     case $input in
         1) installNode ;;
+        3) setupIsolatedGateway; pauseScript ;;
         2) echo -e "\n${txtylw}Bye...${txtrst}"; exit 0 ;;
         *) echo -e "\n${txtred}Invalid input${txtrst}"; sleep 1 ;;
     esac
@@ -1005,16 +968,18 @@ show_menus() {
     echo "5. Deinstall node"
     echo "6. Show node logs"
     echo "7. Configure node"
-    echo "8. Exit to shell${txtrst}"
+    echo "8. Exit to shell"
+    echo "9. Set up isolated historical gateway (from this checkout)${txtrst}"
     echo
 }
 
 read_options() {
     local input
-    read -n1 -r -s -p "Select option [1-8] " input
+    read -n1 -r -s -p "Select option [1-9] " input
     case $input in
         1) echo; warnRetreat && installNode ;;
         2) updateNodeScreen ;;
+        9) setupIsolatedGateway; pauseScript ;;
         3) echo; startNode; echo; pauseScript ;;
         4) echo; warnRetreat && stopNode && echo && pauseScript ;;
         5) echo; warnRetreat && deinstallNode ;;
@@ -1025,6 +990,10 @@ read_options() {
     esac
 }
 
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+    return 0
+fi
+
 [ $DEBUG_MODE -ne 1 ] && clear
 echo
 echo "-----------------------"
@@ -1034,7 +1003,6 @@ echo
 echo "${txtylw}Initializing script, please wait...${txtrst}"
 echo
 # make sure we're not running into avoidable problems during setup
-scriptUpdate
 distroChecks
 # check dependencies instead of install dependencies
 # because the install method may diff in differrent OS
@@ -1042,7 +1010,7 @@ dependChecks
 sanityChecks
 # check for updates if node.json already exists, save state in global variable
 hasUpdate=1
-if [ -f "$CONF_FILE" ]; then
+if [ -f "$CONF_FILE" ] && ! isIsolatedGateway; then
     checkUpdate
     hasUpdate=$?
 fi

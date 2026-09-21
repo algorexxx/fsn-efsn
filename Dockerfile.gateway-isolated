@@ -1,0 +1,11 @@
+ARG BUILDER_IMAGE
+ARG RUNTIME_IMAGE
+FROM ${BUILDER_IMAGE} AS builder
+RUN apk add --no-cache make gcc musl-dev linux-headers
+WORKDIR /efsn
+COPY . .
+RUN make efsn
+
+FROM ${RUNTIME_IMAGE}
+COPY --from=builder /efsn/build/bin/efsn /usr/local/bin/efsn
+ENTRYPOINT ["efsn"]

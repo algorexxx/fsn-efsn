@@ -6,7 +6,8 @@ After=docker.service
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/docker start fusion
-ExecStop=/usr/bin/docker stop fusion
+ExecStop=/usr/bin/docker stop --time 300 fusion
+TimeoutStopSec=330
 RemainAfterExit=yes
 
 [Install]
