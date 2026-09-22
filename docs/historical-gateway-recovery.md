@@ -30,7 +30,10 @@ the image build gates on a Go regression test.
 
 Docker did not activate the requested localhost port publication on the internal
 bridge. Direct host access to the container IP with Host: localhost worked. The
-new private RPC proxy requires a separate live Ubuntu verification after install.
+private RPC proxy from manager commit 846fa28 was then verified live on Ubuntu:
+RPC returned the same head, and ss showed only 127.0.0.1:9000. A Windows SSH
+local forward was independently tested from the Windows workspace: chain ID,
+head, zero peers, and mining false all matched. See [endpoint operations](gateway-endpoint.md).
 
 Not established: complete block/receipt coverage, historical state availability,
 trace support, Fusion-specific RPC coverage, or indexer compatibility. The sampled

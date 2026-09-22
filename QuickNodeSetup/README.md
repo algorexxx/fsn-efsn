@@ -1,5 +1,9 @@
 # Fusion node manager
 
+For the recovered gateway already running on Ubuntu, see the
+[endpoint operations guide](../docs/gateway-endpoint.md). It covers the SSH
+tunnel, daily start/stop, verified results, and troubleshooting.
+
 Run the manager from a checkout with Bash:
 
 ```bash
