@@ -1,0 +1,11 @@
+[Unit]
+Description=Forward private Fusion RPC to the isolated gateway
+Requires=fusion-rpc.socket docker.service
+After=docker.service
+
+[Service]
+ExecStart=/usr/local/libexec/fusion-rpc-proxy.sh
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true

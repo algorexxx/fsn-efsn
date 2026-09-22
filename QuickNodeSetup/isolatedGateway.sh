@@ -59,6 +59,7 @@ setupIsolatedGateway() {
         '{nodeType:"isolated-gateway", testnet:"false", mining:"false", autobt:"false", nodeName:"", image:$image, revision:$revision, builder:$builder, runtime:$runtime}' \
         > "$config_tmp" || return 1
     installNodeService || return 1
+    installIsolatedRpc || return 1
     sudo systemctl daemon-reload || return 1
     sudo systemctl disable fusion || return 1
     if [ "$(systemctl is-active fusion 2>/dev/null)" = "active" ]; then
@@ -67,7 +68,7 @@ setupIsolatedGateway() {
     removeContainer || return 1
     sudo docker create --name fusion --pull never --restart no --stop-timeout 300 \
         --label io.fusion.mode=isolated-gateway \
-        --network fusion-history --publish 127.0.0.1:9000:9000 \
+        --network fusion-history \
         --mount "type=bind,source=$BASE_DIR/fusion-node/data/efsn/chaindata,target=/fusion-node/data/efsn/chaindata" \
         "$image_id" --datadir /fusion-node/data --syncmode full \
         --maxpeers 0 --nodiscover --bootnodes "" --nat none --port 0 \
@@ -116,7 +117,8 @@ validateIsolatedGateway() {
         (.NetworkSettings.Networks | keys) == ["fusion-history"] and
         .HostConfig.RestartPolicy.Name == "no" and
         .HostConfig.Privileged == false and
-        .HostConfig.PortBindings == {"9000/tcp":[{"HostIp":"127.0.0.1","HostPort":"9000"}]} and
+        ((.HostConfig.PortBindings // {}) == {} or
+         .HostConfig.PortBindings == {"9000/tcp":[{"HostIp":"127.0.0.1","HostPort":"9000"}]}) and
         (.Mounts | length) == 1 and
         .Mounts[0].Source == $source and
         .Mounts[0].Destination == "/fusion-node/data/efsn/chaindata"
@@ -124,4 +126,61 @@ validateIsolatedGateway() {
         echo "Container does not match the saved isolated gateway. Run isolated gateway setup again."
         return 1
     fi
+}
+
+installIsolatedRpc() {
+    if [ ! -x /usr/lib/systemd/systemd-socket-proxyd ]; then
+        echo "Missing /usr/lib/systemd/systemd-socket-proxyd; install the Ubuntu systemd package."
+        return 1
+    fi
+    sudo install -D -m 755 "$SCRIPT_DIR/fusion-rpc-proxy.sh" /usr/local/libexec/fusion-rpc-proxy.sh || return 1
+    sudo install -m 644 "$SCRIPT_DIR/fusion-rpc.socket" "$SCRIPT_DIR/fusion-rpc.service" /etc/systemd/system/ || return 1
+    sudo systemctl daemon-reload || return 1
+}
+
+stopIsolatedRpc() {
+    if sudo systemctl cat fusion-rpc.socket >/dev/null 2>&1; then
+        sudo systemctl stop fusion-rpc.socket fusion-rpc.service || return 1
+    fi
+}
+
+startIsolatedRpc() {
+    stopIsolatedRpc || return 1
+    sudo systemctl reset-failed fusion-rpc.service >/dev/null 2>&1 || true
+    if ! sudo systemctl start fusion-rpc.socket; then
+        echo "Could not bind private RPC on 127.0.0.1:9000. Check systemctl status fusion-rpc.socket."
+        return 1
+    fi
+    local result attempt
+    for attempt in {1..15}; do
+        result=$(curl --noproxy '*' --fail --silent --show-error --max-time 2 \
+            http://127.0.0.1:9000 -H 'Content-Type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}' 2>/dev/null) || result=''
+        if jq -e '.result == "0x7f93" and .error == null' <<< "$result" >/dev/null 2>&1; then
+            echo "Private Fusion RPC verified at http://127.0.0.1:9000"
+            return 0
+        fi
+        sleep 1
+    done
+    stopIsolatedRpc || return 1
+    echo "RPC did not become ready. The node was left running; inspect node logs and journalctl -u fusion-rpc.service."
+    return 1
+}
+
+configureIsolatedRpc() {
+    if ! isIsolatedGateway; then
+        echo "Private RPC setup is only available for an isolated historical gateway."
+        return 1
+    fi
+    validateIsolatedGateway || return 1
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' fusion)" != true ]; then
+        echo "Start the isolated gateway before configuring private RPC."
+        return 1
+    fi
+    if [ -n "$(sudo docker port fusion 9000/tcp 2>/dev/null)" ]; then
+        echo "Docker already publishes port 9000. Stop the node and rerun historical setup to remove that mapping first."
+        return 1
+    fi
+    installIsolatedRpc || return 1
+    startIsolatedRpc
 }

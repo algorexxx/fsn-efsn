@@ -62,7 +62,8 @@ recovery artifacts. Do not expose this historical client publicly.
 
 ## Access and checks
 
-Only HTTP RPC port 9000 is published, on the VM's loopback interface. WebSockets,
+A systemd TCP proxy listens on the VM's loopback address, 127.0.0.1:9000.
+The node itself has no published ports and remains on its internal bridge. WebSockets,
 P2P port publishing, discovery, staking, ticket auto-buy, signing keys and official
 node-stat reporting are not enabled. The internal network and container settings
 are checked before menu-driven starts. Do not attach additional Docker networks or
@@ -116,6 +117,7 @@ The bundled systemd service replaces the former foundation-hosted download.
 bash -n QuickNodeSetup/fsnNode.sh
 bash -n QuickNodeSetup/isolatedGateway.sh
 bash QuickNodeSetup/isolatedGateway.test.sh
+bash QuickNodeSetup/fusion-rpc-proxy.test.sh
 ```
 
 The tests require Bash, jq and standard Unix utilities, run as a non-root user, and
@@ -138,3 +140,51 @@ gateway setup while stopped. This rebuilds the client and recreates the containe
 with an empty bootnodes list, preserving the restored database. Discovery remains
 disabled, maxpeers is zero, and the Docker network remains internal. The historical
 image build runs the empty-bootstrap regression test before building efsn.
+
+## Stable private RPC on Ubuntu
+
+Docker may ignore published ports for a container attached only to an internal
+bridge. The manager installs `fusion-rpc.socket`, `fusion-rpc.service`, and a
+root-owned helper using Ubuntu's `/usr/lib/systemd/systemd-socket-proxyd`.
+The socket binds only `127.0.0.1:9000`. The helper checks the running container's
+mode and sole internal network, discovers its current IPv4 address, and forwards
+TCP to port 9000. No second network is attached to efsn. The helper uses Docker's
+privileged socket, so its service runs as root; the interactive manager still
+runs as the normal user. This is TCP forwarding, not authentication or RPC method
+filtering. Only trusted local users and SSH clients should have access.
+
+For an already running historical gateway, update the checkout and choose **R:
+Configure private RPC**. This installs and verifies the endpoint without stopping
+or rebuilding the node. If Docker really publishes the old port mapping, setup
+refuses the conflicting endpoint; stop the node and use option 9 once to recreate
+it without that mapping. An unused legacy loopback mapping is accepted for this
+migration; public bindings and extra networks are rejected.
+
+Menu-driven starts refresh the proxy target and probe `eth_chainId` before
+reporting RPC ready. Probe failure closes the endpoint and leaves the node running
+for diagnosis; a long database recovery can require retrying R after it finishes.
+Menu-driven stop, removal, and recreation close the proxy first. The socket and
+node are not enabled at boot. After reboot, start through the manager. If using
+Docker commands outside the manager, rerun R after a restart/recreation to refresh
+the target. Do not rely on a saved container IP.
+
+From Windows or the Fsnex host, use an SSH tunnel:
+
+```bash
+ssh -N -o ExitOnForwardFailure=yes -L 9000:127.0.0.1:9000 peter@VM_IP
+```
+
+Use `http://127.0.0.1:9000` from that machine while the tunnel runs. A containerized
+indexer needs its own explicit tunnel/network configuration; its loopback is not
+the host's loopback. No public RPC firewall rule is needed.
+
+On Ubuntu, diagnose with:
+
+```bash
+sudo systemctl status fusion-rpc.socket fusion-rpc.service
+sudo journalctl -u fusion-rpc.service -n 50 --no-pager
+sudo ss -ltnp 'sport = :9000'
+```
+
+The listener should be on `127.0.0.1:9000`, never `0.0.0.0:9000` or `[::]:9000`.
+A stopped service before the first request is normal: the socket activates it.

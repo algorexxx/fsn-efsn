@@ -447,6 +447,7 @@ initConfig() {
 }
 
 removeContainer() {
+    if isIsolatedGateway; then stopIsolatedRpc || return 1; fi
     if sudo docker container inspect fusion >/dev/null 2>&1; then
         sudo docker stop --time 300 fusion >/dev/null || return 1
         sudo docker rm fusion >/dev/null || return 1
@@ -553,6 +554,7 @@ startNode() {
     echo "${txtylw}Starting the node${txtrst}"
     sudo docker start fusion >/dev/null
     if [ $? -eq 0 ]; then
+        if isIsolatedGateway; then startIsolatedRpc || return 1; fi
         echo "${txtgrn}✓${txtrst} Node started"
         echo
         echo "---------------------------------------------------------------"
@@ -566,6 +568,7 @@ startNode() {
 }
 
 stopNode() {
+    if isIsolatedGateway; then stopIsolatedRpc || return 1; fi
     echo
     echo "${txtylw}Stopping the node${txtrst}"
     echo "This might take a moment, please wait..."
@@ -969,17 +972,19 @@ show_menus() {
     echo "6. Show node logs"
     echo "7. Configure node"
     echo "8. Exit to shell"
-    echo "9. Set up isolated historical gateway (from this checkout)${txtrst}"
+    echo "9. Set up isolated historical gateway (from this checkout)"
+    echo "R. Configure private RPC for running historical gateway${txtrst}"
     echo
 }
 
 read_options() {
     local input
-    read -n1 -r -s -p "Select option [1-9] " input
+    read -n1 -r -s -p "Select option [1-9/R] " input
     case $input in
         1) echo; warnRetreat && installNode ;;
         2) updateNodeScreen ;;
         9) setupIsolatedGateway; pauseScript ;;
+        r|R) configureIsolatedRpc; pauseScript ;;
         3) echo; startNode; echo; pauseScript ;;
         4) echo; warnRetreat && stopNode && echo && pauseScript ;;
         5) echo; warnRetreat && deinstallNode ;;

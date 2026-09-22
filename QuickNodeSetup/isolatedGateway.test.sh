@@ -20,6 +20,10 @@ runTest() (
     FAIL_BUILD=false
     FAIL_STOP=false
     FAIL_PULL=false
+    FAIL_RPC=false
+    FAIL_SOCKET=false
+    PUBLISHED=false
+    PORT_BINDINGS='{}'
     CONTAINER_EXISTS=false
     LABEL=isolated-gateway
     IMAGE=sha256:gateway
@@ -27,11 +31,18 @@ runTest() (
     DEBUG_MODE=1
 
     sudo() { "$@"; }
+    installIsolatedRpc() { printf 'rpc-install\n' >> "$CALLS"; }
+    sleep() { :; }
+    curl() {
+        printf 'rpc-probe\n' >> "$CALLS"
+        if [ "$FAIL_RPC" = true ]; then echo '{"error":{"code":-1}}'; else echo '{"result":"0x7f93"}'; fi
+    }
     askToContinue() { return 0; }
     pauseScript() { return 0; }
     installNodeService() { printf 'service-install\n' >> "$CALLS"; }
     systemctl() {
         printf 'systemctl %s\n' "$*" >> "$CALLS"
+        if [ "$*" = "start fusion-rpc.socket" ] && [ "$FAIL_SOCKET" = true ]; then return 1; fi
         if [ "${1:-}" = is-active ]; then echo inactive; return 3; fi
     }
     git() {
@@ -64,13 +75,14 @@ runTest() (
                     esac
                 else
                     jq -n --arg source "$BASE_DIR/fusion-node/data/efsn/chaindata" \
-                        --arg image "$IMAGE" --arg label "$LABEL" --argjson extra "$EXTRA_NETWORK" \
+                        --arg image "$IMAGE" --arg label "$LABEL" --argjson extra "$EXTRA_NETWORK" --argjson ports "$PORT_BINDINGS" \
                         '[{Config:{Labels:{"io.fusion.mode":$label}},Image:$image,
                         HostConfig:{NetworkMode:"fusion-history",RestartPolicy:{Name:"no"},Privileged:false,
-                        PortBindings:{"9000/tcp":[{HostIp:"127.0.0.1",HostPort:"9000"}]}},
+                        PortBindings:$ports},
                         NetworkSettings:{Networks:(if $extra then {"fusion-history":{},bridge:{}} else {"fusion-history":{}} end)},
                         Mounts:[{Source:$source,Destination:"/fusion-node/data/efsn/chaindata"}]}]'
                 fi ;;
+            port) if [ "$PUBLISHED" = true ]; then echo "127.0.0.1:9000"; fi ;;
             build) [ "$FAIL_BUILD" = false ] ;;
             pull) [ "$FAIL_PULL" = false ] ;;
             stop) [ "$FAIL_STOP" = false ] ;;
@@ -152,7 +164,7 @@ setupLeavesContainerStoppedAndPinned() {
     [ "$(jq -r '.image' "$CONF_FILE")" = sha256:gateway ]
     grep -qx -- '--pull' "$BASE_DIR/create-args"
     grep -qx -- 'never' "$BASE_DIR/create-args"
-    grep -qx -- '127.0.0.1:9000:9000' "$BASE_DIR/create-args"
+    ! grep -qx -- '--publish' "$BASE_DIR/create-args"
     grep -qx -- 'sha256:gateway' "$BASE_DIR/create-args"
     grep -qx -- '--nodiscover' "$BASE_DIR/create-args"
     grep -qx -- '--bootnodes' "$BASE_DIR/create-args"
@@ -205,12 +217,71 @@ legacyLayoutRequiresManualMigration() {
     ! grep -q 'docker create' "$CALLS"
 }
 
+configureRpcPreservesRunningNode() {
+    restoreManifest
+    RUNNING=true
+    configureIsolatedRpc
+    grep -q 'rpc-install' "$CALLS"
+    grep -q 'systemctl start fusion-rpc.socket' "$CALLS"
+    ! grep -Eq 'docker (start|stop|rm|create|build)' "$CALLS"
+}
+
+configureRpcRejectsExternalNetwork() {
+    restoreManifest
+    RUNNING=true
+    EXTRA_NETWORK=true
+    if configureIsolatedRpc; then return 1; fi
+    ! grep -q 'rpc-install' "$CALLS"
+}
+
+configureRpcRejectsPublishedPort() {
+    restoreManifest
+    RUNNING=true
+    PUBLISHED=true
+    if configureIsolatedRpc; then return 1; fi
+    ! grep -q 'rpc-install' "$CALLS"
+}
+
+rpcProbeFailureClosesEndpoint() {
+    FAIL_RPC=true
+    if startIsolatedRpc; then return 1; fi
+    [ "$(grep -c 'systemctl stop fusion-rpc.socket fusion-rpc.service' "$CALLS")" -eq 2 ]
+    ! grep -q 'docker stop' "$CALLS"
+}
+
+rpcBindFailureIsReported() {
+    FAIL_SOCKET=true
+    if startIsolatedRpc; then return 1; fi
+    ! grep -q 'rpc-probe' "$CALLS"
+}
+
+stopClosesRpcBeforeNode() {
+    stopNode
+    [ "$(grep -n 'systemctl stop fusion-rpc.socket' "$CALLS" | cut -d: -f1)" -lt "$(grep -n 'docker stop' "$CALLS" | cut -d: -f1)" ]
+}
+
+startAcceptsLegacyLoopbackBinding() {
+    restoreManifest
+    PORT_BINDINGS='{"9000/tcp":[{"HostIp":"127.0.0.1","HostPort":"9000"}]}'
+    validateIsolatedGateway
+}
+
+startRejectsPublicBinding() {
+    restoreManifest
+    PORT_BINDINGS='{"9000/tcp":[{"HostIp":"0.0.0.0","HostPort":"9000"}]}'
+    if startNode; then return 1; fi
+    ! grep -q 'docker start' "$CALLS"
+}
+
 for test_name in installPreservesExistingData initPreservesExistingData \
     startRejectsEmptyDatabase startRejectsManifestTraversal startRejectsExternalNetwork \
     startRejectsExtraNetwork startRejectsChangedImage startAcceptsRestoredIsolatedContainer \
     buildFailurePreservesConfiguration setupLeavesContainerStoppedAndPinned \
     setupRejectsExistingMiner stopFailurePreventsRemoval uninstallPreservesConfigurationAndData \
     updateDoesNotPullPublicImage legacyUpdatePullFailurePreservesContainer \
-    legacyLayoutRequiresManualMigration; do
+    legacyLayoutRequiresManualMigration configureRpcPreservesRunningNode \
+    configureRpcRejectsExternalNetwork configureRpcRejectsPublishedPort \
+    rpcProbeFailureClosesEndpoint rpcBindFailureIsReported stopClosesRpcBeforeNode \
+    startAcceptsLegacyLoopbackBinding startRejectsPublicBinding; do
     runTest "$test_name"
 done
