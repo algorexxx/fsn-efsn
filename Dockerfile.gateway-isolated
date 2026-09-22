@@ -4,6 +4,7 @@ FROM ${BUILDER_IMAGE} AS builder
 RUN apk add --no-cache make gcc musl-dev linux-headers
 WORKDIR /efsn
 COPY . .
+RUN go test ./cmd/utils -run '^TestExplicitEmptyBootstrapNodes$' -count=1
 RUN make efsn
 
 FROM ${RUNTIME_IMAGE}

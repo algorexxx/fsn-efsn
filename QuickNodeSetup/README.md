@@ -125,11 +125,16 @@ small fixtures under the system temporary directory for inspection. A real image
 build and a VM recovery test are still required before treating this as validated
 against a Fusion backup.
 
-## Empty bootstrap argument startup failure
+## Bootstrap startup failure
 
-If startup exits with Bootstrap URL invalid and an empty enode, update to the
-installer fix and rerun historical gateway setup while the container is stopped.
-This recreates the container without the unsupported empty bootnodes argument;
-the restored database is preserved. Discovery remains disabled, maxpeers is zero,
-and the internal Docker network still prevents external connections. This efsn
-version parses an explicitly empty bootnodes value as one invalid URL.
+Historical startup must not resolve the Foundation bootstrap hostnames. The
+upstream v4 bootstrap parser treated an explicitly empty bootnodes value as an
+invalid URL; omitting the option instead loaded the default hostnames. The
+recovery client uses the existing SplitAndTrim helper for v4 as well as v5, so
+an explicitly empty list disables bootstrap nodes without DNS resolution.
+
+For either Bootstrap URL invalid error, update the checkout and rerun historical
+gateway setup while stopped. This rebuilds the client and recreates the container
+with an empty bootnodes list, preserving the restored database. Discovery remains
+disabled, maxpeers is zero, and the Docker network remains internal. The historical
+image build runs the empty-bootstrap regression test before building efsn.
