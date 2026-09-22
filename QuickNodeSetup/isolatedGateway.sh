@@ -70,7 +70,7 @@ setupIsolatedGateway() {
         --network fusion-history --publish 127.0.0.1:9000:9000 \
         --mount "type=bind,source=$BASE_DIR/fusion-node/data/efsn/chaindata,target=/fusion-node/data/efsn/chaindata" \
         "$image_id" --datadir /fusion-node/data --syncmode full \
-        --maxpeers 0 --nodiscover --bootnodes "" --nat none --port 0 \
+        --maxpeers 0 --nodiscover --nat none --port 0 \
         --http --http.addr 0.0.0.0 --http.port 9000 --http.api eth,net,web3,fsn \
         --http.vhosts localhost,127.0.0.1 || return 1
     mv "$config_tmp" "$CONF_FILE" || return 1

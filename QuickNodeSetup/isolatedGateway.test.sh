@@ -154,6 +154,9 @@ setupLeavesContainerStoppedAndPinned() {
     grep -qx -- 'never' "$BASE_DIR/create-args"
     grep -qx -- '127.0.0.1:9000:9000' "$BASE_DIR/create-args"
     grep -qx -- 'sha256:gateway' "$BASE_DIR/create-args"
+    grep -qx -- '--nodiscover' "$BASE_DIR/create-args"
+    ! grep -qx -- '--bootnodes' "$BASE_DIR/create-args"
+    ! grep -qx -- '' "$BASE_DIR/create-args"
     ! grep -Eq -- '--mine|--autobt|--unlock|--ethstats|40408|fsntx' "$BASE_DIR/create-args"
     ! grep -q 'docker start' "$CALLS"
     [ "$(find "$BASE_DIR/fusion-node" -name 'node.json.before-recovery-*' | wc -l)" -eq 1 ]

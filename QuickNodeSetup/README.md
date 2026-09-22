@@ -124,3 +124,12 @@ pinning and isolation checks without a Docker daemon or real chaindata. They lea
 small fixtures under the system temporary directory for inspection. A real image
 build and a VM recovery test are still required before treating this as validated
 against a Fusion backup.
+
+## Empty bootstrap argument startup failure
+
+If startup exits with Bootstrap URL invalid and an empty enode, update to the
+installer fix and rerun historical gateway setup while the container is stopped.
+This recreates the container without the unsupported empty bootnodes argument;
+the restored database is preserved. Discovery remains disabled, maxpeers is zero,
+and the internal Docker network still prevents external connections. This efsn
+version parses an explicitly empty bootnodes value as one invalid URL.
