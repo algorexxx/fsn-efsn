@@ -63,8 +63,9 @@ been checked.
 
 The behaviour decides balances and fees, so a fix changes consensus. It must activate at a
 fork height, with the old path kept below it so history still replays to the same state
-roots. Fusion is halted at block 15,130,080, so any restart would apply it from the first new
-block.
+roots. The recovered backup ends at block 15,130,080; this does not establish the final
+canonical network block. Fixing this behavior is a separate decision from the minimal
+restart. No activation height is selected; see [the restart plan](restart-plan.md).
 
 At and above the fork:
 

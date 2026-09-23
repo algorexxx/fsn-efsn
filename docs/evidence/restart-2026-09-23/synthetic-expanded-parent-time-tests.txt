@@ -1,0 +1,58 @@
+=== RUN   TestPresentDaySuccessorRejectsExpiredTicket
+--- PASS: TestPresentDaySuccessorRejectsExpiredTicket (0.01s)
+=== RUN   TestHistoricalBridgeImportsOnIndependentState
+    bridge_test.go:45: step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626
+    bridge_test.go:45: step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626
+    bridge_test.go:45: step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626
+    bridge_test.go:45: step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626
+    bridge_test.go:45: step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626
+    bridge_test.go:45: step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626
+    bridge_test.go:45: step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626
+    bridge_test.go:45: step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626
+--- PASS: TestHistoricalBridgeImportsOnIndependentState (0.03s)
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund
+--- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission (0.02s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund (0.00s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund (0.01s)
+=== RUN   TestDefaultHistoricalPurchaseFailsPoolAdmission
+--- PASS: TestDefaultHistoricalPurchaseFailsPoolAdmission (0.01s)
+=== RUN   TestPresentDayPurchaseStartRejectedOnHistoricalHead
+--- PASS: TestPresentDayPurchaseStartRejectedOnHistoricalHead (0.01s)
+=== RUN   TestReconstructionAcrossMissingStates
+=== RUN   TestReconstructionAcrossMissingStates/step_1_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_4
+--- PASS: TestReconstructionAcrossMissingStates (0.38s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_1_missing_1 (0.04s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_1 (0.03s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_2 (0.03s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_1 (0.04s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_2 (0.04s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_3 (0.04s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_1 (0.05s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_2 (0.04s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_3 (0.04s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_4 (0.04s)
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751
+--- PASS: TestReconstructionAtHistoricalExpiryBoundary (0.09s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749 (0.03s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750 (0.03s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751 (0.03s)
+=== RUN   TestReconstructionWithMissingAncestorDetectsPanic
+--- PASS: TestReconstructionWithMissingAncestorDetectsPanic (0.03s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.02s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	0.959s
