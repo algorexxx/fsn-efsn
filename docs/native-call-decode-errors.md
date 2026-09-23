@@ -18,8 +18,10 @@ st.fee = common.GetFsnCallFee(msg.To(), fsnCallParam.Func)
 ```
 
 `rlp` decodes field by field into the struct, so a failure leaves whatever was assigned before
-it. Input that is not an RLP list — empty input, a string, hex digits sent as text, an ERC-20
-call — never assigns `Func`, which stays `0`: `GenNotationFunc`. Then:
+it. Input that is not an RLP list never assigns `Func`, which stays `0`: `GenNotationFunc`.
+That covers empty input, any input whose first byte is below `0xc0`, and the two mainnet
+cases below: hex digits sent as text, and ERC-20 calldata whose selector starts with `0xa9`.
+Then:
 
 1. `GetFsnCallFee` prices it at 0.1 FSN, which `buyGas` debits with the gas.
 2. `handleFsnCall` runs GenNotation for the sender. If they hold no notation, they get one. If
