@@ -44,14 +44,7 @@ func newFixture(t *testing.T) *fixture {
 
 func newFixtureWithExpiry(t *testing.T, otherOwnerExpiry uint64) *fixture {
 	t.Helper()
-	data, err := os.ReadFile("../../docs/evidence/restart-2026-09-23/responses.json")
-	requireNoError(t, err)
-	var observations []rpcObservation
-	requireNoError(t, json.Unmarshal(data, &observations))
-	values := make(map[int]json.RawMessage)
-	for _, observation := range observations {
-		values[observation.ID] = observation.Result
-	}
+	values := readRPCObservations(t)
 	var header types.Header
 	var tickets map[common.Hash]common.TicketDisplay
 	var locks common.TimeLock
@@ -111,6 +104,19 @@ func newFixtureWithExpiry(t *testing.T, otherOwnerExpiry uint64) *fixture {
 		db.Close()
 	})
 	return &fixture{db: db, chain: chain, engine: engine, key: key, owner: owner, parent: parent}
+}
+
+func readRPCObservations(t *testing.T) map[int]json.RawMessage {
+	t.Helper()
+	data, err := os.ReadFile("../../docs/evidence/restart-2026-09-23/responses.json")
+	requireNoError(t, err)
+	var observations []rpcObservation
+	requireNoError(t, json.Unmarshal(data, &observations))
+	values := make(map[int]json.RawMessage)
+	for _, observation := range observations {
+		values[observation.ID] = observation.Result
+	}
+	return values
 }
 
 func requireNoError(t *testing.T, err error) {

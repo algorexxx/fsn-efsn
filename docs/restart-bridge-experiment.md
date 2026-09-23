@@ -12,7 +12,8 @@ The tests and reproducibility notes are in [tests/restart](../tests/restart/READ
 No production Go code, dependency versions, live node settings, balances, or
 private keys were changed. A checksum-verified portable Go 1.21.3 runtime was
 placed in the ignored workspace temporary directory. The run used Windows amd64
-and `CGO_ENABLED=0`; Linux/CGO behavior remains to be checked.
+and `CGO_ENABLED=0`. Subsequent [Linux/CGO checks](restart-linux-investigation.md)
+reproduce the expanded suite and record an additional miner race finding.
 
 ## What the fixture represents
 
@@ -227,6 +228,6 @@ producers and adequate ticket runway remain necessary launch decisions.
 
 Next work: reproduce and resolve replenishment failure/cold-start behavior;
 review the reconstruction correction and missing-ancestor error handling;
-exercise real historical reconstruction and the intended Linux toolchain; then
+exercise real historical reconstruction and the eventual deployment toolchain; then
 prepare a controlled full-state rehearsal. The separate restart-anchor
 implementation and heavier-branch rejection tests are still outstanding.

@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"os"
 	"os/exec"
+	"sync"
 	"testing"
 	"time"
 
@@ -70,7 +71,8 @@ func runAutoBuyRuntime(t *testing.T) {
 	})
 	mux := new(event.TypeMux)
 	b.miner = miner.New(b, &miner.Config{GasCeil: initial.GasLimit(), GasPrice: big.NewInt(1), Recommit: time.Second}, f.chain.Config(), mux, f.engine, func(block *types.Block) bool { return block.Coinbase() == f.owner })
-	t.Cleanup(func() { b.miner.Close(); mux.Stop() })
+	var closeMiner sync.Once
+	t.Cleanup(func() { closeMiner.Do(b.miner.Close); mux.Stop() })
 	lock := new(ethapi.AddrLocker)
 	api := ethapi.NewFusionTransactionAPI(b, lock, ethapi.NewPublicTransactionPoolAPI(b, lock))
 	heads := make(chan core.ChainHeadEvent, 8)
@@ -100,13 +102,14 @@ func runAutoBuyRuntime(t *testing.T) {
 		t.Fatal("manual retry returned a different transaction")
 	}
 	first := awaitHead(t, heads)
-	verifyMinedPurchase(t, verifier, first, hash, initial.NumberU64()+1)
-	t.Logf("explicit retry: tx=%s gas=%d mined at height=%d; independent import passed", hash.Hex(), manual.tx.Gas(), first.NumberU64())
+	t.Logf("explicit retry: tx=%s gas=%d mined at height=%d", hash.Hex(), manual.tx.Gas(), first.NumberU64())
 	automatic := awaitSubmission(t, b)
 	requireNoError(t, automatic.err)
 	second := awaitHead(t, heads)
+	closeMiner.Do(b.miner.Close)
+	verifyMinedPurchase(t, verifier, first, hash, initial.NumberU64()+1)
 	verifyMinedPurchase(t, verifier, second, automatic.tx.Hash(), initial.NumberU64()+2)
-	t.Logf("canonical-head notification: next automatic purchase mined at height=%d; independent import passed", second.NumberU64())
+	t.Logf("canonical-head notification: next automatic purchase mined at height=%d; both independent imports passed after stopping the producer", second.NumberU64())
 }
 
 func assertNoPurchaseOrHead(t *testing.T, b *autoBuyBackend, heads <-chan core.ChainHeadEvent, expectedBuilds int32) {

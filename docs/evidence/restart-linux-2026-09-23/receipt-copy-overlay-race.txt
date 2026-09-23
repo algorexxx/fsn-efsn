@@ -1,0 +1,32 @@
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:33: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:89: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:95: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+            autobuy_test.go:105: explicit retry: tx=0xb50ab563a6f8a7f146a6f584bbb947393caa2bf5396683b191be13869f6168db gas=21224 mined at height=15130095
+            autobuy_test.go:112: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (23.25s)
+        PASS
+--- PASS: TestAutoBuyRuntime (24.27s)
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:33: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:89: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:95: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+            autobuy_test.go:105: explicit retry: tx=0x3dfb098a3c395a6f4a06d687d3adfa8f3def95263b97dd0ca468612525601486 gas=21224 mined at height=15130095
+            autobuy_test.go:112: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (22.98s)
+        PASS
+--- PASS: TestAutoBuyRuntime (24.00s)
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:33: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:89: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:95: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+            autobuy_test.go:105: explicit retry: tx=0x40d3fdb026584fc0eaa962a5eb91dd0fb327d905120a52fcc7734046d0453cb2 gas=21224 mined at height=15130095
+            autobuy_test.go:112: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (22.98s)
+        PASS
+--- PASS: TestAutoBuyRuntime (24.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	73.292s

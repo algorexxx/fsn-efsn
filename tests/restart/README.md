@@ -33,7 +33,7 @@ The bridge test uses two independent in-memory databases, in one process. Signed
 blocks are RLP round-tripped to clear cached selection fields, then passed to
 `InsertChain` for header, body, and state validation. Both imports execute their
 own transactions and reproduce the block's commitments. This is not yet a
-multi-process, multi-platform, or network-sync rehearsal. The ticket cache is
+multi-process, cross-platform block-exchange, or network-sync rehearsal. The ticket cache is
 process-global, so the tests are deliberately not parallel.
 
 Missing-state tests evict the global ticket cache and wrap the state database so
@@ -115,3 +115,25 @@ writes two compiler-overlay copies under ignored `tmp`, substitutes parent-time
 cleanup, and changes only the reconstruction success expectation. It does not
 edit production source. The missing-ancestor panic remains expected in this
 experiment; the proposed cleanup change does not repair that separate defect.
+
+Linux/CGO results and race-detector findings are recorded in
+[the Linux investigation](../../docs/restart-linux-investigation.md). With the
+Linux compiler and CGO prerequisites configured, the portable overlay runners are:
+
+```bash
+python3 tests/restart/run-parent-time-experiment.py --go go
+CGO_ENABLED=1 python3 tests/restart/run-receipt-copy-experiment.py --go go
+```
+
+The receipt-copy experiment runs the auto-buy scenario three times under the
+race detector with a temporary receipt-log ownership correction. Unchanged
+production code fails that scenario. The verifier now imports both blocks after
+the producer is closed, avoiding concurrent two-chain global-header access in
+the fixture while retaining independent execution checks.
+
+`TestPreservedBackupReadOnly` is skipped in ordinary runs. It requires
+`FUSION_RESTART_CHAINDATA` to name a checksum-verified disposable copy of the
+observed LevelDB-only backup. Compile the tests first, then run only this probe
+in a network namespace with the copy mounted read-only. It checks the recorded
+head/account/ticket observations and selected block/receipt commitments. It
+does not run a node, sign blocks, traverse every state node, or replay history.

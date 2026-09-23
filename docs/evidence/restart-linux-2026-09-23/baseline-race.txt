@@ -1,0 +1,247 @@
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:32: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:87: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:93: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+        ==================
+        WARNING: DATA RACE
+        Write at 0x00c00017c128 by goroutine 164:
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).resultLoop()
+              /home/rehearsal/fsn-efsn/miner/worker.go:602 +0x19be
+          github.com/FusionFoundation/efsn/v5/miner.newWorker.func3()
+              /home/rehearsal/fsn-efsn/miner/worker.go:223 +0x33
+        
+        Previous read at 0x00c00017c128 by goroutine 162:
+          github.com/FusionFoundation/efsn/v5/core/state.(*StateDB).Copy()
+              /home/rehearsal/fsn-efsn/core/state/statedb.go:824 +0x19c6
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).updateSnapshot()
+              /home/rehearsal/fsn-efsn/miner/worker.go:673 +0x5c9
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commit()
+              /home/rehearsal/fsn-efsn/miner/worker.go:982 +0x130
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commitNewWork()
+              /home/rehearsal/fsn-efsn/miner/worker.go:949 +0x1e93
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).mainLoop()
+              /home/rehearsal/fsn-efsn/miner/worker.go:448 +0x630
+          github.com/FusionFoundation/efsn/v5/miner.newWorker.func1()
+              /home/rehearsal/fsn-efsn/miner/worker.go:221 +0x33
+        
+        Goroutine 164 (running) created at:
+          github.com/FusionFoundation/efsn/v5/miner.newWorker()
+              /home/rehearsal/fsn-efsn/miner/worker.go:223 +0xd59
+          github.com/FusionFoundation/efsn/v5/miner.New()
+              /home/rehearsal/fsn-efsn/miner/miner.go:77 +0xe8
+          github.com/FusionFoundation/efsn/v5/tests/restart.runAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:72 +0xecf
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:24 +0x5c
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        
+        Goroutine 162 (running) created at:
+          github.com/FusionFoundation/efsn/v5/miner.newWorker()
+              /home/rehearsal/fsn-efsn/miner/worker.go:221 +0xc4d
+          github.com/FusionFoundation/efsn/v5/miner.New()
+              /home/rehearsal/fsn-efsn/miner/miner.go:77 +0xe8
+          github.com/FusionFoundation/efsn/v5/tests/restart.runAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:72 +0xecf
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:24 +0x5c
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        ==================
+        ==================
+        WARNING: DATA RACE
+        Read at 0x0000011e6400 by goroutine 162:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.(*DaTong).Finalize()
+              /home/rehearsal/fsn-efsn/consensus/datong/consensus.go:376 +0x75
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commit()
+              /home/rehearsal/fsn-efsn/miner/worker.go:960 +0x46f
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commitNewWork()
+              /home/rehearsal/fsn-efsn/miner/worker.go:949 +0x1e93
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).mainLoop()
+              /home/rehearsal/fsn-efsn/miner/worker.go:448 +0x630
+          github.com/FusionFoundation/efsn/v5/miner.newWorker.func1()
+              /home/rehearsal/fsn-efsn/miner/worker.go:221 +0x33
+        
+        Previous write at 0x0000011e6400 by goroutine 11:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.SetHeaders()
+              /home/rehearsal/fsn-efsn/consensus/datong/consensus.go:244 +0x18ef
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).insertChain()
+              /home/rehearsal/fsn-efsn/core/blockchain.go:1454 +0x18e3
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).InsertChain()
+              /home/rehearsal/fsn-efsn/core/blockchain.go:1376 +0x4a
+          github.com/FusionFoundation/efsn/v5/tests/restart.(*fixture).importBlock()
+              /home/rehearsal/fsn-efsn/tests/restart/blocks_test.go:83 +0x184
+          github.com/FusionFoundation/efsn/v5/tests/restart.verifyMinedPurchase()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:160 +0x207
+          github.com/FusionFoundation/efsn/v5/tests/restart.runAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:103 +0x1944
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:24 +0x5c
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        
+        Goroutine 162 (running) created at:
+          github.com/FusionFoundation/efsn/v5/miner.newWorker()
+              /home/rehearsal/fsn-efsn/miner/worker.go:221 +0xc4d
+          github.com/FusionFoundation/efsn/v5/miner.New()
+              /home/rehearsal/fsn-efsn/miner/miner.go:77 +0xe8
+          github.com/FusionFoundation/efsn/v5/tests/restart.runAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:72 +0xecf
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:24 +0x5c
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        
+        Goroutine 11 (running) created at:
+          testing.(*T).Run()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x82a
+          testing.runTests.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:2054 +0x84
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.runTests()
+              /opt/fusion-toolchain/go/src/testing/testing.go:2052 +0x896
+          testing.(*M).Run()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1925 +0xb57
+          main.main()
+              _testmain.go:65 +0x2bd
+        ==================
+            autobuy_test.go:104: explicit retry: tx=0xfce8d4099a196fed583a142b330dbd5201852ff7d92ffb917bfd24e543a57961 gas=21224 mined at height=15130095; independent import passed
+        ==================
+        WARNING: DATA RACE
+        Read at 0x0000011e6400 by goroutine 162:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.(*DaTong).Finalize()
+              /home/rehearsal/fsn-efsn/consensus/datong/consensus.go:376 +0x75
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commit()
+              /home/rehearsal/fsn-efsn/miner/worker.go:960 +0x46f
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commitNewWork()
+              /home/rehearsal/fsn-efsn/miner/worker.go:949 +0x1e93
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).mainLoop()
+              /home/rehearsal/fsn-efsn/miner/worker.go:448 +0x630
+          github.com/FusionFoundation/efsn/v5/miner.newWorker.func1()
+              /home/rehearsal/fsn-efsn/miner/worker.go:221 +0x33
+        
+        Previous write at 0x0000011e6400 by goroutine 11:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.SetHeaders()
+              /home/rehearsal/fsn-efsn/consensus/datong/consensus.go:244 +0x18ef
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).insertChain()
+              /home/rehearsal/fsn-efsn/core/blockchain.go:1454 +0x18e3
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).InsertChain()
+              /home/rehearsal/fsn-efsn/core/blockchain.go:1376 +0x4a
+          github.com/FusionFoundation/efsn/v5/tests/restart.(*fixture).importBlock()
+              /home/rehearsal/fsn-efsn/tests/restart/blocks_test.go:83 +0x184
+          github.com/FusionFoundation/efsn/v5/tests/restart.verifyMinedPurchase()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:160 +0x207
+          github.com/FusionFoundation/efsn/v5/tests/restart.runAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:108 +0x1da4
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:24 +0x5c
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        
+        Goroutine 162 (running) created at:
+          github.com/FusionFoundation/efsn/v5/miner.newWorker()
+              /home/rehearsal/fsn-efsn/miner/worker.go:221 +0xc4d
+          github.com/FusionFoundation/efsn/v5/miner.New()
+              /home/rehearsal/fsn-efsn/miner/miner.go:77 +0xe8
+          github.com/FusionFoundation/efsn/v5/tests/restart.runAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:72 +0xecf
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestAutoBuyRuntime()
+              /home/rehearsal/fsn-efsn/tests/restart/autobuy_test.go:24 +0x5c
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        
+        Goroutine 11 (running) created at:
+          testing.(*T).Run()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x82a
+          testing.runTests.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:2054 +0x84
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.runTests()
+              /opt/fusion-toolchain/go/src/testing/testing.go:2052 +0x896
+          testing.(*M).Run()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1925 +0xb57
+          main.main()
+              _testmain.go:65 +0x2bd
+        ==================
+            autobuy_test.go:109: canonical-head notification: next automatic purchase mined at height=15130096; independent import passed
+            testing.go:1465: race detected during execution of test
+        --- FAIL: TestAutoBuyRuntime (22.64s)
+        === NAME  
+            testing.go:1465: race detected during execution of test
+        FAIL
+    autobuy_test.go:33: exit status 1
+--- FAIL: TestAutoBuyRuntime (22.66s)
+=== RUN   TestPresentDaySuccessorRejectsExpiredTicket
+--- PASS: TestPresentDaySuccessorRejectsExpiredTicket (0.06s)
+=== RUN   TestHistoricalBridgeImportsOnIndependentState
+    bridge_test.go:45: step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626
+    bridge_test.go:45: step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626
+    bridge_test.go:45: step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626
+    bridge_test.go:45: step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626
+    bridge_test.go:45: step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626
+    bridge_test.go:45: step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626
+    bridge_test.go:45: step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626
+    bridge_test.go:45: step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626
+--- PASS: TestHistoricalBridgeImportsOnIndependentState (0.25s)
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund
+--- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission (0.14s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund (0.04s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund (0.10s)
+=== RUN   TestDefaultHistoricalPurchaseFailsPoolAdmission
+--- PASS: TestDefaultHistoricalPurchaseFailsPoolAdmission (0.06s)
+=== RUN   TestPresentDayPurchaseStartRejectedOnHistoricalHead
+--- PASS: TestPresentDayPurchaseStartRejectedOnHistoricalHead (0.06s)
+=== RUN   TestReconstructionAcrossMissingStates
+=== RUN   TestReconstructionAcrossMissingStates/step_1_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_4
+--- PASS: TestReconstructionAcrossMissingStates (3.92s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_1_missing_1 (0.42s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_1 (0.36s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_2 (0.37s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_1 (0.41s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_2 (0.40s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_3 (0.38s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_1 (0.40s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_2 (0.40s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_3 (0.39s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_4 (0.39s)
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751
+--- PASS: TestReconstructionAtHistoricalExpiryBoundary (0.99s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749 (0.32s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750 (0.32s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751 (0.35s)
+=== RUN   TestReconstructionWithMissingAncestorDetectsPanic
+--- PASS: TestReconstructionWithMissingAncestorDetectsPanic (0.33s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.17s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/tests/restart	28.674s
+FAIL

@@ -1,0 +1,40 @@
+{
+  "sourceCommit": "a93f45bf94a1a728383f3432b81ce9b3b764bd92",
+  "modifiedTest": "tests/restart/autobuy_test.go",
+  "modifiedTestSha256": "e1bc4022307f632d37646d556233a4d2a21d51dac60af654167cb87583d92a0e",
+  "reason": "Stop producer before verifier import to isolate shared-global cross-chain access; production code unchanged.",
+  "runs": [
+    {
+      "name": "sequential-verifier-cgo1",
+      "command": [
+        "/opt/fusion-toolchain/go/bin/go",
+        "test",
+        "./tests/restart",
+        "-v",
+        "-count=1",
+        "-timeout=90s"
+      ],
+      "startedUtc": "2026-09-23T19:47:49.117422+00:00",
+      "finishedUtc": "2026-09-23T19:48:12.710062+00:00",
+      "exitCode": 0,
+      "logSha256": "72a6e1732d17dac402e9405a1aebc03ae79135b492e9f76167738c0cf8003b92"
+    },
+    {
+      "name": "sequential-verifier-race",
+      "command": [
+        "/opt/fusion-toolchain/go/bin/go",
+        "test",
+        "-race",
+        "./tests/restart",
+        "-run=^TestAutoBuyRuntime$",
+        "-v",
+        "-count=3",
+        "-timeout=180s"
+      ],
+      "startedUtc": "2026-09-23T19:48:12.710355+00:00",
+      "finishedUtc": "2026-09-23T19:49:23.041364+00:00",
+      "exitCode": 1,
+      "logSha256": "6d39e696889d6ef41e423e2df5efd20c8e036f4c3164c69b90793a09a8e53dc1"
+    }
+  ]
+}

@@ -10,8 +10,14 @@ tests purchase API/pool behavior, and extends reconstruction coverage to multipl
 missing states and exact expiry boundaries. It also reproduces a missing-ancestor
 panic. The [auto-buy runtime test](restart-autobuy-experiment.md) now reproduces
 startup/submission-failure stalls and demonstrates recovery by explicit purchase
-retry. Production consensus code remains unchanged; full-state and network
-rehearsals are still outstanding.
+retry. The [Linux investigation](restart-linux-investigation.md) now reproduces
+these results with CGO disabled/enabled and identifies a miner receipt-log race,
+with a passing temporary ownership-copy experiment. The D:-backed WSL environment
+is operational, with a fully checksummed disposable database copy. Its isolated
+read-only probe matches the recorded head, tickets and account observations;
+sampled older state roots are unavailable. Production code remains unchanged;
+complete historical/state validation, full-state execution and network rehearsals
+are still outstanding.
 
 ## 1. Objective and agreed scope
 
@@ -74,7 +80,7 @@ Limitations:
 - Complete block/receipt coverage, full replay, all historical state, and state-trie completeness remain unproven.
 - No production restart blocks have been constructed or signed. Synthetic blocks using a public test key have now been constructed and imported; see the experiment report.
 - No private keys were read and no transactions were submitted.
-- Go remains absent from the machine's PATH, but a portable Go 1.21.3 toolchain now compiles the consensus package and runs ten top-level synthetic restart tests covering 22 cases on Windows with CGO disabled. Several passing characterization cases deliberately reproduce defects. This does not establish Linux or release-build readiness. The reviewed workflow named `Build-And-Test` currently only builds.
+- Go 1.21.3 runs ten top-level synthetic restart tests covering 22 cases on Windows with CGO disabled and in the dedicated Linux environment with CGO disabled/enabled. Several passing characterization cases deliberately reproduce defects. The Linux race run fails on an existing receipt-log ownership defect; a temporary correction passes the exercised scenario. Production-release readiness remains unproven. The reviewed workflow named `Build-And-Test` currently only builds.
 
 ## 3. Corrections and additional findings from the second review
 
@@ -286,6 +292,7 @@ Gate: a documented, reproducible baseline and an explicitly chosen historical pa
 - Establish a disposable Linux build/rehearsal environment with adequate disk for separate databases. Do not repurpose the 200 GiB explorer VM for bulk replay without a capacity plan.
 - Reproduce the known 5.0.3/recovery build using recorded dependencies; preserve a baseline binary and logs.
 - Run existing relevant tests and record pre-existing failures. Inventory missing Fusion-specific coverage; this review found no test files in `consensus/datong`.
+- Review the reproduced miner receipt-log race and the temporary deep-copy experiment. Test ordinary mining/import concurrency around global `glb_parents`; the first report involved two in-memory chains in one process and is not yet a single-node reproduction of that second race.
 - Establish actual test execution in CI. Pin toolchain/container inputs and examine dependency security findings before choosing the production toolchain.
 - Validate compiler/dependency updates against historical replay and ticket serialization commitments; avoid unrelated bulk upgrades in the consensus patch.
 
@@ -464,8 +471,8 @@ Release acceptance requires all applicable phase gates and verification cases to
 ## 15. Immediate next actions
 
 1. Specify and test initial submission, bounded retry, and inclusion monitoring using the reproduced auto-buy stalls. Broaden to wallet/estimation failures, dropped transactions, and disk restart/journal restoration; these results do not yet establish reliable automation.
-2. Establish the disposable Linux/full-state rehearsal environment on the operator's Windows D: drive and complete historical-baseline validation. See [local setup](restart-local-linux.md). The portable Windows tests do not replace these gates.
-3. Review the parent-time reconstruction correction and missing-ancestor error handling; test real historical reconstruction. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
+2. Complete historical-baseline validation in the now-operational D:-backed Linux environment. See [local setup](restart-local-linux.md) and [Linux findings](restart-linux-investigation.md). Verify the disposable copy before use; sampled inspection does not replace historical execution or complete state validation.
+3. Review the parent-time reconstruction correction, missing-ancestor error handling, and reproduced receipt-log race; test real historical reconstruction and mining/import concurrency. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Specify and implement the separate restart anchor, then exercise all canonical-head entry points against a heavier incompatible history.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 

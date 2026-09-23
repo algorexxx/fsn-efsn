@@ -1,0 +1,94 @@
+{
+  "sourceCommit": "a93f45b",
+  "sourceArchiveSha256": "e41ae70760f4b204611eca0d6605c320e4c4f1ba410ca1b16d09a5b88063ff06",
+  "helperSha256": "829a64d28579c2cb1e5882c6339db9dd71062cc6d6aafb19007853257ad23960",
+  "kernel": {
+    "system": "Linux",
+    "node": "DESKTOP-QAGMH5D",
+    "release": "6.18.33.2-microsoft-standard-WSL2",
+    "version": "#1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "osRelease": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+  "goRelease": {
+    "filename": "go1.21.3.linux-amd64.tar.gz",
+    "os": "linux",
+    "arch": "amd64",
+    "version": "go1.21.3",
+    "sha256": "1241381b2843fae5a9707eec1f8fb2ef94d827990582c7c7c32f5bdfbfd420c8",
+    "size": 66641773,
+    "kind": "archive"
+  },
+  "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "4",
+    "GOFLAGS": "-p=2 -mod=readonly"
+  },
+  "runs": [
+    {
+      "name": "baseline-cgo0",
+      "CGO_ENABLED": "0",
+      "command": [
+        "/opt/fusion-toolchain/go/bin/go",
+        "test",
+        "./tests/restart",
+        "-v",
+        "-count=1",
+        "-timeout=90s"
+      ],
+      "startedUtc": "2026-09-23T19:42:31.755072+00:00",
+      "finishedUtc": "2026-09-23T19:43:05.666332+00:00",
+      "exitCode": 0,
+      "logSha256": "877f29641a5dd7425aca59fa1998cee37c62b2345027a166796466c69552f9e7"
+    },
+    {
+      "name": "baseline-cgo1",
+      "CGO_ENABLED": "1",
+      "command": [
+        "/opt/fusion-toolchain/go/bin/go",
+        "test",
+        "./tests/restart",
+        "-v",
+        "-count=1",
+        "-timeout=90s"
+      ],
+      "startedUtc": "2026-09-23T19:43:05.666722+00:00",
+      "finishedUtc": "2026-09-23T19:43:35.687686+00:00",
+      "exitCode": 0,
+      "logSha256": "2a6966e0d82adef7d7381408c4ade84d8d0a90889e4574fa9870c5bb0132e34a"
+    },
+    {
+      "name": "parent-time-cgo1",
+      "CGO_ENABLED": "1",
+      "command": [
+        "python3",
+        "/home/rehearsal/fsn-efsn/tests/restart/run-parent-time-experiment.py",
+        "--go",
+        "/opt/fusion-toolchain/go/bin/go"
+      ],
+      "startedUtc": "2026-09-23T19:43:35.688265+00:00",
+      "finishedUtc": "2026-09-23T19:43:59.667015+00:00",
+      "exitCode": 0,
+      "logSha256": "8efdc424f4d38fde0545bc12884519014ab5be0b59c910b86164af0637fa82b1"
+    },
+    {
+      "name": "baseline-race",
+      "CGO_ENABLED": "1",
+      "command": [
+        "/opt/fusion-toolchain/go/bin/go",
+        "test",
+        "-race",
+        "./tests/restart",
+        "-v",
+        "-count=1",
+        "-timeout=90s"
+      ],
+      "startedUtc": "2026-09-23T19:43:59.667368+00:00",
+      "finishedUtc": "2026-09-23T19:44:47.074366+00:00",
+      "exitCode": 1,
+      "logSha256": "431c05d63b5367af51fabfa53a471a3d0e53c4030b16fa1e59ae493281149b05"
+    }
+  ]
+}

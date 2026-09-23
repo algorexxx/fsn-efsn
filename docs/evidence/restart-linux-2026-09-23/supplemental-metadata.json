@@ -1,0 +1,77 @@
+{
+  "recordedUtc": "2026-09-23T20:08:48.089380+00:00",
+  "sourceCommit": "a93f45bf94a1a728383f3432b81ce9b3b764bd92",
+  "archiveFilesCompared": 1227,
+  "changedArchivedFiles": [
+    "tests/restart/autobuy_test.go",
+    "tests/restart/fixture_test.go"
+  ],
+  "finalTestInputSha256": {
+    "tests/restart/autobuy_test.go": "e1bc4022307f632d37646d556233a4d2a21d51dac60af654167cb87583d92a0e",
+    "tests/restart/fixture_test.go": "e54d626d10f136fc4bfec4acecb8fbda82963f1d787ef4d38d55c4dcdee077ea",
+    "tests/restart/backup_test.go": "1af3d13c2460e8a0bf68c22764ea582002b6aef37cc83d0935523dcd757060bb",
+    "tests/restart/run-parent-time-experiment.py": "829a64d28579c2cb1e5882c6339db9dd71062cc6d6aafb19007853257ad23960",
+    "tests/restart/run-receipt-copy-experiment.py": "793b5dc3acc13c9b0dbaf52df6b40f1829c385dc5d00196f3c105f7e2e714a6b"
+  },
+  "backupTestSha256DuringSyntheticRunsBeforeHexFormatting": "213a685ec2c63f0f53279c146b1b3f72dd5348a5e03b54f86c3f8b85f6d23102",
+  "nodeBinary": {
+    "path": "/home/rehearsal/bin/efsn-a93f45b",
+    "sha256": "7fde3503f9b840dfa59d4d67a4595d3a61653a1bae95eb814b2942a0233f59f4",
+    "command": "go build -trimpath -o /home/rehearsal/bin/efsn-a93f45b ./cmd/efsn",
+    "CGO_ENABLED": "1",
+    "GOFLAGS": "-p=2 -mod=readonly",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "4",
+    "exitCode": 0
+  },
+  "moduleVerification": "go mod verify: all modules verified",
+  "additionalRuns": [
+    {
+      "log": "receipt-copy-overlay-race.txt",
+      "command": "python3 tests/restart/run-receipt-copy-experiment.py --go /opt/fusion-toolchain/go/bin/go",
+      "exitCode": 0
+    },
+    {
+      "log": "receipt-copy-overlay-full-suite.txt",
+      "command": "go test -race -overlay tmp/restart-receipt-copy-overlay/overlay.json ./tests/restart -v -count=1 -timeout=90s",
+      "exitCode": 0
+    },
+    {
+      "log": "parent-time-sequential-verifier.txt",
+      "command": "python3 tests/restart/run-parent-time-experiment.py --go /opt/fusion-toolchain/go/bin/go",
+      "exitCode": 0
+    },
+    {
+      "log": "backup-readonly-probe.txt",
+      "command": "unshare --mount --net --propagation private; read-only bind mount; runuser -u rehearsal -- env FUSION_RESTART_CHAINDATA=/mnt/fusion-rehearsal-probe GOMAXPROCS=4 /home/rehearsal/restart-tests -test.run=^TestPreservedBackupReadOnly$ -test.v -test.timeout=180s",
+      "exitCode": 0
+    }
+  ],
+  "logSha256": {
+    "backup-readonly-probe.txt": "4ab01ccf819737424ca7ca85624ef51d9c5e642c06aa5dbf6a9746dd5a9310ba",
+    "baseline-cgo0.txt": "877f29641a5dd7425aca59fa1998cee37c62b2345027a166796466c69552f9e7",
+    "baseline-cgo1.txt": "2a6966e0d82adef7d7381408c4ade84d8d0a90889e4574fa9870c5bb0132e34a",
+    "baseline-race.txt": "431c05d63b5367af51fabfa53a471a3d0e53c4030b16fa1e59ae493281149b05",
+    "module-verification.txt": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+    "node-build-modules.txt": "d84564b959b8142bcb5a369415c93425f666980dd9c6fbe84e1485624c63caf9",
+    "node-build.txt": "f9ec9e2eb47da2c6a217c62d1ce31c8a32263e065f2da14eb31fe8fd61e5e39c",
+    "parent-time-cgo1.txt": "8efdc424f4d38fde0545bc12884519014ab5be0b59c910b86164af0637fa82b1",
+    "parent-time-sequential-verifier.txt": "c62d6e013500022c1cfd00e0fcc4fbcc0bec441bc1721ee1ffbf46246be0aa5e",
+    "probe-isolation.txt": "02ee75bfa4df488d7e24505ed2a68cb37d1f40760fbad5dad77a06e506fbc570",
+    "receipt-copy-overlay-full-suite.txt": "d36c6849aa32a5a56a034f437a3529caf5e7210b3bb6b268240d9e3a279617f0",
+    "receipt-copy-overlay-race.txt": "13e12c86662e70816e2dc9ec4b008e4de69c3065667ac277d5bee013625a6aa4",
+    "sequential-verifier-cgo1.txt": "72a6e1732d17dac402e9405a1aebc03ae79135b492e9f76167738c0cf8003b92",
+    "sequential-verifier-race.txt": "6d39e696889d6ef41e423e2df5efd20c8e036f4c3164c69b90793a09a8e53dc1"
+  },
+  "scriptsSha256": {
+    "configure-user.py": "168c8df3de9f3dd5f7d4dfdf6ac9a071e66653bee1da598a3b289806cfd14aa6",
+    "copy-chaindata.sh": "572739b90bea6afdaf96649a35b1371ecb83b14f4dc7da3797e3e44a7726d26b",
+    "parallel-files.py": "bd2275f9759118a040743d8791fbd97854343a62fddf441a53a73b82365309c5",
+    "probe-copy.sh": "2d3d391144cce5055696ab26ec1f05f4fc49c9b6a5e72fcce3483db1635972fa",
+    "resume-copy-chaindata.sh": "5834b7c19a92d4482d890359ab0aee0b6f7a768955645146e0d736f66a679fa3",
+    "run-linux-tests.py": "8c439eb8c545ce278b1e1bf7efa0ce31f2a9caf2329be407aec8bb272624ad97",
+    "save-evidence.py": "dc03e48a8a0340760a0513db4fa934badd01889105cce649a72d9fc4cf0492f9",
+    "setup-toolchain.py": "285f741d3ec0ef4e8932bcb9e3407d432b47e75e4caf5f8bff0d443a40312a08",
+    "triage-race.py": "14b1c77684cb34955ed56055a2e780f0c5f7aa639c94720de39932b098e1b005"
+  }
+}

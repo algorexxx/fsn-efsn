@@ -58,7 +58,11 @@ that every external system or future client can never retry.
 
 ## Limits and remaining cases
 
-This runs on Windows amd64, Go 1.21.3, CGO disabled. It uses an adapter over the
+The initial run used Windows amd64, Go 1.21.3, CGO disabled. Subsequent
+[Linux/CGO and race runs](restart-linux-investigation.md) reproduce the behavior
+and identify a separate miner receipt-log race. The revised fixture stops the
+producer before importing both mined blocks in the verifier, avoiding concurrent
+two-chain access to process-global parent headers. It uses an adapter over the
 real in-memory chain/pool, rather than the full `eth.Ethereum` service or JSON-RPC
 transport. The cold-start condition is a newly created miner and empty pool on
 existing state; it is not a disk-database restart or journal recovery test. The
