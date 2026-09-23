@@ -17,7 +17,9 @@ is operational, with a fully checksummed disposable database copy. Its isolated
 read-only probe matches the recorded head, tickets and account observations;
 sampled older state roots are unavailable. Production code remains unchanged;
 complete historical/state validation, full-state execution and network rehearsals
-are still outstanding.
+are still outstanding. The [integrity and replay investigation](restart-integrity-investigation.md)
+adds complete read-only scanners, a successful 10,000-block baseline replay and
+128 real historical ticket-reconstruction cases. Complete scanning is in progress.
 
 ## 1. Objective and agreed scope
 

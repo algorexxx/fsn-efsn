@@ -1,0 +1,25 @@
+# github.com/FusionFoundation/efsn/v5/miner [github.com/FusionFoundation/efsn/v5/miner.test]
+miner/unconfirmed_test.go:46:23: not enough arguments in call to pool.Insert
+	have (uint64, "github.com/FusionFoundation/efsn/v5/common".Hash)
+	want (uint64, "github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash)
+miner/unconfirmed_test.go:66:22: not enough arguments in call to pool.Insert
+	have (uint64, "github.com/FusionFoundation/efsn/v5/common".Hash)
+	want (uint64, "github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash)
+miner/worker_test.go:80:17: undefined: ethdb.NewMemDatabase
+miner/worker_test.go:135:104: too many arguments in call to newWorker
+	have (*params.ChainConfig, consensus.Engine, *testWorkerBackend, *event.TypeMux, time.Duration, uint64, uint64, nil)
+	want (*Config, *params.ChainConfig, consensus.Engine, Backend, *event.TypeMux, func(*types.Block) bool)
+miner/worker_test.go:141:49: undefined: ethash
+miner/worker_test.go:144:49: undefined: clique
+miner/worker_test.go:144:92: undefined: ethdb.NewMemDatabase
+miner/worker_test.go:159:33: not enough arguments in call to state.GetBalance
+	have ("github.com/FusionFoundation/efsn/v5/common".Address)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address)
+miner/worker_test.go:167:33: not enough arguments in call to state.GetBalance
+	have ("github.com/FusionFoundation/efsn/v5/common".Address)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address)
+miner/worker_test.go:173:38: undefined: ethash
+miner/worker_test.go:173:38: too many errors
+?   	github.com/FusionFoundation/efsn/v5/consensus/datong	[no test files]
+FAIL	github.com/FusionFoundation/efsn/v5/miner [build failed]
+FAIL

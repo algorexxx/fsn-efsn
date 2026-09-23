@@ -137,3 +137,26 @@ observed LevelDB-only backup. Compile the tests first, then run only this probe
 in a network namespace with the copy mounted read-only. It checks the recorded
 head/account/ticket observations and selected block/receipt commitments. It
 does not run a node, sign blocks, traverse every state node, or replay history.
+
+## Complete integrity and replay probes
+
+`TestPreservedStateIntegrity`, `TestPreservedHistoryIntegrity` and
+`TestPreservedTicketReconstruction` additionally require
+`FUSION_RESTART_FULL_AUDIT=1`. Compile first and run the resulting test binary
+with no network and the verified source mounted read-only. The first two traverse
+reachable state and canonical history respectively; the third validates actual
+recent headers with direct state and forced missing-state reconstruction.
+The ordinary suite tests the scanners against deliberate database corruption.
+
+On Linux, `TestPreservedHistoryReplay` requires an absolute, nonexistent
+`FUSION_RESTART_REPLAY_DIR`, a height in `FUSION_RESTART_REPLAY_END`, and the
+Windows drive mount in `FUSION_RESTART_HOST_STORAGE` (for example `/mnt/d`).
+The output parent must already exist. It executes canonical blocks into a new
+database with the original checkpoint behavior and stops on an import error,
+unexpected head, or insufficient disk reserve. Source and output must be separate.
+Use a bounded pilot before choosing a full replay layout. Existing targets are
+rejected; there is no resume mode yet.
+
+See [the integrity/replay report](../../docs/restart-integrity-investigation.md)
+for measured results, limits and evidence. Successful structural checks and
+checkpoint-assisted execution are not full independent consensus verification.
