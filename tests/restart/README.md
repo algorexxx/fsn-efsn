@@ -162,7 +162,13 @@ The output parent must already exist. It executes canonical blocks into a new
 database with the original checkpoint behavior and stops on an import error,
 unexpected head, or insufficient disk reserve. Source and output must be separate.
 Use a bounded pilot before choosing a full replay layout. Existing targets are
-rejected; there is no resume mode yet.
+rejected by default. `FUSION_RESTART_REPLAY_RESUME=1` requires a matching identity
+manifest from the same retained executable, then verifies the target head and
+available state read-only before reopening it writable. Older pilots without
+that manifest cannot be automatically resumed. Never run two writers.
+`FUSION_RESTART_REPLAY_STOP_FILE` names an optional file whose existence triggers
+a controlled failure and normal cleanup at the next batch boundary. A timeout
+or forced process/WSL termination does not guarantee that cleanup.
 
 See [the integrity/replay report](../../docs/restart-integrity-investigation.md)
 for measured results, limits and evidence. Successful structural checks and

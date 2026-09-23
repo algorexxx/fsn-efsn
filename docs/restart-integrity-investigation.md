@@ -2,7 +2,9 @@
 
 The Linux investigation was committed as `bf71410` on
 `codex/restart-investigation-wip`. This follow-up adds read-only full-data checks
-and a bounded historical replay runner. Production node code is unchanged.
+and a bounded historical replay runner, committed as `d82a229`. All baseline
+data checks and replay use unchanged production code. The subsequent
+[corrections](restart-corrections.md) are tested in a separate source tree.
 
 ## Complete-data checks
 
@@ -36,8 +38,12 @@ transactions and parent links. All eleven cases passed before the real scan.
 The full scan started at 20:21:26 UTC in a private mount/network namespace,
 with the verified database mounted read-only. Its live log is
 `/home/rehearsal/results/restart-integrity-2026-09-23/full-integrity.txt`.
-Completion is not yet established; results must be recorded before closing this
-validation gate.
+The complete current-state scan passed in 1,287.81 seconds: 801,355 accounts,
+2,886,305 storage leaves, and 33,437 code/native-data references totalling
+262,368,983 referenced bytes. The rebuilt root matches the observed head and
+no missing/corrupt reachable data was reported. References can share blobs;
+these are not unique code-size totals. The complete history scan is still in
+progress; that separate gate remains open.
 
 ## Replay pilot
 
@@ -64,8 +70,8 @@ its runtime or bytes per block into a reliable full-replay estimate.
 
 The existing CLI import handler logs `ImportChain` errors but can return nil.
 The rehearsal runner instead fails on an import error or unexpected head and
-checks the resulting ticket commitment. It accepts only a new output directory;
-existing databases cannot be overwritten by this runner. Before each 128-block
+checks the resulting ticket commitment. The initial pilot accepted only a new
+output directory; the later validated resume mode is described below. Before each 128-block
 batch it checks reserves of 50 GiB on the Windows host drive and 20 GiB inside
 Linux. Cleanup stops the chain and closes the output database so a controlled
 test failure does not intentionally discard pending state.
@@ -75,6 +81,58 @@ The pilot left 78,689,280,000 bytes available in Linux and 151,710,142,464 bytes
 on D:. The 200 GB virtual-disk capacity is a separate limit from host free space.
 No additional full database, network archive, or long replay has been assumed
 to fit. The existing C: preservation copy and explorer gateway remain intact.
+
+A second fresh replay through 100,000 blocks passed in 397.06 seconds
+(20:46:38–20:53:15 UTC). Its closed database occupies 227,214,790 bytes.
+The final hash is `0x0e4a4045c06984472f86bb8f1e40bb70dee87b6227877ffcaeab7624db745cd2`,
+root `0x95697b558879524bead323328c9e97adce259ac7047a2140107704bf930d4741`,
+and ticket commitment `0x1860459771b267e3b319ed899deb55a4ab973562f0d923309263244e1630020d`
+with 2,630 tickets. Both pilot databases are retained. The smaller incremental
+growth illustrates why a fixed bytes-per-block estimate from the first pilot
+would have been misleading; it still does not establish the full replay size.
+
+## Replay continuation and active long run
+
+The later runner records the exact executable hash, source genesis/head and
+source/replay configurations in a target manifest. Reuse requires explicit
+`FUSION_RESTART_REPLAY_RESUME=1` and an identical manifest. Before writable open,
+it checks the target's genesis/configuration, all three head pointers, head body
+and receipt commitments, cumulative difficulty and available head ticket state
+against the preserved source. Startup must retain that validated head. A missing
+state after an unclean termination fails preflight; it does not authorize a
+silent rewind or manual manifest rewrite.
+
+Continuation testing created a fresh database through 1,024, rejected accidental
+reuse and an end below the existing head, stopped through the explicit stop-file
+path, then resumed to 10,000 with the same hash/root/ticket commitment as the
+original fresh pilot. A deliberately mismatched executable identity was also
+rejected; the test restored the original manifest afterward. These intentional
+nonzero test exits are expected rejection evidence, not successful replays.
+
+At 21:02:03 UTC the first million-block baseline phase started in a new database:
+
+- Source: `/home/rehearsal/data/efsn/chaindata`, read-only mount in a private
+  mount/network namespace.
+- Retained executable: `/home/rehearsal/replay-resume-tests`, compiled from the
+  baseline production tree with the updated replay harness.
+- Target: `/home/rehearsal/replay/baseline-mainnet`.
+- Results: `/home/rehearsal/results/restart-replay-million-2026-09-23`.
+- End height: 1,000,000. This is a bounded first phase, not a full-chain success.
+- Stop file: `/home/rehearsal/replay/STOP-baseline-mainnet`. Creating it requests
+  a controlled test failure at the next batch boundary, followed by normal
+  chain/database cleanup. Do not terminate WSL to pause a replay.
+
+Do not run two writers or edit this running executable. A later extension must
+first confirm completion/clean shutdown and use that same retained executable
+with explicit resume and a newly chosen end. The old 10,000/100,000 pilot targets
+predate the identity manifest and are not eligible for automatic resume.
+Full replay remains conditional on continued storage checks and results.
+
+The exact machine-specific runner scripts are archived in
+[the evidence runners](evidence/restart-integrity-2026-09-23/runners). Invoke
+isolation scripts through `wsl -d FusionRehearsal -u root --exec unshare --mount
+--net --propagation private -- bash <script-path>`. Review their target/result
+paths before reusing them; most intentionally reject an existing target.
 
 ## Historical reconstruction check
 

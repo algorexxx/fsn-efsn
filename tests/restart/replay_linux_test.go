@@ -3,7 +3,6 @@ package restart
 import (
 	"math/big"
 	"os"
-	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
@@ -28,33 +27,40 @@ func TestPreservedHistoryReplay(t *testing.T) {
 	if end == 0 || end > backup.head.Number.Uint64() {
 		t.Fatal("replay end must be within the preserved history")
 	}
-	if !filepath.IsAbs(directory) {
-		t.Fatal("replay directory must be an absolute path")
-	}
-	if _, err := os.Stat(directory); !os.IsNotExist(err) {
-		t.Fatal("replay requires a new, nonexistent directory; existing databases are never overwritten")
-	}
-	requireReplaySpace(t, filepath.Dir(directory))
-	requireNoError(t, os.Mkdir(directory, 0700))
+	resume := prepareReplayDirectory(t, backup, directory, end)
 	db, err := rawdb.NewLevelDBDatabase(directory, 256, 128, "restart-replay", false)
 	requireNoError(t, err)
 	t.Cleanup(func() { requireNoError(t, db.Close()) })
 	genesis := core.DefaultGenesisBlock()
-	block, err := genesis.Commit(db)
-	requireNoError(t, err)
-	if block.Hash() != rawdb.ReadCanonicalHash(backup.db, 0) {
-		t.Fatal("generated mainnet genesis differs from preserved genesis")
+	if !resume {
+		block, err := genesis.Commit(db)
+		requireNoError(t, err)
+		if block.Hash() != rawdb.ReadCanonicalHash(backup.db, 0) {
+			t.Fatal("generated mainnet genesis differs from preserved genesis")
+		}
 	}
 	datong.InitCheckPoints("")
 	t.Logf("baseline replay: end=%d legacyCheckpointRangeEnd=%d; ticket-seal and raw-transaction shortcuts remain active in that historical range", end, datong.LastCheckPoint)
 	cache := &core.CacheConfig{TrieCleanLimit: 128, TrieDirtyLimit: 256, TrieTimeLimit: 5 * time.Minute}
 	engine := datong.New(genesis.Config.DaTong, db)
+	expectedHead := rawdb.ReadHeadBlockHash(db)
 	chain, err := core.NewBlockChain(db, cache, genesis.Config, engine, vm.Config{}, nil)
 	requireNoError(t, err)
 	t.Cleanup(chain.Stop)
+	if chain.CurrentBlock().Hash() != expectedHead {
+		t.Fatal("replay startup changed the validated head; investigate instead of silently rewinding")
+	}
+	t.Logf("replay starting at height=%d hash=%s resume=%t", chain.CurrentBlock().NumberU64(), chain.CurrentBlock().Hash().Hex(), resume)
 	lastProgress := time.Now()
-	for first := uint64(1); first <= end; {
+	for first := chain.CurrentBlock().NumberU64() + 1; first <= end; {
 		requireReplaySpace(t, directory)
+		if stop := os.Getenv("FUSION_RESTART_REPLAY_STOP_FILE"); stop != "" {
+			if _, err := os.Stat(stop); err == nil {
+				t.Fatalf("replay stopped by stop file before block %d; normal cleanup will persist state", first)
+			} else if !os.IsNotExist(err) {
+				t.Fatal(err)
+			}
+		}
 		last := first + 127
 		if last > end {
 			last = end
