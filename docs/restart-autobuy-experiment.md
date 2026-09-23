@@ -69,11 +69,21 @@ existing state; it is not a disk-database restart or journal recovery test. The
 second verifier shares a process with the producer and therefore the global
 ticket cache. No public network, recovered database, or real staking key is used.
 
-Only submission failure is injected. Locked-wallet, estimation, insufficient
+The original runtime test injects submission failure. Locked-wallet, estimation, insufficient
 funding, nonce conflict, dropped purchase, same-height reorganization, journal
 restoration, and long outage/expiry cases remain. The current purchase cache is
 keyed by block number and owner; successful submission is not the same as
 inclusion, so retry behavior must account for it rather than blindly resubmit.
+
+The follow-up `TestSubmittedTicketReplacementBlocksBuilderRetry` now confirms
+one non-inclusion case using the real API, wallet and pool: a synthetic purchase
+is accepted, then a higher-fee same-nonce ordinary transfer replaces it. The old
+purchase disappears from the pool, but a new purchase request at the unchanged
+head still fails with `Purchase of BuyTicket for this block already submitted`.
+All three Linux race-detector repetitions reproduced this. The miner is not
+started in this bounded cache test; it establishes retry rejection, not that
+every chain with additional producers would stall. See
+[the raw result](evidence/restart-integrity-2026-09-23/purchase-replacement.txt).
 
 ## Required operational behavior
 
@@ -87,3 +97,18 @@ After a successful submission, track inclusion and the surviving ticket rather
 than treating the returned transaction hash as completion. Test recovery when
 submission succeeds but the transaction later leaves the pool. Adequate ticket
 runway and independent producers remain separate launch requirements.
+
+Before implementing a retry timer, resolve the accepted-but-not-included state.
+The controller must distinguish its exact pending transaction from another
+transaction consuming the nonce, and re-evaluate after a head-hash change even
+when the height is unchanged. A boolean keyed by owner and height cannot answer
+either question. Preserve the consensus one-purchase-per-owner constraint;
+submission throttling is a separate client concern.
+
+For the historical bridge, use the explicit reviewed sequence and transaction
+arguments, with auto-buy disabled until the head reaches the agreed transition.
+For ordinary operation, run an initial evaluation when mining starts, then
+reconcile head/tickets, the submitted transaction and pool/nonce state before
+retrying. Surface wallet/funding/nonce conflicts; do not silently produce new
+signed alternatives. Durable transaction recovery and journal/reorg tests remain
+implementation gates. The three narrow corrections do not claim to solve these.

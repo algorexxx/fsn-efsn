@@ -1,0 +1,322 @@
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:33: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:89: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:95: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+            autobuy_test.go:105: explicit retry: tx=0x1454265e645e1488ad7f32d5f79a24c04578f6910714db0660abfeb065686bae gas=21224 mined at height=15130095
+            autobuy_test.go:112: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (22.89s)
+        PASS
+--- PASS: TestAutoBuyRuntime (23.91s)
+=== RUN   TestPreservedBackupReadOnly
+    backup_test.go:21: set FUSION_RESTART_CHAINDATA to a verified disposable copy for offline inspection
+--- SKIP: TestPreservedBackupReadOnly (0.00s)
+=== RUN   TestPresentDaySuccessorRejectsExpiredTicket
+--- PASS: TestPresentDaySuccessorRejectsExpiredTicket (0.06s)
+=== RUN   TestHistoricalBridgeImportsOnIndependentState
+    bridge_test.go:45: step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626
+    bridge_test.go:45: step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626
+    bridge_test.go:45: step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626
+    bridge_test.go:45: step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626
+    bridge_test.go:45: step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626
+    bridge_test.go:45: step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626
+    bridge_test.go:45: step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626
+    bridge_test.go:45: step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626
+--- PASS: TestHistoricalBridgeImportsOnIndependentState (0.26s)
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/account_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/storage_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/missing_code
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code
+--- PASS: TestStateIntegrityDetectsMissingAndCorruptData (0.01s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/account_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/storage_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/missing_code (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code (0.00s)
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/body
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/receipts
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/transactions
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/parent
+--- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/body (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/receipts (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/transactions (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/parent (0.00s)
+=== RUN   TestPreservedStateIntegrity
+    integrity_test.go:51: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedStateIntegrity (0.00s)
+=== RUN   TestPreservedHistoryIntegrity
+    integrity_test.go:64: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedHistoryIntegrity (0.00s)
+=== RUN   TestPreservedTicketReconstruction
+    preserved_reconstruction_test.go:40: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedTicketReconstruction (0.00s)
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund
+--- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission (0.13s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund (0.04s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund (0.09s)
+=== RUN   TestDefaultHistoricalPurchaseFailsPoolAdmission
+--- PASS: TestDefaultHistoricalPurchaseFailsPoolAdmission (0.06s)
+=== RUN   TestPresentDayPurchaseStartRejectedOnHistoricalHead
+--- PASS: TestPresentDayPurchaseStartRejectedOnHistoricalHead (0.06s)
+=== RUN   TestReconstructionAcrossMissingStates
+=== RUN   TestReconstructionAcrossMissingStates/step_1_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_4
+--- PASS: TestReconstructionAcrossMissingStates (4.21s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_1_missing_1 (0.37s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_1 (0.40s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_2 (0.40s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_1 (0.44s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_2 (0.46s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_3 (0.44s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_1 (0.42s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_2 (0.43s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_3 (0.42s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_4 (0.43s)
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751
+--- PASS: TestReconstructionAtHistoricalExpiryBoundary (1.12s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749 (0.37s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750 (0.37s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751 (0.38s)
+=== RUN   TestReconstructionWithMissingAncestorReturnsError
+--- PASS: TestReconstructionWithMissingAncestorReturnsError (0.35s)
+=== RUN   TestPreservedHistoryReplay
+    replay_linux_test.go:23: set an explicit new FUSION_RESTART_REPLAY_DIR and FUSION_RESTART_REPLAY_END for isolated replay
+--- SKIP: TestPreservedHistoryReplay (0.00s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.14s)
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:33: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:89: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:95: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+            autobuy_test.go:105: explicit retry: tx=0xacd9d3bbc3379ad89fd051ed6de8d6f9238b7af24812d3da78c74ac3995e7b3e gas=21224 mined at height=15130095
+            autobuy_test.go:112: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (22.56s)
+        PASS
+--- PASS: TestAutoBuyRuntime (23.58s)
+=== RUN   TestPreservedBackupReadOnly
+    backup_test.go:21: set FUSION_RESTART_CHAINDATA to a verified disposable copy for offline inspection
+--- SKIP: TestPreservedBackupReadOnly (0.00s)
+=== RUN   TestPresentDaySuccessorRejectsExpiredTicket
+--- PASS: TestPresentDaySuccessorRejectsExpiredTicket (0.07s)
+=== RUN   TestHistoricalBridgeImportsOnIndependentState
+    bridge_test.go:45: step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626
+    bridge_test.go:45: step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626
+    bridge_test.go:45: step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626
+    bridge_test.go:45: step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626
+    bridge_test.go:45: step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626
+    bridge_test.go:45: step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626
+    bridge_test.go:45: step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626
+    bridge_test.go:45: step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626
+--- PASS: TestHistoricalBridgeImportsOnIndependentState (0.30s)
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/account_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/storage_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/missing_code
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code
+--- PASS: TestStateIntegrityDetectsMissingAndCorruptData (0.01s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/account_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/storage_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/missing_code (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code (0.00s)
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/body
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/receipts
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/transactions
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/parent
+--- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/body (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/receipts (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/transactions (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/parent (0.00s)
+=== RUN   TestPreservedStateIntegrity
+    integrity_test.go:51: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedStateIntegrity (0.00s)
+=== RUN   TestPreservedHistoryIntegrity
+    integrity_test.go:64: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedHistoryIntegrity (0.00s)
+=== RUN   TestPreservedTicketReconstruction
+    preserved_reconstruction_test.go:40: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedTicketReconstruction (0.00s)
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund
+--- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission (0.16s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund (0.04s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund (0.11s)
+=== RUN   TestDefaultHistoricalPurchaseFailsPoolAdmission
+--- PASS: TestDefaultHistoricalPurchaseFailsPoolAdmission (0.07s)
+=== RUN   TestPresentDayPurchaseStartRejectedOnHistoricalHead
+--- PASS: TestPresentDayPurchaseStartRejectedOnHistoricalHead (0.07s)
+=== RUN   TestReconstructionAcrossMissingStates
+=== RUN   TestReconstructionAcrossMissingStates/step_1_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_4
+--- PASS: TestReconstructionAcrossMissingStates (5.00s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_1_missing_1 (0.45s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_1 (0.46s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_2 (0.50s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_1 (0.53s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_2 (0.52s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_3 (0.48s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_1 (0.54s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_2 (0.53s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_3 (0.53s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_4 (0.47s)
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751
+--- PASS: TestReconstructionAtHistoricalExpiryBoundary (1.33s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749 (0.48s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750 (0.45s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751 (0.41s)
+=== RUN   TestReconstructionWithMissingAncestorReturnsError
+--- PASS: TestReconstructionWithMissingAncestorReturnsError (0.41s)
+=== RUN   TestPreservedHistoryReplay
+    replay_linux_test.go:23: set an explicit new FUSION_RESTART_REPLAY_DIR and FUSION_RESTART_REPLAY_END for isolated replay
+--- SKIP: TestPreservedHistoryReplay (0.00s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.15s)
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:33: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:89: cold start: mining enabled, pool empty, builds=0, head=15130094 unchanged for 3s
+            autobuy_test.go:95: notification: purchase reached signing/submission, injected failure; no retry or new head for 3s
+            autobuy_test.go:105: explicit retry: tx=0xa84bb5062f34a8fce6cb66d19c1e93325b30637b99c73dc3854562fcf95409b7 gas=21224 mined at height=15130095
+            autobuy_test.go:112: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (22.40s)
+        PASS
+--- PASS: TestAutoBuyRuntime (23.43s)
+=== RUN   TestPreservedBackupReadOnly
+    backup_test.go:21: set FUSION_RESTART_CHAINDATA to a verified disposable copy for offline inspection
+--- SKIP: TestPreservedBackupReadOnly (0.00s)
+=== RUN   TestPresentDaySuccessorRejectsExpiredTicket
+--- PASS: TestPresentDaySuccessorRejectsExpiredTicket (0.06s)
+=== RUN   TestHistoricalBridgeImportsOnIndependentState
+    bridge_test.go:45: step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626
+    bridge_test.go:45: step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626
+    bridge_test.go:45: step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626
+    bridge_test.go:45: step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626
+    bridge_test.go:45: step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626
+    bridge_test.go:45: step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626
+    bridge_test.go:45: step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626
+    bridge_test.go:45: step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626
+--- PASS: TestHistoricalBridgeImportsOnIndependentState (0.31s)
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/account_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/storage_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/missing_code
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code
+--- PASS: TestStateIntegrityDetectsMissingAndCorruptData (0.01s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/account_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/storage_root (0.01s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/missing_code (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code (0.00s)
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/body
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/receipts
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/transactions
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/parent
+--- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/body (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/receipts (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/transactions (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/parent (0.00s)
+=== RUN   TestPreservedStateIntegrity
+    integrity_test.go:51: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedStateIntegrity (0.00s)
+=== RUN   TestPreservedHistoryIntegrity
+    integrity_test.go:64: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedHistoryIntegrity (0.00s)
+=== RUN   TestPreservedTicketReconstruction
+    preserved_reconstruction_test.go:40: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedTicketReconstruction (0.00s)
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund
+--- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission (0.15s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund (0.04s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund (0.11s)
+=== RUN   TestDefaultHistoricalPurchaseFailsPoolAdmission
+--- PASS: TestDefaultHistoricalPurchaseFailsPoolAdmission (0.08s)
+=== RUN   TestPresentDayPurchaseStartRejectedOnHistoricalHead
+--- PASS: TestPresentDayPurchaseStartRejectedOnHistoricalHead (0.07s)
+=== RUN   TestReconstructionAcrossMissingStates
+=== RUN   TestReconstructionAcrossMissingStates/step_1_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_4
+--- PASS: TestReconstructionAcrossMissingStates (4.98s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_1_missing_1 (0.44s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_1 (0.53s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_2 (0.47s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_1 (0.49s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_2 (0.49s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_3 (0.52s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_1 (0.50s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_2 (0.55s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_3 (0.51s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_4 (0.49s)
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751
+--- PASS: TestReconstructionAtHistoricalExpiryBoundary (1.35s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749 (0.44s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750 (0.44s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751 (0.46s)
+=== RUN   TestReconstructionWithMissingAncestorReturnsError
+--- PASS: TestReconstructionWithMissingAncestorReturnsError (0.46s)
+=== RUN   TestPreservedHistoryReplay
+    replay_linux_test.go:23: set an explicit new FUSION_RESTART_REPLAY_DIR and FUSION_RESTART_REPLAY_END for isolated replay
+--- SKIP: TestPreservedHistoryReplay (0.00s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.17s)
+PASS

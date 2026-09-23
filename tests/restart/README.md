@@ -1,7 +1,10 @@
 # Synthetic restart investigation
 
-These are characterization tests against unchanged Fusion production code, not a
-mainnet restart implementation. Run from the repository root:
+These tests cover the restart investigation and the first narrow corrections,
+not a complete mainnet restart implementation. The unchanged characterization
+baseline is `d82a229`; current expectations require successful ticket
+reconstruction and an error instead of a missing-ancestor panic. See
+[the correction report](../../docs/restart-corrections.md). Run from the repository root:
 
 ```powershell
 $env:CGO_ENABLED = '0'
@@ -65,20 +68,23 @@ mined block is imported by another in-memory chain. See
 [the runtime report](../../docs/restart-autobuy-experiment.md) for bounded timing,
 adapter limitations, and remaining failure cases. No HTTP or P2P listener starts.
 
+`TestSubmittedTicketReplacementBlocksBuilderRetry` separately demonstrates that
+a real same-nonce pool replacement removes the purchase but leaves the
+per-height submission cache blocking another purchase. It uses a child process
+and synthetic wallet, starts no miner, and currently expects that unresolved
+defect. A passing test is evidence of the retry problem, not a fix for it.
+
 ## Results and expectations
 
 - Present-day production from the expired seed tickets is rejected by import.
 - A historical refund funds a long-lived purchase; eight bridge/replenishment
   blocks import successfully with matching commitments.
-- Missing-state reconstruction of the time-jump block returns
-  `AddCachedTickets: hash mismatch` under the unchanged code. This test passes
-  when it reproduces the defect; it is not a test that restart safety passes.
-- Reconstruction after the subsequent cleanup block succeeds.
-- The same mismatch occurs at a synthetic historical expiry boundary. A large
-  jump is sufficient but not necessary to expose it.
-- A missing ancestor header during reconstruction causes a nil-pointer panic.
-  The characterization test catches and expects that panic; a passing suite
-  does not mean this defect has been fixed.
+- Missing-state reconstruction of the time-jump block and the subsequent
+  cleanup block succeeds, preserving direct-state header and ticket selection.
+- The three synthetic expiry-boundary cases also require successful
+  reconstruction. The old mismatch is retained in the baseline evidence.
+- A missing ancestor header during reconstruction returns
+  `consensus.ErrUnknownAncestor`; a panic fails the test.
 - Before the first refund, the pool accepts a long purchase that the RPC builder
   and execution reject for insufficient historical time-lock coverage. After
   the refund, construction, admission, execution, and import succeed.
@@ -103,8 +109,9 @@ one fixed expiry indefinitely would eventually violate the existing rules.
 See [the experiment report](../../docs/restart-bridge-experiment.md) for the
 temporary parent-time reconstruction experiment and outstanding work.
 
-To repeat that overlay experiment after the baseline run, with the same Go
-environment configured:
+The following overlay commands are historical reproduction instructions for a
+separate checkout of `d82a229`, before the corrections. They are not applicable
+to current source. With the same Go environment configured:
 
 ```powershell
 ./tests/restart/run-parent-time-experiment.ps1 -Go go
@@ -125,7 +132,7 @@ python3 tests/restart/run-parent-time-experiment.py --go go
 CGO_ENABLED=1 python3 tests/restart/run-receipt-copy-experiment.py --go go
 ```
 
-The receipt-copy experiment runs the auto-buy scenario three times under the
+On that baseline, the receipt-copy experiment runs the auto-buy scenario three times under the
 race detector with a temporary receipt-log ownership correction. Unchanged
 production code fails that scenario. The verifier now imports both blocks after
 the producer is closed, avoiding concurrent two-chain global-header access in

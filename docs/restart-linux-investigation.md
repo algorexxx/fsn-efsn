@@ -2,8 +2,9 @@
 
 The reboot enabled the dedicated D:-backed WSL environment. The committed
 synthetic investigation reproduces on Linux with CGO disabled and enabled.
-Race detection exposed a miner receipt-log ownership defect. Production code
-remains unchanged; this report records characterization and temporary overlays.
+Race detection exposed a miner receipt-log ownership defect. This report records
+the unchanged baseline and temporary overlays; subsequent implementation and
+validation are in [the correction report](restart-corrections.md).
 
 ## Inputs and results
 

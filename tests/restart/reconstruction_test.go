@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"math/big"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/consensus"
 	"github.com/FusionFoundation/efsn/v5/core"
 	"github.com/FusionFoundation/efsn/v5/core/rawdb"
 	"github.com/FusionFoundation/efsn/v5/core/state"
@@ -38,8 +38,6 @@ func (db *missingStateDatabase) OpenTrie(root common.Hash) (state.Trie, error) {
 	return db.Database.OpenTrie(root)
 }
 
-const expectParentTimeReconstruction = false
-
 func TestReconstructionAcrossMissingStates(t *testing.T) {
 	for steps := 1; steps <= 4; steps++ {
 		for missing := 1; missing <= steps; missing++ {
@@ -66,10 +64,6 @@ func TestReconstructionAcrossMissingStates(t *testing.T) {
 
 				err := f.engine.Prepare(f.chain, header)
 
-				if steps == 3 && !expectParentTimeReconstruction {
-					requireErrorContains(t, err, "AddCachedTickets: hash mismatch")
-					return
-				}
 				requireNoError(t, err)
 				if header.Hash() != expected.Hash() || !reflect.DeepEqual(header.GetSelectedTicket(), expected.GetSelectedTicket()) || !reflect.DeepEqual(header.GetRetreatTickets(), expected.GetRetreatTickets()) {
 					t.Fatal("reconstructed tickets changed prepared header or ticket selection")
@@ -93,10 +87,6 @@ func TestReconstructionAtHistoricalExpiryBoundary(t *testing.T) {
 
 			err := f.engine.Prepare(f.chain, header)
 
-			if expiry <= 1759826750 && !expectParentTimeReconstruction {
-				requireErrorContains(t, err, "AddCachedTickets: hash mismatch")
-				return
-			}
 			requireNoError(t, err)
 			if header.Hash() != expected.Hash() || !reflect.DeepEqual(header.GetSelectedTicket(), expected.GetSelectedTicket()) || !reflect.DeepEqual(header.GetRetreatTickets(), expected.GetRetreatTickets()) {
 				t.Fatal("expiry boundary reconstruction changed prepared header or ticket selection")
@@ -105,7 +95,7 @@ func TestReconstructionAtHistoricalExpiryBoundary(t *testing.T) {
 	}
 }
 
-func TestReconstructionWithMissingAncestorDetectsPanic(t *testing.T) {
+func TestReconstructionWithMissingAncestorReturnsError(t *testing.T) {
 	f := newFixture(t)
 	f.importBlock(t, f.buildBlock(t, f.parent.Time()+120, false))
 	parent := f.chain.CurrentBlock()
@@ -113,14 +103,11 @@ func TestReconstructionWithMissingAncestorDetectsPanic(t *testing.T) {
 	f.engine.SetStateCache(&missingStateDatabase{Database: state.NewDatabase(f.db), roots: map[common.Hash]bool{parent.Root(): true}})
 	chain := &missingHeaderChain{BlockChain: f.chain, missing: f.parent.Hash()}
 	header := &types.Header{ParentHash: parent.Hash(), Number: new(big.Int).Add(parent.Number(), big.NewInt(1)), Coinbase: f.owner, Time: parent.Time() + 120, Difficulty: new(big.Int)}
-	defer func() {
-		failure := recover()
-		if failure == nil || !strings.Contains(fmt.Sprint(failure), "invalid memory address or nil pointer dereference") {
-			t.Fatalf("expected missing-ancestor nil dereference, got %v", failure)
-		}
-	}()
+	err := f.engine.Prepare(chain, header)
 
-	f.engine.Prepare(chain, header)
+	if err != consensus.ErrUnknownAncestor {
+		t.Fatalf("expected unknown ancestor error, got %v", err)
+	}
 }
 
 func evictTicketCache(t *testing.T, target common.Hash) {

@@ -984,11 +984,20 @@ func (w *worker) commit(uncles []*types.Header, interval func(), update bool, st
 	return nil
 }
 
-// copyReceipts makes a deep copy of the given receipts.
+// copyReceipts copies the given receipts and their mutable log data.
 func copyReceipts(receipts []*types.Receipt) []*types.Receipt {
 	result := make([]*types.Receipt, len(receipts))
 	for i, l := range receipts {
 		cpy := *l
+		if l.Logs != nil {
+			cpy.Logs = make([]*types.Log, len(l.Logs))
+			for j, entry := range l.Logs {
+				entryCopy := *entry
+				entryCopy.Topics = append([]common.Hash(nil), entry.Topics...)
+				entryCopy.Data = common.CopyBytes(entry.Data)
+				cpy.Logs[j] = &entryCopy
+			}
+		}
 		result[i] = &cpy
 	}
 	return result
