@@ -48,8 +48,6 @@ func (addr Address) IsSpecialKeyAddress() bool {
 }
 
 var (
-	// AutoBuyTicket wacom
-	AutoBuyTicket = false
 	// AutoBuyTicketChan wacom
 	AutoBuyTicketChan = make(chan int, 10)
 

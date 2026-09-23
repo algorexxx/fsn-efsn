@@ -2,27 +2,23 @@
 
 Status: investigation and implementation plan; not a launch authorization or a completed security audit.
 
-Last reviewed: 23 September 2026. Source baseline: local `master` / `develop` at `c5f0174` (5.0.3); recovery branch at `6981b00`; documentation branch at `c1806fc`. No restart implementation exists yet.
+Last reviewed: 24 September 2026. Source baseline: local `master` / `develop` at `c5f0174` (5.0.3); recovery branch at `6981b00`; documentation branch at `c1806fc`. Narrow client corrections exist on the investigation branch; the complete restart implementation is still pending.
 
-Latest progress: [the synthetic bridge experiment](restart-bridge-experiment.md)
-demonstrates eight independently imported blocks in separate in-memory databases,
-tests purchase API/pool behavior, and extends reconstruction coverage to multiple
-missing states and exact expiry boundaries. It also reproduces a missing-ancestor
-panic. The [auto-buy runtime test](restart-autobuy-experiment.md) now reproduces
-startup/submission-failure stalls and demonstrates recovery by explicit purchase
-retry. The [Linux investigation](restart-linux-investigation.md) now reproduces
-these results with CGO disabled/enabled and identifies a miner receipt-log race,
-with a passing temporary ownership-copy experiment. The D:-backed WSL environment
-is operational, with a fully checksummed disposable database copy. Its isolated
-read-only probe matches the recorded head, tickets and account observations;
-sampled older state roots are unavailable. The [integrity and replay investigation](restart-integrity-investigation.md)
-now verifies all reachable current state and records successful 10,000- and
-100,000-block baseline replays plus 128 real historical ticket-reconstruction
-cases. The full history scan and the first million-block replay phase are in
-progress. Replay continuation and clean-stop safeguards have been exercised. The first
-[narrow corrections](restart-corrections.md) address receipt-log ownership,
-reconstruction expiry and missing-ancestor handling. Complete historical
-execution, full-state recovery and network rehearsals remain outstanding.
+Latest progress: the D:-backed WSL environment contains a fully checksummed
+disposable database copy. The [integrity and replay investigation](restart-integrity-investigation.md)
+has verified all reachable current state, completed 10,000- and 100,000-block
+baseline replays, and passed 128 real historical ticket-reconstruction cases.
+The full history scan and first million-block replay phase are in progress;
+continuation and clean-stop safeguards have been exercised.
+
+The [synthetic bridge experiment](restart-bridge-experiment.md) demonstrates
+eight independently imported blocks. [Narrow corrections](restart-corrections.md)
+address the reproduced receipt-log race, reconstruction expiry mismatch and
+missing-ancestor panic. The [purchase controller](restart-purchase-controller.md)
+adds startup attempts, periodic retry, signed-transaction recovery and canonical
+receipt monitoring, with explicit pauses for nonce conflicts and missing nonces.
+Complete historical execution, full-state recovery, the accepted restart anchor
+and independent network rehearsals remain outstanding.
 
 ## 1. Objective and agreed scope
 
@@ -476,7 +472,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 ## 15. Immediate next actions
 
 1. Complete the running canonical-history scan and first million-block baseline replay phase. Record their actual results and storage growth before extending replay. The current-state traversal is complete; the replay preserves historical checkpoint shortcuts and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
-2. Specify and test initial submission, bounded retry, and inclusion monitoring using the reproduced auto-buy stalls and accepted-then-replaced purchase. Broaden to wallet/estimation failures, same-height reorgs and disk restart/journal restoration; these results do not yet establish reliable automation.
+2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Specify and implement the separate restart anchor, then exercise all canonical-head entry points against a heavier incompatible history.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.

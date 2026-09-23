@@ -44,6 +44,11 @@ func newFixture(t *testing.T) *fixture {
 
 func newFixtureWithExpiry(t *testing.T, otherOwnerExpiry uint64) *fixture {
 	t.Helper()
+	return newFixtureInDatabase(t, otherOwnerExpiry, rawdb.NewMemoryDatabase())
+}
+
+func newFixtureInDatabase(t *testing.T, otherOwnerExpiry uint64, db ethdb.Database) *fixture {
+	t.Helper()
 	values := readRPCObservations(t)
 	var header types.Header
 	var tickets map[common.Hash]common.TicketDisplay
@@ -59,7 +64,6 @@ func newFixtureWithExpiry(t *testing.T, otherOwnerExpiry uint64) *fixture {
 	requireNoError(t, err)
 	owner := crypto.PubkeyToAddress(key.PublicKey)
 	originalOwner := common.HexToAddress("0x9fc4c40e50f902b9aa641b4a32ebaafa5c9386a1")
-	db := rawdb.NewMemoryDatabase()
 	config := params.MainnetChainConfig
 	genesis := &core.Genesis{Config: config, GasLimit: header.GasLimit, Difficulty: big.NewInt(1)}
 	genesis.MustCommit(db)
@@ -99,11 +103,12 @@ func newFixtureWithExpiry(t *testing.T, otherOwnerExpiry uint64) *fixture {
 	engine := datong.New(config.DaTong, db)
 	chain, err := core.NewBlockChain(db, &core.CacheConfig{TrieDirtyDisabled: true}, config, engine, vm.Config{}, nil)
 	requireNoError(t, err)
+	f := &fixture{db: db, chain: chain, engine: engine, key: key, owner: owner, parent: parent}
 	t.Cleanup(func() {
-		chain.Stop()
-		db.Close()
+		f.chain.Stop()
+		f.db.Close()
 	})
-	return &fixture{db: db, chain: chain, engine: engine, key: key, owner: owner, parent: parent}
+	return f
 }
 
 func readRPCObservations(t *testing.T) map[int]json.RawMessage {

@@ -46,8 +46,10 @@ slice remains to be investigated. Passing the reproduced race scenario is not
 proof that all concurrency defects are removed. Historical replay and additional
 reconstruction coverage are still required before release.
 
-Auto-buy startup, error retry and inclusion monitoring are not corrected by
-these changes. They require their own implementation and failure-case evidence.
+Auto-buy startup, error retry and inclusion monitoring are addressed by the
+subsequent [purchase-controller implementation](restart-purchase-controller.md),
+with separate failure-case evidence. They are not part of the three corrections
+or their historical validation results above.
 The separate restart anchor is also not implemented. No production key or
 preserved database has been changed by this work.
 

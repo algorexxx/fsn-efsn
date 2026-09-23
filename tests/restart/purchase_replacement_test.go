@@ -16,14 +16,14 @@ import (
 	"github.com/FusionFoundation/efsn/v5/internal/ethapi"
 )
 
-func TestSubmittedTicketReplacementBlocksBuilderRetry(t *testing.T) {
+func TestSubmittedTicketReplacementAllowsExplicitRetry(t *testing.T) {
 	if os.Getenv("FUSION_RESTART_REPLACEMENT_CHILD") == "1" {
 		runSubmittedTicketReplacement(t)
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestSubmittedTicketReplacementBlocksBuilderRetry$", "-test.v", "-test.timeout=25s")
+	command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestSubmittedTicketReplacementAllowsExplicitRetry$", "-test.v", "-test.timeout=25s")
 	command.Env = append(os.Environ(), "FUSION_RESTART_REPLACEMENT_CHILD=1")
 	output, err := command.CombinedOutput()
 	t.Logf("isolated replacement scenario:\n%s", output)
@@ -39,7 +39,7 @@ func runSubmittedTicketReplacement(t *testing.T) {
 	requireNoError(t, keys.Unlock(account, "synthetic-test-key"))
 	manager := accounts.NewManager(keys)
 	t.Cleanup(func() { manager.Close() })
-	b := &autoBuyBackend{purchaseBackend: &purchaseBackend{chain: f.chain}, pool: f.newPool(t), accounts: manager, owner: f.owner, submissions: make(chan purchaseSubmission, 8)}
+	b := &autoBuyBackend{purchaseBackend: &purchaseBackend{chain: f.chain}, pool: f.newPool(t), accounts: manager, owner: f.owner, database: f.db, submissions: make(chan purchaseSubmission, 8)}
 	lock := new(ethapi.AddrLocker)
 	api := ethapi.NewFusionTransactionAPI(b, lock, ethapi.NewPublicTransactionPoolAPI(b, lock))
 	end := hexutil.Uint64(common.TimeLockForever)
@@ -59,11 +59,15 @@ func runSubmittedTicketReplacement(t *testing.T) {
 		t.Fatal("pool did not replace the purchase with the same-nonce transfer")
 	}
 
-	_, err = api.BuyTicket(context.Background(), args)
+	retriedHash, err := api.BuyTicket(context.Background(), args)
 
-	requireErrorContains(t, err, "Purchase of BuyTicket for this block already submitted")
+	requireNoError(t, err)
+	retried := awaitSubmission(t, b)
+	if retried.tx.Hash() != retriedHash || retried.tx.Nonce() != submitted.tx.Nonce()+1 || b.pool.Get(retriedHash) == nil {
+		t.Fatal("explicit retry did not respect the replacement transaction's nonce")
+	}
 	if f.chain.CurrentBlock().NumberU64() != 15130081 {
 		t.Fatal("replacement scenario unexpectedly advanced the chain")
 	}
-	t.Log("purchase accepted, replaced with a same-nonce transfer, then retry blocked by the submitted cache at the unchanged head")
+	t.Log("explicit retry used the next available nonce after the pool replacement; no stale submitted cache")
 }

@@ -1355,11 +1355,8 @@ func (bc *BlockChain) writeBlockWithState(block *types.Block, receipts []*types.
 	// Set new head.
 	if status == CanonStatTy {
 		bc.writeHeadBlock(block)
-		// (auto) buy ticket when block height changed
-		if common.AutoBuyTicket == true { // if enable
-			go func() { // do not block process
-				common.AutoBuyTicketChan <- 1
-			}()
+		if common.IsAutoBuyTicketEnabled() {
+			common.NotifyAutoBuyTicket()
 		}
 	}
 	bc.futureBlocks.Remove(block.Hash())

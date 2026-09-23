@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math/big"
 	"sort"
-	"sync"
 	"time"
 
 	"github.com/FusionFoundation/efsn/v5/accounts"
@@ -21,10 +20,6 @@ import (
 	"github.com/FusionFoundation/efsn/v5/rlp"
 	"github.com/FusionFoundation/efsn/v5/rpc"
 )
-
-var lastBlockOfBuyTickets = int64(0)
-var buyTicketOnBlockMap map[common.Address]bool
-var buyTicketOnBlockMapMutex sync.Mutex
 
 //--------------------------------------------- PublicFusionAPI -------------------------------------
 
@@ -42,7 +37,7 @@ func NewPublicFusionAPI(b Backend) *PublicFusionAPI {
 
 // IsAutoBuyTicket wacom
 func (s *PublicFusionAPI) IsAutoBuyTicket(ctx context.Context) bool {
-	return common.AutoBuyTicket
+	return common.IsAutoBuyTicketEnabled()
 }
 
 // GetBalance wacom
@@ -881,10 +876,6 @@ func (s *PublicFusionAPI) BuildBuyTicketSendTxArgs(ctx context.Context, args com
 		return nil, err
 	}
 
-	if doesTicketPurchaseExistsForBlock(header.Number.Int64(), args.From) {
-		return nil, fmt.Errorf("Purchase of BuyTicket for this block already submitted")
-	}
-
 	parentTime := header.Time
 	args.Init(parentTime)
 	if err := args.ToParam().Check(common.BigMaxUint64, parentTime); err != nil {
@@ -1286,33 +1277,13 @@ func (s *PrivateFusionAPI) SendTimeLock(ctx context.Context, args common.TimeLoc
 	return s.papi.SendTransaction(ctx, *sendArgs, passwd)
 }
 
-/*
-* on our public gateways too many buyTickets are past through
-this cache of purchase on block will stop multiple purchase
-attempt on a block (which state_transistion also flags).
-the goals is to limit the number of buytickets being processed
-if it is know that they will fail anyway
-*/
-func doesTicketPurchaseExistsForBlock(blockNbr int64, from common.Address) bool {
-	buyTicketOnBlockMapMutex.Lock()
-	defer buyTicketOnBlockMapMutex.Unlock()
-	if lastBlockOfBuyTickets == 0 || lastBlockOfBuyTickets != blockNbr {
-		lastBlockOfBuyTickets = blockNbr
-		buyTicketOnBlockMap = make(map[common.Address]bool)
-	}
-	_, found := buyTicketOnBlockMap[from]
-	return found
-}
-
-// only record on purchase ticket successfully
-func addTicketPurchaseForBlock(from common.Address) {
-	buyTicketOnBlockMapMutex.Lock()
-	defer buyTicketOnBlockMapMutex.Unlock()
-	buyTicketOnBlockMap[from] = true
-}
-
 // BuyTicket ss
 func (s *PrivateFusionAPI) BuyTicket(ctx context.Context, args common.BuyTicketArgs, passwd string) (common.Hash, error) {
+	ticketPurchaseLock.LockAddr(args.From)
+	defer ticketPurchaseLock.UnlockAddr(args.From)
+	if err := checkPendingTicketPurchase(s.b, args); err != nil {
+		return common.Hash{}, err
+	}
 	sendArgs, err := s.BuildBuyTicketSendTxArgs(ctx, args)
 	if err != nil {
 		return common.Hash{}, err
@@ -1321,7 +1292,6 @@ func (s *PrivateFusionAPI) BuyTicket(ctx context.Context, args common.BuyTicketA
 	if err != nil {
 		return common.Hash{}, err
 	}
-	addTicketPurchaseForBlock(args.From)
 	return hash, err
 }
 
@@ -1422,43 +1392,6 @@ func NewFusionTransactionAPI(b Backend, nonceLock *AddrLocker, txapi *PublicTran
 	return fusionTransactionAPI
 }
 
-// auto buy ticket
-func AutoBuyTicket(enable bool) {
-	if enable {
-		_, err := fusionTransactionAPI.b.Coinbase()
-		if err != nil {
-			log.Warn("AutoBuyTicket not enabled as no coinbase account exist")
-			enable = false
-		}
-	}
-	common.AutoBuyTicket = enable
-
-	for {
-		<-common.AutoBuyTicketChan
-	COMSUMEALL:
-		for {
-			select {
-			case <-common.AutoBuyTicketChan:
-			default:
-				break COMSUMEALL
-			}
-		}
-
-		// prevent auto buy ticket in syncing
-		if !fusionTransactionAPI.b.IsMining() {
-			common.DebugInfo("ignore AutoBuyTicket as isMining is false")
-			continue
-		}
-
-		coinbase, err := fusionTransactionAPI.b.Coinbase()
-		if err == nil {
-			fbase := common.FusionBaseArgs{From: coinbase}
-			args := common.BuyTicketArgs{FusionBaseArgs: fbase}
-			fusionTransactionAPI.BuyTicket(context.TODO(), args)
-		}
-	}
-}
-
 // report illegal
 func ReportIllegal() {
 	for {
@@ -1527,20 +1460,24 @@ func (s *FusionTransactionAPI) buildTransaction(ctx context.Context, args Transa
 }
 
 func (s *FusionTransactionAPI) sendTransaction(ctx context.Context, from common.Address, tx *types.Transaction) (common.Hash, error) {
+	signed, err := s.signTransaction(from, tx)
+	if err != nil {
+		return common.Hash{}, err
+	}
+	return s.SendRawTransaction(ctx, signed)
+}
+
+func (s *FusionTransactionAPI) signTransaction(from common.Address, tx *types.Transaction) (*types.Transaction, error) {
 	account := accounts.Account{Address: from}
 	wallet, err := s.b.AccountManager().Find(account)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
 	var chainID *big.Int
 	if config := s.b.ChainConfig(); config.IsEIP155(s.b.CurrentBlock().Number()) {
 		chainID = config.ChainID
 	}
-	signed, err := wallet.SignTx(account, tx, chainID)
-	if err != nil {
-		return common.Hash{}, err
-	}
-	return s.SendRawTransaction(ctx, signed)
+	return wallet.SignTx(account, tx, chainID)
 }
 
 // SendRawTransaction wacom
@@ -1689,6 +1626,11 @@ func (s *FusionTransactionAPI) BuildBuyTicketTx(ctx context.Context, args common
 
 // BuyTicket ss
 func (s *FusionTransactionAPI) BuyTicket(ctx context.Context, args common.BuyTicketArgs) (common.Hash, error) {
+	ticketPurchaseLock.LockAddr(args.From)
+	defer ticketPurchaseLock.UnlockAddr(args.From)
+	if err := checkPendingTicketPurchase(s.b, args); err != nil {
+		return common.Hash{}, err
+	}
 	tx, err := s.BuildBuyTicketTx(ctx, args)
 	if err != nil {
 		return common.Hash{}, err
@@ -1697,7 +1639,6 @@ func (s *FusionTransactionAPI) BuyTicket(ctx context.Context, args common.BuyTic
 	if err != nil {
 		return common.Hash{}, err
 	}
-	addTicketPurchaseForBlock(args.From)
 	return hash, err
 }
 

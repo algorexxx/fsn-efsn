@@ -8,7 +8,7 @@ reconstruction and an error instead of a missing-ancestor panic. See
 
 ```powershell
 $env:CGO_ENABLED = '0'
-go test ./tests/restart -v -count=1 -timeout=90s
+go test ./tests/restart -v -count=1 -timeout=8m
 ```
 
 The recorded run used portable Go 1.21.3 on Windows amd64. Its archive SHA-256
@@ -62,17 +62,23 @@ The operating-system clock and production clock code are not changed.
 loop, gas estimator, temporary test-key keystore, and transaction pool. It runs
 for roughly 25 seconds. Its setup uses a jump one hour before the actual clock
 and perpetual setup tickets; mined timestamps and transaction hashes vary per
-run. It reproduces empty-pool startup and a submission-failure stall, then proves
-an explicit retry restores mining and head-triggered auto-buy continues. Each
-mined block is imported by another in-memory chain. See
-[the runtime report](../../docs/restart-autobuy-experiment.md) for bounded timing,
-adapter limitations, and remaining failure cases. No HTTP or P2P listener starts.
+run. It now requires an initial attempt and an automatic retry of the identical
+signed transaction after a submission failure, followed by receipt confirmation
+and a successful head-triggered purchase. Each mined block is imported by another
+in-memory chain. See [the controller report](../../docs/restart-purchase-controller.md)
+for behavior, adapter limitations and remaining failure cases. The older
+[runtime report](../../docs/restart-autobuy-experiment.md) records the reproduced
+baseline stalls. No HTTP or P2P listener starts.
 
-`TestSubmittedTicketReplacementBlocksBuilderRetry` separately demonstrates that
-a real same-nonce pool replacement removes the purchase but leaves the
-per-height submission cache blocking another purchase. It uses a child process
-and synthetic wallet, starts no miner, and currently expects that unresolved
-defect. A passing test is evidence of the retry problem, not a fix for it.
+`TestSubmittedTicketReplacementAllowsExplicitRetry` requires the manual purchase
+RPC to use the next pool nonce after a transfer replaces the pending purchase.
+`TestAutomaticPurchaseRecovery` tests disabled states, wallet/estimator/funding
+recovery, clean LevelDB/journal reopen with a locked wallet, conflicting purchases,
+nonce gaps, controlled same-height canonical replacement and corrupt saved data.
+It uses separate child processes, real temporary on-disk databases, and a mining
+state adapter. Other owners receive synthetic perpetual tickets in these cases
+so a transfer-only block can be constructed. A full race run with three
+repetitions needs a longer timeout, for example `-race -count=3 -timeout=15m`.
 
 ## Results and expectations
 

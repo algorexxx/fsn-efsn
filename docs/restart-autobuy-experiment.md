@@ -1,5 +1,9 @@
 # Automatic ticket purchase runtime investigation — 23 September 2026
 
+This report preserves the baseline behavior before the purchase-controller
+correction. Current code and test expectations are described in
+[the implementation report](restart-purchase-controller.md).
+
 ## Result
 
 The source-level stall concern is now reproduced with the real miner and

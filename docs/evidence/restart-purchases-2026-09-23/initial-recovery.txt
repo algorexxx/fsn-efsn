@@ -1,0 +1,52 @@
+=== RUN   TestAutomaticPurchaseRecovery
+=== RUN   TestAutomaticPurchaseRecovery/gates
+    purchase_recovery_test.go:38: isolated recovery gates:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:79: disabled auto-buy, disabled mining, startup, and cancellation respected without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (22.45s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/wallet
+    purchase_recovery_test.go:38: isolated recovery wallet:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:98: wallet failure recovered automatically without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (6.46s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/estimate
+    purchase_recovery_test.go:38: isolated recovery estimate:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:98: estimate failure recovered automatically without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (6.44s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/funding
+    purchase_recovery_test.go:38: isolated recovery funding:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:98: funding failure recovered automatically without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (6.47s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/restart_failed
+    purchase_recovery_test.go:38: isolated recovery restart_failed:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:134: restart_failed: reopened LevelDB and pool with locked wallet; exact saved transaction retained
+        --- PASS: TestAutomaticPurchaseRecovery (1.49s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/restart_journal
+    purchase_recovery_test.go:38: isolated recovery restart_journal:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:134: restart_journal: reopened LevelDB and pool with locked wallet; exact saved transaction retained
+        --- PASS: TestAutomaticPurchaseRecovery (7.51s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/replacement_reorg
+    purchase_recovery_test.go:38: isolated recovery replacement_reorg:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:227: automatic buying paused for a conflicting transfer, resumed after inclusion, and recovered the exact next purchase after a same-height canonical replacement and pool loss
+        --- PASS: TestAutomaticPurchaseRecovery (7.51s)
+        PASS
+--- PASS: TestAutomaticPurchaseRecovery (65.48s)
+    --- PASS: TestAutomaticPurchaseRecovery/gates (23.48s)
+    --- PASS: TestAutomaticPurchaseRecovery/wallet (7.48s)
+    --- PASS: TestAutomaticPurchaseRecovery/estimate (7.46s)
+    --- PASS: TestAutomaticPurchaseRecovery/funding (7.49s)
+    --- PASS: TestAutomaticPurchaseRecovery/restart_failed (2.51s)
+    --- PASS: TestAutomaticPurchaseRecovery/restart_journal (8.53s)
+    --- PASS: TestAutomaticPurchaseRecovery/replacement_reorg (8.53s)
+PASS

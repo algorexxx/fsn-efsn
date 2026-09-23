@@ -9,9 +9,11 @@ import (
 	"github.com/FusionFoundation/efsn/v5/accounts"
 	"github.com/FusionFoundation/efsn/v5/common"
 	"github.com/FusionFoundation/efsn/v5/core"
+	"github.com/FusionFoundation/efsn/v5/core/rawdb"
 	"github.com/FusionFoundation/efsn/v5/core/state"
 	"github.com/FusionFoundation/efsn/v5/core/types"
 	"github.com/FusionFoundation/efsn/v5/core/vm"
+	"github.com/FusionFoundation/efsn/v5/ethdb"
 	"github.com/FusionFoundation/efsn/v5/miner"
 	"github.com/FusionFoundation/efsn/v5/params"
 	"github.com/FusionFoundation/efsn/v5/rpc"
@@ -24,14 +26,18 @@ type purchaseSubmission struct {
 
 type autoBuyBackend struct {
 	*purchaseBackend
-	pool        *core.TxPool
-	miner       *miner.Miner
-	accounts    *accounts.Manager
-	owner       common.Address
-	submissions chan purchaseSubmission
-	initialized chan struct{}
-	failNext    atomic.Bool
-	buildCalls  atomic.Int32
+	pool         *core.TxPool
+	miner        *miner.Miner
+	accounts     *accounts.Manager
+	owner        common.Address
+	database     ethdb.Database
+	mining       atomic.Bool
+	submissions  chan purchaseSubmission
+	initialized  chan struct{}
+	failNext     atomic.Bool
+	failEstimate atomic.Bool
+	noFunds      atomic.Bool
+	buildCalls   atomic.Int32
 }
 
 func (b *autoBuyBackend) BlockChain() *core.BlockChain { return b.chain }
@@ -41,7 +47,29 @@ func (b *autoBuyBackend) CurrentHeader() *types.Header {
 	return b.chain.CurrentBlock().Header()
 }
 func (b *autoBuyBackend) ChainConfig() *params.ChainConfig { return b.chain.Config() }
-func (b *autoBuyBackend) IsMining() bool                   { return b.miner.Mining() }
+func (b *autoBuyBackend) IsMining() bool {
+	if b.miner == nil {
+		return b.mining.Load()
+	}
+	return b.miner.Mining()
+}
+func (b *autoBuyBackend) ChainDb() ethdb.Database { return b.database }
+func (b *autoBuyBackend) TxPoolContent() (map[common.Address]types.Transactions, map[common.Address]types.Transactions) {
+	return b.pool.Content()
+}
+func (b *autoBuyBackend) GetPoolTransactionByPredicate(predicate func(*types.Transaction) bool) *types.Transaction {
+	return b.pool.GetByPredicate(predicate)
+}
+func (b *autoBuyBackend) GetTransaction(_ context.Context, hash common.Hash) (*types.Transaction, common.Hash, uint64, uint64, error) {
+	tx, block, number, index := rawdb.ReadTransaction(b.database, hash)
+	return tx, block, number, index, nil
+}
+func (b *autoBuyBackend) HeaderByNumber(_ context.Context, number rpc.BlockNumber) (*types.Header, error) {
+	return b.chain.GetHeaderByNumber(uint64(number)), nil
+}
+func (b *autoBuyBackend) GetReceipts(_ context.Context, hash common.Hash) (types.Receipts, error) {
+	return b.chain.GetReceiptsByHash(hash), nil
+}
 func (b *autoBuyBackend) AccountManager() *accounts.Manager {
 	return b.accounts
 }
@@ -57,7 +85,12 @@ func (b *autoBuyBackend) Coinbase() (common.Address, error) {
 
 func (b *autoBuyBackend) StateAndHeaderByNumber(ctx context.Context, number rpc.BlockNumber) (*state.StateDB, *types.Header, error) {
 	b.buildCalls.Add(1)
-	return b.purchaseBackend.StateAndHeaderByNumber(ctx, number)
+	statedb, header, err := b.purchaseBackend.StateAndHeaderByNumber(ctx, number)
+	if err == nil && b.noFunds.Load() {
+		statedb.SetBalance(b.owner, common.SystemAssetID, new(big.Int))
+		statedb.SetTimeLockBalance(b.owner, common.SystemAssetID, new(common.TimeLock))
+	}
+	return statedb, header, err
 }
 
 func (b *autoBuyBackend) StateAndHeaderByNumberOrHash(ctx context.Context, number rpc.BlockNumberOrHash) (*state.StateDB, *types.Header, error) {
@@ -83,6 +116,9 @@ func (b *autoBuyBackend) GetPoolNonce(_ context.Context, address common.Address)
 }
 
 func (b *autoBuyBackend) GetEVM(_ context.Context, msg core.Message, statedb *state.StateDB, header *types.Header, config *vm.Config) (*vm.EVM, func() error, error) {
+	if b.failEstimate.Load() {
+		return nil, nil, errors.New("injected gas estimation failure")
+	}
 	blockContext := core.NewEVMBlockContext(header, b.chain, nil)
 	txContext := core.NewEVMTxContext(msg)
 	return vm.NewEVM(blockContext, txContext, statedb, b.chain.Config(), *config), func() error { return nil }, nil

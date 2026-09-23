@@ -158,13 +158,13 @@ func (api *PrivateMinerAPI) StartAutoBuyTicket() error {
 	if _, err := api.e.Etherbase(); err != nil {
 		return fmt.Errorf("StartAutoBuyTicket Error: coinbase not exist")
 	}
-	common.AutoBuyTicket = true
+	common.SetAutoBuyTicketEnabled(true)
 	return nil
 }
 
 // StopAutoBuyTicket
 func (api *PrivateMinerAPI) StopAutoBuyTicket() {
-	common.AutoBuyTicket = false
+	common.SetAutoBuyTicketEnabled(false)
 }
 
 // PrivateAdminAPI is the collection of Ethereum full node-related APIs

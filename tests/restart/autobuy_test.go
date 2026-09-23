@@ -2,6 +2,7 @@ package restart
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"os"
 	"os/exec"
@@ -37,20 +38,7 @@ func TestAutoBuyRuntime(t *testing.T) {
 func runAutoBuyRuntime(t *testing.T) {
 	f := newFixture(t)
 	verifier := newFixture(t)
-	jump := uint64(time.Now().Unix()) - 3600
-	for i := 0; i < 14; i++ {
-		timestamp := f.chain.CurrentBlock().Time() + 120
-		if i == 2 {
-			timestamp = jump
-		}
-		var txs []*types.Transaction
-		if i > 0 {
-			txs = append(txs, f.signPurchase(t, f.chain.CurrentBlock().Time(), common.TimeLockForever))
-		}
-		block := f.buildBlockWithTransactions(t, timestamp, txs)
-		f.importBlock(t, block)
-		verifier.importBlock(t, block)
-	}
+	advancePurchaseFixture(t, f, verifier)
 	initial := f.chain.CurrentBlock()
 	statedb, err := f.chain.State()
 	requireNoError(t, err)
@@ -65,7 +53,7 @@ func runAutoBuyRuntime(t *testing.T) {
 	requireNoError(t, keys.Unlock(account, "synthetic-test-key"))
 	manager := accounts.NewManager(keys)
 	t.Cleanup(func() { manager.Close() })
-	b := &autoBuyBackend{purchaseBackend: &purchaseBackend{chain: f.chain}, pool: f.newPool(t), accounts: manager, owner: f.owner, submissions: make(chan purchaseSubmission, 8), initialized: make(chan struct{}, 1)}
+	b := &autoBuyBackend{purchaseBackend: &purchaseBackend{chain: f.chain}, pool: f.newPool(t), accounts: manager, owner: f.owner, database: f.db, submissions: make(chan purchaseSubmission, 8), initialized: make(chan struct{}, 1)}
 	f.engine.Authorize(f.owner, func(_ accounts.Account, _ string, data []byte) ([]byte, error) {
 		return crypto.Sign(crypto.Keccak256(data), f.key)
 	})
@@ -74,62 +62,82 @@ func runAutoBuyRuntime(t *testing.T) {
 	var closeMiner sync.Once
 	t.Cleanup(func() { closeMiner.Do(b.miner.Close); mux.Stop() })
 	lock := new(ethapi.AddrLocker)
-	api := ethapi.NewFusionTransactionAPI(b, lock, ethapi.NewPublicTransactionPoolAPI(b, lock))
+	ethapi.NewFusionTransactionAPI(b, lock, ethapi.NewPublicTransactionPoolAPI(b, lock))
 	heads := make(chan core.ChainHeadEvent, 8)
 	subscription := f.chain.SubscribeChainHeadEvent(heads)
 	t.Cleanup(subscription.Unsubscribe)
 	b.miner.Start(f.owner)
-	go ethapi.AutoBuyTicket(true)
+	b.failNext.Store(true)
+	confirmations := capturePurchaseLog(t, "Automatic ticket purchase confirmed")
+	stopPurchases := startPurchaseController(t, true)
 	select {
 	case <-b.initialized:
 	case <-time.After(5 * time.Second):
 		t.Fatal("auto-buy did not initialize")
 	}
-	assertNoPurchaseOrHead(t, b, heads, 0)
-	t.Logf("cold start: mining enabled, pool empty, builds=0, head=%d unchanged for 3s", initial.NumberU64())
-	b.failNext.Store(true)
-	common.AutoBuyTicketChan <- 1
 	failed := awaitSubmission(t, b)
 	requireErrorContains(t, failed.err, "injected temporary submission failure")
-	assertNoPurchaseOrHead(t, b, heads, 1)
-	t.Log("notification: purchase reached signing/submission, injected failure; no retry or new head for 3s")
-
-	hash, err := api.BuyTicket(context.Background(), common.BuyTicketArgs{FusionBaseArgs: common.FusionBaseArgs{From: f.owner}})
-	requireNoError(t, err)
-	manual := awaitSubmission(t, b)
-	requireNoError(t, manual.err)
-	if manual.tx.Hash() != hash {
-		t.Fatal("manual retry returned a different transaction")
+	if f.chain.CurrentBlock().Hash() != initial.Hash() {
+		t.Fatal("failed submission unexpectedly advanced the chain")
+	}
+	retried := awaitSubmission(t, b)
+	requireNoError(t, retried.err)
+	hash := failed.tx.Hash()
+	if retried.tx.Hash() != hash {
+		t.Fatal("automatic retry changed the saved signed transaction")
 	}
 	first := awaitHead(t, heads)
-	t.Logf("explicit retry: tx=%s gas=%d mined at height=%d", hash.Hex(), manual.tx.Gas(), first.NumberU64())
+	t.Logf("startup and automatic retry: identical tx=%s mined at height=%d", hash.Hex(), first.NumberU64())
 	automatic := awaitSubmission(t, b)
 	requireNoError(t, automatic.err)
+	awaitPurchaseWarning(t, confirmations, fmt.Sprint(hash))
 	second := awaitHead(t, heads)
+	stopPurchases()
 	closeMiner.Do(b.miner.Close)
 	verifyMinedPurchase(t, verifier, first, hash, initial.NumberU64()+1)
 	verifyMinedPurchase(t, verifier, second, automatic.tx.Hash(), initial.NumberU64()+2)
 	t.Logf("canonical-head notification: next automatic purchase mined at height=%d; both independent imports passed after stopping the producer", second.NumberU64())
 }
 
-func assertNoPurchaseOrHead(t *testing.T, b *autoBuyBackend, heads <-chan core.ChainHeadEvent, expectedBuilds int32) {
+func startPurchaseController(t *testing.T, enabled bool) func() {
 	t.Helper()
-	select {
-	case submission := <-b.submissions:
-		t.Fatalf("unexpected purchase while observing stall: %v", submission.err)
-	case head := <-heads:
-		t.Fatalf("unexpected head while observing stall: %d", head.Block.NumberU64())
-	case <-time.After(3 * time.Second):
+	buyer := ethapi.NewTicketBuyer(enabled)
+	requireNoError(t, buyer.Start())
+	var once sync.Once
+	stop := func() {
+		done := make(chan struct{})
+		go func() {
+			once.Do(func() { buyer.Stop() })
+			close(done)
+		}()
+		select {
+		case <-done:
+		case <-time.After(10 * time.Second):
+			t.Fatal("purchase controller did not stop")
+		}
+		common.SetAutoBuyTicketEnabled(false)
 	}
-	if b.buildCalls.Load() != expectedBuilds {
-		t.Fatalf("expected %d purchase builds, got %d", expectedBuilds, b.buildCalls.Load())
-	}
-	if !b.miner.Mining() {
-		t.Fatal("miner was not running during stall observation")
-	}
-	pending, queued := b.pool.Stats()
-	if pending != 0 || queued != 0 {
-		t.Fatalf("pool was not empty: pending=%d queued=%d", pending, queued)
+	t.Cleanup(stop)
+	return stop
+}
+
+func advancePurchaseFixture(t *testing.T, f, verifier *fixture) {
+	t.Helper()
+	jump := uint64(time.Now().Unix()) - 3600
+	for i := 0; i < 14; i++ {
+		timestamp := f.chain.CurrentBlock().Time() + 120
+		if i == 2 {
+			timestamp = jump
+		}
+		var txs []*types.Transaction
+		if i > 0 {
+			txs = append(txs, f.signPurchase(t, f.chain.CurrentBlock().Time(), common.TimeLockForever))
+		}
+		block := f.buildBlockWithTransactions(t, timestamp, txs)
+		f.importBlock(t, block)
+		if verifier != nil {
+			verifier.importBlock(t, block)
+		}
 	}
 }
 

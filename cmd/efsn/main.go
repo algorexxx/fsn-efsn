@@ -294,6 +294,7 @@ func geth(ctx *cli.Context) error {
 	stack, backend := makeFullNode(ctx)
 	defer stack.Close()
 
+	stack.RegisterLifecycle(ethapi.NewTicketBuyer(ctx.Bool(utils.AutoBuyTicketsEnabledFlag.Name)))
 	startNode(ctx, stack, backend)
 	stack.Wait()
 	return nil
@@ -363,8 +364,6 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend) {
 		}
 	}()
 
-	// Start auto buy tickets
-	go ethapi.AutoBuyTicket(ctx.Bool(utils.AutoBuyTicketsEnabledFlag.Name))
 	// Start report illegal
 	go ethapi.ReportIllegal()
 
