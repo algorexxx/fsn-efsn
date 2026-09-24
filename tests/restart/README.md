@@ -162,7 +162,7 @@ does not run a node, sign blocks, traverse every state node, or replay history.
 ## Complete integrity and replay probes
 
 The separate restart-anchor implementation is covered by
-`TestRestartAnchorEnforcement` (34 isolated cases),
+`TestRestartAnchorEnforcement` (36 isolated cases),
 `TestRestartAnchorConfiguration`, and `TestRestartRollbackDatabaseModes`.
 They use synthetic anchors; mainnet remains unconfigured. The original
 `TestRestartAnchorEntryPointsCharacterization` intentionally retains the legacy
@@ -200,10 +200,11 @@ four scenarios, retained logs and explicit limits on the sparse history/crash ca
 `TestRestartCrashBoundaries` is available on Windows and Linux, explicitly enabled
 by `FUSION_RESTART_CRASH_REHEARSAL=1`. It uses actual LevelDB with a test-only write
 wrapper, exits child processes before and after every observed write, then cold
-reopens and resumes in fresh processes. There are 28 cuts per run across
+reopens and resumes in fresh processes. There are 46 cuts per run across
 linear import, compatible heavier reorganization, rollback and six explicit
-rewind cases. Rewinds include below-anchor/split heads and injected missing state
-or bodies. It requires no
+rewind cases, reset and four pivot cases. Rewinds include below-anchor/split heads
+and injected missing state or bodies. Pivots include receipt import followed by
+full-head commit. It requires no
 backup or operator key. For Linux, compile first and run inside a network namespace:
 
 ```sh
@@ -223,8 +224,10 @@ See the
 [crash report](../../docs/restart-crash-rehearsal.md) for the reproduced defect,
 atomic branch-publication correction, and the
 [rewind report](../../docs/restart-rewind-rehearsal.md) for the atomic rewind and
-repair correction. The latter describes genesis-fallback fixture limitations and
-remaining durability/reset/pivot/pruning gates.
+repair correction. The [reset/pivot report](../../docs/restart-reset-pivot-rehearsal.md)
+adds interruption and missing-target checks without further production edits.
+These reports describe fixture limits and remaining durability, state-download,
+genesis-sync and pruning/freezer gates.
 
 `TestPreservedStateIntegrity`, `TestPreservedHistoryIntegrity` and
 `TestPreservedTicketReconstruction` additionally require

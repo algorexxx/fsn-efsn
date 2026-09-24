@@ -43,6 +43,12 @@ Rewinds now commit deletions and head pointers together; synthetic interruption
 checks include below-anchor, split-head and missing-state/body cases. Complete
 pruning/freezer recovery and large reorganization batch cost remain open gates.
 
+The [reset/pivot follow-up](restart-reset-pivot-rehearsal.md) adds eighteen crash
+cuts around reset, three direct pivot positions and receipt-import-to-pivot
+publication. Missing target state/body are rejected without database changes.
+These cases require no further production edits. Complete state acquisition,
+genesis resynchronization and freezer recovery remain separate release gates.
+
 ## 1. Objective and agreed scope
 
 Restart Fusion from an explicitly accepted historical state, using the smallest justified changes to the existing client. Preserve historical verification and accounting. Before public economic use, establish a mandatory restart boundary so a previously unknown, incompatible continuation cannot replace the restart merely by presenting greater accumulated difficulty.
@@ -258,6 +264,44 @@ Required implementation surfaces include header/seal verification, block constru
 ### Selection gate
 
 Produce a comparison with exact block sequence, required edits, total state changes, owner-by-owner economic effects, replay results, and operational steps. Choose the smallest complete design, not the fewest lines at the cost of hidden exceptions. Keep the unsuccessful candidate's findings, not its unused production code.
+
+### Full-state rehearsal with limited disk space
+
+Next implementation step, not yet an exported or validated artifact: use the
+existing `core/state.NewStateSync` and `trie.Sync` scheduler to extract only data
+reachable from the preserved state root. It already follows account/storage
+tries and code references, including native data represented by account code
+hashes. This avoids another complete 117 GB historical-database copy and a custom
+read-through overlay with its own deletion/iterator semantics. The actual output
+size is unknown until measured.
+
+1. Prototype the extraction with synthetic account/storage/code/native-data
+   fixtures. Exercise missing/corrupt source data, interruption, rejected target
+   reuse and cold reopening. Verify each fetched blob's Keccak hash before
+   submitting it to the scheduler; its `Process` method expects the caller to
+   establish that identity. Use existing raw database helpers for code formats.
+2. Run against the verified disposable backup mounted read-only in an isolated
+   network/mount namespace. Create a new explicitly named local target and retain
+   source head/root/config and executable identities. Apply the existing 20 GiB
+   Linux / 50 GiB host reserves before each bounded write batch. An incomplete
+   extraction must not be marked ready or installed as a chain head.
+3. Close the target, reopen without any source fallback, and run the existing
+   complete state traversal. Require the original state root and recorded
+   inventory: 801,355 accounts, 2,886,305 storage leaves, 33,437 code/native-data
+   references and 262,368,983 referenced bytes. Verify all 491 tickets and their
+   commitment separately. Record the closed database size and checksums before
+   deciding whether two independent execution copies fit.
+4. Preserve that exact-state artifact. Add only explicitly bounded historical
+   context needed by a separately labelled synthetic recovery fixture. Any public
+   test-key substitution must have an exact state-difference ledger and cannot
+   be presented as a valid continuation of the original backup block. Confirm
+   required ancestor access from execution, ticket selection and difficulty
+   adjustment rather than silently skipping a missing header.
+5. Rehearse bridge construction and independent import with full account/storage
+   state, cold reopening, reconstruction and accounting. Actual original-history
+   continuation still requires the later reviewed real-signer procedure; this
+   extraction does not require the operator's private key or create recovery
+   blocks on its own.
 
 ## 6. Accepted restart anchor
 
@@ -506,8 +550,9 @@ Release acceptance requires all applicable phase gates and verification cases to
 1. Continue the bounded baseline replay toward 2,700,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 2,000,000 have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
-4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md) and [explicit-rewind correction](restart-rewind-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback and six explicit-rewind cases. Next cover interrupted reset/pivot paths, full pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
+4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
+5. Implement and measure the [bounded full-state extraction](#full-state-rehearsal-with-limited-disk-space), then construct the full-state recovery rehearsal while preserving the exact exported state and the original backup.
+6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation
 

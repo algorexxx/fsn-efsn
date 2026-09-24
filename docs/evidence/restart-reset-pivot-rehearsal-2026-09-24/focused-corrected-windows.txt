@@ -1,0 +1,68 @@
+=== RUN   TestRestartAnchorEnforcement
+=== RUN   TestRestartAnchorEnforcement/fast_missing_state
+    anchor_enforcement_test.go:47: isolated anchor enforcement fast_missing_state:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:338: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/fast_missing_body
+    anchor_enforcement_test.go:47: isolated anchor enforcement fast_missing_body:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:338: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.08s)
+        PASS
+--- PASS: TestRestartAnchorEnforcement (0.23s)
+    --- PASS: TestRestartAnchorEnforcement/fast_missing_state (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/fast_missing_body (0.12s)
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/reset
+    crash_test.go:144: successful reset write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader batch:data batch:canonical,LastBlock]
+=== RUN   TestRestartCrashBoundaries/reset/01_before
+    crash_test.go:151: consistent cold reopen and resume: reset write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/reset/01_after
+    crash_test.go:151: consistent cold reopen and resume: reset write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/reset/02_before
+    crash_test.go:151: consistent cold reopen and resume: reset write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reset/02_after
+    crash_test.go:151: consistent cold reopen and resume: reset write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reset/03_before
+    crash_test.go:151: consistent cold reopen and resume: reset write 3 before (batch:canonical,LastBlock)
+=== RUN   TestRestartCrashBoundaries/reset/03_after
+    crash_test.go:151: consistent cold reopen and resume: reset write 3 after (batch:canonical,LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_below_anchor
+    crash_test.go:144: successful pivot_below_anchor write trace: [put:LastBlock]
+=== RUN   TestRestartCrashBoundaries/pivot_below_anchor/01_before
+    crash_test.go:151: consistent cold reopen and resume: pivot_below_anchor write 1 before (put:LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_below_anchor/01_after
+    crash_test.go:151: consistent cold reopen and resume: pivot_below_anchor write 1 after (put:LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_anchor
+    crash_test.go:144: successful pivot_anchor write trace: [put:LastBlock]
+=== RUN   TestRestartCrashBoundaries/pivot_anchor/01_before
+    crash_test.go:151: consistent cold reopen and resume: pivot_anchor write 1 before (put:LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_anchor/01_after
+    crash_test.go:151: consistent cold reopen and resume: pivot_anchor write 1 after (put:LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_tip
+    crash_test.go:144: successful pivot_tip write trace: [put:LastBlock]
+=== RUN   TestRestartCrashBoundaries/pivot_tip/01_before
+    crash_test.go:151: consistent cold reopen and resume: pivot_tip write 1 before (put:LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_tip/01_after
+    crash_test.go:151: consistent cold reopen and resume: pivot_tip write 1 after (put:LastBlock)
+--- PASS: TestRestartCrashBoundaries (3.47s)
+    --- PASS: TestRestartCrashBoundaries/reset (1.40s)
+        --- PASS: TestRestartCrashBoundaries/reset/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reset/01_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reset/02_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reset/02_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reset/03_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reset/03_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/pivot_below_anchor (0.68s)
+        --- PASS: TestRestartCrashBoundaries/pivot_below_anchor/01_before (0.27s)
+        --- PASS: TestRestartCrashBoundaries/pivot_below_anchor/01_after (0.22s)
+    --- PASS: TestRestartCrashBoundaries/pivot_anchor (0.70s)
+        --- PASS: TestRestartCrashBoundaries/pivot_anchor/01_before (0.25s)
+        --- PASS: TestRestartCrashBoundaries/pivot_anchor/01_after (0.25s)
+    --- PASS: TestRestartCrashBoundaries/pivot_tip (0.70s)
+        --- PASS: TestRestartCrashBoundaries/pivot_tip/01_before (0.23s)
+        --- PASS: TestRestartCrashBoundaries/pivot_tip/01_after (0.25s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	4.255s

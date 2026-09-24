@@ -127,7 +127,9 @@ without a freezer. It does not establish:
 - Interrupted reset or fast-sync pivot operations. The subsequent
   [explicit-rewind rehearsal](restart-rewind-rehearsal.md) reproduces and corrects
   the separate `SetHead` marker/deletion ordering gap, including six synthetic
-  rewind cases. The rollback test alone does not cover `SetHead`.
+  rewind cases. The later [reset/pivot rehearsal](restart-reset-pivot-rehearsal.md)
+  covers those publication boundaries too, with state-download/genesis-sync and
+  freezer limits retained. The rollback test alone does not cover `SetHead`.
 - Very deep reorganizations, a shorter-but-heavier replacement, or the maximum
   memory cost of staging a large canonical switch in one batch. The existing
   reorganization already retains both block lists; the added batch also needs

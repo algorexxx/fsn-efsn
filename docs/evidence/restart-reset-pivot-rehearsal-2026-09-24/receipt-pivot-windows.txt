@@ -1,0 +1,25 @@
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/pivot_receipts
+    crash_test.go:145: successful pivot_receipts write trace: [batch:data,tx-lookup put:LastFast put:LastBlock]
+=== RUN   TestRestartCrashBoundaries/pivot_receipts/01_before
+    crash_test.go:152: consistent cold reopen and resume: pivot_receipts write 1 before (batch:data,tx-lookup)
+=== RUN   TestRestartCrashBoundaries/pivot_receipts/01_after
+    crash_test.go:152: consistent cold reopen and resume: pivot_receipts write 1 after (batch:data,tx-lookup)
+=== RUN   TestRestartCrashBoundaries/pivot_receipts/02_before
+    crash_test.go:152: consistent cold reopen and resume: pivot_receipts write 2 before (put:LastFast)
+=== RUN   TestRestartCrashBoundaries/pivot_receipts/02_after
+    crash_test.go:152: consistent cold reopen and resume: pivot_receipts write 2 after (put:LastFast)
+=== RUN   TestRestartCrashBoundaries/pivot_receipts/03_before
+    crash_test.go:152: consistent cold reopen and resume: pivot_receipts write 3 before (put:LastBlock)
+=== RUN   TestRestartCrashBoundaries/pivot_receipts/03_after
+    crash_test.go:152: consistent cold reopen and resume: pivot_receipts write 3 after (put:LastBlock)
+--- PASS: TestRestartCrashBoundaries (1.49s)
+    --- PASS: TestRestartCrashBoundaries/pivot_receipts (1.49s)
+        --- PASS: TestRestartCrashBoundaries/pivot_receipts/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/pivot_receipts/01_after (0.22s)
+        --- PASS: TestRestartCrashBoundaries/pivot_receipts/02_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/pivot_receipts/02_after (0.22s)
+        --- PASS: TestRestartCrashBoundaries/pivot_receipts/03_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/pivot_receipts/03_after (0.22s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	1.993s

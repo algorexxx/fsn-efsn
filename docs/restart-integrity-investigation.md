@@ -211,10 +211,10 @@ blocks. The source, retained executable, target, identity manifest and per-batch
 20 GiB Linux / 50 GiB Windows reserves remain unchanged. Full historical execution
 remains pending.
 
-Latest archived observation: 24 September at 09:56:46 UTC, block 2,504,064 with
-no reported replay error. Linux had 72,886,886,400 free bytes and D: had
-58,944,876,544, above the existing reserves. The
-[progress snapshot](evidence/restart-rewind-rehearsal-2026-09-24/replay-progress.txt)
+Latest archived observation: 24 September at 10:15:21 UTC, block 2,557,952 with
+no reported replay error. Linux had 72,494,329,856 free bytes and D: had
+57,014,775,808, above the existing reserves. The
+[progress snapshot](evidence/restart-reset-pivot-rehearsal-2026-09-24/replay-progress.txt)
 also confirms the retained executable hash. This is not a closed phase or a
 replacement for the completed two-million checkpoint above.
 

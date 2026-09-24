@@ -27,10 +27,11 @@ import (
 )
 
 type crashHistory struct {
-	Anchor *types.Block
-	Parent *types.Block
-	Old    types.Blocks
-	New    types.Blocks
+	Anchor   *types.Block
+	Parent   *types.Block
+	Old      types.Blocks
+	New      types.Blocks
+	Receipts types.Receipts
 }
 
 type crashDatabase struct {
@@ -129,7 +130,7 @@ func TestRestartCrashBoundaries(t *testing.T) {
 		}
 		return
 	}
-	for _, scenario := range []string{"linear", "reorg", "rollback", "rewind", "rewind_below_anchor", "rewind_split", "rewind_pruned", "rewind_missing_body", "rewind_missing_ancestor"} {
+	for _, scenario := range []string{"linear", "reorg", "rollback", "rewind", "rewind_below_anchor", "rewind_split", "rewind_pruned", "rewind_missing_body", "rewind_missing_ancestor", "reset", "pivot_below_anchor", "pivot_anchor", "pivot_tip", "pivot_receipts"} {
 		t.Run(scenario, func(t *testing.T) {
 			trace := t.TempDir()
 			runCrashChild(t, trace, scenario, "write", 0, "", false)
@@ -190,6 +191,9 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 	builder.importBlock(t, anchor)
 	old := roundTripBlocks(t, buildAnchorBranch(t, f, 4, 120))
 	history := crashHistory{Anchor: anchor, Parent: f.chain.GetBlock(anchor.ParentHash(), anchor.NumberU64()-1), Old: old}
+	if scenario == "pivot_receipts" {
+		history.Receipts = f.chain.GetReceiptsByHash(old[3].Hash())
+	}
 	config := *f.chain.Config()
 	config.RestartAnchor = &params.RestartAnchor{GenesisHash: f.chain.Genesis().Hash(), ChainID: config.ChainID.Uint64(), Number: anchor.NumberU64(), Hash: anchor.Hash()}
 	f.chain.Stop()
@@ -205,6 +209,18 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 	}
 	if scenario == "rewind_missing_ancestor" {
 		rawdb.DeleteBody(db, old[0].Hash(), old[0].NumberU64())
+	}
+	if strings.HasPrefix(scenario, "pivot") {
+		rawdb.WriteHeadBlockHash(db, f.chain.Genesis().Hash())
+	}
+	if scenario == "pivot_receipts" {
+		rawdb.WriteHeadBlockHash(db, history.Parent.Hash())
+		rawdb.WriteHeadFastBlockHash(db, old[2].Hash())
+		rawdb.DeleteBody(db, old[3].Hash(), old[3].NumberU64())
+		rawdb.DeleteReceipts(db, old[3].Hash(), old[3].NumberU64())
+		for _, tx := range old[3].Transactions() {
+			rawdb.DeleteTxLookupEntry(db, tx.Hash())
+		}
 	}
 	f.engine = datong.New(config.DaTong, db)
 	f.chain, err = core.NewBlockChain(db, &core.CacheConfig{TrieDirtyDisabled: true}, &config, f.engine, vm.Config{}, func(block *types.Block) bool { return block.Hash() == old[len(old)-1].Hash() })
@@ -226,6 +242,14 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 		history.New = old[:2]
 	case "rewind_below_anchor":
 		history.New = types.Blocks{history.Parent}
+	case "reset":
+		history.New = types.Blocks{f.chain.Genesis()}
+	case "pivot_below_anchor":
+		history.New = types.Blocks{history.Parent}
+	case "pivot_anchor":
+		history.New = types.Blocks{history.Anchor}
+	case "pivot_tip", "pivot_receipts":
+		history.New = old[3:]
 	default:
 		t.Fatalf("unknown crash scenario %q", scenario)
 	}
@@ -236,7 +260,15 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 	requireNoError(t, err)
 	db.phase = os.Getenv("FUSION_RESTART_CRASH_PHASE")
 	db.armed = true
-	if strings.HasPrefix(scenario, "rewind") {
+	if scenario == "reset" {
+		requireNoError(t, f.chain.Reset())
+	} else if strings.HasPrefix(scenario, "pivot") {
+		if scenario == "pivot_receipts" {
+			_, err = f.chain.InsertReceiptChain(history.New, []types.Receipts{history.Receipts}, 0)
+			requireNoError(t, err)
+		}
+		requireNoError(t, f.chain.FastSyncCommitHead(history.New[0].Hash()))
+	} else if strings.HasPrefix(scenario, "rewind") {
 		requireNoError(t, f.chain.SetHead(history.New[len(history.New)-1].NumberU64()))
 	} else if scenario == "rollback" {
 		f.chain.Rollback([]common.Hash{old[2].Hash(), old[3].Hash()})
@@ -270,6 +302,18 @@ func verifyCrashDatabase(t *testing.T, path, scenario string) {
 	requireNoError(t, err)
 	defer chain.Stop()
 	t.Logf("cold startup: head=%s readiness=%v", chain.CurrentBlock().Hash().Hex(), chain.CheckRestartReady())
+	if scenario == "reset" {
+		verifyCrashReset(t, db, chain, &history)
+		return
+	}
+	if scenario == "pivot_receipts" {
+		verifyCrashReceiptPivot(t, db, chain, &history)
+		return
+	}
+	if strings.HasPrefix(scenario, "pivot") {
+		verifyCrashPivot(t, db, chain, &history)
+		return
+	}
 	if strings.HasPrefix(scenario, "rewind") {
 		verifyCrashRewind(t, db, chain, &history, scenario)
 		return

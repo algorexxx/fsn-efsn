@@ -123,5 +123,10 @@ of very deep rewinds/reorganizations. Injecting missing historical keys exercise
 repair branches, not a complete production pruning lifecycle. The public light
 client remains unsupported with an active restart anchor.
 
+The subsequent [reset/pivot rehearsal](restart-reset-pivot-rehearsal.md) covers
+reset to the existing genesis and anchored pivot publication, including receipt
+import followed by pivot. It needs no further production correction, and retains
+the state-download, genesis-resync and freezer limitations above.
+
 These remaining gates, full-state recovery construction, accounting review and
 independent operator review remain in the [main plan](restart-plan.md).

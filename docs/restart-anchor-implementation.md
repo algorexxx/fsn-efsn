@@ -100,14 +100,15 @@ rewards, balances, or fork weight.
 
 ## Validation
 
-`TestRestartAnchorEnforcement` has 34 isolated cases covering incompatible fresh,
+`TestRestartAnchorEnforcement` now has 36 isolated cases covering incompatible fresh,
 stored and known blocks; header/direct-header, receipt/ancient-receipt rejection;
 mining/state-less writes; missing ancestry; incompatible or damaged startup
 heads/indexes/bodies; configuration identity and snapshotting; genesis setup;
 rewind and rollback recovery; and compatible full/header/receipt/pivot imports.
 Rejected inputs are checked against a digest of every key/value, persisted and
 in-memory heads, and the head-event channel. Compatible synchronization is also
-checked after clean reopening. The additional large-batch case measures proof-cache
+checked after clean reopening. Two cases added in the reset/pivot follow-up verify
+rejection of a missing compatible pivot state root or body. The large-batch case measures proof-cache
 behavior after growing a stored header chain beyond cache capacity.
 
 The compatible-fork case adopts a heavier branch diverging **after** the anchor.
@@ -164,7 +165,8 @@ historical state/bodies; genesis fallback keeps readiness disabled.
    complete historical/full-state fixtures. The first rehearsal uses actual
    devp2p transport with an explicit downloader trigger and a sparse synthetic
    history; it does not prove operator startup timing or a genesis sync.
-3. Extend write-boundary crash coverage to reset/pivot operations, complete
+3. Review the subsequent [reset/pivot interruption results](restart-reset-pivot-rehearsal.md),
+   then extend coverage to complete state acquisition, genesis resynchronization,
    pruning lifecycles and realistic large reorganization batches, and test supported
    ancient/freezer and fast-state-sync paths. The ancient-receipt negative case
    rejects before touching a freezer; it is not a successful freezer import test.

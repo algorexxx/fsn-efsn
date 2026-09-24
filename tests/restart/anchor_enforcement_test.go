@@ -32,7 +32,7 @@ func TestRestartAnchorEnforcement(t *testing.T) {
 	}
 	for _, mode := range []string{
 		"full_batch", "stored_fork", "known_block", "headers", "direct_header", "receipts", "ancient_receipts",
-		"fast_commit", "miner_write", "pruned_write", "missing_ancestor", "compatible_fork", "rewind_resync", "rollback_resync",
+		"fast_commit", "fast_missing_state", "fast_missing_body", "miner_write", "pruned_write", "missing_ancestor", "compatible_fork", "rewind_resync", "rollback_resync",
 		"below_anchor_head", "config_snapshot", "body_validation", "network_identity", "genesis_setup",
 		"startup_full", "startup_header", "startup_fast", "startup_masked_ancestry", "startup_index", "startup_missing", "startup_height", "startup_missing_body",
 		"fresh_full_batch", "fresh_headers_receipts", "light_mode", "reset_identity", "chain_identity", "empty_anchor",
@@ -87,6 +87,10 @@ func runAnchorEnforcement(t *testing.T, mode string) {
 	}
 	receiver.chain.Stop()
 	switch mode {
+	case "fast_missing_state":
+		requireNoError(t, receiver.db.Delete(accepted[2].Root().Bytes()))
+	case "fast_missing_body":
+		rawdb.DeleteBody(receiver.db, accepted[2].Hash(), accepted[2].NumberU64())
 	case "startup_full":
 		rawdb.WriteHeadBlockHash(receiver.db, later[3].Hash())
 	case "startup_header":
@@ -149,6 +153,7 @@ func runAnchorEnforcement(t *testing.T, mode string) {
 	headEvents := make(chan core.ChainHeadEvent, 8)
 	subscription := receiver.chain.SubscribeChainHeadEvent(headEvents)
 	defer subscription.Unsubscribe()
+	expectedError := "restart anchor:"
 	switch mode {
 	case "full_batch":
 		_, err = receiver.chain.InsertChain(later)
@@ -174,6 +179,12 @@ func runAnchorEnforcement(t *testing.T, mode string) {
 		_, err = receiver.chain.InsertReceiptChain(later[1:], receipts[1:], ancientLimit)
 	case "fast_commit":
 		err = receiver.chain.FastSyncCommitHead(later[0].Hash())
+	case "fast_missing_state":
+		err = receiver.chain.FastSyncCommitHead(accepted[2].Hash())
+		expectedError = "missing trie node"
+	case "fast_missing_body":
+		err = receiver.chain.FastSyncCommitHead(accepted[2].Hash())
+		expectedError = "non existent block"
 	case "miner_write":
 		_, err = receiver.chain.WriteBlockWithState(later[1], nil, nil)
 	case "pruned_write":
@@ -313,7 +324,7 @@ func runAnchorEnforcement(t *testing.T, mode string) {
 	default:
 		t.Fatalf("unknown anchor enforcement mode %q", mode)
 	}
-	requireErrorContains(t, err, "restart anchor:")
+	requireErrorContains(t, err, expectedError)
 	requireDatabaseUnchanged(t, receiver.db, before)
 	requireCanonicalTip(t, receiver, oldHead)
 	if receiver.chain.CurrentHeader().Hash() != oldHead.Hash() || receiver.chain.CurrentFastBlock().Hash() != oldHead.Hash() {
