@@ -1,0 +1,24 @@
+{
+  "baseline_commit": "0ad0136f0811cdfff0df61723f697b161fc75511",
+  "toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detection; GOMAXPROCS=2; offline cached modules",
+  "source_sha256": {
+    "internal/recovery/offline.go": "26f6eb61189dff50a6644f3d85cf196e3f8d05c0f8cd3eafaef69f489ac54825",
+    "internal/recovery/offline_test.go": "e54927475576e31b57c281f374369b16374bb157d0ef9a55e85cdacd0daace18",
+    "tests/restart/recovery_offline_test.go": "d4d808048a6b423af26940275d5852ef6f7f4be61fe2c2029db1a080dbeb3252"
+  },
+  "additional_snapshot_test_source_sha256": {
+    "tests/restart/snapshot_indexes_test.go": "4473d8e0977c9c6a97dc6fed035b745728def041d857f2d15595c1cbccf41eb8",
+    "tests/restart/snapshot_package_test.go": "b9735b6ad0acfae890d5f5c282c3ca596d38f2fafb85b0a645f0c03accd10dec",
+    "tests/restart/snapshot_service_test.go": "8516081d1ce862e22e8647262ffc4abd437ef63387e0307ae9129c08e3521497"
+  },
+  "source_git_blobs": {
+    "internal/recovery/offline.go": "3d80d48f3a05cbc149b174d7b484557941c415d2",
+    "internal/recovery/offline_test.go": "857ce8e30216a08dfed3b09d549ec3390f183aec",
+    "tests/restart/recovery_offline_test.go": "619a7ce3e6089ed73cea4c15dc606cb35cfa2f6a"
+  },
+  "binary_sha256": {
+    "tmp/recovery-offline-windows-tests.exe": "2de2bf68653fc41b33ec1206f8c1f8cc02826cab1c31580bf2cba3a4d2a3902f",
+    "tmp/recovery-offline-linux-tests": "f30638a939b99f36981db6e5bb6e97a7fa3a3560592d173d43d7de7b39de9288"
+  },
+  "scope": "Only small synthetic offline-signing, export, guard and handover tests ran. The restart binaries also include the listed earlier uncommitted snapshot tests; they were not selected. No real key, full-state fixture or W: data was opened. This is not a reproducible release-build attestation."
+}

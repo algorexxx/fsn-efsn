@@ -1,0 +1,49 @@
+?   	github.com/FusionFoundation/efsn/v5/cmd/fsn-recovery	[no test files]
+=== RUN   TestNativeErrorDespiteSuccessfulReceipt
+--- PASS: TestNativeErrorDespiteSuccessfulReceipt (0.00s)
+=== RUN   TestExportSavedBlock
+--- PASS: TestExportSavedBlock (0.36s)
+=== RUN   TestExportSavedBlockRefusesUnfinished
+--- PASS: TestExportSavedBlockRefusesUnfinished (0.18s)
+=== RUN   TestOfflineResolvedPaths
+--- PASS: TestOfflineResolvedPaths (0.13s)
+=== RUN   TestSigningJournalReplayAndConflict
+--- PASS: TestSigningJournalReplayAndConflict (0.17s)
+=== RUN   TestSigningJournalTruncatedWAL
+    signing_test.go:119: truncated reservation refused: leveldb/journal: block/chunk corrupted: chunk length overflows block (668 bytes) [file=000001.log]
+--- PASS: TestSigningJournalTruncatedWAL (0.11s)
+=== RUN   TestSigningJournalAmbiguousCallback
+=== RUN   TestSigningJournalAmbiguousCallback/error
+=== RUN   TestSigningJournalAmbiguousCallback/short
+=== RUN   TestSigningJournalAmbiguousCallback/wrong_key
+=== RUN   TestSigningJournalAmbiguousCallback/write_failure
+=== RUN   TestSigningJournalAmbiguousCallback/panic
+--- PASS: TestSigningJournalAmbiguousCallback (0.74s)
+    --- PASS: TestSigningJournalAmbiguousCallback/error (0.15s)
+    --- PASS: TestSigningJournalAmbiguousCallback/short (0.14s)
+    --- PASS: TestSigningJournalAmbiguousCallback/wrong_key (0.14s)
+    --- PASS: TestSigningJournalAmbiguousCallback/write_failure (0.14s)
+    --- PASS: TestSigningJournalAmbiguousCallback/panic (0.16s)
+=== RUN   TestSigningJournalIdentityAndCorruption
+--- PASS: TestSigningJournalIdentityAndCorruption (0.42s)
+=== RUN   TestSigningJournalProcessLock
+--- PASS: TestSigningJournalProcessLock (1.10s)
+=== RUN   TestSigningJournalProcessCuts
+=== RUN   TestSigningJournalProcessCuts/before_reservation
+    signing_test.go:293: forced termination at before_reservation: new signer calls=1, outcome=<nil>
+=== RUN   TestSigningJournalProcessCuts/after_reservation
+    signing_test.go:293: forced termination at after_reservation: new signer calls=0, outcome=signing reservation is unfinished; do not sign again
+=== RUN   TestSigningJournalProcessCuts/after_signature
+    signing_test.go:293: forced termination at after_signature: new signer calls=0, outcome=signing reservation is unfinished; do not sign again
+=== RUN   TestSigningJournalProcessCuts/after_completion
+    signing_test.go:293: forced termination at after_completion: new signer calls=0, outcome=<nil>
+--- PASS: TestSigningJournalProcessCuts (0.88s)
+    --- PASS: TestSigningJournalProcessCuts/before_reservation (0.20s)
+    --- PASS: TestSigningJournalProcessCuts/after_reservation (0.21s)
+    --- PASS: TestSigningJournalProcessCuts/after_signature (0.24s)
+    --- PASS: TestSigningJournalProcessCuts/after_completion (0.23s)
+=== RUN   TestSigningJournalChild
+    signing_test.go:312: subprocess helper
+--- SKIP: TestSigningJournalChild (0.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/internal/recovery	5.140s
