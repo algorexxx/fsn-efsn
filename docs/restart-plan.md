@@ -7,9 +7,10 @@ Last reviewed: 24 September 2026. Source baseline: local `master` / `develop` at
 Latest progress: the D:-backed WSL environment contains a fully checksummed
 disposable database copy. The [integrity and replay investigation](restart-integrity-investigation.md)
 has verified all reachable current state and structural history through `B`,
-completed baseline replay through 1,000,000, and passed 128 real historical
-ticket-reconstruction cases. The next bounded replay phase to 2,000,000 is in
-progress; continuation and clean-stop safeguards have been exercised.
+completed baseline replay through 2,000,000, and passed 128 real historical
+ticket-reconstruction cases. The next bounded target is 2,700,000, crossing the
+end of the legacy checkpoint range; continuation and clean-stop safeguards have
+been exercised. Live phase status belongs in the linked replay report.
 
 The [synthetic bridge experiment](restart-bridge-experiment.md) demonstrates
 eight independently imported blocks. [Narrow corrections](restart-corrections.md)
@@ -18,7 +19,7 @@ missing-ancestor panic. The [purchase controller](restart-purchase-controller.md
 adds startup attempts, periodic retry, signed-transaction recovery and canonical
 receipt monitoring, with explicit pauses for nonce conflicts and missing nonces.
 Complete historical execution, full-state recovery, the accepted restart anchor
-and independent network rehearsals remain outstanding.
+and independent operator rehearsals remain outstanding.
 
 The [anchor entry-point investigation](restart-anchor-investigation.md) now
 reproduces heavier-chain replacement and legacy-checkpoint gaps involving stored
@@ -27,8 +28,10 @@ The [separate anchor prototype](restart-anchor-implementation.md) now checks the
 entry points, rejects incompatible startup data before repair, and gates mining
 and transaction readiness below the anchor. It also fixes two reproduced rollback
 defects. The production height/hash remains unset. Light mode explicitly refuses
-an active anchor; fast/freezer release support and multi-process rehearsal remain
-unproven. Adding a legacy checkpoint is not an adequate implementation.
+an active anchor. An isolated [multi-process rehearsal](restart-node-rehearsal.md)
+now exercises the actual service, IPC, miner and peer downloader. Fast/freezer
+release support and full-state network rehearsal remain unproven. Adding a legacy
+checkpoint is not an adequate implementation.
 
 ## 1. Objective and agreed scope
 
@@ -88,9 +91,9 @@ Limitations:
 
 - These RPC results come from one recovered node; they are not independent validation of the chain.
 - File checksums in the recovery report establish faithful copying, not the correctness or finality of the source history.
-- Complete structural block/receipt coverage and reachable current-state traversal now pass. Full replay and all historical state remain unproven; replay through 1,000,000 passed and the bounded 2,000,000 phase is running.
+- Complete structural block/receipt coverage and reachable current-state traversal now pass. Full replay and all historical state remain unproven; replay through 2,000,000 passed, retaining the legacy checkpoint shortcuts.
 - No production restart blocks have been constructed or signed. Synthetic blocks using a public test key have now been constructed and imported; see the experiment report.
-- No private keys were read and no transactions were submitted.
+- No operator private key was read and no production transaction was submitted. Synthetic tests sign with the public key-1 test key and submit only to isolated disposable nodes.
 - Go 1.21.3 runs the growing synthetic restart suite on Windows and Linux. Original baseline race failures and their passing corrections are retained separately; current counts and exact results belong to the linked evidence reports. Legacy characterization cases deliberately reproduce defects, while enabled-anchor cases require rejection. Production-release readiness remains unproven. The reviewed workflow named `Build-And-Test` currently only builds.
 
 ## 3. Corrections and additional findings from the second review
@@ -490,10 +493,10 @@ Release acceptance requires all applicable phase gates and verification cases to
 
 ## 15. Immediate next actions
 
-1. Continue the bounded baseline replay toward 2,000,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 1,000,000 have passed. Historical checkpoint shortcuts remain in the replay and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
+1. Continue the bounded baseline replay toward 2,700,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 2,000,000 have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
-4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md). Synthetic entry-point tests now reject incompatible inputs and preserve ordinary compatible fork choice. Next cover independent peer processes, actual mining/RPC operation with an active anchor, interrupted database writes, deep ancestry and supported synchronization modes. Freeze the production anchor only after the recovery artifacts are reviewed.
+4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md) and [multi-process results](restart-node-rehearsal.md). Actual service tests now cover compatible peer sync, heavier stored-fork rejection, RPC/miner readiness, a committed-head process kill and incompatible database startup. Next cover interrupted writes within head/index updates, deep ancestry, concurrent peer mining/reorgs and supported synchronization modes. Freeze the production anchor only after the recovery artifacts are reviewed.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation

@@ -13,7 +13,9 @@ Archived on 24 September 2026. Times in the runner records are UTC.
   closed database size was 1,158,354,931 bytes; exit code was zero.
 - `two-million-*` records only the start, capacity, isolation and successful
   read-only resume preflight for the next bounded phase. Its completion is
-  pending. `run-replay-two-million.sh` is the exact continuation runner.
+  pending in this original capture. Completion is now retained in the
+  [later evidence](../restart-node-rehearsal-2026-09-24); the phase passed at
+  07:22:21 UTC. `run-replay-two-million.sh` is the exact continuation runner.
 
 Those jobs use the retained baseline executables, not the new anchor tests.
 The replay executable SHA-256 remains

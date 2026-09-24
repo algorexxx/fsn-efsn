@@ -134,17 +134,25 @@ and database; this work does not replace them.
 
 ## Remaining release gates
 
+The later [multi-process rehearsal](restart-node-rehearsal.md) adds actual
+service/IPC/miner/downloader evidence and readable hexadecimal hashes in anchor
+rejection diagnostics. Its synthetic network passed compatible synchronization,
+heavier stored-fork rejection, mining/transaction readiness, committed-head
+SIGKILL/reopen and incompatible LevelDB startup refusal. These close specific
+gaps in the initial entry-point tests, subject to that report's fixture limits.
+
 1. Review the implementation independently, including interrupted head/index
    writes, deep incompatible stored ancestry and cache behavior under concurrent
    imports. Measure startup cost on long
    post-anchor chains; the initial preflight walks their actual headers and can
    be repeated during service construction. Do not assume the memory cache makes
    initial startup constant-time.
-2. Run independent processes with real peer synchronization, concurrent mining,
-   rewinds and RPC readiness observation. Direct entry-point tests do not replace
-   that rehearsal. Exercise the configured anchor with the actual miner service,
-   rather than only its direct write entry point.
-3. Exercise process crashes and interrupted writes on disk, and test supported
+2. Extend the separate-process peer/miner/RPC coverage to concurrent mining,
+   live reorganization, rewinds during activity, disconnected operators and
+   complete historical/full-state fixtures. The first rehearsal uses actual
+   devp2p transport with an explicit downloader trigger and a sparse synthetic
+   history; it does not prove operator startup timing or a genesis sync.
+3. Extend the committed-head process-crash case to interrupted writes on disk, and test supported
    ancient/freezer and fast-state-sync paths. The ancient-receipt negative case
    rejects before touching a freezer; it is not a successful freezer import test.
    The service can open its database before preflight, so this is not a claim that

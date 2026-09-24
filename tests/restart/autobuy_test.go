@@ -67,6 +67,7 @@ func runAutoBuyRuntime(t *testing.T) {
 	subscription := f.chain.SubscribeChainHeadEvent(heads)
 	t.Cleanup(subscription.Unsubscribe)
 	b.miner.Start(f.owner)
+	awaitMining(t, b.miner)
 	b.failNext.Store(true)
 	confirmations := capturePurchaseLog(t, "Automatic ticket purchase confirmed")
 	stopPurchases := startPurchaseController(t, true)
@@ -97,6 +98,21 @@ func runAutoBuyRuntime(t *testing.T) {
 	verifyMinedPurchase(t, verifier, first, hash, initial.NumberU64()+1)
 	verifyMinedPurchase(t, verifier, second, automatic.tx.Hash(), initial.NumberU64()+2)
 	t.Logf("canonical-head notification: next automatic purchase mined at height=%d; both independent imports passed after stopping the producer", second.NumberU64())
+}
+
+func awaitMining(t *testing.T, producer *miner.Miner) {
+	t.Helper()
+	deadline := time.NewTimer(5 * time.Second)
+	defer deadline.Stop()
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
+	for !producer.Mining() {
+		select {
+		case <-ticker.C:
+		case <-deadline.C:
+			t.Fatal("miner did not become active")
+		}
+	}
 }
 
 func startPurchaseController(t *testing.T, enabled bool) func() {

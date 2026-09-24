@@ -141,8 +141,8 @@ GiB), with 4,598 tickets. The resulting commitments are:
 After confirming exit code zero, no remaining writer and the retained executable
 identity, continuation to **2,000,000** started at 05:40:23 UTC on 24 September.
 The preflight successfully reopened and validated height 1,000,000 before
-resuming. This phase is still in progress and remains within the original
-checkpoint shortcut range. Its result directory is
+resuming. This phase completed at 07:22:21 UTC, with exit zero after 5,928.57
+seconds. It remains within the original checkpoint shortcut range. Its result directory is
 `/home/rehearsal/results/restart-replay-two-million-2026-09-24`; the source,
 target, executable and stop-file paths above are unchanged. The runner adds
 a writer lock and preserves the existing 20 GiB Linux / 50 GiB Windows reserves.
@@ -190,7 +190,26 @@ those stale files.
 Completed logs, isolation records and source hashes are preserved in
 [the original evidence directory](evidence/restart-integrity-2026-09-23) and
 [the completed-scan/continuation evidence](evidence/restart-validation-2026-09-24).
-Completion of the two-million phase and full historical execution remain pending.
+The completed two-million phase is archived in the
+[node rehearsal evidence](evidence/restart-node-rehearsal-2026-09-24).
+The closed replay database occupies 2,261,867,399 bytes (about 2.11 GiB), with
+5,449 tickets. All final commitments match the source:
+
+- Block: `0x4592c42db8ddf3343dc242770d13de5d158c5e7fc1120870805b1e8731ed43cf`.
+- State: `0x3c3a1d38a0f4022f738b8e494becb823867562b7424166043e76df69543f04a2`.
+- Tickets: `0x5ec663a1a3e90d9270733d5aa20d99108f4d0d12e5e2c99e71a5a87bf666ba5b`.
+
+At completion Linux had 74,905,395,200 free bytes and D: had 74,497,351,680.
+Continuation to the next bounded target, 2,700,000, started at 08:00:40 UTC on
+24 September. The read-only preflight validated the complete 2,000,000 head
+before writable resume. This phase is running; its results directory is
+`/home/rehearsal/results/restart-replay-checkpoint-boundary-2026-09-24` and its
+[exact runner](evidence/restart-node-rehearsal-2026-09-24/run-replay-checkpoint-boundary.sh)
+is archived. Do not rerun it while the writer is active. This crosses the last legacy checkpoint at
+2,680,000; it does not retroactively remove verification shortcuts from earlier
+blocks. The source, retained executable, target, identity manifest and per-batch
+20 GiB Linux / 50 GiB Windows reserves remain unchanged. Full historical execution
+remains pending.
 
 ## Next gates
 

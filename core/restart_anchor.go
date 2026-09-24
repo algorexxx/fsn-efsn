@@ -44,7 +44,7 @@ func (a *restartAnchor) check(header *types.Header, parents map[common.Hash]*typ
 		hash, number := header.Hash(), header.Number.Uint64()
 		if number == a.rule.Number {
 			if hash != a.rule.Hash {
-				return fmt.Errorf("restart anchor: hash mismatch at %d: have %s, want %s", number, hash, a.rule.Hash)
+				return fmt.Errorf("restart anchor: hash mismatch at %d: have %s, want %s", number, hash.Hex(), a.rule.Hash.Hex())
 			}
 			break
 		}
@@ -58,7 +58,7 @@ func (a *restartAnchor) check(header *types.Header, parents map[common.Hash]*typ
 			parent = rawdb.ReadHeader(a.db, parentHash, number-1)
 		}
 		if parent == nil || parent.Number == nil || !parent.Number.IsUint64() || parent.Number.Uint64() != number-1 || parent.Hash() != parentHash {
-			return fmt.Errorf("restart anchor: missing or corrupt ancestor %s at %d", parentHash, number-1)
+			return fmt.Errorf("restart anchor: missing or corrupt ancestor %s at %d", parentHash.Hex(), number-1)
 		}
 		if provedInBatch {
 			break
@@ -113,19 +113,19 @@ func (a *restartAnchor) preflight() error {
 	headHash := rawdb.ReadHeadHeaderHash(a.db)
 	headNumber := rawdb.ReadHeaderNumber(a.db, headHash)
 	if headNumber == nil {
-		return fmt.Errorf("restart anchor: missing persisted header head %s", headHash)
+		return fmt.Errorf("restart anchor: missing persisted header head %s", headHash.Hex())
 	}
 	for _, hash := range []common.Hash{rawdb.ReadHeadHeaderHash(a.db), rawdb.ReadHeadBlockHash(a.db), rawdb.ReadHeadFastBlockHash(a.db)} {
 		number := rawdb.ReadHeaderNumber(a.db, hash)
 		if number == nil {
-			return fmt.Errorf("restart anchor: missing persisted head %s", hash)
+			return fmt.Errorf("restart anchor: missing persisted head %s", hash.Hex())
 		}
 		if *number > *headNumber {
-			return fmt.Errorf("restart anchor: block head %s is above header head", hash)
+			return fmt.Errorf("restart anchor: block head %s is above header head", hash.Hex())
 		}
 		header := rawdb.ReadHeader(a.db, hash, *number)
 		if header == nil || header.Hash() != hash || header.Number == nil || !header.Number.IsUint64() || header.Number.Uint64() != *number {
-			return fmt.Errorf("restart anchor: corrupt persisted head %s", hash)
+			return fmt.Errorf("restart anchor: corrupt persisted head %s", hash.Hex())
 		}
 		if err := a.check(header, nil); err != nil {
 			return err
@@ -134,7 +134,7 @@ func (a *restartAnchor) preflight() error {
 	for _, hash := range []common.Hash{rawdb.ReadHeadBlockHash(a.db), rawdb.ReadHeadFastBlockHash(a.db)} {
 		number := rawdb.ReadHeaderNumber(a.db, hash)
 		if rawdb.ReadBlock(a.db, hash, *number) == nil {
-			return fmt.Errorf("restart anchor: missing or corrupt head block %s", hash)
+			return fmt.Errorf("restart anchor: missing or corrupt head block %s", hash.Hex())
 		}
 	}
 	for height := *headNumber; height >= a.rule.Number; height-- {

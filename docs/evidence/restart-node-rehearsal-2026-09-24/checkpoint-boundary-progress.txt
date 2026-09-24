@@ -1,0 +1,12 @@
+2026-09-24T08:09:07Z
+=== RUN   TestPreservedHistoryReplay
+    replay_linux_test.go:30: read-only resume preflight matched height=2000000 hash=0x4592c42db8ddf3343dc242770d13de5d158c5e7fc1120870805b1e8731ed43cf
+    replay_linux_test.go:43: baseline replay: end=2700000 legacyCheckpointRangeEnd=2680000; ticket-seal and raw-transaction shortcuts remain active in that historical range
+    replay_linux_test.go:53: replay starting at height=2000000 hash=0x4592c42db8ddf3343dc242770d13de5d158c5e7fc1120870805b1e8731ed43cf resume=true
+    replay_linux_test.go:85: replay progress: height=2055680 root=0xb8449233f7ddf276e7777fcdf2f0ec90daece6f83f9c47b579173ba706261438
+    replay_linux_test.go:85: replay progress: height=2058240 root=0x190df8004a851207f7f692d621204ef3fd8c8a3a15683a2faa7be4c3b4f26fc0
+    replay_linux_test.go:85: replay progress: height=2060800 root=0x508bbbdb9468edf2634f15ec3883b79e582eccb17e1df82695357ddcdbc9f1f7
+Filesystem        1B-blocks         Used       Avail
+/dev/sdd       210241560576 125046648832 74440716288
+D:\            500090007552 430181998592 69908008960
+370 /home/rehearsal/replay-resume-tests -test.run=^TestPreservedHistoryReplay$ -test.v -test.timeout=12h

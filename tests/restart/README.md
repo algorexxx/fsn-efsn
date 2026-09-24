@@ -177,6 +177,24 @@ The [implementation report](../../docs/restart-anchor-implementation.md) describ
 coverage, the explicit light-mode restriction, the two rollback fixes and the
 remaining process/crash/full-state gates. The tests never use the operator's key.
 
+`TestRestartNodeRehearsal` is Linux-only and explicitly opt-in. It starts separate
+instances of the actual node and Ethereum service with disposable LevelDB stores,
+IPC endpoints and public synthetic signing keys. It refuses any network namespace
+containing an interface other than an enabled loopback. Build first, then run:
+
+```sh
+go test -race -c -o /tmp/restart-node-tests ./tests/restart
+cd tests/restart
+sudo unshare --net -- bash -c 'ip link set lo up; exec runuser -u rehearsal -- env FUSION_RESTART_NODE_REHEARSAL=1 /tmp/restart-node-tests -test.run=^TestRestartNodeRehearsal$ -test.v -test.timeout=6m'
+```
+
+Replace `rehearsal` with a local unprivileged test account. No backup path is
+needed. The tests use loopback devp2p and IPC, with no HTTP/WS, discovery, NAT,
+bootnodes or production anchor. A test-only IPC API triggers the real downloader
+and probes the worker guard; it is not included in the production node binary.
+See [the service rehearsal report](../../docs/restart-node-rehearsal.md) for the
+four scenarios, retained logs and explicit limits on the sparse history/crash case.
+
 `TestPreservedStateIntegrity`, `TestPreservedHistoryIntegrity` and
 `TestPreservedTicketReconstruction` additionally require
 `FUSION_RESTART_FULL_AUDIT=1`. Compile first and run the resulting test binary
