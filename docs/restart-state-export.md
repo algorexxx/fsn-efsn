@@ -167,6 +167,8 @@ rehearsal suffix; it does not validate arbitrary sparse-history node operation.
 Deleting that only retained parent state must fail explicitly unless an older
 verified state and the complete intervening context were deliberately included.
 
-The next gate is full-state bridge construction and independent import with
-accounting, cold restart and ticket reconstruction. Original-history signatures,
-the final recovery sequence and production anchor remain later review gates.
+The [full-state bridge rehearsal](restart-full-state-rehearsal.md) now provides
+independent import, complete synthetic accounting, cold restart and bounded
+ticket reconstruction evidence using copies of this artifact. Actual mining and
+replenishment with a deliberate ticket runway, original-history signatures, the
+final recovery sequence and production anchor remain later review gates.

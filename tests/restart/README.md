@@ -287,3 +287,29 @@ filesystem choice and remaining full-state execution work.
 See [the integrity/replay report](../../docs/restart-integrity-investigation.md)
 for measured results, limits and evidence. Successful structural checks and
 checkpoint-assisted execution are not full independent consensus verification.
+
+The [full-state rehearsal](../../docs/restart-full-state-rehearsal.md) uses new,
+checksummed copies of the exported state. `TestExportFullStateContext` is a
+Linux-only, read-only-source probe with `FUSION_RESTART_CONTEXT_OUTPUT` naming an
+absolute new RLP file; the full-audit/source variables and read-only mount are
+required. The retained context also drives ordinary integrity tests.
+
+`TestFullStateRehearsal` takes `FUSION_RESTART_FULL_STATE_DIR` (absolute disposable
+copy with the verified-copy proof) and `FUSION_RESTART_FULL_STATE_MODE`:
+`prepare`, `produce`, `import`, or `cold`. Run each phase in a separate process.
+The latter phases use the absolute `FUSION_RESTART_FULL_STATE_BLOCKS` artifact
+directory; only `produce` creates it. Source-backup environment must be unset.
+Preparation changes FSN funding and ticket ownership to public key 1, writes a
+complete difference ledger and installs a synthetic trusted parent. These are
+not mainnet node data directories. Existing fixtures and output artifacts are
+not silently reused. Use the retained Windows runner for exact copy checks,
+capacity guards, phase ordering and logs.
+
+`TestFullStateKeyAudit` reads only the state artifact when
+`FUSION_RESTART_FULL_STATE_AUDIT` is set. `TestFullStateLedgerAudit` separately
+decodes/checks fixture and block ledgers with `FUSION_RESTART_FULL_STATE_LEDGER`,
+`FUSION_RESTART_FULL_STATE_BLOCKS`, and a new absolute
+`FUSION_RESTART_FULL_STATE_ACCOUNTING` output. It opens no state database.
+`TestFullStateDifferenceAccounting` and `TestFullStateContextIntegrity` run
+without opt-in data or real keys. The full-state report records which actual
+execution, cold traversal and Linux race checks have passed and their limits.
