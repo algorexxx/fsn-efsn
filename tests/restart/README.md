@@ -306,10 +306,22 @@ not silently reused. Use the retained Windows runner for exact copy checks,
 capacity guards, phase ordering and logs.
 
 `TestFullStateKeyAudit` reads only the state artifact when
-`FUSION_RESTART_FULL_STATE_AUDIT` is set. `TestFullStateLedgerAudit` separately
+`FUSION_RESTART_FULL_STATE_AUDIT` is set. Optional
+`FUSION_RESTART_AUDIT_ADDRESS` selects one strictly validated public wallet
+address; without it the original and public-test-key accounts are reported.
+It records the source head and a current 30-day time-lock coverage window.
+`TestFullStateLedgerAudit` separately
 decodes/checks fixture and block ledgers with `FUSION_RESTART_FULL_STATE_LEDGER`,
 `FUSION_RESTART_FULL_STATE_BLOCKS`, and a new absolute
 `FUSION_RESTART_FULL_STATE_ACCOUNTING` output. It opens no state database.
 `TestFullStateDifferenceAccounting` and `TestFullStateContextIntegrity` run
 without opt-in data or real keys. The full-state report records which actual
 execution, cold traversal and Linux race checks have passed and their limits.
+
+`TestLastTicketHandover` tests a sparse two-key final-ticket transition using
+public keys 1 and 2. Synthetic successor funding is explicit: 10,001 FSN,
+the observed donation balance of 12,020.102 FSN, or an insufficient 5,001 FSN.
+It checks the old owner's selection/refund, independent imports, replacement
+purchases and an unchanged retired account. See the
+[handover report](../../docs/restart-wallet-handover.md) for the distinction
+between this core test and the remaining full-state/runtime/key-custody gates.

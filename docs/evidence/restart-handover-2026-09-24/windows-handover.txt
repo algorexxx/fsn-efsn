@@ -1,0 +1,17 @@
+=== RUN   TestLastTicketHandover
+=== RUN   TestLastTicketHandover/funded_replacements
+    handover_test.go:52: handover height=15130085 original=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf successor=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF originalTickets=0 successorTickets=1 originalRefund=5000FSN-time-lock
+    handover_test.go:52: successor-only continuation: four blocks imported independently; retired account unchanged; height=15130089 root=0xd9e90c810f71fa5898ef100469292d43cd0036368e514e6af8d48782f0141c96
+=== RUN   TestLastTicketHandover/donation_balance
+    handover_test.go:53: handover height=15130085 original=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf successor=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF originalTickets=0 successorTickets=1 originalRefund=5000FSN-time-lock
+    handover_test.go:53: successor-only continuation: four blocks imported independently; retired account unchanged; height=15130089 root=0x19433a869668651aeb2dfbc4dcb6054ab08cc04bc7baf9dbad77992bd65147ef
+=== RUN   TestLastTicketHandover/only_first_ticket_funded
+    handover_test.go:54: handover height=15130085 original=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf successor=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF originalTickets=0 successorTickets=1 originalRefund=5000FSN-time-lock
+    handover_test.go:54: 5001 FSN initial funding buys the first ticket but cannot fund its replacement before the selection refund
+--- PASS: TestLastTicketHandover (0.13s)
+    --- PASS: TestLastTicketHandover/funded_replacements (0.06s)
+    --- PASS: TestLastTicketHandover/donation_balance (0.04s)
+    --- PASS: TestLastTicketHandover/only_first_ticket_funded (0.03s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.02s)
+PASS

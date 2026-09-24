@@ -172,8 +172,10 @@ that log formatting and adds the independent accounting assertions.
 - Exercise actual full-state mining and automatic replenishment, including a
   missed purchase, restart and funding/wallet failures. Decide and demonstrate
   the initial operator/key layout and ticket runway before selecting launch
-  timing. The working launch target is one producer with existing authorized
-  funding; test sustained replenishment and restore, then later participation.
+  timing. The working launch target now includes a temporary recovery signer
+  handing over to Peter's separately funded continuing wallet; see the
+  [handover investigation](restart-wallet-handover.md). Test full-state handover,
+  purchase drain, sustained replenishment and restore, then later participation.
 - Review the historical bridge's refunds, retreats and time-lock changes; compare
   Candidate A with the explicit current-time alternative. Synthetic owner/parent
   changes alter sorting, transaction IDs and ticket IDs, so the real-signer
