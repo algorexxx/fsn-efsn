@@ -1,11 +1,17 @@
 # Recovery signer to continuing operator
 
-The intended startup uses the backup owner's wallet only to recover the chain.
-Peter wants his own funded wallet to take over, stop purchases for the backup
-owner, consume the owner's remaining tickets, then stop using that owner's key
-and return operation to him. The owner remains free to run a node and buy tickets
-later. No account restriction, balance confiscation or permanent dependence on
-the borrowed key is part of this handover.
+On 24 September 2026 Peter selected a two-node launch: the backup wallet
+`0x9fc4c40e50f902b9aa641b4a32ebaafa5c9386a1` signs one recovery block and buys
+no new tickets; the donation wallet
+`0xa3ce60d2dbf51afa0ab106df1c44a2e48853817a` then continues production and
+replenishment. Both initial nodes are operated by Peter. Stop our use of the
+backup owner's key after verified handover and return operation to him. He
+remains free to run a node and buy tickets later. No account restriction, balance
+confiscation or permanent dependence on the borrowed key is part of this plan.
+
+This selects the launch arrangement. Exact real-signer recovery blocks,
+accounting, runtime behavior and the accepted anchor still need rehearsal and
+review before production signing or public use. No real keys have been used.
 
 ## Funding observation
 
@@ -25,9 +31,9 @@ The source is the preserved 7 October 2025 block
 `0xe93ffded087a79097d4309c7831690161db6ed136f4b1a22c4c83a99db80f99f`.
 This is not a balance claim for any unknown continuation after that block.
 Only public state was read. No donation key was requested, read, unlocked or
-used, and no transfer or purchase was submitted. Selecting this wallet as the
-actual producer or choosing a separately funded staking address remains a
-funding/custody decision; a balance lookup is not a fund transfer authorization.
+used, and no transfer or purchase was submitted. Peter subsequently selected
+this donation wallet as the continuing producer; no transfer from the backup
+owner's balance is required by this arrangement.
 
 The 10,001-FSN synthetic successor budget succeeds: 5,000 for the first ticket,
 5,000 available for replacement before the selection refund, and 1 for gas.
@@ -44,7 +50,73 @@ ticket refund. With only the successor's ticket remaining, the chain cannot
 simply consume it and leave zero tickets. This demonstrates why funding one
 ticket plus gas is insufficient for this particular standalone successor setup.
 
-## Proposed handover sequence
+## Selected one-block startup
+
+1. Prepare two nodes with separately writable, verified copies of the accepted
+   data and one active signer per key. Keep the backup wallet's automatic
+   purchases disabled from the outset, including after restart. Inventory and
+   reconcile any existing pending purchases, nonces and purchase journals.
+2. Construct the donation wallet's first funded ticket purchase before mining.
+   Its start must fit the historical parent timestamp and its end must extend
+   beyond the planned present-day jump, with the required ticket duration and
+   operating margin. An ordinary 30-day purchase based on the old timestamp
+   expires before that jump. Explicitly construct and submit this first purchase;
+   the donation node cannot mine before its ticket exists in parent state.
+3. The backup wallet signs exactly one historically timed recovery block,
+   containing that donation purchase and no purchase from the backup wallet.
+   Its selected historical ticket receives the normal remaining-interval refund.
+4. The donation signer produces the next block at the planned jump timestamp,
+   including a replacement purchase, and continues producing/replenishing.
+   Clear the expired historical ticket set under existing rules and verify the
+   complete recovery sequence independently. The jump block's purchase also
+   needs an explicit interval spanning the jump; do not rely on the automatic
+   buyer's historical 30-day default. After the head reaches the present-day
+   timestamp, demonstrate ordinary automatic replenishment and cold restart.
+5. Verify there are no backup-wallet purchases still capable of being included
+   from the recovery operation. Stop the recovery instance/signing access and
+   provide its owner current data, configuration and the accounting record.
+   Coordinate custody so our signer and his node never sign concurrently using
+   the same key. Returning a copied key does not revoke other copies.
+6. Publish the release and recovery data enforcing the accepted restart anchor
+   before opening ordinary economic use. Keep the donation producer running;
+   other holders may join and stake normally. Neither a second permanent
+   producer nor another organization is required for this initial arrangement.
+
+The backup wallet has **two** historical tickets at the preserved head. One
+backup block consumes only one by selection. Its other ticket has expired by
+the jump and is removed by retreat or expiry processing, without a refund of
+that expired interval. This is different from the earlier proposal to mine the
+owner's final remaining ticket after a longer recovery bridge. Existing future
+time-lock rights are not transferred to Peter; exact original-owner accounting
+must accompany the real sequence. If refunding both selected historical tickets
+before the jump is required, the one-backup-block constraint must be reconsidered.
+
+`TestSingleBackupBlockHandover` demonstrates this shorter sequence with public
+keys 1 and 2 and synthetic successor funding equal to the observed donation
+balance. It uses the RPC purchase builder for the first long-lived ticket,
+imports the sole original-signer block at 15,130,081, then imports five successor
+blocks independently. The first successor block jumps to 23 September 2026;
+the second clears the remaining expired ticket set, leaving one successor
+ticket. No original-wallet transaction is submitted, and the original account
+is byte-identical throughout successor-only production after its first refund.
+In this fixture its other ticket is retreated in the jump block without a refund.
+Real addresses alter ticket ordering, so that particular retreat slot is not a
+production prediction. `TestSingleBackupBlockRejectsShortSuccessorTicket`
+confirms that a first ticket ending 30 days after the old timestamp cannot seal
+the jump and that rejecting it leaves the canonical head unchanged.
+
+These sparse core tests pass on Windows and twice on Linux with race detection.
+They do not prove full-state accounting, actual worker timestamps, pool/network
+submission, automatic-purchase startup or two-process handover. Those runtime
+checks are the next gate. The fixture's fixed dates and synthetic roots are
+test inputs, not launch dates or a production anchor. Evidence:
+[single-block rehearsal](evidence/restart-single-block-handover-2026-09-24).
+
+## Earlier final-ticket handover alternative
+
+The earlier tested construction below uses four backup-signer bridge blocks
+before its final handover block. It remains useful as a comparison, but is not
+the selected one-backup-block startup.
 
 1. Complete the historical bridge with the backup owner's authorized signer.
    Prepare Peter's separate node/wallet and prove its funding and purchase
@@ -88,7 +160,7 @@ The real-node rehearsal must cover shutdown/drain, restart with purchases
 disabled, existing signed transactions and canonical reconciliation. Do not
 claim the handover is complete from the RPC return value alone.
 
-## Test result and scope
+## Earlier final-ticket test result and scope
 
 `TestLastTicketHandover` uses public keys 1 and 2 with the existing sparse
 restart fixture. It explicitly installs synthetic funding for key 2 in that

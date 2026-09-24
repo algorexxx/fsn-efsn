@@ -325,3 +325,13 @@ It checks the old owner's selection/refund, independent imports, replacement
 purchases and an unchanged retired account. See the
 [handover report](../../docs/restart-wallet-handover.md) for the distinction
 between this core test and the remaining full-state/runtime/key-custody gates.
+
+`TestSingleBackupBlockHandover` tests the subsequently selected shorter startup:
+one original-signer historical block includes the successor's first long-lived
+purchase; the successor then jumps forward and produces five blocks with
+replacements. Independent imports agree, the original signer makes no purchase,
+its selected ticket is refunded, and its other historical ticket disappears
+without another account credit. `TestSingleBackupBlockRejectsShortSuccessorTicket`
+rejects using a historical 30-day ticket to seal the present-day jump. Both use
+public test keys and explicit synthetic successor funding of 12,020.102 FSN;
+neither uses real keys or proves actual miner/network/auto-buy operation.

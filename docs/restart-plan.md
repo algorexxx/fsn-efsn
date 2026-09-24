@@ -20,8 +20,8 @@ address the reproduced receipt-log race, reconstruction expiry mismatch and
 missing-ancestor panic. The [purchase controller](restart-purchase-controller.md)
 adds startup attempts, periodic retry, signed-transaction recovery and canonical
 receipt monitoring, with explicit pauses for nonce conflicts and missing nonces.
-Complete historical execution, full-state recovery, the accepted restart anchor
-and independent operator rehearsals remain outstanding.
+Complete historical execution, full-state miner/runtime recovery, the accepted
+restart anchor and launch operator rehearsals remain outstanding.
 
 The [anchor entry-point investigation](restart-anchor-investigation.md) now
 reproduces heavier-chain replacement and legacy-checkpoint gaps involving stored
@@ -57,7 +57,7 @@ Restart Fusion from an explicitly accepted historical state, using the smallest 
 
 The backup is a candidate starting point, not a claim that no later valid blocks exist. Additional history can be assessed before the launch decision. Once accepted and used, the restart boundary must not silently move in response to a returning operator.
 
-The working launch target, clarified on 24 September 2026, is the smallest viable startup: the recovered owner's signer mines the recovery blocks, then Peter's separately funded wallet takes over as the continuing producer. Stop replenishing the recovered owner's tickets, account for its final selection/refunds and any pending purchases, stop our use of its key and return operation to its owner. He may run his own node later. The [wallet handover investigation](restart-wallet-handover.md) records a synthetic final-ticket switch and the donation wallet's preserved funding; full-state/runtime verification remains open. Publish the anchor-enforcing release, verified recovery data and a reachable DNS discovery endpoint, which the continuing producer may also host. A separate validator fleet or dedicated seeds are not required for day one. Other holders can download the release, follow the data/configuration checks, synchronize and choose to produce blocks using ordinary funded tickets. Joining needs no new operator allowlist. Demonstrate separate-process verification during rehearsal without treating that verifier as a mandatory second permanently hosted node.
+The working launch target, selected on 24 September 2026, uses two nodes initially operated by Peter: backup wallet `0x9fc4c40e50f902b9aa641b4a32ebaafa5c9386a1` signs one historical recovery block without buying another ticket, and donation wallet `0xa3ce60d2dbf51afa0ab106df1c44a2e48853817a` takes over production and replenishment. That first recovery block must include the donation wallet's funded, long-lived first ticket purchase; it cannot wait until the donation node starts mining. The donation signer then bridges to the planned present-day timestamp. The backup wallet has two historical tickets: one is selected/refunded, while the other expires and is removed without another refund of its expired interval. The [wallet handover investigation](restart-wallet-handover.md) records passing sparse consensus tests for this exact one-backup-block arrangement, the earlier longer alternative, and the donation wallet's preserved funding. Full-state accounting and actual two-node miner/automatic-purchase verification remain open. Stop our use of the backup key after verified handover and return operation to its owner; he may run his own node later. Publish the anchor-enforcing release, verified recovery data and a reachable DNS discovery endpoint, which the continuing producer may also host. A separate validator fleet or dedicated seeds are not required for day one. Other holders can download the release, follow the data/configuration checks, synchronize and choose to produce blocks using ordinary funded tickets. Joining needs no new operator allowlist. Demonstrate separate-process verification during rehearsal without treating that verifier as a mandatory second permanently hosted node.
 
 In scope:
 
@@ -223,18 +223,18 @@ Every proposed implementation and release must satisfy these requirements:
 
 ## 5. Compare two recovery candidates
 
-Both candidates require the accepted restart anchor. Neither is approved for launch. Candidate A has a successful synthetic import sequence but a confirmed reconstruction defect; a temporary parent-time correction passes the focused experiment. Candidate B has not been implemented or tested.
+Both candidates require the accepted restart anchor. Candidate A is the working route for the selected two-wallet startup; exact production blocks and launch remain unapproved. Its reproduced reconstruction defect has a narrow correction and passing follow-up checks. Candidate B remains a fallback and has not been implemented or tested.
 
 ### Candidate A — a short bridge under existing ticket rules
 
-Experiment sequence, not executable launch instructions:
+Selected one-backup-block experiment sequence, not executable launch instructions:
 
-1. Construct a block just after `B`, with a valid historical timestamp and ordinary selection by the known owner. Start with no unrelated transactions. Verify the selected ticket, order, difficulty, retreat effects, and ordinary refund.
-2. Using the other old ticket, construct another historical-time block containing a normally funded ticket whose lifetime reaches beyond the planned time jump. Verify the refund actually supplies continuous coverage, and account for fees before execution.
-3. Advance to current time using that new long-lived ticket. Include required replenishment so consuming it does not halt subsequent blocks.
-4. Continue through the next blocks to demonstrate expired-ticket cleanup and stable present-day operation, including cold reconstruction. The exact number of bridge blocks is not yet known.
+1. Construct the sole backup-signer block just after `B`, with a valid historical timestamp and ordinary ticket selection. Include the donation wallet's funded long-lived first ticket purchase; exclude unrelated transactions and backup-wallet purchases. Verify selection, difficulty, retreats and the original selected-ticket refund.
+2. The donation signer advances to the planned current-time timestamp using that new ticket. Include its replacement purchase with an explicit interval spanning the jump. Account for the backup wallet's unused expired ticket without assuming a second selection refund.
+3. Continue donation-only production through expired-ticket cleanup and ordinary replenishment. The sparse test leaves one successor ticket after its second block, but real-address ordering and full-state accounting must be checked.
+4. Verify actual worker/construction behavior, independent import, cold reconstruction, automatic-purchase startup and restart before accepting exact recovery artifacts.
 
-Why test it first: source rules allow old timestamps subject to their checks, and ticket lifetimes have no maximum in the inspected validation. The recorded balances plus ordinary refunds make funding plausible. It may leave production ticket validation unchanged.
+Source rules allow old timestamps subject to their checks, and ticket lifetimes have no maximum in the inspected validation. The donation wallet's preserved liquid funding allows its first purchase without waiting for the backup wallet's refund. Sparse Windows/Linux tests now demonstrate this transition without new ticket-validity exceptions. The earlier backup-only sequence, which needs a historical refund before its own long purchase, remains recorded in the bridge experiment and the handover report's alternative.
 
 Reasons to reject or revise it:
 
@@ -247,7 +247,7 @@ Reasons to reject or revise it:
 
 The bridge would be newly created recovery history bearing historical timestamps, not evidence those blocks existed in 2025. Publish this fact and the full ledger. Do not simulate a year of catch-up mining or change the operating system clock as a launch procedure.
 
-Construction must explicitly set the purchase lifetime in steps 2 and 3: their
+Construction must explicitly set the purchase lifetime in steps 1 and 2: their
 parent timestamps are still historical, and default 30-day purchases fail today's
 pool checks. The ordinary worker uses wall-clock timestamps, so stock mining
 controls alone do not construct these historical bridge blocks. The tests prove
@@ -391,7 +391,7 @@ Gate: reproducible build, understood baseline failures, and an executable test h
 - Match synthetic account/ticket/time-lock structure to the relevant observed conditions.
 - Maintain an exact ledger after every block, including effects on offline owners.
 - Test a second node importing the producer's blocks; test cold restart and missing-state reconstruction.
-- Demonstrate automated or scripted ticket replenishment, initial submission on an empty pool, cold restart, bounded retry after a failed purchase without any new head, and failure behavior if a purchase is delayed. Rehearse the two-wallet handover: old-owner purchases disabled/drained, successor ticket funded, old owner's final ticket/refund accounted for, then successor-only operation. Verify that disabling purchases and restarting cannot unexpectedly resume old-owner purchases; account for signed transactions already in pools, journals or peer circulation. Additional hosted producers are not a prerequisite for the minimal startup.
+- Demonstrate automated or scripted ticket replenishment, initial submission on an empty pool, cold restart, bounded retry after a failed purchase without any new head, and failure behavior if a purchase is delayed. Rehearse the selected one-backup-block handover: backup purchases disabled/drained, donation first purchase included in that block, explicit jump-spanning purchase intervals, original selected-ticket refund and unused-ticket expiry accounted for, then donation-only operation. Verify that disabling purchases and restarting cannot unexpectedly resume old-owner purchases; account for signed transactions already in pools, journals or peer circulation. Additional hosted producers are not a prerequisite for the minimal startup.
 - Run an isolated rehearsal on a copy of the backup only after the signing/artifact policy is defined. Do not produce multiple conflicting real-key signatures merely to iterate tests.
 
 Gate: a selected sequence, exact rule changes if any, independent state agreement, adequate ticket runway, and no unexplained accounting differences.
@@ -409,7 +409,7 @@ Gate: incompatible history cannot become canonical through any supported path; c
 ### Phase 5 — organization, infrastructure, and operator rehearsal
 
 - Establish the organization and release governance described in sections 9–11.
-- Use the backup owner temporarily for recovery and Peter's separate wallet as the continuing producer; agree funding, the overlap/handover sequence, custody and restore requirements before choosing a date. The initial two-wallet transition does not require two permanently hosted producers. Extra producers and independent organizations may join later. Multiple machines or addresses under one operator do not establish organizational independence.
+- Use the selected backup wallet for one historical block and the donation wallet as the continuing producer; verify the exact handover sequence, accounting, custody and restore requirements before choosing a date. The initial two-wallet transition does not require two permanently hosted producers. Extra producers and independent organizations may join later. Multiple machines or addresses under one operator do not establish organizational independence.
 - Verify the selected release and imports across separate machines/processes; seek external operator verification when available. Non-producing full nodes and discovery nodes require no tickets. Keep only one active signer per key; additional simultaneous producers need distinct funded keys, and failover must prevent overlapping signers.
 - Demonstrate fresh synchronization and restore from a published, checksummed artifact; publish the artifact's trust assumptions.
 - Rehearse DNS loss, bootnode loss, validator outage, restart, disk pressure, clock errors, and network partitions using disposable networks.
@@ -534,7 +534,7 @@ Ongoing finality remains outside scope. Do not expand the restart into permanent
 | Anchor location/hash | End of accepted recovery sequence proposed | Final release/public use |
 | Chain ID, network ID, transaction replay policy | Preserve history; no new ID selected | Wallet/operator integration and release |
 | Native decode defect and other audit findings | Separate triage; no automatic inclusion | Go/no-go decision |
-| Initial operators, producer keys and ticket runway | Temporary backup-owner recovery signer, then Peter's separate funded signer. Donation address has 12,020.102 liquid FSN at the preserved head; exact use/address choice remains a custody/funding decision. Prove purchase drain, final-ticket handover, sustained replenishment and restore. | Launch date |
+| Initial operators, producer keys and ticket runway | Peter selected two initial nodes: one backup-wallet block including the donation wallet's first long-lived purchase, then donation-only production. Donation balance is 12,020.102 liquid FSN at the preserved head. Prove full-state accounting, purchase drain, actual miner handover, sustained replenishment and restore. | Launch date |
 | Key custody and real-data rehearsal procedure | Synthetic keys first; avoid conflicting production signatures | Access to production signer |
 | Supported sync modes and bootstrap artifacts | Must be demonstrated; unsupported modes explicitly excluded | Operator release |
 | Organization, maintainers, domains, hosts | Not yet selected | Infrastructure deployment |
@@ -563,7 +563,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Review the [full-state recovery rehearsal](restart-full-state-rehearsal.md) and [two-wallet handover](restart-wallet-handover.md). Extend to full-state operation with the actual mining worker and automatic replenishment, including missed purchases, disabling/draining the temporary recovery wallet, successor-only production and restore. The sparse handover test includes the donation wallet's observed balance and an insufficient replacement-funding case. Keep the verified state artifact and original backup intact, and review real-signer refunds/retreats before selecting the recovery sequence.
+5. Review the [full-state recovery rehearsal](restart-full-state-rehearsal.md) and [two-wallet handover](restart-wallet-handover.md). Extend to full-state operation with the actual mining worker and automatic replenishment, including missed purchases, disabling/draining the temporary recovery wallet, successor-only production and restore. Sparse tests cover the selected one-backup-block startup and rejection of an expired first ticket, plus the earlier final-ticket handover with the donation balance and an insufficient replacement-funding case. Keep the verified state artifact and original backup intact, and review real-signer refunds/retreats before selecting the recovery sequence.
 6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation
