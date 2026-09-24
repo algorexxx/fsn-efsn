@@ -109,8 +109,10 @@ These sparse core tests pass on Windows and twice on Linux with race detection.
 The subsequent [full-state handover rehearsal](restart-full-state-handover.md)
 also passes complete-state independent imports, owner-by-owner accounting,
 actual worker/automatic-buyer production, a failed submission and process
-restart on both platforms. Full node-service/P2P handover and backup-wallet
-purchase drain remain open. The fixture's fixed dates and synthetic roots are
+restart on both platforms. The [guarded two-node follow-up](restart-recovery-construction.md)
+now also passes actual service/IPC/peer handover, ordinary mining immediately
+after cleanup, SIGKILL restart and independent cold ledgers. Actual backup-wallet
+purchase drain, production signing custody and supported data distribution remain open. The fixture's fixed dates and synthetic roots are
 test inputs, not launch dates or a production anchor. Evidence:
 [single-block rehearsal](evidence/restart-single-block-handover-2026-09-24).
 
@@ -120,8 +122,9 @@ omitted. Require that replacement and a usable successor ticket before signing
 or publishing the recovery block. Keep the initial handover/jump/cleanup
 construction controlled until those checks pass. The cleanup block rejects a
 missing replacement, but the jump itself does not provide that protection.
-The demonstrated worker run starts after cleanup and additional constructed
-donation blocks; it does not authorize unattended worker startup at the old head.
+The earlier worker run starts after cleanup and additional constructed donation
+blocks. The two-node follow-up starts ordinary production directly after cleanup.
+Neither permits unattended worker startup at the old historical head.
 
 ## Earlier final-ticket handover alternative
 
@@ -196,8 +199,10 @@ The existing last-ticket/no-purchase rejection is tested alongside it.
 
 Windows passes the three handover cases and existing negative case. Linux runs
 the same set twice with race detection in a private network namespace. This
-does not yet prove a full-state two-wallet handover, actual miner/auto-buy drain,
-network propagation, cold restart or key-custody cleanup. Those are the next
-rehearsal gates; no production code or consensus rules changed.
+earlier sparse result alone does not prove complete-state operation or key
+custody. Complete-state execution, peer propagation and process restart are now
+covered by the later reports linked above; actual backup-wallet purchase drain
+and key-custody cleanup remain open. This earlier experiment changed no
+production code or consensus rules.
 
 Evidence: [restart-handover-2026-09-24](evidence/restart-handover-2026-09-24).

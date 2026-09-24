@@ -1,0 +1,232 @@
+=== RUN   TestFullStateRecoveryNodes
+    recovery_nodes_linux_test.go:81: controlled stage=1 hash=0x7e16c5dabebb465314f9d48ba24bbb2cb836768a5264d5193329b46fd69af3da root=0xdfab33d93bdcb5e278b642a8894bd8422ca0a47bd86e111f117bd00c3500ad59; rejected unsafe plan before signing; peer imported identical block
+    recovery_nodes_linux_test.go:81: controlled stage=2 hash=0x9aaa779dad8d3883bff738d99f6a3c360812f658ccffd4778a6a4aa0c9ec862a root=0xf19455dbbd7f131bcb9179c591c967d614470d07d0814fb74b52ac458f201be8; rejected unsafe plan before signing; peer imported identical block
+    recovery_nodes_linux_test.go:81: controlled stage=3 hash=0x94ed041a999c47e4a3797f3f33067e3cdf011add53b786832f3ad334d9727345 root=0xea437527f99ff52f682abfe458941f2a4a56b8023d8fd7f3d4e99dd7efaf6cf4; rejected unsafe plan before signing; peer imported identical block
+=== RUN   TestFullStateRecoveryNodes/cold-ledger-0
+INFO [09-24|17:14:29.437] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-node-v5/guarded-recovery-backup/chaindata cache=256.00MiB handles=128
+INFO [09-24|17:14:29.526] Loaded most recent local header          number=15,130,086 hash="f53717…ce50ac" td=63,370,514,670 age=32s
+INFO [09-24|17:14:29.527] Loaded most recent local full block      number=15,130,086 hash="f53717…ce50ac" td=63,370,514,670 age=32s
+INFO [09-24|17:14:29.527] Loaded most recent local fast block      number=15,130,086 hash="f53717…ce50ac" td=63,370,514,670 age=32s
+    recovery_nodes_linux_test.go:131: block=1 height=15130081 time=1759826750 signer=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf hash=0x7e16c5dabebb465314f9d48ba24bbb2cb836768a5264d5193329b46fd69af3da root=0xdfab33d93bdcb5e278b642a8894bd8422ca0a47bd86e111f117bd00c3500ad59 tickets=485 changedAccounts=8
+    recovery_nodes_linux_test.go:131: block=2 height=15130082 time=1790121600 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x9aaa779dad8d3883bff738d99f6a3c360812f658ccffd4778a6a4aa0c9ec862a root=0xf19455dbbd7f131bcb9179c591c967d614470d07d0814fb74b52ac458f201be8 tickets=480 changedAccounts=2
+    recovery_nodes_linux_test.go:131: block=3 height=15130083 time=1790121720 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x94ed041a999c47e4a3797f3f33067e3cdf011add53b786832f3ad334d9727345 root=0xea437527f99ff52f682abfe458941f2a4a56b8023d8fd7f3d4e99dd7efaf6cf4 tickets=1 changedAccounts=2
+    recovery_nodes_linux_test.go:131: block=4 height=15130084 time=1790262815 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0xc093e5b283ab2be405a10b157e4e20b2d5c64fa528a7ee272125330f67d93f0e root=0x7d592d5d724f1cc7729caa9387bbbf8dd9c2769e9b327c3f0bbd5bcb72b6ed67 tickets=1 changedAccounts=2
+    recovery_nodes_linux_test.go:131: block=5 height=15130085 time=1790262826 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x622a3c280303de25e506348682748b357221be5347991c4a1cdcd655dbe05277 root=0x09deab3a022b83e8728ce61bd4db3cd7ca968ebbd41ed205bbe1435c68875927 tickets=1 changedAccounts=2
+    recovery_nodes_linux_test.go:131: block=6 height=15130086 time=1790262837 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0xf53717e738f6f5ca16bd806ddd12faa56a991f1fedff639ee81005ad5dce50ac root=0xe06ab26659b2675be6156e2bd86751588accf78688932420f1db2efd7bf45ee9 tickets=1 changedAccounts=2
+INFO [09-24|17:14:30.784] Blockchain manager stopped 
+=== RUN   TestFullStateRecoveryNodes/cold-ledger-1
+INFO [09-24|17:14:31.015] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-node-v5/guarded-recovery-donation/chaindata cache=256.00MiB handles=128
+INFO [09-24|17:14:31.118] Loaded most recent local header          number=15,130,086 hash="f53717…ce50ac" td=63,370,514,670 age=34s
+INFO [09-24|17:14:31.119] Loaded most recent local full block      number=15,130,086 hash="f53717…ce50ac" td=63,370,514,670 age=34s
+INFO [09-24|17:14:31.119] Loaded most recent local fast block      number=15,130,086 hash="f53717…ce50ac" td=63,370,514,670 age=34s
+INFO [09-24|17:14:32.482] Blockchain manager stopped 
+=== NAME  TestFullStateRecoveryNodes
+    recovery_nodes_linux_test.go:146: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    recovery_nodes_linux_test.go:146: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    recovery_nodes_linux_test.go:146: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    recovery_nodes_linux_test.go:146: accounted block=4 height=15130084 accounts=2 temporalBoundaries=6 tickets=1 feeWei=21224000021224 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    recovery_nodes_linux_test.go:146: accounted block=5 height=15130085 accounts=2 temporalBoundaries=6 tickets=1 feeWei=21224000021224 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    recovery_nodes_linux_test.go:146: accounted block=6 height=15130086 accounts=2 temporalBoundaries=6 tickets=1 feeWei=21224000021224 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    recovery_nodes_linux_test.go:146: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; blocks=6 totalRewardWei=1875000000000000000; no database opened
+    recovery_nodes_linux_test.go:147: two real full-state services: backup signed exactly one controlled block; donation signed jump/cleanup then three ordinary worker blocks, including one after SIGKILL/reopen; final=0xf53717e738f6f5ca16bd806ddd12faa56a991f1fedff639ee81005ad5dce50ac root=0xe06ab26659b2675be6156e2bd86751588accf78688932420f1db2efd7bf45ee9
+    node_rehearsal_linux_test.go:290: node process /tmp/TestFullStateRecoveryNodes1473828416/002/process-3844551563.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-24|17:13:57.296] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-24|17:13:57.297] Allocated cache and file handles         database=/tmp/TestFullStateRecoveryNodes1473828416/002/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-24|17:13:57.376] Persisted trie from memory database      nodes=24 size=3.95KiB time="188.331µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-24|17:13:57.378]  
+        INFO [09-24|17:13:57.378] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-24|17:13:57.378] Chain ID:  32659 (mainnet) 
+        INFO [09-24|17:13:57.378] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-24|17:13:57.378]  
+        INFO [09-24|17:13:57.378] hard forks: 
+        INFO [09-24|17:13:57.378]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-24|17:13:57.378]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-24|17:13:57.378]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-24|17:13:57.378]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-24|17:13:57.378]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-24|17:13:57.378]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-24|17:13:57.378]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-24|17:13:57.378]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-24|17:13:57.378]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-24|17:13:57.378]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-24|17:13:57.378]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-24|17:13:57.378]  - Fusion Eco:                  8250000  
+        INFO [09-24|17:13:57.378]  
+        INFO [09-24|17:13:57.378]  
+        INFO [09-24|17:13:57.378] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-24|17:13:57.378]  
+        INFO [09-24|17:13:57.381] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-24|17:13:57.385] Loaded most recent local header          number=15,130,085 hash="622a3c…e05277" td=63,370,514,668 age=11s
+        INFO [09-24|17:13:57.385] Loaded most recent local full block      number=15,130,085 hash="622a3c…e05277" td=63,370,514,668 age=11s
+        INFO [09-24|17:13:57.385] Loaded most recent local fast block      number=15,130,085 hash="622a3c…e05277" td=63,370,514,668 age=11s
+        INFO [09-24|17:13:57.388] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-24|17:13:57.392] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-24|17:13:57.392] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-24|17:13:57.392] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-24|17:13:57.392] Starting P2P networking 
+        ERROR[09-24|17:13:57.392] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:57.392] RLPx listener up                         self="enode://349da7753950a9de04f2fb9cb0571bb4f55d4b5e1799fd21dd49272ffd58c6185f7dcc5122ae0fa38979d6b0715bd2eb9bb66effa107517692baf8a1db1d24ab@127.0.0.1:42069?discport=0"
+        INFO [09-24|17:13:57.396] IPC endpoint opened                      url=/tmp/TestFullStateRecoveryNodes1473828416/002/lab.ipc
+        INFO [09-24|17:13:57.433] Transaction pool price threshold updated price=1
+        WARN [09-24|17:13:57.435] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-24|17:13:57.435] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-24|17:14:02.422] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [09-24|17:14:02.423] Submitted transaction                    hash=0xe2de4b9f6dcccc2e555be9d4b012098239cb67ff6e54a4cb71198dcb74c3630e from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=5 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-24|17:14:02.423] Automatic ticket submitted; awaiting inclusion tx="e2de4b…c3630e" nonce=5
+        INFO [09-24|17:14:02.439] Commit new mining work                   number=15,130,086 sealhash="b09e52…654761" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.704ms
+        INFO [09-24|17:14:08.007] Successfully sealed new block            number=15,130,086 sealhash="b09e52…654761" hash="f53717…ce50ac" difficulty=2 elapsed=5.567s
+        INFO [09-24|17:14:08.007] 🔨 mined potential block                  number=15,130,086 hash="f53717…ce50ac"
+        INFO [09-24|17:14:08.008] Automatic ticket purchase confirmed      tx="e2de4b…c3630e" block="f53717…ce50ac"
+        INFO [09-24|17:14:08.011] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-24|17:14:08.022] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        WARN [09-24|17:14:08.022] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-24|17:14:08.022] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-24|17:14:08.030] Submitted transaction                    hash=0x6d2c00e8b4125a3285941aeff80c81e1e4c1d5cd54c71dbbdd38148bb9c5a3ee from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=6 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-24|17:14:08.030] Automatic ticket submitted; awaiting inclusion tx="6d2c00…c5a3ee" nonce=6
+        INFO [09-24|17:14:28.146] IPC endpoint closed                      url=/tmp/TestFullStateRecoveryNodes1473828416/002/lab.ipc
+        INFO [09-24|17:14:28.146] Stopping Ethereum protocol 
+        INFO [09-24|17:14:28.146] Ethereum protocol stopped 
+        INFO [09-24|17:14:28.146] Transaction pool stopped 
+        INFO [09-24|17:14:28.146] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (31.36s)
+        PASS
+    node_rehearsal_linux_test.go:290: node process /tmp/TestFullStateRecoveryNodes1473828416/002/process-1765163922.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-24|17:13:34.789] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-24|17:13:34.789] Allocated cache and file handles         database=/tmp/TestFullStateRecoveryNodes1473828416/002/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-24|17:13:34.873] Persisted trie from memory database      nodes=24 size=3.95KiB time="254.303µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-24|17:13:34.879]  
+        INFO [09-24|17:13:34.879] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-24|17:13:34.879] Chain ID:  32659 (mainnet) 
+        INFO [09-24|17:13:34.879] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-24|17:13:34.879]  
+        INFO [09-24|17:13:34.879] hard forks: 
+        INFO [09-24|17:13:34.879]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-24|17:13:34.879]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-24|17:13:34.879]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-24|17:13:34.879]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-24|17:13:34.879]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-24|17:13:34.879]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-24|17:13:34.879]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-24|17:13:34.879]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-24|17:13:34.879]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-24|17:13:34.879]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-24|17:13:34.879]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-24|17:13:34.879]  - Fusion Eco:                  8250000  
+        INFO [09-24|17:13:34.879]  
+        INFO [09-24|17:13:34.879]  
+        INFO [09-24|17:13:34.879] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-24|17:13:34.879]  
+        INFO [09-24|17:13:34.888] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-24|17:13:34.892] Loaded most recent local header          number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+        INFO [09-24|17:13:34.893] Loaded most recent local full block      number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+        INFO [09-24|17:13:34.893] Loaded most recent local fast block      number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+        INFO [09-24|17:13:34.896] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-24|17:13:34.901] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-24|17:13:34.901] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-24|17:13:34.901] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-24|17:13:34.901] Starting P2P networking 
+        ERROR[09-24|17:13:34.901] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:34.902] RLPx listener up                         self="enode://349da7753950a9de04f2fb9cb0571bb4f55d4b5e1799fd21dd49272ffd58c6185f7dcc5122ae0fa38979d6b0715bd2eb9bb66effa107517692baf8a1db1d24ab@127.0.0.1:42069?discport=0"
+        INFO [09-24|17:13:34.906] IPC endpoint opened                      url=/tmp/TestFullStateRecoveryNodes1473828416/002/lab.ipc
+        INFO [09-24|17:13:35.317] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=101.597ms mgasps=0.209 order=6 number=15,130,081 hash="7e16c5…9af3da" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dfab33…00ad59" parentHash="e463e5…951458" time=1,759,826,750 age=11mo3w1d cache=0.00B
+        ERROR[09-24|17:13:35.318] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        WARN [09-24|17:13:35.418] Served lab_construct                     reqid=9 duration="460.453µs" err="purchase must remain usable beyond the next planned timestamp"
+        INFO [09-24|17:13:35.456] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.819ms  mgasps=1.432 order=5 number=15,130,082 hash="9aaa77…ec862a" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f19455…201be8" parentHash="7e16c5…9af3da" time=1,790,121,600 age=1d15h13m cache=0.00B
+        ERROR[09-24|17:13:35.458] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        WARN [09-24|17:13:35.571] Served lab_construct                     reqid=14 duration="359.402µs" err="purchase must remain usable beyond the next planned timestamp"
+        INFO [09-24|17:13:35.584] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.404ms   mgasps=3.927 order=4 number=15,130,083 hash="94ed04…727345" difficulty=74 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ea4375…af6cf4" parentHash="9aaa77…ec862a" time=1,790,121,720 age=1d15h11m cache=0.00B
+        ERROR[09-24|17:13:35.585] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:35.689] Transaction pool price threshold updated price=1
+        WARN [09-24|17:13:35.689] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-24|17:13:35.689] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-24|17:13:35.706] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [09-24|17:13:35.706] Submitted transaction                    hash=0x5448700cd6186eb9f2b74a790964f75b89afc1887999bdccdf7101fed2c6b626 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=3 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-24|17:13:35.707] Automatic ticket submitted; awaiting inclusion tx="544870…c6b626" nonce=3
+        INFO [09-24|17:13:36.693] Commit new mining work                   number=15,130,084 sealhash="e4f06a…9a609b" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.799ms
+        INFO [09-24|17:13:46.004] Successfully sealed new block            number=15,130,084 sealhash="e4f06a…9a609b" hash="c093e5…d93f0e" difficulty=2  elapsed=9.311s
+        INFO [09-24|17:13:46.004] 🔨 mined potential block                  number=15,130,084 hash="c093e5…d93f0e"
+        INFO [09-24|17:13:46.004] Upgrading chain index                    type=bloombits percentage=0
+        WARN [09-24|17:13:46.005] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-24|17:13:46.005] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        ERROR[09-24|17:13:46.008] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:46.008] Automatic ticket purchase confirmed      tx="544870…c6b626" block="c093e5…d93f0e"
+        INFO [09-24|17:13:46.020] Submitted transaction                    hash=0xf97d33b5f73769d8c04b295da863feaca366194c06e1876b58d77aab03ef00f2 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=4 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-24|17:13:46.020] Automatic ticket submitted; awaiting inclusion tx="f97d33…ef00f2" nonce=4
+        INFO [09-24|17:13:47.007] Commit new mining work                   number=15,130,085 sealhash="509839…9b9698" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.684ms
+        INFO [09-24|17:13:57.003] Successfully sealed new block            number=15,130,085 sealhash="509839…9b9698" hash="622a3c…e05277" difficulty=2  elapsed=9.996s
+        INFO [09-24|17:13:57.003] 🔨 mined potential block                  number=15,130,085 hash="622a3c…e05277"
+        WARN [09-24|17:13:57.004] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-24|17:13:57.004] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-24|17:13:57.004] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-24|17:13:57.004] Automatic ticket purchase confirmed      tx="f97d33…ef00f2" block="622a3c…e05277"
+        ERROR[09-24|17:13:57.005] Section processing failed                type=bloombits error="canonical block #1 unknown"
+    node_rehearsal_linux_test.go:290: node process /tmp/TestFullStateRecoveryNodes1473828416/001/process-2743896127.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-24|17:13:33.690] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-24|17:13:33.691] Allocated cache and file handles         database=/tmp/TestFullStateRecoveryNodes1473828416/001/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-24|17:13:33.797] Persisted trie from memory database      nodes=24 size=3.95KiB time="755.597µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-24|17:13:33.799]  
+        INFO [09-24|17:13:33.799] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-24|17:13:33.799] Chain ID:  32659 (mainnet) 
+        INFO [09-24|17:13:33.799] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-24|17:13:33.799]  
+        INFO [09-24|17:13:33.800] hard forks: 
+        INFO [09-24|17:13:33.800]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-24|17:13:33.800]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-24|17:13:33.800]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-24|17:13:33.800]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-24|17:13:33.800]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-24|17:13:33.800]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-24|17:13:33.800]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-24|17:13:33.800]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-24|17:13:33.800]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-24|17:13:33.800]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-24|17:13:33.800]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-24|17:13:33.800]  - Fusion Eco:                  8250000  
+        INFO [09-24|17:13:33.800]  
+        INFO [09-24|17:13:33.800]  
+        INFO [09-24|17:13:33.800] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-24|17:13:33.800]  
+        INFO [09-24|17:13:33.809] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-24|17:13:33.815] Loaded most recent local header          number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+        INFO [09-24|17:13:33.815] Loaded most recent local full block      number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+        INFO [09-24|17:13:33.815] Loaded most recent local fast block      number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+        INFO [09-24|17:13:33.820] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-24|17:13:33.828] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:33.830] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-24|17:13:33.832] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-24|17:13:33.832] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-24|17:13:33.833] Starting P2P networking 
+        INFO [09-24|17:13:33.837] RLPx listener up                         self="enode://537c6ea060cc072bc9f693fef93163b094bb9b6134849bfc59dd2fb1ccd1b8744a256dd95dcecc69c27bba3c4fdee5c0fae72a3911544d2eaa0d80040a583c23@127.0.0.1:39137?discport=0"
+        INFO [09-24|17:13:33.840] IPC endpoint opened                      url=/tmp/TestFullStateRecoveryNodes1473828416/001/lab.ipc
+        WARN [09-24|17:13:35.050] Served lab_construct                     reqid=3 duration="761.797µs" err="purchase must remain usable beyond the next planned timestamp"
+        INFO [09-24|17:13:35.197] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=28.368ms mgasps=0.748 order=6 number=15,130,081 hash="7e16c5…9af3da" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dfab33…00ad59" parentHash="e463e5…951458" time=1,759,826,750 age=11mo3w1d cache=0.00B
+        ERROR[09-24|17:13:35.198] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:35.484] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=20.558ms mgasps=1.032 order=5 number=15,130,082 hash="9aaa77…ec862a" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f19455…201be8" parentHash="7e16c5…9af3da" time=1,790,121,600 age=1d15h13m cache=0.00B
+        ERROR[09-24|17:13:35.488] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:35.604] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.107ms mgasps=1.504 order=4 number=15,130,083 hash="94ed04…727345" difficulty=74 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ea4375…af6cf4" parentHash="9aaa77…ec862a" time=1,790,121,720 age=1d15h11m cache=0.00B
+        ERROR[09-24|17:13:35.607] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:46.010] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.688ms  mgasps=4.527 order=0 number=15,130,084 hash="c093e5…d93f0e" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="7d592d…b6ed67" parentHash="94ed04…727345" time=1,790,262,815 cache=0.00B
+        INFO [09-24|17:13:46.010] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-24|17:13:46.010] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:13:57.010] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.045ms  mgasps=4.207 order=0 number=15,130,085 hash="622a3c…e05277" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="09deab…875927" parentHash="c093e5…d93f0e" time=1,790,262,826 cache=0.00B
+        INFO [09-24|17:13:57.010] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-24|17:13:57.011] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:14:27.103] Block synchronisation started 
+        INFO [09-24|17:14:27.110] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=83.90B throttle=8192
+        INFO [09-24|17:14:27.116] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.840ms  mgasps=3.634 order=0 number=15,130,086 hash="f53717…ce50ac" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="e06ab2…f45ee9" parentHash="622a3c…e05277" time=1,790,262,837 cache=0.00B
+        INFO [09-24|17:14:27.117] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-24|17:14:27.118] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-24|17:14:27.119] IPC endpoint closed                      url=/tmp/TestFullStateRecoveryNodes1473828416/001/lab.ipc
+        INFO [09-24|17:14:27.119] Stopping Ethereum protocol 
+        INFO [09-24|17:14:27.119] Ethereum protocol stopped 
+        INFO [09-24|17:14:27.119] Transaction pool stopped 
+        INFO [09-24|17:14:27.119] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (54.29s)
+        PASS
+--- PASS: TestFullStateRecoveryNodes (60.15s)
+    --- PASS: TestFullStateRecoveryNodes/cold-ledger-0 (1.58s)
+    --- PASS: TestFullStateRecoveryNodes/cold-ledger-1 (1.53s)
+PASS

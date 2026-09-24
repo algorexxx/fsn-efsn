@@ -20,8 +20,10 @@ address the reproduced receipt-log race, reconstruction expiry mismatch and
 missing-ancestor panic. The [purchase controller](restart-purchase-controller.md)
 adds startup attempts, periodic retry, signed-transaction recovery and canonical
 receipt monitoring, with explicit pauses for nonce conflicts and missing nonces.
-Complete historical execution, full-state miner/runtime recovery, the accepted
-restart anchor and launch operator rehearsals remain outstanding.
+Complete historical execution, the accepted restart anchor and production
+operator rehearsals remain outstanding. Full-state worker recovery and a
+[guarded two-node handover](restart-recovery-construction.md) now pass with
+public test keys; real-key custody and signing remain separate gates.
 
 The [anchor entry-point investigation](restart-anchor-investigation.md) now
 reproduces heavier-chain replacement and legacy-checkpoint gaps involving stored
@@ -32,7 +34,10 @@ and transaction readiness below the anchor. It also fixes two reproduced rollbac
 defects. The production height/hash remains unset. Light mode explicitly refuses
 an active anchor. An isolated [multi-process rehearsal](restart-node-rehearsal.md)
 now exercises the actual service, IPC, miner and peer downloader. Fast/freezer
-release support and full-state network rehearsal remain unproven. Adding a legacy
+release support and general state acquisition remain unproven. The later
+[full-state two-node rehearsal](restart-recovery-construction.md) covers controlled
+handover, live block propagation and post-crash suffix catch-up, with explicit
+historical-data limitations. Adding a legacy
 checkpoint is not an adequate implementation.
 
 The [interrupted-write rehearsal](restart-crash-rehearsal.md) then reproduced
@@ -57,7 +62,7 @@ Restart Fusion from an explicitly accepted historical state, using the smallest 
 
 The backup is a candidate starting point, not a claim that no later valid blocks exist. Additional history can be assessed before the launch decision. Once accepted and used, the restart boundary must not silently move in response to a returning operator.
 
-The working launch target, selected on 24 September 2026, uses two nodes initially operated by Peter: backup wallet `0x9fc4c40e50f902b9aa641b4a32ebaafa5c9386a1` signs one historical recovery block without buying another ticket, and donation wallet `0xa3ce60d2dbf51afa0ab106df1c44a2e48853817a` takes over production and replenishment. That first recovery block must include the donation wallet's funded, long-lived first ticket purchase; it cannot wait until the donation node starts mining. The donation signer then bridges to the planned present-day timestamp. The backup wallet has two historical tickets: one is selected/refunded, while the other expires and is removed without another refund of its expired interval. The [wallet handover investigation](restart-wallet-handover.md) records passing sparse consensus tests for this exact one-backup-block arrangement, the earlier longer alternative, and the donation wallet's preserved funding. The [full-state follow-up](restart-full-state-handover.md) now passes complete-state accounting, separate-process imports and actual worker/automatic-buyer restart on Windows and Linux. Full node-service/P2P handover and backup purchase drain remain open. It also reproduces an accepted but stranded jump if its replacement purchase is omitted: controlled construction must require that purchase and a usable successor ticket before signing or publishing. Stop our use of the backup key after verified handover and return operation to its owner; he may run his own node later. Publish the anchor-enforcing release, verified recovery data and a reachable DNS discovery endpoint, which the continuing producer may also host. A separate validator fleet or dedicated seeds are not required for day one. Other holders can download the release, follow the data/configuration checks, synchronize and choose to produce blocks using ordinary funded tickets. Joining needs no new operator allowlist. Demonstrate separate-process verification during rehearsal without treating that verifier as a mandatory second permanently hosted node.
+The working launch target, selected on 24 September 2026, uses two nodes initially operated by Peter: backup wallet `0x9fc4c40e50f902b9aa641b4a32ebaafa5c9386a1` signs one historical recovery block without buying another ticket, and donation wallet `0xa3ce60d2dbf51afa0ab106df1c44a2e48853817a` takes over production and replenishment. That first recovery block must include the donation wallet's funded, long-lived first ticket purchase; it cannot wait until the donation node starts mining. The donation signer then bridges to the planned present-day timestamp. The backup wallet has two historical tickets: one is selected/refunded, while the other expires and is removed without another refund of its expired interval. The [wallet handover investigation](restart-wallet-handover.md) records passing sparse consensus tests for this exact one-backup-block arrangement, the earlier longer alternative, and the donation wallet's preserved funding. The [full-state follow-up](restart-full-state-handover.md) now passes complete-state accounting, separate-process imports and actual worker/automatic-buyer restart on Windows and Linux. The [guarded construction and two-node rehearsal](restart-recovery-construction.md) now passes unsigned command review, guard-before-sign checks, peer handover, automatic mining immediately after cleanup, forced-process restart and matching cold account ledgers. Production signing/custody, backup purchase drain and a supported complete data package remain open. It also reproduces an accepted but stranded jump if its replacement purchase is omitted: controlled construction must require that purchase and a usable successor ticket before signing or publishing. Stop our use of the backup key after verified handover and return operation to its owner; he may run his own node later. Publish the anchor-enforcing release, verified recovery data and a reachable DNS discovery endpoint, which the continuing producer may also host. A separate validator fleet or dedicated seeds are not required for day one. Other holders can download the release, follow the data/configuration checks, synchronize and choose to produce blocks using ordinary funded tickets. Joining needs no new operator allowlist. Demonstrate separate-process verification during rehearsal without treating that verifier as a mandatory second permanently hosted node.
 
 In scope:
 
@@ -183,28 +188,31 @@ Discovery v4 resolves hostnames to an IP when parsing; it chooses the first retu
 
 ### 3.9 Purchase admission and automatic retry are separate gates
 
-The real purchase argument builder, pool, and execution have now been exercised
-against synthetic observed-balance fixtures. Before the first historical refund,
-the pool admits a long purchase that execution rejects: the pool checks funding
-from wall-clock time, whereas execution needs coverage from historical parent
-time. After the refund, construction, admission, import, and ticket creation pass.
+The original backup-only funding experiment exercised the real purchase argument
+builder, pool and execution against observed-balance fixtures. Before that
+wallet's first historical refund, the pool admits a long purchase that execution
+rejects: the pool checks funding from wall-clock time, whereas execution needs
+coverage from historical parent time. The selected donation-wallet route has
+12,020.102 liquid FSN and funds its first purchase without waiting for the backup
+wallet's refund; its separate complete-state accounting now passes.
 
 Default purchases on the historical head expire in November 2025 and are rejected
 by the pool. A present-day start also fails the parent-plus-three-hours rule.
-Candidate A's purchases in steps 2 and 3 therefore need explicitly extended ends
+The selected Candidate A's purchases in steps 1 and 2 therefore need explicitly extended ends
 while retaining valid historical starts. No general purchase-rule relaxation has
 been shown necessary.
 
-Auto-buy is triggered by a new canonical head; the inspected loop drops purchase
-errors and has no timer-based retry. Enabling it does not enqueue an initial
-purchase. Combined with the reproduced one-ticket/no-replacement failure, this
-creates a possible stall after a failed purchase or a cold restart with an empty
-pool. The runtime test now reproduces both conditions over bounded observation
-windows; an explicit API retry restores mining and ordinary head-triggered
-purchases continue. Require initial submission, bounded retry, actual inclusion
-checks, and visible errors before launch. An operator watchdog or purchase tool
-may suffice; this is not a reason to redesign consensus. Disk restart, journal
-restoration, and failures at other purchase stages remain untested.
+The upstream auto-buy loop depended on a new canonical head, dropped purchase
+errors and had no initial attempt or timer-based retry. Tests reproduced stalls
+after a failed purchase and a cold restart with an empty pool. The investigation
+branch now has the [purchase controller](restart-purchase-controller.md), with
+initial attempts, bounded retry, signed-transaction journaling and canonical
+receipt checks. Complete-state worker tests and the [actual two-node service
+rehearsal](restart-recovery-construction.md) now pass startup and process restart.
+Systematic journal crash boundaries, live peer reorgs and the real backup wallet's
+existing signed transactions remain separate checks. Ordinary automatic buying
+is still unsuitable for the historical bridge; construct and review those
+long-lived purchases explicitly.
 
 ## 4. Design invariants
 
@@ -529,12 +537,12 @@ Ongoing finality remains outside scope. Do not expand the restart into permanent
 | Decision | Current position | Needed before |
 | --- | --- | --- |
 | Historical parent and evidence deadline | `B` is the candidate; additional valid history remains welcome before acceptance | Final sequence construction |
-| Candidate A or B | Test A first; retain B as fallback; neither proven | Implementation freeze |
+| Candidate A or B | Existing-rules historical construction and funded jump (A) pass sparse, complete-state and two-node synthetic rehearsals. Final real-address parameters remain unselected; retain B only as fallback. | Implementation freeze |
 | Exact sequence, signers, transactions, time, rewards/refunds | Unspecified; publish complete ledger | Real-key signing |
 | Anchor location/hash | End of accepted recovery sequence proposed | Final release/public use |
 | Chain ID, network ID, transaction replay policy | Preserve history; no new ID selected | Wallet/operator integration and release |
 | Native decode defect and other audit findings | Separate triage; no automatic inclusion | Go/no-go decision |
-| Initial operators, producer keys and ticket runway | Peter selected two initial nodes: one backup-wallet block including the donation wallet's first long-lived purchase, then donation-only production. Donation balance is 12,020.102 liquid FSN at the preserved head. Complete-state accounting and worker/auto-buy restart now pass. Prove controlled jump construction, purchase drain, full node-service handover and restore. | Launch date |
+| Initial operators, producer keys and ticket runway | Peter selected two initial nodes: one backup-wallet block including the donation wallet's first long-lived purchase, then donation-only production. Donation balance is 12,020.102 liquid FSN at the preserved head. Complete-state accounting, guarded unsigned construction and two-node handover/auto-buy/SIGKILL restart now pass with public test keys. Real signing custody, purchase drain and a supported restore/distribution package remain open. | Launch date |
 | Key custody and real-data rehearsal procedure | Synthetic keys first; avoid conflicting production signatures | Access to production signer |
 | Supported sync modes and bootstrap artifacts | Must be demonstrated; unsupported modes explicitly excluded | Operator release |
 | Organization, maintainers, domains, hosts | Not yet selected | Infrastructure deployment |
@@ -560,10 +568,10 @@ Release acceptance requires all applicable phase gates and verification cases to
 ## 15. Immediate next actions
 
 1. Review the completed 2,700,000 baseline replay and cold reopen, preserving the D: checkpoint at 2,613,376 and the new C: checkpoint. Choose the next bounded range and capacity before resuming. Current-state traversal and complete structural history validation have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and paths](restart-integrity-investigation.md).
-2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
+2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Complete-state operation and a real-service SIGKILL continuation now pass in the guarded two-node follow-up. Extend to systematic journal crash boundaries and live peer reorgs before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Review the [full-state recovery rehearsal](restart-full-state-rehearsal.md), [two-wallet handover](restart-wallet-handover.md) and [full-state worker/restart evidence](restart-full-state-handover.md). The worker/controller now produces and restarts with complete state on Windows and Linux. Require controlled early construction and mandatory jump-purchase/usable-ticket checks; then extend to the actual node service and peer handover, disabling/draining the temporary recovery wallet, successor-only operation and restore. Sparse tests cover the selected one-backup-block startup and rejection of an expired first ticket, plus the earlier final-ticket handover with the donation balance and an insufficient replacement-funding case. Keep the verified state artifact and original backup intact, and review real-signer refunds/retreats before selecting the recovery sequence.
+5. Review the [guarded recovery command and full-state two-node result](restart-recovery-construction.md), alongside the [wallet handover](restart-wallet-handover.md) and [earlier full-state worker evidence](restart-full-state-handover.md). The command leaves all source database files unchanged; the actual services reject unsafe plans before signing and reproduce the reviewed three-block prefix. Donation auto-buy/mining starts immediately after cleanup, resumes after SIGKILL, and both cold databases agree on complete account ledgers. Next implement/rehearse durable real-signing reservation and artifact custody, inventory/drain the actual backup-wallet pool/journal, and demonstrate the supported node-data download/restore path. The compact state fixture lacks historical bodies and log indexes and is not that distribution package. Preserve the original backup; review real-address refunds/retreats and fresh timing parameters before choosing the production sequence.
 6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation

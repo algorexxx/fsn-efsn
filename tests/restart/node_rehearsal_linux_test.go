@@ -28,6 +28,8 @@ import (
 	"github.com/FusionFoundation/efsn/v5/eth"
 	"github.com/FusionFoundation/efsn/v5/eth/downloader"
 	"github.com/FusionFoundation/efsn/v5/eth/ethconfig"
+	"github.com/FusionFoundation/efsn/v5/internal/ethapi"
+	"github.com/FusionFoundation/efsn/v5/internal/recovery"
 	"github.com/FusionFoundation/efsn/v5/log"
 	"github.com/FusionFoundation/efsn/v5/node"
 	"github.com/FusionFoundation/efsn/v5/p2p"
@@ -38,8 +40,12 @@ import (
 )
 
 type nodeRehearsalConfig struct {
-	Anchor   *params.RestartAnchor
-	GasLimit uint64
+	Anchor         *params.RestartAnchor
+	GasLimit       uint64
+	MainnetGenesis bool
+	TestKey        byte
+	AutoBuy        bool
+	ListenAddr     string
 }
 
 type nodeRehearsalStatus struct {
@@ -54,11 +60,14 @@ type nodeRehearsalStatus struct {
 	Signatures uint64
 	Pending    int
 	Queued     int
+	AutoBuy    bool
+	Mining     bool
 }
 
 type nodeRehearsalAPI struct {
 	service    *eth.Ethereum
 	signatures atomic.Uint64
+	testKey    byte
 }
 
 func (a *nodeRehearsalAPI) Status() nodeRehearsalStatus {
@@ -70,6 +79,53 @@ func (a *nodeRehearsalAPI) Status() nodeRehearsalStatus {
 		Number: head.NumberU64(), Hash: head.Hash(), Root: head.Root(), Tickets: head.MixDigest(),
 		Full: rawdb.ReadHeadBlockHash(db), Header: rawdb.ReadHeadHeaderHash(db), Fast: rawdb.ReadHeadFastBlockHash(db),
 		TD: (*hexutil.Big)(chain.GetTd(head.Hash(), head.NumberU64())), Signatures: a.signatures.Load(), Pending: pending, Queued: queued,
+		AutoBuy: common.IsAutoBuyTicketEnabled(), Mining: a.service.IsMining(),
+	}
+}
+
+func (a *nodeRehearsalAPI) Construct(plan recovery.Plan, purchase hexutil.Bytes) (common.Hash, error) {
+	if a.service.IsMining() {
+		return common.Hash{}, fmt.Errorf("stop ordinary mining before controlled construction")
+	}
+	var tx types.Transaction
+	if err := rlp.DecodeBytes(purchase, &tx); err != nil {
+		return common.Hash{}, err
+	}
+	keyBytes := make([]byte, 32)
+	keyBytes[31] = a.testKey
+	key, err := crypto.ToECDSA(keyBytes)
+	if err != nil {
+		return common.Hash{}, err
+	}
+	owner := crypto.PubkeyToAddress(key.PublicKey)
+	if owner != plan.Signer {
+		return common.Hash{}, fmt.Errorf("plan signer differs from this public test key")
+	}
+	chain := a.service.BlockChain()
+	candidate, err := recovery.Build(chain, plan, types.Transactions{&tx})
+	if err != nil {
+		return common.Hash{}, err
+	}
+	engine := a.service.Engine().(*datong.DaTong)
+	engine.Authorize(owner, func(_ accounts.Account, _ string, data []byte) ([]byte, error) {
+		a.signatures.Add(1)
+		return crypto.Sign(crypto.Keccak256(data), key)
+	})
+	results := make(chan *types.Block, 1)
+	stop := make(chan struct{})
+	defer close(stop)
+	if err := engine.Seal(chain, candidate.Block, results, stop); err != nil {
+		return common.Hash{}, err
+	}
+	select {
+	case block := <-results:
+		_, err := chain.InsertChain(types.Blocks{block})
+		if err == nil {
+			a.service.EventMux().Post(core.NewMinedBlockEvent{Block: block})
+		}
+		return block.Hash(), err
+	case <-time.After(5 * time.Second):
+		return common.Hash{}, fmt.Errorf("historical construction did not seal")
 	}
 }
 
@@ -128,18 +184,27 @@ func runRehearsalNode(t *testing.T, path string) {
 	requireNoError(t, err)
 	var lab nodeRehearsalConfig
 	requireNoError(t, json.Unmarshal(data, &lab))
+	if lab.TestKey == 0 {
+		lab.TestKey = 1
+	}
+	if lab.TestKey != 1 && lab.TestKey != 2 {
+		t.Fatal("only public rehearsal keys 1 and 2 are permitted")
+	}
+	if lab.ListenAddr == "" {
+		lab.ListenAddr = "127.0.0.1:0"
+	}
 	restrict, err := netutil.ParseNetlist("127.0.0.0/8")
 	requireNoError(t, err)
 	stack, err := node.New(&node.Config{
 		Name: "anchor-lab", DataDir: path, IPCPath: "lab.ipc", UseLightweightKDF: true,
-		P2P: p2p.Config{MaxPeers: 4, NoDiscovery: true, ListenAddr: "127.0.0.1:0", NetRestrict: restrict},
+		P2P: p2p.Config{MaxPeers: 4, NoDiscovery: true, ListenAddr: lab.ListenAddr, NetRestrict: restrict},
 	})
 	requireNoError(t, err)
 	t.Cleanup(func() { stack.Close() })
 	keys := keystore.NewKeyStore(filepath.Join(path, "keystore"), keystore.LightScryptN, keystore.LightScryptP)
 	stack.AccountManager().AddBackend(keys)
 	keyBytes := make([]byte, 32)
-	keyBytes[31] = 1
+	keyBytes[31] = lab.TestKey
 	key, err := crypto.ToECDSA(keyBytes)
 	requireNoError(t, err)
 	account := accounts.Account{Address: crypto.PubkeyToAddress(key.PublicKey)}
@@ -152,6 +217,10 @@ func runRehearsalNode(t *testing.T, path string) {
 	chainConfig.RestartAnchor = lab.Anchor
 	config := ethconfig.Defaults
 	config.Genesis = &core.Genesis{Config: &chainConfig, GasLimit: lab.GasLimit, Difficulty: big.NewInt(1)}
+	if lab.MainnetGenesis {
+		config.Genesis = core.DefaultGenesisBlock()
+		config.Genesis.Config = &chainConfig
+	}
 	config.NetworkId = 99032659
 	config.SyncMode = downloader.FullSync
 	config.NoPruning = true
@@ -163,7 +232,8 @@ func runRehearsalNode(t *testing.T, path string) {
 	service, err := eth.New(stack, &config)
 	requireNoError(t, err)
 	service.SetEtherbase(account.Address)
-	stack.RegisterAPIs([]rpc.API{{Namespace: "lab", Version: "1.0", Service: &nodeRehearsalAPI{service: service}}})
+	stack.RegisterAPIs([]rpc.API{{Namespace: "lab", Version: "1.0", Service: &nodeRehearsalAPI{service: service, testKey: lab.TestKey}}})
+	stack.RegisterLifecycle(ethapi.NewTicketBuyer(lab.AutoBuy))
 	datong.InitCheckPoints("")
 	requireNoError(t, stack.Start())
 	stop := make(chan os.Signal, 1)
@@ -407,7 +477,7 @@ func connectRehearsalPeer(t *testing.T, local, remote *rehearsalNode) string {
 	if !added {
 		t.Fatal("could not add loopback peer")
 	}
-	awaitRehearsal(t, 10*time.Second, func() bool {
+	awaitRehearsal(t, 45*time.Second, func() bool {
 		var peers []*p2p.PeerInfo
 		requireNoError(t, local.call(t, &peers, "admin_peers"))
 		for _, peer := range peers {

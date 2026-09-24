@@ -27,6 +27,11 @@ func TestFullStateHandoverAccounting(t *testing.T) {
 	if !filepath.IsAbs(directory) || !filepath.IsAbs(artifacts) {
 		t.Fatal("absolute fixture and block artifact paths required")
 	}
+	auditFullStateHandover(t, directory, artifacts, 10)
+}
+
+func auditFullStateHandover(t *testing.T, directory, artifacts string, count int) {
+	t.Helper()
 	var original fullStateFixtureLedger
 	var funding fullStateHandoverFunding
 	readHandoverJSON(t, filepath.Join(directory, "fixture.json"), &original)
@@ -47,7 +52,7 @@ func TestFullStateHandoverAccounting(t *testing.T) {
 		addresses[crypto.Keccak256Hash(ticket.Owner.Bytes())] = ticket.Owner
 	}
 	previous := funding.Parent
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= count; i++ {
 		var entry fullStateBlockLedger
 		readHandoverJSON(t, filepath.Join(artifacts, fmt.Sprintf("block-%02d.json", i)), &entry)
 		encoded, err := os.ReadFile(filepath.Join(artifacts, fmt.Sprintf("block-%02d.rlp", i)))
@@ -139,7 +144,7 @@ func TestFullStateHandoverAccounting(t *testing.T) {
 		t.Logf("accounted block=%d height=%d accounts=%d temporalBoundaries=%d tickets=%d feeWei=%s rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=%t", i, block.NumberU64(), len(entry.Differences), len(points), len(entry.Tickets), fee, i > 1)
 		previous, tickets = entry.Header, entry.Tickets
 	}
-	t.Log("all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; total rewards=3.125FSN; no database opened")
+	t.Logf("all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; blocks=%d totalRewardWei=%s; no database opened", count, new(big.Int).Mul(big.NewInt(int64(count)), decimal(t, "312500000000000000")))
 }
 
 func readHandoverJSON(t *testing.T, path string, target interface{}) {

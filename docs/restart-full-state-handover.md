@@ -150,13 +150,20 @@ The two added accounts are the public test signers. Linux separately
 executes/imports the full state and audits both platform ledgers under race
 detection; complete trie traversal is performed natively on Windows.
 
+The subsequent [guarded recovery and two-node rehearsal](restart-recovery-construction.md)
+now covers the actual service/IPC/P2P handover and starts ordinary production
+directly after cleanup. Its unsigned command verifies required purchases and
+surviving tickets without changing the source database. Both nodes agree on
+cold ledgers after a forced donation-process restart. The compact fixture still
+lacks historical data needed for general sync and complete log indexing.
+
 Remaining launch work includes:
 
 - Controlled recovery construction and review with real addresses/parameters,
   including mandatory purchases and usable-ticket checks before signatures.
-- Full node-service/P2P/IPC operation with the selected two-node layout. This
-  worker rehearsal uses the real miner, chain, pool and controller through a
-  test backend; it is not an end-to-end two-node network rehearsal.
+- A supported complete data package and operator restore/synchronization path.
+  The later node rehearsal does not establish arbitrary full-history sync or
+  replace the production data-distribution gate.
 - Backup-wallet purchase/journal inventory, durable disabled startup and key
   custody. The compact state fixture does not contain the original node's
   pending pool or automatic-purchase journal.
