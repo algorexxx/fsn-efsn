@@ -57,6 +57,8 @@ Restart Fusion from an explicitly accepted historical state, using the smallest 
 
 The backup is a candidate starting point, not a claim that no later valid blocks exist. Additional history can be assessed before the launch decision. Once accepted and used, the restart boundary must not silently move in response to a returning operator.
 
+The working launch target, clarified on 24 September 2026, is the smallest viable startup: one initial producer using the recovered owner's existing authorized funding, a published anchor-enforcing release and verified recovery data, and a reachable DNS discovery endpoint. The producer may also supply that initial discovery service; a separate fleet of validators or dedicated seeds is not required for day one. Other holders can download the release, follow the documented data/configuration checks, synchronize and choose to produce blocks using ordinary funded tickets. Joining needs no new operator allowlist. Demonstrate separate-process verification during rehearsal without treating that verifier as a mandatory second permanently hosted node.
+
 In scope:
 
 - Preservation and validation of the recovered data.
@@ -389,7 +391,7 @@ Gate: reproducible build, understood baseline failures, and an executable test h
 - Match synthetic account/ticket/time-lock structure to the relevant observed conditions.
 - Maintain an exact ledger after every block, including effects on offline owners.
 - Test a second node importing the producer's blocks; test cold restart and missing-state reconstruction.
-- Demonstrate automated or scripted ticket replenishment, initial submission on an empty pool, cold restart, bounded retry after a failed purchase without any new head, transition to multiple separately keyed producers (which may initially share an operator), and failure behavior if a purchase is delayed.
+- Demonstrate automated or scripted ticket replenishment for one producer using the recorded funding, initial submission on an empty pool, cold restart, bounded retry after a failed purchase without any new head, and failure behavior if a purchase is delayed. Demonstrate that a later separately keyed, ordinarily funded producer can join; multiple hosted producers are not a prerequisite for the minimal startup.
 - Run an isolated rehearsal on a copy of the backup only after the signing/artifact policy is defined. Do not produce multiple conflicting real-key signatures merely to iterate tests.
 
 Gate: a selected sequence, exact rule changes if any, independent state agreement, adequate ticket runway, and no unexplained accounting differences.
@@ -407,13 +409,13 @@ Gate: incompatible history cannot become canonical through any supported path; c
 ### Phase 5 — organization, infrastructure, and operator rehearsal
 
 - Establish the organization and release governance described in sections 9–11.
-- Define the initial producer, full-node and signing-key layout. A team-operated bootstrap is permitted as a launch option; agree its tested funding, availability and recovery requirements before choosing a date. Multiple machines or addresses under one operator do not establish organizational independence. Recruit other operators as participation becomes available.
+- Use one initial producer as the working target; agree its tested funding, backup and recovery requirements before choosing a date. Extra producer machines/keys and independent organizations may join later. Multiple machines or addresses under one operator do not establish organizational independence.
 - Verify the selected release and imports across separate machines/processes; seek external operator verification when available. Non-producing full nodes and discovery nodes require no tickets. Keep only one active signer per key; additional simultaneous producers need distinct funded keys, and failover must prevent overlapping signers.
 - Demonstrate fresh synchronization and restore from a published, checksummed artifact; publish the artifact's trust assumptions.
 - Rehearse DNS loss, bootnode loss, validator outage, restart, disk pressure, clock errors, and network partitions using disposable networks.
 - Review the explorer's native calls, receipts, maturity events, rewards, and reorganization behavior against the rehearsal.
 
-Gate: production, replenishment, failure recovery and new-node onboarding work under the declared initial operator model, including provider/domain/dashboard outages within its tested redundancy. A single-operator bootstrap must explicitly disclose its dependence on that operator; removing that dependence is a later decentralization objective, not an implied property of multiple servers.
+Gate: production, replenishment, backup/restore and new-node onboarding work under the declared single-producer model. Demonstrate recovery from producer and discovery outages; continuous block production during loss of the only producer is not promised. The bootstrap must explicitly disclose its initial dependence on that operator. Removing that dependence is a later decentralization objective. The fixed restart anchor and ordinary validity/accounting checks remain required before public economic use.
 
 The original mainnet genesis creates five special tickets for one owner (`core/genesis.go`, `DefaultGenesisBlock` and `ToBlock`); their creation does not pass through an ordinary funded purchase. This confirms a single-owner bootstrap design, without proving how many physical nodes or people ran the historical launch. The restart continues to use existing authorized FSN/time-lock rights and ordinary purchases. Funding calculations must include tickets already outstanding, eligible time-lock intervals, purchase-before-refund ordering, liquid transaction fees and delayed/missed replenishment. A 5,000-FSN ticket is not a requirement for every full-node machine. The completed full-state bridge proves short single-owner replenishment with the recorded funding; a sustained real-miner test and a budget for additional producer keys remain open.
 
@@ -481,12 +483,12 @@ The current extra branches should not be merged wholesale by assumption. The rec
 ### Peer discovery
 
 - Use ordinary discovery v4 with new operator-controlled DNS enode addresses as the initial design.
-- Run several seed/discovery nodes across independent providers and domains. Protect their node identities separately from validator signing keys.
+- Start with one reachable DNS discovery endpoint, which may be hosted by the initial producer. Protect its P2P identity separately from the validator signing key. Add seeds across other providers/domains as participation grows; those additional deployments are not an initial launch gate.
 - Keep node identities stable across IP moves; document DNS changes and the need for re-resolution/restart under current behavior.
 - Provide static-peer fallbacks and an explicit empty-bootstrap option. No dedicated seed can eliminate the need for some initial contact information.
 - Decide whether to harden unresolved-DNS handling now. If changed, distinguish malformed configuration from temporary resolution failure and make failure visible; test one/all seeds unavailable and multiple DNS answers.
 - Inventory v5 defaults, NAT announcements, TCP/UDP reachability, static/trusted peers, and all Foundation hostnames in scripts/configuration. Do not imply v5 hostname support.
-- Verify established peers continue when seeds are unavailable and fresh nodes can recover when a provider/domain fails.
+- Verify established peers continue when seeds are unavailable. Document initial-contact failure and recovery through a reachable static peer or restored seed; one endpoint cannot provide fresh-node discovery while it is offline.
 
 ### RPC and data providers
 
@@ -532,7 +534,7 @@ Ongoing finality remains outside scope. Do not expand the restart into permanent
 | Anchor location/hash | End of accepted recovery sequence proposed | Final release/public use |
 | Chain ID, network ID, transaction replay policy | Preserve history; no new ID selected | Wallet/operator integration and release |
 | Native decode defect and other audit findings | Separate triage; no automatic inclusion | Go/no-go decision |
-| Initial operators, producer keys and ticket runway | Team-operated bootstrap is an option; exact funding, redundancy and failover remain to be tested. Independent participation is a later objective rather than a fixed launch minimum. | Launch date |
+| Initial operators, producer keys and ticket runway | Target one initial producer using existing authorized funding; prove sustained replenishment and controlled restore. Publish how others can join. Extra producers/independent organizations are not a fixed launch minimum. | Launch date |
 | Key custody and real-data rehearsal procedure | Synthetic keys first; avoid conflicting production signatures | Access to production signer |
 | Supported sync modes and bootstrap artifacts | Must be demonstrated; unsupported modes explicitly excluded | Operator release |
 | Organization, maintainers, domains, hosts | Not yet selected | Infrastructure deployment |
@@ -561,7 +563,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Review the [full-state recovery rehearsal](restart-full-state-rehearsal.md): independent eight-block imports, exact synthetic funding/ticket substitution, complete account differences, cold traversal and bounded ticket reconstruction now have evidence. Extend to the actual mining worker and automatic replenishment, including missed purchases and multiple operators; the demonstrated suffix ends with one live ticket. Keep the verified state artifact and original backup intact, and review real-signer refunds/retreats before selecting the recovery sequence.
+5. Review the [full-state recovery rehearsal](restart-full-state-rehearsal.md): independent eight-block imports, exact synthetic funding/ticket substitution, complete account differences, cold traversal and bounded ticket reconstruction now have evidence. Extend to the actual mining worker and automatic replenishment for the minimal single-producer target, including missed purchases and restore; the demonstrated suffix ends with one live ticket. Then demonstrate a later participant joining with a separate funded key. Keep the verified state artifact and original backup intact, and review real-signer refunds/retreats before selecting the recovery sequence.
 6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation
