@@ -106,11 +106,22 @@ confirms that a first ticket ending 30 days after the old timestamp cannot seal
 the jump and that rejecting it leaves the canonical head unchanged.
 
 These sparse core tests pass on Windows and twice on Linux with race detection.
-They do not prove full-state accounting, actual worker timestamps, pool/network
-submission, automatic-purchase startup or two-process handover. Those runtime
-checks are the next gate. The fixture's fixed dates and synthetic roots are
+The subsequent [full-state handover rehearsal](restart-full-state-handover.md)
+also passes complete-state independent imports, owner-by-owner accounting,
+actual worker/automatic-buyer production, a failed submission and process
+restart on both platforms. Full node-service/P2P handover and backup-wallet
+purchase drain remain open. The fixture's fixed dates and synthetic roots are
 test inputs, not launch dates or a production anchor. Evidence:
 [single-block rehearsal](evidence/restart-single-block-handover-2026-09-24).
+
+**Mandatory jump purchase:** the follow-up also reproduces an accepted jump
+block with only expired tickets remaining when the donation replacement is
+omitted. Require that replacement and a usable successor ticket before signing
+or publishing the recovery block. Keep the initial handover/jump/cleanup
+construction controlled until those checks pass. The cleanup block rejects a
+missing replacement, but the jump itself does not provide that protection.
+The demonstrated worker run starts after cleanup and additional constructed
+donation blocks; it does not authorize unattended worker startup at the old head.
 
 ## Earlier final-ticket handover alternative
 

@@ -335,3 +335,29 @@ without another account credit. `TestSingleBackupBlockRejectsShortSuccessorTicke
 rejects using a historical 30-day ticket to seal the present-day jump. Both use
 public test keys and explicit synthetic successor funding of 12,020.102 FSN;
 neither uses real keys or proves actual miner/network/auto-buy operation.
+
+`TestFullStateHandover` opts into complete preserved-state copies through
+`FUSION_RESTART_HANDOVER_DIR`, `FUSION_RESTART_HANDOVER_MODE` and an absolute
+`FUSION_RESTART_HANDOVER_BLOCKS` directory. Modes are `prepare`, `produce`,
+`runtime`, `import` and `cold`. Preparation reuses the existing three-account
+backup-signer substitution, then separately debits the donation balance and
+credits public test key 2 with exactly two more account changes. Produce creates
+one backup-key block and five successor blocks; each runtime invocation produces
+two worker/automatic-buyer blocks, with the second invocation testing process
+restart. Separate import and cold modes compare complete ledgers for all ten
+blocks; cold also reconstructs unavailable suffix states and traverses the full
+state. Use the report's scripts only with new disposable targets.
+
+`TestFullStateHandoverAccounting` opens no database. Set
+`FUSION_RESTART_HANDOVER_AUDIT` to the prepared fixture ledger directory and
+`FUSION_RESTART_HANDOVER_BLOCKS` to the recorded blocks. It checks conservation
+of each owner's future FSN rights over all liquid/time-lock/ticket boundaries,
+ordinary fees/rewards/retreat penalties and preservation of unrelated fields.
+`TestHandoverFundingGuard` rejects unauthorized funding/field changes;
+`TestHandoverTemporalAccounting` checks the boundary arithmetic.
+
+`TestHandoverMissingRecoveryPurchase` characterizes two different outcomes:
+omitting the jump replacement produces an accepted but stranded chain with only
+expired tickets; omitting the cleanup replacement is rejected and can be retried
+with a purchase. The [full-state handover report](../../docs/restart-full-state-handover.md)
+records evidence and remaining node-service/network/construction gates.

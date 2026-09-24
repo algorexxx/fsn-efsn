@@ -1,0 +1,451 @@
+=== RUN   TestFullStateDifferenceAccounting
+=== RUN   TestFullStateDifferenceAccounting/none
+=== RUN   TestFullStateDifferenceAccounting/duplicate_funding
+=== RUN   TestFullStateDifferenceAccounting/other_asset
+=== RUN   TestFullStateDifferenceAccounting/storage
+=== RUN   TestFullStateDifferenceAccounting/code
+=== RUN   TestFullStateDifferenceAccounting/nonce
+=== RUN   TestFullStateDifferenceAccounting/wrong_ledger_credit
+=== RUN   TestFullStateDifferenceAccounting/wrong_ledger_locks
+=== RUN   TestFullStateDifferenceAccounting/deleted_account
+=== RUN   TestFullStateDifferenceAccounting/extra_account
+--- PASS: TestFullStateDifferenceAccounting (0.04s)
+    --- PASS: TestFullStateDifferenceAccounting/none (0.01s)
+    --- PASS: TestFullStateDifferenceAccounting/duplicate_funding (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/other_asset (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/storage (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/code (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/nonce (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/wrong_ledger_credit (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/wrong_ledger_locks (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/deleted_account (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/extra_account (0.00s)
+=== RUN   TestFullStateContextIntegrity
+=== RUN   TestFullStateContextIntegrity/none
+=== RUN   TestFullStateContextIntegrity/short
+=== RUN   TestFullStateContextIntegrity/missing
+=== RUN   TestFullStateContextIntegrity/parent_link
+=== RUN   TestFullStateContextIntegrity/height
+=== RUN   TestFullStateContextIntegrity/end_hash
+=== RUN   TestFullStateContextIntegrity/body
+=== RUN   TestFullStateContextIntegrity/uncles
+=== RUN   TestFullStateContextIntegrity/receipts
+=== RUN   TestFullStateContextIntegrity/difficulty
+--- PASS: TestFullStateContextIntegrity (0.08s)
+    --- PASS: TestFullStateContextIntegrity/none (0.01s)
+    --- PASS: TestFullStateContextIntegrity/short (0.00s)
+    --- PASS: TestFullStateContextIntegrity/missing (0.00s)
+    --- PASS: TestFullStateContextIntegrity/parent_link (0.00s)
+    --- PASS: TestFullStateContextIntegrity/height (0.00s)
+    --- PASS: TestFullStateContextIntegrity/end_hash (0.01s)
+    --- PASS: TestFullStateContextIntegrity/body (0.01s)
+    --- PASS: TestFullStateContextIntegrity/uncles (0.01s)
+    --- PASS: TestFullStateContextIntegrity/receipts (0.01s)
+    --- PASS: TestFullStateContextIntegrity/difficulty (0.00s)
+=== RUN   TestHandoverFundingGuard
+=== RUN   TestHandoverFundingGuard/none
+=== RUN   TestHandoverFundingGuard/duplicate_funding
+=== RUN   TestHandoverFundingGuard/wrong_credit
+=== RUN   TestHandoverFundingGuard/donor_nonce
+=== RUN   TestHandoverFundingGuard/recipient_nonce
+=== RUN   TestHandoverFundingGuard/storage
+=== RUN   TestHandoverFundingGuard/code
+=== RUN   TestHandoverFundingGuard/empty_lock_insert
+=== RUN   TestHandoverFundingGuard/other_asset
+=== RUN   TestHandoverFundingGuard/deleted_account
+=== RUN   TestHandoverFundingGuard/existing_recipient
+=== RUN   TestHandoverFundingGuard/extra_account
+=== RUN   TestHandoverFundingGuard/duplicate_difference
+=== RUN   TestHandoverFundingGuard/same_owner
+=== RUN   TestHandoverFundingGuard/wrong_ledger
+--- PASS: TestHandoverFundingGuard (0.01s)
+    --- PASS: TestHandoverFundingGuard/none (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_funding (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_credit (0.00s)
+    --- PASS: TestHandoverFundingGuard/donor_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/recipient_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/storage (0.00s)
+    --- PASS: TestHandoverFundingGuard/code (0.00s)
+    --- PASS: TestHandoverFundingGuard/empty_lock_insert (0.00s)
+    --- PASS: TestHandoverFundingGuard/other_asset (0.00s)
+    --- PASS: TestHandoverFundingGuard/deleted_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/existing_recipient (0.00s)
+    --- PASS: TestHandoverFundingGuard/extra_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_difference (0.00s)
+    --- PASS: TestHandoverFundingGuard/same_owner (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_ledger (0.00s)
+=== RUN   TestHandoverTemporalAccounting
+--- PASS: TestHandoverTemporalAccounting (0.00s)
+=== RUN   TestFullStateHandoverAccounting
+    full_state_handover_ledger_test.go:139: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_handover_ledger_test.go:139: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=4 height=15130084 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=5 height=15130085 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=6 height=15130086 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=7 height=15130087 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=8 height=15130088 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=9 height=15130089 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=10 height=15130090 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:142: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; total rewards=3.125FSN; no database opened
+--- PASS: TestFullStateHandoverAccounting (0.46s)
+=== RUN   TestHandoverMissingRecoveryPurchase
+=== RUN   TestHandoverMissingRecoveryPurchase/jump
+INFO [09-24|16:31:21.711] Persisted trie from memory database      nodes=8 size=996.00B time="89.018µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:21.733] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.734] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.734] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.735] Blockchain manager stopped 
+INFO [09-24|16:31:21.737] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.738] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.738] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.760] Persisted trie from memory database      nodes=8 size=996.00B time="81.859µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:21.778] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.779] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.780] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.781] Blockchain manager stopped 
+INFO [09-24|16:31:21.783] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.783] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.784] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.821] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=18.681ms mgasps=1.136 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:21.836] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.958ms mgasps=1.419 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:21.868] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.937ms mgasps=0.000 order=5 number=15,130,082 hash="5136d6…fa14b8" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f0933c…72c568" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:21.884] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.483ms mgasps=0.000 order=5 number=15,130,082 hash="5136d6…fa14b8" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f0933c…72c568" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+    handover_cleanup_test.go:64: accepted jump block without replacement at height=15130082 leaves storedTickets=479 successorTickets=0; next preparation fails with no ticket
+INFO [09-24|16:31:21.885] Blockchain manager stopped 
+INFO [09-24|16:31:21.886] Blockchain manager stopped 
+=== RUN   TestHandoverMissingRecoveryPurchase/cleanup
+INFO [09-24|16:31:21.908] Persisted trie from memory database      nodes=8 size=996.00B time="76.089µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:21.925] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.926] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.927] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.927] Blockchain manager stopped 
+INFO [09-24|16:31:21.929] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.929] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.930] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.949] Persisted trie from memory database      nodes=8 size=996.00B time="75.096µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:21.965] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.966] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.967] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.968] Blockchain manager stopped 
+INFO [09-24|16:31:21.969] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.970] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:21.970] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.002] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.891ms mgasps=1.425 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:22.018] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.666ms mgasps=1.355 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:22.052] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.284ms mgasps=1.228 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:22.070] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.538ms mgasps=1.283 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:22.094] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=9.164ms  mgasps=2.316 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+INFO [09-24|16:31:22.102] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=7.041ms  mgasps=3.014 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+    handover_cleanup_test.go:38: cleanup without replacement is rejected before signing; adding the purchase resumes production
+INFO [09-24|16:31:22.104] Blockchain manager stopped 
+INFO [09-24|16:31:22.105] Blockchain manager stopped 
+--- PASS: TestHandoverMissingRecoveryPurchase (0.42s)
+    --- PASS: TestHandoverMissingRecoveryPurchase/jump (0.20s)
+    --- PASS: TestHandoverMissingRecoveryPurchase/cleanup (0.22s)
+=== RUN   TestSingleBackupBlockHandover
+INFO [09-24|16:31:22.131] Persisted trie from memory database      nodes=8 size=996.00B time="83.995µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:22.150] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.151] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.151] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.152] Blockchain manager stopped 
+INFO [09-24|16:31:22.154] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.154] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.155] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.177] Persisted trie from memory database      nodes=8 size=996.00B time="116.59µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:22.198] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.199] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.200] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.201] Blockchain manager stopped 
+INFO [09-24|16:31:22.202] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.203] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.204] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.246] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=20.438ms mgasps=1.038 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:22.267] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=19.695ms mgasps=1.078 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+    single_block_handover_test.go:69: single backup block height=15130081 time=1759826750 originalTickets=1 successorTickets=1 selected=0xe9d35cbc573308b366497a6f6b63e88b177652cd8696f7be6ed5a352cf89aceb refund=5000FSN-time-lock successorFirst=0x08a7d3629f563a40bcc76bcdcfe856aa83c9fd259df3f08aa896de3b4dc0400c remainingOriginal=0x7ac0cdfed0c0337f910fcaafadbab8bb34fdf43a5b62cf446095a2f59501c293 expires=1762415390
+INFO [09-24|16:31:22.308] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=20.483ms mgasps=1.036 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:22.329] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=20.051ms mgasps=1.058 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+    single_block_handover_test.go:103: successor step=1 height=15130082 time=1790121600 tickets=480 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=true root=0x57fb2154cb85a2bd6f6a7e0ef145dba6dc29124b915a206ecd1ef166d1146b35
+INFO [09-24|16:31:22.346] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=7.126ms  mgasps=2.978 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+INFO [09-24|16:31:22.357] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=9.480ms  mgasps=2.239 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+    single_block_handover_test.go:103: successor step=2 height=15130083 time=1790121720 tickets=1 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=false root=0x241a4a127ba250613cd24e4e3b4d3991f5ccea8e986a4f7e964d148938697d6e
+INFO [09-24|16:31:22.366] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.268ms  mgasps=6.494 order=0 number=15,130,084 hash="a1c72f…b89bc4" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="8aac75…e33a91" parentHash="3b8f3d…cd931e" time=1,790,121,840 age=1d14h27m cache=0.00B
+INFO [09-24|16:31:22.371] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.273ms  mgasps=4.967 order=0 number=15,130,084 hash="a1c72f…b89bc4" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="8aac75…e33a91" parentHash="3b8f3d…cd931e" time=1,790,121,840 age=1d14h27m cache=0.00B
+    single_block_handover_test.go:103: successor step=3 height=15130084 time=1790121840 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x8aac752fb801f69f95feff50c8e25b9e89b25073011b7a487f13622546e33a91
+INFO [09-24|16:31:22.381] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.474ms  mgasps=6.109 order=0 number=15,130,085 hash="8a1e08…bd48f8" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="d0ac17…e9007d" parentHash="a1c72f…b89bc4" time=1,790,121,960 age=1d14h25m cache=0.00B
+INFO [09-24|16:31:22.386] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.470ms  mgasps=6.115 order=0 number=15,130,085 hash="8a1e08…bd48f8" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="d0ac17…e9007d" parentHash="a1c72f…b89bc4" time=1,790,121,960 age=1d14h25m cache=0.00B
+    single_block_handover_test.go:103: successor step=4 height=15130085 time=1790121960 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0xd0ac17de08afc8fe3475d79aa250f9896b03a2db3276a999846f261781e9007d
+INFO [09-24|16:31:22.394] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.903ms  mgasps=7.310 order=0 number=15,130,086 hash="40ae58…4afe28" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="2f9d8a…8f55bd" parentHash="8a1e08…bd48f8" time=1,790,122,080 age=1d14h23m cache=0.00B
+INFO [09-24|16:31:22.400] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.639ms  mgasps=4.574 order=0 number=15,130,086 hash="40ae58…4afe28" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="2f9d8a…8f55bd" parentHash="8a1e08…bd48f8" time=1,790,122,080 age=1d14h23m cache=0.00B
+    single_block_handover_test.go:103: successor step=5 height=15130086 time=1790122080 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x2f9d8a080152645d98fd444143e74bb91ae91dc6f62a0d80860b0cc1fe8f55bd
+    single_block_handover_test.go:108: one original signature and no original purchases; five successor blocks; original account unchanged after initial selection refund, with no second-ticket refund
+INFO [09-24|16:31:22.402] Blockchain manager stopped 
+INFO [09-24|16:31:22.403] Blockchain manager stopped 
+--- PASS: TestSingleBackupBlockHandover (0.30s)
+=== RUN   TestSingleBackupBlockRejectsShortSuccessorTicket
+INFO [09-24|16:31:22.430] Persisted trie from memory database      nodes=8 size=996.00B time="80.434µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:22.455] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.456] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.456] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.457] Blockchain manager stopped 
+INFO [09-24|16:31:22.459] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.459] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.460] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:22.499] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=19.345ms mgasps=1.097 order=6 number=15,130,081 hash="ed0d01…45fc16" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dd03c0…ade755" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+WARN [09-24|16:31:22.522] Failed to load old bad blocks            error="not found"
+ERROR[09-24|16:31:22.523] 
+########## BAD BLOCK #########
+Chain config: Chain ID:  32659 (mainnet)
+Consensus: DaTong (Ticketed proof-of-stake)
+
+hard forks:
+ - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md)
+ - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md)
+ - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md)
+ - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md)
+ - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md)
+ - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md)
+ - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md)
+ - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md)
+ - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md)
+ - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md)
+ - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md)
+ - Fusion Eco:                  8250000 
+
+
+
+Number: 15130082
+Hash: 0x83938b467c3f03325d7830c6002eba0972fee20c15d643473db00a4d018453f6
+
+
+Error: checkTicketInfo ticket ExpireTime mismatch
+##############################
+ 
+INFO [09-24|16:31:22.524] Blockchain manager stopped 
+--- PASS: TestSingleBackupBlockRejectsShortSuccessorTicket (0.12s)
+=== RUN   TestFullStateDifferenceAccounting
+=== RUN   TestFullStateDifferenceAccounting/none
+=== RUN   TestFullStateDifferenceAccounting/duplicate_funding
+=== RUN   TestFullStateDifferenceAccounting/other_asset
+=== RUN   TestFullStateDifferenceAccounting/storage
+=== RUN   TestFullStateDifferenceAccounting/code
+=== RUN   TestFullStateDifferenceAccounting/nonce
+=== RUN   TestFullStateDifferenceAccounting/wrong_ledger_credit
+=== RUN   TestFullStateDifferenceAccounting/wrong_ledger_locks
+=== RUN   TestFullStateDifferenceAccounting/deleted_account
+=== RUN   TestFullStateDifferenceAccounting/extra_account
+--- PASS: TestFullStateDifferenceAccounting (0.03s)
+    --- PASS: TestFullStateDifferenceAccounting/none (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/duplicate_funding (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/other_asset (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/storage (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/code (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/nonce (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/wrong_ledger_credit (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/wrong_ledger_locks (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/deleted_account (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/extra_account (0.00s)
+=== RUN   TestFullStateContextIntegrity
+=== RUN   TestFullStateContextIntegrity/none
+=== RUN   TestFullStateContextIntegrity/short
+=== RUN   TestFullStateContextIntegrity/missing
+=== RUN   TestFullStateContextIntegrity/parent_link
+=== RUN   TestFullStateContextIntegrity/height
+=== RUN   TestFullStateContextIntegrity/end_hash
+=== RUN   TestFullStateContextIntegrity/body
+=== RUN   TestFullStateContextIntegrity/uncles
+=== RUN   TestFullStateContextIntegrity/receipts
+=== RUN   TestFullStateContextIntegrity/difficulty
+--- PASS: TestFullStateContextIntegrity (0.09s)
+    --- PASS: TestFullStateContextIntegrity/none (0.01s)
+    --- PASS: TestFullStateContextIntegrity/short (0.00s)
+    --- PASS: TestFullStateContextIntegrity/missing (0.00s)
+    --- PASS: TestFullStateContextIntegrity/parent_link (0.01s)
+    --- PASS: TestFullStateContextIntegrity/height (0.00s)
+    --- PASS: TestFullStateContextIntegrity/end_hash (0.01s)
+    --- PASS: TestFullStateContextIntegrity/body (0.01s)
+    --- PASS: TestFullStateContextIntegrity/uncles (0.01s)
+    --- PASS: TestFullStateContextIntegrity/receipts (0.01s)
+    --- PASS: TestFullStateContextIntegrity/difficulty (0.00s)
+=== RUN   TestHandoverFundingGuard
+=== RUN   TestHandoverFundingGuard/none
+=== RUN   TestHandoverFundingGuard/duplicate_funding
+=== RUN   TestHandoverFundingGuard/wrong_credit
+=== RUN   TestHandoverFundingGuard/donor_nonce
+=== RUN   TestHandoverFundingGuard/recipient_nonce
+=== RUN   TestHandoverFundingGuard/storage
+=== RUN   TestHandoverFundingGuard/code
+=== RUN   TestHandoverFundingGuard/empty_lock_insert
+=== RUN   TestHandoverFundingGuard/other_asset
+=== RUN   TestHandoverFundingGuard/deleted_account
+=== RUN   TestHandoverFundingGuard/existing_recipient
+=== RUN   TestHandoverFundingGuard/extra_account
+=== RUN   TestHandoverFundingGuard/duplicate_difference
+=== RUN   TestHandoverFundingGuard/same_owner
+=== RUN   TestHandoverFundingGuard/wrong_ledger
+--- PASS: TestHandoverFundingGuard (0.01s)
+    --- PASS: TestHandoverFundingGuard/none (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_funding (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_credit (0.00s)
+    --- PASS: TestHandoverFundingGuard/donor_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/recipient_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/storage (0.00s)
+    --- PASS: TestHandoverFundingGuard/code (0.00s)
+    --- PASS: TestHandoverFundingGuard/empty_lock_insert (0.00s)
+    --- PASS: TestHandoverFundingGuard/other_asset (0.00s)
+    --- PASS: TestHandoverFundingGuard/deleted_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/existing_recipient (0.00s)
+    --- PASS: TestHandoverFundingGuard/extra_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_difference (0.00s)
+    --- PASS: TestHandoverFundingGuard/same_owner (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_ledger (0.00s)
+=== RUN   TestHandoverTemporalAccounting
+--- PASS: TestHandoverTemporalAccounting (0.00s)
+=== RUN   TestFullStateHandoverAccounting
+    full_state_handover_ledger_test.go:139: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_handover_ledger_test.go:139: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=4 height=15130084 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=5 height=15130085 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=6 height=15130086 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=7 height=15130087 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=8 height=15130088 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=9 height=15130089 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=10 height=15130090 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:142: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; total rewards=3.125FSN; no database opened
+--- PASS: TestFullStateHandoverAccounting (0.47s)
+=== RUN   TestHandoverMissingRecoveryPurchase
+=== RUN   TestHandoverMissingRecoveryPurchase/jump
+INFO [09-24|16:31:23.148] Persisted trie from memory database      nodes=8 size=996.00B time="79.533µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.166] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.166] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.167] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.168] Blockchain manager stopped 
+INFO [09-24|16:31:23.169] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.170] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.171] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.192] Persisted trie from memory database      nodes=8 size=996.00B time="83.541µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.209] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.210] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.211] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.213] Blockchain manager stopped 
+INFO [09-24|16:31:23.214] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.215] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.215] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.250] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.311ms mgasps=1.301 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:23.268] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.783ms mgasps=1.193 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:23.299] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.634ms mgasps=0.000 order=5 number=15,130,082 hash="5136d6…fa14b8" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f0933c…72c568" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:23.315] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.770ms mgasps=0.000 order=5 number=15,130,082 hash="5136d6…fa14b8" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f0933c…72c568" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+    handover_cleanup_test.go:64: accepted jump block without replacement at height=15130082 leaves storedTickets=479 successorTickets=0; next preparation fails with no ticket
+INFO [09-24|16:31:23.317] Blockchain manager stopped 
+INFO [09-24|16:31:23.317] Blockchain manager stopped 
+=== RUN   TestHandoverMissingRecoveryPurchase/cleanup
+INFO [09-24|16:31:23.338] Persisted trie from memory database      nodes=8 size=996.00B time="72.586µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.356] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.357] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.357] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.358] Blockchain manager stopped 
+INFO [09-24|16:31:23.359] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.360] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.360] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.380] Persisted trie from memory database      nodes=8 size=996.00B time="75.825µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.397] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.397] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.398] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.399] Blockchain manager stopped 
+INFO [09-24|16:31:23.400] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.401] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.401] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.434] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.652ms mgasps=1.275 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:23.451] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.355ms mgasps=1.298 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:23.483] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.192ms mgasps=1.311 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:23.500] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.029ms mgasps=1.324 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:23.518] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.555ms  mgasps=3.238 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+INFO [09-24|16:31:23.526] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.836ms  mgasps=3.104 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+    handover_cleanup_test.go:38: cleanup without replacement is rejected before signing; adding the purchase resumes production
+INFO [09-24|16:31:23.527] Blockchain manager stopped 
+INFO [09-24|16:31:23.528] Blockchain manager stopped 
+--- PASS: TestHandoverMissingRecoveryPurchase (0.40s)
+    --- PASS: TestHandoverMissingRecoveryPurchase/jump (0.19s)
+    --- PASS: TestHandoverMissingRecoveryPurchase/cleanup (0.21s)
+=== RUN   TestSingleBackupBlockHandover
+INFO [09-24|16:31:23.549] Persisted trie from memory database      nodes=8 size=996.00B time="73.762µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.567] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.568] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.568] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.569] Blockchain manager stopped 
+INFO [09-24|16:31:23.570] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.571] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.571] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.592] Persisted trie from memory database      nodes=8 size=996.00B time="217.274µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.609] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.609] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.610] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.611] Blockchain manager stopped 
+INFO [09-24|16:31:23.612] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.613] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.613] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.646] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.036ms mgasps=1.411 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-24|16:31:23.663] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.149ms mgasps=1.314 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+    single_block_handover_test.go:69: single backup block height=15130081 time=1759826750 originalTickets=1 successorTickets=1 selected=0xe9d35cbc573308b366497a6f6b63e88b177652cd8696f7be6ed5a352cf89aceb refund=5000FSN-time-lock successorFirst=0x08a7d3629f563a40bcc76bcdcfe856aa83c9fd259df3f08aa896de3b4dc0400c remainingOriginal=0x7ac0cdfed0c0337f910fcaafadbab8bb34fdf43a5b62cf446095a2f59501c293 expires=1762415390
+INFO [09-24|16:31:23.697] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.811ms mgasps=1.342 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+INFO [09-24|16:31:23.713] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.471ms mgasps=1.372 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=1d14h31m cache=0.00B
+    single_block_handover_test.go:103: successor step=1 height=15130082 time=1790121600 tickets=480 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=true root=0x57fb2154cb85a2bd6f6a7e0ef145dba6dc29124b915a206ecd1ef166d1146b35
+INFO [09-24|16:31:23.727] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.720ms  mgasps=3.158 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+INFO [09-24|16:31:23.736] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=7.605ms  mgasps=2.791 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=1d14h29m cache=0.00B
+    single_block_handover_test.go:103: successor step=2 height=15130083 time=1790121720 tickets=1 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=false root=0x241a4a127ba250613cd24e4e3b4d3991f5ccea8e986a4f7e964d148938697d6e
+INFO [09-24|16:31:23.743] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.541ms  mgasps=8.350 order=0 number=15,130,084 hash="a1c72f…b89bc4" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="8aac75…e33a91" parentHash="3b8f3d…cd931e" time=1,790,121,840 age=1d14h27m cache=0.00B
+INFO [09-24|16:31:23.748] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.750ms  mgasps=5.659 order=0 number=15,130,084 hash="a1c72f…b89bc4" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="8aac75…e33a91" parentHash="3b8f3d…cd931e" time=1,790,121,840 age=1d14h27m cache=0.00B
+    single_block_handover_test.go:103: successor step=3 height=15130084 time=1790121840 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x8aac752fb801f69f95feff50c8e25b9e89b25073011b7a487f13622546e33a91
+INFO [09-24|16:31:23.755] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.338ms  mgasps=6.358 order=0 number=15,130,085 hash="8a1e08…bd48f8" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="d0ac17…e9007d" parentHash="a1c72f…b89bc4" time=1,790,121,960 age=1d14h25m cache=0.00B
+INFO [09-24|16:31:23.759] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.199ms  mgasps=6.634 order=0 number=15,130,085 hash="8a1e08…bd48f8" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="d0ac17…e9007d" parentHash="a1c72f…b89bc4" time=1,790,121,960 age=1d14h25m cache=0.00B
+    single_block_handover_test.go:103: successor step=4 height=15130085 time=1790121960 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0xd0ac17de08afc8fe3475d79aa250f9896b03a2db3276a999846f261781e9007d
+INFO [09-24|16:31:23.767] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.643ms  mgasps=8.028 order=0 number=15,130,086 hash="40ae58…4afe28" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="2f9d8a…8f55bd" parentHash="8a1e08…bd48f8" time=1,790,122,080 age=1d14h23m cache=0.00B
+INFO [09-24|16:31:23.771] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.938ms  mgasps=7.222 order=0 number=15,130,086 hash="40ae58…4afe28" difficulty=2  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="2f9d8a…8f55bd" parentHash="8a1e08…bd48f8" time=1,790,122,080 age=1d14h23m cache=0.00B
+    single_block_handover_test.go:103: successor step=5 height=15130086 time=1790122080 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x2f9d8a080152645d98fd444143e74bb91ae91dc6f62a0d80860b0cc1fe8f55bd
+    single_block_handover_test.go:108: one original signature and no original purchases; five successor blocks; original account unchanged after initial selection refund, with no second-ticket refund
+INFO [09-24|16:31:23.773] Blockchain manager stopped 
+INFO [09-24|16:31:23.774] Blockchain manager stopped 
+--- PASS: TestSingleBackupBlockHandover (0.24s)
+=== RUN   TestSingleBackupBlockRejectsShortSuccessorTicket
+INFO [09-24|16:31:23.795] Persisted trie from memory database      nodes=8 size=996.00B time="122.596µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-24|16:31:23.816] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.817] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.817] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.818] Blockchain manager stopped 
+INFO [09-24|16:31:23.820] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.821] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.821] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-24|16:31:23.859] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.520ms mgasps=1.211 order=6 number=15,130,081 hash="ed0d01…45fc16" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dd03c0…ade755" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+WARN [09-24|16:31:23.877] Failed to load old bad blocks            error="not found"
+ERROR[09-24|16:31:23.879] 
+########## BAD BLOCK #########
+Chain config: Chain ID:  32659 (mainnet)
+Consensus: DaTong (Ticketed proof-of-stake)
+
+hard forks:
+ - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md)
+ - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md)
+ - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md)
+ - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md)
+ - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md)
+ - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md)
+ - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md)
+ - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md)
+ - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md)
+ - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md)
+ - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md)
+ - Fusion Eco:                  8250000 
+
+
+
+Number: 15130082
+Hash: 0x83938b467c3f03325d7830c6002eba0972fee20c15d643473db00a4d018453f6
+
+
+Error: checkTicketInfo ticket ExpireTime mismatch
+##############################
+ 
+INFO [09-24|16:31:23.879] Blockchain manager stopped 
+--- PASS: TestSingleBackupBlockRejectsShortSuccessorTicket (0.10s)
+PASS

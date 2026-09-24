@@ -35,17 +35,7 @@ func TestFullStateRehearsal(t *testing.T) {
 	if !filepath.IsAbs(directory) || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
 		t.Fatal("absolute disposable path and no backup source environment required")
 	}
-	proof, err := os.ReadFile(filepath.Join(directory, "copy-verified.json"))
-	requireNoError(t, err)
-	var copyProof struct {
-		Source         string
-		ManifestSHA256 string
-		Files          int
-	}
-	requireNoError(t, json.Unmarshal(proof, &copyProof))
-	if filepath.Clean(copyProof.Source) == filepath.Clean(directory) || copyProof.ManifestSHA256 != "a6c86fc58a9f7b482a02b787a337d600e32a447551e45dbe40d210b498341bbf" || copyProof.Files != 230 {
-		t.Fatal("disposable copy proof missing or unexpected")
-	}
+	requireFullStateCopy(t, directory)
 	mode := os.Getenv("FUSION_RESTART_FULL_STATE_MODE")
 	t.Logf("full-state mode=%s directory=%s executable=%s", mode, directory, stateExportExecutableHash(t))
 	switch mode {
@@ -57,6 +47,21 @@ func TestFullStateRehearsal(t *testing.T) {
 		inspectFullStateBridge(t, directory)
 	default:
 		t.Fatal("mode must be prepare, produce, import or cold")
+	}
+}
+
+func requireFullStateCopy(t *testing.T, directory string) {
+	t.Helper()
+	proof, err := os.ReadFile(filepath.Join(directory, "copy-verified.json"))
+	requireNoError(t, err)
+	var copyProof struct {
+		Source         string
+		ManifestSHA256 string
+		Files          int
+	}
+	requireNoError(t, json.Unmarshal(proof, &copyProof))
+	if filepath.Clean(copyProof.Source) == filepath.Clean(directory) || copyProof.ManifestSHA256 != "a6c86fc58a9f7b482a02b787a337d600e32a447551e45dbe40d210b498341bbf" || copyProof.Files != 230 {
+		t.Fatal("disposable copy proof missing or unexpected")
 	}
 }
 
@@ -248,7 +253,7 @@ func verifyFullStateReconstruction(t *testing.T, f *fixture) {
 	if header.Hash() != expected.Hash() || !reflect.DeepEqual(header.GetSelectedTicket(), expected.GetSelectedTicket()) || !reflect.DeepEqual(header.GetRetreatTickets(), expected.GetRetreatTickets()) {
 		t.Fatal("full-state reconstruction changed selection")
 	}
-	t.Log("reconstructed all eight unavailable suffix states back to retained synthetic parent")
+	t.Logf("reconstructed %d unavailable suffix states back to retained synthetic parent", len(roots))
 	roots[f.parent.Root()] = true
 	evictTicketCache(t, parent.MixDigest())
 	f.engine.SetStateCache(&missingStateDatabase{Database: state.NewDatabase(f.db), roots: roots})

@@ -1,0 +1,40 @@
+=== RUN   TestFullStateHandover
+    full_state_handover_test.go:31: full-state handover mode=runtime directory=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-handover-linux-producer executable=a8bdf074518aa5bcf8529782becdbedbc211ce515268b1dc3e28fa77586e5941
+INFO [09-24|16:24:37.430] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-handover-linux-producer/chaindata cache=256.00MiB handles=128
+INFO [09-24|16:24:37.528] Loaded most recent local header          number=15,130,086 hash="294fb7…0da503" td=63,370,514,670 age=1d14h16m
+INFO [09-24|16:24:37.529] Loaded most recent local full block      number=15,130,086 hash="294fb7…0da503" td=63,370,514,670 age=1d14h16m
+INFO [09-24|16:24:37.530] Loaded most recent local fast block      number=15,130,086 hash="294fb7…0da503" td=63,370,514,670 age=1d14h16m
+WARN [09-24|16:24:38.367] Next block doesn't have ticket, wait buy ticket 
+INFO [09-24|16:24:38.367] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+WARN [09-24|16:24:38.368] Next block doesn't have ticket, wait buy ticket 
+INFO [09-24|16:24:38.369] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+WARN [09-24|16:24:38.378] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+WARN [09-24|16:24:38.404] Automatic ticket purchase needs attention; retrying err="injected temporary submission failure"
+INFO [09-24|16:24:43.368] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+INFO [09-24|16:24:43.371] Submitted transaction                    hash=0xf78e633e149f109486559e5db6c3ab6da11ccd3feaffaca4256a1f6887acb60a from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=6 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+INFO [09-24|16:24:43.371] Automatic ticket submitted; awaiting inclusion tx="f78e63…acb60a" nonce=6
+    full_state_handover_test.go:38: startup submission failure retried without a new head; identical signed transaction=0xf78e633e149f109486559e5db6c3ab6da11ccd3feaffaca4256a1f6887acb60a
+INFO [09-24|16:24:45.891] Commit new mining work                   number=15,130,087 sealhash="68cf6f…e718cd" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=8.658ms
+INFO [09-24|16:24:49.014] Successfully sealed new block            number=15,130,087 sealhash="68cf6f…e718cd" hash="dd1aea…7d7fb1" difficulty=2 elapsed=3.123s
+INFO [09-24|16:24:49.015] 🔨 mined potential block                  number=15,130,087 hash="dd1aea…7d7fb1"
+INFO [09-24|16:24:49.015] Automatic ticket purchase confirmed      tx="f78e63…acb60a" block="dd1aea…7d7fb1"
+WARN [09-24|16:24:49.015] Next block doesn't have ticket, wait buy ticket 
+INFO [09-24|16:24:49.016] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+WARN [09-24|16:24:49.016] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+INFO [09-24|16:24:49.027] Submitted transaction                    hash=0x2825f2539a8e707b9568b2ac7d91b38ef7885b61810667ddc79d5486e5ade176 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=7 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+INFO [09-24|16:24:49.028] Automatic ticket submitted; awaiting inclusion tx="2825f2…ade176" nonce=7
+INFO [09-24|16:24:50.020] Commit new mining work                   number=15,130,088 sealhash="483234…bd3601" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=4.055ms
+INFO [09-24|16:25:00.003] Successfully sealed new block            number=15,130,088 sealhash="483234…bd3601" hash="caeba5…309c4e" difficulty=2 elapsed=9.983s
+INFO [09-24|16:25:00.003] 🔨 mined potential block                  number=15,130,088 hash="caeba5…309c4e"
+INFO [09-24|16:25:00.005] Automatic ticket purchase confirmed      tx="2825f2…ade176" block="caeba5…309c4e"
+WARN [09-24|16:25:00.006] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+INFO [09-24|16:25:00.015] Submitted transaction                    hash=0x13ed74cc53fa8e6bf9820076a0fae79e7014fc5321c87fc8f7070b711434e39b from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=8 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+INFO [09-24|16:25:00.015] Automatic ticket submitted; awaiting inclusion tx="13ed74…34e39b" nonce=8
+INFO [09-24|16:25:00.019] Commit new mining work                   number=15,130,089 sealhash="853920…65189e" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.933ms
+    full_state_handover_test.go:38: block=7 height=15130087 time=1790259878 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0xdd1aeab845b507276c83b99d61d025b26d0ed1262a1b501a736762564f7d7fb1 root=0x15ba72291e82b36c64b9dbd182d94bafa97e5b02c1a6574d06e4576cd1d85d5f tickets=1 changedAccounts=2
+    full_state_handover_test.go:38: block=8 height=15130088 time=1790259889 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0xcaeba5cab97d3d4fd5fbd65d35d855e053fe1b568960641167fea01e91309c4e root=0xa27d5cc9c224e4d18787ebaa88fe73be1e6bcbaa01d13c8346d4476374f9cb39 tickets=1 changedAccounts=2
+    full_state_handover_test.go:38: real worker and automatic buyer completed two blocks; offset=7..8 originalNonce=233427 successorNonce=8
+INFO [09-24|16:25:00.349] Transaction pool stopped 
+INFO [09-24|16:25:00.349] Blockchain manager stopped 
+--- PASS: TestFullStateHandover (22.01s)
+PASS

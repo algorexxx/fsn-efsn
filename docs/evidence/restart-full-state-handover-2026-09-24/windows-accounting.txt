@@ -1,0 +1,48 @@
+=== RUN   TestHandoverFundingGuard
+=== RUN   TestHandoverFundingGuard/none
+=== RUN   TestHandoverFundingGuard/duplicate_funding
+=== RUN   TestHandoverFundingGuard/wrong_credit
+=== RUN   TestHandoverFundingGuard/donor_nonce
+=== RUN   TestHandoverFundingGuard/recipient_nonce
+=== RUN   TestHandoverFundingGuard/storage
+=== RUN   TestHandoverFundingGuard/code
+=== RUN   TestHandoverFundingGuard/empty_lock_insert
+=== RUN   TestHandoverFundingGuard/other_asset
+=== RUN   TestHandoverFundingGuard/deleted_account
+=== RUN   TestHandoverFundingGuard/existing_recipient
+=== RUN   TestHandoverFundingGuard/extra_account
+=== RUN   TestHandoverFundingGuard/duplicate_difference
+=== RUN   TestHandoverFundingGuard/same_owner
+=== RUN   TestHandoverFundingGuard/wrong_ledger
+--- PASS: TestHandoverFundingGuard (0.00s)
+    --- PASS: TestHandoverFundingGuard/none (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_funding (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_credit (0.00s)
+    --- PASS: TestHandoverFundingGuard/donor_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/recipient_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/storage (0.00s)
+    --- PASS: TestHandoverFundingGuard/code (0.00s)
+    --- PASS: TestHandoverFundingGuard/empty_lock_insert (0.00s)
+    --- PASS: TestHandoverFundingGuard/other_asset (0.00s)
+    --- PASS: TestHandoverFundingGuard/deleted_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/existing_recipient (0.00s)
+    --- PASS: TestHandoverFundingGuard/extra_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_difference (0.00s)
+    --- PASS: TestHandoverFundingGuard/same_owner (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_ledger (0.00s)
+=== RUN   TestHandoverTemporalAccounting
+--- PASS: TestHandoverTemporalAccounting (0.00s)
+=== RUN   TestFullStateHandoverAccounting
+    full_state_handover_ledger_test.go:139: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_handover_ledger_test.go:139: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=4 height=15130084 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=5 height=15130085 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=6 height=15130086 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=7 height=15130087 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=8 height=15130088 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=9 height=15130089 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:139: accounted block=10 height=15130090 accounts=2 temporalBoundaries=6 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_handover_ledger_test.go:142: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; total rewards=3.125FSN; no database opened
+--- PASS: TestFullStateHandoverAccounting (0.31s)
+PASS

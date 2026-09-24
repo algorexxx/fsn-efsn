@@ -169,13 +169,14 @@ that log formatting and adds the independent accounting assertions.
 
 ## Next gates
 
-- Exercise actual full-state mining and automatic replenishment, including a
-  missed purchase, restart and funding/wallet failures. Decide and demonstrate
-  the initial operator/key layout and ticket runway before selecting launch
-  timing. The working launch target now includes a temporary recovery signer
-  handing over to Peter's separately funded continuing wallet; see the
-  [handover investigation](restart-wallet-handover.md). Test full-state handover,
-  purchase drain, sustained replenishment and restore, then later participation.
+- The subsequent [full-state handover](restart-full-state-handover.md) now
+  demonstrates one backup-signer block, donation-key continuation, complete
+  accounting, actual worker/automatic-buyer production, a failed submission and
+  process restart on Windows and Linux. It also finds an accepted but stranded
+  jump when its replacement purchase is omitted. Require controlled recovery
+  construction and pre-signing purchase/usable-ticket checks. Continue with
+  full node-service/P2P handover, backup-wallet purchase drain, funding/wallet
+  failure cases, restore and later participation.
 - Review the historical bridge's refunds, retreats and time-lock changes; compare
   Candidate A with the explicit current-time alternative. Synthetic owner/parent
   changes alter sorting, transaction IDs and ticket IDs, so the real-signer

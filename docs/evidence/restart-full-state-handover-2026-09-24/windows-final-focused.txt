@@ -1,0 +1,98 @@
+=== RUN   TestFullStateDifferenceAccounting
+=== RUN   TestFullStateDifferenceAccounting/none
+=== RUN   TestFullStateDifferenceAccounting/duplicate_funding
+=== RUN   TestFullStateDifferenceAccounting/other_asset
+=== RUN   TestFullStateDifferenceAccounting/storage
+=== RUN   TestFullStateDifferenceAccounting/code
+=== RUN   TestFullStateDifferenceAccounting/nonce
+=== RUN   TestFullStateDifferenceAccounting/wrong_ledger_credit
+=== RUN   TestFullStateDifferenceAccounting/wrong_ledger_locks
+=== RUN   TestFullStateDifferenceAccounting/deleted_account
+=== RUN   TestFullStateDifferenceAccounting/extra_account
+--- PASS: TestFullStateDifferenceAccounting (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/none (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/duplicate_funding (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/other_asset (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/storage (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/code (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/nonce (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/wrong_ledger_credit (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/wrong_ledger_locks (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/deleted_account (0.00s)
+    --- PASS: TestFullStateDifferenceAccounting/extra_account (0.00s)
+=== RUN   TestFullStateContextIntegrity
+=== RUN   TestFullStateContextIntegrity/none
+=== RUN   TestFullStateContextIntegrity/short
+=== RUN   TestFullStateContextIntegrity/missing
+=== RUN   TestFullStateContextIntegrity/parent_link
+=== RUN   TestFullStateContextIntegrity/height
+=== RUN   TestFullStateContextIntegrity/end_hash
+=== RUN   TestFullStateContextIntegrity/body
+=== RUN   TestFullStateContextIntegrity/uncles
+=== RUN   TestFullStateContextIntegrity/receipts
+=== RUN   TestFullStateContextIntegrity/difficulty
+--- PASS: TestFullStateContextIntegrity (0.01s)
+    --- PASS: TestFullStateContextIntegrity/none (0.00s)
+    --- PASS: TestFullStateContextIntegrity/short (0.00s)
+    --- PASS: TestFullStateContextIntegrity/missing (0.00s)
+    --- PASS: TestFullStateContextIntegrity/parent_link (0.00s)
+    --- PASS: TestFullStateContextIntegrity/height (0.00s)
+    --- PASS: TestFullStateContextIntegrity/end_hash (0.00s)
+    --- PASS: TestFullStateContextIntegrity/body (0.00s)
+    --- PASS: TestFullStateContextIntegrity/uncles (0.00s)
+    --- PASS: TestFullStateContextIntegrity/receipts (0.00s)
+    --- PASS: TestFullStateContextIntegrity/difficulty (0.00s)
+=== RUN   TestHandoverFundingGuard
+=== RUN   TestHandoverFundingGuard/none
+=== RUN   TestHandoverFundingGuard/duplicate_funding
+=== RUN   TestHandoverFundingGuard/wrong_credit
+=== RUN   TestHandoverFundingGuard/donor_nonce
+=== RUN   TestHandoverFundingGuard/recipient_nonce
+=== RUN   TestHandoverFundingGuard/storage
+=== RUN   TestHandoverFundingGuard/code
+=== RUN   TestHandoverFundingGuard/empty_lock_insert
+=== RUN   TestHandoverFundingGuard/other_asset
+=== RUN   TestHandoverFundingGuard/deleted_account
+=== RUN   TestHandoverFundingGuard/existing_recipient
+=== RUN   TestHandoverFundingGuard/extra_account
+=== RUN   TestHandoverFundingGuard/duplicate_difference
+=== RUN   TestHandoverFundingGuard/same_owner
+=== RUN   TestHandoverFundingGuard/wrong_ledger
+--- PASS: TestHandoverFundingGuard (0.00s)
+    --- PASS: TestHandoverFundingGuard/none (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_funding (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_credit (0.00s)
+    --- PASS: TestHandoverFundingGuard/donor_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/recipient_nonce (0.00s)
+    --- PASS: TestHandoverFundingGuard/storage (0.00s)
+    --- PASS: TestHandoverFundingGuard/code (0.00s)
+    --- PASS: TestHandoverFundingGuard/empty_lock_insert (0.00s)
+    --- PASS: TestHandoverFundingGuard/other_asset (0.00s)
+    --- PASS: TestHandoverFundingGuard/deleted_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/existing_recipient (0.00s)
+    --- PASS: TestHandoverFundingGuard/extra_account (0.00s)
+    --- PASS: TestHandoverFundingGuard/duplicate_difference (0.00s)
+    --- PASS: TestHandoverFundingGuard/same_owner (0.00s)
+    --- PASS: TestHandoverFundingGuard/wrong_ledger (0.00s)
+=== RUN   TestHandoverTemporalAccounting
+--- PASS: TestHandoverTemporalAccounting (0.00s)
+=== RUN   TestHandoverMissingRecoveryPurchase
+=== RUN   TestHandoverMissingRecoveryPurchase/jump
+    handover_cleanup_test.go:64: accepted jump block without replacement at height=15130082 leaves storedTickets=479 successorTickets=0; next preparation fails with no ticket
+=== RUN   TestHandoverMissingRecoveryPurchase/cleanup
+    handover_cleanup_test.go:38: cleanup without replacement is rejected before signing; adding the purchase resumes production
+--- PASS: TestHandoverMissingRecoveryPurchase (0.05s)
+    --- PASS: TestHandoverMissingRecoveryPurchase/jump (0.03s)
+    --- PASS: TestHandoverMissingRecoveryPurchase/cleanup (0.03s)
+=== RUN   TestSingleBackupBlockHandover
+    single_block_handover_test.go:69: single backup block height=15130081 time=1759826750 originalTickets=1 successorTickets=1 selected=0xe9d35cbc573308b366497a6f6b63e88b177652cd8696f7be6ed5a352cf89aceb refund=5000FSN-time-lock successorFirst=0x08a7d3629f563a40bcc76bcdcfe856aa83c9fd259df3f08aa896de3b4dc0400c remainingOriginal=0x7ac0cdfed0c0337f910fcaafadbab8bb34fdf43a5b62cf446095a2f59501c293 expires=1762415390
+    single_block_handover_test.go:103: successor step=1 height=15130082 time=1790121600 tickets=480 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=true root=0x57fb2154cb85a2bd6f6a7e0ef145dba6dc29124b915a206ecd1ef166d1146b35
+    single_block_handover_test.go:103: successor step=2 height=15130083 time=1790121720 tickets=1 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=false root=0x241a4a127ba250613cd24e4e3b4d3991f5ccea8e986a4f7e964d148938697d6e
+    single_block_handover_test.go:103: successor step=3 height=15130084 time=1790121840 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x8aac752fb801f69f95feff50c8e25b9e89b25073011b7a487f13622546e33a91
+    single_block_handover_test.go:103: successor step=4 height=15130085 time=1790121960 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0xd0ac17de08afc8fe3475d79aa250f9896b03a2db3276a999846f261781e9007d
+    single_block_handover_test.go:103: successor step=5 height=15130086 time=1790122080 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x2f9d8a080152645d98fd444143e74bb91ae91dc6f62a0d80860b0cc1fe8f55bd
+    single_block_handover_test.go:108: one original signature and no original purchases; five successor blocks; original account unchanged after initial selection refund, with no second-ticket refund
+--- PASS: TestSingleBackupBlockHandover (0.04s)
+=== RUN   TestSingleBackupBlockRejectsShortSuccessorTicket
+--- PASS: TestSingleBackupBlockRejectsShortSuccessorTicket (0.01s)
+PASS
