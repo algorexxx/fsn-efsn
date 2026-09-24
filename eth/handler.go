@@ -189,7 +189,7 @@ func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, ne
 			return 0, nil
 		}
 		n, err := manager.blockchain.InsertChain(blocks)
-		if err == nil {
+		if err == nil && manager.blockchain.CheckRestartReady() == nil {
 			atomic.StoreUint32(&manager.acceptTxs, 1) // Mark initial sync done on any fetcher import
 		}
 		return n, err
@@ -686,7 +686,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 
 	case msg.Code == TxMsg:
 		// Transactions arrived, make sure we have a valid and fresh chain to handle them
-		if atomic.LoadUint32(&pm.acceptTxs) == 0 {
+		if atomic.LoadUint32(&pm.acceptTxs) == 0 || pm.blockchain.CheckRestartReady() != nil {
 			break
 		}
 		// Transactions can be processed, parse all of them and deliver to the pool

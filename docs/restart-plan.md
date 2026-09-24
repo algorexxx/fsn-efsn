@@ -23,8 +23,12 @@ and independent network rehearsals remain outstanding.
 The [anchor entry-point investigation](restart-anchor-investigation.md) now
 reproduces heavier-chain replacement and legacy-checkpoint gaps involving stored
 forks, canonical indexes, headers, receipts, pivot commits and startup initialization/rewinds.
-The separate restart boundary remains required; adding a legacy checkpoint is
-not an adequate implementation.
+The [separate anchor prototype](restart-anchor-implementation.md) now checks these
+entry points, rejects incompatible startup data before repair, and gates mining
+and transaction readiness below the anchor. It also fixes two reproduced rollback
+defects. The production height/hash remains unset. Light mode explicitly refuses
+an active anchor; fast/freezer release support and multi-process rehearsal remain
+unproven. Adding a legacy checkpoint is not an adequate implementation.
 
 ## 1. Objective and agreed scope
 
@@ -84,10 +88,10 @@ Limitations:
 
 - These RPC results come from one recovered node; they are not independent validation of the chain.
 - File checksums in the recovery report establish faithful copying, not the correctness or finality of the source history.
-- Complete block/receipt coverage, full replay, all historical state, and state-trie completeness remain unproven.
+- Complete structural block/receipt coverage and reachable current-state traversal now pass. Full replay and all historical state remain unproven; replay through 1,000,000 passed and the bounded 2,000,000 phase is running.
 - No production restart blocks have been constructed or signed. Synthetic blocks using a public test key have now been constructed and imported; see the experiment report.
 - No private keys were read and no transactions were submitted.
-- Go 1.21.3 runs ten top-level synthetic restart tests covering 22 cases on Windows with CGO disabled and in the dedicated Linux environment with CGO disabled/enabled. Several passing characterization cases deliberately reproduce defects. The Linux race run fails on an existing receipt-log ownership defect; a temporary correction passes the exercised scenario. Production-release readiness remains unproven. The reviewed workflow named `Build-And-Test` currently only builds.
+- Go 1.21.3 runs the growing synthetic restart suite on Windows and Linux. Original baseline race failures and their passing corrections are retained separately; current counts and exact results belong to the linked evidence reports. Legacy characterization cases deliberately reproduce defects, while enabled-anchor cases require rejection. Production-release readiness remains unproven. The reviewed workflow named `Build-And-Test` currently only builds.
 
 ## 3. Corrections and additional findings from the second review
 
@@ -489,7 +493,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 1. Continue the bounded baseline replay toward 2,000,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 1,000,000 have passed. Historical checkpoint shortcuts remain in the replay and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
-4. Implement the separate restart-anchor eligibility rule using the [reproduced entry-point gaps](restart-anchor-investigation.md). Invert the unsafe characterization expectations to require clean rejection, test ordinary fork choice among compatible descendants, and extend to direct mining writes, startup corruption, recovery tools and supported sync modes. Freeze the production anchor only after the recovery artifacts are reviewed.
+4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md). Synthetic entry-point tests now reject incompatible inputs and preserve ordinary compatible fork choice. Next cover independent peer processes, actual mining/RPC operation with an active anchor, interrupted database writes, deep ancestry and supported synchronization modes. Freeze the production anchor only after the recovery artifacts are reviewed.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation
@@ -500,6 +504,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 | Checkpoint shortcuts and range behavior | [consensus/datong/checkpoints.go](../consensus/datong/checkpoints.go), [core/block_validator.go](../core/block_validator.go) |
 | Canonical selection, reorg, startup, writes, fast-sync head | [core/blockchain.go](../core/blockchain.go) |
 | Header-chain selection and import | [core/headerchain.go](../core/headerchain.go) |
+| Separate restart rule, preflight and readiness | [core/restart_anchor.go](../core/restart_anchor.go), [params/restart_anchor.go](../params/restart_anchor.go) |
 | Mining write path and block preparation | [miner/worker.go](../miner/worker.go) |
 | Execution, native errors, time references and receipts | [core/state_transition.go](../core/state_transition.go), [core/state_processor.go](../core/state_processor.go), [core/evm.go](../core/evm.go) |
 | Ticket storage/cache and maturity | [core/state/statedb.go](../core/state/statedb.go), [core/state/state_object.go](../core/state/state_object.go) |

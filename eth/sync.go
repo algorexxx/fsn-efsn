@@ -209,7 +209,7 @@ func (pm *ProtocolManager) synchronise(peer *peer) {
 	// If we've successfully finished a sync cycle and passed any required checkpoint,
 	// enable accepting transactions from the network.
 	head := pm.blockchain.CurrentBlock()
-	if head.NumberU64() >= pm.checkpointNumber {
+	if head.NumberU64() >= pm.checkpointNumber && pm.blockchain.CheckRestartReady() == nil {
 		// Checkpoint passed, sanity check the timestamp to have a fallback mechanism
 		// for non-checkpointed (number = 0) private networks.
 		if head.Time() >= uint64(time.Now().AddDate(0, -1, 0).Unix()) {

@@ -831,6 +831,10 @@ func (w *worker) commitTransactions(txs *types.TransactionsByPriceAndNonce, coin
 
 // commitNewWork generates several new sealing tasks based on the parent block.
 func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) {
+	if err := w.chain.CheckRestartReady(); err != nil {
+		log.Warn("Mining waits for restart anchor", "err", err)
+		return
+	}
 	w.mu.RLock()
 	defer w.mu.RUnlock()
 

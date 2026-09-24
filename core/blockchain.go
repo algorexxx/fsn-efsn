@@ -386,13 +386,22 @@ func (bc *BlockChain) FastSyncCommitHead(hash common.Hash) error {
 	if block == nil {
 		return fmt.Errorf("non existent block [%x…]", hash[:4])
 	}
+	bc.chainmu.Lock()
+	defer bc.chainmu.Unlock()
+	if err := bc.hc.restartAnchor.checkHead(block.Header(), bc.CurrentBlock().Header()); err != nil {
+		return err
+	}
+	if bc.hc.restartAnchor != nil && (bc.CurrentHeader().Number.Uint64() < block.NumberU64() || rawdb.ReadCanonicalHash(bc.db, block.NumberU64()) != block.Hash()) {
+		return fmt.Errorf("restart anchor: fast-sync head is not canonical")
+	}
 	if _, err := trie.NewSecure(block.Root(), bc.stateCache.TrieDB()); err != nil {
 		return err
 	}
 	// If all checks out, manually set the head block
-	bc.chainmu.Lock()
+	if bc.hc.restartAnchor != nil {
+		rawdb.WriteHeadBlockHash(bc.db, hash)
+	}
 	bc.currentBlock.Store(block)
-	bc.chainmu.Unlock()
 
 	log.Info("Committed new head block", "number", block.Number(), "hash", hash)
 	return nil
@@ -466,6 +475,9 @@ func (bc *BlockChain) Reset() error {
 // ResetWithGenesisBlock purges the entire blockchain, restoring it to the
 // specified genesis state.
 func (bc *BlockChain) ResetWithGenesisBlock(genesis *types.Block) error {
+	if a := bc.hc.restartAnchor; a != nil && genesis.Hash() != a.rule.GenesisHash {
+		return fmt.Errorf("restart anchor: cannot replace genesis")
+	}
 	// Dump the entire block chain and purge the caches
 	if err := bc.SetHead(0); err != nil {
 		return err
@@ -561,7 +573,7 @@ func (bc *BlockChain) writeHeadBlock(block *types.Block) {
 		return
 	}
 	// If the block is on a side chain or an unknown one, force other heads onto it too
-	updateHeads := rawdb.ReadCanonicalHash(bc.db, block.NumberU64()) != block.Hash()
+	updateHeads := rawdb.ReadCanonicalHash(bc.db, block.NumberU64()) != block.Hash() || bc.hc.CurrentHeader().Number.Uint64() < block.NumberU64()
 
 	// Add the block to the canonical chain number scheme and mark as the head
 	batch := bc.db.NewBatch()
@@ -853,6 +865,9 @@ const (
 func (bc *BlockChain) Rollback(chain []common.Hash) {
 	bc.chainmu.Lock()
 	defer bc.chainmu.Unlock()
+	if bc.hc.restartAnchor != nil {
+		bc.hc.restartAnchor.proven.Purge()
+	}
 
 	batch := bc.db.NewBatch()
 	for i := len(chain) - 1; i >= 0; i-- {
@@ -898,6 +913,9 @@ func (bc *BlockChain) Rollback(chain []common.Hash) {
 // data in the ancient store that exceeds the specified header.
 func (bc *BlockChain) truncateAncient(head uint64) error {
 	frozen, err := bc.db.Ancients()
+	if errors.Is(err, rawdb.ErrNotSupported) {
+		return nil
+	}
 	if err != nil {
 		return err
 	}
@@ -935,6 +953,14 @@ type numberHash struct {
 // InsertReceiptChain attempts to complete an already existing header chain with
 // transaction and receipt data.
 func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain []types.Receipts, ancientLimit uint64) (int, error) {
+	if i, err := bc.hc.restartAnchor.checkBlocks(blockChain); err != nil {
+		return i, err
+	}
+	if len(blockChain) > 0 {
+		if err := bc.hc.restartAnchor.checkHead(blockChain[len(blockChain)-1].Header(), bc.CurrentFastBlock().Header()); err != nil {
+			return 0, err
+		}
+	}
 	// We don't require the chainMu here since we want to maximize the
 	// concurrency of header insertion and receipt insertion.
 	bc.wg.Add(1)
@@ -968,8 +994,12 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 	)
 	// updateHead updates the head fast sync block if the inserted blocks are better
 	// and returns an indicator whether the inserted blocks are canonical.
-	updateHead := func(head *types.Block) bool {
+	updateHead := func(head *types.Block) (bool, error) {
 		bc.chainmu.Lock()
+		if err := bc.hc.restartAnchor.checkHead(head.Header(), bc.CurrentFastBlock().Header()); err != nil {
+			bc.chainmu.Unlock()
+			return false, err
+		}
 
 		// Rewind may have occurred, skip in that case.
 		if bc.CurrentHeader().Number.Cmp(head.Number()) >= 0 {
@@ -979,11 +1009,11 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 				bc.currentFastBlock.Store(head)
 				headFastBlockGauge.Update(int64(head.NumberU64()))
 				bc.chainmu.Unlock()
-				return true
+				return true, nil
 			}
 		}
 		bc.chainmu.Unlock()
-		return false
+		return false, nil
 	}
 	// writeAncient writes blockchain and corresponding receipt chain into ancient store.
 	//
@@ -1058,7 +1088,11 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 		if err := bc.db.Sync(); err != nil {
 			return 0, err
 		}
-		if !updateHead(blockChain[len(blockChain)-1]) {
+		updated, err := updateHead(blockChain[len(blockChain)-1])
+		if err != nil {
+			return 0, err
+		}
+		if !updated {
 			return 0, errors.New("side blocks can't be accepted as the ancient chain data")
 		}
 		previous = nil // disable rollback explicitly
@@ -1150,8 +1184,8 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 				return 0, err
 			}
 		}
-		updateHead(blockChain[len(blockChain)-1])
-		return 0, nil
+		_, err := updateHead(blockChain[len(blockChain)-1])
+		return 0, err
 	}
 	// Write downloaded chain data and corresponding receipt chain data
 	if len(ancientBlocks) > 0 {
@@ -1215,6 +1249,9 @@ var lastWrite uint64
 // but does not write any state. This is used to construct competing side forks
 // up to the point where they exceed the canonical total difficulty.
 func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (err error) {
+	if err := bc.hc.restartAnchor.check(block.Header(), nil); err != nil {
+		return err
+	}
 	bc.wg.Add(1)
 	defer bc.wg.Done()
 
@@ -1234,6 +1271,9 @@ func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (e
 func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.Receipt, state *state.StateDB) (status WriteStatus, err error) {
 	bc.chainmu.Lock()
 	defer bc.chainmu.Unlock()
+	if err := bc.CheckRestartReady(); err != nil {
+		return NonStatTy, err
+	}
 
 	return bc.writeBlockWithState(block, receipts, state)
 }
@@ -1241,6 +1281,9 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 // writeBlockWithState writes the block and all associated state to the database,
 // but is expects the chain mutex to be held.
 func (bc *BlockChain) writeBlockWithState(block *types.Block, receipts []*types.Receipt, state *state.StateDB) (status WriteStatus, err error) {
+	if err := bc.hc.restartAnchor.checkHead(block.Header(), bc.CurrentBlock().Header()); err != nil {
+		return NonStatTy, err
+	}
 	bc.wg.Add(1)
 	defer bc.wg.Done()
 
@@ -1395,6 +1438,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		}
 	}
 	if i, err := datong.CheckPointsInBlockChain(bc.chainConfig.ChainID, chain); err != nil {
+		return i, nil, nil, err
+	}
+	if i, err := bc.hc.restartAnchor.checkBlocks(chain); err != nil {
 		return i, nil, nil, err
 	}
 	// Pre-checks passed, start the full block imports
@@ -1656,6 +1702,9 @@ func countTransactions(chain []*types.Block) (c int) {
 // to be part of the new canonical chain and accumulates potential missing transactions and post an
 // event about them
 func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
+	if err := bc.hc.restartAnchor.checkHead(newBlock.Header(), oldBlock.Header()); err != nil {
+		return err
+	}
 	var (
 		newChain    types.Blocks
 		oldChain    types.Blocks

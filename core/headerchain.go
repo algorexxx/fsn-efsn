@@ -65,9 +65,10 @@ type HeaderChain struct {
 	currentHeader     atomic.Value // Current head of the header chain (may be above the block chain!)
 	currentHeaderHash common.Hash  // Hash of the current head of the header chain (prevent recomputing all the time)
 
-	headerCache *lru.Cache // Cache for the most recent block headers
-	tdCache     *lru.Cache // Cache for the most recent block total difficulties
-	numberCache *lru.Cache // Cache for the most recent block numbers
+	headerCache   *lru.Cache // Cache for the most recent block headers
+	tdCache       *lru.Cache // Cache for the most recent block total difficulties
+	numberCache   *lru.Cache // Cache for the most recent block numbers
+	restartAnchor *restartAnchor
 
 	procInterrupt func() bool
 
@@ -78,6 +79,13 @@ type HeaderChain struct {
 // NewHeaderChain creates a new HeaderChain structure. ProcInterrupt points
 // to the parent's interrupt semaphore.
 func NewHeaderChain(chainDb ethdb.Database, config *params.ChainConfig, engine consensus.Engine, procInterrupt func() bool) (*HeaderChain, error) {
+	anchor, err := newRestartAnchor(chainDb, config)
+	if err != nil {
+		return nil, err
+	}
+	if err := anchor.preflight(); err != nil {
+		return nil, err
+	}
 	headerCache, _ := lru.New(headerCacheLimit)
 	tdCache, _ := lru.New(tdCacheLimit)
 	numberCache, _ := lru.New(numberCacheLimit)
@@ -97,6 +105,7 @@ func NewHeaderChain(chainDb ethdb.Database, config *params.ChainConfig, engine c
 		procInterrupt: procInterrupt,
 		rand:          mrand.New(mrand.NewSource(seed.Int64())),
 		engine:        engine,
+		restartAnchor: anchor,
 	}
 
 	hc.genesisHeader = hc.GetHeaderByNumber(0)
@@ -139,6 +148,9 @@ func (hc *HeaderChain) GetBlockNumber(hash common.Hash) *uint64 {
 // in two scenarios: pure-header mode of operation (light clients), or properly
 // separated header/block phases (non-archive clients).
 func (hc *HeaderChain) WriteHeader(header *types.Header) (status WriteStatus, err error) {
+	if err := hc.restartAnchor.checkHead(header, hc.CurrentHeader()); err != nil {
+		return NonStatTy, err
+	}
 	// Cache some values to prevent constant recalculation
 	var (
 		hash   = header.Hash()
@@ -223,6 +235,9 @@ func (hc *HeaderChain) WriteHeader(header *types.Header) (status WriteStatus, er
 type WhCallback func(*types.Header) error
 
 func (hc *HeaderChain) ValidateHeaderChain(chain []*types.Header, checkFreq int) (int, error) {
+	if i, err := hc.restartAnchor.checkHeaders(chain); err != nil {
+		return i, err
+	}
 	// Do a sanity check that the provided chain is actually ordered and linked
 
 	for i := 1; i < len(chain); i++ {
@@ -290,6 +305,9 @@ func (hc *HeaderChain) ValidateHeaderChain(chain []*types.Header, checkFreq int)
 // of the header retrieval mechanisms already need to verfy nonces, as well as
 // because nonces can be verified sparsely, not needing to check each.
 func (hc *HeaderChain) InsertHeaderChain(chain []*types.Header, writeHeader WhCallback, start time.Time) (int, error) {
+	if i, err := hc.restartAnchor.checkHeaders(chain); err != nil {
+		return i, err
+	}
 	if i, err := datong.CheckPointsInHeaderChain(hc.config.ChainID, chain); err != nil {
 		return i, err
 	}
@@ -486,6 +504,9 @@ type DeleteCallback func(ethdb.KeyValueWriter, common.Hash, uint64)
 // SetHead rewinds the local chain to a new head. Everything above the new head
 // will be deleted and the new one set.
 func (hc *HeaderChain) SetHead(head uint64, delFn DeleteCallback) {
+	if hc.restartAnchor != nil {
+		hc.restartAnchor.proven.Purge()
+	}
 	var (
 		parentHash common.Hash
 		batch      = hc.chainDb.NewBatch()

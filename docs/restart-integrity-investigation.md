@@ -150,6 +150,12 @@ At launch Linux had 76,551,995,392 free bytes and D: had 87,101,820,928 free byt
 Available host space had fallen since the previous phase, so capacity is checked
 throughout instead of assuming the full replay fits.
 
+At 06:42:36 UTC on 24 September, while the separate anchor prototype was being
+tested, this replay had reached 1,604,288 with no reported import failure.
+Linux had 75,352,391,680 free bytes and D: had 79,522,516,992. The retained replay
+executable still matched its original digest. This is an intermediate observation,
+not phase-completion evidence; see the [sampled log and capacity record](evidence/restart-anchor-implementation-2026-09-24/replay-progress.txt).
+
 Do not run two writers or edit the retained executable. Any later extension must
 first confirm completion/clean shutdown and use that same executable with
 explicit resume and a newly chosen end. The old 10,000/100,000 pilot targets

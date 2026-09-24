@@ -4,7 +4,9 @@ The existing checkpoint feature is not a sufficient restart boundary. Tests on
 `82d685e` reproduce an incompatible heavier branch replacing accepted history,
 and several ways the legacy checkpoint checks can be bypassed or leave
 inconsistent head/index state. Production code is unchanged by this investigation.
-The exact production anchor remains undecided.
+The exact production anchor remains undecided. Subsequent implementation is
+tracked in [the anchor prototype report](restart-anchor-implementation.md);
+the observations below describe the earlier baseline with that rule disabled.
 
 ## Reproduced behavior
 
@@ -140,10 +142,10 @@ not the existence or economic viability of a particular unknown operator's
 continuation. The same synthetic signer creates both branches; no automatic
 illegal-mining report service is running in these tests.
 
-Next: implement the separate eligibility rule against synthetic anchors and
-invert the unsafe expectations to require clean rejection. Add direct miner
-writes, known/pruned ancestors, missing ancestry, corrupted head/index states,
-rewinds, crashes during writes, light/ancient paths if supported, and actual
-multi-process peer synchronization. Also require compatible descendants to
-continue ordinary fork choice. Do not freeze a production anchor until the
-full-state recovery sequence is constructed, reviewed and accepted.
+The subsequent [implementation and enforcement tests](restart-anchor-implementation.md)
+cover direct mining/state-less writes, stored and known branches, missing ancestry,
+damaged startup heads/indexes, rewinds and compatible descendant fork choice.
+The original characterization remains available with the new rule disabled.
+Interrupted writes, supported ancient/fast paths, actual miner/RPC operation and
+multi-process peer synchronization remain release gates. Do not freeze a production
+anchor until the full-state recovery sequence is constructed, reviewed and accepted.

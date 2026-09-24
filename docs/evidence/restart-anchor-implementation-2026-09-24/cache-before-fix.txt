@@ -1,0 +1,14 @@
+=== RUN   TestRestartAnchorEnforcement
+=== RUN   TestRestartAnchorEnforcement/large_batch
+    anchor_enforcement_test.go:47: isolated anchor enforcement large_batch:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:305: unsigned headers isolate ancestry cost: 8192 stored descendants then 600 imports required 8796 header reads
+            anchor_enforcement_test.go:307: batch proof checks evicted stored-tip proof and rewalked old ancestry
+        --- FAIL: TestRestartAnchorEnforcement (0.32s)
+        FAIL
+    anchor_enforcement_test.go:48: exit status 1
+--- FAIL: TestRestartAnchorEnforcement (0.36s)
+    --- FAIL: TestRestartAnchorEnforcement/large_batch (0.36s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/tests/restart	0.802s
+FAIL

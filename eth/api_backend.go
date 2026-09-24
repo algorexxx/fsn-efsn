@@ -216,6 +216,9 @@ func (b *EthAPIBackend) SubscribeLogsEvent(ch chan<- []*types.Log) event.Subscri
 }
 
 func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction) error {
+	if err := b.eth.blockchain.CheckRestartReady(); err != nil {
+		return err
+	}
 	return b.eth.txPool.AddLocal(signedTx)
 }
 
@@ -274,7 +277,14 @@ func (b *EthAPIBackend) GetBlacklist() []common.Address {
 }
 
 func (b *EthAPIBackend) SyncProgress() ethereum.SyncProgress {
-	return b.eth.Downloader().Progress()
+	progress := b.eth.Downloader().Progress()
+	if anchor := b.eth.blockchain.RestartAnchorHeight(); anchor > progress.HighestBlock {
+		progress.HighestBlock = anchor
+	}
+	if head := b.eth.blockchain.CurrentBlock(); head.NumberU64() < b.eth.blockchain.RestartAnchorHeight() {
+		progress.CurrentBlock = head.NumberU64()
+	}
+	return progress
 }
 
 func (b *EthAPIBackend) SuggestGasTipCap(ctx context.Context) (*big.Int, error) {

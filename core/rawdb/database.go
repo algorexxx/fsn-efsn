@@ -81,42 +81,42 @@ type nofreezedb struct {
 
 // HasAncient returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) HasAncient(kind string, number uint64) (bool, error) {
-	return false, errNotSupported
+	return false, ErrNotSupported
 }
 
 // Ancient returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) Ancient(kind string, number uint64) ([]byte, error) {
-	return nil, errNotSupported
+	return nil, ErrNotSupported
 }
 
 // ReadAncients returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) ReadAncients(kind string, start, max, maxByteSize uint64) ([][]byte, error) {
-	return nil, errNotSupported
+	return nil, ErrNotSupported
 }
 
 // Ancients returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) Ancients() (uint64, error) {
-	return 0, errNotSupported
+	return 0, ErrNotSupported
 }
 
 // AncientSize returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) AncientSize(kind string) (uint64, error) {
-	return 0, errNotSupported
+	return 0, ErrNotSupported
 }
 
 // AppendAncient returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) AppendAncient(number uint64, hash, header, body, receipts, td []byte) error {
-	return errNotSupported
+	return ErrNotSupported
 }
 
 // TruncateAncients returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) TruncateAncients(items uint64) error {
-	return errNotSupported
+	return ErrNotSupported
 }
 
 // Sync returns an error as we don't have a backing chain freezer.
 func (db *nofreezedb) Sync() error {
-	return errNotSupported
+	return ErrNotSupported
 }
 
 // NewDatabase creates a high level database on top of a given key-value data

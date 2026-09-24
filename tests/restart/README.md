@@ -161,6 +161,22 @@ does not run a node, sign blocks, traverse every state node, or replay history.
 
 ## Complete integrity and replay probes
 
+The separate restart-anchor implementation is covered by
+`TestRestartAnchorEnforcement` (34 isolated cases),
+`TestRestartAnchorConfiguration`, and `TestRestartRollbackDatabaseModes`.
+They use synthetic anchors; mainnet remains unconfigured. The original
+`TestRestartAnchorEntryPointsCharacterization` intentionally retains the legacy
+behavior with the new rule disabled. Run the focused set with:
+
+```sh
+go test ./tests/restart -run '^TestRestart(Anchor|Rollback)' -v -count=1
+```
+
+On Linux, add `-race` and run the compiled binary inside a network namespace.
+The [implementation report](../../docs/restart-anchor-implementation.md) describes
+coverage, the explicit light-mode restriction, the two rollback fixes and the
+remaining process/crash/full-state gates. The tests never use the operator's key.
+
 `TestPreservedStateIntegrity`, `TestPreservedHistoryIntegrity` and
 `TestPreservedTicketReconstruction` additionally require
 `FUSION_RESTART_FULL_AUDIT=1`. Compile first and run the resulting test binary
