@@ -80,6 +80,14 @@ state adapter. Other owners receive synthetic perpetual tickets in these cases
 so a transfer-only block can be constructed. A full race run with three
 repetitions needs a longer timeout, for example `-race -count=3 -timeout=15m`.
 
+`TestRestartAnchorEntryPointsCharacterization` runs nine child-process cases
+against the existing client. It reproduces heavier-fork replacement and legacy
+checkpoint gaps across stored forks, headers, receipts, fast-sync head commit,
+startup/configuration ordering and expanded raw-body validation shortcuts. Its passing assertions
+describe unsafe existing behavior, not an implemented anchor. See
+[the entry-point report](../../docs/restart-anchor-investigation.md). These cases
+use synthetic branches and checkpoint identities, never production anchor values.
+
 ## Results and expectations
 
 - Present-day production from the expired seed tickets is rejected by import.

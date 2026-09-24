@@ -42,8 +42,16 @@ The complete current-state scan passed in 1,287.81 seconds: 801,355 accounts,
 2,886,305 storage leaves, and 33,437 code/native-data references totalling
 262,368,983 referenced bytes. The rebuilt root matches the observed head and
 no missing/corrupt reachable data was reported. References can share blobs;
-these are not unique code-size totals. The complete history scan is still in
-progress; that separate gate remains open.
+these are not unique code-size totals.
+
+The complete history scan also passed, finishing at 23:28:23 UTC on 23 September.
+It checked 15,130,081 blocks including genesis, 419,409,946 transactions and the
+same number of receipts, with no absent empty-block receipt records. The final
+hash matches `B`, and accumulated difficulty is 63,370,514,513. The history phase
+took 9,928.76 seconds. Its calculated block-stream RLP size is 76,291,252,333
+bytes (about 71.05 GiB); this excludes receipt/state/database overhead and is
+not an export artifact or a complete backup-size estimate. Completed logs and
+isolation/exit records are in [the follow-up evidence](evidence/restart-validation-2026-09-24).
 
 ## Replay pilot
 
@@ -91,7 +99,7 @@ with 2,630 tickets. Both pilot databases are retained. The smaller incremental
 growth illustrates why a fixed bytes-per-block estimate from the first pilot
 would have been misleading; it still does not establish the full replay size.
 
-## Replay continuation and active long run
+## Replay continuation and bounded long runs
 
 The later runner records the exact executable hash, source genesis/head and
 source/replay configurations in a target manifest. Reuse requires explicit
@@ -117,14 +125,34 @@ At 21:02:03 UTC the first million-block baseline phase started in a new database
   baseline production tree with the updated replay harness.
 - Target: `/home/rehearsal/replay/baseline-mainnet`.
 - Results: `/home/rehearsal/results/restart-replay-million-2026-09-23`.
-- End height: 1,000,000. This is a bounded first phase, not a full-chain success.
+- End height: 1,000,000. This bounded first phase completed successfully, not a full-chain replay.
 - Stop file: `/home/rehearsal/replay/STOP-baseline-mainnet`. Creating it requests
   a controlled test failure at the next batch boundary, followed by normal
   chain/database cleanup. Do not terminate WSL to pause a replay.
 
-Do not run two writers or edit this running executable. A later extension must
-first confirm completion/clean shutdown and use that same retained executable
-with explicit resume and a newly chosen end. The old 10,000/100,000 pilot targets
+The first million-block phase finished at 22:14:08 UTC on 23 September after
+4,324.80 seconds. Its closed database occupies 1,158,354,931 bytes (about 1.08
+GiB), with 4,598 tickets. The resulting commitments are:
+
+- Block: `0x4b0d0d5a0739c801c3d4fe91258d3b9ddf81f471464e221921442ea503d711a6`.
+- State: `0x882b7092542a98dfd38dcc253304b17e7d713dcc2aed65222399e0042ec81ad3`.
+- Tickets: `0xe8850a91eff584a180740c12f9279a5ce973fb57884c43b75466fbe9d3c3b614`.
+
+After confirming exit code zero, no remaining writer and the retained executable
+identity, continuation to **2,000,000** started at 05:40:23 UTC on 24 September.
+The preflight successfully reopened and validated height 1,000,000 before
+resuming. This phase is still in progress and remains within the original
+checkpoint shortcut range. Its result directory is
+`/home/rehearsal/results/restart-replay-two-million-2026-09-24`; the source,
+target, executable and stop-file paths above are unchanged. The runner adds
+a writer lock and preserves the existing 20 GiB Linux / 50 GiB Windows reserves.
+At launch Linux had 76,551,995,392 free bytes and D: had 87,101,820,928 free bytes.
+Available host space had fallen since the previous phase, so capacity is checked
+throughout instead of assuming the full replay fits.
+
+Do not run two writers or edit the retained executable. Any later extension must
+first confirm completion/clean shutdown and use that same executable with
+explicit resume and a newly chosen end. The old 10,000/100,000 pilot targets
 predate the identity manifest and are not eligible for automatic resume.
 Full replay remains conditional on continued storage checks and results.
 
@@ -154,13 +182,15 @@ miner through an external test package without silently repairing or excluding
 those stale files.
 
 Completed logs, isolation records and source hashes are preserved in
-[the evidence directory](evidence/restart-integrity-2026-09-23). The complete
-integrity scan's final evidence remains pending.
+[the original evidence directory](evidence/restart-integrity-2026-09-23) and
+[the completed-scan/continuation evidence](evidence/restart-validation-2026-09-24).
+Completion of the two-million phase and full historical execution remain pending.
 
 ## Next gates
 
-1. Finish the state and complete-history scans; investigate any failure instead
-   of treating a partial traversal as success.
+1. Continue bounded execution replay, investigating any failure. Current-state
+   traversal and complete structural history validation have both passed;
+   neither substitutes for full historical execution.
 2. Use the measured export size and progressively measured replay growth to
    choose the full replay layout. W: remains available for verified sequential
    exports/preservation; active LevelDB storage remains on local Linux ext4.

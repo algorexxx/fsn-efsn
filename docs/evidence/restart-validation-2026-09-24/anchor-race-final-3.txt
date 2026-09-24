@@ -1,0 +1,226 @@
+=== RUN   TestRestartAnchorEntryPointsCharacterization
+=== RUN   TestRestartAnchorEntryPointsCharacterization/heavier_fork
+    anchor_paths_test.go:32: isolated anchor path heavier_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7d44e38e027e3336916c981c49566875f04a105191a7b193150dc0264c5a8dac acceptedTD=252 returningTD=254
+            anchor_paths_test.go:68: ordinary full import replaced the accepted branch and removed its later transaction lookup
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.55s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_direct
+    anchor_paths_test.go:32: isolated anchor path checkpoint_direct:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x9fe96befc284ba2a8469d48a407f740c61dd8ef8d93f951cd7e39d99b6269aa9 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:74: control: an incoming batch containing the mismatching checkpoint height was rejected
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.43s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork
+    anchor_paths_test.go:32: isolated anchor path checkpoint_stored_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xe51088b156042f27405083016fa44a8d3086c97c809680abaf9629be48762311 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:92: stored fork bypassed descending reorg checkpoint scan: canonical checkpoint index retains the accepted block while head ancestry follows the incompatible block
+            anchor_paths_test.go:93: GetAncestor returns the retained canonical checkpoint index, while explicit parent-hash traversal reaches the incompatible ancestor
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.42s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_headers
+    anchor_paths_test.go:32: isolated anchor path checkpoint_headers:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x9d058818ec27f69a4dd5c98d0abfcf0374f67001424ba79d4c7486f2a3ddeb47 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:106: header-only continuation above a stored incompatible checkpoint rewrote canonical header ancestry
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.37s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts
+    anchor_paths_test.go:32: isolated anchor path checkpoint_receipts:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xf19b8bdd1cc1fcff0e76002dff8b085357fb2f5ae43a08ccce3d34e71998875f acceptedTD=252 returningTD=254
+            anchor_paths_test.go:120: receipt insertion advanced the fast head using headers stored before checkpoint installation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.37s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head
+    anchor_paths_test.go:32: isolated anchor path checkpoint_commit_head:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xcfe01656deefdc73306c144bf66bc194fbcb61b5bfe1e12c7212b428a4667ebd acceptedTD=252 returningTD=254
+            anchor_paths_test.go:129: fast-sync commit accepted incompatible stored state without checkpoint validation; the persisted full-head marker remained different
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.38s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_startup
+    anchor_paths_test.go:32: isolated anchor path checkpoint_startup:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x98399735ac0c7d4b91581158ee504f7b810d8e1d3f904227f43a50fa07a26f99 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:151: startup returned success after automatically rewinding an incompatible database below the checkpoint
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.41s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init
+    anchor_paths_test.go:32: isolated anchor path checkpoint_late_init:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x3475a7e086b24e8ec8b4b9b98912c24902041209f4af482d27da0762f6126687 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:144: loading checkpoint settings after chain construction left the incompatible head active without revalidation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.38s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut
+    anchor_paths_test.go:32: isolated anchor path checkpoint_body_shortcut:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x2b88324e03bbc6ddc39fc371a79e6c72c84a249c765bae91acfc77045fba905b acceptedTD=252 returningTD=254
+            anchor_paths_test.go:160: adding a later checkpoint disabled duplicate-ticket raw-body validation below it; this is a body-validator test, not a complete invalid-block import
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.37s)
+        PASS
+--- PASS: TestRestartAnchorEntryPointsCharacterization (12.87s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/heavier_fork (1.59s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_direct (1.45s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork (1.44s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_headers (1.39s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts (1.39s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head (1.39s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_startup (1.43s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init (1.40s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut (1.39s)
+=== RUN   TestRestartAnchorEntryPointsCharacterization
+=== RUN   TestRestartAnchorEntryPointsCharacterization/heavier_fork
+    anchor_paths_test.go:32: isolated anchor path heavier_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x30696fbf8a772477b1959ee6c970d4edcd830bbe466b13fc095a753af70eea93 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:68: ordinary full import replaced the accepted branch and removed its later transaction lookup
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.42s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_direct
+    anchor_paths_test.go:32: isolated anchor path checkpoint_direct:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xfdd1e2179a989a68368eb84b9f4e208e77431f16cded5581e74bdaf4ebfa16dc acceptedTD=252 returningTD=254
+            anchor_paths_test.go:74: control: an incoming batch containing the mismatching checkpoint height was rejected
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.42s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork
+    anchor_paths_test.go:32: isolated anchor path checkpoint_stored_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xc6ef7764a8ec372b937ad7c4d54fb98c7778f8e5e660c05d8d1c5cf40cd96cac acceptedTD=252 returningTD=254
+            anchor_paths_test.go:92: stored fork bypassed descending reorg checkpoint scan: canonical checkpoint index retains the accepted block while head ancestry follows the incompatible block
+            anchor_paths_test.go:93: GetAncestor returns the retained canonical checkpoint index, while explicit parent-hash traversal reaches the incompatible ancestor
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.40s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_headers
+    anchor_paths_test.go:32: isolated anchor path checkpoint_headers:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xc14df11e8903c62918eb9fab92129271bc4d44870ceb196044cc3c77a6118778 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:106: header-only continuation above a stored incompatible checkpoint rewrote canonical header ancestry
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.43s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts
+    anchor_paths_test.go:32: isolated anchor path checkpoint_receipts:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xb2b3b39b278563fc2aefc24c8869fe8336dd5c07a25663bde7a928555ae94e3f acceptedTD=252 returningTD=254
+            anchor_paths_test.go:120: receipt insertion advanced the fast head using headers stored before checkpoint installation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.45s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head
+    anchor_paths_test.go:32: isolated anchor path checkpoint_commit_head:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x6617f986390f0d33021d54df45ea1d6f5e16d0132fe75290322faf435858cad8 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:129: fast-sync commit accepted incompatible stored state without checkpoint validation; the persisted full-head marker remained different
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.44s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_startup
+    anchor_paths_test.go:32: isolated anchor path checkpoint_startup:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x50ae6011988d647f27be3e831c971e947a602d4dc440554f7d856e015ba27230 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:151: startup returned success after automatically rewinding an incompatible database below the checkpoint
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.42s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init
+    anchor_paths_test.go:32: isolated anchor path checkpoint_late_init:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x214a17365fc6aa90765e35d01ef3eb029fa544b4f547b6d70fc13ae27759f1ab acceptedTD=252 returningTD=254
+            anchor_paths_test.go:144: loading checkpoint settings after chain construction left the incompatible head active without revalidation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.40s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut
+    anchor_paths_test.go:32: isolated anchor path checkpoint_body_shortcut:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x8b5d143916b078d5fcdadf4cde319ad389969388d3b6fe1595d3afe3c120ef25 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:160: adding a later checkpoint disabled duplicate-ticket raw-body validation below it; this is a body-validator test, not a complete invalid-block import
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.40s)
+        PASS
+--- PASS: TestRestartAnchorEntryPointsCharacterization (12.95s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/heavier_fork (1.44s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_direct (1.44s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork (1.42s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_headers (1.45s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts (1.47s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head (1.46s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_startup (1.45s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init (1.42s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut (1.42s)
+=== RUN   TestRestartAnchorEntryPointsCharacterization
+=== RUN   TestRestartAnchorEntryPointsCharacterization/heavier_fork
+    anchor_paths_test.go:32: isolated anchor path heavier_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x936d4e8839542ffd6a2b5de5e9e8a57d28903c81caeeb2b12f867825d8afefc8 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:68: ordinary full import replaced the accepted branch and removed its later transaction lookup
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.43s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_direct
+    anchor_paths_test.go:32: isolated anchor path checkpoint_direct:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x40123d6b4c282a6df18acfa0e520f4e0ee6e3cab5a602130730aa82d3ede9e7b acceptedTD=252 returningTD=254
+            anchor_paths_test.go:74: control: an incoming batch containing the mismatching checkpoint height was rejected
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.39s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork
+    anchor_paths_test.go:32: isolated anchor path checkpoint_stored_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x761f57e57d02b9877fe848bfdb3e12a030ba7a6ccc748c326416e97bab4f2950 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:92: stored fork bypassed descending reorg checkpoint scan: canonical checkpoint index retains the accepted block while head ancestry follows the incompatible block
+            anchor_paths_test.go:93: GetAncestor returns the retained canonical checkpoint index, while explicit parent-hash traversal reaches the incompatible ancestor
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.43s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_headers
+    anchor_paths_test.go:32: isolated anchor path checkpoint_headers:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x89a4d31462c090bba952beef810194555efcbe8c677d5cc433b52a1697341407 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:106: header-only continuation above a stored incompatible checkpoint rewrote canonical header ancestry
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.47s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts
+    anchor_paths_test.go:32: isolated anchor path checkpoint_receipts:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x1ebc7b7fd3ebff24b3c46223863b623de3b18dbfdebfd3375be647ac1efc8e1f acceptedTD=252 returningTD=254
+            anchor_paths_test.go:120: receipt insertion advanced the fast head using headers stored before checkpoint installation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.45s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head
+    anchor_paths_test.go:32: isolated anchor path checkpoint_commit_head:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xec77935f89b4ed0a711066ef3a8b8ace20fc987aa3be1d7b7b5e1f6b229bdef3 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:129: fast-sync commit accepted incompatible stored state without checkpoint validation; the persisted full-head marker remained different
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.46s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_startup
+    anchor_paths_test.go:32: isolated anchor path checkpoint_startup:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x3fb21cb6001c163fcc23e364c80bf2706aee7469837c9d15737b243027d2821e acceptedTD=252 returningTD=254
+            anchor_paths_test.go:151: startup returned success after automatically rewinding an incompatible database below the checkpoint
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.45s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init
+    anchor_paths_test.go:32: isolated anchor path checkpoint_late_init:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x13fdca0c38342455fd776d6cc70455d5dec7ea0443cc67a8991f7ffcfd35d4f3 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:144: loading checkpoint settings after chain construction left the incompatible head active without revalidation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.36s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut
+    anchor_paths_test.go:32: isolated anchor path checkpoint_body_shortcut:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x3a95afe4a656ee27f5855ae3d2e66f4c82399d9752909d8dff5ba079cc8579c4 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:160: adding a later checkpoint disabled duplicate-ticket raw-body validation below it; this is a body-validator test, not a complete invalid-block import
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.34s)
+        PASS
+--- PASS: TestRestartAnchorEntryPointsCharacterization (12.97s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/heavier_fork (1.45s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_direct (1.41s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork (1.45s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_headers (1.50s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts (1.47s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head (1.48s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_startup (1.47s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init (1.38s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut (1.35s)
+PASS

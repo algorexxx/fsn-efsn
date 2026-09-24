@@ -6,10 +6,10 @@ Last reviewed: 24 September 2026. Source baseline: local `master` / `develop` at
 
 Latest progress: the D:-backed WSL environment contains a fully checksummed
 disposable database copy. The [integrity and replay investigation](restart-integrity-investigation.md)
-has verified all reachable current state, completed 10,000- and 100,000-block
-baseline replays, and passed 128 real historical ticket-reconstruction cases.
-The full history scan and first million-block replay phase are in progress;
-continuation and clean-stop safeguards have been exercised.
+has verified all reachable current state and structural history through `B`,
+completed baseline replay through 1,000,000, and passed 128 real historical
+ticket-reconstruction cases. The next bounded replay phase to 2,000,000 is in
+progress; continuation and clean-stop safeguards have been exercised.
 
 The [synthetic bridge experiment](restart-bridge-experiment.md) demonstrates
 eight independently imported blocks. [Narrow corrections](restart-corrections.md)
@@ -19,6 +19,12 @@ adds startup attempts, periodic retry, signed-transaction recovery and canonical
 receipt monitoring, with explicit pauses for nonce conflicts and missing nonces.
 Complete historical execution, full-state recovery, the accepted restart anchor
 and independent network rehearsals remain outstanding.
+
+The [anchor entry-point investigation](restart-anchor-investigation.md) now
+reproduces heavier-chain replacement and legacy-checkpoint gaps involving stored
+forks, canonical indexes, headers, receipts, pivot commits and startup initialization/rewinds.
+The separate restart boundary remains required; adding a legacy checkpoint is
+not an adequate implementation.
 
 ## 1. Objective and agreed scope
 
@@ -242,7 +248,16 @@ Let `A` be an exact accepted block at the end of the reviewed recovery sequence.
 
 Before public use, publish a release/manifest committing to `A` and the accepted prefix. At heights at or above `A`, a candidate chain is eligible only if its ancestor at `A` is the exact agreed block. Common ancestry at `B` alone is insufficient. Partial sync below `A` must follow a defined verification policy and must not be exposed as a launched, settled chain.
 
-The restriction is a separate rule from legacy checkpoint validation shortcuts. It must cover:
+The restriction is a separate rule from legacy checkpoint validation shortcuts.
+The [24 September investigation](restart-anchor-investigation.md) demonstrates
+why this separation and ancestry validation are required. In particular, a
+stored incompatible fork can leave the checkpoint's canonical index apparently
+correct while the actual head descends from another block. Startup preflight
+must check linked ancestry and all head markers before any automatic rewind.
+The rule must be loaded before chain construction, unlike the current CLI's
+late initialization of legacy checkpoints.
+
+The rule must cover:
 
 - Full block import, including files and network fetches.
 - Header validation, header insertion, and canonical header rewrites.
@@ -471,10 +486,10 @@ Release acceptance requires all applicable phase gates and verification cases to
 
 ## 15. Immediate next actions
 
-1. Complete the running canonical-history scan and first million-block baseline replay phase. Record their actual results and storage growth before extending replay. The current-state traversal is complete; the replay preserves historical checkpoint shortcuts and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
+1. Continue the bounded baseline replay toward 2,000,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 1,000,000 have passed. Historical checkpoint shortcuts remain in the replay and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
-4. Specify and implement the separate restart anchor, then exercise all canonical-head entry points against a heavier incompatible history.
+4. Implement the separate restart-anchor eligibility rule using the [reproduced entry-point gaps](restart-anchor-investigation.md). Invert the unsafe characterization expectations to require clean rejection, test ordinary fork choice among compatible descendants, and extend to direct mining writes, startup corruption, recovery tools and supported sync modes. Freeze the production anchor only after the recovery artifacts are reviewed.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation
