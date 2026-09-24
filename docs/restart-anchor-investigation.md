@@ -8,6 +8,12 @@ The exact production anchor remains undecided. Subsequent implementation is
 tracked in [the anchor prototype report](restart-anchor-implementation.md);
 the observations below describe the earlier baseline with that rule disabled.
 
+Later status: the [atomic reorganization correction](restart-crash-rehearsal.md)
+now propagates the previously ignored per-block checkpoint failure. The current
+stored-fork test requires rejection; use the retained baseline revision/evidence
+to reproduce its original inconsistent head/index result. Other legacy entry-point
+gaps below remain reasons for the separate anchor.
+
 ## Reproduced behavior
 
 `TestRestartAnchorEntryPointsCharacterization` builds two valid branches using
@@ -145,7 +151,9 @@ illegal-mining report service is running in these tests.
 The subsequent [implementation and enforcement tests](restart-anchor-implementation.md)
 cover direct mining/state-less writes, stored and known branches, missing ancestry,
 damaged startup heads/indexes, rewinds and compatible descendant fork choice.
-The original characterization remains available with the new rule disabled.
-Interrupted writes, supported ancient/fast paths, actual miner/RPC operation and
-multi-process peer synchronization remain release gates. Do not freeze a production
+The original characterization evidence remains available; the current stored-fork
+case is now a rejection regression. Later reports cover
+[actual service/peer operation](restart-node-rehearsal.md) and selected
+[interrupted writes](restart-crash-rehearsal.md). Supported ancient/fast paths,
+full-state operation and the remaining crash boundaries are release gates. Do not freeze a production
 anchor until the full-state recovery sequence is constructed, reviewed and accepted.

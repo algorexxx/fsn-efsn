@@ -166,7 +166,9 @@ The separate restart-anchor implementation is covered by
 `TestRestartAnchorConfiguration`, and `TestRestartRollbackDatabaseModes`.
 They use synthetic anchors; mainnet remains unconfigured. The original
 `TestRestartAnchorEntryPointsCharacterization` intentionally retains the legacy
-behavior with the new rule disabled. Run the focused set with:
+behavior with the new rule disabled, except that its stored-checkpoint-fork case
+now requires the atomic reorganization correction to reject the branch. Original
+failure evidence is retained. Run the focused set with:
 
 ```sh
 go test ./tests/restart -run '^TestRestart(Anchor|Rollback)' -v -count=1
@@ -194,6 +196,30 @@ bootnodes or production anchor. A test-only IPC API triggers the real downloader
 and probes the worker guard; it is not included in the production node binary.
 See [the service rehearsal report](../../docs/restart-node-rehearsal.md) for the
 four scenarios, retained logs and explicit limits on the sparse history/crash case.
+
+`TestRestartCrashBoundaries` is available on Windows and Linux, explicitly enabled
+by `FUSION_RESTART_CRASH_REHEARSAL=1`. It uses actual LevelDB with a test-only write
+wrapper, exits child processes before and after every observed write, then cold
+reopens and resumes in fresh processes. There are sixteen cuts per run across
+linear import, compatible heavier reorganization and rollback. It requires no
+backup or operator key. For Linux, compile first and run inside a network namespace:
+
+```sh
+go test -race -c -o /tmp/restart-crash-tests ./tests/restart
+cd tests/restart
+sudo unshare --net -- runuser -u rehearsal -- env FUSION_RESTART_CRASH_REHEARSAL=1 /tmp/restart-crash-tests -test.run=^TestRestartCrashBoundaries$ -test.v -test.timeout=6m
+```
+
+Use a local unprivileged account in place of `rehearsal`. On Windows:
+
+```powershell
+$env:FUSION_RESTART_CRASH_REHEARSAL = '1'
+go test ./tests/restart -run '^TestRestartCrashBoundaries$' -v -count=1
+```
+
+See the
+[crash report](../../docs/restart-crash-rehearsal.md) for the reproduced defect,
+atomic branch-publication correction and remaining durability/rewind/pruning gates.
 
 `TestPreservedStateIntegrity`, `TestPreservedHistoryIntegrity` and
 `TestPreservedTicketReconstruction` additionally require

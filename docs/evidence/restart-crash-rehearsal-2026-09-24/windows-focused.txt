@@ -1,0 +1,135 @@
+=== RUN   TestRestartAnchorEntryPointsCharacterization
+=== RUN   TestRestartAnchorEntryPointsCharacterization/heavier_fork
+    anchor_paths_test.go:32: isolated anchor path heavier_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:68: ordinary full import replaced the accepted branch and removed its later transaction lookup
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_direct
+    anchor_paths_test.go:32: isolated anchor path checkpoint_direct:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:74: control: an incoming batch containing the mismatching checkpoint height was rejected
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork
+    anchor_paths_test.go:32: isolated anchor path checkpoint_stored_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:111: stored checkpoint fork rejected before publishing canonical changes; all heads, accepted indexes, transaction lookups and linked ancestry retained
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_headers
+    anchor_paths_test.go:32: isolated anchor path checkpoint_headers:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:124: header-only continuation above a stored incompatible checkpoint rewrote canonical header ancestry
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts
+    anchor_paths_test.go:32: isolated anchor path checkpoint_receipts:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:138: receipt insertion advanced the fast head using headers stored before checkpoint installation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head
+    anchor_paths_test.go:32: isolated anchor path checkpoint_commit_head:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:147: fast-sync commit accepted incompatible stored state without checkpoint validation; the persisted full-head marker remained different
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_startup
+    anchor_paths_test.go:32: isolated anchor path checkpoint_startup:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:169: startup returned success after automatically rewinding an incompatible database below the checkpoint
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init
+    anchor_paths_test.go:32: isolated anchor path checkpoint_late_init:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:162: loading checkpoint settings after chain construction left the incompatible head active without revalidation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut
+    anchor_paths_test.go:32: isolated anchor path checkpoint_body_shortcut:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x7e85a6d0ce7453cb5a51bde304e63f645ba31619f9a37eeb2dc6014a2a2bb2fb acceptedTD=252 returningTD=254
+            anchor_paths_test.go:178: adding a later checkpoint disabled duplicate-ticket raw-body validation below it; this is a body-validator test, not a complete invalid-block import
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+--- PASS: TestRestartAnchorEntryPointsCharacterization (0.88s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/heavier_fork (0.10s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_direct (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork (0.11s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_headers (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_startup (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init (0.11s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut (0.09s)
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/linear
+    crash_test.go:143: successful linear write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast]
+=== RUN   TestRestartCrashBoundaries/linear/01_before
+    crash_test.go:150: consistent cold reopen and resume: linear write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/01_after
+    crash_test.go:150: consistent cold reopen and resume: linear write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/02_before
+    crash_test.go:150: consistent cold reopen and resume: linear write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/02_after
+    crash_test.go:150: consistent cold reopen and resume: linear write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/03_before
+    crash_test.go:150: consistent cold reopen and resume: linear write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/linear/03_after
+    crash_test.go:150: consistent cold reopen and resume: linear write 3 after (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg
+    crash_test.go:143: successful reorg write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock]
+=== RUN   TestRestartCrashBoundaries/reorg/01_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/01_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/03_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/03_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 3 after (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/04_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 4 before (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/reorg/04_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 4 after (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rollback
+    crash_test.go:143: successful rollback write trace: [batch:LastHeader,LastFast,LastBlock]
+=== RUN   TestRestartCrashBoundaries/rollback/01_before
+    crash_test.go:150: consistent cold reopen and resume: rollback write 1 before (batch:LastHeader,LastFast,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rollback/01_after
+    crash_test.go:150: consistent cold reopen and resume: rollback write 1 after (batch:LastHeader,LastFast,LastBlock)
+--- PASS: TestRestartCrashBoundaries (3.80s)
+    --- PASS: TestRestartCrashBoundaries/linear (1.33s)
+        --- PASS: TestRestartCrashBoundaries/linear/01_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/linear/01_after (0.19s)
+        --- PASS: TestRestartCrashBoundaries/linear/02_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/linear/02_after (0.21s)
+        --- PASS: TestRestartCrashBoundaries/linear/03_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/linear/03_after (0.19s)
+    --- PASS: TestRestartCrashBoundaries/reorg (1.86s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_after (0.22s)
+        --- PASS: TestRestartCrashBoundaries/reorg/04_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/04_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rollback (0.60s)
+        --- PASS: TestRestartCrashBoundaries/rollback/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rollback/01_after (0.22s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	5.149s

@@ -77,20 +77,38 @@ func runAnchorPath(t *testing.T, mode string) {
 		requireNoError(t, err)
 		requireCanonicalTip(t, receiver, oldHead)
 		setSyntheticCheckpoint(anchor)
+		heads := make(chan core.ChainHeadEvent, 8)
+		subscription := receiver.chain.SubscribeChainHeadEvent(heads)
+		defer subscription.Unsubscribe()
 		_, err = receiver.chain.InsertChain(later[1:])
-		requireNoError(t, err)
-		requireCanonicalTip(t, receiver, newHead)
-		if rawdb.ReadCanonicalHash(receiver.db, anchor.NumberU64()) != anchor.Hash() {
-			t.Fatal("expected the single-block checkpoint guard to retain the old canonical index")
+		requireErrorContains(t, err, "check point failed, block hash mismatch")
+		requireCanonicalTip(t, receiver, oldHead)
+		if receiver.chain.CurrentHeader().Hash() != oldHead.Hash() || receiver.chain.CurrentFastBlock().Hash() != oldHead.Hash() || rawdb.ReadHeadHeaderHash(receiver.db) != oldHead.Hash() || rawdb.ReadHeadFastBlockHash(receiver.db) != oldHead.Hash() {
+			t.Fatal("rejected checkpoint fork changed a header or fast head")
 		}
-		requireIncompatibleAncestry(t, receiver, newHead, later[0])
+		for _, block := range accepted {
+			if rawdb.ReadCanonicalHash(receiver.db, block.NumberU64()) != block.Hash() {
+				t.Fatal("rejected checkpoint fork changed a canonical index")
+			}
+			for _, transaction := range block.Transactions() {
+				found, hash, _, _ := rawdb.ReadTransaction(receiver.db, transaction.Hash())
+				if found == nil || hash != block.Hash() {
+					t.Fatal("rejected checkpoint fork changed an accepted transaction lookup")
+				}
+			}
+		}
+		select {
+		case <-heads:
+			t.Fatal("rejected checkpoint fork emitted a canonical head event")
+		default:
+		}
+		requireLinkedAncestor(t, receiver, oldHead, anchor)
 		limit := uint64(1024)
-		indexedAncestor, number := receiver.chain.GetAncestor(newHead.Hash(), newHead.NumberU64(), newHead.NumberU64()-anchor.NumberU64(), &limit)
+		indexedAncestor, number := receiver.chain.GetAncestor(oldHead.Hash(), oldHead.NumberU64(), oldHead.NumberU64()-anchor.NumberU64(), &limit)
 		if indexedAncestor != anchor.Hash() || number != anchor.NumberU64() {
-			t.Fatal("expected the canonical-index ancestor shortcut to mask the inconsistent parent chain")
+			t.Fatal("canonical ancestor index disagrees with the retained linked ancestry")
 		}
-		t.Log("stored fork bypassed descending reorg checkpoint scan: canonical checkpoint index retains the accepted block while head ancestry follows the incompatible block")
-		t.Log("GetAncestor returns the retained canonical checkpoint index, while explicit parent-hash traversal reaches the incompatible ancestor")
+		t.Log("stored checkpoint fork rejected before publishing canonical changes; all heads, accepted indexes, transaction lookups and linked ancestry retained")
 	case "checkpoint_headers":
 		_, err := receiver.chain.InsertHeaderChain(blockHeaders(later[:1]), 1)
 		requireNoError(t, err)
@@ -209,7 +227,7 @@ func requireCanonicalTip(t *testing.T, f *fixture, block *types.Block) {
 	}
 }
 
-func requireIncompatibleAncestry(t *testing.T, f *fixture, head, ancestor *types.Block) {
+func requireLinkedAncestor(t *testing.T, f *fixture, head, ancestor *types.Block) {
 	t.Helper()
 	header := head.Header()
 	for header.Number.Uint64() > ancestor.NumberU64() {
@@ -219,6 +237,6 @@ func requireIncompatibleAncestry(t *testing.T, f *fixture, head, ancestor *types
 		}
 	}
 	if header.Hash() != ancestor.Hash() {
-		t.Fatal("head did not follow the incompatible ancestry")
+		t.Fatal("head did not follow the expected linked ancestry")
 	}
 }

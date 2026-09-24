@@ -33,6 +33,13 @@ now exercises the actual service, IPC, miner and peer downloader. Fast/freezer
 release support and full-state network rehearsal remain unproven. Adding a legacy
 checkpoint is not an adequate implementation.
 
+The [interrupted-write rehearsal](restart-crash-rehearsal.md) then reproduced
+partially published reorganizations that passed cold startup. Canonical branch
+replacement now commits its indexes and all head markers in one batch. A short
+archive-style fixture covers before/after process exits for linear import,
+compatible reorganization and rollback. Interrupted explicit rewinds, pruning,
+freezer behavior and large reorganization batch cost remain open gates.
+
 ## 1. Objective and agreed scope
 
 Restart Fusion from an explicitly accepted historical state, using the smallest justified changes to the existing client. Preserve historical verification and accounting. Before public economic use, establish a mandatory restart boundary so a previously unknown, incompatible continuation cannot replace the restart merely by presenting greater accumulated difficulty.
@@ -496,7 +503,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 1. Continue the bounded baseline replay toward 2,700,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 2,000,000 have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
-4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md) and [multi-process results](restart-node-rehearsal.md). Actual service tests now cover compatible peer sync, heavier stored-fork rejection, RPC/miner readiness, a committed-head process kill and incompatible database startup. Next cover interrupted writes within head/index updates, deep ancestry, concurrent peer mining/reorgs and supported synchronization modes. Freeze the production anchor only after the recovery artifacts are reviewed.
+4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md) and [interrupted-write correction](restart-crash-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs and rollback. Next cover interrupted `SetHead`/reset/pivot paths, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs. Freeze the production anchor only after the recovery artifacts are reviewed.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation

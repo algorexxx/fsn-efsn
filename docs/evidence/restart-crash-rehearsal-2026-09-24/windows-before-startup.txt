@@ -1,0 +1,112 @@
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/reorg
+    crash_test.go:143: successful reorg write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:tx-lookup batch:canonical,tx-lookup,LastBlock]
+=== RUN   TestRestartCrashBoundaries/reorg/01_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/01_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/03_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/03_after
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0xa9db5171fe4f643dad9c62ab0dc0a465918c8543b1ca41e27ee0246424a38ef1 readiness=<nil>
+            crash_test.go:257: partial chain published: head=0xa9db5171fe4f643dad9c62ab0dc0a465918c8543b1ca41e27ee0246424a38ef1, old=0xfec36a568c4201277847e1423ac43a99eadc28198a427a8a20e4a3ac4f2a58d0, new=0xcd01d1002bfcc02abd5e17494909c1f40f84a5c74fe37603a930e5c2fcd5a0f7
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/04_before
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0xa9db5171fe4f643dad9c62ab0dc0a465918c8543b1ca41e27ee0246424a38ef1 readiness=<nil>
+            crash_test.go:257: partial chain published: head=0xa9db5171fe4f643dad9c62ab0dc0a465918c8543b1ca41e27ee0246424a38ef1, old=0xfec36a568c4201277847e1423ac43a99eadc28198a427a8a20e4a3ac4f2a58d0, new=0xcd01d1002bfcc02abd5e17494909c1f40f84a5c74fe37603a930e5c2fcd5a0f7
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/04_after
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0x8e845a8a660a5114e3711394a0b5025b6e585ecb656d4a294bdf427fc3c6748d readiness=<nil>
+            crash_test.go:257: partial chain published: head=0x8e845a8a660a5114e3711394a0b5025b6e585ecb656d4a294bdf427fc3c6748d, old=0xfec36a568c4201277847e1423ac43a99eadc28198a427a8a20e4a3ac4f2a58d0, new=0xcd01d1002bfcc02abd5e17494909c1f40f84a5c74fe37603a930e5c2fcd5a0f7
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/05_before
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0x8e845a8a660a5114e3711394a0b5025b6e585ecb656d4a294bdf427fc3c6748d readiness=<nil>
+            crash_test.go:257: partial chain published: head=0x8e845a8a660a5114e3711394a0b5025b6e585ecb656d4a294bdf427fc3c6748d, old=0xfec36a568c4201277847e1423ac43a99eadc28198a427a8a20e4a3ac4f2a58d0, new=0xcd01d1002bfcc02abd5e17494909c1f40f84a5c74fe37603a930e5c2fcd5a0f7
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/05_after
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0xb4c663ab81148c52c46bfa79560d59c096dc20664c9620952424d73ad3d08562 readiness=<nil>
+            crash_test.go:257: partial chain published: head=0xb4c663ab81148c52c46bfa79560d59c096dc20664c9620952424d73ad3d08562, old=0xfec36a568c4201277847e1423ac43a99eadc28198a427a8a20e4a3ac4f2a58d0, new=0xcd01d1002bfcc02abd5e17494909c1f40f84a5c74fe37603a930e5c2fcd5a0f7
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/06_before
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0x15c2cb98a49278e573d29bb95edcd7ddbbe5fc18212dddf1e616e9c2027eed9f readiness=<nil>
+            crash_test.go:257: partial chain published: head=0x15c2cb98a49278e573d29bb95edcd7ddbbe5fc18212dddf1e616e9c2027eed9f, old=0xfbf8776071d270c7f3c1e105eb463ed06dbf2b8b3343d5595f80b24f27cabde2, new=0xf56af78f406e17d9ab2472aea97c3db5ae14d2266bc7a9cd31f16a3694c744df
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/06_after
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0x4e0ec2aa25b0d02f997563925fc2af82f97aae9f664c6e255df825e93fcb745f readiness=<nil>
+            crash_test.go:257: partial chain published: head=0x4e0ec2aa25b0d02f997563925fc2af82f97aae9f664c6e255df825e93fcb745f, old=0xfbf8776071d270c7f3c1e105eb463ed06dbf2b8b3343d5595f80b24f27cabde2, new=0xf56af78f406e17d9ab2472aea97c3db5ae14d2266bc7a9cd31f16a3694c744df
+        --- FAIL: TestRestartCrashBoundaries (0.04s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/07_before
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0x4e0ec2aa25b0d02f997563925fc2af82f97aae9f664c6e255df825e93fcb745f readiness=<nil>
+            crash_test.go:257: partial chain published: head=0x4e0ec2aa25b0d02f997563925fc2af82f97aae9f664c6e255df825e93fcb745f, old=0xfbf8776071d270c7f3c1e105eb463ed06dbf2b8b3343d5595f80b24f27cabde2, new=0xf56af78f406e17d9ab2472aea97c3db5ae14d2266bc7a9cd31f16a3694c744df
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/07_after
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0xf56af78f406e17d9ab2472aea97c3db5ae14d2266bc7a9cd31f16a3694c744df readiness=<nil>
+            crash_test.go:266: stale transaction lookup after interrupted switch: 0x7669147dce72482a71e8f83c44268822cd644b2e1dc38f361496c765a2728257
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/08_before
+    crash_test.go:149: reorg verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:251: cold startup: head=0xf56af78f406e17d9ab2472aea97c3db5ae14d2266bc7a9cd31f16a3694c744df readiness=<nil>
+            crash_test.go:266: stale transaction lookup after interrupted switch: 0x7669147dce72482a71e8f83c44268822cd644b2e1dc38f361496c765a2728257
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/reorg/08_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 8 after (batch:tx-lookup)
+=== RUN   TestRestartCrashBoundaries/reorg/09_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 9 before (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/reorg/09_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 9 after (batch:canonical,tx-lookup,LastBlock)
+--- FAIL: TestRestartCrashBoundaries (3.73s)
+    --- FAIL: TestRestartCrashBoundaries/reorg (3.73s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_after (0.21s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/03_after (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/04_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/04_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/05_before (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/05_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/06_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/06_after (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/07_before (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/07_after (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/reorg/08_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/08_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/09_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/09_after (0.20s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/tests/restart	4.171s
+FAIL

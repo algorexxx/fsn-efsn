@@ -103,8 +103,11 @@ It also retains the completed two-million-block baseline replay, which used its
 separate unchanged executable and source database. No synthetic result is counted
 as preserved-history execution.
 
-Next cover interrupted head/index writes, deep unknown ancestry, ordinary sync
-scheduling, concurrent peer mining/reorganizations and supported fast/freezer
-modes. Full-state bridge construction, complete accounting, controlled production
+The subsequent [write-boundary rehearsal](restart-crash-rehearsal.md) covers
+linear import, compatible reorganization and rollback, and corrects a reproduced
+partially published reorganization. Explicit rewind/reset/pivot interruption,
+deep unknown ancestry, ordinary sync scheduling, concurrent peer mining/reorganizations
+and supported fast/freezer modes remain open. Full-state bridge construction,
+complete accounting, controlled production
 signing and independent operator review remain required before selecting or
 activating the production anchor. See the [main plan](restart-plan.md).

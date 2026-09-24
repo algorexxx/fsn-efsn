@@ -5,7 +5,9 @@ It is exercised with synthetic anchors; **no mainnet height/hash is configured**
 This is an implementation and test checkpoint, not a release or launch approval.
 
 The [preceding investigation](restart-anchor-investigation.md) records the nine
-legacy failures and controls. Those tests remain as baseline characterizations
+legacy failures and controls. Their historical evidence remains available.
+The later atomic reorganization correction changes the stored-checkpoint-fork
+case into a rejection regression; the other legacy characterizations still run
 with the new rule disabled. The new enforcement tests require rejection with
 the rule enabled, including when incompatible blocks were stored before upgrade.
 
@@ -141,6 +143,11 @@ heavier stored-fork rejection, mining/transaction readiness, committed-head
 SIGKILL/reopen and incompatible LevelDB startup refusal. These close specific
 gaps in the initial entry-point tests, subject to that report's fixture limits.
 
+The [interrupted-write rehearsal](restart-crash-rehearsal.md) subsequently found
+and corrected partially published compatible reorganizations. It covers process
+exits around every observed write for linear import, reorg and rollback, without
+claiming power-loss durability or covering all head-changing APIs.
+
 1. Review the implementation independently, including interrupted head/index
    writes, deep incompatible stored ancestry and cache behavior under concurrent
    imports. Measure startup cost on long
@@ -152,7 +159,8 @@ gaps in the initial entry-point tests, subject to that report's fixture limits.
    complete historical/full-state fixtures. The first rehearsal uses actual
    devp2p transport with an explicit downloader trigger and a sparse synthetic
    history; it does not prove operator startup timing or a genesis sync.
-3. Extend the committed-head process-crash case to interrupted writes on disk, and test supported
+3. Extend write-boundary crash coverage to explicit rewind/reset/pivot operations,
+   pruning and realistic large reorganization batches, and test supported
    ancient/freezer and fast-state-sync paths. The ancient-receipt negative case
    rejects before touching a freezer; it is not a successful freezer import test.
    The service can open its database before preflight, so this is not a claim that

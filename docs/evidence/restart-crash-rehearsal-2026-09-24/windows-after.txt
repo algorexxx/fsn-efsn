@@ -1,0 +1,61 @@
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/linear
+    crash_test.go:143: successful linear write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast]
+=== RUN   TestRestartCrashBoundaries/linear/01_before
+    crash_test.go:150: consistent cold reopen and resume: linear write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/01_after
+    crash_test.go:150: consistent cold reopen and resume: linear write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/02_before
+    crash_test.go:150: consistent cold reopen and resume: linear write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/02_after
+    crash_test.go:150: consistent cold reopen and resume: linear write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/03_before
+    crash_test.go:150: consistent cold reopen and resume: linear write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/linear/03_after
+    crash_test.go:150: consistent cold reopen and resume: linear write 3 after (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg
+    crash_test.go:143: successful reorg write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock]
+=== RUN   TestRestartCrashBoundaries/reorg/01_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/01_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/03_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/03_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 3 after (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/04_before
+    crash_test.go:150: consistent cold reopen and resume: reorg write 4 before (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/reorg/04_after
+    crash_test.go:150: consistent cold reopen and resume: reorg write 4 after (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rollback
+    crash_test.go:143: successful rollback write trace: [batch:LastHeader,LastFast,LastBlock]
+=== RUN   TestRestartCrashBoundaries/rollback/01_before
+    crash_test.go:150: consistent cold reopen and resume: rollback write 1 before (batch:LastHeader,LastFast,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rollback/01_after
+    crash_test.go:150: consistent cold reopen and resume: rollback write 1 after (batch:LastHeader,LastFast,LastBlock)
+--- PASS: TestRestartCrashBoundaries (3.56s)
+    --- PASS: TestRestartCrashBoundaries/linear (1.30s)
+        --- PASS: TestRestartCrashBoundaries/linear/01_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/linear/01_after (0.18s)
+        --- PASS: TestRestartCrashBoundaries/linear/02_before (0.18s)
+        --- PASS: TestRestartCrashBoundaries/linear/02_after (0.18s)
+        --- PASS: TestRestartCrashBoundaries/linear/03_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/linear/03_after (0.19s)
+    --- PASS: TestRestartCrashBoundaries/reorg (1.70s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_after (0.18s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_after (0.19s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_after (0.19s)
+        --- PASS: TestRestartCrashBoundaries/reorg/04_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/04_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rollback (0.56s)
+        --- PASS: TestRestartCrashBoundaries/rollback/01_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/rollback/01_after (0.20s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	3.973s
