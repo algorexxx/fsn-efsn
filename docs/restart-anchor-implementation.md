@@ -148,6 +148,11 @@ and corrected partially published compatible reorganizations. It covers process
 exits around every observed write for linear import, reorg and rollback, without
 claiming power-loss durability or covering all head-changing APIs.
 
+The subsequent [explicit-rewind rehearsal](restart-rewind-rehearsal.md) corrects
+separately committed rewind pointers/deletions and a missing-ancestor repair
+panic. Six synthetic cases include below-anchor rewinds, split heads and missing
+historical state/bodies; genesis fallback keeps readiness disabled.
+
 1. Review the implementation independently, including interrupted head/index
    writes, deep incompatible stored ancestry and cache behavior under concurrent
    imports. Measure startup cost on long
@@ -159,8 +164,8 @@ claiming power-loss durability or covering all head-changing APIs.
    complete historical/full-state fixtures. The first rehearsal uses actual
    devp2p transport with an explicit downloader trigger and a sparse synthetic
    history; it does not prove operator startup timing or a genesis sync.
-3. Extend write-boundary crash coverage to explicit rewind/reset/pivot operations,
-   pruning and realistic large reorganization batches, and test supported
+3. Extend write-boundary crash coverage to reset/pivot operations, complete
+   pruning lifecycles and realistic large reorganization batches, and test supported
    ancient/freezer and fast-state-sync paths. The ancient-receipt negative case
    rejects before touching a freezer; it is not a successful freezer import test.
    The service can open its database before preflight, so this is not a claim that

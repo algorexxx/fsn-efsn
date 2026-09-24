@@ -1,0 +1,274 @@
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/rewind
+    crash_test.go:144: successful rewind write trace: [batch:LastHeader batch:LastHeader batch:data,canonical put:LastBlock put:LastFast]
+=== RUN   TestRestartCrashBoundaries/rewind/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind write 1 before (batch:LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind/01_after
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xabe3c7030f168045b2968b2312087cc52bdfcbfbed83dafbec874ddb9055f7b8 header=0x3503bdf3d3531a569f15020584110731ab223fa221bac87a39345903a963036d fast=0xabe3c7030f168045b2968b2312087cc52bdfcbfbed83dafbec874ddb9055f7b8
+            crash_test.go:261: restart anchor: block head 0xabe3c7030f168045b2968b2312087cc52bdfcbfbed83dafbec874ddb9055f7b8 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.04s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/02_before
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 header=0xc471a4cd72f71dc75953d96ea47193b5d4d82de311d6a73572635700f610356d fast=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+            crash_test.go:261: restart anchor: block head 0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/02_after
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 header=0x4e34e2f910110daa2faa2798535866686d94796b8da67a8383a4c33dde9bfaf8 fast=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+            crash_test.go:261: restart anchor: block head 0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/03_before
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 header=0x4e34e2f910110daa2faa2798535866686d94796b8da67a8383a4c33dde9bfaf8 fast=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+            crash_test.go:261: restart anchor: block head 0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/03_after
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 header=0x4e34e2f910110daa2faa2798535866686d94796b8da67a8383a4c33dde9bfaf8 fast=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+            crash_test.go:261: restart anchor: missing persisted head 0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/04_before
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84 header=0x4e34e2f910110daa2faa2798535866686d94796b8da67a8383a4c33dde9bfaf8 fast=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+            crash_test.go:261: restart anchor: missing persisted head 0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/04_after
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x4e34e2f910110daa2faa2798535866686d94796b8da67a8383a4c33dde9bfaf8 header=0x4e34e2f910110daa2faa2798535866686d94796b8da67a8383a4c33dde9bfaf8 fast=0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+            crash_test.go:261: restart anchor: missing persisted head 0x7c6f040e1f94b83f53844a4362aaf5228ced1ca22cbd931d9949b71a5724ba84
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/05_before
+    crash_test.go:150: rewind verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x32a6b6ea5584bc8db0370b5fe8a28636f6262c0863d03c138a448f3a2fbfebaa header=0x32a6b6ea5584bc8db0370b5fe8a28636f6262c0863d03c138a448f3a2fbfebaa fast=0x1727fba37799563617a9ea464e8de7a1ad20f4079ef8dd2110e69f3806e717ca
+            crash_test.go:261: restart anchor: missing persisted head 0x1727fba37799563617a9ea464e8de7a1ad20f4079ef8dd2110e69f3806e717ca
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind/05_after
+    crash_test.go:151: consistent cold reopen and resume: rewind write 5 after (put:LastFast)
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor
+    crash_test.go:144: successful rewind_below_anchor write trace: [batch:LastHeader batch:LastHeader batch:LastHeader batch:LastHeader batch:LastHeader batch:data,canonical put:LastBlock put:LastFast]
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_below_anchor write 1 before (batch:LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/01_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 header=0xf1118c515d7bb7071b114ede2e49ec90bbbdec31b6a42d839652db7384ee17dd fast=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253
+            crash_test.go:261: restart anchor: block head 0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/02_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 header=0xf1118c515d7bb7071b114ede2e49ec90bbbdec31b6a42d839652db7384ee17dd fast=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253
+            crash_test.go:261: restart anchor: block head 0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/02_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 header=0x093ef0a0eef89eff1da45bd4724afe736abfada972ce2befa88655d92f830641 fast=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253
+            crash_test.go:261: restart anchor: block head 0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/03_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 header=0x093ef0a0eef89eff1da45bd4724afe736abfada972ce2befa88655d92f830641 fast=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253
+            crash_test.go:261: restart anchor: block head 0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/03_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 header=0x448a8606a36e9423a9e0ba4e960c86782f7228b6607d1a9a1f214b6b15ebe60d fast=0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253
+            crash_test.go:261: restart anchor: block head 0xacc2957d2e84aa82d74f0525c50ea866253f89de9fa2f8bf336fc483000bd253 is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/04_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad header=0x7a1619316f42ca80f5e24d677688ee28ce9adab2d232cb4dd53456123dcdccef fast=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad
+            crash_test.go:261: restart anchor: block head 0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/04_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad header=0x7cca3f65849a9b11c642dd5bacc4117a4489a67462075508e9d17d37e26d0f10 fast=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad
+            crash_test.go:261: restart anchor: block head 0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/05_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad header=0x7cca3f65849a9b11c642dd5bacc4117a4489a67462075508e9d17d37e26d0f10 fast=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad
+            crash_test.go:261: restart anchor: block head 0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/05_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad header=0xb0bf7e64d8b1fcd9d0c20cc93b76df77192b813053171512554661e4c21683ec fast=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad
+            crash_test.go:261: restart anchor: block head 0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/06_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad header=0xb0bf7e64d8b1fcd9d0c20cc93b76df77192b813053171512554661e4c21683ec fast=0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad
+            crash_test.go:261: restart anchor: block head 0x5ca8242a2059f3a36f53ece3045e2e7b697215489c14938dca99ac48c6f2b9ad is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/06_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d header=0x10502ecf8c1f81c87a3ab5dcf41103afa72984ff817710d3acc90a734ae02dff fast=0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+            crash_test.go:261: restart anchor: missing persisted head 0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/07_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d header=0x10502ecf8c1f81c87a3ab5dcf41103afa72984ff817710d3acc90a734ae02dff fast=0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+            crash_test.go:261: restart anchor: missing persisted head 0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/07_after
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x10502ecf8c1f81c87a3ab5dcf41103afa72984ff817710d3acc90a734ae02dff header=0x10502ecf8c1f81c87a3ab5dcf41103afa72984ff817710d3acc90a734ae02dff fast=0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+            crash_test.go:261: restart anchor: missing persisted head 0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/08_before
+    crash_test.go:150: rewind_below_anchor verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0x10502ecf8c1f81c87a3ab5dcf41103afa72984ff817710d3acc90a734ae02dff header=0x10502ecf8c1f81c87a3ab5dcf41103afa72984ff817710d3acc90a734ae02dff fast=0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+            crash_test.go:261: restart anchor: missing persisted head 0x11052fd98240d9d8c33c17a18fef4ee38a86357ee912a1be284e6e39761bda4d
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/08_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_below_anchor write 8 after (put:LastFast)
+=== RUN   TestRestartCrashBoundaries/rewind_split
+    crash_test.go:144: successful rewind_split write trace: [batch:LastHeader batch:LastHeader batch:data,canonical put:LastBlock put:LastFast]
+=== RUN   TestRestartCrashBoundaries/rewind_split/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_split write 1 before (batch:LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_split/01_after
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xce8ff9f13a726a6412a67d77281d8c08587e28ee9e43ba768e4d8ff903d08419 header=0x181368849982bd38ba9a5c75bca63420cde9c821ca466e5c1907d91953d80289 fast=0x181368849982bd38ba9a5c75bca63420cde9c821ca466e5c1907d91953d80289
+            crash_test.go:263: cold startup: head=0xce8ff9f13a726a6412a67d77281d8c08587e28ee9e43ba768e4d8ff903d08419 readiness=<nil>
+            crash_test.go:265: partial rewind published: header=0x181368849982bd38ba9a5c75bca63420cde9c821ca466e5c1907d91953d80289 old=0xf3618f6bfe0509ba9f11689ad35c7bf39b5a21d53d4a275cbd158a6cdb18b3b3 target=0x49c0aa1d28f86fc021775bbe2278c8f61027b0d3be49ab129ae352301276c6c1
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/02_before
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xce8ff9f13a726a6412a67d77281d8c08587e28ee9e43ba768e4d8ff903d08419 header=0x181368849982bd38ba9a5c75bca63420cde9c821ca466e5c1907d91953d80289 fast=0x181368849982bd38ba9a5c75bca63420cde9c821ca466e5c1907d91953d80289
+            crash_test.go:263: cold startup: head=0xce8ff9f13a726a6412a67d77281d8c08587e28ee9e43ba768e4d8ff903d08419 readiness=<nil>
+            crash_test.go:265: partial rewind published: header=0x181368849982bd38ba9a5c75bca63420cde9c821ca466e5c1907d91953d80289 old=0xf3618f6bfe0509ba9f11689ad35c7bf39b5a21d53d4a275cbd158a6cdb18b3b3 target=0x49c0aa1d28f86fc021775bbe2278c8f61027b0d3be49ab129ae352301276c6c1
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/02_after
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xc2e01ec0dfc0a5174e214c1826faafa401196543f4090c815948bfbca6523e04 header=0x154df4dc2b5be7264c78bfc0c0294bd4b2e570286bf147e126ca235cf96515b1 fast=0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed
+            crash_test.go:261: restart anchor: block head 0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/03_before
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xc2e01ec0dfc0a5174e214c1826faafa401196543f4090c815948bfbca6523e04 header=0x154df4dc2b5be7264c78bfc0c0294bd4b2e570286bf147e126ca235cf96515b1 fast=0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed
+            crash_test.go:261: restart anchor: block head 0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed is above header head
+        --- FAIL: TestRestartCrashBoundaries (0.04s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/03_after
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xc2e01ec0dfc0a5174e214c1826faafa401196543f4090c815948bfbca6523e04 header=0x154df4dc2b5be7264c78bfc0c0294bd4b2e570286bf147e126ca235cf96515b1 fast=0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed
+            crash_test.go:261: restart anchor: missing persisted head 0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/04_before
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xc2e01ec0dfc0a5174e214c1826faafa401196543f4090c815948bfbca6523e04 header=0x154df4dc2b5be7264c78bfc0c0294bd4b2e570286bf147e126ca235cf96515b1 fast=0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed
+            crash_test.go:261: restart anchor: missing persisted head 0xe3af0230ffa9ed85c9d0b07f7208330e63917db31e77942e02341be9647e81ed
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/04_after
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xdd882d57a4e7bb55ab7e8ba1327d701cd377690907586fd61a80e91467dc4e47 header=0xad946d06d7698054d1425c6d0090ad45d26098878dc45f94a65d9cb943d5a16f fast=0xe029ecf643cb0883827ac8f860568bd4b2ef62b54ad0129eed084a20b61f2c5c
+            crash_test.go:261: restart anchor: missing persisted head 0xe029ecf643cb0883827ac8f860568bd4b2ef62b54ad0129eed084a20b61f2c5c
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/05_before
+    crash_test.go:150: rewind_split verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:259: persisted heads: full=0xdd882d57a4e7bb55ab7e8ba1327d701cd377690907586fd61a80e91467dc4e47 header=0xad946d06d7698054d1425c6d0090ad45d26098878dc45f94a65d9cb943d5a16f fast=0xe029ecf643cb0883827ac8f860568bd4b2ef62b54ad0129eed084a20b61f2c5c
+            crash_test.go:261: restart anchor: missing persisted head 0xe029ecf643cb0883827ac8f860568bd4b2ef62b54ad0129eed084a20b61f2c5c
+        --- FAIL: TestRestartCrashBoundaries (0.03s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_split/05_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_split write 5 after (put:LastFast)
+--- FAIL: TestRestartCrashBoundaries (8.27s)
+    --- FAIL: TestRestartCrashBoundaries/rewind (2.18s)
+        --- PASS: TestRestartCrashBoundaries/rewind/01_before (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/01_after (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/02_before (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/02_after (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/03_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/03_after (0.19s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/04_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/04_after (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind/05_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind/05_after (0.19s)
+    --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor (3.64s)
+        --- PASS: TestRestartCrashBoundaries/rewind_below_anchor/01_before (0.23s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/01_after (0.25s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/02_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/02_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/03_before (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/03_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/04_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/04_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/05_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/05_after (0.23s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/06_before (0.21s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/06_after (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/07_before (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/07_after (0.22s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_below_anchor/08_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rewind_below_anchor/08_after (0.22s)
+    --- FAIL: TestRestartCrashBoundaries/rewind_split (2.44s)
+        --- PASS: TestRestartCrashBoundaries/rewind_split/01_before (0.23s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/01_after (0.25s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/02_before (0.25s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/02_after (0.23s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/03_before (0.25s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/03_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/04_before (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/04_after (0.20s)
+        --- FAIL: TestRestartCrashBoundaries/rewind_split/05_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind_split/05_after (0.22s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/tests/restart	8.786s
+FAIL

@@ -124,10 +124,10 @@ without a freezer. It does not establish:
   inside LevelDB's own atomic write implementation; default writes are not being
   upgraded to an fsync durability guarantee.
 - Pruned-state recovery, ancient/freezer consistency or full-state mainnet replay.
-- Interrupted `SetHead`/reset or fast-sync pivot operations. In particular,
-  `HeaderChain.SetHead` currently writes the header marker before the full/fast
-  marker updates in `BlockChain.SetHead`; that order still needs fault injection
-  and an explicit recovery policy. The rollback test does not cover `SetHead`.
+- Interrupted reset or fast-sync pivot operations. The subsequent
+  [explicit-rewind rehearsal](restart-rewind-rehearsal.md) reproduces and corrects
+  the separate `SetHead` marker/deletion ordering gap, including six synthetic
+  rewind cases. The rollback test alone does not cover `SetHead`.
 - Very deep reorganizations, a shorter-but-heavier replacement, or the maximum
   memory cost of staging a large canonical switch in one batch. The existing
   reorganization already retains both block lists; the added batch also needs

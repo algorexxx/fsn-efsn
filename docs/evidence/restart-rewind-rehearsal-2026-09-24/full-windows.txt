@@ -1,0 +1,622 @@
+=== RUN   TestRestartAnchorEnforcement
+=== RUN   TestRestartAnchorEnforcement/full_batch
+    anchor_enforcement_test.go:47: isolated anchor enforcement full_batch:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/stored_fork
+    anchor_enforcement_test.go:47: isolated anchor enforcement stored_fork:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/known_block
+    anchor_enforcement_test.go:47: isolated anchor enforcement known_block:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/headers
+    anchor_enforcement_test.go:47: isolated anchor enforcement headers:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/direct_header
+    anchor_enforcement_test.go:47: isolated anchor enforcement direct_header:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/receipts
+    anchor_enforcement_test.go:47: isolated anchor enforcement receipts:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/ancient_receipts
+    anchor_enforcement_test.go:47: isolated anchor enforcement ancient_receipts:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/fast_commit
+    anchor_enforcement_test.go:47: isolated anchor enforcement fast_commit:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/miner_write
+    anchor_enforcement_test.go:47: isolated anchor enforcement miner_write:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/pruned_write
+    anchor_enforcement_test.go:47: isolated anchor enforcement pruned_write:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/missing_ancestor
+    anchor_enforcement_test.go:47: isolated anchor enforcement missing_ancestor:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.08s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/compatible_fork
+    anchor_enforcement_test.go:47: isolated anchor enforcement compatible_fork:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:228: heavier compatible fork adopted above the fixed anchor
+        --- PASS: TestRestartAnchorEnforcement (0.08s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/rewind_resync
+    anchor_enforcement_test.go:47: isolated anchor enforcement rewind_resync:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:250: explicit rewind disabled mining; ordinary sync through the anchor restored readiness
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/rollback_resync
+    anchor_enforcement_test.go:47: isolated anchor enforcement rollback_resync:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:250: explicit rewind disabled mining; ordinary sync through the anchor restored readiness
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/below_anchor_head
+    anchor_enforcement_test.go:47: isolated anchor enforcement below_anchor_head:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/config_snapshot
+    anchor_enforcement_test.go:47: isolated anchor enforcement config_snapshot:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/body_validation
+    anchor_enforcement_test.go:47: isolated anchor enforcement body_validation:
+        === RUN   TestRestartAnchorEnforcement
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/network_identity
+    anchor_enforcement_test.go:47: isolated anchor enforcement network_identity:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/genesis_setup
+    anchor_enforcement_test.go:47: isolated anchor enforcement genesis_setup:
+        === RUN   TestRestartAnchorEnforcement
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_full
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_full:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_header
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_header:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_fast
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_fast:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_masked_ancestry
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_masked_ancestry:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_index
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_index:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_missing
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_missing:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_height
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_height:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/startup_missing_body
+    anchor_enforcement_test.go:47: isolated anchor enforcement startup_missing_body:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/fresh_full_batch
+    anchor_enforcement_test.go:47: isolated anchor enforcement fresh_full_batch:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:275: compatible synchronization through anchor survives clean reopening
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/fresh_headers_receipts
+    anchor_enforcement_test.go:47: isolated anchor enforcement fresh_headers_receipts:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:275: compatible synchronization through anchor survives clean reopening
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/light_mode
+    anchor_enforcement_test.go:47: isolated anchor enforcement light_mode:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/reset_identity
+    anchor_enforcement_test.go:47: isolated anchor enforcement reset_identity:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:327: incompatible input rejected without database, head or event changes
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/chain_identity
+    anchor_enforcement_test.go:47: isolated anchor enforcement chain_identity:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/empty_anchor
+    anchor_enforcement_test.go:47: isolated anchor enforcement empty_anchor:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:135: startup rejected without changing any database key/value
+        --- PASS: TestRestartAnchorEnforcement (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEnforcement/large_batch
+    anchor_enforcement_test.go:47: isolated anchor enforcement large_batch:
+        === RUN   TestRestartAnchorEnforcement
+            anchor_enforcement_test.go:305: unsigned headers isolate ancestry cost: 8192 stored descendants then 600 imports required 601 header reads
+        --- PASS: TestRestartAnchorEnforcement (0.26s)
+        PASS
+--- PASS: TestRestartAnchorEnforcement (3.68s)
+    --- PASS: TestRestartAnchorEnforcement/full_batch (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/stored_fork (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/known_block (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/headers (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/direct_header (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/receipts (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/ancient_receipts (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/fast_commit (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/miner_write (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/pruned_write (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/missing_ancestor (0.12s)
+    --- PASS: TestRestartAnchorEnforcement/compatible_fork (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/rewind_resync (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/rollback_resync (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/below_anchor_head (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/config_snapshot (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/body_validation (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/network_identity (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/genesis_setup (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/startup_full (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/startup_header (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/startup_fast (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/startup_masked_ancestry (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/startup_index (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/startup_missing (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/startup_height (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/startup_missing_body (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/fresh_full_batch (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/fresh_headers_receipts (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/light_mode (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/reset_identity (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/chain_identity (0.09s)
+    --- PASS: TestRestartAnchorEnforcement/empty_anchor (0.11s)
+    --- PASS: TestRestartAnchorEnforcement/large_batch (0.30s)
+=== RUN   TestRestartAnchorConfiguration
+--- PASS: TestRestartAnchorConfiguration (0.00s)
+=== RUN   TestRestartAnchorEntryPointsCharacterization
+=== RUN   TestRestartAnchorEntryPointsCharacterization/heavier_fork
+    anchor_paths_test.go:32: isolated anchor path heavier_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x383bc5cab025d327d8ce4ec3c936c1c2c686e75e9c5a5efe898f3ba338f4adf5 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:68: ordinary full import replaced the accepted branch and removed its later transaction lookup
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_direct
+    anchor_paths_test.go:32: isolated anchor path checkpoint_direct:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x383bc5cab025d327d8ce4ec3c936c1c2c686e75e9c5a5efe898f3ba338f4adf5 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:74: control: an incoming batch containing the mismatching checkpoint height was rejected
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork
+    anchor_paths_test.go:32: isolated anchor path checkpoint_stored_fork:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x383bc5cab025d327d8ce4ec3c936c1c2c686e75e9c5a5efe898f3ba338f4adf5 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:111: stored checkpoint fork rejected before publishing canonical changes; all heads, accepted indexes, transaction lookups and linked ancestry retained
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_headers
+    anchor_paths_test.go:32: isolated anchor path checkpoint_headers:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x383bc5cab025d327d8ce4ec3c936c1c2c686e75e9c5a5efe898f3ba338f4adf5 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:124: header-only continuation above a stored incompatible checkpoint rewrote canonical header ancestry
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts
+    anchor_paths_test.go:32: isolated anchor path checkpoint_receipts:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x383bc5cab025d327d8ce4ec3c936c1c2c686e75e9c5a5efe898f3ba338f4adf5 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:138: receipt insertion advanced the fast head using headers stored before checkpoint installation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head
+    anchor_paths_test.go:32: isolated anchor path checkpoint_commit_head:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0x383bc5cab025d327d8ce4ec3c936c1c2c686e75e9c5a5efe898f3ba338f4adf5 acceptedTD=252 returningTD=254
+            anchor_paths_test.go:147: fast-sync commit accepted incompatible stored state without checkpoint validation; the persisted full-head marker remained different
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_startup
+    anchor_paths_test.go:32: isolated anchor path checkpoint_startup:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xcc3c68ab57c0105096d0a67167ceaaa24fa43cb4b21603fd3424c9db797c985d acceptedTD=252 returningTD=254
+            anchor_paths_test.go:169: startup returned success after automatically rewinding an incompatible database below the checkpoint
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init
+    anchor_paths_test.go:32: isolated anchor path checkpoint_late_init:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xcc3c68ab57c0105096d0a67167ceaaa24fa43cb4b21603fd3424c9db797c985d acceptedTD=252 returningTD=254
+            anchor_paths_test.go:162: loading checkpoint settings after chain construction left the incompatible head active without revalidation
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.07s)
+        PASS
+=== RUN   TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut
+    anchor_paths_test.go:32: isolated anchor path checkpoint_body_shortcut:
+        === RUN   TestRestartAnchorEntryPointsCharacterization
+            anchor_paths_test.go:55: common=15130094 proposedAnchor=0xcc3c68ab57c0105096d0a67167ceaaa24fa43cb4b21603fd3424c9db797c985d acceptedTD=252 returningTD=254
+            anchor_paths_test.go:178: adding a later checkpoint disabled duplicate-ticket raw-body validation below it; this is a body-validator test, not a complete invalid-block import
+        --- PASS: TestRestartAnchorEntryPointsCharacterization (0.06s)
+        PASS
+--- PASS: TestRestartAnchorEntryPointsCharacterization (0.88s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/heavier_fork (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_direct (0.11s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_stored_fork (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_headers (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_receipts (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_commit_head (0.09s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_startup (0.11s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_late_init (0.11s)
+    --- PASS: TestRestartAnchorEntryPointsCharacterization/checkpoint_body_shortcut (0.09s)
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:34: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+            autobuy_test.go:91: startup and automatic retry: identical tx=0x24bede58599fe2a2205ba7c84c3eef4412fcdb430fab5c3adf7218f1360f94b3 mined at height=15130095
+            autobuy_test.go:100: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        --- PASS: TestAutoBuyRuntime (21.64s)
+        PASS
+--- PASS: TestAutoBuyRuntime (21.67s)
+=== RUN   TestPreservedBackupReadOnly
+    backup_test.go:21: set FUSION_RESTART_CHAINDATA to a verified disposable copy for offline inspection
+--- SKIP: TestPreservedBackupReadOnly (0.00s)
+=== RUN   TestPresentDaySuccessorRejectsExpiredTicket
+--- PASS: TestPresentDaySuccessorRejectsExpiredTicket (0.02s)
+=== RUN   TestHistoricalBridgeImportsOnIndependentState
+    bridge_test.go:45: step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626
+    bridge_test.go:45: step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626
+    bridge_test.go:45: step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626
+    bridge_test.go:45: step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626
+    bridge_test.go:45: step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626
+    bridge_test.go:45: step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626
+    bridge_test.go:45: step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626
+    bridge_test.go:45: step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626
+--- PASS: TestHistoricalBridgeImportsOnIndependentState (0.05s)
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/linear
+    crash_test.go:144: successful linear write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast]
+=== RUN   TestRestartCrashBoundaries/linear/01_before
+    crash_test.go:151: consistent cold reopen and resume: linear write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/01_after
+    crash_test.go:151: consistent cold reopen and resume: linear write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/02_before
+    crash_test.go:151: consistent cold reopen and resume: linear write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/02_after
+    crash_test.go:151: consistent cold reopen and resume: linear write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/linear/03_before
+    crash_test.go:151: consistent cold reopen and resume: linear write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/linear/03_after
+    crash_test.go:151: consistent cold reopen and resume: linear write 3 after (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg
+    crash_test.go:144: successful reorg write trace: [batch:data batch:data batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast batch:canonical,tx-lookup,LastBlock]
+=== RUN   TestRestartCrashBoundaries/reorg/01_before
+    crash_test.go:151: consistent cold reopen and resume: reorg write 1 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/01_after
+    crash_test.go:151: consistent cold reopen and resume: reorg write 1 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_before
+    crash_test.go:151: consistent cold reopen and resume: reorg write 2 before (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/02_after
+    crash_test.go:151: consistent cold reopen and resume: reorg write 2 after (batch:data)
+=== RUN   TestRestartCrashBoundaries/reorg/03_before
+    crash_test.go:151: consistent cold reopen and resume: reorg write 3 before (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/03_after
+    crash_test.go:151: consistent cold reopen and resume: reorg write 3 after (batch:canonical,tx-lookup,LastBlock,LastHeader,LastFast)
+=== RUN   TestRestartCrashBoundaries/reorg/04_before
+    crash_test.go:151: consistent cold reopen and resume: reorg write 4 before (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/reorg/04_after
+    crash_test.go:151: consistent cold reopen and resume: reorg write 4 after (batch:canonical,tx-lookup,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rollback
+    crash_test.go:144: successful rollback write trace: [batch:LastHeader,LastFast,LastBlock]
+=== RUN   TestRestartCrashBoundaries/rollback/01_before
+    crash_test.go:151: consistent cold reopen and resume: rollback write 1 before (batch:LastHeader,LastFast,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rollback/01_after
+    crash_test.go:151: consistent cold reopen and resume: rollback write 1 after (batch:LastHeader,LastFast,LastBlock)
+=== RUN   TestRestartCrashBoundaries/rewind
+    crash_test.go:144: successful rewind write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor
+    crash_test.go:144: successful rewind_below_anchor write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_below_anchor write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_below_anchor write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_split
+    crash_test.go:144: successful rewind_split write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_split/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_split write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_split/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_split write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_pruned
+    crash_test.go:144: successful rewind_pruned write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_pruned/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_pruned write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_pruned/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_pruned write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body
+    crash_test.go:144: successful rewind_missing_body write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_body write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_body write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor
+    crash_test.go:144: successful rewind_missing_ancestor write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_ancestor write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_ancestor write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+--- PASS: TestRestartCrashBoundaries (7.71s)
+    --- PASS: TestRestartCrashBoundaries/linear (1.43s)
+        --- PASS: TestRestartCrashBoundaries/linear/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/linear/01_after (0.19s)
+        --- PASS: TestRestartCrashBoundaries/linear/02_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/linear/02_after (0.22s)
+        --- PASS: TestRestartCrashBoundaries/linear/03_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/linear/03_after (0.22s)
+    --- PASS: TestRestartCrashBoundaries/reorg (1.94s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/reorg/01_after (0.21s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/reorg/02_after (0.20s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_before (0.23s)
+        --- PASS: TestRestartCrashBoundaries/reorg/03_after (0.21s)
+        --- PASS: TestRestartCrashBoundaries/reorg/04_before (0.23s)
+        --- PASS: TestRestartCrashBoundaries/reorg/04_after (0.23s)
+    --- PASS: TestRestartCrashBoundaries/rollback (0.65s)
+        --- PASS: TestRestartCrashBoundaries/rollback/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rollback/01_after (0.23s)
+    --- PASS: TestRestartCrashBoundaries/rewind (0.64s)
+        --- PASS: TestRestartCrashBoundaries/rewind/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rewind/01_after (0.22s)
+    --- PASS: TestRestartCrashBoundaries/rewind_below_anchor (0.62s)
+        --- PASS: TestRestartCrashBoundaries/rewind_below_anchor/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind_below_anchor/01_after (0.22s)
+    --- PASS: TestRestartCrashBoundaries/rewind_split (0.62s)
+        --- PASS: TestRestartCrashBoundaries/rewind_split/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind_split/01_after (0.21s)
+    --- PASS: TestRestartCrashBoundaries/rewind_pruned (0.60s)
+        --- PASS: TestRestartCrashBoundaries/rewind_pruned/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind_pruned/01_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rewind_missing_body (0.62s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_body/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_body/01_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rewind_missing_ancestor (0.59s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_ancestor/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_ancestor/01_after (0.22s)
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/account_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/storage_root
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/missing_code
+=== RUN   TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code
+--- PASS: TestStateIntegrityDetectsMissingAndCorruptData (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/account_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/storage_root (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/missing_code (0.00s)
+    --- PASS: TestStateIntegrityDetectsMissingAndCorruptData/corrupt_code (0.00s)
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/none
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/body
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/receipts
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/transactions
+=== RUN   TestHistoryIntegrityDetectsMissingAndCorruptData/parent
+--- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/none (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/body (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/receipts (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/difficulty (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/transactions (0.00s)
+    --- PASS: TestHistoryIntegrityDetectsMissingAndCorruptData/parent (0.00s)
+=== RUN   TestPreservedStateIntegrity
+    integrity_test.go:51: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedStateIntegrity (0.00s)
+=== RUN   TestPreservedHistoryIntegrity
+    integrity_test.go:64: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedHistoryIntegrity (0.00s)
+=== RUN   TestPreservedTicketReconstruction
+    preserved_reconstruction_test.go:40: set FUSION_RESTART_FULL_AUDIT=1 for the complete read-only integrity scan
+--- SKIP: TestPreservedTicketReconstruction (0.00s)
+=== RUN   TestAutomaticPurchaseRecovery
+=== RUN   TestAutomaticPurchaseRecovery/gates
+    purchase_recovery_test.go:38: isolated recovery gates:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:79: disabled auto-buy, disabled mining, startup, and cancellation respected without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (21.23s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/wallet
+    purchase_recovery_test.go:38: isolated recovery wallet:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:98: wallet failure recovered automatically without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (5.21s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/estimate
+    purchase_recovery_test.go:38: isolated recovery estimate:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:98: estimate failure recovered automatically without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (5.24s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/funding
+    purchase_recovery_test.go:38: isolated recovery funding:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:98: funding failure recovered automatically without a head change
+        --- PASS: TestAutomaticPurchaseRecovery (5.24s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/restart_failed
+    purchase_recovery_test.go:38: isolated recovery restart_failed:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:134: restart_failed: reopened LevelDB and pool with locked wallet; exact saved transaction retained
+        --- PASS: TestAutomaticPurchaseRecovery (0.26s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/restart_journal
+    purchase_recovery_test.go:38: isolated recovery restart_journal:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:134: restart_journal: reopened LevelDB and pool with locked wallet; exact saved transaction retained
+        --- PASS: TestAutomaticPurchaseRecovery (6.25s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/replacement_reorg
+    purchase_recovery_test.go:38: isolated recovery replacement_reorg:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:258: automatic buying paused for a conflicting transfer and a rewind nonce gap, resumed after inclusion, and recovered the exact next purchase after a same-height canonical replacement and pool loss
+        --- PASS: TestAutomaticPurchaseRecovery (12.25s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/later_ticket
+    purchase_recovery_test.go:38: isolated recovery later_ticket:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:156: later-nonce ticket was preserved despite the pool's one-ticket-per-owner rule
+        --- PASS: TestAutomaticPurchaseRecovery (6.20s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/corrupt_saved
+    purchase_recovery_test.go:38: isolated recovery corrupt_saved:
+        === RUN   TestAutomaticPurchaseRecovery
+            purchase_recovery_test.go:163: corrupt saved transaction stopped new automatic signing
+        --- PASS: TestAutomaticPurchaseRecovery (6.21s)
+        PASS
+--- PASS: TestAutomaticPurchaseRecovery (68.44s)
+    --- PASS: TestAutomaticPurchaseRecovery/gates (21.27s)
+    --- PASS: TestAutomaticPurchaseRecovery/wallet (5.26s)
+    --- PASS: TestAutomaticPurchaseRecovery/estimate (5.29s)
+    --- PASS: TestAutomaticPurchaseRecovery/funding (5.29s)
+    --- PASS: TestAutomaticPurchaseRecovery/restart_failed (0.28s)
+    --- PASS: TestAutomaticPurchaseRecovery/restart_journal (6.28s)
+    --- PASS: TestAutomaticPurchaseRecovery/replacement_reorg (12.29s)
+    --- PASS: TestAutomaticPurchaseRecovery/later_ticket (6.23s)
+    --- PASS: TestAutomaticPurchaseRecovery/corrupt_saved (6.24s)
+=== RUN   TestSubmittedTicketReplacementAllowsExplicitRetry
+    purchase_replacement_test.go:29: isolated replacement scenario:
+        === RUN   TestSubmittedTicketReplacementAllowsExplicitRetry
+            purchase_replacement_test.go:72: explicit retry used the next available nonce after the pool replacement; no stale submitted cache
+        --- PASS: TestSubmittedTicketReplacementAllowsExplicitRetry (0.13s)
+        PASS
+--- PASS: TestSubmittedTicketReplacementAllowsExplicitRetry (0.17s)
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund
+=== RUN   TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund
+--- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission (0.02s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund (0.01s)
+    --- PASS: TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund (0.02s)
+=== RUN   TestDefaultHistoricalPurchaseFailsPoolAdmission
+--- PASS: TestDefaultHistoricalPurchaseFailsPoolAdmission (0.01s)
+=== RUN   TestPresentDayPurchaseStartRejectedOnHistoricalHead
+--- PASS: TestPresentDayPurchaseStartRejectedOnHistoricalHead (0.01s)
+=== RUN   TestReconstructionAcrossMissingStates
+=== RUN   TestReconstructionAcrossMissingStates/step_1_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_2_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_3_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_1
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_2
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_3
+=== RUN   TestReconstructionAcrossMissingStates/step_4_missing_4
+--- PASS: TestReconstructionAcrossMissingStates (0.56s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_1_missing_1 (0.05s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_1 (0.05s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_2_missing_2 (0.05s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_1 (0.06s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_2 (0.06s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_3_missing_3 (0.06s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_1 (0.06s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_2 (0.05s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_3 (0.05s)
+    --- PASS: TestReconstructionAcrossMissingStates/step_4_missing_4 (0.06s)
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750
+=== RUN   TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751
+--- PASS: TestReconstructionAtHistoricalExpiryBoundary (0.15s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749 (0.04s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750 (0.05s)
+    --- PASS: TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751 (0.06s)
+=== RUN   TestReconstructionWithMissingAncestorReturnsError
+--- PASS: TestReconstructionWithMissingAncestorReturnsError (0.04s)
+=== RUN   TestSingleRemainingTicketRequiresReplacement
+--- PASS: TestSingleRemainingTicketRequiresReplacement (0.02s)
+=== RUN   TestRestartRollbackDatabaseModes
+=== RUN   TestRestartRollbackDatabaseModes/memory
+    rollback_test.go:55: rollback database memory:
+        === RUN   TestRestartRollbackDatabaseModes
+        --- PASS: TestRestartRollbackDatabaseModes (0.05s)
+        PASS
+=== RUN   TestRestartRollbackDatabaseModes/leveldb
+    rollback_test.go:55: rollback database leveldb:
+        === RUN   TestRestartRollbackDatabaseModes
+        --- PASS: TestRestartRollbackDatabaseModes (0.07s)
+        PASS
+=== RUN   TestRestartRollbackDatabaseModes/storage_error
+    rollback_test.go:55: rollback database storage_error:
+        === RUN   TestRestartRollbackDatabaseModes
+        CRIT [09-24|11:50:44.453] Truncate ancient store failed            err="injected ancient storage read failure"
+--- PASS: TestRestartRollbackDatabaseModes (0.25s)
+    --- PASS: TestRestartRollbackDatabaseModes/memory (0.09s)
+    --- PASS: TestRestartRollbackDatabaseModes/leveldb (0.11s)
+    --- PASS: TestRestartRollbackDatabaseModes/storage_error (0.05s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	104.211s

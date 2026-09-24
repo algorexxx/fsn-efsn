@@ -105,7 +105,9 @@ as preserved-history execution.
 
 The subsequent [write-boundary rehearsal](restart-crash-rehearsal.md) covers
 linear import, compatible reorganization and rollback, and corrects a reproduced
-partially published reorganization. Explicit rewind/reset/pivot interruption,
+partially published reorganization. The [explicit-rewind follow-up](restart-rewind-rehearsal.md)
+also corrects interrupted `SetHead` publication and missing-ancestor repair.
+Reset/pivot interruption,
 deep unknown ancestry, ordinary sync scheduling, concurrent peer mining/reorganizations
 and supported fast/freezer modes remain open. Full-state bridge construction,
 complete accounting, controlled production

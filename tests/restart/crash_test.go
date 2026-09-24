@@ -28,6 +28,7 @@ import (
 
 type crashHistory struct {
 	Anchor *types.Block
+	Parent *types.Block
 	Old    types.Blocks
 	New    types.Blocks
 }
@@ -128,7 +129,7 @@ func TestRestartCrashBoundaries(t *testing.T) {
 		}
 		return
 	}
-	for _, scenario := range []string{"linear", "reorg", "rollback"} {
+	for _, scenario := range []string{"linear", "reorg", "rollback", "rewind", "rewind_below_anchor", "rewind_split", "rewind_pruned", "rewind_missing_body", "rewind_missing_ancestor"} {
 		t.Run(scenario, func(t *testing.T) {
 			trace := t.TempDir()
 			runCrashChild(t, trace, scenario, "write", 0, "", false)
@@ -188,10 +189,23 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 	anchor := buildAnchorBranch(t, f, 1, 120)[0]
 	builder.importBlock(t, anchor)
 	old := roundTripBlocks(t, buildAnchorBranch(t, f, 4, 120))
-	history := crashHistory{Anchor: anchor, Old: old}
+	history := crashHistory{Anchor: anchor, Parent: f.chain.GetBlock(anchor.ParentHash(), anchor.NumberU64()-1), Old: old}
 	config := *f.chain.Config()
 	config.RestartAnchor = &params.RestartAnchor{GenesisHash: f.chain.Genesis().Hash(), ChainID: config.ChainID.Uint64(), Number: anchor.NumberU64(), Hash: anchor.Hash()}
 	f.chain.Stop()
+	if scenario == "rewind_split" {
+		rawdb.WriteHeadBlockHash(db, old[0].Hash())
+		rawdb.WriteHeadFastBlockHash(db, old[2].Hash())
+	}
+	if scenario == "rewind_pruned" || scenario == "rewind_missing_ancestor" {
+		requireNoError(t, db.Delete(old[1].Root().Bytes()))
+	}
+	if scenario == "rewind_missing_body" {
+		rawdb.DeleteBody(db, old[1].Hash(), old[1].NumberU64())
+	}
+	if scenario == "rewind_missing_ancestor" {
+		rawdb.DeleteBody(db, old[0].Hash(), old[0].NumberU64())
+	}
 	f.engine = datong.New(config.DaTong, db)
 	f.chain, err = core.NewBlockChain(db, &core.CacheConfig{TrieDirtyDisabled: true}, &config, f.engine, vm.Config{}, func(block *types.Block) bool { return block.Hash() == old[len(old)-1].Hash() })
 	requireNoError(t, err)
@@ -208,6 +222,10 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 		}
 	case "rollback":
 		history.New = old[:2]
+	case "rewind", "rewind_split", "rewind_pruned", "rewind_missing_body", "rewind_missing_ancestor":
+		history.New = old[:2]
+	case "rewind_below_anchor":
+		history.New = types.Blocks{history.Parent}
 	default:
 		t.Fatalf("unknown crash scenario %q", scenario)
 	}
@@ -218,7 +236,9 @@ func writeCrashDatabase(t *testing.T, path, scenario string) {
 	requireNoError(t, err)
 	db.phase = os.Getenv("FUSION_RESTART_CRASH_PHASE")
 	db.armed = true
-	if scenario == "rollback" {
+	if strings.HasPrefix(scenario, "rewind") {
+		requireNoError(t, f.chain.SetHead(history.New[len(history.New)-1].NumberU64()))
+	} else if scenario == "rollback" {
 		f.chain.Rollback([]common.Hash{old[2].Hash(), old[3].Hash()})
 	} else {
 		_, err = f.chain.InsertChain(history.New[len(history.New)-1:])
@@ -245,10 +265,15 @@ func verifyCrashDatabase(t *testing.T, path, scenario string) {
 	config := *params.MainnetChainConfig
 	config.RestartAnchor = &params.RestartAnchor{GenesisHash: rawdb.ReadCanonicalHash(db, 0), ChainID: config.ChainID.Uint64(), Number: history.Anchor.NumberU64(), Hash: history.Anchor.Hash()}
 	engine := datong.New(config.DaTong, db)
+	t.Logf("persisted heads: full=%s header=%s fast=%s", head.Hex(), rawdb.ReadHeadHeaderHash(db).Hex(), rawdb.ReadHeadFastBlockHash(db).Hex())
 	chain, err := core.NewBlockChain(db, &core.CacheConfig{TrieDirtyDisabled: true}, &config, engine, vm.Config{}, nil)
 	requireNoError(t, err)
 	defer chain.Stop()
 	t.Logf("cold startup: head=%s readiness=%v", chain.CurrentBlock().Hash().Hex(), chain.CheckRestartReady())
+	if strings.HasPrefix(scenario, "rewind") {
+		verifyCrashRewind(t, db, chain, &history, scenario)
+		return
+	}
 	oldTip, newTip := history.Old[len(history.Old)-1], history.New[len(history.New)-1]
 	expected := history.Old
 	if head == newTip.Hash() {

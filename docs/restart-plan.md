@@ -37,8 +37,11 @@ The [interrupted-write rehearsal](restart-crash-rehearsal.md) then reproduced
 partially published reorganizations that passed cold startup. Canonical branch
 replacement now commits its indexes and all head markers in one batch. A short
 archive-style fixture covers before/after process exits for linear import,
-compatible reorganization and rollback. Interrupted explicit rewinds, pruning,
-freezer behavior and large reorganization batch cost remain open gates.
+compatible reorganization and rollback. The [explicit-rewind rehearsal](restart-rewind-rehearsal.md)
+also reproduced stranded head pointers and a missing-ancestor repair panic.
+Rewinds now commit deletions and head pointers together; synthetic interruption
+checks include below-anchor, split-head and missing-state/body cases. Complete
+pruning/freezer recovery and large reorganization batch cost remain open gates.
 
 ## 1. Objective and agreed scope
 
@@ -503,7 +506,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 1. Continue the bounded baseline replay toward 2,700,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 2,000,000 have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
-4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md) and [interrupted-write correction](restart-crash-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs and rollback. Next cover interrupted `SetHead`/reset/pivot paths, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs. Freeze the production anchor only after the recovery artifacts are reviewed.
+4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md) and [explicit-rewind correction](restart-rewind-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback and six explicit-rewind cases. Next cover interrupted reset/pivot paths, full pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs. Freeze the production anchor only after the recovery artifacts are reviewed.
 5. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation

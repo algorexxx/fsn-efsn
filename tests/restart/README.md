@@ -200,8 +200,10 @@ four scenarios, retained logs and explicit limits on the sparse history/crash ca
 `TestRestartCrashBoundaries` is available on Windows and Linux, explicitly enabled
 by `FUSION_RESTART_CRASH_REHEARSAL=1`. It uses actual LevelDB with a test-only write
 wrapper, exits child processes before and after every observed write, then cold
-reopens and resumes in fresh processes. There are sixteen cuts per run across
-linear import, compatible heavier reorganization and rollback. It requires no
+reopens and resumes in fresh processes. There are 28 cuts per run across
+linear import, compatible heavier reorganization, rollback and six explicit
+rewind cases. Rewinds include below-anchor/split heads and injected missing state
+or bodies. It requires no
 backup or operator key. For Linux, compile first and run inside a network namespace:
 
 ```sh
@@ -219,7 +221,10 @@ go test ./tests/restart -run '^TestRestartCrashBoundaries$' -v -count=1
 
 See the
 [crash report](../../docs/restart-crash-rehearsal.md) for the reproduced defect,
-atomic branch-publication correction and remaining durability/rewind/pruning gates.
+atomic branch-publication correction, and the
+[rewind report](../../docs/restart-rewind-rehearsal.md) for the atomic rewind and
+repair correction. The latter describes genesis-fallback fixture limitations and
+remaining durability/reset/pivot/pruning gates.
 
 `TestPreservedStateIntegrity`, `TestPreservedHistoryIntegrity` and
 `TestPreservedTicketReconstruction` additionally require

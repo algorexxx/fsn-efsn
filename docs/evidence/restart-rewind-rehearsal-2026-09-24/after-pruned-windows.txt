@@ -1,0 +1,58 @@
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/rewind
+    crash_test.go:144: successful rewind write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor
+    crash_test.go:144: successful rewind_below_anchor write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_below_anchor write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_below_anchor/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_below_anchor write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_split
+    crash_test.go:144: successful rewind_split write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_split/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_split write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_split/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_split write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_pruned
+    crash_test.go:144: successful rewind_pruned write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_pruned/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_pruned write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_pruned/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_pruned write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body
+    crash_test.go:144: successful rewind_missing_body write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_body write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_body write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor
+    crash_test.go:144: successful rewind_missing_ancestor write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_ancestor write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_missing_ancestor write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+--- PASS: TestRestartCrashBoundaries (3.61s)
+    --- PASS: TestRestartCrashBoundaries/rewind (0.59s)
+        --- PASS: TestRestartCrashBoundaries/rewind/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind/01_after (0.22s)
+    --- PASS: TestRestartCrashBoundaries/rewind_below_anchor (0.62s)
+        --- PASS: TestRestartCrashBoundaries/rewind_below_anchor/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rewind_below_anchor/01_after (0.21s)
+    --- PASS: TestRestartCrashBoundaries/rewind_split (0.62s)
+        --- PASS: TestRestartCrashBoundaries/rewind_split/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rewind_split/01_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rewind_pruned (0.60s)
+        --- PASS: TestRestartCrashBoundaries/rewind_pruned/01_before (0.22s)
+        --- PASS: TestRestartCrashBoundaries/rewind_pruned/01_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rewind_missing_body (0.59s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_body/01_before (0.19s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_body/01_after (0.20s)
+    --- PASS: TestRestartCrashBoundaries/rewind_missing_ancestor (0.59s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_ancestor/01_before (0.21s)
+        --- PASS: TestRestartCrashBoundaries/rewind_missing_ancestor/01_after (0.20s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/tests/restart	4.054s

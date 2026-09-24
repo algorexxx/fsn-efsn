@@ -1,0 +1,57 @@
+=== RUN   TestRestartCrashBoundaries
+=== RUN   TestRestartCrashBoundaries/rewind_pruned
+    crash_test.go:144: successful rewind_pruned write trace: [batch:data,canonical,LastBlock,LastFast,LastHeader]
+=== RUN   TestRestartCrashBoundaries/rewind_pruned/01_before
+    crash_test.go:151: consistent cold reopen and resume: rewind_pruned write 1 before (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_pruned/01_after
+    crash_test.go:151: consistent cold reopen and resume: rewind_pruned write 1 after (batch:data,canonical,LastBlock,LastFast,LastHeader)
+=== RUN   TestRestartCrashBoundaries/rewind_missing_body
+    crash_test.go:136: rewind_missing_body verify child: exit status 1
+        === RUN   TestRestartCrashBoundaries
+            crash_test.go:268: persisted heads: full=0x725687d27a204db52bc799c37d19bc57b769b6c7dd7aa9c1bd067e1759a2875d header=0x238649b26a18abed32d6122ccf160538fe0907a749d060136a617cd42b969b26 fast=0x725687d27a204db52bc799c37d19bc57b769b6c7dd7aa9c1bd067e1759a2875d
+            crash_test.go:272: cold startup: head=0x725687d27a204db52bc799c37d19bc57b769b6c7dd7aa9c1bd067e1759a2875d readiness=restart anchor: synchronization required through block 15130095 before mining
+            crash_test.go:274: Invalid new chain
+        --- FAIL: TestRestartCrashBoundaries (0.04s)
+        FAIL
+=== RUN   TestRestartCrashBoundaries/rewind_missing_ancestor
+    crash_test.go:135: rewind_missing_ancestor write child: exit status 2
+        === RUN   TestRestartCrashBoundaries
+        --- FAIL: TestRestartCrashBoundaries (0.08s)
+        panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+        	panic: runtime error: invalid memory address or nil pointer dereference
+        [signal 0xc0000005 code=0x0 addr=0x0 pc=0xb10d67]
+        
+        goroutine 31 [running]:
+        testing.tRunner.func1.2({0xc53020, 0x123a810})
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tmp/restart-runtime/go/src/testing/testing.go:1545 +0x238
+        testing.tRunner.func1()
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tmp/restart-runtime/go/src/testing/testing.go:1548 +0x397
+        panic({0xc53020?, 0x123a810?})
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tmp/restart-runtime/go/src/runtime/panic.go:914 +0x21f
+        github.com/FusionFoundation/efsn/v5/core/types.(*Block).Number(...)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/core/types/block.go:312
+        github.com/FusionFoundation/efsn/v5/core.(*BlockChain).repair(0xc0001d6c00, 0xc00027da20)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:504 +0x67
+        github.com/FusionFoundation/efsn/v5/core.(*BlockChain).SetHead.func1({0x24c752e3520, 0xc0007d3440}, 0xc0007d0280)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:339 +0x170
+        github.com/FusionFoundation/efsn/v5/core.(*HeaderChain).setHead(0xc0000d61b0, 0xe6ddf1, 0xc00027da70, 0xdf41f0)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/core/headerchain.go:559 +0x2b4
+        github.com/FusionFoundation/efsn/v5/core.(*BlockChain).SetHead(0xc0001d6c00, 0x1a?)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:354 +0x269
+        github.com/FusionFoundation/efsn/v5/tests/restart.writeCrashDatabase(0xc00016a9c0, {0xc000021b00, 0x60}, {0xc0000846d8, 0x17})
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/crash_test.go:240 +0x162d
+        github.com/FusionFoundation/efsn/v5/tests/restart.TestRestartCrashBoundaries(0xc00016a9c0)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/crash_test.go:128 +0x497
+        testing.tRunner(0xc00016a9c0, 0xdf3720)
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tmp/restart-runtime/go/src/testing/testing.go:1595 +0xff
+        created by testing.(*T).Run in goroutine 1
+        	C:/Users/Peter/Documents/CODING/fsn-efsn/tmp/restart-runtime/go/src/testing/testing.go:1648 +0x3ad
+--- FAIL: TestRestartCrashBoundaries (0.89s)
+    --- PASS: TestRestartCrashBoundaries/rewind_pruned (0.59s)
+        --- PASS: TestRestartCrashBoundaries/rewind_pruned/01_before (0.20s)
+        --- PASS: TestRestartCrashBoundaries/rewind_pruned/01_after (0.20s)
+    --- FAIL: TestRestartCrashBoundaries/rewind_missing_body (0.18s)
+    --- FAIL: TestRestartCrashBoundaries/rewind_missing_ancestor (0.11s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/tests/restart	1.362s
+FAIL
