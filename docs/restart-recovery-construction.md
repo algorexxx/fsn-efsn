@@ -174,16 +174,19 @@ The test-only IPC constructor is compiled into the test executable, not `efsn`.
 It permits public keys 1 and 2 only. It demonstrates guard-before-sign ordering;
 it is not a production signer or an authorization API.
 
-Before any real key signs a block, design and rehearse durable reservation of
-the parent and exact payload, refusal to sign a conflicting payload after a
-restart, crash-safe artifact custody, and revalidation before publication.
-Use DaTong's actual signing encoding; `SealHash` is not interchangeable with
-its signature payload. The command intentionally supplies no generic signing
-digest or production signing callback.
+The [signing-journal follow-up](restart-signing-journal.md) now implements and
+tests synchronous parent/payload reservation, refusal of conflicting or ambiguous
+attempts, and exact completed-artifact retrieval after process termination.
+It uses DaTong's actual signing encoding; `SealHash` is not interchangeable with
+its signature payload. This library prototype uses public test keys and is not
+wired into the ordinary miner or this report's test-only constructor. The command
+still supplies no production signing callback. Real-key custody, the production
+adapter, export and independent pre-publication validation remain required.
 
-Inventory the backup node's actual pending/queued transactions and automatic
-purchase journal separately. A fresh synthetic keystore and pool do not prove
-that old signed backup-wallet purchases have been drained. An operator must
+The saved-backup inventory now finds an empty `transactions.rlp` and no automatic
+purchase record for either wallet. Inventory the live node's actual pending/queued
+transactions and purchase journal separately; the saved backup does not prove
+that later signed backup-wallet purchases have been drained. An operator must
 also verify disabled startup configuration and the one-active-signer custody
 handover. Real addresses, dates, refunds/retreats and the accepted anchor still
 require review before launch.

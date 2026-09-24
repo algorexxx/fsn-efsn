@@ -1,0 +1,19 @@
+{
+  "BaselineCommit": "3ae0c82256471ffd55e95bc0b0e81fd5a511414b",
+  "Toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detector",
+  "BaselineArchiveSHA256": "425d09b2fe86189120a3062947ecd5f1e8de0d61e613af2b08dbbb5e978470ae",
+  "Sources": {
+    "consensus/datong/consensus.go": "482c745726a4ab44dc6b2233e234e8826811dd3383bba1ee5caaf9d2f23fd596",
+    "ethdb/leveldb/leveldb.go": "96d101de9eb0980e39e24da9bc1eebdc18d79ee44057a25b68b6e16fafd8779a",
+    "ethdb/leveldb/readonly_test.go": "c85592153d5099e71127a64672fd12ffa0d14e4bd03249500f9d65a3460e49d0",
+    "internal/recovery/signing.go": "ab995f2871fda0e84b8cbf13f47f9751a095ccd4f5005a604e2aa41488681f88",
+    "internal/recovery/signing_test.go": "97fe27e57cf33bf2b4314a1d214d01bd772bfcd87b9186984d68aaa2f4ccf534",
+    "tests/restart/recovery_signing_test.go": "c980b67ca2bd3e418656dddd3363777a8918d7373deedf467586fd74acf24ffc",
+    "tests/restart/purchase_inventory_test.go": "12f5784c1fe01a015b27fb17bcc32b360ddc24cb69b00417554e8030ac5c16e9"
+  },
+  "Binaries": {
+    "tmp/recovery-signing-final-windows-tests.exe": "49412bc8ac5244160072ee1113b7fae84c8a76432c559a178ff62aca4c28cbcd",
+    "tmp/recovery-signing-linux-v2-tests": "7418bbbb4725ff05d0de781df7d84f93c5e550fea63eb1c859059c77b73e5f2e"
+  },
+  "Scope": "Restart binaries include guard/handover/inventory tests. Journal and LevelDB tests ran through go test; their ephemeral package binaries are not retained. Linux source was updated only for the final manifest regression after the handover run."
+}

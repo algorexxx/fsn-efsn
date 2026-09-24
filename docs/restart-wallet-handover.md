@@ -174,6 +174,14 @@ The real-node rehearsal must cover shutdown/drain, restart with purchases
 disabled, existing signed transactions and canonical reconciliation. Do not
 claim the handover is complete from the RPC return value alone.
 
+The [saved-backup inventory and signing-journal follow-up](restart-signing-journal.md)
+found an empty transaction journal and no automatic-purchase record for either
+wallet at the preserved head. The backup nonce remains 233427 and the donation
+nonce is 0. This read-only result covers the saved backup, not the live gateway's
+pool or subsequent signed transactions. Durable parent/payload reservation now
+passes synthetic crash/conflict tests; production key custody and live drain
+remain launch gates.
+
 ## Earlier final-ticket test result and scope
 
 `TestLastTicketHandover` uses public keys 1 and 2 with the existing sparse
