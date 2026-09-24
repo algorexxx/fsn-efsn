@@ -7,10 +7,12 @@ Last reviewed: 24 September 2026. Source baseline: local `master` / `develop` at
 Latest progress: the D:-backed WSL environment contains a fully checksummed
 disposable database copy. The [integrity and replay investigation](restart-integrity-investigation.md)
 has verified all reachable current state and structural history through `B`,
-completed baseline replay through 2,000,000, and passed 128 real historical
-ticket-reconstruction cases. The next bounded target is 2,700,000, crossing the
-end of the legacy checkpoint range; continuation and clean-stop safeguards have
-been exercised. Live phase status belongs in the linked replay report.
+completed baseline replay through 2,700,000, and passed 128 real historical
+ticket-reconstruction cases. Continuation stopped cleanly at 2,613,376 as D:
+approached its reserve; a cold read-only check confirms the saved head. A complete
+checksum-verified working copy on C: completed 2,700,000 and passed a cold reopen
+check, including execution of 20,000 blocks beyond the legacy checkpoint range.
+The D: checkpoint remains preserved. Phase status belongs in the linked report.
 
 The [synthetic bridge experiment](restart-bridge-experiment.md) demonstrates
 eight independently imported blocks. [Narrow corrections](restart-corrections.md)
@@ -267,13 +269,19 @@ Produce a comparison with exact block sequence, required edits, total state chan
 
 ### Full-state rehearsal with limited disk space
 
-Next implementation step, not yet an exported or validated artifact: use the
+The [test-only extractor](restart-state-export.md) now uses the
 existing `core/state.NewStateSync` and `trie.Sync` scheduler to extract only data
 reachable from the preserved state root. It already follows account/storage
 tries and code references, including native data represented by account code
 hashes. This avoids another complete 117 GB historical-database copy and a custom
-read-through overlay with its own deletion/iterator semantics. The actual output
-size is unknown until measured.
+read-through overlay with its own deletion/iterator semantics. The closed state
+database is about 504 MiB. Synthetic extraction/corruption/interruption checks
+pass on Windows and under the Linux race detector. The first D: extraction
+stopped at the reserve and remains unverified. A fresh C: artifact passed complete
+cold verification natively on Windows, matching the exact root, state inventory
+and all tickets. The retained Linux writer's identity is explicitly checked.
+Two additional execution copies fit within the measured C: capacity, subject to
+fresh reserve checks before creating them. The exact artifact remains preserved.
 
 1. Prototype the extraction with synthetic account/storage/code/native-data
    fixtures. Exercise missing/corrupt source data, interruption, rejected target
@@ -283,7 +291,7 @@ size is unknown until measured.
 2. Run against the verified disposable backup mounted read-only in an isolated
    network/mount namespace. Create a new explicitly named local target and retain
    source head/root/config and executable identities. Apply the existing 20 GiB
-   Linux / 50 GiB host reserves before each bounded write batch. An incomplete
+   output-filesystem / 50 GiB host reserves before each bounded write batch. An incomplete
    extraction must not be marked ready or installed as a chain head.
 3. Close the target, reopen without any source fallback, and run the existing
    complete state traversal. Require the original state root and recorded
@@ -547,11 +555,11 @@ Release acceptance requires all applicable phase gates and verification cases to
 
 ## 15. Immediate next actions
 
-1. Continue the bounded baseline replay toward 2,700,000, recording completion and storage growth before extending again. Current-state traversal, complete structural history validation and replay through 2,000,000 have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and live paths](restart-integrity-investigation.md).
+1. Review the completed 2,700,000 baseline replay and cold reopen, preserving the D: checkpoint at 2,613,376 and the new C: checkpoint. Choose the next bounded range and capacity before resuming. Current-state traversal and complete structural history validation have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Extend to process-crash boundaries, live peer reorgs and full-state operation before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Implement and measure the [bounded full-state extraction](#full-state-rehearsal-with-limited-disk-space), then construct the full-state recovery rehearsal while preserving the exact exported state and the original backup.
+5. Use the [verified compact state artifact](restart-state-export.md) to construct the full-state recovery rehearsal, adding checked historical context and an explicit synthetic-key/accounting difference ledger. Preserve the exact exported state and the original backup.
 6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation

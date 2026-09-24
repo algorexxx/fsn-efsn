@@ -1,0 +1,11 @@
+/mnt/fusion-closed-replay ro,relatime,discard,errors=remount-ro,data=ordered
+/mnt/fusion-closed-replay-source ro,relatime,discard,errors=remount-ro,data=ordered
+lo               DOWN           00:00:00:00:00:00 <LOOPBACK> 
+=== RUN   TestPreservedReplayHeadReadOnly
+INFO [09-24|12:40:23.672] Allocated cache and file handles         database=/mnt/fusion-closed-replay-source cache=512.00MiB handles=128 readonly=true
+INFO [09-24|12:40:33.043] Allocated cache and file handles         database=/mnt/fusion-closed-replay        cache=128.00MiB handles=64  readonly=true
+    replay_inspection_linux_test.go:29: read-only resume preflight matched height=2613376 hash=0xa701593c60162b41f1fdb21c4bb06dee3ab3f1330c2a9d6f4186a57f8f97f858
+INFO [09-24|12:40:33.273] Allocated cache and file handles         database=/mnt/fusion-closed-replay        cache=128.00MiB handles=64  readonly=true
+    replay_inspection_linux_test.go:41: closed replay matched: height=2613376 hash=0xa701593c60162b41f1fdb21c4bb06dee3ab3f1330c2a9d6f4186a57f8f97f858 root=0xccd632d317aa6881d339cacb90c56db337639dbc4f8fc488a2a7afeec0c0dd27 ticketCommitment=0xadea244a3f8392d706a4d41fd812b4c055f4952791e8235f0910b6ff4385a5f5
+--- PASS: TestPreservedReplayHeadReadOnly (7.86s)
+PASS

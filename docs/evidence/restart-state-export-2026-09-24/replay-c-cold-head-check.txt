@@ -1,0 +1,13 @@
+2026-09-24T11:23:29Z
+/mnt/fusion-replay-c-closed ro,noatime,aname=drvfs;path=C:\;uid=1000;gid=1000;symlinkroot=/mnt/,cache=0x5,access=client,msize=65536,trans=fd,rfd=6,wfd=6
+/mnt/fusion-replay-c-inspection-source ro,relatime,discard,errors=remount-ro,data=ordered
+lo               DOWN           00:00:00:00:00:00 <LOOPBACK> 
+4dd9b2a105c9984d0f0d8ac154582c997e5560818d365c7ce4cef803cd552778  /home/rehearsal/results/restart-state-export-2026-09-24/replay-inspection-tests
+=== RUN   TestPreservedReplayHeadReadOnly
+INFO [09-24|13:23:29.337] Allocated cache and file handles         database=/mnt/fusion-replay-c-inspection-source cache=512.00MiB handles=128 readonly=true
+INFO [09-24|13:24:08.462] Allocated cache and file handles         database=/mnt/fusion-replay-c-closed            cache=128.00MiB handles=64  readonly=true
+    replay_inspection_linux_test.go:29: read-only resume preflight matched height=2700000 hash=0xfa99e1a18636a767938436e35708e8583fe031abf7d16d6cf04149bccfce2ac6
+INFO [09-24|13:24:08.765] Allocated cache and file handles         database=/mnt/fusion-replay-c-closed            cache=128.00MiB handles=64  readonly=true
+    replay_inspection_linux_test.go:41: closed replay matched: height=2700000 hash=0xfa99e1a18636a767938436e35708e8583fe031abf7d16d6cf04149bccfce2ac6 root=0x5745b4d10f3725fe2ee65457802e7e94e19242dfae0ca285ef1666b447e56d4a ticketCommitment=0x7fbbb4af2e6e4ea56f9b5451a0d7114313517ae9a5f23eca6beafaad8a6889c2
+--- PASS: TestPreservedReplayHeadReadOnly (37.74s)
+PASS

@@ -202,21 +202,69 @@ The closed replay database occupies 2,261,867,399 bytes (about 2.11 GiB), with
 At completion Linux had 74,905,395,200 free bytes and D: had 74,497,351,680.
 Continuation to the next bounded target, 2,700,000, started at 08:00:40 UTC on
 24 September. The read-only preflight validated the complete 2,000,000 head
-before writable resume. This phase is running; its results directory is
+before writable resume. This phase was stopped cleanly before its target; its
+results directory is
 `/home/rehearsal/results/restart-replay-checkpoint-boundary-2026-09-24` and its
 [exact runner](evidence/restart-node-rehearsal-2026-09-24/run-replay-checkpoint-boundary.sh)
-is archived. Do not rerun it while the writer is active. This crosses the last legacy checkpoint at
+is archived. The intended target crosses the last legacy checkpoint at
 2,680,000; it does not retroactively remove verification shortcuts from earlier
 blocks. The source, retained executable, target, identity manifest and per-batch
 20 GiB Linux / 50 GiB Windows reserves remain unchanged. Full historical execution
 remains pending.
 
-Latest archived observation: 24 September at 10:15:21 UTC, block 2,557,952 with
-no reported replay error. Linux had 72,494,329,856 free bytes and D: had
-57,014,775,808, above the existing reserves. The
-[progress snapshot](evidence/restart-reset-pivot-rehearsal-2026-09-24/replay-progress.txt)
-also confirms the retained executable hash. This is not a closed phase or a
-replacement for the completed two-million checkpoint above.
+At 10:34:28 UTC on 24 September the existing stop-file mechanism closed the
+replay after block 2,613,376, before attempting 2,613,377. This was an intentional
+storage stop as D: approached its 50 GiB reserve; exit code 1 records the stop
+request, not an invalid historical block. The closed database occupies
+3,736,629,446 bytes. A fresh process with both source and replay mounted read-only
+passed the existing resume checks and an exact-height check: all three heads,
+canonical identity, transaction/receipt commitments and bloom, cumulative
+difficulty, available head state and ticket commitment agree with the source.
+
+- Block: `0xa701593c60162b41f1fdb21c4bb06dee3ab3f1330c2a9d6f4186a57f8f97f858`.
+- State: `0xccd632d317aa6881d339cacb90c56db337639dbc4f8fc488a2a7afeec0c0dd27`.
+- Tickets: `0xadea244a3f8392d706a4d41fd812b4c055f4952791e8235f0910b6ff4385a5f5`.
+
+The [state-export evidence](evidence/restart-state-export-2026-09-24) retains the
+closed replay log and cold inspection. The original retained replay executable
+and identity manifest are unchanged. The stop file remains present. Do not
+resume that D: target until host capacity again satisfies the reserve;
+archive/remove that explicit stop request only as part of a deliberate validated
+resume.
+
+C: has enough space for a separate working copy. With the D: replay mounted
+read-only, all 1,694 files (3,736,629,446 bytes) were copied into the ignored
+workspace directory `tmp/replay-mainnet-c`. Every destination file was reread
+and its SHA-256/length checked against the source; the inventory was checked
+before writing a completed-copy marker. The original D: checkpoint is preserved.
+This uses NTFS through WSL for a bounded disposable replay, following the
+extraction's filesystem-specific process-crash/reopen checks. It does not change
+the eventual production storage decision.
+
+The retained original executable resumed that C: copy at 10:51:04 UTC, with the
+original source mounted read-only and no networking. Its ordinary resume preflight
+checked the identity and source commitments before writable open. It retained the 20 GiB
+output-filesystem / 50 GiB host reserve, now correctly naming `/mnt/c` as the
+host drive. Results are in
+`/home/rehearsal/results/restart-replay-c-storage-2026-09-24`; the copy and run
+scripts are retained in the [state-export evidence](evidence/restart-state-export-2026-09-24).
+Its separate optional stop file is
+`C:/Users/Peter/Documents/CODING/fsn-efsn/tmp/STOP-replay-mainnet-c`.
+The C: phase completed successfully at 11:15:52 UTC on 24 September 2026,
+reporting 1,406.51 test seconds. The closed database occupies 3,978,652,725 bytes
+(about 3.71 GiB), with 4,851 tickets. It reached 2,700,000 with all final
+commitments matching the preserved source:
+
+- Block: `0xfa99e1a18636a767938436e35708e8583fe031abf7d16d6cf04149bccfce2ac6`.
+- State: `0x5745b4d10f3725fe2ee65457802e7e94e19242dfae0ca285ef1666b447e56d4a`.
+- Tickets: `0x7fbbb4af2e6e4ea56f9b5451a0d7114313517ae9a5f23eca6beafaad8a6889c2`.
+
+A fresh, isolated process with source and C: replay mounted read-only then
+passed the exact-height and resume-invariant checks in 37.74 seconds. This
+completes the checkpoint-boundary gate, including 20,000 subsequent blocks under
+the ordinary checks outside the legacy shortcut range. It does not retroactively
+validate the skipped historical ticket seals/raw-transaction checks or complete
+the remaining history through 15,130,080. Neither replay copy has an active writer.
 
 ## Next gates
 
@@ -224,8 +272,10 @@ replacement for the completed two-million checkpoint above.
    traversal and complete structural history validation have both passed;
    neither substitutes for full historical execution.
 2. Use the measured export size and progressively measured replay growth to
-   choose the full replay layout. W: remains available for verified sequential
-   exports/preservation; active LevelDB storage remains on local Linux ext4.
+   choose the full replay layout. W: remains a preservation option requiring a
+   fresh accessibility/capacity check. The preserved source and D: checkpoint
+   remain on Linux ext4; the current bounded replay and compact export use C:
+   through WSL, with production storage still a separate decision.
 3. Retain explicit distinction between replay with historical checkpoint
    shortcuts and any subsequent stricter verification experiment.
 4. Prepare the demonstrated corrections and then the full-state recovery and

@@ -252,6 +252,38 @@ that manifest cannot be automatically resumed. Never run two writers.
 a controlled failure and normal cleanup at the next batch boundary. A timeout
 or forced process/WSL termination does not guarantee that cleanup.
 
+`TestPreservedReplayHeadReadOnly` checks a closed replay without reopening it
+writable. Set `FUSION_RESTART_INSPECT_REPLAY_DIR` to a read-only mount of the
+replay and `FUSION_RESTART_INSPECT_REPLAY_HEIGHT` to the exact expected height;
+the preserved source and `FUSION_RESTART_FULL_AUDIT=1` are also required. It uses
+the existing resume checks, including source difficulty, receipts and tickets,
+then requires the exact requested height. It does not change the retained
+executable identity needed for a later writable resume.
+
+`TestStateExportIntegrity`, `TestStateExportDirectory` and `TestStateExportCrash`
+exercise the state-only extractor with disposable fixtures. On Linux,
+`TestPreservedStateExport` additionally requires the full-audit/source settings,
+a read-only source mount, an absolute new `FUSION_RESTART_STATE_EXPORT_DIR`, and
+`FUSION_RESTART_HOST_STORAGE` naming the output's actual host drive. An optional
+`FUSION_RESTART_STATE_EXPORT_STOP_FILE` requests cleanup at a batch boundary.
+The extractor enforces the existing 20 GiB output-filesystem and 50 GiB host
+reserves. Existing targets are rejected and incomplete copies are not resumable.
+
+Run `TestVerifyStateExport` in a separate process with
+`FUSION_RESTART_VERIFY_EXPORT_DIR` naming the closed artifact and
+`FUSION_RESTART_CHAINDATA` unset. It independently traverses all state and checks
+the saved head inventory/tickets before creating `verified.json`. Run only that
+test in the process so ticket caches are cold. By default the verifier must be
+the retained writer binary. To verify from a different build/platform, explicitly
+set `FUSION_RESTART_STATE_EXPORT_WRITER` to an absolute path to the trusted
+retained writer binary; its bytes must match the recorded writer SHA-256. Both
+writer and verifier hashes are logged. The verifier is portable; the protected
+real-backup extraction and replay inspection remain Linux-only.
+These probes export no canonical
+chain metadata, sign no blocks, and do not create a bootable node database. See
+the [extraction report](../../docs/restart-state-export.md) for measured results,
+filesystem choice and remaining full-state execution work.
+
 See [the integrity/replay report](../../docs/restart-integrity-investigation.md)
 for measured results, limits and evidence. Successful structural checks and
 checkpoint-assisted execution are not full independent consensus verification.

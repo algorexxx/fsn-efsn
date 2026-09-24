@@ -1,0 +1,39 @@
+=== RUN   TestStateExportIntegrity
+=== RUN   TestStateExportIntegrity/none
+=== RUN   TestStateExportIntegrity/missing_root
+=== RUN   TestStateExportIntegrity/corrupt_root
+=== RUN   TestStateExportIntegrity/missing_storage
+=== RUN   TestStateExportIntegrity/corrupt_storage
+=== RUN   TestStateExportIntegrity/missing_code
+=== RUN   TestStateExportIntegrity/corrupt_code
+=== RUN   TestStateExportIntegrity/missing_native_data
+=== RUN   TestStateExportIntegrity/corrupt_native_data
+=== RUN   TestStateExportIntegrity/legacy_code
+=== RUN   TestStateExportIntegrity/stopped
+=== RUN   TestStateExportIntegrity/stopped_before_commit
+=== RUN   TestStateExportIntegrity/occupied_target
+--- PASS: TestStateExportIntegrity (0.05s)
+    --- PASS: TestStateExportIntegrity/none (0.01s)
+    --- PASS: TestStateExportIntegrity/missing_root (0.00s)
+    --- PASS: TestStateExportIntegrity/corrupt_root (0.00s)
+    --- PASS: TestStateExportIntegrity/missing_storage (0.00s)
+    --- PASS: TestStateExportIntegrity/corrupt_storage (0.00s)
+    --- PASS: TestStateExportIntegrity/missing_code (0.00s)
+    --- PASS: TestStateExportIntegrity/corrupt_code (0.00s)
+    --- PASS: TestStateExportIntegrity/missing_native_data (0.00s)
+    --- PASS: TestStateExportIntegrity/corrupt_native_data (0.00s)
+    --- PASS: TestStateExportIntegrity/legacy_code (0.00s)
+    --- PASS: TestStateExportIntegrity/stopped (0.00s)
+    --- PASS: TestStateExportIntegrity/stopped_before_commit (0.00s)
+    --- PASS: TestStateExportIntegrity/occupied_target (0.00s)
+=== RUN   TestStateExportDirectory
+--- PASS: TestStateExportDirectory (0.00s)
+=== RUN   TestStateExportCrash
+=== RUN   TestStateExportCrash/before
+INFO [09-24|13:25:04.375] Allocated cache and file handles         database=/tmp/TestStateExportCrashbefore4086827036/001/export/chaindata cache=16.00MiB handles=16 readonly=true
+=== RUN   TestStateExportCrash/after
+INFO [09-24|13:25:04.413] Allocated cache and file handles         database=/tmp/TestStateExportCrashafter459961303/001/export/chaindata cache=16.00MiB handles=16 readonly=true
+--- PASS: TestStateExportCrash (0.09s)
+    --- PASS: TestStateExportCrash/before (0.05s)
+    --- PASS: TestStateExportCrash/after (0.04s)
+PASS
