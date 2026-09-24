@@ -62,7 +62,7 @@ In scope:
 - Preservation and validation of the recovered data.
 - A tested way to resume ticket purchases and block production.
 - Enforcement of the accepted restart history across import, synchronization, mining, and existing databases.
-- Independent node participation, peer discovery, release infrastructure, operational monitoring, and a sustainable way for new nodes to sync.
+- A workable initial operator setup, a path to independent participation, peer discovery, release infrastructure, operational monitoring, and a sustainable way for new nodes to sync. A bootstrap operated by one team is an option; organizational independence is not a DaTong validity rule or a fixed prerequisite for the initial restart.
 - A GitHub organization and maintained repositories, preserving upstream history and notices.
 - Investigation and triage of defects that could prevent a safe restart.
 
@@ -389,7 +389,7 @@ Gate: reproducible build, understood baseline failures, and an executable test h
 - Match synthetic account/ticket/time-lock structure to the relevant observed conditions.
 - Maintain an exact ledger after every block, including effects on offline owners.
 - Test a second node importing the producer's blocks; test cold restart and missing-state reconstruction.
-- Demonstrate automated or scripted ticket replenishment, initial submission on an empty pool, cold restart, bounded retry after a failed purchase without any new head, transition to multiple independent producers, and failure behavior if a purchase is delayed.
+- Demonstrate automated or scripted ticket replenishment, initial submission on an empty pool, cold restart, bounded retry after a failed purchase without any new head, transition to multiple separately keyed producers (which may initially share an operator), and failure behavior if a purchase is delayed.
 - Run an isolated rehearsal on a copy of the backup only after the signing/artifact policy is defined. Do not produce multiple conflicting real-key signatures merely to iterate tests.
 
 Gate: a selected sequence, exact rule changes if any, independent state agreement, adequate ticket runway, and no unexplained accounting differences.
@@ -407,13 +407,15 @@ Gate: incompatible history cannot become canonical through any supported path; c
 ### Phase 5 — organization, infrastructure, and operator rehearsal
 
 - Establish the organization and release governance described in sections 9–11.
-- Operate multiple independently controlled validator/full-node instances; address count alone is not independence. Agree a minimum launch participation level before choosing a date.
-- Verify the selected release across separate machines and operators.
+- Define the initial producer, full-node and signing-key layout. A team-operated bootstrap is permitted as a launch option; agree its tested funding, availability and recovery requirements before choosing a date. Multiple machines or addresses under one operator do not establish organizational independence. Recruit other operators as participation becomes available.
+- Verify the selected release and imports across separate machines/processes; seek external operator verification when available. Non-producing full nodes and discovery nodes require no tickets. Keep only one active signer per key; additional simultaneous producers need distinct funded keys, and failover must prevent overlapping signers.
 - Demonstrate fresh synchronization and restore from a published, checksummed artifact; publish the artifact's trust assumptions.
 - Rehearse DNS loss, bootnode loss, validator outage, restart, disk pressure, clock errors, and network partitions using disposable networks.
 - Review the explorer's native calls, receipts, maturity events, rewards, and reorganization behavior against the rehearsal.
 
-Gate: the network can continue and onboard a node without one operator, one domain, or the dashboard being indispensable.
+Gate: production, replenishment, failure recovery and new-node onboarding work under the declared initial operator model, including provider/domain/dashboard outages within its tested redundancy. A single-operator bootstrap must explicitly disclose its dependence on that operator; removing that dependence is a later decentralization objective, not an implied property of multiple servers.
+
+The original mainnet genesis creates five special tickets for one owner (`core/genesis.go`, `DefaultGenesisBlock` and `ToBlock`); their creation does not pass through an ordinary funded purchase. This confirms a single-owner bootstrap design, without proving how many physical nodes or people ran the historical launch. The restart continues to use existing authorized FSN/time-lock rights and ordinary purchases. Funding calculations must include tickets already outstanding, eligible time-lock intervals, purchase-before-refund ordering, liquid transaction fees and delayed/missed replenishment. A 5,000-FSN ticket is not a requirement for every full-node machine. The completed full-state bridge proves short single-owner replenishment with the recorded funding; a sustained real-miner test and a budget for additional producer keys remain open.
 
 ### Phase 6 — freeze and launch
 
@@ -530,7 +532,7 @@ Ongoing finality remains outside scope. Do not expand the restart into permanent
 | Anchor location/hash | End of accepted recovery sequence proposed | Final release/public use |
 | Chain ID, network ID, transaction replay policy | Preserve history; no new ID selected | Wallet/operator integration and release |
 | Native decode defect and other audit findings | Separate triage; no automatic inclusion | Go/no-go decision |
-| Minimum independent launch operators and ticket runway | Not yet agreed | Launch date |
+| Initial operators, producer keys and ticket runway | Team-operated bootstrap is an option; exact funding, redundancy and failover remain to be tested. Independent participation is a later objective rather than a fixed launch minimum. | Launch date |
 | Key custody and real-data rehearsal procedure | Synthetic keys first; avoid conflicting production signatures | Access to production signer |
 | Supported sync modes and bootstrap artifacts | Must be demonstrated; unsupported modes explicitly excluded | Operator release |
 | Organization, maintainers, domains, hosts | Not yet selected | Infrastructure deployment |

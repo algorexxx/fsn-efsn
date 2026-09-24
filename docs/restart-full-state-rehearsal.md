@@ -122,8 +122,10 @@ The final ticket is
 `0x8075c5fe368d6eed4d264da76b197830f89daf92a54aa32f7238f60188e3cfc9`,
 owned by the test signer, with interval 1790122080–1792714080. Its existence
 does not establish launch resilience: with one ticket, another replacement
-purchase is needed to keep producing blocks. Multiple independent operators
-and a deliberate ticket runway remain launch requirements to resolve.
+purchase is needed to keep producing blocks. A deliberate ticket runway and
+tested operator/failover setup remain to be resolved. One team may initially
+operate the producers; independent organizations are a decentralization goal,
+not a consensus requirement or a fixed initial launch minimum.
 
 ## Cold verification and limits
 
@@ -169,7 +171,8 @@ that log formatting and adds the independent accounting assertions.
 
 - Exercise actual full-state mining and automatic replenishment, including a
   missed purchase, restart and funding/wallet failures. Decide and demonstrate
-  the independent-operator/ticket runway before selecting launch timing.
+  the initial operator/key layout and ticket runway before selecting launch
+  timing; a team-operated bootstrap is an option.
 - Review the historical bridge's refunds, retreats and time-lock changes; compare
   Candidate A with the explicit current-time alternative. Synthetic owner/parent
   changes alter sorting, transaction IDs and ticket IDs, so the real-signer
