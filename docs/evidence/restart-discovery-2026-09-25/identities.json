@@ -1,0 +1,117 @@
+{
+  "date": "2026-09-25",
+  "baseline": "0df4014d9f7852adb22e32a23c443557c694bf13",
+  "production_change": "Move go tab.loop() after UDP transport initialization; one added and one removed production line.",
+  "production_paths": [
+    "p2p/discover/table.go",
+    "p2p/discover/udp.go"
+  ],
+  "baseline_sources": {
+    "baseline": "0df4014d9f7852adb22e32a23c443557c694bf13",
+    "scope": "Restore the two discovery runtime files and their table test constructor call sites to pre-P10 bytes.",
+    "sources": {
+      "p2p/discover/table.go": {
+        "git_blob": "263a4c85068373378c6a2b301f25f961c2c7e148",
+        "sha256": "e44141e9364fc918e5d6ec35fddc17897c83455f2f86e1a24e0d8e71203c04d8"
+      },
+      "p2p/discover/udp.go": {
+        "git_blob": "5d052c62c3b466fa1a47686d334016318c54c077",
+        "sha256": "72de7e383d21832333f897affdae2b7c1d8124e2fac5d1af10c38aefbfe06e7f"
+      },
+      "p2p/discover/table_test.go": {
+        "git_blob": "9972c2bffa39124f1db4db96fb1fd266795c71bf",
+        "sha256": "bcec21940504474cdafb1c275215ef820aa7ee18d3b4ef5cfc147ff8df224a7e"
+      }
+    }
+  },
+  "current_sources": {
+    "p2p/discover/table.go": {
+      "git_blob": "5d5119dd194af5672ae21567ddafdbd427c7ae02",
+      "sha256_raw": "b8e2c79a1b631c7ec7d1450b2370f69293ec0dc3737788f5d8f47dac3115bdc0"
+    },
+    "p2p/discover/udp.go": {
+      "git_blob": "00f0f0575057d89d6349b9d5b2a711ebfc1d0cd9",
+      "sha256_raw": "7408763f3d2ecf1b4a865f69f34152a515d524352933fb351ad7b6a96aa0a8a2"
+    },
+    "p2p/discover/table_test.go": {
+      "git_blob": "01b85e03401d60ceab6030af57a03a3c36f0bce5",
+      "sha256_raw": "54b53144e39d3c1257b5a8306b5f61378b7844e401705624b40fbb6a6870b1e8"
+    },
+    "tests/restart/discovery_linux_test.go": {
+      "git_blob": "1f6ea413a45cf22fb1e75b11817e43351d6281fa",
+      "sha256_raw": "7706d70445597ba12bdfe7236dc29766e08ac92e0697b1cb84e1831277afe712"
+    },
+    "cmd/utils/flags.go": {
+      "git_blob": "4e5d66cc784ba8bd1c60c5ef7758c9ecf0e1c82f",
+      "sha256_raw": "713d92f68f91b4fa831bbf6fd565f7a14a919da7f2c6c6e291e646b72c63a99e"
+    },
+    "p2p/discover/node.go": {
+      "git_blob": "e13a09b8018572a645a312c03d09b6ec0f67d7e3",
+      "sha256_raw": "bfab31ce3489a9e693dbf4a88686221a93ad9be025067e1552ffeeb09c944eae"
+    },
+    "p2p/discv5/node.go": {
+      "git_blob": "4784408091fd31e2bff7acc956346d74f306fafe",
+      "sha256_raw": "64eb435071253706f4430f7b7fc4a4d47eb497cd26f77e5381857b3fec4f6964"
+    },
+    "p2p/server.go": {
+      "git_blob": "731967c52e0986a4a45523807ba5dea8e21c5067",
+      "sha256_raw": "aa9205a7008bc452b971146d3a2f3d194549071a7c456059f7a6d9af5d66dc32"
+    },
+    "p2p/dial.go": {
+      "git_blob": "24b7b42ce8804a6a64887dc9531ad65139256b44",
+      "sha256_raw": "138a974e43568e4587723cb8073e7f68ef5e80d03e5e3b21f50421a60cfaa128"
+    },
+    "node/api.go": {
+      "git_blob": "589e60d3d431af7c51bbeecb4e9a9fb3c744674f",
+      "sha256_raw": "d544354313731b9bf40c51c307f24a286ad0e8beaede45ae0f976bfa57e1378e"
+    },
+    "node/config.go": {
+      "git_blob": "8fb3d8e940a8394c952c8305bc7d0f0b9f2ed772",
+      "sha256_raw": "a3eb25a56b103dc6bfed0ecb4a1d47c77160afe7d5b740e24699adccfca7fdce"
+    },
+    "p2p/discover/node_test.go": {
+      "git_blob": "69e7c3143fc74767e9ec7c2c62f2d0c2b7822255",
+      "sha256_raw": "1cdd55dc3ef018c366e080f53599edbc341f589b190785e78e843a42cf501cca"
+    },
+    "p2p/discover/udp_test.go": {
+      "git_blob": "a3c2d82f6d659c207dbe59266821ce53e7c35265",
+      "sha256_raw": "2a03a56b82198b2f8b3f615d598b306f1c2619d7ee1960fbafdecae2c3f88b9b"
+    },
+    "p2p/rlpx.go": {
+      "git_blob": "8afef81ec8008b3a7559ef52a57766c63c357c8e",
+      "sha256_raw": "9f068a7a3ce9761efde7a23ee85ce44f6483e54bd30d3b33480718217994bb02"
+    },
+    "p2p/rlpx_test.go": {
+      "git_blob": "c71d56d25206a5b60b8a47f56b867168b0ec3ed8",
+      "sha256_raw": "88ca7b7946c8d1ff78d9e84853056e9dacbce9436408dd9cdfed09c4bf5f89f6"
+    }
+  },
+  "binaries": {
+    "tmp/discovery-linux-tests": "941597d7c2bdabe565896c741f638fff0128eb1ae390403b40477a294f8bd77f",
+    "tmp/discovery-baseline-linux-tests": "3f62599c7d283c4e5024763e96e3eaa811886c514b1fe660e9745e698e933a94",
+    "tmp/discovery-current-linux-tests": "4607eb7c9750014bc4ded6dea9bf946fb2a8a62cd3aee90f5d274993099ea1e3"
+  },
+  "results": {
+    "current": {
+      "leaf_cases": 10,
+      "duration_seconds": 30.44,
+      "race_detection": "PASS"
+    },
+    "baseline": {
+      "duration_seconds": 60.92,
+      "connectivity_assertions": "PASS",
+      "race_detection": "FAIL",
+      "race_reports": 2
+    },
+    "focused_packages": "PASS with race detection",
+    "full_packages": {
+      "status": "FAIL",
+      "preexisting_failures_reproduced": [
+        "TestForwardCompatibility",
+        "TestParseNode",
+        "TestProtocolHandshake"
+      ]
+    }
+  },
+  "limits": "Loopback-only UDP/RLPx test protocol, controlled IPv4 DNS and CLI configuration subprocesses. No chain execution, real keys, public networking, persisted-peer cold restart or DNS retry implementation."
+}

@@ -1,0 +1,107 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartDiscoveryRehearsal
+=== RUN   TestRestartDiscoveryRehearsal/dns_parse_move_and_multiple_answers
+    discovery_linux_test.go:157: v4 resolves once, keeps one IP, loses hostname and does not dial the second answer; reparse moves IP with identical node ID; v5 rejects DNS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/healthy
+    discovery_linux_test.go:178: healthy:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:207: bootstrap configuration returned: v4=1 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/bad_then_good
+    discovery_linux_test.go:178: bad_then_good:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|15:45:15.655] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/good_then_bad
+    discovery_linux_test.go:178: good_then_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|15:45:15.677] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/all_bad
+    discovery_linux_test.go:178: all_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|15:45:15.699] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_bad
+    discovery_linux_test.go:178: nodiscover_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|15:45:15.720] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/empty
+    discovery_linux_test.go:178: empty:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:207: bootstrap configuration returned: v4=0 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_empty
+    discovery_linux_test.go:178: nodiscover_empty:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:207: bootstrap configuration returned: v4=0 v5=0 discoveryDisabled=true
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/malformed
+    discovery_linux_test.go:178: malformed:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|15:45:17.788] Bootstrap URL invalid                    enode=not-an-enode err="invalid URL scheme, want \"enode\""
+=== RUN   TestRestartDiscoveryRehearsal/seed_outage_and_static_recovery
+==================
+WARNING: DATA RACE
+Read at 0x00c00023a0d8 by goroutine 88:
+  github.com/FusionFoundation/efsn/v5/p2p/discover.(*udp).findnode()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/udp.go:311 +0x4f
+  github.com/FusionFoundation/efsn/v5/p2p/discover.(*Table).findnode()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/table.go:320 +0x3b4
+  github.com/FusionFoundation/efsn/v5/p2p/discover.(*Table).lookup.func1()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/table.go:299 +0xda
+
+Previous write at 0x00c00023a0d8 by goroutine 55:
+  github.com/FusionFoundation/efsn/v5/p2p/discover.newUDP()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/udp.go:258 +0x4e4
+  github.com/FusionFoundation/efsn/v5/p2p/discover.ListenUDP()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/udp.go:231 +0x8b
+  github.com/FusionFoundation/efsn/v5/p2p.(*Server).Start()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/server.go:498 +0x10b4
+  github.com/FusionFoundation/efsn/v5/tests/restart.startDiscoveryProbe()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/discovery_linux_test.go:230 +0x591
+  github.com/FusionFoundation/efsn/v5/tests/restart.rehearseDiscoverySeedOutage()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/discovery_linux_test.go:307 +0xf1
+  testing.tRunner()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+  testing.(*T).Run.func1()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+
+Goroutine 88 (running) created at:
+  github.com/FusionFoundation/efsn/v5/p2p/discover.(*Table).lookup()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/table.go:299 +0x775
+  github.com/FusionFoundation/efsn/v5/p2p/discover.(*Table).doRefresh()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/table.go:424 +0x151
+  github.com/FusionFoundation/efsn/v5/p2p/discover.(*Table).loop.func4()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/discover/table.go:366 +0x44
+
+Goroutine 55 (running) created at:
+  testing.(*T).Run()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x82a
+  github.com/FusionFoundation/efsn/v5/tests/restart.TestRestartDiscoveryRehearsal()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/discovery_linux_test.go:42 +0x552
+  testing.tRunner()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+  testing.(*T).Run.func1()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+==================
+    discovery_linux_test.go:309: timed out: two nodes discover each other through the seed
+    testing.go:1465: race detected during execution of test
+=== NAME  TestRestartDiscoveryRehearsal
+    testing.go:1465: race detected during execution of test
+--- FAIL: TestRestartDiscoveryRehearsal (93.22s)
+    --- PASS: TestRestartDiscoveryRehearsal/dns_parse_move_and_multiple_answers (0.01s)
+    --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures (3.18s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/healthy (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/bad_then_good (0.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/good_then_bad (0.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/all_bad (0.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_bad (0.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/empty (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_empty (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/malformed (0.02s)
+    --- FAIL: TestRestartDiscoveryRehearsal/seed_outage_and_static_recovery (90.03s)
+=== NAME  
+    testing.go:1465: race detected during execution of test
+FAIL

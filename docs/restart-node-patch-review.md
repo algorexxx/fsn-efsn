@@ -4,6 +4,8 @@
 `c5f0174d88ab2b9c3086c6a9cc9ccf38a072992f`; candidate implementation at
 `04a676c42015dfe7f86aed47e598fb2920ed1e69` for P1–P8. P9 is an additional
 candidate from baseline `bcbd1ce`, pinned by source blobs in its evidence.
+P10 is a discovery startup correction from baseline `0df4014`, also pinned by
+source blobs and before/after race evidence.
 This is the review inventory, not
 an approved release. Later test/document changes do not approve these patches.
 
@@ -25,6 +27,7 @@ investigation commit is not a substitute for selecting its intended changes.
 | P7 | Skip ancient-store truncation only when the database explicitly lacks a freezer; repair header/fast head advancement when reimporting a known block after rollback. | Required for the demonstrated rollback/reimport path on Fusion's existing LevelDB-without-freezer layout. | Persistence and availability correction. Genuine storage errors remain errors. Review [rollback defects](restart-anchor-implementation.md) and [interruption controls](restart-crash-rehearsal.md). |
 | P8 | Do not call the database repair routine after a corrupt database fails a read-only open. | Required for the investigation/recovery tools' promise to leave the source unchanged. It is not required to alter ordinary writable node operation. | A read-only corrupt open fails instead of attempting repair. Review `ethdb/leveldb/readonly_test.go` and [offline signing evidence](restart-offline-signing.md). This is also a candidate standalone upstream bug fix. |
 | P9 | Remove the package-global parent-header list; use each chain reader for single-block work and explicit parent prefixes through the existing header-batch API. | Required to fix the reproduced import/miner race and deterministic cross-branch `unknown ancestor` failures. | Validation-context isolation, with no difficulty, ticket-economics or finality change. Review [parent isolation](restart-parent-isolation.md), baseline failures and corrected concurrency/header-batch tests. The [cold-header follow-up](restart-cold-header-validation.md) distinguishes cached parent routing from state availability; the header-only limit predates P9 and full import/cold reopen passes. Independent validation review remains required. |
+| P10 | Start the discovery table's background loop only after the UDP transport has received its table. | Required to remove the inherited startup race reproduced by real seed discovery. | One goroutine-start line moved across two files. Affects discovery startup, with no wire-format, DNS policy, consensus or economic change. Review [discovery resilience](restart-discovery-resilience.md) and retained before/after race results. The relevant focused tests pass; three inherited full-package test failures remain documented. |
 
 ## Source boundaries
 
@@ -43,6 +46,7 @@ the recovery-only section. Tests and evidence must accompany any extracted patch
 | P7 | `core/blockchain.go`: `truncateAncient` and known-block head advancement in `writeHeadBlock`; `core/rawdb/database.go`, `core/rawdb/freezer_table.go`: exported unsupported-operation sentinel. |
 | P8 | `ethdb/leveldb/leveldb.go`: read-only corruption handling. |
 | P9 | `consensus/datong/consensus.go`: remove `glb_parents` / `SetHeaders`, update `VerifyHeader` / `Finalize`; `core/blockchain.go`: remove setter calls; `core/headerchain.go`: use `VerifyHeaders` results. |
+| P10 | `p2p/discover/table.go`: remove loop startup from `newTable`; `p2p/discover/udp.go`: start it in `newUDP` after transport initialization. The six direct table-test callers start their own loop. |
 | O1 | `cmd/utils/flags.go`: trim/filter explicit bootstrap lists. Inherited gateway usability fix; optional for the restart protocol. Does not create DNS discovery. Review independently if retained. |
 
 P1, P5, P6, P7 and P9 overlap in chain/header code. Extract and test them in a defined
