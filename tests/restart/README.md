@@ -425,3 +425,11 @@ reproduces the inherited shared-parent ownership defect. The companion
 absent from the receiving database, guarding the explicit batch-parent path.
 See the [parent isolation report](../../docs/restart-parent-isolation.md) for
 baseline failures, repeated Windows/Linux checks and the separate P9 correction.
+
+`TestColdHeaderValidationBoundaries` runs eight cases in separate processes and
+small LevelDBs, checking absent future ticket caches and account states. It
+characterizes headers-only rejection, body/receipt requirements, reconstruction
+with complete stored data, incremental-header and invalid-header rejection, and
+full import followed by another cold reopen. These cases also run with a pre-P9
+source overlay. See the [cold-header report](../../docs/restart-cold-header-validation.md);
+passing rejection cases do not establish fast/light sync support.

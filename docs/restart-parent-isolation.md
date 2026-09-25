@@ -63,6 +63,12 @@ validation does not persist them or advance the full head. It also passes five
 times on each platform. This specifically guards the header-batch behavior
 while removing the global state.
 
+That original batch test shares the builder's process and ticket cache. The
+[cold-process follow-up](restart-cold-header-validation.md) now distinguishes
+parent routing from state availability: headers alone reject a missing purchase
+history both before and after P9; stored bodies/receipts permit reconstruction,
+and full block import plus cold reopen succeeds.
+
 The corrected real competing-miner rehearsal passes under the race detector
 (98.37 seconds). Both wallets continue purchasing after their forks converge.
 The existing nine anchor-entry characterizations also pass, including header,

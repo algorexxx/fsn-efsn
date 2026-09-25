@@ -1,0 +1,119 @@
+{
+  "date": "2026-09-25",
+  "candidate_baseline": "04ad8611aa337bcc04bbde8d5c70c03aca5d9cd7",
+  "production_changes_this_investigation": [],
+  "comparison": {
+    "baseline": "bcbd1ceadd1748b9a34482f70ead1e53e337a952",
+    "scope": "Only the three P9 runtime files are overlaid with pre-P9 bytes; current tests and all other runtime sources retained.",
+    "sources": {
+      "consensus/datong/consensus.go": {
+        "git_blob": "0d0327cceeb25d46b187a523d1be6003eb323340",
+        "sha256": "482c745726a4ab44dc6b2233e234e8826811dd3383bba1ee5caaf9d2f23fd596"
+      },
+      "core/blockchain.go": {
+        "git_blob": "7d1a2fe52f56e171986da54ac8d76ee2a22ea338",
+        "sha256": "7d06a99aa9833aab4c1bf6a0a4270172332df5f5481821ae24f68509e2b45e5d"
+      },
+      "core/headerchain.go": {
+        "git_blob": "f8fae1b1f171ce8e820a33095233f5c9352ae0f2",
+        "sha256": "7bd1dbc28b60546839f800e34dbedbfb09a430df0ed2823cea9b634da59a69f9"
+      }
+    }
+  },
+  "current_sources": {
+    "tests/restart/header_sync_cold_test.go": {
+      "git_blob": "b6aa73b5fd867a081fbb450a7ce4df78d93660eb",
+      "sha256_raw": "23ab569eff99df310e45caca8b3f66a2231ff97bd82902e2d834a72303be1aca"
+    },
+    "tests/restart/fixture_test.go": {
+      "git_blob": "a4a46cd0088c4d7f56bb1eb9615931f0e55d376b",
+      "sha256_raw": "f6561b7e420fc723fc00bff9b7b09a9d75d8c8ac809c5e6837ee1ddaf3b5ba7d"
+    },
+    "tests/restart/autobuy_test.go": {
+      "git_blob": "d44fd5a5d14b5f12d453eb531556544addd45602",
+      "sha256_raw": "2eb592e786e331ab3a6deb69e08a0b4fcfc121258e4da5cafef9f27b5772d1a8"
+    },
+    "tests/restart/anchor_paths_test.go": {
+      "git_blob": "3f1aa3f96acc9462e7fa9a93d808ea4ed9ea5f8a",
+      "sha256_raw": "1e11093912922ba1c55bc6d9b0e9bce12acc29342af47597d0081ec59966f888"
+    },
+    "consensus/datong/consensus.go": {
+      "git_blob": "3b7af9c1712f0d8235e20a449041226ebb4f583b",
+      "sha256_raw": "26a568a4c7b630b3ddd5600d14248f1d1273f04d0ea78e7e53c9259e11861427"
+    },
+    "core/blockchain.go": {
+      "git_blob": "c0bb42a46c43f245a9039ec6ab8450cc303cd0bc",
+      "sha256_raw": "a4162ea52710cd5b278212e25e9ebc7b057caef71436d3ab2c41fef4ffffb4b7"
+    },
+    "core/headerchain.go": {
+      "git_blob": "52ef671b59078fe1640bd4a6c3b083074778c161",
+      "sha256_raw": "603385e86d7c9530f51b003d36ecd057873eb0668561ccac20b2a30330b117eb"
+    },
+    "core/state/statedb.go": {
+      "git_blob": "cf05978d4cc9bbb2ebf06fa5aa898fd0350c688c",
+      "sha256_raw": "87afa15ae9f8a67f5537507c6a59a01c159e558c48dadb81343ff144a2f6897d"
+    },
+    "core/rawdb/accessors_chain.go": {
+      "git_blob": "2af7a59afeb8b381e6aeab02d1fec3b4ae01175d",
+      "sha256_raw": "c7bb94e1b57e58677ba82b0f97939da42f6bbafbe4266a4695278b46195017ec"
+    },
+    "eth/downloader/modes.go": {
+      "git_blob": "16f514832111fdf342fb5d2f88c102cdeeefbeb2",
+      "sha256_raw": "2790337e773df6f559c4fc537e3f8f6b074614fb3977860af2c4f8ae6d4cfc88"
+    },
+    "eth/downloader/downloader.go": {
+      "git_blob": "eb58cf940694a9a7505864d90dc396984d259597",
+      "sha256_raw": "6a342ee814f4abf3f4fd60ec1b039ca4cd3da714c278de854f22b85e3129e3ae"
+    },
+    "eth/sync.go": {
+      "git_blob": "15eeb6b377307176667dd3b99560cb9492f06245",
+      "sha256_raw": "1878cb3dcec82d971afd104918b2b38ce7470e449a6ecfc5e789e6a1ce8979da"
+    },
+    "eth/ethconfig/config.go": {
+      "git_blob": "f14ebc34fada52f948f6e158c8fa4c482da12c89",
+      "sha256_raw": "914807d54a084257a33767fda94647f15fd8ad023ae7050ce93ac9ae797143dc"
+    },
+    "light/lightchain.go": {
+      "git_blob": "50f3c532189a45669c0a0e19450ec3180f43adbd",
+      "sha256_raw": "cfe8df9132073ebca1c62806f8dbe6ee16280eacb46f92a50093c7d61b7a1eb8"
+    }
+  },
+  "binaries": {
+    "tmp/cold-headers-current-windows-tests.exe": {
+      "sha256": "64ea0c23aff33c964ca9edb85ccfa9148c785959a84dabb1761eadbaa77cc384",
+      "scope": "Current candidate production; new eight-case test, Windows without race detection."
+    },
+    "tmp/cold-headers-pre-p9-windows-tests.exe": {
+      "sha256": "4a185b642019dfc59cb1ca461956dcb6368685f0cbf61ffdeecc2bd8dbdec81d",
+      "scope": "Same new test; three P9 runtime files overlaid with pre-P9 bytes, Windows without race detection."
+    },
+    "tmp/cold-headers-linux-tests": {
+      "sha256": "2f2d05fbe619e4ab1306109a667b58607e70970c807ad8642f0d7c1b4844c463",
+      "scope": "Current candidate production; new eight-case test, Linux with race detection."
+    }
+  },
+  "results": {
+    "windows-current.txt": {
+      "cases": 8,
+      "duration": "1.69s",
+      "expected_incomplete_reconstruction_rejections": 5,
+      "expected_invalid_header_rejections": 1,
+      "cold_full_import_and_reopen": true
+    },
+    "windows-pre-p9.txt": {
+      "cases": 8,
+      "duration": "1.55s",
+      "expected_incomplete_reconstruction_rejections": 5,
+      "expected_invalid_header_rejections": 1,
+      "cold_full_import_and_reopen": true
+    },
+    "linux-race.txt": {
+      "cases": 8,
+      "duration": "16.11s",
+      "expected_incomplete_reconstruction_rejections": 5,
+      "expected_invalid_header_rejections": 1,
+      "cold_full_import_and_reopen": true
+    }
+  },
+  "limits": "Characterizes expected refusals; no network fast sync, genesis resync, full-history replay or real-key/backup use. Stored receipt/body preparation is synthetic."
+}
