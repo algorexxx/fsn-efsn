@@ -225,7 +225,10 @@ cold ledgers and owner-by-owner accounting agree. Production key access and the
 operator approval/custody workflow above remain unproven; the tests use only
 public scalars 1 and 2.
 
-In parallel with release preparation, finish the real signer custody/adapter and
+The [operator command follow-up](restart-operator-workflow.md) now passes bounded
+encrypted-key preflight and actual review/prepare/init/sign/export commands on
+small fixtures. Repeat the final commands with complete state before real-key use.
+In parallel with release preparation, finish real signer custody and the
 live purchase-drain procedures above, review the actual-address ledger and fresh
 ticket intervals, then select the authorized recovery artifact and anchor. Full
 historical execution still stops at 2,700,000; this work does not extend that claim.

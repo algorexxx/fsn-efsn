@@ -35,6 +35,17 @@ func withOfflineJournal(chainPath, journalPath string, identity SigningIdentity,
 	if containsPath(chainPath, journalPath) || containsPath(journalPath, chainPath) {
 		return nil, fmt.Errorf("signing journal and chain data must be separate directories")
 	}
+	return withStoppedChain(chainPath, func(reader *Reader) (*types.Block, error) {
+		journal, err := OpenSigningJournal(journalPath, identity)
+		if err != nil {
+			return nil, err
+		}
+		defer journal.Close()
+		return sign(reader, journal)
+	})
+}
+
+func withStoppedChain(chainPath string, use func(*Reader) (*types.Block, error)) (*types.Block, error) {
 	db, err := rawdb.NewLevelDBDatabase(chainPath, 16, 16, "recovery-offline", true)
 	if err != nil {
 		return nil, err
@@ -44,18 +55,17 @@ func withOfflineJournal(chainPath, journalPath string, identity SigningIdentity,
 	if err != nil {
 		return nil, err
 	}
-	journal, err := OpenSigningJournal(journalPath, identity)
-	if err != nil {
-		return nil, err
-	}
-	defer journal.Close()
-	return sign(reader, journal)
+	return use(reader)
 }
 
 // ExportSavedBlock retrieves a completed journal record without any signing
 // capability or chain-head dependency. It only creates a new file. A failed
 // write can leave a partial file; retry to a new path and verify before import.
 func ExportSavedBlock(journalPath string, identity SigningIdentity, parent common.Hash, output string) error {
+	return exportSavedBlock(journalPath, identity, parent, output, nil)
+}
+
+func exportSavedBlock(journalPath string, identity SigningIdentity, parent common.Hash, output string, check func(*SigningJournal, *types.Block) error) error {
 	if !filepath.IsAbs(output) {
 		return fmt.Errorf("absolute export filename required")
 	}
@@ -79,6 +89,11 @@ func ExportSavedBlock(journalPath string, identity SigningIdentity, parent commo
 	block, err := journal.Saved(parent)
 	if err != nil {
 		return err
+	}
+	if check != nil {
+		if err := check(journal, block); err != nil {
+			return err
+		}
 	}
 	encoded, err := rlp.EncodeToBytes(block)
 	if err != nil {

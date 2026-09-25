@@ -129,12 +129,24 @@ func (j *SigningJournal) Sign(chain Chain, plan Plan, txs types.Transactions, re
 }
 
 func (j *SigningJournal) signReviewed(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
+	return j.signReviewedWithPreflight(chain, plan, txs, reviewed, fixedSigner(signer))
+}
+
+func (j *SigningJournal) signReviewedWithPreflight(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, open signerPreflight) (*types.Block, error) {
 	if j.fault != nil {
 		return nil, j.fault
 	}
 	if j.identity != (SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}) {
 		return nil, fmt.Errorf("plan differs from journal signing identity")
 	}
+	block, err := reviewedCandidate(chain, plan, txs, reviewed)
+	if err != nil {
+		return nil, err
+	}
+	return j.signWithPreflight(block, reviewed, open)
+}
+
+func reviewedCandidate(chain Chain, plan Plan, txs types.Transactions, reviewed []byte) (*types.Block, error) {
 	candidate, err := Build(chain, plan, txs)
 	if err != nil {
 		return nil, err
@@ -146,10 +158,14 @@ func (j *SigningJournal) signReviewed(chain Chain, plan Plan, txs types.Transact
 	if !bytes.Equal(encoded, reviewed) {
 		return nil, fmt.Errorf("rebuilt block differs from reviewed unsigned artifact")
 	}
-	return j.signBlock(candidate.Block, encoded, signer)
+	return candidate.Block, nil
 }
 
 func (j *SigningJournal) signBlock(block *types.Block, encoded []byte, signer datong.SignerFn) (*types.Block, error) {
+	return j.signWithPreflight(block, encoded, fixedSigner(signer))
+}
+
+func (j *SigningJournal) signWithPreflight(block *types.Block, encoded []byte, open signerPreflight) (*types.Block, error) {
 	if err := j.checkPolicySequence(block); err != nil {
 		return nil, err
 	}
@@ -171,18 +187,20 @@ func (j *SigningJournal) signBlock(block *types.Block, encoded []byte, signer da
 	if err != leveldb.ErrNotFound {
 		return nil, err
 	}
-	if signer == nil {
-		return nil, fmt.Errorf("signer callback required")
-	}
-	record := signingRecord{Unsigned: encoded}
-	if err := j.writeRecord(key, record); err != nil {
-		return nil, err
-	}
 	payload, err := datong.SigningPayload(block.Header())
 	if err != nil {
 		return nil, err
 	}
-	signature, err := signer(accounts.Account{Address: j.identity.Signer}, "", payload)
+	session, err := open(accounts.Account{Address: j.identity.Signer}, common.CopyBytes(payload))
+	if err != nil {
+		return nil, err
+	}
+	defer session.close()
+	record := signingRecord{Unsigned: encoded}
+	if err := j.writeRecord(key, record); err != nil {
+		return nil, err
+	}
+	signature, err := session.sign(accounts.Account{Address: j.identity.Signer}, "", payload)
 	if err != nil {
 		return nil, fmt.Errorf("%w: callback failed: %v", ErrSigningUncertain, err)
 	}

@@ -32,18 +32,28 @@ type report struct {
 
 func main() {
 	if err := run(); err != nil {
+		if err == flag.ErrHelp {
+			return
+		}
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
 func run() error {
-	directory := flag.String("chaindata", "", "absolute path to a stopped LevelDB database; opened read-only")
-	planPath := flag.String("plan", "", "reviewed recovery plan JSON")
-	purchasePath := flag.String("purchase", "", "one already-signed purchase transaction in binary RLP")
-	output := flag.String("out", "", "new absolute report filename; existing files are refused")
-	flag.Parse()
-	if flag.NArg() != 0 || !filepath.IsAbs(*directory) || !filepath.IsAbs(*output) || *planPath == "" || *purchasePath == "" {
+	return runCommand(os.Args[1:])
+}
+
+func runReview(args []string) error {
+	flags := flag.NewFlagSet("review", flag.ContinueOnError)
+	directory := flags.String("chaindata", "", "absolute path to a stopped LevelDB database; opened read-only")
+	planPath := flags.String("plan", "", "reviewed recovery plan JSON")
+	purchasePath := flags.String("purchase", "", "one already-signed purchase transaction in binary RLP")
+	output := flags.String("out", "", "new absolute report filename; existing files are refused")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	if flags.NArg() != 0 || !filepath.IsAbs(*directory) || !filepath.IsAbs(*output) || *planPath == "" || *purchasePath == "" {
 		return fmt.Errorf("required: -chaindata ABSOLUTE_PATH -plan PLAN.json -purchase TX.rlp -out NEW_ABSOLUTE_REPORT.json")
 	}
 	planData, err := readInput(*planPath)
@@ -67,40 +77,40 @@ func run() error {
 	if err := rlp.DecodeBytes(purchaseData, &purchase); err != nil {
 		return err
 	}
-	db, err := rawdb.NewLevelDBDatabase(*directory, 128, 64, "recovery-readonly", true)
+	result, err := buildReviewReport(*directory, plan, &purchase)
 	if err != nil {
 		return err
 	}
-	defer db.Close()
-	chain, err := recovery.NewReader(db)
-	if err != nil {
-		return err
-	}
-	candidate, err := recovery.Build(chain, plan, types.Transactions{&purchase})
-	if err != nil {
-		return err
-	}
-	encoded, err := rlp.EncodeToBytes(candidate.Block)
-	if err != nil {
-		return err
-	}
-	result, err := json.MarshalIndent(report{Version: 1, Plan: plan, ChainConfig: chain.Config(), UnsignedBlock: encoded, Header: candidate.Block.Header(), Receipt: candidate.Receipt, Ticket: candidate.Ticket, Selected: candidate.Selected, Retreat: candidate.Retreat}, "", "  ")
-	if err != nil {
-		return err
-	}
-	file, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	if _, err := file.Write(append(result, '\n')); err != nil {
-		return err
-	}
-	if err := file.Sync(); err != nil {
+	if err := writeNewFile(*output, result); err != nil {
 		return err
 	}
 	fmt.Fprintln(os.Stdout, "Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.")
 	return nil
+}
+
+func buildReviewReport(directory string, plan recovery.Plan, purchase *types.Transaction) ([]byte, error) {
+	db, err := rawdb.NewLevelDBDatabase(directory, 128, 64, "recovery-readonly", true)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	chain, err := recovery.NewReader(db)
+	if err != nil {
+		return nil, err
+	}
+	candidate, err := recovery.Build(chain, plan, types.Transactions{purchase})
+	if err != nil {
+		return nil, err
+	}
+	encoded, err := rlp.EncodeToBytes(candidate.Block)
+	if err != nil {
+		return nil, err
+	}
+	result, err := json.MarshalIndent(report{Version: 1, Plan: plan, ChainConfig: chain.Config(), UnsignedBlock: encoded, Header: candidate.Block.Header(), Receipt: candidate.Receipt, Ticket: candidate.Ticket, Selected: candidate.Selected, Retreat: candidate.Retreat}, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	return append(result, '\n'), nil
 }
 
 func readInput(path string) ([]byte, error) {

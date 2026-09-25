@@ -1,0 +1,38 @@
+{
+  "baseline_commit": "7c389ab5db8b35546d63676fa424a23de43ccd40",
+  "toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1; Linux unit tests, command and integration binary with race detection; GOMAXPROCS=2; offline cached modules; Linux integration network isolated",
+  "source_sha256": {
+    "cmd/fsn-recovery/main.go": "6163dc064f0b799f6f9070d5bb55d1e453c29e2148929b158995508f56e7eda9",
+    "cmd/fsn-recovery/operator.go": "7941ab59f7f8cffb9dff8bbf7bcc77798f68463c35957653b3bca4640c365e4b",
+    "cmd/fsn-recovery/operator_test.go": "cf978ecf9c132ebf764e1c543aa1bc19805e37cbbea40be87aca3bbc69fb1d18",
+    "internal/recovery/approval.go": "12e32406bbd7397db7da96a35d96454c41274d6e56e013bb64759f1d062f0a7e",
+    "internal/recovery/offline.go": "2553fddb24d4cc17f01e36e6b6340a5666fdc48f4051c5f19a57fb221add7dd6",
+    "internal/recovery/signing.go": "2806c3c25f9cb982a021c21fa455c180199ecb27aa5d0d68d603cd1fe0a78bd9",
+    "internal/recovery/signing_test.go": "9f8a059c5a98a1b195a7b493bd21b8dba7dacaaae7d63fe214daee5644760370",
+    "internal/recovery/keystore.go": "0335a3104c6fc99f1daffaf87d839c0da18fc745335d22f6cac20a631440d8fb",
+    "internal/recovery/keystore_test.go": "1bb1c50ad6a64f2c5f1d9291d27539afc06662e5b6244a02b15ea532d633452e",
+    "internal/recovery/operator.go": "3e9bcfeea03b8da86dfa6ac642a01d51665d06ba9f5682a3dcf594956c72e86c",
+    "tests/restart/recovery_operator_test.go": "11f1cbd6481ecca69145dcdafd0af0819f41f5be144a338681d349280609f5df"
+  },
+  "source_git_blobs": {
+    "cmd/fsn-recovery/main.go": "2e05bb8e35eeb7b56ddecae84c43b0e9ebaae4a0",
+    "cmd/fsn-recovery/operator.go": "38a1aa2137c262cef2db5377053e064afaf25e93",
+    "cmd/fsn-recovery/operator_test.go": "53a7b953533a6ec7a4de3befe71fc4334f643df1",
+    "internal/recovery/approval.go": "c920a2bf1e2a0525e1e8b9c5b01b5c26bb8a3113",
+    "internal/recovery/offline.go": "100d4efdc05f280f994e5312a8e947e90b636ca4",
+    "internal/recovery/signing.go": "16d9585a97e61a9411bbc28643bc305dc51a82d3",
+    "internal/recovery/signing_test.go": "2a094bfa962dd6dda2ec6cd640eaac124b6b07ba",
+    "internal/recovery/keystore.go": "ee46b1eae78656fb377cfdb9b5f3a0856556b899",
+    "internal/recovery/keystore_test.go": "fdca63c9285c1a5db4ab8b43d2035469c9aa3ec9",
+    "internal/recovery/operator.go": "4282554d103e02bcb434e46c213b6c1a3ca12572",
+    "tests/restart/recovery_operator_test.go": "b6c567946d54b590ae4753f1619939ff24122859"
+  },
+  "binary_sha256": {
+    "tmp/fsn-recovery-operator.exe": "5272d5eb4dd0c490abb78d22af7e44781870329c43e1c0913533cabde2b1e4d3",
+    "tmp/fsn-recovery-operator-linux": "0493d62bacc5b4b168353d0cb9cf33863df64ba0b957ad3102314fe79c45c7c8",
+    "tmp/recovery-operator-windows-tests.exe": "b03ea57b22981d86cad75f364701e033c8b31ef067daeffd039f37db9be0a89f",
+    "tmp/recovery-operator-linux-tests": "e5d7f58d850ee80e328198017a8bc4df48dbb5336a1d427cca19ba7f348efa68"
+  },
+  "controlled_command_blocks_per_platform": 3,
+  "scope": "Final unprefixed logs cover actual CLI review, full report rebuild, initialization, signing and export on sparse state with public encrypted scalars 1/2, credential and lock failures, pre-reservation process kill and approved/legacy interruption regressions. Initial logs predate report-rebuild and final input/lock checks. No real key, full-state fixture, W: data or replay checkpoint opened. No new dependencies. Not a reproducible release-build or power-loss attestation."
+}

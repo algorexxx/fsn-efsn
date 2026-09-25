@@ -1,0 +1,114 @@
+=== RUN   TestNativeErrorDespiteSuccessfulReceipt
+--- PASS: TestNativeErrorDespiteSuccessfulReceipt (0.00s)
+=== RUN   TestKeystoreSessionBoundAndCleared
+--- PASS: TestKeystoreSessionBoundAndCleared (0.02s)
+=== RUN   TestKeystorePreflightDoesNotReserve
+--- PASS: TestKeystorePreflightDoesNotReserve (0.04s)
+=== RUN   TestKeystoreInputBounds
+=== RUN   TestKeystoreInputBounds/version
+=== RUN   TestKeystoreInputBounds/wrong_address
+=== RUN   TestKeystoreInputBounds/kdf_missing
+=== RUN   TestKeystoreInputBounds/kdf_type
+=== RUN   TestKeystoreInputBounds/kdf_cost
+=== RUN   TestKeystoreInputBounds/kdf_fraction
+=== RUN   TestKeystoreInputBounds/iv_length
+=== RUN   TestKeystoreInputBounds/scalar_length
+--- PASS: TestKeystoreInputBounds (0.02s)
+    --- PASS: TestKeystoreInputBounds/version (0.00s)
+    --- PASS: TestKeystoreInputBounds/wrong_address (0.00s)
+    --- PASS: TestKeystoreInputBounds/kdf_missing (0.00s)
+    --- PASS: TestKeystoreInputBounds/kdf_type (0.00s)
+    --- PASS: TestKeystoreInputBounds/kdf_cost (0.00s)
+    --- PASS: TestKeystoreInputBounds/kdf_fraction (0.00s)
+    --- PASS: TestKeystoreInputBounds/iv_length (0.00s)
+    --- PASS: TestKeystoreInputBounds/scalar_length (0.00s)
+=== RUN   TestSigningPreflightClosesOnFailure
+=== RUN   TestSigningPreflightClosesOnFailure/reservation_write
+=== RUN   TestSigningPreflightClosesOnFailure/callback_error
+=== RUN   TestSigningPreflightClosesOnFailure/callback_panic
+--- PASS: TestSigningPreflightClosesOnFailure (0.10s)
+    --- PASS: TestSigningPreflightClosesOnFailure/reservation_write (0.03s)
+    --- PASS: TestSigningPreflightClosesOnFailure/callback_error (0.03s)
+    --- PASS: TestSigningPreflightClosesOnFailure/callback_panic (0.03s)
+=== RUN   TestExportSavedBlock
+--- PASS: TestExportSavedBlock (0.18s)
+=== RUN   TestExportSavedBlockRefusesUnfinished
+--- PASS: TestExportSavedBlockRefusesUnfinished (0.06s)
+=== RUN   TestOfflineResolvedPaths
+    offline_test.go:105: Windows symbolic-link privilege unavailable: symlink C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\offline-signing-temp\TestOfflineResolvedPaths3555664403\001\journal C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\offline-signing-temp\TestOfflineResolvedPaths3555664403\001\alias: A required privilege is not held by the client.
+--- SKIP: TestOfflineResolvedPaths (0.03s)
+=== RUN   TestApprovedJournalQuotaAndSequence
+    policy_test.go:93: 1-block policy retained across reopen; out-of-sequence and extra signatures refused; saved export retained
+    policy_test.go:93: 2-block policy retained across reopen; out-of-sequence and extra signatures refused; saved export retained
+--- PASS: TestApprovedJournalQuotaAndSequence (0.28s)
+=== RUN   TestApprovedJournalRefusesInvalidPolicy
+--- PASS: TestApprovedJournalRefusesInvalidPolicy (0.00s)
+=== RUN   TestApprovedJournalUnfinishedCannotAdvance
+--- PASS: TestApprovedJournalUnfinishedCannotAdvance (0.08s)
+=== RUN   TestApprovedJournalRefusesStoredSequenceViolation
+--- PASS: TestApprovedJournalRefusesStoredSequenceViolation (0.11s)
+=== RUN   TestSigningApprovalExactBytes
+--- PASS: TestSigningApprovalExactBytes (0.00s)
+=== RUN   TestSigningJournalReplayAndConflict
+--- PASS: TestSigningJournalReplayAndConflict (0.08s)
+=== RUN   TestSigningJournalTruncatedWAL
+    signing_test.go:119: truncated reservation refused: leveldb/journal: block/chunk corrupted: chunk length overflows block (668 bytes) [file=000001.log]
+--- PASS: TestSigningJournalTruncatedWAL (0.04s)
+=== RUN   TestSigningJournalAmbiguousCallback
+=== RUN   TestSigningJournalAmbiguousCallback/error
+=== RUN   TestSigningJournalAmbiguousCallback/short
+=== RUN   TestSigningJournalAmbiguousCallback/wrong_key
+=== RUN   TestSigningJournalAmbiguousCallback/write_failure
+=== RUN   TestSigningJournalAmbiguousCallback/panic
+--- PASS: TestSigningJournalAmbiguousCallback (0.32s)
+    --- PASS: TestSigningJournalAmbiguousCallback/error (0.06s)
+    --- PASS: TestSigningJournalAmbiguousCallback/short (0.07s)
+    --- PASS: TestSigningJournalAmbiguousCallback/wrong_key (0.06s)
+    --- PASS: TestSigningJournalAmbiguousCallback/write_failure (0.06s)
+    --- PASS: TestSigningJournalAmbiguousCallback/panic (0.06s)
+=== RUN   TestSigningJournalIdentityAndCorruption
+--- PASS: TestSigningJournalIdentityAndCorruption (0.19s)
+=== RUN   TestSigningJournalProcessLock
+--- PASS: TestSigningJournalProcessLock (0.07s)
+=== RUN   TestSigningJournalProcessCuts
+=== RUN   TestSigningJournalProcessCuts/before_reservation
+    signing_test.go:293: forced termination at before_reservation: new signer calls=1, outcome=<nil>
+=== RUN   TestSigningJournalProcessCuts/key_opened_before_reservation
+    signing_test.go:293: forced termination at key_opened_before_reservation: new signer calls=1, outcome=<nil>
+=== RUN   TestSigningJournalProcessCuts/after_reservation
+    signing_test.go:293: forced termination at after_reservation: new signer calls=0, outcome=signing reservation is unfinished; do not sign again
+=== RUN   TestSigningJournalProcessCuts/after_signature
+    signing_test.go:293: forced termination at after_signature: new signer calls=0, outcome=signing reservation is unfinished; do not sign again
+=== RUN   TestSigningJournalProcessCuts/after_completion
+    signing_test.go:293: forced termination at after_completion: new signer calls=0, outcome=<nil>
+--- PASS: TestSigningJournalProcessCuts (0.70s)
+    --- PASS: TestSigningJournalProcessCuts/before_reservation (0.13s)
+    --- PASS: TestSigningJournalProcessCuts/key_opened_before_reservation (0.14s)
+    --- PASS: TestSigningJournalProcessCuts/after_reservation (0.15s)
+    --- PASS: TestSigningJournalProcessCuts/after_signature (0.14s)
+    --- PASS: TestSigningJournalProcessCuts/after_completion (0.15s)
+=== RUN   TestSigningJournalChild
+    signing_test.go:312: subprocess helper
+--- SKIP: TestSigningJournalChild (0.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/internal/recovery	2.774s
+=== RUN   TestOperatorRequiresReviewedDigest
+flag provided but not defined: -password
+Usage of sign:
+  -approval string
+    	canonical reviewed approval JSON
+  -approved-sha256 string
+    	separately reviewed approval SHA-256
+  -chaindata string
+    	absolute stopped working chain directory
+  -journal string
+    	absolute journal directory
+  -keyfile string
+    	absolute encrypted V3 scrypt key file
+  -password-stdin
+    	read one password line from a pipe; terminal input refused
+--- PASS: TestOperatorRequiresReviewedDigest (0.00s)
+=== RUN   TestPasswordLinePreservesWhitespaceAndBounds
+--- PASS: TestPasswordLinePreservesWhitespaceAndBounds (0.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/cmd/fsn-recovery	0.417s

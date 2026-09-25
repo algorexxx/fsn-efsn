@@ -222,7 +222,7 @@ func TestSigningJournalProcessLock(t *testing.T) {
 }
 
 func TestSigningJournalProcessCuts(t *testing.T) {
-	for _, stage := range []string{"before_reservation", "after_reservation", "after_signature", "after_completion"} {
+	for _, stage := range []string{"before_reservation", "key_opened_before_reservation", "after_reservation", "after_signature", "after_completion"} {
 		t.Run(stage, func(t *testing.T) {
 			identity, block, encoded, signer := signingFixture(t)
 			path := filepath.Join(t.TempDir(), "journal")
@@ -277,7 +277,7 @@ func TestSigningJournalProcessCuts(t *testing.T) {
 				if !errors.Is(err, ErrSigningUncertain) || calls != 0 || sealed != nil {
 					t.Fatalf("ambiguous crash retried: calls=%d error=%v", calls, err)
 				}
-			} else if err != nil || (stage == "before_reservation" && calls != 1) || (stage == "after_completion" && calls != 0) {
+			} else if err != nil || ((stage == "before_reservation" || stage == "key_opened_before_reservation") && calls != 1) || (stage == "after_completion" && calls != 0) {
 				t.Fatalf("wrong recovery: calls=%d error=%v", calls, err)
 			}
 			if stage == "after_completion" {
@@ -330,6 +330,19 @@ func TestSigningJournalChild(t *testing.T) {
 	}
 	if stage == "before_reservation" {
 		cut()
+	}
+	if stage == "key_opened_before_reservation" {
+		keyPath := path + ".encrypted-test-key.json"
+		encryptedTestKey(t, keyPath, 1)
+		_, err := j.signWithPreflight(block, encoded, func(account accounts.Account, payload []byte) (*signingSession, error) {
+			session, err := openKeystoreSigner(keyPath, account, payload, func() ([]byte, error) { return []byte("public test password"), nil })
+			if err != nil {
+				return nil, err
+			}
+			cut()
+			return session, nil
+		})
+		t.Fatalf("preflight child returned: %v", err)
 	}
 	sealed, err := j.signBlock(block, encoded, func(account accounts.Account, mime string, payload []byte) ([]byte, error) {
 		if stage == "after_reservation" {

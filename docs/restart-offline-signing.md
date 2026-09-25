@@ -150,12 +150,12 @@ outside chain data as well as outside the journal.
 
 Before real-key use:
 
-1. Integrate bounded key access and the operator commands around the
-   [reviewed-input and immutable-policy layer](restart-signing-approval.md).
-   That follow-up binds the plan, purchase, unsigned bytes, configuration and
-   executable, with passing small-state interruption tests. It does not
-   authenticate the reviewer or externally attest the executable. Test credential
-   preflight before reservation without allowing uncertain attempts to retry.
+1. Rehearse the [implemented operator commands and bounded key preflight](restart-operator-workflow.md)
+   with complete preserved state. Small-state command and interruption tests now
+   pass on Windows and Linux, including wrong-password recovery before reservation,
+   refusal to reopen keys for uncertain/completed attempts and report rebuilding.
+   These controls do not authenticate the reviewer or externally attest the
+   executable; finish actual operator review and key custody before real-key use.
 2. Keep the authoritative journal on reliable local storage outside snapshots;
    enforce one active holder per key and the approved one-backup-block custody
    sequence. Path separation cannot detect journal rollback, copied journals or

@@ -3,6 +3,9 @@
 25 September 2026. Baseline `cedde9f`, on `codex/restart-investigation-wip`.
 This adds the library controls for the operator workflow. It does not add a
 real-key loader, signing CLI, RPC method, consensus rule or launch authorization.
+The subsequent [operator command and credential follow-up](restart-operator-workflow.md)
+now implements the local CLI/key adapter and passes small-state command rehearsals;
+the original results below remain scoped to their recorded source.
 
 ## Problem and change
 
@@ -116,15 +119,14 @@ copies, malicious database edits or another holder using the key elsewhere are
 outside these local controls. This is a quota on one journal, not a global
 restriction on a wallet or its rightful owner's later operation.
 
-The next adapter should use bounded local keystore access and avoid persistent
-unlocking. Existing `SignHashWithPassphrase` decrypts for one signature and
-clears the private scalar afterward, but any callback error after reservation
-currently makes the attempt uncertain. In particular, simply placing password
-decryption inside the callback would consume a reservation on a mistyped
-password. Design and test credential preflight before reservation, after review
-validation and with the stopped-chain lock held, without permitting another
-signature after an ambiguous attempt. This adapter and the operator-facing
-approval/initialization/export commands are still pending.
+The later operator implementation resolves the credential-preflight gap: it
+validates/decrypts a bounded V3 scrypt keystore before reservation, after review
+and sequence checks and while retaining both locks. Wrong passwords can be
+corrected without consuming the allowance. Completed and uncertain attempts
+never reopen credentials. Its local key session signs only the approved payload
+once and closes afterward. Review/prepare/init/sign/export commands pass synthetic
+end-to-end tests. The new CLI still needs complete-state and final operator/custody
+rehearsals before real-key use; callback failures after reservation remain uncertain.
 
 No real signature, real purchase submission or public release was performed.
 Power-loss durability, complete historical execution, general sync/distribution

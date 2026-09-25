@@ -47,6 +47,10 @@ func decodeSigningApproval(data []byte, approvedSHA256 common.Hash) (*SigningApp
 	return &approval, nil
 }
 
+func DecodeSigningApproval(data []byte, approvedSHA256 common.Hash) (*SigningApproval, error) {
+	return decodeSigningApproval(data, approvedSHA256)
+}
+
 func ExecutableSHA256() (common.Hash, error) {
 	path, err := os.Executable()
 	if err != nil {
@@ -73,6 +77,10 @@ func ConfigurationSHA256(config *params.ChainConfig) (common.Hash, error) {
 }
 
 func SignApprovedOffline(chainPath, journalPath string, data []byte, approvedSHA256 common.Hash, signer datong.SignerFn) (*types.Block, error) {
+	return signApprovedOffline(chainPath, journalPath, data, approvedSHA256, fixedSigner(signer))
+}
+
+func signApprovedOffline(chainPath, journalPath string, data []byte, approvedSHA256 common.Hash, open signerPreflight) (*types.Block, error) {
 	approval, err := decodeSigningApproval(data, approvedSHA256)
 	if err != nil {
 		return nil, err
@@ -85,21 +93,36 @@ func SignApprovedOffline(chainPath, journalPath string, data []byte, approvedSHA
 		if journal.policy == nil || *journal.policy != approval.Policy || plan.Purchase.Owner != approval.Policy.PurchaseOwner {
 			return nil, fmt.Errorf("approval differs from immutable journal policy")
 		}
-		executable, err := ExecutableSHA256()
-		if err != nil {
+		if err := checkApprovalContext(reader, approval); err != nil {
 			return nil, err
-		}
-		config, err := ConfigurationSHA256(reader.Config())
-		if err != nil {
-			return nil, err
-		}
-		if executable != approval.Policy.ExecutableSHA256 || config != approval.Policy.ConfigSHA256 {
-			return nil, fmt.Errorf("executable or chain configuration differs from approved policy")
 		}
 		var purchase types.Transaction
 		if err := rlp.DecodeBytes(approval.Purchase, &purchase); err != nil {
 			return nil, err
 		}
-		return journal.signReviewed(reader, plan, types.Transactions{&purchase}, approval.UnsignedBlock, signer)
+		return journal.signReviewedWithPreflight(reader, plan, types.Transactions{&purchase}, approval.UnsignedBlock, open)
 	})
+}
+
+func checkApprovalContext(reader *Reader, approval *SigningApproval) error {
+	plan := approval.Plan
+	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
+	if err := validateSigningPolicy(identity, approval.Policy); err != nil {
+		return err
+	}
+	if plan.Purchase.Owner != approval.Policy.PurchaseOwner {
+		return fmt.Errorf("purchase owner differs from policy")
+	}
+	executable, err := ExecutableSHA256()
+	if err != nil {
+		return err
+	}
+	config, err := ConfigurationSHA256(reader.Config())
+	if err != nil {
+		return err
+	}
+	if executable != approval.Policy.ExecutableSHA256 || config != approval.Policy.ConfigSHA256 {
+		return fmt.Errorf("executable or chain configuration differs from approved policy")
+	}
+	return nil
 }
