@@ -1,8 +1,21 @@
-# Baseline replay continuation toward three million
+# Baseline replay through three million
 
 25 September 2026. Approved continuation from the verified 2,700,000 checkpoint
 to a bounded target of 3,000,000. This directory records operational work only;
 it introduces no node-runtime change and does not approve the candidate patches.
+
+Completed successfully on 25 September at 13:33:45 UTC (15:33:45 Stockholm).
+Replay: PASS, 4,452.18 test seconds. Separate cold exact-height verification:
+PASS, 12.81 seconds. The wrapper's total start-to-verified interval was about
+77 minutes 27 seconds. `final-capture.json`, `replay.txt`, `exit-code.txt` and
+`final-cold-check.txt` retain acceptance evidence. The original `startup-*`
+records remain explicitly provisional snapshots of the earlier running job.
+
+The closed target is 4,988,076,554 logical bytes / 4,992,933,888 allocated bytes
+(about 4.65 GiB); logical growth during this phase was about 0.94 GiB. D: retained
+about 155.47 GiB free and Linux about 60.87 GiB. No size-monitor error or stop
+occurred. Exact final commitments and scope are in the
+[investigation report](../../restart-integrity-investigation.md).
 
 ## Execution
 

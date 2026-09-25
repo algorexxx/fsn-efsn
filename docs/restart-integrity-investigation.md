@@ -266,7 +266,7 @@ the ordinary checks outside the legacy shortcut range. It does not retroactively
 validate the skipped historical ticket seals/raw-transaction checks or complete
 the remaining history through 15,130,080. Neither replay copy has an active writer.
 
-## D: continuation toward 3,000,000
+## D: continuation through 3,000,000
 
 On 25 September, after D: recovered to roughly 162 GiB free, the user authorized
 the next bounded replay. A new Linux ext4 target,
@@ -289,13 +289,38 @@ and a sampled 20 GiB total working-directory allowance that requests a clean
 stop. It automatically runs a separate read-only exact-height/head/state/ticket
 check after successful completion. Only that check writes `verified.txt`.
 
-At this update the run is active. Do not claim the 3,000,000 gate passed until
-the replay exit code and final cold-check result are collected and reviewed.
-Live results are
+The run completed successfully on 25 September. The test reports 4,452.18
+seconds (74 minutes 12 seconds); the wrapper recorded completion at 13:33:32
+UTC, and the separate cold check passed in 12.81 seconds. Final acceptance was
+recorded at 13:33:45 UTC, about 77 minutes 27 seconds after the wrapper start.
+Both replay exit code and exact-height cold check pass; the process has exited.
+
+The closed target contains 4,988,076,554 logical bytes (about 4.65 GiB), or
+4,992,933,888 allocated bytes. Its logical growth from the copied checkpoint is
+1,009,423,829 bytes (about 0.94 GiB). The size monitor recorded no errors and did
+not request a stop. At completion D: had 166,929,305,600 bytes free (about
+155.47 GiB), while Linux had 65,357,578,240 bytes free (about 60.87 GiB). Neither
+reserve was approached; this measured growth is not a full-replay size estimate.
+
+At height 3,000,000, the replay and source agree on 4,652 tickets and these
+commitments, also confirmed after closing and reopening read-only:
+
+- Block: `0xc43580bdd7ff045050c5b555fc1bf1c0f663223c19fd597eef469a258cdb22ab`.
+- State: `0x0c335e82c32a866e9e86e0fc9f9d8c04eb1dc152d1aa2ccc770c07dc2078459a`.
+- Tickets: `0xb56ef7f45f19f42e4af92715c425e18629c13df1c1fbec58b1a88be319e1dc1b`.
+
+The final check also verifies persisted full/header/fast heads, canonical indexes,
+head transaction/receipt commitments, bloom, cumulative difficulty and available
+head state against the preserved source. The retained baseline has now executed
+320,000 blocks beyond the legacy checkpoint boundary; the remaining history
+through 15,130,080 and historical execution of the newer candidate patches are
+still separate work. No replay beyond 3,000,000 has been launched.
+
+Original Linux results are
 `/home/rehearsal/results/restart-replay-three-million-2026-09-25`;
 the explicit clean-stop file is
 `/home/rehearsal/replay/STOP-baseline-mainnet-three-million`.
-Scripts and startup evidence are retained in
+Scripts, startup and final evidence are retained in
 [the three-million evidence directory](evidence/restart-replay-three-million-2026-09-25).
 
 ## Next gates

@@ -14,16 +14,17 @@ investigation branch is not itself that selection.
 Latest progress: the D:-backed WSL environment contains a fully checksummed
 disposable database copy. The [integrity and replay investigation](restart-integrity-investigation.md)
 has verified all reachable current state and structural history through `B`,
-completed baseline replay through 2,700,000, and passed 128 real historical
+completed baseline replay through 3,000,000, and passed 128 real historical
 ticket-reconstruction cases. Continuation stopped cleanly at 2,613,376 as D:
 approached its reserve; a cold read-only check confirms the saved head. A complete
 checksum-verified working copy on C: completed 2,700,000 and passed a cold reopen
 check, including execution of 20,000 blocks beyond the legacy checkpoint range.
 Both earlier checkpoints remain preserved. On 25 September a separately copied,
-checksummed D:-backed ext4 target began baseline continuation from 2,700,000 to
-3,000,000 with the retained executable, read-only sources and storage guards.
-This is an active run, not a completed replay claim; phase status belongs in the
-linked report and live result directory.
+checksummed D:-backed ext4 target completed baseline continuation from 2,700,000
+to 3,000,000 with the retained executable, read-only sources and storage guards.
+The final cold check passed at 13:33:45 UTC; the closed database is about 4.65 GiB.
+This verifies the retained baseline, not historical execution of the newer P1–P9
+candidate. Phase results belong in the linked report and captured evidence.
 
 The [synthetic bridge experiment](restart-bridge-experiment.md) demonstrates
 eight independently imported blocks. [Narrow corrections](restart-corrections.md)
@@ -624,7 +625,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 
 ## 15. Immediate next actions
 
-1. Collect and review the active baseline replay toward 3,000,000 and its automatic cold check. It resumes a separately checksummed D:-backed ext4 copy of the completed 2,700,000 C: checkpoint, preserving both earlier checkpoints and the original binary identity. Do not start another writer or infer completion from progress logs. Current-state traversal and complete structural history validation have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and paths](restart-integrity-investigation.md).
+1. Review the completed 3,000,000 baseline replay and passing cold check, then select the next bounded range and capacity. The closed D:-backed ext4 target is about 4.65 GiB; both earlier checkpoints and the original binary identity remain preserved. No continuation beyond 3,000,000 is running. Current-state traversal and complete structural history validation have passed. Historical checkpoint shortcuts remain through 2,680,000 and must be labelled accordingly. See [integrity/replay evidence and paths](restart-integrity-investigation.md).
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Complete-state operation and a real-service SIGKILL continuation pass in the guarded two-node follow-up. The [sixteen purchase interruption cases](restart-purchase-crash-rehearsal.md) now pass before/after record save, submission, retirement and pool adoption. The [storage/peer follow-up](restart-purchase-storage-and-peers.md) now passes eight database-interface failures and two compatible reorganizations through real peers/downloader, with receipt checks and empty-pool cold recovery. The [nonce rollback/live-miner follow-up](restart-purchase-nonce-rollback.md) demonstrates a two-purchase rollback, retained intent across cold restart, explicit nonce repair, and two real miners continuing after convergence. A missing nonce can require operator intervention; decide the monitored repair policy before release. Exact concurrent confirmation cuts, more fork depths, internal write boundaries and power-loss durability remain separate concerns. Ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. The additional [P9 parent-isolation correction](restart-parent-isolation.md) addresses an inherited race reproduced by concurrent import/mining; review its separate failure evidence and header-batch coverage. The permanent inventory now contains nine candidates. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. The [cold-header matrix](restart-cold-header-validation.md) now confirms the same header-only reconstruction limit before/after P9, validates reconstruction with stored bodies/receipts, and passes full import plus cold reopen. Normal scheduling already disables fast sync; the launch candidate uses explicit full sync from restored state. General state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and wider concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
