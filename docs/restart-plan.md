@@ -268,6 +268,15 @@ of superseded entries. Deterministic failures and a signed UDP move across
 simulated public subnets are reproduced before and pass after correction.
 Public NAT/firewall/IPv6 deployment and independent operators remain unverified.
 
+The [operator network profile](restart-network-profile.md) now inventories old
+infrastructure references and verifies same-IP two-node ports, NAT advertisement
+and restart, effective restored peer lists, and IPv6 discovery/RLPx in isolation.
+It provides an actual-command-tested template with explicit v4/v5 and peer-list
+settings. No additional runtime patch is added. Keep the public introduction on
+the long-lived donation node's P2P identity; on one IP, use donation 40408 and
+temporary backup 40409 for both TCP and UDP. NAT/dumpconfig/flag limitations and
+their explicit configuration workarounds are recorded in that report.
+
 ### 3.9 Purchase admission and automatic retry are separate gates
 
 The original backup-only funding experiment exercised the real purchase argument
@@ -577,8 +586,8 @@ The current extra branches should not be merged wholesale by assumption. The rec
 - Keep node identities stable across IP moves. The P12 candidate refreshes bootstrap DNS automatically with bounded retries; document refresh/backoff delays and distinguish it from unchanged static/trusted/v5 parsing.
 - Provide static-peer fallbacks and an explicit empty-bootstrap option. No dedicated seed can eliminate the need for some initial contact information.
 - Review [P12 bootstrap DNS and P13 restored-seed corrections](restart-bootstrap-dns.md) separately from consensus. The candidate retains names, retries without blocking startup, rejects malformed configuration and uses cached/literal/other contacts during DNS failure. The earlier fatal-startup and single-answer [characterization](restart-discovery-resilience.md) remains baseline evidence. The final candidate adds real-command TOML/CLI, deadlines, DNS recovery and persisted-peer cold restart with a failed hostname still configured.
-- Inventory v5 defaults, NAT announcements, TCP/UDP reachability, static/trusted peers, and all Foundation hostnames in scripts/configuration. Do not imply v5 hostname support.
-- The isolated live rehearsals verify established peer messaging with the seed stopped, fresh-node failure, static-peer recovery, DNS errors/recovery, address changes and cold restart from genuine persisted peers. [P14](restart-peer-addresses.md) corrects demonstrated subnet accounting and stale-probe defects, with deterministic race tests and signed UDP packets across simulated public subnets. Public TCP/UDP/NAT, IPv6 and partitions remain deployment checks; these are not block-production tests.
+- Use the [tested operator network profile and endpoint inventory](restart-network-profile.md): keep the initial public DNS introduction on the long-lived donation node, use unique P2P identities/datadirs, publish both TCP and UDP, and explicitly override v5/bootstrap/static/trusted settings. The saved [TOML base](restart-network-profile.toml) is not a complete mining/recovery launch command. Retain NAT as an explicit CLI input; do not assume `dumpconfig` can be reused or shows peer files loaded at startup. Replace final release endpoints/images/entrypoints after their new ownership is selected. Do not imply v5 hostname support.
+- The isolated live rehearsals verify established peer messaging with the seed stopped, fresh-node failure, static-peer recovery, DNS errors/recovery, address changes and cold restart from genuine persisted peers. [P14](restart-peer-addresses.md) corrects demonstrated subnet accounting and stale-probe defects, with deterministic race tests and signed UDP packets across simulated public subnets. The [profile follow-up](restart-network-profile.md) adds IPv6 UDP-only introduction/RLPx and NAT-adapter lifecycle checks. Public TCP/UDP/NAT, IPv6 and partitions remain deployment checks; these are not block-production tests.
 - Plan for Peter's eventual departure once other operators are active: add independently operated discovery contacts under independent domains as participation grows, retain replaceable/manual peer configuration, and publish portable operating instructions. With all Peter-operated infrastructure unavailable, demonstrate existing-node continuity, restart from remembered peers and fresh installation through independent contacts. Preserving a chain after its sole participant leaves is explicitly outside this investigation. This is an independence milestone, not an added multi-operator requirement for the agreed initial launch.
 
 ### RPC and data providers

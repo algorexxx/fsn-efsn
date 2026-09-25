@@ -1,0 +1,124 @@
+lo               UNKNOWN        127.0.0.1/8 172.0.1.1/16 ::1/128 
+=== RUN   TestRestartBootstrapDNSRehearsal
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/unresolved
+    bootstrap_dns_linux_test.go:69: actual efsn dumpconfig mode=unresolved exit=<nil>; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/cli_empty_override
+    bootstrap_dns_linux_test.go:69: actual efsn dumpconfig mode=cli_empty_override exit=<nil>; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/malformed
+    bootstrap_dns_linux_test.go:69: actual efsn dumpconfig mode=malformed exit=exit status 1; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/outage_recovery_udp_only_and_move
+INFO [09-25|18:23:38.269] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:58179
+INFO [09-25|18:23:38.272] Starting P2P networking 
+INFO [09-25|18:23:38.274] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:43793
+INFO [09-25|18:23:38.275] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:43793
+INFO [09-25|18:23:38.276] Starting P2P networking 
+INFO [09-25|18:23:38.278] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37983
+INFO [09-25|18:23:38.279] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37983
+WARN [09-25|18:23:38.282] Bootstrap contact unavailable; retrying  host=servfail.restart.invalid id=5cbdf0646e5db4ea err="lookup servfail.restart.invalid on 10.255.255.254:53: server misbehaving"
+WARN [09-25|18:23:38.282] Bootstrap contact unavailable; retrying  host=community.restart.invalid id=79be667ef9dcbbac err="lookup community.restart.invalid on 10.255.255.254:53: no such host"
+    bootstrap_dns_linux_test.go:128: startup returned while NXDOMAIN, SERVFAIL and a nonresponding DNS server were present; no initial contacts acquired
+WARN [09-25|18:23:43.280] Bootstrap contact unavailable; retrying  host=timeout.restart.invalid   id=fff97bd5755eeea4 err="lookup timeout.restart.invalid: i/o timeout"
+INFO [09-25|18:23:48.785] Bootstrap contact recovered              host=community.restart.invalid id=79be667ef9dcbbac
+    bootstrap_dns_linux_test.go:135: same running client recovered through second A answer and UDP-only seed; reached nondialing community and exchanged message 51
+INFO [09-25|18:23:50.833] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.3:58179
+    bootstrap_dns_linux_test.go:149: running client contacted empty UDP seed at changed IP with unchanged key/port, without reparsing configuration or restarting
+    bootstrap_dns_linux_test.go:155: shutdown completed within two seconds with failing DNS contacts still configured
+=== RUN   TestRestartBootstrapDNSRehearsal/restricted_answers
+INFO [09-25|18:24:19.693] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:42874
+INFO [09-25|18:24:19.694] Starting P2P networking 
+INFO [09-25|18:24:19.695] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40965
+WARN [09-25|18:24:19.696] Bootstrap contact unavailable; retrying  host=restricted.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for restricted.restart.invalid"
+INFO [09-25|18:24:19.697] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40965
+    bootstrap_dns_linux_test.go:173: DNS answer outside NetRestrict was not contacted or introduced into the peer table
+=== RUN   TestRestartBootstrapDNSRehearsal/shutdown_during_blocked_lookup
+INFO [09-25|18:24:20.700] Starting P2P networking 
+INFO [09-25|18:24:20.701] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:42461
+INFO [09-25|18:24:20.702] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:42461
+    bootstrap_dns_linux_test.go:188: shutdown cancelled an in-flight nonresponding DNS lookup within one second
+--- PASS: TestRestartBootstrapDNSRehearsal (43.96s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command (2.31s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/unresolved (1.10s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/cli_empty_override (1.14s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/malformed (0.06s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/outage_recovery_udp_only_and_move (40.58s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/restricted_answers (1.01s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/shutdown_during_blocked_lookup (0.05s)
+=== RUN   TestRestartNetworkConfigInputs
+=== RUN   TestRestartNetworkConfigInputs/legacy_peer_files
+    network_config_test.go:48: input config contains zero static/trusted entries; effective server loads 1 of each from legacy root files; P2P service not started
+=== RUN   TestRestartNetworkConfigInputs/explicit_empty_peer_lists
+    network_config_test.go:48: input config contains zero static/trusted entries; effective server loads 0 of each from legacy root files; P2P service not started
+=== RUN   TestRestartNetworkConfigInputs/omitted_nat_uses_default
+INFO [09-25|18:24:20.768] Maximum peer count                       ETH=25 LES=0 total=25
+    network_config_test.go:70: effective NAT adapter present=true; no router query or P2P startup performed
+=== RUN   TestRestartNetworkConfigInputs/cli_none_overrides_default
+INFO [09-25|18:24:20.771] Maximum peer count                       ETH=25 LES=0 total=25
+    network_config_test.go:70: effective NAT adapter present=false; no router query or P2P startup performed
+--- PASS: TestRestartNetworkConfigInputs (0.02s)
+    --- PASS: TestRestartNetworkConfigInputs/legacy_peer_files (0.01s)
+    --- PASS: TestRestartNetworkConfigInputs/explicit_empty_peer_lists (0.00s)
+    --- PASS: TestRestartNetworkConfigInputs/omitted_nat_uses_default (0.01s)
+    --- PASS: TestRestartNetworkConfigInputs/cli_none_overrides_default (0.00s)
+=== RUN   TestRestartNetworkProfileRehearsal
+=== RUN   TestRestartNetworkProfileRehearsal/fixed_port_external_ip
+INFO [09-25|18:24:20.774] Starting P2P networking 
+INFO [09-25|18:24:20.775] Mapped network port                      proto=udp extport=40408 intport=40408 interface=ExtIP(192.0.2.10)
+INFO [09-25|18:24:20.778] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@192.0.2.10:40408
+    network_profile_linux_test.go:79: external advertisement is 192.0.2.10:40408 for TCP and UDP while local bind remains 172.0.1.1:40408; extip does not create a router mapping
+INFO [09-25|18:24:20.779] Mapped network port                      proto=tcp extport=40408 intport=40408 interface=ExtIP(192.0.2.10)
+INFO [09-25|18:24:20.780] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@192.0.2.10:40408
+=== RUN   TestRestartNetworkProfileRehearsal/wildcard_without_nat
+INFO [09-25|18:24:20.781] Starting P2P networking 
+INFO [09-25|18:24:20.783] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@[::]:40408
+    network_profile_linux_test.go:87: wildcard bind with no NAT advertises ::; the startup enode is not a usable public contact
+INFO [09-25|18:24:20.784] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@[::]:40408
+=== RUN   TestRestartNetworkProfileRehearsal/mapping_and_external_ip_restart
+INFO [09-25|18:24:20.786] Starting P2P networking 
+INFO [09-25|18:24:20.787] Mapped network port                      proto=udp extport=40408 intport=40408 interface=isolated-rehearsal-mapper
+INFO [09-25|18:24:20.792] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@192.0.2.10:40408
+INFO [09-25|18:24:20.792] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@192.0.2.10:40408
+INFO [09-25|18:24:20.792] Mapped network port                      proto=tcp extport=40408 intport=40408 interface=isolated-rehearsal-mapper
+INFO [09-25|18:24:20.793] Starting P2P networking 
+INFO [09-25|18:24:20.794] Mapped network port                      proto=udp extport=40408 intport=40408 interface=isolated-rehearsal-mapper
+INFO [09-25|18:24:20.797] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@192.0.2.20:40408
+INFO [09-25|18:24:20.797] Mapped network port                      proto=tcp extport=40408 intport=40408 interface=isolated-rehearsal-mapper
+INFO [09-25|18:24:20.797] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@192.0.2.20:40408
+    network_profile_linux_test.go:114: recording NAT adapter received matching TCP/UDP map/delete requests; external address queried once per startup; restart refreshed it with unchanged identity; no real router was contacted
+=== RUN   TestRestartNetworkProfileRehearsal/mapping_failure_does_not_fail_startup
+INFO [09-25|18:24:20.800] Starting P2P networking 
+INFO [09-25|18:24:20.802] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@172.0.1.1:40408
+INFO [09-25|18:24:20.803] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@172.0.1.1:40408
+    network_profile_linux_test.go:142: server starts despite external-IP/mapping failures and advertises local address; running status does not establish public reachability
+=== RUN   TestRestartNetworkProfileRehearsal/two_ports_one_ipv4_address
+INFO [09-25|18:24:20.804] Starting P2P networking 
+INFO [09-25|18:24:20.806] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40408
+INFO [09-25|18:24:20.807] Starting P2P networking 
+INFO [09-25|18:24:20.807] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40408
+INFO [09-25|18:24:20.810] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40409
+INFO [09-25|18:24:20.810] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40409
+    network_profile_linux_test.go:154: two distinct P2P identities share one IP on 40408 and 40409, advertise matching TCP/UDP ports and exchange authenticated RLPx message 61
+=== RUN   TestRestartNetworkProfileRehearsal/ipv6_discovery_and_rlpx
+INFO [09-25|18:24:20.866] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@[::1]:40407
+INFO [09-25|18:24:20.867] Starting P2P networking 
+INFO [09-25|18:24:20.872] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@[::1]:40408
+INFO [09-25|18:24:20.874] RLPx listener up                         self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@[::1]:40408
+INFO [09-25|18:24:20.874] Starting P2P networking 
+INFO [09-25|18:24:20.876] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@[::1]:40409
+INFO [09-25|18:24:20.877] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@[::1]:40409
+    network_profile_linux_test.go:175: IPv6 loopback UDP-only seed introduced a nondialing community peer; bracketed endpoints and authenticated RLPx message 62 verified without static or bootstrap TCP fallback
+=== RUN   TestRestartNetworkProfileRehearsal/tcp_static_without_udp
+INFO [09-25|18:24:22.430] Starting P2P networking 
+INFO [09-25|18:24:22.431] RLPx listener up                         self="enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40408?discport=0"
+INFO [09-25|18:24:22.431] Starting P2P networking 
+INFO [09-25|18:24:22.432] RLPx listener up                         self="enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40409?discport=0"
+    network_profile_linux_test.go:190: UDP port is unbound with v4/v5 disabled; literal static TCP peer still exchanges RLPx message 63
+--- PASS: TestRestartNetworkProfileRehearsal (1.71s)
+    --- PASS: TestRestartNetworkProfileRehearsal/fixed_port_external_ip (0.01s)
+    --- PASS: TestRestartNetworkProfileRehearsal/wildcard_without_nat (0.00s)
+    --- PASS: TestRestartNetworkProfileRehearsal/mapping_and_external_ip_restart (0.01s)
+    --- PASS: TestRestartNetworkProfileRehearsal/mapping_failure_does_not_fail_startup (0.00s)
+    --- PASS: TestRestartNetworkProfileRehearsal/two_ports_one_ipv4_address (0.06s)
+    --- PASS: TestRestartNetworkProfileRehearsal/ipv6_discovery_and_rlpx (1.57s)
+    --- PASS: TestRestartNetworkProfileRehearsal/tcp_static_without_udp (0.05s)
+PASS

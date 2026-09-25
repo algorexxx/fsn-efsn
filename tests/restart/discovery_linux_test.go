@@ -251,10 +251,13 @@ func startConfiguredDiscoveryProbe(t *testing.T, keyNumber int, config p2p.Confi
 	requireNoError(t, err)
 	restrict, err := netutil.ParseNetlist("127.0.0.0/8")
 	requireNoError(t, err)
-	reservation, err := net.Listen("tcp4", "127.0.0.1:0")
-	requireNoError(t, err)
-	listenAddr := reservation.Addr().String()
-	requireNoError(t, reservation.Close())
+	listenAddr := config.ListenAddr
+	if listenAddr == "" {
+		reservation, err := net.Listen("tcp4", "127.0.0.1:0")
+		requireNoError(t, err)
+		listenAddr = reservation.Addr().String()
+		requireNoError(t, reservation.Close())
+	}
 	probe := &discoveryProbe{writers: make(map[discover.NodeID]p2p.MsgReadWriter), received: make(chan discoveryProbeMessage, 32)}
 	config.PrivateKey = key
 	config.Name = "restart-discovery-rehearsal"

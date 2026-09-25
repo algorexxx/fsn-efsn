@@ -88,6 +88,11 @@ DNS discovery defaults, final anchor selection, supported public download/sync
 paths and release packaging remain separate unfinished work. This inventory does
 not claim those are implemented or that the candidate node is ready to launch.
 
+The [operator network-profile follow-up](restart-network-profile.md) adds no
+runtime patch. It records tested configuration workarounds for inherited NAT,
+diagnostic dump, discovery-flag and restored-peer-list behavior, plus the remaining
+release endpoint/image changes. The inventory remains P1–P14.
+
 ## Independent review handoff
 
 Reviewers should identify the baseline and candidate commit, reference the row ID,
