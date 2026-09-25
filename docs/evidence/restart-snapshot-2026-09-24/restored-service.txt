@@ -1,0 +1,46 @@
+=== RUN   TestRestoredSnapshotService
+INFO [09-25|01:22:03.618] Allocated cache and file handles         database=W:\FusionRestart\restore-rehearsal-2026-09-24\restored-node\efsn\chaindata cache=128.00MiB handles=128 readonly=true
+INFO [09-25|01:22:25.235] InitCheckPoints finished                 count=8 last=2,680,000
+INFO [09-25|01:22:25.236] Allocated trie memory caches             clean=32.00MiB dirty=0.00B
+INFO [09-25|01:22:25.237] Allocated cache and file handles         database=W:\FusionRestart\restore-rehearsal-2026-09-24\restored-node\efsn\chaindata cache=128.00MiB handles=128
+INFO [09-25|01:25:18.794] Persisted trie from memory database      nodes=24 size=3.95KiB time=1.1363ms gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+INFO [09-25|01:25:18.855]  
+INFO [09-25|01:25:18.855] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+INFO [09-25|01:25:18.855] Chain ID:  32659 (mainnet) 
+INFO [09-25|01:25:18.855] Consensus: DaTong (Ticketed proof-of-stake) 
+INFO [09-25|01:25:18.855]  
+INFO [09-25|01:25:18.855] hard forks: 
+INFO [09-25|01:25:18.855]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+INFO [09-25|01:25:18.855]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+INFO [09-25|01:25:18.855]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+INFO [09-25|01:25:18.855]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+INFO [09-25|01:25:18.855]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+INFO [09-25|01:25:18.855]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+INFO [09-25|01:25:18.855]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+INFO [09-25|01:25:18.855]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+INFO [09-25|01:25:18.855]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+INFO [09-25|01:25:18.855]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+INFO [09-25|01:25:18.855]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+INFO [09-25|01:25:18.855]  - Fusion Eco:                  8250000  
+INFO [09-25|01:25:18.855]  
+INFO [09-25|01:25:18.855]  
+INFO [09-25|01:25:18.855] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+INFO [09-25|01:25:18.855]  
+INFO [09-25|01:25:19.389] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+INFO [09-25|01:25:19.436] Loaded most recent local header          number=15,130,080 hash="e93ffd…80f99f" td=63,370,514,513 age=11mo3w1d
+INFO [09-25|01:25:19.436] Loaded most recent local full block      number=15,130,080 hash="e93ffd…80f99f" td=63,370,514,513 age=11mo3w1d
+INFO [09-25|01:25:19.436] Loaded most recent local fast block      number=15,130,080 hash="e93ffd…80f99f" td=63,370,514,513 age=11mo3w1d
+INFO [09-25|01:25:20.657] Gasprice oracle is ignoring threshold set threshold=2
+INFO [09-25|01:25:20.658] Starting peer-to-peer node               instance=Efsn/windows-amd64/go1.21.3
+INFO [09-25|01:25:20.659] Starting P2P networking 
+INFO [09-25|01:25:20.664] RLPx listener up                         self="enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:57997?discport=0"
+    snapshot_service_test.go:72: restored wallet=0x9fc4c40e50f902b9aa641b4a32ebaafa5c9386a1 liquidWei=3225543308109480158626 nonce=233427
+    snapshot_service_test.go:72: restored wallet=0xa3ce60d2dbf51afa0ab106df1c44a2e48853817a liquidWei=12020102000000000000000 nonce=0
+INFO [09-25|01:25:21.205] Starting P2P networking 
+INFO [09-25|01:25:21.214] Stopping Ethereum protocol 
+INFO [09-25|01:25:21.214] Ethereum protocol stopped 
+INFO [09-25|01:25:21.214] Transaction pool stopped 
+INFO [09-25|01:25:21.214] Blockchain manager stopped 
+    snapshot_service_test.go:73: restored full node startup/RPC/loopback-peer/clean-stop succeeded
+--- PASS: TestRestoredSnapshotService (198.34s)
+PASS

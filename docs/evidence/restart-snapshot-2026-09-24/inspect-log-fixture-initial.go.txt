@@ -1,0 +1,37 @@
+package main
+
+import (
+	"fmt"
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+	"os"
+)
+
+func main() {
+	db, err := rawdb.NewLevelDBDatabase(os.Args[1], 64, 64, "snapshot-log-probe", true)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	if rawdb.ReadHeadBlockHash(db) != common.HexToHash("0xe93ffded087a79097d4309c7831690161db6ed136f4b1a22c4c83a99db80f99f") {
+		panic("unexpected source head")
+	}
+	genesis := rawdb.ReadCanonicalHash(db, 0)
+	if genesis != common.HexToHash("0xc2422b1d9d16331be2a5b207c0783027d4419498003f729f4b9e9c5c1838623a") {
+		panic("unexpected genesis")
+	}
+	config := rawdb.ReadChainConfig(db, genesis)
+	for _, height := range []uint64{1, 236407, 2700000} {
+		hash := rawdb.ReadCanonicalHash(db, height)
+		block := rawdb.ReadBlock(db, hash, height)
+		if block == nil {
+			panic("missing historical block")
+		}
+		receipts := rawdb.ReadReceipts(db, hash, height, config)
+		count := 0
+		for _, receipt := range receipts {
+			count += len(receipt.Logs)
+		}
+		fmt.Printf("height=%d hash=%s transactions=%d receipts=%d logs=%d\n", height, hash, len(block.Transactions()), len(receipts), count)
+	}
+}

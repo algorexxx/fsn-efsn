@@ -157,6 +157,11 @@ intentionally incomplete historical fixture. Log-index completeness and a
 supported downloadable node dataset remain open release requirements. Do not
 advertise the compact state export as a complete node backup.
 
+The separate [complete preserved-data restore rehearsal](restart-snapshot-restore.md)
+now passes for the original full database on W:. Its restored historical index
+report matches the source, and two fresh service processes pass RPC and local
+peer checks without relying on this compact fixture.
+
 Other retained failed runs exposed test-harness issues: an exclusive-create
 JSON helper was incorrectly used to replace restart configuration; the
 ephemeral listening port changed after restart; and the peer wait was ten

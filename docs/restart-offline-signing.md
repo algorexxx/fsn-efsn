@@ -85,8 +85,8 @@ production path checks.
 
 This establishes composition with small synthetic state. It does not repeat the
 full preserved-state handover or prove machine power-loss durability. The
-full database restore remains a separate running
-investigation; this work does not certify its result.
+[full database restore](restart-snapshot-restore.md) subsequently passed on
+25 September, including file readback, index comparison and two service starts.
 
 An export interrupted during its write may leave a partial file. Export again
 to a new filename from the completed journal; never erase a reservation or

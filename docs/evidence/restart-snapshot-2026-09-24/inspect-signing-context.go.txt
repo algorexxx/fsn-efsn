@@ -1,0 +1,101 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/consensus/datong"
+	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+	"github.com/FusionFoundation/efsn/v5/ethdb"
+)
+
+type checkedHeaderIndex struct {
+	ethdb.Database
+	err error
+}
+
+type checkedHeaderIterator struct {
+	ethdb.Iterator
+	owner *checkedHeaderIndex
+}
+
+func (db *checkedHeaderIndex) NewIterator(prefix, start []byte) ethdb.Iterator {
+	db.err = nil
+	return &checkedHeaderIterator{Iterator: db.Database.NewIterator(prefix, start), owner: db}
+}
+
+func (it *checkedHeaderIterator) Release() {
+	it.owner.err = it.Iterator.Error()
+	it.Iterator.Release()
+}
+
+func main() {
+	if len(os.Args) != 3 || !filepath.IsAbs(os.Args[1]) || !filepath.IsAbs(os.Args[2]) {
+		panic("absolute source and new report paths required")
+	}
+	db, err := rawdb.NewLevelDBDatabase(os.Args[1], 64, 64, "snapshot-signing-context", true)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	expected := common.HexToHash("0xe93ffded087a79097d4309c7831690161db6ed136f4b1a22c4c83a99db80f99f")
+	for _, hash := range []common.Hash{rawdb.ReadHeadBlockHash(db), rawdb.ReadHeadHeaderHash(db), rawdb.ReadHeadFastBlockHash(db)} {
+		if hash != expected {
+			panic("unexpected source head")
+		}
+	}
+	if rawdb.ReadCanonicalHash(db, 0) != common.HexToHash("0xc2422b1d9d16331be2a5b207c0783027d4419498003f729f4b9e9c5c1838623a") {
+		panic("unexpected genesis")
+	}
+	checked := &checkedHeaderIndex{Database: db}
+	rows := make([]map[string]interface{}, 0)
+	currentFound := false
+	for height := uint64(15130080); height <= 15130083; height++ {
+		hashes := rawdb.ReadAllHashes(checked, height)
+		if checked.err != nil {
+			panic(checked.err)
+		}
+		headers := make([]map[string]interface{}, 0)
+		for _, hash := range hashes {
+			header := rawdb.ReadHeader(db, hash, height)
+			if header == nil || header.Hash() != hash {
+				panic("stored header cannot be decoded or differs from its key")
+			}
+			signatureError := ""
+			if err := datong.VerifySignature(header); err != nil {
+				signatureError = err.Error()
+			}
+			if hash == expected {
+				if signatureError != "" {
+					panic(signatureError)
+				}
+				currentFound = true
+			}
+			headers = append(headers, map[string]interface{}{"hash": hash, "parent": header.ParentHash, "miner": header.Coinbase, "signature_error": signatureError})
+		}
+		rows = append(rows, map[string]interface{}{"height": height, "stored_headers": len(hashes), "headers": headers})
+		fmt.Printf("height=%d stored_headers=%d\n", height, len(hashes))
+	}
+	if !currentFound {
+		panic("positive control did not enumerate the preserved canonical head")
+	}
+	report := map[string]interface{}{"source": os.Args[1], "head": expected, "heights": rows,
+		"scope": "Enumerates all saved header records at B through B+3, including noncanonical hashes, and verifies the preserved canonical head as a positive control. Iterator errors are checked before release. This does not establish the absence of signatures outside this saved database or in other record formats. No private keys are accessed."}
+	encoded, err := json.MarshalIndent(report, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	output, err := os.OpenFile(os.Args[2], os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	if err != nil {
+		panic(err)
+	}
+	if _, err := output.Write(append(encoded, '\n')); err != nil {
+		panic(err)
+	}
+	if err := output.Close(); err != nil {
+		panic(err)
+	}
+}

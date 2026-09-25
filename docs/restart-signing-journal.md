@@ -151,6 +151,15 @@ gate. Before custody handover:
 No live gateway pool was queried or modified in this step. There was no request
 for a real key, real block signature, transaction submission or public launch.
 
+A later read-only [saved-header probe](evidence/restart-snapshot-2026-09-24/source-signing-context.json)
+enumerated canonical and noncanonical header records at heights 15,130,080
+through 15,130,083. It found the expected preserved head, verified its signature,
+and found no stored headers at the three proposed recovery heights. Iterator
+errors were checked before release. This rules out conflicting header signatures
+stored at those heights in this database; it cannot establish what another
+operator, signer, log or unpublished artifact may contain. It does not replace
+the signing journal or the one-active-signer custody requirement.
+
 ## Read-only database repair correction
 
 The existing `ethdb/leveldb.NewCustom` retried certain corruption errors with
@@ -167,10 +176,52 @@ are retained so the passing earlier case is not mistaken for proof of this fix.
 
 ## Next work
 
-The next independent investigation is the supported complete node-data package:
-capacity, historical headers/bodies/indexes, archive integrity, restore and
-ordinary synchronization. The compact preserved-state fixture is still not a
-complete distributable node backup. Keep the original and both replay checkpoints.
+The [complete preserved-data package investigation](restart-snapshot-restore.md)
+now passes packaging and exact comparison of every source-file hash to the
+retained original manifest; its full W: restore, identical index report and two
+fresh-process service checks passed overnight on 25 September.
+The compact preserved-state fixture remains a separate artifact. Keep the
+original and both replay checkpoints.
+
+The [offline signing integration](restart-offline-signing.md) now uses the
+existing read-only `Reader` with the chain service stopped and its database
+lock held. It opens an existing journal and exports completed artifacts without
+a signer callback. Windows and Linux tests pass all three controlled stages
+across completion-before-export, export-before-import and import-before-acknowledgment
+process cuts using small synthetic databases. Unfinished attempts are refused.
+The complete preserved-state composition remains to be tested. The test-only node
+constructor in `node_rehearsal_linux_test.go` checks `IsMining()` before building
+and sealing, but that does not freeze peer imports or serialize all concurrent
+construction requests. It only accepts public test keys and is not a production
+signing API. Adding the journal to that live RPC method alone would not enforce
+the stopped-chain precondition of `SigningJournal.Sign`.
+
+The operator workflow around these library operations still needs to:
+
+1. Pin the exact reviewed plan, signed purchase, unsigned block bytes, source
+   identity and build/configuration. Require an explicitly initialized existing
+   journal on reliable local storage outside chain snapshots. Bulk backup use of
+   W: does not change that journal placement requirement.
+2. Open the stopped working chain read-only, rebuild the candidate and compare
+   its bytes before invoking the bounded signing callback. Do not expose generic
+   arbitrary-plan signing over the node's RPC interfaces.
+3. Commit and export the exact signed artifact, then independently import it
+   into the isolated verifier/working chain before constructing the next stage.
+   If interruption follows a completed journal write, use `Saved(parent)` to
+   recover those bytes, including after the working head has advanced. Never
+   recreate a missing journal or retry an unfinished reservation.
+4. Enforce the reviewed one-backup-block sequence in the adapter's approved
+   inputs and custody procedure. The journal's same-parent restriction is not
+   a lifetime block quota. Enable ordinary donation mining only after controlled
+   construction has ended and the reviewed cleanup state is present.
+
+Before real-key access, extend the full-state synthetic two-process rehearsal
+across completion-before-export, export-before-import and import-before-acknowledgment
+interruptions. Assert exact artifact recovery, no second callback, independent
+import/accounting agreement, and refusal of conflicting or unfinished attempts.
+The small-state offline composition now covers these boundaries. The earlier
+full-state service tests cover the larger execution dataset separately; their
+combined full-state and production key workflow remains unproven.
 
 In parallel with release preparation, finish the real signer custody/adapter and
 live purchase-drain procedures above, review the actual-address ledger and fresh

@@ -139,6 +139,11 @@ or demonstration of peer state download. Address preimages and unrelated databas
 keys are not part of the state commitment and are not exported. Source corruption
 fails the extraction; incomplete output is disposable and remains unverified.
 
+The separate [complete preserved-data restore rehearsal](restart-snapshot-restore.md)
+now passes packaging and restoration of the original database, including
+historical bodies and indexes, on W:, followed by actual node service checks.
+Its results and limitations are tracked separately from this compact artifact.
+
 Preserve the exact exported state before constructing separately labelled
 rehearsal copies. Measure those copies against available space before making
 them. Public test-key substitutions must have a complete difference ledger,

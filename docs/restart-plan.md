@@ -29,6 +29,22 @@ recovery tests. The known saved backup has an empty transaction journal and no
 automatic-purchase record for either wallet. Production signing integration,
 real-key custody and the live gateway pool remain separate gates.
 
+The [offline signing integration](restart-offline-signing.md) now passes on
+Windows and Linux (with Linux race detection). Small synthetic databases prove
+exact artifact recovery across sign/export/import interruptions, independent
+imports and cold account/receipt/ticket agreement without another signature.
+Unfinished attempts, active writers and changed review inputs are refused. The
+complete-state composition and production key/custody workflow remain open.
+
+The [complete preserved-data restore rehearsal](restart-snapshot-restore.md)
+has packaged the original 117 GB database onto the user-selected W: network
+share. Every packaged file hash matches the independently retained original
+backup manifest. Source index inspection and Windows/Linux packaging failure
+tests pass. Full restoration, identical restored index reports and two separate
+restored-node startup/RPC/P2P processes passed overnight on 25 September. The
+release download/mirror and final recovery-data procedure remain unproven. New bulk data stays
+off the nearly full D: drive.
+
 The [anchor entry-point investigation](restart-anchor-investigation.md) now
 reproduces heavier-chain replacement and legacy-checkpoint gaps involving stored
 forks, canonical indexes, headers, receipts, pivot commits and startup initialization/rewinds.
@@ -575,7 +591,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Complete-state operation and a real-service SIGKILL continuation now pass in the guarded two-node follow-up. Extend to systematic journal crash boundaries and live peer reorgs before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Review the [guarded recovery command and full-state two-node result](restart-recovery-construction.md), alongside the [wallet handover](restart-wallet-handover.md) and [earlier full-state worker evidence](restart-full-state-handover.md). The command leaves all source database files unchanged; the actual services reject unsafe plans before signing and reproduce the reviewed three-block prefix. Donation auto-buy/mining starts immediately after cleanup, resumes after SIGKILL, and both cold databases agree on complete account ledgers. The [signing journal and saved-backup inventory](restart-signing-journal.md) now pass synthetic reservation/crash/conflict tests and find no saved purchases for either wallet. Next demonstrate the supported complete node-data download/restore path; finish the production signing adapter/artifact custody and inventory/drain the live backup-wallet pool/journal before real signing. The compact state fixture lacks historical bodies and log indexes and is not that distribution package. Preserve the original backup; review real-address refunds/retreats and fresh timing parameters before choosing the production sequence.
+5. Review the [guarded recovery command and full-state two-node result](restart-recovery-construction.md), alongside the [wallet handover](restart-wallet-handover.md) and [earlier full-state worker evidence](restart-full-state-handover.md). The command leaves all source database files unchanged; the actual services reject unsafe plans before signing and reproduce the reviewed three-block prefix. Donation auto-buy/mining starts immediately after cleanup, resumes after SIGKILL, and both cold databases agree on complete account ledgers. The [signing journal and saved-backup inventory](restart-signing-journal.md) now pass synthetic reservation/crash/conflict tests and find no saved purchases for either wallet. The complete preserved database now passes local package/restore and actual-service checks. Next demonstrate release hosting/download and final recovery-data distribution; extend the offline signer composition to complete preserved state, finish production signing adapter/artifact custody and inventory/drain the live backup-wallet pool/journal before real signing. The compact state fixture lacks historical bodies and log indexes and is not that distribution package. Preserve the original backup; review real-address refunds/retreats and fresh timing parameters before choosing the production sequence.
 6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation
