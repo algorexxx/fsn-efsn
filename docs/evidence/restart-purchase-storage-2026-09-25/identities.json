@@ -1,0 +1,46 @@
+{
+  "baseline_commit": "c62d8cd98076f942988a350e1bb7465fe29bbd9a",
+  "production_source_changes": false,
+  "toolchain": "Go 1.21.3; offline modules; GOMAXPROCS=2; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detection and private network namespaces",
+  "storage_source_git_blobs": {
+    "tests/restart/purchase_storage_test.go": "76bb5dc5e78e685d0903c4806d5eb59c9be9600c",
+    "tests/restart/purchase_recovery_test.go": "7bc22b8372412f01f07eb11245f80afa3320038a",
+    "tests/restart/purchase_crash_recovery_test.go": "f6f470656db81f9ac330241702f0f569d28ce468"
+  },
+  "final_peer_source_git_blobs": {
+    "tests/restart/purchase_peer_linux_test.go": "c593821594791b3c59fd613c841ddd307ff59e9e",
+    "tests/restart/node_rehearsal_linux_test.go": "9317e2d0f1b51985dbc125759d610d7c2c818df8"
+  },
+  "source_sha256": {
+    "tests/restart/purchase_storage_test.go": "ac00af727f418e959a36022bef2bb296071875e007b36499f08b9f9db0e24dff",
+    "tests/restart/purchase_recovery_test.go": "a4db24f21ca85ad235b17ce890028b54e5ff5edc3801a02cd26968c905396d43",
+    "tests/restart/purchase_crash_recovery_test.go": "cb56ae0932a141d945f9d27310bacefaf17000fa97bc3780e27243c5e19bd8b5",
+    "tests/restart/purchase_peer_linux_test.go": "b043a4180087b7224da73e4684c7100a186ed060bc81f10b757c6c57219977b7",
+    "tests/restart/node_rehearsal_linux_test.go": "97cdd3f84b67d60e38a2590961b060d317ead7768c57e2ad3c9029325b85cec6"
+  },
+  "binary_sha256": {
+    "tmp/purchase-storage-windows-tests.exe": "959bb6e63fc2a0b2cbcc8629f57081396c9a332043d77a183bcd8a582dab1a9b",
+    "tmp/purchase-storage-linux-tests": "97076f5dddb71614b454312691713dcb5ff1a005d0c8a0e5b0726bafb2afcca8",
+    "tmp/purchase-peer-linux-tests": "fa9cade73a03560c3d61d0c086c2dff2814e56b1ba7771930d3552456878c72a"
+  },
+  "binary_scope": "The storage binaries precede the final Linux-only peer log-count and empty-pool assertions. Storage source files are identical between builds. The final peer binary includes all recorded final peer assertions.",
+  "final_seconds": {
+    "windows-storage.txt": 80.12,
+    "linux-storage-race.txt": 97.61,
+    "linux-peer-final-race.txt": 44.81
+  },
+  "storage_cases_per_platform": [
+    "put_before",
+    "put_after",
+    "adopt_before",
+    "adopt_after",
+    "delete_before",
+    "delete_after",
+    "has",
+    "get"
+  ],
+  "linux_peer_cases": [
+    "purchase_peer_reinclusion",
+    "purchase_peer_replacement"
+  ]
+}

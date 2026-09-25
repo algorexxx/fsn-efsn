@@ -93,6 +93,13 @@ Clean restart and the later [process-interruption rehearsal](restart-purchase-cr
 are tested. Sixteen cuts per platform now cover both sides of automatic record
 save, pool submission, retirement and adoption, with exact cold-record/pool checks
 and initially locked recovery. The production controller needed no change.
+The subsequent [storage/peer rehearsal](restart-purchase-storage-and-peers.md)
+passes eight database-interface failure cases on both platforms and two
+compatible reorganizations through actual Linux peers/downloader, including
+receipt relocation/replacement and an empty-pool cold restart. Its block signer
+is held to prevent local production; simultaneous competing miners and deeper
+live-peer nonce rollback remain open. An uncertain successful record deletion
+can omit a confirmation log; use canonical receipts when checking inclusion.
 Abrupt power loss, torn storage, cross-device recovery, cuts within database
 writes and every internal pool-journal boundary remain untested. The record uses
 the database's normal `Put`, without an additional synchronous flush guarantee.

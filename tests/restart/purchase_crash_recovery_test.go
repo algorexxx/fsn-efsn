@@ -18,6 +18,7 @@ import (
 	"github.com/FusionFoundation/efsn/v5/core/types"
 	"github.com/FusionFoundation/efsn/v5/core/vm"
 	"github.com/FusionFoundation/efsn/v5/crypto"
+	"github.com/FusionFoundation/efsn/v5/ethdb"
 	"github.com/FusionFoundation/efsn/v5/internal/ethapi"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -233,8 +234,13 @@ func verifyPurchaseCutRecord(t *testing.T, directory, scenario string, f *fixtur
 
 func readPurchaseCrashRecord(t *testing.T, backend *purchaseCrashBackend) *types.Transaction {
 	t.Helper()
-	key := append([]byte("fsn-auto-ticket-v1-"), backend.owner[:]...)
-	data, err := backend.database.Get(key)
+	return readAutomaticPurchaseRecord(t, backend.database, backend.owner)
+}
+
+func readAutomaticPurchaseRecord(t *testing.T, database ethdb.Database, owner common.Address) *types.Transaction {
+	t.Helper()
+	key := append([]byte("fsn-auto-ticket-v1-"), owner[:]...)
+	data, err := database.Get(key)
 	if errors.Is(err, leveldb.ErrNotFound) {
 		return nil
 	}

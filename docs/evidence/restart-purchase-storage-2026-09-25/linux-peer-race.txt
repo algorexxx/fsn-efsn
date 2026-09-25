@@ -1,0 +1,96 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/purchase_peer_reinclusion
+    node_rehearsal_linux_test.go:300: node exited before IPC: exit status 1
+    node_rehearsal_linux_test.go:292: node process /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-1516040112/process-530946936.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|12:55:08.663] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|12:55:08.665] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-1516040112/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|12:55:08.751] Persisted trie from memory database      nodes=8 size=996.00B time="166.937µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|12:55:08.756]  
+        INFO [09-25|12:55:08.757] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|12:55:08.757] Chain ID:  32659 (mainnet) 
+        INFO [09-25|12:55:08.758] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|12:55:08.759]  
+        INFO [09-25|12:55:08.759] hard forks: 
+        INFO [09-25|12:55:08.760]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|12:55:08.760]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|12:55:08.761]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|12:55:08.762]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|12:55:08.762]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|12:55:08.762]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|12:55:08.763]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|12:55:08.763]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|12:55:08.764]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|12:55:08.764]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|12:55:08.764]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|12:55:08.765]  - Fusion Eco:                  8250000  
+        INFO [09-25|12:55:08.765]  
+        INFO [09-25|12:55:08.765]  
+        INFO [09-25|12:55:08.766] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|12:55:08.766]  
+        INFO [09-25|12:55:08.768] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-25|12:55:08.774] Loaded most recent local header          number=15,130,095 hash="204547…2f6edc" td=1135 age=36m1s
+        INFO [09-25|12:55:08.775] Loaded most recent local full block      number=15,130,095 hash="204547…2f6edc" td=1135 age=36m1s
+        INFO [09-25|12:55:08.775] Loaded most recent local fast block      number=15,130,095 hash="204547…2f6edc" td=1135 age=36m1s
+        INFO [09-25|12:55:08.779] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|12:55:08.783] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|12:55:08.783] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|12:55:08.786] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|12:55:08.787] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|12:55:08.788] Starting P2P networking 
+        INFO [09-25|12:55:08.791] RLPx listener up                         self="enode://8dea973b7c741f42ebec29665125048d78d642820a957c59671ba2b08058ca732f40d63a829528e418bb7098ac8c3b1cba3a7e9f9adec092a0a86634746b827d@127.0.0.1:33893?discport=0"
+        WARN [09-25|12:55:08.795] The ipc endpoint is longer than 108 characters.  endpoint=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-1516040112/lab.ipc
+        WARN [09-25|12:55:08.796] IPC opening failed                       url=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-1516040112/lab.ipc error="listen unix /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-1516040112/lab.ipc: bind: invalid argument"
+            node_rehearsal_linux_test.go:240: listen unix /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-1516040112/lab.ipc: bind: invalid argument
+        --- FAIL: TestRestartNodeRehearsal (0.99s)
+        FAIL
+=== RUN   TestRestartNodeRehearsal/purchase_peer_replacement
+    node_rehearsal_linux_test.go:300: node exited before IPC: exit status 1
+    node_rehearsal_linux_test.go:292: node process /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-3556527183/process-4044056925.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|12:55:10.711] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|12:55:10.712] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-3556527183/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|12:55:10.792] Persisted trie from memory database      nodes=8 size=996.00B time="260.051µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|12:55:10.796]  
+        INFO [09-25|12:55:10.797] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|12:55:10.797] Chain ID:  32659 (mainnet) 
+        INFO [09-25|12:55:10.797] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|12:55:10.798]  
+        INFO [09-25|12:55:10.798] hard forks: 
+        INFO [09-25|12:55:10.798]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|12:55:10.799]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|12:55:10.799]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|12:55:10.800]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|12:55:10.800]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|12:55:10.801]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|12:55:10.801]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|12:55:10.801]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|12:55:10.802]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|12:55:10.802]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|12:55:10.802]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|12:55:10.803]  - Fusion Eco:                  8250000  
+        INFO [09-25|12:55:10.803]  
+        INFO [09-25|12:55:10.803]  
+        INFO [09-25|12:55:10.804] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|12:55:10.804]  
+        INFO [09-25|12:55:10.805] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-25|12:55:10.809] Loaded most recent local header          number=15,130,095 hash="b42e5d…e91108" td=1108 age=36m1s
+        INFO [09-25|12:55:10.810] Loaded most recent local full block      number=15,130,095 hash="b42e5d…e91108" td=1108 age=36m1s
+        INFO [09-25|12:55:10.810] Loaded most recent local fast block      number=15,130,095 hash="b42e5d…e91108" td=1108 age=36m1s
+        INFO [09-25|12:55:10.811] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|12:55:10.811] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|12:55:10.812] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|12:55:10.813] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|12:55:10.813] Starting P2P networking 
+        ERROR[09-25|12:55:10.812] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|12:55:10.814] RLPx listener up                         self="enode://8acd92acc5485217570920f75e21c690a2d952bad277b6bdbe532bcdb565756a47207a633a7f049dec4403546610244f9726795413fd75f4bc70affc364150a0@127.0.0.1:41327?discport=0"
+        WARN [09-25|12:55:10.819] The ipc endpoint is longer than 108 characters.  endpoint=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-3556527183/lab.ipc
+        WARN [09-25|12:55:10.820] IPC opening failed                       url=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-3556527183/lab.ipc error="listen unix /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-3556527183/lab.ipc: bind: invalid argument"
+            node_rehearsal_linux_test.go:240: listen unix /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/fsn-purchase-peer-3556527183/lab.ipc: bind: invalid argument
+        --- FAIL: TestRestartNodeRehearsal (0.97s)
+        FAIL
+--- FAIL: TestRestartNodeRehearsal (4.12s)
+    --- FAIL: TestRestartNodeRehearsal/purchase_peer_reinclusion (2.07s)
+    --- FAIL: TestRestartNodeRehearsal/purchase_peer_replacement (2.04s)
+FAIL

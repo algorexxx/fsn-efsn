@@ -387,3 +387,19 @@ lost-pool cases preserve the original journal and select a fresh journal path.
 No production fault hooks or preserved database are used. See the
 [report](../../docs/restart-purchase-crash-rehearsal.md) for the matrix and
 the distinction between a process exit and machine power loss.
+
+`TestAutomaticPurchaseStorageErrors` runs eight isolated cases returning errors
+from automatic-record `Has`, `Get`, `Put` and `Delete`, including writes/deletes
+that take effect before reporting an error. It reuses the real pool, keystore and
+controller fixture, checks retained bytes and observes a full retry interval.
+These are database-interface faults, not physical disk failure emulation.
+
+The opt-in Linux `TestRestartNodeRehearsal/purchase_peer_*` cases add two real
+devp2p/downloader reorganizations above a common synthetic anchor. The actual
+worker is enabled but its test block signer refuses signatures, allowing the
+automatic buyer to run while the peer supplies a controlled heavier branch.
+They check receipt relocation/replacement, nonce reconciliation, logs, persisted
+heads and exact record recovery into an empty pool after process restart. Use a
+short Linux `TMPDIR` for IPC socket paths. See the
+[storage/peer report](../../docs/restart-purchase-storage-and-peers.md) for results
+and limits; neither case tests simultaneous live block producers.

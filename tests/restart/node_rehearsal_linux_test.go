@@ -174,6 +174,8 @@ func TestRestartNodeRehearsal(t *testing.T) {
 	datong.InitCheckPoints("")
 	t.Run("readiness_mining_crash", rehearseNodeReadiness)
 	t.Run("compatible_peer", rehearseCompatiblePeer)
+	t.Run("purchase_peer_reinclusion", func(t *testing.T) { rehearsePurchasePeer(t, false) })
+	t.Run("purchase_peer_replacement", func(t *testing.T) { rehearsePurchasePeer(t, true) })
 	t.Run("heavier_stored_fork_peer", rehearseHeavierPeer)
 	t.Run("incompatible_database_startup", rehearseIncompatibleStartup)
 }

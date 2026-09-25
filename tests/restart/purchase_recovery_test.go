@@ -63,6 +63,9 @@ func runPurchaseRecovery(t *testing.T, mode string) {
 	ethapi.NewFusionTransactionAPI(b, lock, ethapi.NewPublicTransactionPoolAPI(b, lock))
 	warnings := capturePurchaseLog(t, "Automatic ticket purchase needs attention; retrying")
 	switch mode {
+	case "storage_put_before", "storage_put_after", "storage_adopt_before", "storage_adopt_after", "storage_delete_before", "storage_delete_after", "storage_has", "storage_get":
+		runPurchaseStorageError(t, mode, f, b, keys, warnings)
+		return
 	case "gates":
 		b.mining.Store(false)
 		stop := startPurchaseController(t, false)

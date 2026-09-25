@@ -78,8 +78,10 @@ delivery. They also do not inject cuts within a LevelDB write or at every intern
 pool-journal instruction. A submitted transaction may have reached peers before
 a process exits; resubmitting the identical transaction is expected behavior.
 
-Live peer reorganizations during confirmation, deeper rollback of already
-retired intent, expired/underpriced retained purchases, storage failure and
+The subsequent [storage/peer rehearsal](restart-purchase-storage-and-peers.md)
+covers eight database-interface errors and two compatible live-peer forks.
+Deeper rollback of already retired intent, exact concurrent confirmation cuts,
+expired/underpriced retained purchases, machine-level storage failure and
 one-active-key custody remain separate review concerns. The existing controller
 pauses or reports unresolved conflicts rather than automatically changing fees
 or filling unexplained nonce gaps. Independent review of patch P4 in the
