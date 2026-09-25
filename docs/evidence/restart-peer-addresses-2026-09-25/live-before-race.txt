@@ -1,0 +1,13 @@
+lo               UNKNOWN        127.0.0.1/8 172.0.1.1/16 172.0.2.1/16 172.0.3.1/16 ::1/128 
+=== RUN   TestRestartPeerAddressLive
+    restart_address_linux_test.go:35: live endpoint changed without reservation transfer: table={172.0.2.0×1} bucket={172.0.2.0×1} want={172.0.3.0×1}
+--- FAIL: TestRestartPeerAddressLive (0.02s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/p2p/discover	0.081s
+testing: warning: no tests to run
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/p2p	1.062s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/cmd/utils	1.081s [no tests to run]
+FAIL

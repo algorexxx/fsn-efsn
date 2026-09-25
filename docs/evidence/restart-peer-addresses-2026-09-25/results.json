@@ -1,0 +1,16 @@
+{
+  "baseline_failed_cases": 23,
+  "baseline_control_passes": 8,
+  "corrected_deterministic_passes": 31,
+  "windows_passes": 31,
+  "live_udp_before": "FAIL: stale old-subnet reservation",
+  "live_udp_after": "PASS",
+  "dns_live_leaf_passes": 6,
+  "broader_known_failures": [
+    "TestForwardCompatibility",
+    "TestParseNode",
+    "TestProtocolHandshake"
+  ],
+  "runtime_diff": "+63/-23 in p2p/discover/table.go",
+  "scope": "Local discovery bookkeeping; no consensus, tickets, real keys or chain database work; public deployment not demonstrated"
+}

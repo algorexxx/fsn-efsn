@@ -323,19 +323,24 @@ func (tab *Table) lookup(targetID NodeID, refreshIfEmpty bool) []*Node {
 }
 
 func (tab *Table) findnode(n *Node, targetID NodeID, reply chan<- []*Node) {
-	fails := tab.db.findFails(n.ID)
 	r, err := tab.net.findnode(n.ID, n.addr(), targetID)
-	if err != nil || len(r) == 0 {
-		fails++
-		tab.db.updateFindFails(n.ID, fails)
-		log.Trace("Findnode failed", "id", n.ID, "failcount", fails, "err", err)
-		if fails >= maxFindnodeFailures {
-			log.Trace("Too many findnode failures, dropping", "id", n.ID, "failcount", fails)
-			tab.delete(n)
+	tab.mutex.Lock()
+	b := tab.bucket(n.sha)
+	if findNode(b.entries, n.ID) == n {
+		fails := tab.db.findFails(n.ID)
+		if err != nil || len(r) == 0 {
+			fails++
+			tab.db.updateFindFails(n.ID, fails)
+			log.Trace("Findnode failed", "id", n.ID, "failcount", fails, "err", err)
+			if fails >= maxFindnodeFailures {
+				log.Trace("Too many findnode failures, dropping", "id", n.ID, "failcount", fails)
+				tab.deleteInBucket(b, n)
+			}
+		} else if fails > 0 {
+			tab.db.updateFindFails(n.ID, fails-1)
 		}
-	} else if fails > 0 {
-		tab.db.updateFindFails(n.ID, fails-1)
 	}
+	tab.mutex.Unlock()
 
 	// Grab as many nodes as possible. Some of them might not be alive anymore, but we'll
 	// just remove those again during revalidation.
@@ -462,13 +467,7 @@ func (tab *Table) loadSeedNodes() {
 		log.Debug("Found seed node in database", "id", seed.ID, "addr", seed.addr(), "age", age)
 		tab.mutex.Lock()
 		b := tab.bucket(seed.sha)
-		known := false
-		for _, existing := range b.entries {
-			if existing.ID == seed.ID {
-				known = true
-				break
-			}
-		}
+		known := findNode(b.entries, seed.ID) != nil || findNode(b.replacements, seed.ID) != nil
 		if !known && !tab.bumpOrAdd(b, seed) {
 			tab.addReplacement(b, seed)
 		}
@@ -496,6 +495,9 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
 	b := tab.buckets[bi]
+	if len(b.entries) == 0 || b.entries[len(b.entries)-1] != last {
+		return
+	}
 	if err == nil {
 		// The node responded, move it to the front.
 		log.Trace("Revalidated node", "b", bi, "id", last.ID)
@@ -658,10 +660,25 @@ func (tab *Table) removeIP(b *bucket, ip net.IP) {
 	b.ips.Remove(ip)
 }
 
+func (tab *Table) updateIP(b *bucket, old, next net.IP) bool {
+	if old.Equal(next) {
+		return true
+	}
+	tab.removeIP(b, old)
+	if tab.addIP(b, next) {
+		return true
+	}
+	tab.addIP(b, old)
+	return false
+}
+
 func (tab *Table) addReplacement(b *bucket, n *Node) {
-	for _, e := range b.replacements {
+	for i, e := range b.replacements {
 		if e.ID == n.ID {
-			return // already in list
+			if tab.updateIP(b, e.IP, n.IP) {
+				b.replacements[i] = n
+			}
+			return
 		}
 	}
 	if !tab.addIP(b, n.IP) {
@@ -678,7 +695,7 @@ func (tab *Table) addReplacement(b *bucket, n *Node) {
 // last entry in the bucket. If 'last' isn't the last entry, it has either been replaced
 // with someone else or became active.
 func (tab *Table) replace(b *bucket, last *Node) *Node {
-	if len(b.entries) == 0 || b.entries[len(b.entries)-1].ID != last.ID {
+	if len(b.entries) == 0 || b.entries[len(b.entries)-1] != last {
 		// Entry has moved, don't replace it.
 		return nil
 	}
@@ -690,6 +707,7 @@ func (tab *Table) replace(b *bucket, last *Node) *Node {
 	r := b.replacements[tab.rand.Intn(len(b.replacements))]
 	b.replacements = deleteNode(b.replacements, r)
 	b.entries[len(b.entries)-1] = r
+	r.addedAt = time.Now()
 	tab.removeIP(b, last.IP)
 	return r
 }
@@ -710,12 +728,22 @@ func (b *bucket) bump(n *Node) bool {
 }
 
 // bumpOrAdd moves n to the front of the bucket entry list or adds it if the list isn't
-// full. The return value is true if n is in the bucket.
+// full. The return value is true if n's identity is in the bucket.
 func (tab *Table) bumpOrAdd(b *bucket, n *Node) bool {
-	if b.bump(n) {
+	if previous := findNode(b.entries, n.ID); previous != nil {
+		if tab.updateIP(b, previous.IP, n.IP) {
+			b.bump(n)
+		}
 		return true
 	}
-	if len(b.entries) >= bucketSize || !tab.addIP(b, n.IP) {
+	if len(b.entries) >= bucketSize {
+		return false
+	}
+	if previous := findNode(b.replacements, n.ID); previous != nil {
+		if !tab.updateIP(b, previous.IP, n.IP) {
+			return false
+		}
+	} else if !tab.addIP(b, n.IP) {
 		return false
 	}
 	b.entries, _ = pushNode(b.entries, n, bucketSize)
@@ -728,8 +756,20 @@ func (tab *Table) bumpOrAdd(b *bucket, n *Node) bool {
 }
 
 func (tab *Table) deleteInBucket(b *bucket, n *Node) {
+	if findNode(b.entries, n.ID) != n {
+		return
+	}
 	b.entries = deleteNode(b.entries, n)
 	tab.removeIP(b, n.IP)
+}
+
+func findNode(list []*Node, id NodeID) *Node {
+	for _, n := range list {
+		if n.ID == id {
+			return n
+		}
+	}
+	return nil
 }
 
 // pushNode adds n to the front of list, keeping at most max items.

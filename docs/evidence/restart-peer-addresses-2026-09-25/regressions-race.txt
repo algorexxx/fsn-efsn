@@ -1,0 +1,240 @@
+=== RUN   TestRestartBootstrapRefreshKeepsResolvedAddress
+--- PASS: TestRestartBootstrapRefreshKeepsResolvedAddress (0.01s)
+=== RUN   TestRestartBootstrapLookupDeadlineAndCancellation
+    bootstrap_deadline_test.go:42: cancelEarly=false elapsed=5.003641694s err=lookup blocked.restart.invalid: i/o timeout
+    bootstrap_deadline_test.go:42: cancelEarly=true elapsed=50.527564ms err=lookup blocked.restart.invalid: operation was canceled
+--- PASS: TestRestartBootstrapLookupDeadlineAndCancellation (5.05s)
+=== RUN   TestRestartBootstrapConfiguration
+=== RUN   TestRestartBootstrapConfiguration/missing.restart.invalid:40408
+=== RUN   TestRestartBootstrapConfiguration/127.0.0.1:40408
+=== RUN   TestRestartBootstrapConfiguration/[::1]:40408
+=== RUN   TestRestartBootstrapConfiguration/seed.restart.invalid:0?discport=40408
+--- PASS: TestRestartBootstrapConfiguration (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/missing.restart.invalid:40408 (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/127.0.0.1:40408 (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/[::1]:40408 (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/seed.restart.invalid:0?discport=40408 (0.00s)
+=== RUN   TestRestartBootstrapNodeEncodingUnchanged
+--- PASS: TestRestartBootstrapNodeEncodingUnchanged (0.00s)
+=== RUN   TestNodeDBKeys
+--- PASS: TestNodeDBKeys (0.00s)
+=== RUN   TestNodeDBInt64
+--- PASS: TestNodeDBInt64 (0.00s)
+=== RUN   TestNodeDBFetchStore
+--- PASS: TestNodeDBFetchStore (0.00s)
+=== RUN   TestNodeDBSeedQuery
+--- PASS: TestNodeDBSeedQuery (0.00s)
+=== RUN   TestNodeDBPersistency
+--- PASS: TestNodeDBPersistency (0.08s)
+=== RUN   TestNodeDBExpiration
+--- PASS: TestNodeDBExpiration (0.00s)
+=== RUN   TestNodeDBSelfExpiration
+--- PASS: TestNodeDBSelfExpiration (0.00s)
+=== RUN   TestRestartPeerAddressLive
+    restart_address_linux_test.go:16: requires isolated loopback namespace with the rehearsal IP aliases
+--- SKIP: TestRestartPeerAddressLive (0.00s)
+=== RUN   TestRestartPeerAddressMove
+=== RUN   TestRestartPeerAddressMove/public_subnet
+=== RUN   TestRestartPeerAddressMove/same_subnet
+=== RUN   TestRestartPeerAddressMove/lan_to_public
+=== RUN   TestRestartPeerAddressMove/public_to_lan
+=== RUN   TestRestartPeerAddressMove/ipv6_subnet
+=== RUN   TestRestartPeerAddressMove/ipv4_to_ipv6
+--- PASS: TestRestartPeerAddressMove (0.01s)
+    --- PASS: TestRestartPeerAddressMove/public_subnet (0.00s)
+    --- PASS: TestRestartPeerAddressMove/same_subnet (0.00s)
+    --- PASS: TestRestartPeerAddressMove/lan_to_public (0.00s)
+    --- PASS: TestRestartPeerAddressMove/public_to_lan (0.00s)
+    --- PASS: TestRestartPeerAddressMove/ipv6_subnet (0.00s)
+    --- PASS: TestRestartPeerAddressMove/ipv4_to_ipv6 (0.00s)
+=== RUN   TestRestartPeerAddressMoveLimits
+=== RUN   TestRestartPeerAddressMoveLimits/bucket_full
+=== RUN   TestRestartPeerAddressMoveLimits/table_full
+=== RUN   TestRestartPeerAddressMoveLimits/same_subnet_full
+--- PASS: TestRestartPeerAddressMoveLimits (0.01s)
+    --- PASS: TestRestartPeerAddressMoveLimits/bucket_full (0.00s)
+    --- PASS: TestRestartPeerAddressMoveLimits/table_full (0.00s)
+    --- PASS: TestRestartPeerAddressMoveLimits/same_subnet_full (0.00s)
+=== RUN   TestRestartPeerAddressMoveReleasesCapacity
+--- PASS: TestRestartPeerAddressMoveReleasesCapacity (0.00s)
+=== RUN   TestRestartPeerReplacementAddress
+=== RUN   TestRestartPeerReplacementAddress/move
+=== RUN   TestRestartPeerReplacementAddress/reject_full_subnet
+=== RUN   TestRestartPeerReplacementAddress/promote_same
+=== RUN   TestRestartPeerReplacementAddress/promote_moved
+--- PASS: TestRestartPeerReplacementAddress (0.01s)
+    --- PASS: TestRestartPeerReplacementAddress/move (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/reject_full_subnet (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/promote_same (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/promote_moved (0.00s)
+=== RUN   TestRestartPeerReplacementMaturation
+--- PASS: TestRestartPeerReplacementMaturation (0.00s)
+=== RUN   TestRestartPeerReplacementCachePreservesAddress
+--- PASS: TestRestartPeerReplacementCachePreservesAddress (0.00s)
+=== RUN   TestRestartPeerStaleRevalidation
+=== RUN   TestRestartPeerStaleRevalidation/ip/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/ip/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/port/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/port/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/refresh/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/refresh/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/remove_readd/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/remove_readd/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/current/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/current/responds=false
+--- PASS: TestRestartPeerStaleRevalidation (0.02s)
+    --- PASS: TestRestartPeerStaleRevalidation/ip/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/ip/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/port/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/port/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/refresh/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/refresh/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/remove_readd/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/remove_readd/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/current/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/current/responds=false (0.00s)
+=== RUN   TestRestartPeerStaleFindnode
+=== RUN   TestRestartPeerStaleFindnode/moved/responds=true
+=== RUN   TestRestartPeerStaleFindnode/moved/responds=false
+=== RUN   TestRestartPeerStaleFindnode/current/responds=true
+=== RUN   TestRestartPeerStaleFindnode/current/responds=false
+--- PASS: TestRestartPeerStaleFindnode (0.01s)
+    --- PASS: TestRestartPeerStaleFindnode/moved/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/moved/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/current/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/current/responds=false (0.00s)
+=== RUN   TestRestartPeerRepeatedDelete
+--- PASS: TestRestartPeerRepeatedDelete (0.00s)
+=== RUN   TestRestartPeerCacheMaturation
+    restart_cache_test.go:41: four-minute contact excluded; six-minute contact persisted and survived reopen
+--- PASS: TestRestartPeerCacheMaturation (0.03s)
+=== RUN   TestRestartPeerRefreshPreservesMaturation
+--- PASS: TestRestartPeerRefreshPreservesMaturation (0.00s)
+=== RUN   TestRestartPeerCacheAgeAndCleanup
+    restart_cache_test.go:98: cold seed query admits one-hour and two-day contacts, excludes six-day contact; explicit cleanup keeps only the one-hour contact
+--- PASS: TestRestartPeerCacheAgeAndCleanup (0.04s)
+=== RUN   TestRestartSparseFindnodeReplies
+=== RUN   TestRestartSparseFindnodeReplies/one_valid
+=== RUN   TestRestartSparseFindnodeReplies/two_packets
+=== RUN   TestRestartSparseFindnodeReplies/invalid_only
+=== RUN   TestRestartSparseFindnodeReplies/no_reply
+--- PASS: TestRestartSparseFindnodeReplies (2.01s)
+    --- PASS: TestRestartSparseFindnodeReplies/one_valid (0.50s)
+    --- PASS: TestRestartSparseFindnodeReplies/two_packets (0.50s)
+    --- PASS: TestRestartSparseFindnodeReplies/invalid_only (0.50s)
+    --- PASS: TestRestartSparseFindnodeReplies/no_reply (0.50s)
+=== RUN   TestRestartSparseReplyDoesNotPenalizePeer
+--- PASS: TestRestartSparseReplyDoesNotPenalizePeer (0.51s)
+=== RUN   TestTable_pingReplace
+=== RUN   TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=true
+=== PAUSE TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=true
+=== RUN   TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=true
+=== PAUSE TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=true
+=== RUN   TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=false
+=== PAUSE TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=false
+=== RUN   TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=false
+=== PAUSE TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=false
+=== CONT  TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=true
+=== CONT  TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=false
+=== CONT  TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=true
+=== CONT  TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=false
+--- PASS: TestTable_pingReplace (0.00s)
+    --- PASS: TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=true (0.00s)
+    --- PASS: TestTable_pingReplace/newNodeResponding=false/lastInBucketResponding=false (0.00s)
+    --- PASS: TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=true (0.00s)
+    --- PASS: TestTable_pingReplace/newNodeResponding=true/lastInBucketResponding=false (0.00s)
+=== RUN   TestBucket_bumpNoDuplicates
+=== PAUSE TestBucket_bumpNoDuplicates
+=== RUN   TestTable_IPLimit
+--- PASS: TestTable_IPLimit (0.00s)
+=== RUN   TestTable_BucketIPLimit
+--- PASS: TestTable_BucketIPLimit (0.00s)
+=== RUN   TestTable_closest
+=== PAUSE TestTable_closest
+=== RUN   TestTable_ReadRandomNodesGetAll
+--- PASS: TestTable_ReadRandomNodesGetAll (0.39s)
+=== RUN   TestTable_Lookup
+    table_test.go:348: results:
+    table_test.go:350:   ld=246, 5cbc39716171e253df9a5021765d4414a814f9b57b2cff1106807cd8aa1d83c7
+    table_test.go:350:   ld=246, 5cbe2080c94f83311437f55676252320c4126e0643f14728cdb5436791c689ef
+    table_test.go:350:   ld=246, 5caab00e8273a3f5265384e66859416694f9633d27e114b40b278a5d85168aa2
+    table_test.go:350:   ld=247, 5cd2ae61ed768220b90f62fc33b3f146bba4d522d4b7a283ab85b66fc8feebbb
+    table_test.go:350:   ld=247, 5cd3371c3623a6328f677ee5adc24e76835c132151fc49d14ad11e1fe2ac611a
+    table_test.go:350:   ld=247, 5cc025e8688ca824501f4af4ac94ba7c2de3f8c8ff7de6ab43407cd75eadac25
+    table_test.go:350:   ld=247, 5cf8248c4a67601d8a4aa17c0d01ec93a98826c4f09a341a8677f9669b6f49b9
+    table_test.go:350:   ld=247, 5cf88501f1ee7cca638e957296bc6ba5afe6d556f3bc79866f0dbca984c955cd
+    table_test.go:350:   ld=247, 5ce5132c8f1fff0ef38a84dfd059f978b2d6514aa2e12a5f1698104e3b35d541
+    table_test.go:350:   ld=247, 5ce68c5cc2d7f4daffdc927f5781e3973c0683e7046c20b435aea0679a274bb9
+    table_test.go:350:   ld=247, 5ce249c20408feb354012496a15dcb35a4619d41e00ad3ce5d6173a195bae532
+    table_test.go:350:   ld=247, 5cef1e87ea01f8aa40147f643795b3271a24d4d3dd66f76b79dad23a9c894cea
+    table_test.go:350:   ld=247, 5cef124df5c23298f610eafa878d55d00fa4bade89812a21e435421cc6d7c780
+    table_test.go:350:   ld=248, 5c1646ffb4c9daf49fde58e4b35780e921cd2d5078f7ef55927ff0238b175aa5
+    table_test.go:350:   ld=248, 5c181d747de5905ede2e6c2b8068519f95b97efd7da37eedc83b531367b0d78c
+    table_test.go:350:   ld=248, 5c0be64be73fc2aab7f418fca455f1b703aba3c2c1c404460f1af31c3686c176
+--- PASS: TestTable_Lookup (0.00s)
+=== RUN   TestUDP_packetErrors
+--- PASS: TestUDP_packetErrors (0.00s)
+=== RUN   TestUDP_pingTimeout
+=== PAUSE TestUDP_pingTimeout
+=== RUN   TestUDP_responseTimeouts
+=== PAUSE TestUDP_responseTimeouts
+=== RUN   TestUDP_findnodeTimeout
+=== PAUSE TestUDP_findnodeTimeout
+=== RUN   TestUDP_findnode
+--- PASS: TestUDP_findnode (0.00s)
+=== RUN   TestUDP_findnodeMultiReply
+--- PASS: TestUDP_findnodeMultiReply (0.50s)
+=== RUN   TestUDP_successfulPing
+--- PASS: TestUDP_successfulPing (0.00s)
+=== CONT  TestBucket_bumpNoDuplicates
+=== CONT  TestUDP_pingTimeout
+--- PASS: TestBucket_bumpNoDuplicates (0.10s)
+=== CONT  TestUDP_findnodeTimeout
+--- PASS: TestUDP_pingTimeout (0.50s)
+=== CONT  TestTable_closest
+--- PASS: TestUDP_findnodeTimeout (1.50s)
+=== CONT  TestUDP_responseTimeouts
+--- PASS: TestUDP_responseTimeouts (3.41s)
+--- PASS: TestTable_closest (9.91s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/p2p/discover	20.187s
+=== RUN   TestDialStateDynDial
+--- PASS: TestDialStateDynDial (0.00s)
+=== RUN   TestDialStateDynDialBootnode
+--- PASS: TestDialStateDynDialBootnode (0.00s)
+=== RUN   TestDialStateDynDialFromTable
+--- PASS: TestDialStateDynDialFromTable (0.00s)
+=== RUN   TestDialStateNetRestrict
+--- PASS: TestDialStateNetRestrict (0.00s)
+=== RUN   TestDialStateStaticDial
+--- PASS: TestDialStateStaticDial (0.00s)
+=== RUN   TestDialStaticAfterReset
+--- PASS: TestDialStaticAfterReset (0.00s)
+=== RUN   TestDialStateCache
+--- PASS: TestDialStateCache (0.00s)
+=== RUN   TestDialResolve
+--- PASS: TestDialResolve (0.00s)
+=== RUN   TestServerListen
+--- PASS: TestServerListen (0.01s)
+=== RUN   TestServerDial
+--- PASS: TestServerDial (0.00s)
+=== RUN   TestServerTaskScheduling
+--- PASS: TestServerTaskScheduling (0.00s)
+=== RUN   TestServerManyTasks
+--- PASS: TestServerManyTasks (0.00s)
+=== RUN   TestServerAtCap
+--- PASS: TestServerAtCap (0.00s)
+=== RUN   TestServerPeerLimits
+--- PASS: TestServerPeerLimits (0.00s)
+=== RUN   TestServerSetupConn
+--- PASS: TestServerSetupConn (0.01s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/p2p	1.090s
+=== RUN   TestExplicitEmptyBootstrapNodes
+=== RUN   TestExplicitEmptyBootstrapNodes/bootnodes
+=== RUN   TestExplicitEmptyBootstrapNodes/bootnodesv4
+--- PASS: TestExplicitEmptyBootstrapNodes (0.00s)
+    --- PASS: TestExplicitEmptyBootstrapNodes/bootnodes (0.00s)
+    --- PASS: TestExplicitEmptyBootstrapNodes/bootnodesv4 (0.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/cmd/utils	1.081s

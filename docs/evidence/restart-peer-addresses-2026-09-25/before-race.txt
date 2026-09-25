@@ -1,0 +1,108 @@
+=== RUN   TestRestartPeerAddressLive
+    restart_address_linux_test.go:16: requires isolated loopback namespace with the rehearsal IP aliases
+--- SKIP: TestRestartPeerAddressLive (0.00s)
+=== RUN   TestRestartPeerAddressMove
+=== RUN   TestRestartPeerAddressMove/public_subnet
+    restart_address_test.go:59: subnet reservations: table={172.0.1.0×1} bucket={172.0.1.0×1} want={172.0.2.0×1}
+=== RUN   TestRestartPeerAddressMove/same_subnet
+=== RUN   TestRestartPeerAddressMove/lan_to_public
+    restart_address_test.go:59: subnet reservations: table={} bucket={} want={172.0.2.0×1}
+=== RUN   TestRestartPeerAddressMove/public_to_lan
+    restart_address_test.go:59: subnet reservations: table={172.0.1.0×1} bucket={172.0.1.0×1} want={}
+=== RUN   TestRestartPeerAddressMove/ipv6_subnet
+    restart_address_test.go:59: subnet reservations: table={2001:4800::×1} bucket={2001:4800::×1} want={2606:4700::×1}
+=== RUN   TestRestartPeerAddressMove/ipv4_to_ipv6
+    restart_address_test.go:59: subnet reservations: table={172.0.1.0×1} bucket={172.0.1.0×1} want={2606:4700::×1}
+--- FAIL: TestRestartPeerAddressMove (0.02s)
+    --- FAIL: TestRestartPeerAddressMove/public_subnet (0.01s)
+    --- PASS: TestRestartPeerAddressMove/same_subnet (0.00s)
+    --- FAIL: TestRestartPeerAddressMove/lan_to_public (0.00s)
+    --- FAIL: TestRestartPeerAddressMove/public_to_lan (0.00s)
+    --- FAIL: TestRestartPeerAddressMove/ipv6_subnet (0.00s)
+    --- FAIL: TestRestartPeerAddressMove/ipv4_to_ipv6 (0.00s)
+=== RUN   TestRestartPeerAddressMoveLimits
+=== RUN   TestRestartPeerAddressMoveLimits/bucket_full
+    restart_address_test.go:102: wrong endpoint after quota check: got=172.0.2.99:40408 want=172.0.1.1:40408
+=== RUN   TestRestartPeerAddressMoveLimits/table_full
+    restart_address_test.go:102: wrong endpoint after quota check: got=172.0.2.99:40408 want=172.0.1.1:40408
+=== RUN   TestRestartPeerAddressMoveLimits/same_subnet_full
+--- FAIL: TestRestartPeerAddressMoveLimits (0.01s)
+    --- FAIL: TestRestartPeerAddressMoveLimits/bucket_full (0.00s)
+    --- FAIL: TestRestartPeerAddressMoveLimits/table_full (0.00s)
+    --- PASS: TestRestartPeerAddressMoveLimits/same_subnet_full (0.00s)
+=== RUN   TestRestartPeerAddressMoveReleasesCapacity
+    restart_address_test.go:126: old capacity was not released or new subnet limit bypassed: entries=4 overLimit=true replacements=0
+--- FAIL: TestRestartPeerAddressMoveReleasesCapacity (0.00s)
+=== RUN   TestRestartPeerReplacementAddress
+=== RUN   TestRestartPeerReplacementAddress/move
+    restart_address_test.go:173: replacement endpoint: got=172.2.1.1:40408 want=172.2.2.1:40408
+=== RUN   TestRestartPeerReplacementAddress/reject_full_subnet
+=== RUN   TestRestartPeerReplacementAddress/promote_same
+    restart_address_test.go:179: identity or reservation transfer: copies=1 table=17 bucket=17 want=16
+=== RUN   TestRestartPeerReplacementAddress/promote_moved
+    restart_address_test.go:179: identity or reservation transfer: copies=1 table=17 bucket=17 want=16
+--- FAIL: TestRestartPeerReplacementAddress (0.01s)
+    --- FAIL: TestRestartPeerReplacementAddress/move (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/reject_full_subnet (0.00s)
+    --- FAIL: TestRestartPeerReplacementAddress/promote_same (0.00s)
+    --- FAIL: TestRestartPeerReplacementAddress/promote_moved (0.00s)
+=== RUN   TestRestartPeerReplacementMaturation
+    restart_address_test.go:201: newly promoted replacement bypassed the five-minute active-table maturity filter
+--- FAIL: TestRestartPeerReplacementMaturation (0.00s)
+=== RUN   TestRestartPeerReplacementCachePreservesAddress
+--- PASS: TestRestartPeerReplacementCachePreservesAddress (0.00s)
+=== RUN   TestRestartPeerStaleRevalidation
+=== RUN   TestRestartPeerStaleRevalidation/ip/responds=true
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/ip/responds=false
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/port/responds=true
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/port/responds=false
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/refresh/responds=true
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/refresh/responds=false
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/remove_readd/responds=true
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/remove_readd/responds=false
+    restart_address_test.go:293: old revalidation result overwrote or evicted the current peer
+=== RUN   TestRestartPeerStaleRevalidation/current/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/current/responds=false
+--- FAIL: TestRestartPeerStaleRevalidation (0.02s)
+    --- FAIL: TestRestartPeerStaleRevalidation/ip/responds=true (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/ip/responds=false (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/port/responds=true (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/port/responds=false (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/refresh/responds=true (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/refresh/responds=false (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/remove_readd/responds=true (0.00s)
+    --- FAIL: TestRestartPeerStaleRevalidation/remove_readd/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/current/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/current/responds=false (0.00s)
+=== RUN   TestRestartPeerStaleFindnode
+=== RUN   TestRestartPeerStaleFindnode/moved/responds=true
+    restart_address_test.go:342: lookup affected wrong entry's failure count: got=3 want=4
+=== RUN   TestRestartPeerStaleFindnode/moved/responds=false
+    restart_address_test.go:339: obsolete lookup evicted the current endpoint
+    restart_address_test.go:342: lookup affected wrong entry's failure count: got=5 want=4
+=== RUN   TestRestartPeerStaleFindnode/current/responds=true
+=== RUN   TestRestartPeerStaleFindnode/current/responds=false
+--- FAIL: TestRestartPeerStaleFindnode (0.01s)
+    --- FAIL: TestRestartPeerStaleFindnode/moved/responds=true (0.00s)
+    --- FAIL: TestRestartPeerStaleFindnode/moved/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/current/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/current/responds=false (0.00s)
+=== RUN   TestRestartPeerRepeatedDelete
+    restart_address_test.go:363: absent peer deletion released another peer's reservation: {}
+--- FAIL: TestRestartPeerRepeatedDelete (0.00s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/p2p/discover	0.134s
+testing: warning: no tests to run
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/p2p	1.070s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/cmd/utils	1.099s [no tests to run]
+FAIL

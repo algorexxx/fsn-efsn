@@ -136,7 +136,10 @@ Loopback is exempt from those limits, so the passing move rehearsal does not
 resolve this concern. The next targeted investigation must cover admitted and
 rejected moves between public subnets, same-subnet moves at capacity, and stale
 revalidation results during a move before claiming public migration readiness.
-No correction for that separate path is included here.
+No correction for that separate path is included in P12/P13. The subsequent
+[P14 address investigation](restart-peer-addresses.md) reproduces and corrects
+these failures, including a real signed UDP move across simulated public subnets
+inside an isolated namespace. It does not establish public deployment readiness.
 
 Failed hostname-based static/trusted configuration can still use the old blocking
 parser, and v5 still requires IP addresses. The scoped behavior here applies to

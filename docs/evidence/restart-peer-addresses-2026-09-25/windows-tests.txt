@@ -1,0 +1,73 @@
+=== RUN   TestRestartPeerAddressMove
+=== RUN   TestRestartPeerAddressMove/public_subnet
+=== RUN   TestRestartPeerAddressMove/same_subnet
+=== RUN   TestRestartPeerAddressMove/lan_to_public
+=== RUN   TestRestartPeerAddressMove/public_to_lan
+=== RUN   TestRestartPeerAddressMove/ipv6_subnet
+=== RUN   TestRestartPeerAddressMove/ipv4_to_ipv6
+--- PASS: TestRestartPeerAddressMove (0.01s)
+    --- PASS: TestRestartPeerAddressMove/public_subnet (0.01s)
+    --- PASS: TestRestartPeerAddressMove/same_subnet (0.00s)
+    --- PASS: TestRestartPeerAddressMove/lan_to_public (0.00s)
+    --- PASS: TestRestartPeerAddressMove/public_to_lan (0.00s)
+    --- PASS: TestRestartPeerAddressMove/ipv6_subnet (0.00s)
+    --- PASS: TestRestartPeerAddressMove/ipv4_to_ipv6 (0.00s)
+=== RUN   TestRestartPeerAddressMoveLimits
+=== RUN   TestRestartPeerAddressMoveLimits/bucket_full
+=== RUN   TestRestartPeerAddressMoveLimits/table_full
+=== RUN   TestRestartPeerAddressMoveLimits/same_subnet_full
+--- PASS: TestRestartPeerAddressMoveLimits (0.00s)
+    --- PASS: TestRestartPeerAddressMoveLimits/bucket_full (0.00s)
+    --- PASS: TestRestartPeerAddressMoveLimits/table_full (0.00s)
+    --- PASS: TestRestartPeerAddressMoveLimits/same_subnet_full (0.00s)
+=== RUN   TestRestartPeerAddressMoveReleasesCapacity
+--- PASS: TestRestartPeerAddressMoveReleasesCapacity (0.00s)
+=== RUN   TestRestartPeerReplacementAddress
+=== RUN   TestRestartPeerReplacementAddress/move
+=== RUN   TestRestartPeerReplacementAddress/reject_full_subnet
+=== RUN   TestRestartPeerReplacementAddress/promote_same
+=== RUN   TestRestartPeerReplacementAddress/promote_moved
+--- PASS: TestRestartPeerReplacementAddress (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/move (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/reject_full_subnet (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/promote_same (0.00s)
+    --- PASS: TestRestartPeerReplacementAddress/promote_moved (0.00s)
+=== RUN   TestRestartPeerReplacementMaturation
+--- PASS: TestRestartPeerReplacementMaturation (0.00s)
+=== RUN   TestRestartPeerReplacementCachePreservesAddress
+--- PASS: TestRestartPeerReplacementCachePreservesAddress (0.00s)
+=== RUN   TestRestartPeerStaleRevalidation
+=== RUN   TestRestartPeerStaleRevalidation/ip/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/ip/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/port/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/port/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/refresh/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/refresh/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/remove_readd/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/remove_readd/responds=false
+=== RUN   TestRestartPeerStaleRevalidation/current/responds=true
+=== RUN   TestRestartPeerStaleRevalidation/current/responds=false
+--- PASS: TestRestartPeerStaleRevalidation (0.01s)
+    --- PASS: TestRestartPeerStaleRevalidation/ip/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/ip/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/port/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/port/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/refresh/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/refresh/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/remove_readd/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/remove_readd/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/current/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleRevalidation/current/responds=false (0.00s)
+=== RUN   TestRestartPeerStaleFindnode
+=== RUN   TestRestartPeerStaleFindnode/moved/responds=true
+=== RUN   TestRestartPeerStaleFindnode/moved/responds=false
+=== RUN   TestRestartPeerStaleFindnode/current/responds=true
+=== RUN   TestRestartPeerStaleFindnode/current/responds=false
+--- PASS: TestRestartPeerStaleFindnode (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/moved/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/moved/responds=false (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/current/responds=true (0.00s)
+    --- PASS: TestRestartPeerStaleFindnode/current/responds=false (0.00s)
+=== RUN   TestRestartPeerRepeatedDelete
+--- PASS: TestRestartPeerRepeatedDelete (0.00s)
+PASS
