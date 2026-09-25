@@ -266,6 +266,38 @@ the ordinary checks outside the legacy shortcut range. It does not retroactively
 validate the skipped historical ticket seals/raw-transaction checks or complete
 the remaining history through 15,130,080. Neither replay copy has an active writer.
 
+## D: continuation toward 3,000,000
+
+On 25 September, after D: recovered to roughly 162 GiB free, the user authorized
+the next bounded replay. A new Linux ext4 target,
+`/home/rehearsal/replay/baseline-mainnet-three-million`, received the closed C:
+checkpoint: 1,836 files totaling 3,978,652,725 bytes. Every destination length and
+SHA-256 was checked against the read-only source. Neither the original D:
+checkpoint nor the C: checkpoint is reused as the new writable target.
+
+An independent read-only check again matched exactly 2,700,000, in 8.49 seconds.
+The unchanged retained replay executable began continuation at 12:16:18 UTC,
+targeting exactly 3,000,000. It performs its own identity and head preflight
+before writable open. This is baseline execution, not historical validation of
+the newer P1–P9 candidate changes. All new blocks lie beyond the legacy
+checkpoint shortcut range, but earlier shortcut coverage is not retroactively
+strengthened.
+
+The wrapper uses private mount/network namespaces, read-only source history and
+checkpoint mounts, the existing 20 GiB Linux / 50 GiB Windows per-batch reserves,
+and a sampled 20 GiB total working-directory allowance that requests a clean
+stop. It automatically runs a separate read-only exact-height/head/state/ticket
+check after successful completion. Only that check writes `verified.txt`.
+
+At this update the run is active. Do not claim the 3,000,000 gate passed until
+the replay exit code and final cold-check result are collected and reviewed.
+Live results are
+`/home/rehearsal/results/restart-replay-three-million-2026-09-25`;
+the explicit clean-stop file is
+`/home/rehearsal/replay/STOP-baseline-mainnet-three-million`.
+Scripts and startup evidence are retained in
+[the three-million evidence directory](evidence/restart-replay-three-million-2026-09-25).
+
 ## Next gates
 
 1. Continue bounded execution replay, investigating any failure. Current-state
@@ -274,8 +306,9 @@ the remaining history through 15,130,080. Neither replay copy has an active writ
 2. Use the measured export size and progressively measured replay growth to
    choose the full replay layout. W: remains a preservation option requiring a
    fresh accessibility/capacity check. The preserved source and D: checkpoint
-   remain on Linux ext4; the current bounded replay and compact export use C:
-   through WSL, with production storage still a separate decision.
+   remain on Linux ext4; the latest replay uses a new D:-backed ext4 target, while
+   the completed C: checkpoint and compact export remain preserved. Production
+   storage is still a separate decision.
 3. Retain explicit distinction between replay with historical checkpoint
    shortcuts and any subsequent stricter verification experiment.
 4. Prepare the demonstrated corrections and then the full-state recovery and
