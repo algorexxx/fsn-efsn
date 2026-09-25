@@ -89,10 +89,14 @@ deduplicated. A five-second context bounds context-aware backend operations;
 the wallet signing interface has no context parameter. Hardware/external wallet
 blocking behavior is not covered by these local keystore tests.
 
-A clean restart is tested. Abrupt power loss, torn storage, cross-device
-recovery and a node process crash at every persistence boundary are not. The
-record uses the database's normal `Put`, without an additional synchronous
-flush guarantee. Do not describe it as power-loss-safe or exactly-once delivery.
+Clean restart and the later [process-interruption rehearsal](restart-purchase-crash-rehearsal.md)
+are tested. Sixteen cuts per platform now cover both sides of automatic record
+save, pool submission, retirement and adoption, with exact cold-record/pool checks
+and initially locked recovery. The production controller needed no change.
+Abrupt power loss, torn storage, cross-device recovery, cuts within database
+writes and every internal pool-journal boundary remain untested. The record uses
+the database's normal `Put`, without an additional synchronous flush guarantee.
+Do not describe it as power-loss-safe or exactly-once delivery.
 
 An expired or underpriced retained transaction is retried unchanged and its
 admission error is logged. A nonce gap, conflicting transaction or corrupt

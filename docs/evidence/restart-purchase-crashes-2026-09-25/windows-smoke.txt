@@ -1,0 +1,11 @@
+=== RUN   TestAutomaticPurchaseCrashBoundaries
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/restore/save/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=13 hash=S���IH5Swp*�v��J+$4)��Τ�p�; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.09s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+--- PASS: TestAutomaticPurchaseCrashBoundaries (6.55s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/restore/save/before (6.55s)
+PASS

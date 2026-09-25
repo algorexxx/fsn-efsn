@@ -1,0 +1,131 @@
+=== RUN   TestAutomaticPurchaseCrashBoundaries
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/restore/save/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=13 hash=0x280e7f3b0d5460fad0e7419d40920ed84c30f86dac400c5f78de568c253d82e3; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.10s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/restore/save/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0x09581faa09194cde3d17d23cb9dd8cde0182e2b28407c74c81a20e18b397f406; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.07s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/restore/submit/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0xd1e292cffc6198b6c151a1ae44e04d8be85f9b48b1c80df0101e2ad0261c2f66; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.07s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/restore/submit/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0xf10ace8d3498d0ea0c0a7aef432d5520ebd81d149e23aa7942be472cec000d93; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.07s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/lost/save/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=13 hash=0x6494a2be8dd6ee62558a4b21175bbde6a14a5d633e943dbdd8f29c88dd4929d9; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.09s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/lost/save/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0x9281780aacfdff7cafb60a428e1db5f798906cd7bea5b535ee9b78bf6167bf5c; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.07s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/lost/submit/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0x4020bf3d9cc4102e43d729fb47241b85ea8169e3848293909f5f2fc005fa02a5; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.08s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/new/lost/submit/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0xacd53d7f9f59398fc81f94f57bdb31b75db0dd61499970c61dbeb9a2fd92be08; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.07s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/confirmed/restore/save/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=14 hash=0x1313991b0cc8a1382719291279fc4b449a20d5f9205a4e469fcdcee0f288efaf; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.10s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/confirmed/restore/save/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=14 hash=0xcd04d4d09419b7fbeafe6fe8b3ea535672b65e208daee06d365f0def11e0711d; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.06s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/confirmed/restore/retire/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=14 hash=0xe880162bacf0ff5472f8f0d840aaf051a46796d581f26dce00a8424a2d75765c; same bytes=false; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.09s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/confirmed/restore/retire/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=14 hash=0x8443d0c55ae150407521c55b7688494f9efc975ed129c19a351eb450d6bcf83a; same bytes=false; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.10s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/replaced/restore/retire/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=14 hash=0x06a903184a89fdb3dfc1eb821bbab27c42af0b01a14c9a55ca425ab4c583252e; same bytes=false; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.11s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/replaced/restore/retire/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=false; recovered nonce=14 hash=0x844b72da91af4378184d7b09beb570c6e49ed3b9e2b3ecf214d3b1f668457867; same bytes=false; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.09s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/adopt/restore/save/before
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0x3bcc929f34c4bc45ecee5a303dd3c36c5bee2c0834f89e7faa39fc7b66309d32; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.08s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+=== RUN   TestAutomaticPurchaseCrashBoundaries/adopt/restore/save/after
+    purchase_crash_test.go:110: recovery observations:
+        === RUN   TestAutomaticPurchaseCrashBoundaries
+            purchase_crash_test.go:163: wallet initially locked; retained signed purchase available=true; recovered nonce=13 hash=0xcd36547f2b961812be3534eeec6d44d0331c6fd8ea7287294866167e6ccbbca7; same bytes=true; no extra submission over retry interval
+        --- PASS: TestAutomaticPurchaseCrashBoundaries (6.04s)
+        PASS
+    purchase_crash_test.go:112: abrupt cut reached; exact surviving purchase or correct unconsumed nonce recovered; cold record/pool agree
+--- PASS: TestAutomaticPurchaseCrashBoundaries (104.10s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/restore/save/before (6.53s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/restore/save/after (6.47s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/restore/submit/before (6.50s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/restore/submit/after (6.52s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/lost/save/before (6.53s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/lost/save/after (6.52s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/lost/submit/before (6.48s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/new/lost/submit/after (6.47s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/confirmed/restore/save/before (6.53s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/confirmed/restore/save/after (6.46s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/confirmed/restore/retire/before (6.54s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/confirmed/restore/retire/after (6.54s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/replaced/restore/retire/before (6.55s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/replaced/restore/retire/after (6.51s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/adopt/restore/save/before (6.48s)
+    --- PASS: TestAutomaticPurchaseCrashBoundaries/adopt/restore/save/after (6.46s)
+PASS

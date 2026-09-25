@@ -1,0 +1,42 @@
+{
+  "baseline_commit": "33e80d1687288e8e7a2a75bd5feea43b9858f3ab",
+  "toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detection; GOMAXPROCS=2; offline modules; Linux parent and children network isolated",
+  "production_source_changes": false,
+  "source_sha256": {
+    "tests/restart/purchase_crash_test.go": "0bcd052880c3a83ced4b0abab568ad8e437a6b95679381b712f03aefa0610dec",
+    "tests/restart/purchase_crash_recovery_test.go": "dfdb80cfb52ca21bfd4ce9835f9f277f476956c67ede4ce5bf9eed68e16d4edd"
+  },
+  "source_git_blobs": {
+    "tests/restart/purchase_crash_test.go": "ed0db6b2ceaa8fcc266ae414abcda26752b3dcda",
+    "tests/restart/purchase_crash_recovery_test.go": "581e99452175a5673eb4fd3d8c38bad168d43fe1"
+  },
+  "binary_sha256": {
+    "tmp/purchase-crash-windows-tests.exe": "08be100c5438f499ebafa2627fb90e5d9add07b3bd827a018f01dbf31de5f6f3",
+    "tmp/purchase-crash-linux-tests": "c8d06e7dea1a4ac31ceb248ffe1b6836ab61e5434f519aa69d43bdf22e9a6b6e"
+  },
+  "final_seconds": {
+    "windows-crashes.txt": 104.47,
+    "linux-crashes-race.txt": 175.07
+  },
+  "abrupt_exits_per_platform": 16,
+  "child_processes_per_platform": 64,
+  "final_cases": [
+    "adopt/restore/save/after",
+    "adopt/restore/save/before",
+    "confirmed/restore/retire/after",
+    "confirmed/restore/retire/before",
+    "confirmed/restore/save/after",
+    "confirmed/restore/save/before",
+    "new/lost/save/after",
+    "new/lost/save/before",
+    "new/lost/submit/after",
+    "new/lost/submit/before",
+    "new/restore/save/after",
+    "new/restore/save/before",
+    "new/restore/submit/after",
+    "new/restore/submit/before",
+    "replaced/restore/retire/after",
+    "replaced/restore/retire/before"
+  ],
+  "scope": "Before/after automatic purchase save, pool submission, retirement and pool adoption; exact record/pool checks, canonical nonce/receipt/ticket evidence, initially locked recovery, one retry interval without additional submission and independent cold reopening. Sparse state and public key 1; perpetual other-owner ticket intervals are synthetic scaffolding. Initial logs predate strengthened assertions. No real key, full-state data or production code changes; not power-loss, cuts within storage writes, full node/peer reorganization or exactly-once delivery evidence."
+}

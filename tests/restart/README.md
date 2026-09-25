@@ -376,3 +376,14 @@ opt-in complete-state command rehearsal, not a real-key launch or a public node
 distribution. Existing targets are refused by the preparation script. Exact
 scripts, binary pins and results are in
 [the evidence directory](../../docs/evidence/restart-full-state-operator-2026-09-25).
+
+`TestAutomaticPurchaseCrashBoundaries` is enabled with
+`FUSION_PURCHASE_CRASH_REHEARSAL=1`. Sixteen cases use separate prepare, abrupt
+exit, recover and cold-check processes. Test-only wrappers stop before/after
+the real automatic-purchase record save, pool submission, retirement or adoption.
+Reopening checks exact record and pool contents; recovery starts with a locked
+public-key wallet and rejects extra submission over a retry interval. The
+lost-pool cases preserve the original journal and select a fresh journal path.
+No production fault hooks or preserved database are used. See the
+[report](../../docs/restart-purchase-crash-rehearsal.md) for the matrix and
+the distinction between a process exit and machine power loss.

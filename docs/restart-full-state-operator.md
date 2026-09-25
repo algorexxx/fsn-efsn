@@ -69,9 +69,10 @@ Actual-address accounting with fresh launch timing, live backup purchase
 inventory/drain, one-active-key custody, final anchor and release/data
 distribution remain unfinished. The source patch candidates are now explicitly
 listed for independent review in the [node patch inventory](restart-node-patch-review.md).
-Systematic automatic-purchase persistence interruption and live peer-reorg
-coverage remain useful technical work before release; passing the offline
-operator workflow does not resolve them.
+The subsequent [automatic-purchase interruption rehearsal](restart-purchase-crash-rehearsal.md)
+passes sixteen application-boundary cases per platform without production changes.
+Live peer-reorg, storage-write failure and power-loss behavior remain separate
+concerns; passing the offline operator workflow does not resolve them.
 
 Exact scripts, logs, command artifacts and source/binary identities:
 [`restart-full-state-operator-2026-09-25`](evidence/restart-full-state-operator-2026-09-25).

@@ -1,0 +1,282 @@
+package restart
+
+import (
+	"bytes"
+	"errors"
+	"math/big"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/accounts"
+	"github.com/FusionFoundation/efsn/v5/accounts/keystore"
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/consensus/datong"
+	"github.com/FusionFoundation/efsn/v5/core"
+	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/core/vm"
+	"github.com/FusionFoundation/efsn/v5/crypto"
+	"github.com/FusionFoundation/efsn/v5/internal/ethapi"
+	"github.com/syndtr/goleveldb/leveldb"
+)
+
+func openPurchaseCrashFixture(t *testing.T, directory string) (*fixture, *keystore.KeyStore, *purchaseCrashBackend) {
+	t.Helper()
+	db, err := rawdb.NewLevelDBDatabase(filepath.Join(directory, "chaindata"), 16, 16, "purchase-reopen", false)
+	requireNoError(t, err)
+	config := rawdb.ReadChainConfig(db, rawdb.ReadCanonicalHash(db, 0))
+	engine := datong.New(config.DaTong, db)
+	chain, err := core.NewBlockChain(db, &core.CacheConfig{TrieDirtyDisabled: true}, config, engine, vm.Config{}, nil)
+	requireNoError(t, err)
+	key, err := crypto.HexToECDSA("0000000000000000000000000000000000000000000000000000000000000001")
+	requireNoError(t, err)
+	f := &fixture{db: db, chain: chain, engine: engine, key: key, owner: crypto.PubkeyToAddress(key.PublicKey), parent: chain.CurrentBlock()}
+	t.Cleanup(func() { chain.Stop(); requireNoError(t, db.Close()) })
+	keys := keystore.NewKeyStore(filepath.Join(directory, "keys"), keystore.LightScryptN, keystore.LightScryptP)
+	if len(keys.Accounts()) == 0 {
+		_, err := keys.ImportECDSA(key, "public crash key")
+		requireNoError(t, err)
+	}
+	if len(keys.Accounts()) != 1 || keys.Accounts()[0].Address != f.owner {
+		t.Fatal("unexpected public fixture wallet")
+	}
+	manager := accounts.NewManager(keys)
+	t.Cleanup(func() { manager.Close() })
+	poolConfig := core.DefaultTxPoolConfig
+	poolConfig.Journal = filepath.Join(directory, "transactions.rlp")
+	if os.Getenv("FUSION_PURCHASE_CRASH_POOL") == "lost" && os.Getenv("FUSION_PURCHASE_CRASH_ACTION") != "crash" {
+		poolConfig.Journal = filepath.Join(directory, "recovered-transactions.rlp")
+	}
+	pool := core.NewTxPool(poolConfig, config, chain)
+	t.Cleanup(pool.Stop)
+	boundary := &purchaseCrashBoundary{directory: directory}
+	wrapper := &purchaseCrashDatabase{Database: db, boundary: boundary, key: append([]byte("fsn-auto-ticket-v1-"), f.owner[:]...)}
+	backend := &purchaseCrashBackend{autoBuyBackend: &autoBuyBackend{purchaseBackend: &purchaseBackend{chain: chain}, pool: pool, accounts: manager, owner: f.owner, database: wrapper, submissions: make(chan purchaseSubmission, 16)}, boundary: boundary}
+	backend.mining.Store(true)
+	lock := new(ethapi.AddrLocker)
+	ethapi.NewFusionTransactionAPI(backend, lock, ethapi.NewPublicTransactionPoolAPI(backend, lock))
+	return f, keys, backend
+}
+
+func preparePurchaseCrashScenario(t *testing.T, directory, scenario string, f *fixture, backend *autoBuyBackend) {
+	t.Helper()
+	if scenario == "new" {
+		return
+	}
+	var original *types.Transaction
+	if scenario == "adopt" {
+		original = f.signPurchase(t, f.chain.CurrentBlock().Time(), common.TimeLockForever)
+		requireNoError(t, backend.pool.AddLocal(original))
+	} else {
+		stop := startPurchaseController(t, true)
+		first := awaitSubmission(t, backend)
+		requireNoError(t, first.err)
+		stop()
+		original = first.tx
+	}
+	encoded, err := original.MarshalBinary()
+	requireNoError(t, err)
+	requireNoError(t, os.WriteFile(filepath.Join(directory, "original.bin"), encoded, 0600))
+	if scenario == "adopt" {
+		return
+	}
+	included := original
+	if scenario == "replaced" {
+		included, err = types.SignTx(types.NewTransaction(original.Nonce(), f.owner, new(big.Int), 21000, new(big.Int).Mul(original.GasPrice(), big.NewInt(2)), nil), types.LatestSigner(f.chain.Config()), f.key)
+		requireNoError(t, err)
+	} else if scenario != "confirmed" {
+		t.Fatal("unknown purchase crash scenario")
+	}
+	f.importBlock(t, f.buildBlockWithTransactions(t, f.chain.CurrentBlock().Time()+120, []*types.Transaction{included}))
+	awaitPoolNonce(t, backend, original.Nonce()+1)
+}
+
+func recoverPurchaseCrash(t *testing.T, directory, scenario string, f *fixture, keys *keystore.KeyStore, backend *purchaseCrashBackend) {
+	t.Helper()
+	var head types.Header
+	readHandoverJSON(t, filepath.Join(directory, "head.json"), &head)
+	if f.chain.CurrentBlock().Hash() != head.Hash() {
+		t.Fatal("process cut changed canonical head")
+	}
+	state, err := f.chain.State()
+	requireNoError(t, err)
+	nonce := state.GetNonce(f.owner)
+	expected, err := os.ReadFile(filepath.Join(directory, "attempt.bin"))
+	if os.IsNotExist(err) {
+		expected = nil
+	} else {
+		requireNoError(t, err)
+	}
+	if scenario == "adopt" {
+		expected, err = os.ReadFile(filepath.Join(directory, "original.bin"))
+		requireNoError(t, err)
+	}
+	saved := readPurchaseCrashRecord(t, backend)
+	verifyPurchaseCutRecord(t, directory, scenario, f, saved, expected)
+	pending, queued := backend.pool.Content()
+	available := saved != nil && saved.Nonce() == nonce
+	pooled := false
+	for _, tx := range append(pending[f.owner], queued[f.owner]...) {
+		pooled = pooled || tx.Nonce() == nonce
+	}
+	available = available || pooled
+	wantPooled := scenario == "adopt" || scenario == "new" && os.Getenv("FUSION_PURCHASE_CRASH_POOL") == "restore" && os.Getenv("FUSION_PURCHASE_CRASH_CUT") == "submit" && os.Getenv("FUSION_PURCHASE_CRASH_PHASE") == "after"
+	if pooled != wantPooled {
+		t.Fatalf("unexpected restored pool: got=%t want=%t", pooled, wantPooled)
+	}
+	warnings := capturePurchaseLog(t, "Automatic ticket purchase needs attention; retrying")
+	confirmed := capturePurchaseLog(t, "Automatic ticket purchase confirmed")
+	consumed := capturePurchaseLog(t, "Automatic ticket nonce consumed without a confirmed purchase")
+	stop := startPurchaseController(t, true)
+	if !available {
+		awaitPurchaseWarning(t, warnings, "authentication needed")
+		stop()
+		if len(backend.submissions) != 0 {
+			t.Fatal("locked wallet submitted an unrecorded purchase")
+		}
+		requireNoError(t, keys.Unlock(keys.Accounts()[0], "public crash key"))
+		stop = startPurchaseController(t, true)
+	}
+	deadline := time.After(10 * time.Second)
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
+	var recovered *types.Transaction
+	for recovered == nil {
+		tx := readPurchaseCrashRecord(t, backend)
+		if tx != nil && tx.Nonce() == nonce && backend.pool.Get(tx.Hash()) != nil {
+			recovered = tx
+			break
+		}
+		select {
+		case <-deadline:
+			t.Fatal("recovery did not reach one saved and pooled purchase")
+		case <-ticker.C:
+		}
+	}
+	encoded, err := recovered.MarshalBinary()
+	requireNoError(t, err)
+	if expected != nil && !bytes.Equal(encoded, expected) {
+		t.Fatal("recovery changed intended signed transaction bytes")
+	}
+	if !pooled {
+		submission := awaitSubmission(t, backend.autoBuyBackend)
+		requireNoError(t, submission.err)
+		if submission.tx.Hash() != recovered.Hash() {
+			t.Fatal("recovery resubmitted a consumed nonce or changed transaction")
+		}
+	}
+	assertPurchaseQuiet(t, backend.autoBuyBackend)
+	stop()
+	if len(confirmed) > 0 && scenario != "confirmed" {
+		t.Fatal("controller falsely confirmed a replaced/unmined purchase")
+	}
+	if saved != nil && saved.Nonce() < nonce {
+		if scenario == "confirmed" && len(confirmed) != 1 || scenario == "replaced" && len(consumed) != 1 {
+			t.Fatal("recovered retirement did not classify canonical inclusion")
+		}
+	}
+	if f.chain.CurrentBlock().Hash() != head.Hash() {
+		t.Fatal("purchase recovery changed the chain")
+	}
+	requireNoError(t, os.WriteFile(filepath.Join(directory, "recovered.bin"), encoded, 0600))
+	t.Logf("wallet initially locked; retained signed purchase available=%t; recovered nonce=%d hash=%s; same bytes=%t; no extra submission over retry interval", available, nonce, recovered.Hash().Hex(), expected != nil)
+}
+
+func verifyPurchaseCutRecord(t *testing.T, directory, scenario string, f *fixture, saved *types.Transaction, attempt []byte) {
+	t.Helper()
+	cut, phase := os.Getenv("FUSION_PURCHASE_CRASH_CUT"), os.Getenv("FUSION_PURCHASE_CRASH_PHASE")
+	expected := attempt
+	if cut == "retire" {
+		var err error
+		expected, err = os.ReadFile(filepath.Join(directory, "original.bin"))
+		requireNoError(t, err)
+	}
+	if len(expected) == 0 {
+		t.Fatal("missing original signed intent at the cut")
+	}
+	wantSaved := cut == "submit" || cut == "save" && phase == "after" || cut == "retire" && phase == "before"
+	if (saved != nil) != wantSaved {
+		t.Fatalf("record at %s/%s: got=%t want=%t", cut, phase, saved != nil, wantSaved)
+	}
+	if saved != nil {
+		actual, err := saved.MarshalBinary()
+		requireNoError(t, err)
+		if !bytes.Equal(actual, expected) {
+			t.Fatal("reopened record differs from exact pre-crash intent")
+		}
+	}
+	if scenario != "confirmed" && scenario != "replaced" {
+		return
+	}
+	data, err := os.ReadFile(filepath.Join(directory, "original.bin"))
+	requireNoError(t, err)
+	var original types.Transaction
+	requireNoError(t, original.UnmarshalBinary(data))
+	head := f.chain.CurrentBlock()
+	state, err := f.chain.State()
+	requireNoError(t, err)
+	if len(head.Transactions()) != 1 || head.Transactions()[0].Nonce() != original.Nonce() || state.GetNonce(f.owner) != original.Nonce()+1 {
+		t.Fatal("canonical nonce was not consumed exactly once")
+	}
+	included, hash, _, _ := rawdb.ReadTransaction(f.db, original.Hash())
+	if scenario == "confirmed" {
+		receipts := f.chain.GetReceiptsByHash(head.Hash())
+		if included == nil || hash != head.Hash() || len(receipts) != 1 || receipts[0].Status != types.ReceiptStatusSuccessful || !state.IsTicketExist(crypto.Keccak256Hash(f.owner.Bytes(), head.ParentHash().Bytes())) {
+			t.Fatal("original purchase lacks canonical receipt and ticket evidence")
+		}
+	} else if included != nil || head.Transactions()[0].Hash() == original.Hash() {
+		t.Fatal("replacement fixture unexpectedly included original purchase")
+	}
+}
+
+func readPurchaseCrashRecord(t *testing.T, backend *purchaseCrashBackend) *types.Transaction {
+	t.Helper()
+	key := append([]byte("fsn-auto-ticket-v1-"), backend.owner[:]...)
+	data, err := backend.database.Get(key)
+	if errors.Is(err, leveldb.ErrNotFound) {
+		return nil
+	}
+	requireNoError(t, err)
+	var tx types.Transaction
+	requireNoError(t, tx.UnmarshalBinary(data))
+	return &tx
+}
+
+func verifyPurchaseCrashCold(t *testing.T, directory string, f *fixture, backend *purchaseCrashBackend) {
+	t.Helper()
+	var head types.Header
+	readHandoverJSON(t, filepath.Join(directory, "head.json"), &head)
+	if f.chain.CurrentBlock().Hash() != head.Hash() {
+		t.Fatal("cold purchase restart changed canonical head")
+	}
+	expected, err := os.ReadFile(filepath.Join(directory, "recovered.bin"))
+	requireNoError(t, err)
+	saved := readPurchaseCrashRecord(t, backend)
+	if saved == nil || backend.pool.Get(saved.Hash()) == nil {
+		t.Fatal("cold restart lost the recovered record or pool journal")
+	}
+	actual, err := saved.MarshalBinary()
+	requireNoError(t, err)
+	sender, err := types.Sender(types.LatestSigner(f.chain.Config()), saved)
+	requireNoError(t, err)
+	state, err := f.chain.State()
+	requireNoError(t, err)
+	if !bytes.Equal(expected, actual) || sender != f.owner || saved.Nonce() != state.GetNonce(f.owner) {
+		t.Fatal("cold saved purchase bytes, sender or nonce differ")
+	}
+	if _, err := backend.accounts.Wallets()[0].SignTx(accounts.Account{Address: f.owner}, saved, f.chain.Config().ChainID); err == nil {
+		t.Fatal("cold fixture wallet unexpectedly unlocked")
+	}
+	pending, queued := backend.pool.Content()
+	count := 0
+	for _, list := range []map[common.Address]types.Transactions{pending, queued} {
+		for _, txs := range list {
+			count += len(txs)
+		}
+	}
+	if count != 1 {
+		t.Fatal("unexpected cold pool population")
+	}
+}
