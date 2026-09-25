@@ -87,7 +87,7 @@ type Config struct {
 
 	// BootstrapNodes are used to establish connectivity
 	// with the rest of the network.
-	BootstrapNodes []*discover.Node
+	BootstrapNodes discover.BootstrapNodes
 
 	// BootstrapNodesV5 are used to establish connectivity
 	// with the rest of the network using the V5 discovery
@@ -522,7 +522,13 @@ func (srv *Server) Start() (err error) {
 	}
 
 	dynPeers := srv.maxDialedConns()
-	dialer := newDialState(srv.StaticNodes, srv.BootstrapNodes, srv.ntab, dynPeers, srv.NetRestrict)
+	var dialBootnodes []*discover.Node
+	for _, n := range srv.BootstrapNodes {
+		if n != nil && !n.Incomplete() && n.TCP != 0 {
+			dialBootnodes = append(dialBootnodes, n)
+		}
+	}
+	dialer := newDialState(srv.StaticNodes, dialBootnodes, srv.ntab, dynPeers, srv.NetRestrict)
 
 	// handshake
 	srv.ourHandshake = &protoHandshake{Version: baseProtocolVersion, Name: srv.Name, ID: discover.PubkeyID(&srv.PrivateKey.PublicKey)}

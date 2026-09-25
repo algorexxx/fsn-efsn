@@ -1,0 +1,41 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartBootstrapDNSRehearsal
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/unresolved
+    bootstrap_dns_linux_test.go:68: actual efsn dumpconfig mode=unresolved exit=<nil>; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/cli_empty_override
+    bootstrap_dns_linux_test.go:68: actual efsn dumpconfig mode=cli_empty_override exit=<nil>; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/malformed
+    bootstrap_dns_linux_test.go:68: actual efsn dumpconfig mode=malformed exit=exit status 1; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/outage_recovery_udp_only_and_move
+INFO [09-25|16:49:06.089] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:57780
+INFO [09-25|16:49:06.091] Starting P2P networking 
+INFO [09-25|16:49:06.093] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:38355
+INFO [09-25|16:49:06.094] Starting P2P networking 
+INFO [09-25|16:49:06.095] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:38355
+INFO [09-25|16:49:06.096] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37911
+INFO [09-25|16:49:06.100] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37911
+WARN [09-25|16:49:06.104] Bootstrap contact unavailable; retrying  host=community.restart.invalid id=79be667ef9dcbbac err="lookup community.restart.invalid on 10.255.255.254:53: no such host"
+WARN [09-25|16:49:06.104] Bootstrap contact unavailable; retrying  host=servfail.restart.invalid  id=5cbdf0646e5db4ea err="lookup servfail.restart.invalid on 10.255.255.254:53: server misbehaving"
+    bootstrap_dns_linux_test.go:127: startup returned while NXDOMAIN, SERVFAIL and a nonresponding DNS server were present; no initial contacts acquired
+WARN [09-25|16:49:11.100] Bootstrap contact unavailable; retrying  host=timeout.restart.invalid   id=fff97bd5755eeea4 err="lookup timeout.restart.invalid: i/o timeout"
+INFO [09-25|16:49:16.607] Bootstrap contact recovered              host=community.restart.invalid id=79be667ef9dcbbac
+    bootstrap_dns_linux_test.go:134: same running client recovered through second A answer and UDP-only seed; reached nondialing community and exchanged message 51
+INFO [09-25|16:49:18.656] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.3:57780
+    bootstrap_dns_linux_test.go:148: running client contacted empty UDP seed at changed IP with unchanged key/port, without reparsing configuration or restarting
+    bootstrap_dns_linux_test.go:154: shutdown completed within two seconds with failing DNS contacts still configured
+=== RUN   TestRestartBootstrapDNSRehearsal/restricted_answers
+INFO [09-25|16:49:47.105] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:43339
+INFO [09-25|16:49:47.105] Starting P2P networking 
+INFO [09-25|16:49:47.108] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:43777
+INFO [09-25|16:49:47.108] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:43777
+WARN [09-25|16:49:47.109] Bootstrap contact unavailable; retrying  host=restricted.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for restricted.restart.invalid"
+    bootstrap_dns_linux_test.go:172: DNS answer outside NetRestrict was not contacted or introduced into the peer table
+--- PASS: TestRestartBootstrapDNSRehearsal (44.48s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command (2.83s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/unresolved (1.30s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/cli_empty_override (1.30s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/malformed (0.23s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/outage_recovery_udp_only_and_move (40.58s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/restricted_answers (1.06s)
+PASS

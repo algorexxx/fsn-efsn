@@ -13,8 +13,10 @@ a concrete path toward independent operation.
 
 The subsequent [peer-cache investigation](restart-discovery-cache.md) now verifies
 cold-process reconnection from genuinely learned saved contacts, establishes age
-limits and corrects lost timestamps and sparse-reply penalties as P11. DNS failure
-tolerance remains pending. The results below describe the earlier seed-outage rehearsal.
+limits and corrects lost timestamps and sparse-reply penalties as P11. The later
+[DNS candidate](restart-bootstrap-dns.md) adds bootstrap retry/outage handling
+and restored-seed corrections as P12/P13. The results below describe the earlier
+seed-outage baseline; they are not the current candidate's DNS behavior.
 
 ## Results against the actual client
 

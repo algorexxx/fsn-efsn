@@ -43,6 +43,7 @@ type Node struct {
 	IP       net.IP // len 4 for IPv4 or 16 for IPv6
 	UDP, TCP uint16 // port numbers
 	ID       NodeID // the node's public key
+	hostname string
 
 	// This is a cached copy of sha3(ID) which is used for node
 	// distance calculations. This is part of Node in order to make it
@@ -101,7 +102,13 @@ func (n *Node) validateComplete() error {
 // Please see ParseNode for a description of the format.
 func (n *Node) String() string {
 	u := url.URL{Scheme: "enode"}
-	if n.Incomplete() {
+	if n.hostname != "" {
+		u.User = url.User(fmt.Sprintf("%x", n.ID[:]))
+		u.Host = net.JoinHostPort(n.hostname, strconv.Itoa(int(n.TCP)))
+		if n.UDP != n.TCP {
+			u.RawQuery = "discport=" + strconv.Itoa(int(n.UDP))
+		}
+	} else if n.Incomplete() {
 		u.Host = fmt.Sprintf("%x", n.ID[:])
 	} else {
 		addr := net.TCPAddr{IP: n.IP, Port: int(n.TCP)}
@@ -151,6 +158,18 @@ func ParseNode(rawurl string) (*Node, error) {
 }
 
 func parseComplete(rawurl string) (*Node, error) {
+	n, err := parseNodeEndpoint(rawurl)
+	if err != nil || n.hostname == "" {
+		return n, err
+	}
+	ips, err := net.LookupIP(n.hostname)
+	if err != nil || len(ips) == 0 {
+		return nil, errors.New("invalid host")
+	}
+	return NewNode(n.ID, ips[0], n.UDP, n.TCP), nil
+}
+
+func parseNodeEndpoint(rawurl string) (*Node, error) {
 	var (
 		id               NodeID
 		ip               net.IP
@@ -175,12 +194,11 @@ func parseComplete(rawurl string) (*Node, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid host: %v", err)
 	}
-
-	ips, err := net.LookupIP(host)
-	if err != nil || len(ips) < 1 {
+	if host == "" {
 		return nil, errors.New("invalid host")
 	}
-	ip = ips[0]
+
+	ip = net.ParseIP(host)
 	// Ensure the IP is 4 bytes long for IPv4 addresses.
 	if ipv4 := ip.To4(); ipv4 != nil {
 		ip = ipv4
@@ -197,7 +215,11 @@ func parseComplete(rawurl string) (*Node, error) {
 			return nil, errors.New("invalid discport in query")
 		}
 	}
-	return NewNode(id, ip, uint16(udpPort), uint16(tcpPort)), nil
+	n := NewNode(id, ip, uint16(udpPort), uint16(tcpPort))
+	if ip == nil {
+		n.hostname = host
+	}
+	return n, nil
 }
 
 // MustParseNode parses a node URL. It panics if the URL is not valid.

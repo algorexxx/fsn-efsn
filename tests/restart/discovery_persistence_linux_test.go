@@ -20,11 +20,12 @@ import (
 )
 
 type discoveryPersistenceConfig struct {
-	Database     string
-	KeyNumber    int
-	Bootnodes    []string
-	ExpectedPeer string
-	Mode         string
+	Database        string
+	KeyNumber       int
+	Bootnodes       []string
+	ExpectedPeer    string
+	Mode            string
+	UnavailableSeed bool
 }
 
 type discoveryPersistenceProcess struct {
@@ -61,6 +62,7 @@ func rehearseDiscoveryPersistence(t *testing.T) {
 	seed.server.Stop()
 	longConfig.Bootnodes = nil
 	longConfig.Mode = "mature_cold"
+	longConfig.UnavailableSeed = os.Getenv("FUSION_RESTART_DNS_CACHE") == "1"
 	finishDiscoveryPersistenceChild(t, startDiscoveryPersistenceChild(t, root, longConfig), 70*time.Second)
 	select {
 	case received := <-community.received:
@@ -70,14 +72,18 @@ func rehearseDiscoveryPersistence(t *testing.T) {
 	case <-time.After(3 * time.Second):
 		t.Fatal("community did not receive cold-process probe")
 	}
-	t.Log("separate cold process reconnected from its genuine on-disk peer cache and sent message 42: no seeds, no static peers, original seed stopped, community outbound dialing disabled")
+	if longConfig.UnavailableSeed {
+		t.Log("separate cold process reconnected from genuine on-disk peers and sent message 42 despite NXDOMAIN bootstrap: no static peers, original seed stopped, community outbound dialing disabled")
+	} else {
+		t.Log("separate cold process reconnected from its genuine on-disk peer cache and sent message 42: no seeds, no static peers, original seed stopped, community outbound dialing disabled")
+	}
 
 	freshConfig := longConfig
 	freshConfig.Database = filepath.Join(root, "fresh")
 	freshConfig.KeyNumber = 5
 	freshConfig.Mode = "fresh_cold"
 	finishDiscoveryPersistenceChild(t, startDiscoveryPersistenceChild(t, root, freshConfig), 45*time.Second)
-	t.Log("fresh node with no saved contacts and no seeds remained disconnected while the same community node was reachable")
+	t.Log("fresh node with no saved or usable configured contacts remained disconnected while the same community node was reachable")
 }
 
 func startDiscoveryPersistenceChild(t *testing.T, root string, config discoveryPersistenceConfig) *discoveryPersistenceProcess {
@@ -139,7 +145,14 @@ func runDiscoveryPersistenceChild(t *testing.T, path string) {
 		serverConfig.BootstrapNodes = append(serverConfig.BootstrapNodes, peer)
 	}
 	if strings.HasSuffix(config.Mode, "_cold") && len(serverConfig.BootstrapNodes) != 0 {
-		t.Fatal("cold child must have no configured contacts")
+		t.Fatal("cold child must have no supplied endpoint contacts")
+	}
+	if config.UnavailableSeed {
+		startRehearsalDNS(t)
+		unavailable, err := discover.ParseBootnode(rehearsalEnode(t, 1, "missing.restart.invalid", 40408))
+		requireNoError(t, err)
+		serverConfig.BootstrapNodes = append(serverConfig.BootstrapNodes, unavailable)
+		t.Log("cold child retains an unresolved bootstrap hostname returning NXDOMAIN")
 	}
 	probe := startConfiguredDiscoveryProbe(t, config.KeyNumber, serverConfig)
 	t.Logf("mode=%s pid=%d bootstrap=%d static=%d database=%s", config.Mode, os.Getpid(), len(serverConfig.BootstrapNodes), len(serverConfig.StaticNodes), config.Database)

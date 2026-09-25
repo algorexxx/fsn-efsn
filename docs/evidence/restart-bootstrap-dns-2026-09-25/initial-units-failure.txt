@@ -1,0 +1,226 @@
+go: downloading github.com/cespare/cp v0.1.0
+go: downloading github.com/docker/docker v24.0.7+incompatible
+# github.com/FusionFoundation/efsn/v5/cmd/efsn
+internal/cmdtest/test_cmd.go:36:2: module lookup disabled by GOPROXY=off
+FAIL	github.com/FusionFoundation/efsn/v5/cmd/efsn [setup failed]
+ok  	github.com/FusionFoundation/efsn/v5/p2p/discover	17.512s
+--- FAIL: TestDialStateDynDialBootnode (0.00s)
+    dial_test.go:69: round 3: new tasks mismatch:
+        got ([]p2p.task) (len=2 cap=2) {
+        	(*p2p.dialTask)(0xc0000ff5f0)(dyndial 0000000400000000 <nil>:0),
+        	(*p2p.dialTask)(0xc0000ff620)(dyndial 0000000500000000 <nil>:0)
+        }
+        
+        want ([]p2p.task) (len=3 cap=3) {
+        	(*p2p.dialTask)(0xc0000ff0e0)(dyndial 0000000100000000 <nil>:0),
+        	(*p2p.dialTask)(0xc0000ff110)(dyndial 0000000400000000 <nil>:0),
+        	(*p2p.dialTask)(0xc0000ff140)(dyndial 0000000500000000 <nil>:0)
+        }
+        
+        state: (*p2p.dialstate)(0xc00012efa0)({
+        	maxDynDials: (int) 5,
+        	ntab: (p2p.fakeTable) (len=5 cap=5) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097a20)(enode://00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097ad0)(enode://00000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097b80)(enode://00000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	netrestrict: (*netutil.Netlist)(<nil>),
+        	lookupRunning: (bool) true,
+        	dialing: (map[discover.NodeID]p2p.connFlag) (len=2) {
+        		(discover.NodeID) (len=64 cap=64) 00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000: (p2p.connFlag) dyndial,
+        		(discover.NodeID) (len=64 cap=64) 00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000: (p2p.connFlag) dyndial
+        	},
+        	lookupBuf: ([]*discover.Node) <nil>,
+        	randomNodes: ([]*discover.Node) (len=2 cap=2) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	static: (map[discover.NodeID]*p2p.dialTask) {
+        	},
+        	hist: (*p2p.dialHistory)(0xc0000124c8)((cap=2) {
+        	}),
+        	start: (time.Time) 0001-01-01 00:00:16 +0000 UTC,
+        	bootnodes: ([]*discover.Node) (cap=3) {
+        	}
+        })
+        
+        running: (int) 1
+        
+    dial_test.go:69: round 4: new tasks mismatch:
+        got ([]p2p.task) (len=1 cap=1) {
+        	(*p2p.waitExpireTask)(0xc0000fd338)(wait for dial hist expire (30s))
+        }
+        
+        want ([]p2p.task) (len=1 cap=1) {
+        	(*p2p.dialTask)(0xc0000ff200)(dyndial 0000000200000000 <nil>:0)
+        }
+        
+        state: (*p2p.dialstate)(0xc00012efa0)({
+        	maxDynDials: (int) 5,
+        	ntab: (p2p.fakeTable) (len=5 cap=5) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097a20)(enode://00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097ad0)(enode://00000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097b80)(enode://00000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	netrestrict: (*netutil.Netlist)(<nil>),
+        	lookupRunning: (bool) true,
+        	dialing: (map[discover.NodeID]p2p.connFlag) {
+        	},
+        	lookupBuf: ([]*discover.Node) <nil>,
+        	randomNodes: ([]*discover.Node) (len=2 cap=2) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	static: (map[discover.NodeID]*p2p.dialTask) {
+        	},
+        	hist: (*p2p.dialHistory)(0xc0000124c8)((len=3 cap=4) {
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:34 +0000 UTC
+        		},
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:34 +0000 UTC
+        		},
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:34 +0000 UTC
+        		}
+        	}),
+        	start: (time.Time) 0001-01-01 00:00:16 +0000 UTC,
+        	bootnodes: ([]*discover.Node) (cap=3) {
+        	}
+        })
+        
+        running: (int) 0
+        
+    dial_test.go:69: round 5: new tasks mismatch:
+        got ([]p2p.task) (len=1 cap=1) {
+        	(*p2p.waitExpireTask)(0xc0000fdd48)(wait for dial hist expire (14s))
+        }
+        
+        want ([]p2p.task) (len=1 cap=1) {
+        	(*p2p.dialTask)(0xc0000ff260)(dyndial 0000000300000000 <nil>:0)
+        }
+        
+        state: (*p2p.dialstate)(0xc00012efa0)({
+        	maxDynDials: (int) 5,
+        	ntab: (p2p.fakeTable) (len=5 cap=5) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097a20)(enode://00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097ad0)(enode://00000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097b80)(enode://00000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	netrestrict: (*netutil.Netlist)(<nil>),
+        	lookupRunning: (bool) true,
+        	dialing: (map[discover.NodeID]p2p.connFlag) {
+        	},
+        	lookupBuf: ([]*discover.Node) <nil>,
+        	randomNodes: ([]*discover.Node) (len=2 cap=2) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	static: (map[discover.NodeID]*p2p.dialTask) {
+        	},
+        	hist: (*p2p.dialHistory)(0xc0000124c8)((len=4 cap=4) {
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:34 +0000 UTC
+        		},
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:34 +0000 UTC
+        		},
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:34 +0000 UTC
+        		},
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:50 +0000 UTC
+        		}
+        	}),
+        	start: (time.Time) 0001-01-01 00:00:16 +0000 UTC,
+        	bootnodes: ([]*discover.Node) (cap=3) {
+        	}
+        })
+        
+        running: (int) 0
+        
+    dial_test.go:69: round 6: new tasks mismatch:
+        got ([]p2p.task) (len=2 cap=2) {
+        	(*p2p.dialTask)(0xc0000ffc20)(dyndial 0000000400000000 <nil>:0),
+        	(*p2p.dialTask)(0xc0000ffc50)(dyndial 0000000500000000 <nil>:0)
+        }
+        
+        want ([]p2p.task) (len=3 cap=3) {
+        	(*p2p.dialTask)(0xc0000ff2c0)(dyndial 0000000100000000 <nil>:0),
+        	(*p2p.dialTask)(0xc0000ff2f0)(dyndial 0000000400000000 <nil>:0),
+        	(*p2p.dialTask)(0xc0000ff320)(dyndial 0000000500000000 <nil>:0)
+        }
+        
+        state: (*p2p.dialstate)(0xc00012efa0)({
+        	maxDynDials: (int) 5,
+        	ntab: (p2p.fakeTable) (len=5 cap=5) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097a20)(enode://00000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097ad0)(enode://00000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097b80)(enode://00000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	netrestrict: (*netutil.Netlist)(<nil>),
+        	lookupRunning: (bool) true,
+        	dialing: (map[discover.NodeID]p2p.connFlag) (len=2) {
+        		(discover.NodeID) (len=64 cap=64) 00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000: (p2p.connFlag) dyndial,
+        		(discover.NodeID) (len=64 cap=64) 00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000: (p2p.connFlag) dyndial
+        	},
+        	lookupBuf: ([]*discover.Node) <nil>,
+        	randomNodes: ([]*discover.Node) (len=2 cap=2) {
+        		(*discover.Node)(0xc0000978c0)(enode://00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000),
+        		(*discover.Node)(0xc000097970)(enode://00000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        	},
+        	static: (map[discover.NodeID]*p2p.dialTask) {
+        	},
+        	hist: (*p2p.dialHistory)(0xc0000124c8)((len=2 cap=8) {
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:01:50 +0000 UTC
+        		},
+        		(p2p.pastDial) {
+        			id: (discover.NodeID) (len=64 cap=64) 00000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        			exp: (time.Time) 0001-01-01 00:02:06 +0000 UTC
+        		}
+        	}),
+        	start: (time.Time) 0001-01-01 00:00:16 +0000 UTC,
+        	bootnodes: ([]*discover.Node) (cap=3) {
+        	}
+        })
+        
+        running: (int) 0
+        
+panic: running task counter underflow [recovered]
+	panic: running task counter underflow
+
+goroutine 7 [running]:
+testing.tRunner.func1.2({0x8806e0, 0x98b190})
+	/opt/fusion-toolchain/go/src/testing/testing.go:1545 +0x366
+testing.tRunner.func1()
+	/opt/fusion-toolchain/go/src/testing/testing.go:1548 +0x630
+panic({0x8806e0?, 0x98b190?})
+	/opt/fusion-toolchain/go/src/runtime/panic.go:920 +0x270
+github.com/FusionFoundation/efsn/v5/p2p.runDialTest(0xc0000ee9c0, {0xc00012efa0?, {0xc0000e0480?, 0x8?, 0x10?}})
+	/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/dial_test.go:62 +0x67c
+github.com/FusionFoundation/efsn/v5/p2p.TestDialStateDynDialBootnode(0xc0000ee9c0?)
+	/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/p2p/dial_test.go:236 +0x5085
+testing.tRunner(0xc0000ee9c0, 0x922370)
+	/opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x239
+created by testing.(*T).Run in goroutine 1
+	/opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x82b
+FAIL	github.com/FusionFoundation/efsn/v5/p2p	0.071s
+ok  	github.com/FusionFoundation/efsn/v5/cmd/utils	1.143s
+FAIL

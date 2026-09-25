@@ -23,6 +23,7 @@
 package discover
 
 import (
+	"context"
 	crand "crypto/rand"
 	"encoding/binary"
 	"fmt"
@@ -63,11 +64,13 @@ const (
 )
 
 type Table struct {
-	mutex   sync.Mutex        // protects buckets, bucket content, nursery, rand
-	buckets [nBuckets]*bucket // index of known nodes by distance
-	nursery []*Node           // bootstrap nodes
-	rand    *mrand.Rand       // source of randomness, periodically reseeded
-	ips     netutil.DistinctNetSet
+	mutex       sync.Mutex        // protects buckets, bucket content, nursery, rand
+	buckets     [nBuckets]*bucket // index of known nodes by distance
+	nursery     []*Node           // bootstrap nodes
+	dnsSeeds    []*Node
+	netrestrict *netutil.Netlist
+	rand        *mrand.Rand // source of randomness, periodically reseeded
+	ips         netutil.DistinctNetSet
 
 	db         *nodeDB // database of known nodes
 	refreshReq chan chan struct{}
@@ -203,17 +206,22 @@ func (tab *Table) Close() {
 // are no known nodes in the database.
 func (tab *Table) setFallbackNodes(nodes []*Node) error {
 	for _, n := range nodes {
-		if err := n.validateComplete(); err != nil {
+		if err := n.validateBootstrap(); err != nil {
 			return fmt.Errorf("bad bootstrap/fallback node %q (%v)", n, err)
 		}
 	}
 	tab.nursery = make([]*Node, 0, len(nodes))
+	tab.dnsSeeds = nil
 	for _, n := range nodes {
 		cpy := *n
 		// Recompute cpy.sha because the node might not have been
 		// created by NewNode or ParseNode.
 		cpy.sha = crypto.Keccak256Hash(n.ID[:])
-		tab.nursery = append(tab.nursery, &cpy)
+		if cpy.hostname != "" {
+			tab.dnsSeeds = append(tab.dnsSeeds, &cpy)
+		} else {
+			tab.nursery = append(tab.nursery, &cpy)
+		}
 	}
 	return nil
 }
@@ -349,6 +357,15 @@ func (tab *Table) refresh() <-chan struct{} {
 
 // loop schedules refresh, revalidate runs and coordinates shutdown.
 func (tab *Table) loop() {
+	ctx, cancel := context.WithCancel(context.Background())
+	var resolvers sync.WaitGroup
+	for _, seed := range tab.dnsSeeds {
+		resolvers.Add(1)
+		go func(seed *Node) {
+			defer resolvers.Done()
+			tab.bootstrapLoop(ctx, seed)
+		}(seed)
+	}
 	var (
 		revalidate     = time.NewTimer(tab.nextRevalidateTime())
 		refresh        = time.NewTicker(refreshInterval)
@@ -395,9 +412,11 @@ loop:
 		}
 	}
 
+	cancel()
 	if tab.net != nil {
 		tab.net.close()
 	}
+	resolvers.Wait()
 	if refreshDone != nil {
 		<-refreshDone
 	}
@@ -437,11 +456,25 @@ func (tab *Table) doRefresh(done chan struct{}) {
 
 func (tab *Table) loadSeedNodes() {
 	seeds := tab.db.querySeeds(seedCount, seedMaxAge)
-	seeds = append(seeds, tab.nursery...)
 	for i := range seeds {
 		seed := seeds[i]
 		age := log.Lazy{Fn: func() interface{} { return time.Since(tab.db.lastPongReceived(seed.ID)) }}
 		log.Debug("Found seed node in database", "id", seed.ID, "addr", seed.addr(), "age", age)
+		tab.mutex.Lock()
+		b := tab.bucket(seed.sha)
+		known := false
+		for _, existing := range b.entries {
+			if existing.ID == seed.ID {
+				known = true
+				break
+			}
+		}
+		if !known && !tab.bumpOrAdd(b, seed) {
+			tab.addReplacement(b, seed)
+		}
+		tab.mutex.Unlock()
+	}
+	for _, seed := range tab.nursery {
 		tab.add(seed)
 	}
 }

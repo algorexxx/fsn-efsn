@@ -1,0 +1,19 @@
+=== RUN   TestRestartBootstrapRefreshKeepsResolvedAddress
+--- PASS: TestRestartBootstrapRefreshKeepsResolvedAddress (0.01s)
+=== RUN   TestRestartBootstrapLookupDeadlineAndCancellation
+    bootstrap_deadline_test.go:42: cancelEarly=false elapsed=5.0068067s err=lookup blocked.restart.invalid: i/o timeout
+    bootstrap_deadline_test.go:42: cancelEarly=true elapsed=61.3411ms err=lookup blocked.restart.invalid: operation was canceled
+--- PASS: TestRestartBootstrapLookupDeadlineAndCancellation (5.07s)
+=== RUN   TestRestartBootstrapConfiguration
+=== RUN   TestRestartBootstrapConfiguration/missing.restart.invalid:40408
+=== RUN   TestRestartBootstrapConfiguration/127.0.0.1:40408
+=== RUN   TestRestartBootstrapConfiguration/[::1]:40408
+=== RUN   TestRestartBootstrapConfiguration/seed.restart.invalid:0?discport=40408
+--- PASS: TestRestartBootstrapConfiguration (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/missing.restart.invalid:40408 (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/127.0.0.1:40408 (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/[::1]:40408 (0.00s)
+    --- PASS: TestRestartBootstrapConfiguration/seed.restart.invalid:0?discport=40408 (0.00s)
+=== RUN   TestRestartBootstrapNodeEncodingUnchanged
+--- PASS: TestRestartBootstrapNodeEncodingUnchanged (0.00s)
+PASS

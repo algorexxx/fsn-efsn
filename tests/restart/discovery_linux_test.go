@@ -50,13 +50,16 @@ func TestRestartDiscoveryRehearsal(t *testing.T) {
 type rehearsalDNS struct {
 	mu      sync.Mutex
 	answers map[string][][4]byte
+	codes   map[string]dnsmessage.RCode
+	dropped map[string]bool
+	queries map[string]int
 }
 
 func startRehearsalDNS(t *testing.T) *rehearsalDNS {
 	t.Helper()
 	conn, err := net.ListenPacket("udp4", "127.0.0.1:0")
 	requireNoError(t, err)
-	dns := &rehearsalDNS{answers: make(map[string][][4]byte)}
+	dns := &rehearsalDNS{answers: make(map[string][][4]byte), codes: make(map[string]dnsmessage.RCode), dropped: make(map[string]bool), queries: make(map[string]int)}
 	done := make(chan struct{})
 	go func() {
 		defer close(done)
@@ -72,10 +75,18 @@ func startRehearsalDNS(t *testing.T) *rehearsalDNS {
 				return
 			}
 			response := dnsmessage.Message{Header: dnsmessage.Header{ID: request.ID, Response: true, Authoritative: true, RecursionDesired: request.RecursionDesired, RecursionAvailable: true}, Questions: request.Questions}
+			drop := false
 			for _, question := range request.Questions {
 				dns.mu.Lock()
 				answers, found := dns.answers[question.Name.String()]
+				code := dns.codes[question.Name.String()]
+				drop = drop || dns.dropped[question.Name.String()]
+				dns.queries[question.Name.String()]++
 				dns.mu.Unlock()
+				if code != 0 {
+					response.Header.RCode = code
+					continue
+				}
 				if !found {
 					response.Header.RCode = dnsmessage.RCodeNameError
 					continue
@@ -85,6 +96,9 @@ func startRehearsalDNS(t *testing.T) *rehearsalDNS {
 						response.Answers = append(response.Answers, dnsmessage.Resource{Header: dnsmessage.ResourceHeader{Name: question.Name, Type: dnsmessage.TypeA, Class: dnsmessage.ClassINET, TTL: 0}, Body: &dnsmessage.AResource{A: ip}})
 					}
 				}
+			}
+			if drop {
+				continue
 			}
 			encoded, err := response.Pack()
 			if err != nil {
@@ -98,7 +112,7 @@ func startRehearsalDNS(t *testing.T) *rehearsalDNS {
 	}()
 	previous := net.DefaultResolver
 	net.DefaultResolver = &net.Resolver{PreferGo: true, Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-		return (&net.Dialer{}).DialContext(ctx, "udp4", conn.LocalAddr().String())
+		return (&net.Dialer{Resolver: previous}).DialContext(ctx, "udp4", conn.LocalAddr().String())
 	}}
 	t.Cleanup(func() {
 		net.DefaultResolver = previous
@@ -112,6 +126,8 @@ func (dns *rehearsalDNS) set(name string, addresses ...[4]byte) {
 	dns.mu.Lock()
 	defer dns.mu.Unlock()
 	dns.answers[name+"."] = addresses
+	delete(dns.codes, name+".")
+	delete(dns.dropped, name+".")
 }
 
 func rehearsalEnode(t *testing.T, keyNumber int, host string, port int) string {
@@ -170,7 +186,7 @@ func rehearseDiscoveryCLIFailures(t *testing.T) {
 			command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestRestartDiscoveryRehearsal$", "-test.v")
 			command.Env = append(os.Environ(), "FUSION_RESTART_DISCOVERY_CLI="+mode)
 			output, err := command.CombinedOutput()
-			if mode == "healthy" || mode == "empty" || mode == "nodiscover_empty" {
+			if mode != "malformed" {
 				if err != nil || !strings.Contains(string(output), "bootstrap configuration returned") {
 					t.Fatalf("expected successful configuration: %v\n%s", err, output)
 				}
@@ -245,7 +261,9 @@ func startConfiguredDiscoveryProbe(t *testing.T, keyNumber int, config p2p.Confi
 	config.MaxPeers = 12
 	config.DialRatio = 2
 	config.ListenAddr = listenAddr
-	config.NetRestrict = restrict
+	if config.NetRestrict == nil {
+		config.NetRestrict = restrict
+	}
 	config.Protocols = []p2p.Protocol{{Name: "restartprobe", Version: 1, Length: 1, Run: probe.run}}
 	probe.server = &p2p.Server{Config: config}
 	requireNoError(t, probe.server.Start())

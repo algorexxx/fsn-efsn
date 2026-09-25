@@ -1,0 +1,16 @@
+{
+  "result": "PASS: corrected combined Linux rehearsal, focused Linux race regressions and native Windows discovery checks",
+  "live_durations": {
+    "TestRestartBootstrapDNSRehearsal": "44.47s",
+    "TestRestartDiscoveryRehearsal": "404.24s"
+  },
+  "live_leaf_cases": 17,
+  "separate_cache_child_processes": 5,
+  "broad_package_failures": [
+    "TestParseNode",
+    "TestForwardCompatibility",
+    "TestProtocolHandshake"
+  ],
+  "fixture_race": "Retained in full-race.txt and final-race.txt; corrected explicit resolver in verified-race.txt; node runtime sources unchanged by fixture correction",
+  "limitations": "Loopback-only live tests; public subnet accounting and stale revalidation remain open; no real keys, chain execution or deployment"
+}

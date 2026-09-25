@@ -5,6 +5,10 @@ This follows the [discovery resilience investigation](restart-discovery-resilien
 The scenario assumes that independent community operators remain online. Keeping
 a chain alive after its sole participant leaves is outside scope.
 
+The subsequent [bootstrap DNS candidate](restart-bootstrap-dns.md) implements
+the outage/retry work below as P12 and fixes a further restored-seed interaction
+as P13. This document retains the P11 baseline findings and acceptance criteria.
+
 ## What the live test establishes
 
 A node can reconnect from its own persisted discovery database after the original

@@ -256,6 +256,7 @@ func newUDP(c conn, cfg Config) (*Table, *udp, error) {
 		return nil, nil, err
 	}
 	udp.Table = tab
+	tab.netrestrict = cfg.NetRestrict
 
 	go udp.loop()
 	go udp.readLoop(cfg.Unhandled)

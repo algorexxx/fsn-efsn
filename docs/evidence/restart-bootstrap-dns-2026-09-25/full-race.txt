@@ -1,0 +1,226 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartBootstrapDNSRehearsal
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/unresolved
+    bootstrap_dns_linux_test.go:69: actual efsn dumpconfig mode=unresolved exit=<nil>; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/cli_empty_override
+    bootstrap_dns_linux_test.go:69: actual efsn dumpconfig mode=cli_empty_override exit=<nil>; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/toml_operator_command/malformed
+    bootstrap_dns_linux_test.go:69: actual efsn dumpconfig mode=malformed exit=exit status 1; hostname preservation, override or malformed rejection verified
+=== RUN   TestRestartBootstrapDNSRehearsal/outage_recovery_udp_only_and_move
+INFO [09-25|16:50:56.099] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:57666
+INFO [09-25|16:50:56.102] Starting P2P networking 
+INFO [09-25|16:50:56.105] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:37005
+INFO [09-25|16:50:56.107] Starting P2P networking 
+INFO [09-25|16:50:56.109] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:37005
+INFO [09-25|16:50:56.113] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:42447
+INFO [09-25|16:50:56.114] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:42447
+WARN [09-25|16:50:56.121] Bootstrap contact unavailable; retrying  host=community.restart.invalid id=79be667ef9dcbbac err="lookup community.restart.invalid on 10.255.255.254:53: no such host"
+WARN [09-25|16:50:56.121] Bootstrap contact unavailable; retrying  host=servfail.restart.invalid  id=5cbdf0646e5db4ea err="lookup servfail.restart.invalid on 10.255.255.254:53: server misbehaving"
+    bootstrap_dns_linux_test.go:128: startup returned while NXDOMAIN, SERVFAIL and a nonresponding DNS server were present; no initial contacts acquired
+WARN [09-25|16:51:01.115] Bootstrap contact unavailable; retrying  host=timeout.restart.invalid   id=fff97bd5755eeea4 err="lookup timeout.restart.invalid: i/o timeout"
+INFO [09-25|16:51:06.624] Bootstrap contact recovered              host=community.restart.invalid id=79be667ef9dcbbac
+    bootstrap_dns_linux_test.go:135: same running client recovered through second A answer and UDP-only seed; reached nondialing community and exchanged message 51
+INFO [09-25|16:51:08.668] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.3:57666
+    bootstrap_dns_linux_test.go:149: running client contacted empty UDP seed at changed IP with unchanged key/port, without reparsing configuration or restarting
+    bootstrap_dns_linux_test.go:155: shutdown completed within two seconds with failing DNS contacts still configured
+=== RUN   TestRestartBootstrapDNSRehearsal/restricted_answers
+INFO [09-25|16:51:37.699] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40875
+INFO [09-25|16:51:37.700] Starting P2P networking 
+INFO [09-25|16:51:37.702] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:36543
+INFO [09-25|16:51:37.703] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:36543
+WARN [09-25|16:51:37.703] Bootstrap contact unavailable; retrying  host=restricted.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for restricted.restart.invalid"
+    bootstrap_dns_linux_test.go:173: DNS answer outside NetRestrict was not contacted or introduced into the peer table
+=== RUN   TestRestartBootstrapDNSRehearsal/shutdown_during_blocked_lookup
+INFO [09-25|16:51:38.755] Starting P2P networking 
+INFO [09-25|16:51:38.757] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:43099
+INFO [09-25|16:51:38.758] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:43099
+    bootstrap_dns_linux_test.go:188: shutdown cancelled an in-flight nonresponding DNS lookup within one second
+--- PASS: TestRestartBootstrapDNSRehearsal (44.93s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command (3.22s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/unresolved (1.46s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/cli_empty_override (1.43s)
+        --- PASS: TestRestartBootstrapDNSRehearsal/toml_operator_command/malformed (0.33s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/outage_recovery_udp_only_and_move (40.59s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/restricted_answers (1.06s)
+    --- PASS: TestRestartBootstrapDNSRehearsal/shutdown_during_blocked_lookup (0.05s)
+=== RUN   TestRestartDiscoveryRehearsal
+=== RUN   TestRestartDiscoveryRehearsal/dns_parse_move_and_multiple_answers
+    discovery_linux_test.go:178: v4 resolves once, keeps one IP, loses hostname and does not dial the second answer; reparse moves IP with identical node ID; v5 rejects DNS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/healthy
+    discovery_linux_test.go:199: healthy:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=1 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/bad_then_good
+    discovery_linux_test.go:199: bad_then_good:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=2 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/good_then_bad
+    discovery_linux_test.go:199: good_then_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=2 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/all_bad
+==================
+WARNING: DATA RACE
+Read at 0x000001adfb08 by goroutine 197:
+  net.(*Dialer).DialContext()
+      /opt/fusion-toolchain/go/src/net/dial.go:488 +0x65e
+  github.com/FusionFoundation/efsn/v5/tests/restart.startRehearsalDNS.func2()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/discovery_linux_test.go:115 +0xa9
+  net.(*Resolver).dial()
+      /opt/fusion-toolchain/go/src/net/lookup.go:687 +0x13d
+  net.(*Resolver).exchange()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:177 +0x3ba
+  net.(*Resolver).tryOneName()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:277 +0x5b0
+  net.(*Resolver).goLookupIPCNAMEOrder.func3.1()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:653 +0xf0
+  net.(*Resolver).goLookupIPCNAMEOrder.func3.2()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:656 +0x41
+
+Previous write at 0x000001adfb08 by goroutine 265:
+  github.com/FusionFoundation/efsn/v5/tests/restart.startRehearsalDNS.func3()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/discovery_linux_test.go:118 +0x50
+  testing.(*common).Cleanup.func1()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1169 +0x182
+  testing.(*common).runCleanup()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1347 +0x1c2
+  testing.tRunner.func2()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1589 +0x50
+  runtime.deferreturn()
+      /opt/fusion-toolchain/go/src/runtime/panic.go:477 +0x30
+  testing.(*T).Run.func1()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+
+Goroutine 197 (running) created at:
+  net.(*Resolver).goLookupIPCNAMEOrder.func3()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:652 +0x257
+  net.(*Resolver).goLookupIPCNAMEOrder()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:665 +0xe42
+  net.(*Resolver).goLookupIP()
+      /opt/fusion-toolchain/go/src/net/dnsclient_unix.go:591 +0xeb
+  net.(*Resolver).lookupIP()
+      /opt/fusion-toolchain/go/src/net/lookup_unix.go:66 +0x25d
+  net.(*Resolver).lookupIP-fm()
+      <autogenerated>:1 +0x95
+  net.glob..func1()
+      /opt/fusion-toolchain/go/src/net/hook.go:23 +0x82
+  net.(*Resolver).lookupIPAddr.func1()
+      /opt/fusion-toolchain/go/src/net/lookup.go:324 +0xa4
+  internal/singleflight.(*Group).doCall()
+      /opt/fusion-toolchain/go/src/internal/singleflight/singleflight.go:93 +0x5b
+  internal/singleflight.(*Group).DoChan.func1()
+      /opt/fusion-toolchain/go/src/internal/singleflight/singleflight.go:86 +0x6b
+
+Goroutine 265 (finished) created at:
+  testing.(*T).Run()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x82a
+  github.com/FusionFoundation/efsn/v5/tests/restart.TestRestartDiscoveryRehearsal()
+      /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/discovery_linux_test.go:44 +0x52d
+  testing.tRunner()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+  testing.(*T).Run.func1()
+      /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+==================
+    discovery_linux_test.go:199: all_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=1 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+    testing.go:1465: race detected during execution of test
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_bad
+    discovery_linux_test.go:199: nodiscover_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=1 v5=0 discoveryDisabled=true
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/empty
+    discovery_linux_test.go:199: empty:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=0 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_empty
+    discovery_linux_test.go:199: nodiscover_empty:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:228: bootstrap configuration returned: v4=0 v5=0 discoveryDisabled=true
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/malformed
+    discovery_linux_test.go:199: malformed:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|16:51:47.330] Bootstrap URL invalid                    enode=not-an-enode err="invalid URL scheme, want \"enode\""
+=== NAME  TestRestartDiscoveryRehearsal/cli_bootstrap_failures
+    testing.go:1465: race detected during execution of test
+=== RUN   TestRestartDiscoveryRehearsal/seed_outage_and_static_recovery
+    discovery_linux_test.go:353: two fresh nodes discovered each other through one seed and exchanged an authenticated RLPx subprotocol message
+    discovery_linux_test.go:366: existing peers still exchange messages after 25 seconds with seed stopped; fresh nodes with an offline seed or no seeds remain disconnected
+    discovery_linux_test.go:374: both fresh nodes recovered through a literal-IP static peer without restarting or restoring the seed
+=== RUN   TestRestartDiscoveryRehearsal/persisted_peers_after_seed_shutdown
+    discovery_persistence_linux_test.go:46: mature child connected; waiting 340 real seconds for the five-minute eligibility period and 30-second persistence tick
+    discovery_persistence_linux_test.go:53: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:158: mode=learn_short pid=719 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown3121838635/001/short
+            discovery_persistence_linux_test.go:177: community connection established
+        --- PASS: TestRestartDiscoveryRehearsal (1.59s)
+        PASS
+    discovery_persistence_linux_test.go:54: closed database contains recent pong metadata but no complete endpoint record
+    discovery_persistence_linux_test.go:57: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:158: mode=short_cold pid=726 bootstrap=0 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown3121838635/001/short
+            discovery_persistence_linux_test.go:167: no connection acquired during 25-second observation
+        --- PASS: TestRestartDiscoveryRehearsal (25.02s)
+        PASS
+    discovery_persistence_linux_test.go:58: short-lived child had pong metadata but no saved endpoint; a separate cold process with no seed remained disconnected
+    discovery_persistence_linux_test.go:60: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:158: mode=learn_mature pid=713 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown3121838635/001/mature
+            discovery_persistence_linux_test.go:177: community connection established
+            discovery_persistence_linux_test.go:186: 340-second real-time peer maturation complete
+        --- PASS: TestRestartDiscoveryRehearsal (341.59s)
+        PASS
+    discovery_persistence_linux_test.go:61: read-only cold inspection verified exact community endpoint and recent pong: enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:44541
+    discovery_persistence_linux_test.go:66: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:155: cold child retains an unresolved bootstrap hostname returning NXDOMAIN
+            discovery_persistence_linux_test.go:158: mode=mature_cold pid=1500 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown3121838635/001/mature
+        WARN [09-25|16:58:08.928] Bootstrap contact unavailable; retrying  host=missing.restart.invalid id=79be667ef9dcbbac err="lookup missing.restart.invalid on 10.255.255.254:53: no such host"
+            discovery_persistence_linux_test.go:177: community connection established
+            discovery_persistence_linux_test.go:199: sent message 42 through connection obtained from saved contacts
+        --- PASS: TestRestartDiscoveryRehearsal (0.60s)
+        PASS
+    discovery_persistence_linux_test.go:76: separate cold process reconnected from genuine on-disk peers and sent message 42 despite NXDOMAIN bootstrap: no static peers, original seed stopped, community outbound dialing disabled
+    discovery_persistence_linux_test.go:85: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:155: cold child retains an unresolved bootstrap hostname returning NXDOMAIN
+            discovery_persistence_linux_test.go:158: mode=fresh_cold pid=1511 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown3121838635/001/fresh
+        WARN [09-25|16:58:10.528] Bootstrap contact unavailable; retrying  host=missing.restart.invalid id=79be667ef9dcbbac err="lookup missing.restart.invalid on 10.255.255.254:53: no such host"
+            discovery_persistence_linux_test.go:167: no connection acquired during 25-second observation
+        --- PASS: TestRestartDiscoveryRehearsal (25.03s)
+        PASS
+    discovery_persistence_linux_test.go:86: fresh node with no saved contacts and no seeds remained disconnected while the same community node was reachable
+=== NAME  TestRestartDiscoveryRehearsal
+    testing.go:1465: race detected during execution of test
+--- FAIL: TestRestartDiscoveryRehearsal (404.22s)
+    --- PASS: TestRestartDiscoveryRehearsal/dns_parse_move_and_multiple_answers (0.00s)
+    --- FAIL: TestRestartDiscoveryRehearsal/cli_bootstrap_failures (7.20s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/healthy (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/bad_then_good (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/good_then_bad (1.02s)
+        --- FAIL: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/all_bad (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_bad (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/empty (1.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_empty (1.02s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/malformed (0.02s)
+    --- PASS: TestRestartDiscoveryRehearsal/seed_outage_and_static_recovery (26.68s)
+    --- PASS: TestRestartDiscoveryRehearsal/persisted_peers_after_seed_shutdown (370.33s)
+=== NAME  
+    testing.go:1465: race detected during execution of test
+FAIL
