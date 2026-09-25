@@ -1,0 +1,77 @@
+=== RUN   TestFullStateOfflineRecovery
+INFO [09-25|08:29:31.017] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\reference\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:22: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:32.912] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\reference\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:22: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+INFO [09-25|08:29:33.027] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\reference\chaindata cache=256.00MiB handles=128
+INFO [09-25|08:29:33.098] Loaded most recent local header          number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+INFO [09-25|08:29:33.098] Loaded most recent local full block      number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+INFO [09-25|08:29:33.098] Loaded most recent local fast block      number=15,130,080 hash="e463e5…951458" td=63,370,514,513 age=11mo3w1d
+INFO [09-25|08:29:33.133] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.279ms mgasps=4.959 order=6 number=15,130,081 hash="7e16c5…9af3da" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dfab33…00ad59" parentHash="e463e5…951458" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:29:33.381] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.998ms mgasps=5.309 order=5 number=15,130,082 hash="9aaa77…ec862a" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="f19455…201be8" parentHash="7e16c5…9af3da" time=1,790,121,600 age=2d6h29m  cache=0.00B
+INFO [09-25|08:29:33.409] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.342ms mgasps=3.973 order=4 number=15,130,083 hash="94ed04…727345" difficulty=74 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ea4375…af6cf4" parentHash="9aaa77…ec862a" time=1,790,121,720 age=2d6h27m  cache=0.00B
+    full_state_offline_test.go:32: reference stage=1 hash=0x7e16c5dabebb465314f9d48ba24bbb2cb836768a5264d5193329b46fd69af3da root=0xdfab33d93bdcb5e278b642a8894bd8422ca0a47bd86e111f117bd00c3500ad59 tickets=485 changedAccounts=8
+    full_state_offline_test.go:32: reference stage=2 hash=0x9aaa779dad8d3883bff738d99f6a3c360812f658ccffd4778a6a4aa0c9ec862a root=0xf19455dbbd7f131bcb9179c591c967d614470d07d0814fb74b52ac458f201be8 tickets=480 changedAccounts=2
+    full_state_offline_test.go:32: reference stage=3 hash=0x94ed041a999c47e4a3797f3f33067e3cdf011add53b786832f3ad334d9727345 root=0xea437527f99ff52f682abfe458941f2a4a56b8023d8fd7f3d4e99dd7efaf6cf4 tickets=1 changedAccounts=2
+    full_state_offline_test.go:34: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_offline_test.go:34: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_offline_test.go:34: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_offline_test.go:34: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; blocks=3 totalRewardWei=937500000000000000; no database opened
+=== RUN   TestFullStateOfflineRecovery/completion
+INFO [09-25|08:29:33.791] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\completion\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:35.677] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\completion\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+INFO [09-25|08:29:35.790] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\completion\verifier\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:37.298] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\completion\verifier\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+    full_state_offline_test.go:52: complete-state stage=1 kill-after=completion: exact artifact recovered; independent import and cold ledger agree
+    full_state_offline_test.go:52: complete-state stage=2 kill-after=completion: exact artifact recovered; independent import and cold ledger agree
+    full_state_offline_test.go:52: complete-state stage=3 kill-after=completion: exact artifact recovered; independent import and cold ledger agree
+=== RUN   TestFullStateOfflineRecovery/export
+INFO [09-25|08:29:42.095] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\export\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:43.346] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\export\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+INFO [09-25|08:29:43.440] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\export\verifier\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:44.681] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\export\verifier\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+    full_state_offline_test.go:52: complete-state stage=1 kill-after=export: exact artifact recovered; independent import and cold ledger agree
+    full_state_offline_test.go:52: complete-state stage=2 kill-after=export: exact artifact recovered; independent import and cold ledger agree
+    full_state_offline_test.go:52: complete-state stage=3 kill-after=export: exact artifact recovered; independent import and cold ledger agree
+=== RUN   TestFullStateOfflineRecovery/import
+INFO [09-25|08:29:51.876] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\import\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:53.336] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\import\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+INFO [09-25|08:29:53.417] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\import\verifier\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:29:54.746] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\import\verifier\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+    full_state_offline_test.go:52: complete-state stage=1 kill-after=import: exact artifact recovered; independent import and cold ledger agree
+    full_state_offline_test.go:52: complete-state stage=2 kill-after=import: exact artifact recovered; independent import and cold ledger agree
+    full_state_offline_test.go:52: complete-state stage=3 kill-after=import: exact artifact recovered; independent import and cold ledger agree
+=== RUN   TestFullStateOfflineRecovery/reservation
+INFO [09-25|08:29:59.882] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\reservation\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:30:01.984] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\reservation\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+INFO [09-25|08:30:02.989] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\reservation\working\chaindata cache=16.00MiB  handles=16  readonly=true
+    full_state_offline_test.go:40: kill-after=reservation: repeat signing and export refused; chain bytes unchanged
+=== RUN   TestFullStateOfflineRecovery/signature
+INFO [09-25|08:30:03.537] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\signature\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+INFO [09-25|08:30:05.383] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\signature\working\chaindata cache=256.00MiB handles=128
+    full_state_offline_test.go:38: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+INFO [09-25|08:30:06.367] Allocated cache and file handles         database=C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\full-state-offline-windows-2026-09-25\signature\working\chaindata cache=16.00MiB  handles=16  readonly=true
+    full_state_offline_test.go:40: kill-after=signature: repeat signing and export refused; chain bytes unchanged
+INFO [09-25|08:30:06.891] Blockchain manager stopped 
+--- PASS: TestFullStateOfflineRecovery (35.91s)
+    --- PASS: TestFullStateOfflineRecovery/completion (8.32s)
+    --- PASS: TestFullStateOfflineRecovery/export (9.78s)
+    --- PASS: TestFullStateOfflineRecovery/import (8.01s)
+    --- PASS: TestFullStateOfflineRecovery/reservation (3.66s)
+    --- PASS: TestFullStateOfflineRecovery/signature (3.36s)
+PASS

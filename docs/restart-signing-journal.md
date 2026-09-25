@@ -188,8 +188,9 @@ existing read-only `Reader` with the chain service stopped and its database
 lock held. It opens an existing journal and exports completed artifacts without
 a signer callback. Windows and Linux tests pass all three controlled stages
 across completion-before-export, export-before-import and import-before-acknowledgment
-process cuts using small synthetic databases. Unfinished attempts are refused.
-The complete preserved-state composition remains to be tested. The test-only node
+process cuts using small synthetic databases and, in the 25 September follow-up,
+complete preserved state with public test-key substitutions. Unfinished attempts
+are refused. The test-only node
 constructor in `node_rehearsal_linux_test.go` checks `IsMining()` before building
 and sealing, but that does not freeze peer imports or serialize all concurrent
 construction requests. It only accepts public test keys and is not a production
@@ -215,13 +216,12 @@ The operator workflow around these library operations still needs to:
    a lifetime block quota. Enable ordinary donation mining only after controlled
    construction has ended and the reviewed cleanup state is present.
 
-Before real-key access, extend the full-state synthetic two-process rehearsal
-across completion-before-export, export-before-import and import-before-acknowledgment
-interruptions. Assert exact artifact recovery, no second callback, independent
-import/accounting agreement, and refusal of conflicting or unfinished attempts.
-The small-state offline composition now covers these boundaries. The earlier
-full-state service tests cover the larger execution dataset separately; their
-combined full-state and production key workflow remains unproven.
+The complete-state offline rehearsal now passes nine completed process cuts and
+two unfinished cuts per platform, alongside the small-state conflicting-input
+regressions. Exact artifact recovery, no second callback, independent imports,
+cold ledgers and owner-by-owner accounting agree. Production key access and the
+operator approval/custody workflow above remain unproven; the tests use only
+public scalars 1 and 2.
 
 In parallel with release preparation, finish the real signer custody/adapter and
 live purchase-drain procedures above, review the actual-address ledger and fresh

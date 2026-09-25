@@ -1,0 +1,142 @@
+=== RUN   TestOfflineRecoveryProcessCuts
+=== RUN   TestOfflineRecoveryProcessCuts/completion
+INFO [09-25|08:31:43.954] Persisted trie from memory database      nodes=8 size=996.00B time="307.981µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-25|08:31:43.976] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:31:43.977] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:31:43.978] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:31:43.979] Blockchain manager stopped 
+INFO [09-25|08:31:43.981] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:31:43.981] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:31:43.982] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:31:43.982] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryProcessCutscompletion3485439793/001/working cache=16.00MiB handles=16
+INFO [09-25|08:31:44.047] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryProcessCutscompletion3485439793/001/verifier cache=16.00MiB handles=16
+INFO [09-25|08:31:44.177] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=23.052ms mgasps=0.921 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:31:44.264] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.933ms mgasps=1.183 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=2d6h31m  cache=0.00B
+INFO [09-25|08:31:44.309] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.217ms  mgasps=3.413 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=2d6h29m  cache=0.00B
+    recovery_offline_test.go:51: stage=1 kill-after=completion: exact export recovered, one callback, independent import and cold ledger agree
+    recovery_offline_test.go:51: stage=2 kill-after=completion: exact export recovered, one callback, independent import and cold ledger agree
+    recovery_offline_test.go:51: stage=3 kill-after=completion: exact export recovered, one callback, independent import and cold ledger agree
+INFO [09-25|08:31:53.235] Blockchain manager stopped 
+=== RUN   TestOfflineRecoveryProcessCuts/export
+INFO [09-25|08:31:53.303] Persisted trie from memory database      nodes=8 size=996.00B time="76.736µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-25|08:31:53.320] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:31:53.321] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:31:53.321] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:31:53.322] Blockchain manager stopped 
+INFO [09-25|08:31:53.323] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:31:53.323] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:31:53.324] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:31:53.324] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryProcessCutsexport1288283595/001/working cache=16.00MiB handles=16
+INFO [09-25|08:31:53.377] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryProcessCutsexport1288283595/001/verifier cache=16.00MiB handles=16
+INFO [09-25|08:31:53.477] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.515ms mgasps=1.368 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:31:53.544] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.491ms mgasps=1.573 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=2d6h31m  cache=0.00B
+INFO [09-25|08:31:53.592] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.250ms  mgasps=3.395 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=2d6h29m  cache=0.00B
+    recovery_offline_test.go:51: stage=1 kill-after=export: exact export recovered, one callback, independent import and cold ledger agree
+    recovery_offline_test.go:51: stage=2 kill-after=export: exact export recovered, one callback, independent import and cold ledger agree
+    recovery_offline_test.go:51: stage=3 kill-after=export: exact export recovered, one callback, independent import and cold ledger agree
+INFO [09-25|08:32:02.426] Blockchain manager stopped 
+=== RUN   TestOfflineRecoveryProcessCuts/import
+INFO [09-25|08:32:02.493] Persisted trie from memory database      nodes=8 size=996.00B time="84.194µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-25|08:32:02.510] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:02.511] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:02.511] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:02.512] Blockchain manager stopped 
+INFO [09-25|08:32:02.513] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:02.513] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:02.514] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:02.515] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryProcessCutsimport3340896337/001/working cache=16.00MiB handles=16
+INFO [09-25|08:32:02.570] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryProcessCutsimport3340896337/001/verifier cache=16.00MiB handles=16
+INFO [09-25|08:32:02.669] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.306ms mgasps=1.387 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:32:02.737] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.369ms mgasps=1.588 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=2d6h32m  cache=0.00B
+INFO [09-25|08:32:02.784] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.857ms  mgasps=3.095 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=2d6h30m  cache=0.00B
+    recovery_offline_test.go:51: stage=1 kill-after=import: exact export recovered, one callback, independent import and cold ledger agree
+    recovery_offline_test.go:51: stage=2 kill-after=import: exact export recovered, one callback, independent import and cold ledger agree
+    recovery_offline_test.go:51: stage=3 kill-after=import: exact export recovered, one callback, independent import and cold ledger agree
+INFO [09-25|08:32:11.813] Blockchain manager stopped 
+--- PASS: TestOfflineRecoveryProcessCuts (27.95s)
+    --- PASS: TestOfflineRecoveryProcessCuts/completion (9.36s)
+    --- PASS: TestOfflineRecoveryProcessCuts/export (9.19s)
+    --- PASS: TestOfflineRecoveryProcessCuts/import (9.39s)
+=== RUN   TestOfflineRecoveryUncertainCuts
+=== RUN   TestOfflineRecoveryUncertainCuts/reservation
+INFO [09-25|08:32:11.888] Persisted trie from memory database      nodes=8 size=996.00B time="76.24µs"     gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-25|08:32:11.905] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:11.906] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:11.906] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:11.907] Blockchain manager stopped 
+INFO [09-25|08:32:11.908] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:11.909] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:11.909] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:11.910] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryUncertainCutsreservation1941885054/001/working cache=16.00MiB handles=16
+INFO [09-25|08:32:11.962] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryUncertainCutsreservation1941885054/001/verifier cache=16.00MiB handles=16
+INFO [09-25|08:32:12.058] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.066ms mgasps=1.409 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:32:12.126] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.625ms mgasps=1.558 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=2d6h32m  cache=0.00B
+INFO [09-25|08:32:12.169] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.009ms  mgasps=3.532 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=2d6h30m  cache=0.00B
+INFO [09-25|08:32:12.491] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryUncertainCutsreservation1941885054/001/working cache=16.00MiB handles=16 readonly=true
+    recovery_offline_test.go:358: kill-after=reservation: repeat signing and export refused; chain bytes unchanged
+INFO [09-25|08:32:12.653] Blockchain manager stopped 
+=== RUN   TestOfflineRecoveryUncertainCuts/signature
+INFO [09-25|08:32:12.711] Persisted trie from memory database      nodes=8 size=996.00B time="82.076µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-25|08:32:12.726] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:12.727] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:12.728] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:12.728] Blockchain manager stopped 
+INFO [09-25|08:32:12.730] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:12.731] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:12.731] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:12.731] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryUncertainCutssignature1399233350/001/working cache=16.00MiB handles=16
+INFO [09-25|08:32:12.784] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryUncertainCutssignature1399233350/001/verifier cache=16.00MiB handles=16
+INFO [09-25|08:32:12.883] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.631ms mgasps=1.204 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:32:12.955] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.422ms mgasps=1.581 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=2d6h32m  cache=0.00B
+INFO [09-25|08:32:13.001] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.743ms  mgasps=3.695 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=2d6h30m  cache=0.00B
+INFO [09-25|08:32:13.357] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryUncertainCutssignature1399233350/001/working cache=16.00MiB handles=16 readonly=true
+    recovery_offline_test.go:358: kill-after=signature: repeat signing and export refused; chain bytes unchanged
+INFO [09-25|08:32:13.534] Blockchain manager stopped 
+--- PASS: TestOfflineRecoveryUncertainCuts (1.70s)
+    --- PASS: TestOfflineRecoveryUncertainCuts/reservation (0.82s)
+    --- PASS: TestOfflineRecoveryUncertainCuts/signature (0.88s)
+=== RUN   TestOfflineRecoveryRefusals
+INFO [09-25|08:32:13.588] Persisted trie from memory database      nodes=8 size=996.00B time="70.175µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+INFO [09-25|08:32:13.603] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:13.604] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:13.604] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w1d
+INFO [09-25|08:32:13.605] Blockchain manager stopped 
+INFO [09-25|08:32:13.606] Loaded most recent local header          number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:13.607] Loaded most recent local full block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:13.607] Loaded most recent local fast block      number=15,130,080 hash="41503c…70ec4a" td=1 age=11mo3w1d
+INFO [09-25|08:32:13.608] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16
+INFO [09-25|08:32:13.658] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/verifier cache=16.00MiB handles=16
+INFO [09-25|08:32:13.761] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.100ms mgasps=1.318 order=6 number=15,130,081 hash="d9fd67…c47dfe" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="215b38…6f03ec" parentHash="41503c…70ec4a" time=1,759,826,750 age=11mo3w1d cache=0.00B
+INFO [09-25|08:32:13.834] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.753ms mgasps=1.439 order=5 number=15,130,082 hash="09723c…36a114" difficulty=47 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="57fb21…146b35" parentHash="d9fd67…c47dfe" time=1,790,121,600 age=2d6h32m  cache=0.00B
+INFO [09-25|08:32:13.882] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.444ms  mgasps=3.293 order=5 number=15,130,083 hash="3b8f3d…cd931e" difficulty=46 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="241a4a…697d6e" parentHash="09723c…36a114" time=1,790,121,720 age=2d6h30m  cache=0.00B
+=== RUN   TestOfflineRecoveryRefusals/relative_chain
+=== RUN   TestOfflineRecoveryRefusals/relative_journal
+=== RUN   TestOfflineRecoveryRefusals/missing_chain
+=== RUN   TestOfflineRecoveryRefusals/missing_journal
+=== RUN   TestOfflineRecoveryRefusals/same_directory
+=== RUN   TestOfflineRecoveryRefusals/journal_contains_chain
+=== RUN   TestOfflineRecoveryRefusals/chain_contains_journal
+INFO [09-25|08:32:14.139] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16
+INFO [09-25|08:32:14.206] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.242] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.350] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.431] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.510] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.586] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.704] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.885] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:14.921] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+INFO [09-25|08:32:15.008] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16
+INFO [09-25|08:32:15.091] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/recovery-guard-linux-gotmp/TestOfflineRecoveryRefusals1980361994/001/working cache=16.00MiB handles=16 readonly=true
+=== NAME  TestOfflineRecoveryRefusals
+    recovery_offline_test.go:499: active chain/journal locks, missing/overlapping paths, changed inputs and conflicting candidate refused before signer
+INFO [09-25|08:32:15.125] Blockchain manager stopped 
+--- PASS: TestOfflineRecoveryRefusals (1.59s)
+    --- PASS: TestOfflineRecoveryRefusals/relative_chain (0.00s)
+    --- PASS: TestOfflineRecoveryRefusals/relative_journal (0.01s)
+    --- PASS: TestOfflineRecoveryRefusals/missing_chain (0.00s)
+    --- PASS: TestOfflineRecoveryRefusals/missing_journal (0.01s)
+    --- PASS: TestOfflineRecoveryRefusals/same_directory (0.01s)
+    --- PASS: TestOfflineRecoveryRefusals/journal_contains_chain (0.01s)
+    --- PASS: TestOfflineRecoveryRefusals/chain_contains_journal (0.01s)
+PASS

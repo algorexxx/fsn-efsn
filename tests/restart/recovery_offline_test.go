@@ -28,11 +28,12 @@ import (
 )
 
 type offlineRecoveryStep struct {
-	Plan     recovery.Plan
-	Purchase hexutil.Bytes
-	Unsigned hexutil.Bytes
-	Expected hexutil.Bytes
-	Ledger   fullStateBlockLedger
+	Plan      recovery.Plan
+	Purchase  hexutil.Bytes
+	Unsigned  hexutil.Bytes
+	Expected  hexutil.Bytes
+	Ledger    fullStateBlockLedger
+	FullState bool `json:",omitempty"`
 }
 
 func TestOfflineRecoveryProcessCuts(t *testing.T) {
@@ -73,12 +74,13 @@ func prepareOfflineRecovery(t *testing.T) string {
 		requireNoError(t, batch.Write())
 		requireNoError(t, db.Close())
 	}
-	for _, signer := range []*fixture{original, successor} {
-		identity := recovery.SigningIdentity{GenesisHash: original.chain.Genesis().Hash(), ChainID: original.chain.Config().ChainID.Uint64(), Signer: signer.owner}
-		journal, err := recovery.CreateSigningJournal(filepath.Join(directory, signer.owner.Hex()), identity)
-		requireNoError(t, err)
-		requireNoError(t, journal.Close())
-	}
+	writeOfflineRecoverySteps(t, directory, original, successor, false)
+	initializeOfflineJournals(t, directory)
+	return directory
+}
+
+func writeOfflineRecoverySteps(t *testing.T, directory string, original, successor *fixture, fullState bool) {
+	t.Helper()
 	for stage := 1; stage <= 3; stage++ {
 		parent := original.chain.CurrentBlock()
 		signer, timestamp, next := original, parent.Time()+120, jumpTime
@@ -98,9 +100,20 @@ func prepareOfflineRecovery(t *testing.T) string {
 		requireNoError(t, err)
 		original.importBlock(t, independent)
 		ledger := captureFullStateBlock(t, original, parent.Root(), independent)
-		requireNoError(t, writeStateExportJSON(filepath.Join(directory, fmt.Sprintf("step-%d.json", stage)), offlineRecoveryStep{plan, purchase, unsigned, expected, ledger}))
+		requireNoError(t, writeStateExportJSON(filepath.Join(directory, fmt.Sprintf("step-%d.json", stage)), offlineRecoveryStep{Plan: plan, Purchase: purchase, Unsigned: unsigned, Expected: expected, Ledger: ledger, FullState: fullState}))
 	}
-	return directory
+}
+
+func initializeOfflineJournals(t *testing.T, directory string) {
+	t.Helper()
+	for stage := 1; stage <= 2; stage++ {
+		var step offlineRecoveryStep
+		readHandoverJSON(t, filepath.Join(directory, fmt.Sprintf("step-%d.json", stage)), &step)
+		identity := recovery.SigningIdentity{GenesisHash: step.Plan.GenesisHash, ChainID: step.Plan.ChainID, Signer: step.Plan.Signer}
+		journal, err := recovery.CreateSigningJournal(filepath.Join(directory, step.Plan.Signer.Hex()), identity)
+		requireNoError(t, err)
+		requireNoError(t, journal.Close())
+	}
 }
 
 func runOfflineRecoveryChild(t *testing.T, directory string, stage int, action, cut string) {
@@ -155,13 +168,13 @@ func TestOfflineRecoveryChild(t *testing.T) {
 	requireNoError(t, rlp.DecodeBytes(step.Purchase, &tx))
 	identity := recovery.SigningIdentity{GenesisHash: step.Plan.GenesisHash, ChainID: step.Plan.ChainID, Signer: step.Plan.Signer}
 	journalPath := filepath.Join(directory, step.Plan.Signer.Hex())
-	chainPath := filepath.Join(directory, "working")
+	chainPath := offlineChainPath(t, directory, "working", step.FullState)
 	output := filepath.Join(directory, fmt.Sprintf("export-%d.rlp", stage))
 	cut := os.Getenv("FUSION_OFFLINE_TEST_CUT")
 	action := os.Getenv("FUSION_OFFLINE_TEST_ACTION")
 	if action == "verify" {
 		verifyOfflineImport(t, chainPath, &step, step.Expected, false, nil)
-		verifyOfflineImport(t, filepath.Join(directory, "verifier"), &step, step.Expected, false, nil)
+		verifyOfflineImport(t, offlineChainPath(t, directory, "verifier", step.FullState), &step, step.Expected, false, nil)
 		return
 	}
 	if action == "sign" {
@@ -254,7 +267,17 @@ func TestOfflineRecoveryChild(t *testing.T) {
 		t.Fatal("recovered export changed signature or block")
 	}
 	verifyOfflineImport(t, chainPath, &step, encoded, true, nil)
-	verifyOfflineImport(t, filepath.Join(directory, "verifier"), &step, encoded, true, nil)
+	verifyOfflineImport(t, offlineChainPath(t, directory, "verifier", step.FullState), &step, encoded, true, nil)
+}
+
+func offlineChainPath(t *testing.T, directory, role string, fullState bool) string {
+	t.Helper()
+	path := filepath.Join(directory, role)
+	if fullState {
+		requireFullStateCopy(t, path)
+		path = filepath.Join(path, "chaindata")
+	}
+	return path
 }
 
 func offlineRecoveryCut() {
@@ -300,6 +323,9 @@ func verifyOfflineImport(t *testing.T, path string, step *offlineRecoveryStep, e
 		t.Fatal("missing imported parent")
 	}
 	f := &fixture{db: db, chain: chain, engine: engine}
+	if step.FullState {
+		verifyFullStateContextReads(t, f, block.Header())
+	}
 	actual, err := json.Marshal(captureFullStateBlock(t, f, parent.Root, &block))
 	requireNoError(t, err)
 	want, err := json.Marshal(step.Ledger)
@@ -329,34 +355,39 @@ func offlineDatabaseFiles(t *testing.T, path string) map[string]string {
 func TestOfflineRecoveryUncertainCuts(t *testing.T) {
 	for _, cut := range []string{"reservation", "signature"} {
 		t.Run(cut, func(t *testing.T) {
-			directory := prepareOfflineRecovery(t)
-			before := offlineDatabaseFiles(t, filepath.Join(directory, "working"))
-			runOfflineRecoveryChild(t, directory, 1, "sign", cut)
-			var step offlineRecoveryStep
-			readHandoverJSON(t, filepath.Join(directory, "step-1.json"), &step)
-			var tx types.Transaction
-			requireNoError(t, rlp.DecodeBytes(step.Purchase, &tx))
-			calls := 0
-			path := filepath.Join(directory, step.Plan.Signer.Hex())
-			_, err := recovery.SignOffline(filepath.Join(directory, "working"), path, step.Plan, types.Transactions{&tx}, step.Unsigned, func(accounts.Account, string, []byte) ([]byte, error) {
-				calls++
-				return nil, errors.New("unexpected callback")
-			})
-			if !errors.Is(err, recovery.ErrSigningUncertain) || calls != 0 {
-				t.Fatalf("uncertain attempt retried: calls=%d error=%v", calls, err)
-			}
-			identity := recovery.SigningIdentity{GenesisHash: step.Plan.GenesisHash, ChainID: step.Plan.ChainID, Signer: step.Plan.Signer}
-			output := filepath.Join(directory, "refused.rlp")
-			err = recovery.ExportSavedBlock(path, identity, step.Plan.ParentHash, output)
-			if !errors.Is(err, recovery.ErrSigningUncertain) {
-				t.Fatalf("uncertain attempt exported: %v", err)
-			}
-			if _, err := os.Stat(output); !os.IsNotExist(err) || !reflect.DeepEqual(before, offlineDatabaseFiles(t, filepath.Join(directory, "working"))) {
-				t.Fatal("uncertain recovery exported or changed chain files")
-			}
-			t.Logf("kill-after=%s: repeat signing and export refused; chain bytes unchanged", cut)
+			requireOfflineUncertain(t, prepareOfflineRecovery(t), cut)
 		})
 	}
+}
+
+func requireOfflineUncertain(t *testing.T, directory, cut string) {
+	t.Helper()
+	var step offlineRecoveryStep
+	readHandoverJSON(t, filepath.Join(directory, "step-1.json"), &step)
+	chainPath := offlineChainPath(t, directory, "working", step.FullState)
+	before := offlineDatabaseFiles(t, chainPath)
+	runOfflineRecoveryChild(t, directory, 1, "sign", cut)
+	var tx types.Transaction
+	requireNoError(t, rlp.DecodeBytes(step.Purchase, &tx))
+	calls := 0
+	path := filepath.Join(directory, step.Plan.Signer.Hex())
+	_, err := recovery.SignOffline(chainPath, path, step.Plan, types.Transactions{&tx}, step.Unsigned, func(accounts.Account, string, []byte) ([]byte, error) {
+		calls++
+		return nil, errors.New("unexpected callback")
+	})
+	if !errors.Is(err, recovery.ErrSigningUncertain) || calls != 0 {
+		t.Fatalf("uncertain attempt retried: calls=%d error=%v", calls, err)
+	}
+	identity := recovery.SigningIdentity{GenesisHash: step.Plan.GenesisHash, ChainID: step.Plan.ChainID, Signer: step.Plan.Signer}
+	output := filepath.Join(directory, "refused.rlp")
+	err = recovery.ExportSavedBlock(path, identity, step.Plan.ParentHash, output)
+	if !errors.Is(err, recovery.ErrSigningUncertain) {
+		t.Fatalf("uncertain attempt exported: %v", err)
+	}
+	if _, err := os.Stat(output); !os.IsNotExist(err) || !reflect.DeepEqual(before, offlineDatabaseFiles(t, chainPath)) {
+		t.Fatal("uncertain recovery exported or changed chain files")
+	}
+	t.Logf("kill-after=%s: repeat signing and export refused; chain bytes unchanged", cut)
 }
 
 func TestOfflineRecoveryRefusals(t *testing.T) {

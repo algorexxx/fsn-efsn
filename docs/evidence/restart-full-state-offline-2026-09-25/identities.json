@@ -1,0 +1,36 @@
+{
+  "baseline_commit": "45ad8af20530723d82701794dd8dc7c924d2d520",
+  "toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detection; GOMAXPROCS=2; offline cached modules; Linux network namespace isolated",
+  "source_sha256": {
+    "tests/restart/recovery_offline_test.go": "ff6703de0df22bb05960a23831d1b4ce564df0f07ce03bac1eb6dde123627ec3",
+    "tests/restart/full_state_offline_test.go": "c808e0e6773a983391f439e4488834173409e01fcc33fb8ccf990f400093df81"
+  },
+  "source_git_blobs": {
+    "tests/restart/recovery_offline_test.go": "77ebc6b4e4ca9dcbe1cd492b29b882e5a2ab7c3a",
+    "tests/restart/full_state_offline_test.go": "e2c15580724c951fdab083ab1a8f7337bd8c039d"
+  },
+  "binary_sha256": {
+    "tmp/full-state-offline-windows-tests.exe": "2a7886d5408cad17c0f1d745fb5ceaea7de1ed674e89cc973aa0c153aa59eca0",
+    "tmp/full-state-offline-linux-tests": "98ab39deef254704014f346438cf3dc2af5af67427d1b7558d102b60f6d8758d"
+  },
+  "compact_source_manifest_sha256": "a6c86fc58a9f7b482a02b787a337d600e32a447551e45dbe40d210b498341bbf",
+  "copies_per_platform": 9,
+  "files_per_initial_copy": 230,
+  "bytes_per_initial_copy": 528817080,
+  "cross_platform_identical_artifacts": [
+    "step-1.json",
+    "step-2.json",
+    "step-3.json",
+    "block-01.json",
+    "block-01.rlp",
+    "block-02.json",
+    "block-02.rlp",
+    "block-03.json",
+    "block-03.rlp",
+    "reference/fixture.json",
+    "reference/handover.json"
+  ],
+  "completed_cuts_per_platform": 9,
+  "uncertain_cuts_per_platform": 2,
+  "scope": "Complete preserved account state with public scalar 1/2 substitutions and retained historical header context; three controlled handover blocks. No real key, W: data, replay checkpoint, public peer or complete 117 GB database opened. No production code changed. Forced process termination, not machine power-loss testing. This is not a reproducible release-build attestation."
+}

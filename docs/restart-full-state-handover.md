@@ -157,12 +157,21 @@ surviving tickets without changing the source database. Both nodes agree on
 cold ledgers after a forced donation-process restart. The compact fixture still
 lacks historical data needed for general sync and complete log indexing.
 
+The [offline-signing follow-up](restart-offline-signing.md) repeats the three
+controlled blocks against complete-state copies, with forced process termination
+after signing completion, export and import at every stage. Exact artifact
+recovery, independent imports, cold ledgers and owner-by-owner accounting pass;
+unfinished signing attempts remain blocked. The separate
+[complete backup package/restore](restart-snapshot-restore.md) now passes local
+readback, index comparison and actual node service checks. Public distribution
+and final recovery-data production remain open.
+
 Remaining launch work includes:
 
 - Controlled recovery construction and review with real addresses/parameters,
   including mandatory purchases and usable-ticket checks before signatures.
-- A supported complete data package and operator restore/synchronization path.
-  The later node rehearsal does not establish arbitrary full-history sync or
+- Published recovery data and an operator download/restore/synchronization path.
+  The passing local restore does not establish arbitrary full-history sync or
   replace the production data-distribution gate.
 - Backup-wallet purchase/journal inventory, durable disabled startup and key
   custody. The compact state fixture does not contain the original node's

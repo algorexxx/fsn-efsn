@@ -1,6 +1,6 @@
 # Offline recovery signing and interruption rehearsal
 
-Date: 24 September 2026. Baseline: `0ad0136` on
+Updated: 25 September 2026. Initial baseline: `0ad0136` on
 `codex/restart-investigation-wip`. The offline library integration passes on
 Windows and Linux, with Linux race detection. This is a synthetic rehearsal;
 the production key adapter and launch authorization remain separate work.
@@ -81,12 +81,65 @@ refused `EvalSymlinks`; the same checks pass outside that sandbox. The failures
 and capability limitation are retained in the evidence, without removing the
 production path checks.
 
+## Complete-state follow-up
+
+The 25 September follow-up, based on `45ad8af`, repeats all eleven interruption
+cases above against the complete preserved account state: nine completed cuts
+(three boundaries for each of three blocks) and two uncertain first-block cuts.
+It reuses the same signing library and child-process harness; only test code
+changes. It also reruns the small-state interruption and refusal regressions.
+
+Both platforms pass: Windows completes the full-state test in 35.91 seconds;
+Linux under race detection completes it in 294.60 seconds. Their reviewed
+plans, signed blocks, substitution records and changed-account ledgers are
+byte-identical. No production code change was needed for this follow-up.
+
+Each platform starts with nine fresh copies of the immutable compact export,
+verified against manifest
+`a6c86fc58a9f7b482a02b787a337d600e32a447551e45dbe40d210b498341bbf`:
+230 files and 528,817,080 bytes per copy. All new copies are on C:, with a 50 GiB
+reserve enforced. The original backup, replay checkpoints and W: package/restore
+are untouched. Existing fixture preparation substitutes public scalars 1 and 2
+for the backup/donation wallets, preserving their recorded funding and ticket
+rights. No real key is used. The compact export contains current state and the
+rehearsal adds retained historical header context; it is not a full-history node
+distribution.
+
+The independently built reference prefix passes owner-by-owner accounting of
+future FSN rights across liquid balances, time locks and tickets. Only ordinary
+fees, rewards and existing first-retreat penalties are permitted. Other assets,
+code, storage and notation remain unchanged. The retired signer account is
+unchanged after its first block. The resulting complete-state fixture has:
+
+| Stage | Height | Stored tickets | Changed accounts |
+| --- | --- | --- | --- |
+| Backup handover | 15,130,081 | 485 | 8 |
+| Donation jump | 15,130,082 | 480 | 2 |
+| Donation cleanup | 15,130,083 | 1 | 2 |
+
+The jump's stored count still includes expired tickets; cleanup leaves the
+required usable donation replacement. Each block carries one successful funded
+purchase, a fee of 42,448,000,000,000 wei and the ordinary 0.3125 FSN reward.
+
+Completed cuts recover the exact reference RLP without another signing callback.
+Separate working/verifier imports and fresh-process reopening agree on all head
+markers, receipts, tickets and complete changed-account ledgers. The 256-header
+EVM context remains readable. Signing/export-only cuts leave every chain file
+unchanged; reservation/signature cuts refuse both re-signing and export.
+
+Evidence, platform results, source/binary identities and the compared review
+plans, blocks and ledgers are retained in
+[`restart-full-state-offline-2026-09-25`](evidence/restart-full-state-offline-2026-09-25).
+The fixed September test dates and substituted identities are not launch
+parameters or production anchors. This follow-up does not repeat the earlier
+complete trie traversal or extend historical execution beyond 2,700,000.
+
 ## Remaining limits and next work
 
-This establishes composition with small synthetic state. It does not repeat the
-full preserved-state handover or prove machine power-loss durability. The
-[full database restore](restart-snapshot-restore.md) subsequently passed on
+The [full database restore](restart-snapshot-restore.md) also passed on
 25 September, including file readback, index comparison and two service starts.
+These rehearsals do not prove machine power-loss durability or public data
+distribution.
 
 An export interrupted during its write may leave a partial file. Export again
 to a new filename from the completed journal; never erase a reservation or
@@ -97,17 +150,15 @@ outside chain data as well as outside the journal.
 
 Before real-key use:
 
-1. Repeat these composed interruption boundaries with the complete synthetic
-   preserved-state fixture once bulk validation is finished.
-2. Integrate bounded key access and an operator workflow pinning the reviewed
+1. Integrate bounded key access and an operator workflow pinning the reviewed
    plan, purchase, unsigned report, configuration and executable. The library
    checks chain identity and reviewed block bytes; it does not authenticate the
    operator's approval or attest the executable/configuration externally.
-3. Keep the authoritative journal on reliable local storage outside snapshots;
+2. Keep the authoritative journal on reliable local storage outside snapshots;
    enforce one active holder per key and the approved one-backup-block custody
    sequence. Path separation cannot detect journal rollback, copied journals or
    signatures made elsewhere. The journal is not a lifetime one-block quota.
-4. Complete the live backup-wallet purchase drain, real-address ledger/timing
+3. Complete the live backup-wallet purchase drain, real-address ledger/timing
    review, independent recovery import and mandatory ancestry-anchor selection.
    Enable ordinary donation mining only after the controlled sequence is verified.
 
