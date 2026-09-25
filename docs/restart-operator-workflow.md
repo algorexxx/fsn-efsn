@@ -134,8 +134,12 @@ and integration binary both use race detection inside an isolated network
 namespace. This does not repeat the complete-state rehearsal with the new CLI,
 prove power-loss durability or establish a reproducible release build.
 
-Next rehearse these final commands against fresh complete-state copies, then
-finish the actual-address/time-interval review, live backup purchase drain,
+The [complete-state command follow-up](restart-full-state-operator.md) now passes
+on Windows and Linux with the same executables, fresh verified copies and
+separate import/cold-check processes. The sparse evidence above remains the
+record of this original implementation run.
+
+Next finish the actual-address/time-interval review, live backup purchase drain,
 one-active-key custody, independent verifier/import procedure and final anchor/
 release/data-distribution gates. The journal cannot control another holder using
 the same key elsewhere; it does not restrict the backup owner's later node.

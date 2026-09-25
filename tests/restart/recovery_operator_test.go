@@ -96,7 +96,12 @@ func TestRecoveryOperatorCLI(t *testing.T) {
 		t.Skip("requires separately built recovery executable")
 	}
 	directory := prepareOfflineRecovery(t)
-	working := filepath.Join(directory, "working")
+	runRecoveryOperatorStages(t, directory, false)
+}
+
+func runRecoveryOperatorStages(t *testing.T, directory string, fullState bool) {
+	t.Helper()
+	working := offlineChainPath(t, directory, "working", fullState)
 	var firstDonation string
 	var firstDonationDigest string
 	for stage := 1; stage <= 3; stage++ {
@@ -182,9 +187,10 @@ func TestRecoveryOperatorCLI(t *testing.T) {
 		if !reflect.DeepEqual(before, offlineDatabaseFiles(t, working)) {
 			t.Fatal("operator workflow changed stopped chain files")
 		}
-		verifyOfflineImport(t, working, &step, encoded, true, nil)
-		verifyOfflineImport(t, filepath.Join(directory, "verifier"), &step, encoded, true, nil)
-		verifyOfflineImport(t, working, &step, encoded, false, nil)
+		for _, role := range []string{"working", "verifier"} {
+			runRecoveryOperatorImport(t, directory, stage, role, "import")
+			runRecoveryOperatorImport(t, directory, stage, role, "cold")
+		}
 		runRecoveryOperator(t, "", true, append([]string{"export", "-out", prefix + "-after-import.rlp"}, commonArgs...)...)
 		altered, err := recovery.DecodeSigningApproval(approval, common.Hash(sha256.Sum256(approval)))
 		requireNoError(t, err)
@@ -199,4 +205,34 @@ func TestRecoveryOperatorCLI(t *testing.T) {
 		}
 		t.Logf("stage=%d: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree", stage)
 	}
+}
+
+func runRecoveryOperatorImport(t *testing.T, directory string, stage int, role, action string) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 90*time.Second)
+	defer cancel()
+	command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestRecoveryOperatorImportChild$", "-test.v", "-test.timeout=80s")
+	command.Env = append(os.Environ(), "FUSION_OPERATOR_IMPORT_DIR="+directory, fmt.Sprintf("FUSION_OPERATOR_IMPORT_STAGE=%d", stage), "FUSION_OPERATOR_IMPORT_ROLE="+role, "FUSION_OPERATOR_IMPORT_ACTION="+action)
+	output, err := command.CombinedOutput()
+	if err != nil || bytes.Contains(output, []byte("WARNING: DATA RACE")) || !bytes.Contains(output, []byte("OPERATOR-IMPORT-VERIFIED")) {
+		t.Fatalf("operator %s %s failed: %v\n%s", role, action, err, output)
+	}
+}
+
+func TestRecoveryOperatorImportChild(t *testing.T) {
+	directory := os.Getenv("FUSION_OPERATOR_IMPORT_DIR")
+	if directory == "" {
+		t.Skip("subprocess helper for disposable operator fixtures")
+	}
+	role, action := os.Getenv("FUSION_OPERATOR_IMPORT_ROLE"), os.Getenv("FUSION_OPERATOR_IMPORT_ACTION")
+	stage := os.Getenv("FUSION_OPERATOR_IMPORT_STAGE")
+	if !filepath.IsAbs(directory) || (role != "working" && role != "verifier") || (action != "import" && action != "cold") || (stage != "1" && stage != "2" && stage != "3") || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
+		t.Fatal("invalid disposable import settings")
+	}
+	var step offlineRecoveryStep
+	readHandoverJSON(t, filepath.Join(directory, "step-"+stage+".json"), &step)
+	encoded, err := os.ReadFile(filepath.Join(directory, "operator-"+stage+"-block.rlp"))
+	requireNoError(t, err)
+	verifyOfflineImport(t, offlineChainPath(t, directory, role, step.FullState), &step, encoded, action == "import", nil)
+	fmt.Println("OPERATOR-IMPORT-VERIFIED")
 }

@@ -361,3 +361,18 @@ omitting the jump replacement produces an accepted but stranded chain with only
 expired tickets; omitting the cleanup replacement is rejected and can be retried
 with a purchase. The [full-state handover report](../../docs/restart-full-state-handover.md)
 records evidence and remaining node-service/network/construction gates.
+
+`TestRecoveryOperatorCLI` requires an absolute `FUSION_RECOVERY_OPERATOR` pointing
+to a separately built command. It runs review/prepare/init/sign/export using
+public encrypted keys 1 and 2. Each working/verifier import and cold check runs
+in its own child process so consensus caches are not inherited from the builder.
+
+`TestFullStateRecoveryOperator` additionally takes
+`FUSION_RESTART_OPERATOR_FULL_STATE_ROOT`, containing fresh, checksummed
+`reference`, `working` and `verifier` compact-state copies. The original-backup
+environment must be unset. It reuses the explicit public-key substitutions,
+complete account-difference accounting and command refusal checks. This is an
+opt-in complete-state command rehearsal, not a real-key launch or a public node
+distribution. Existing targets are refused by the preparation script. Exact
+scripts, binary pins and results are in
+[the evidence directory](../../docs/evidence/restart-full-state-operator-2026-09-25).

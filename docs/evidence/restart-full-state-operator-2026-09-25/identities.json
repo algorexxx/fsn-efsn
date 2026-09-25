@@ -1,0 +1,38 @@
+{
+  "baseline_commit": "04a676c42015dfe7f86aed47e598fb2920ed1e69",
+  "toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detection; GOMAXPROCS=2; offline modules; Linux test/command/import processes network isolated",
+  "source_sha256": {
+    "tests/restart/recovery_operator_test.go": "bb242766991951d88d5dac8a5a4de6950be660b9ae680422bf12bd0819635dc0",
+    "tests/restart/full_state_operator_test.go": "75380036c27af3a069dfc5fac43ae97b52785df1f210d9c6c368bdfeb6b53030"
+  },
+  "source_git_blobs": {
+    "tests/restart/recovery_operator_test.go": "cf627bde23d99db43b253d04f296e30ccced301f",
+    "tests/restart/full_state_operator_test.go": "eda54881293d9ca37e04f1cd27a0dee7167a65e7"
+  },
+  "binary_sha256": {
+    "tmp/fsn-recovery-operator.exe": "5272d5eb4dd0c490abb78d22af7e44781870329c43e1c0913533cabde2b1e4d3",
+    "tmp/fsn-recovery-operator-linux": "0493d62bacc5b4b168353d0cb9cf33863df64ba0b957ad3102314fe79c45c7c8",
+    "tmp/full-state-operator-windows-tests.exe": "95f23c2a69ea4210205ead460daa7eefe2020dc689872cca3833e080a91d74d8",
+    "tmp/full-state-operator-linux-tests": "383d5fdb191bb1e03584c19015b2504abc9bc4e9fd95a0dc86231d1f63344588"
+  },
+  "compact_source_manifest_sha256": "a6c86fc58a9f7b482a02b787a337d600e32a447551e45dbe40d210b498341bbf",
+  "source_files_verified_unchanged_after_tests": 230,
+  "copies_per_platform": 3,
+  "bytes_per_initial_copy": 528817080,
+  "prior_byte_identical_reference_artifacts": {
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/step-1.json": "83aa4644f9147e0a33d6c06c2271ff8e59442daaa0b4cc47dbb1279df77c6328",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/step-2.json": "ba3f4d472b2a76be9c41f2685ced6cebbd16b376478bea8879d594dc3fdcdbb9",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/step-3.json": "95f4041f0954f3781e4949cde1c3701210e7db751ad7ae7946347e6e3886563c",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/block-01.json": "38bcdbba1e45c4c48ba64ff669fe14533c0aeef439f586ef3a409aeea66b4be7",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/block-01.rlp": "6bc1b9cb1dbe1e262ba0dd2208c0daa2ac2668af0d9d24b19afabf8fb73296ae",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/block-02.json": "5b769b95882236081401a76c3fc1bbde6d7da5c2de5de3858610c0f444216c1e",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/block-02.rlp": "cabcc528c98e75bfcf3ddbd00a776c4065b332f1751d293f886e246db23dec07",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/block-03.json": "d4a8b3fc178ea311b4e16157079d173ba710cd205c8efcd39aa8fdb155b36c55",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/block-03.rlp": "be050c49e6231409a850d20a24b91dd6e20a66bb1744e901932a53606866ba84",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/reference/fixture.json": "c59f66326493e356924a828582f74300a6a5514ab41c919a0b9e604c041bb059",
+    "docs/evidence/restart-full-state-offline-2026-09-25/artifacts/reference/handover.json": "9ea410c1a1056166a4d3cef9da6b9c418ca968d0d63ab6072e6450c07345641e"
+  },
+  "complete_state_command_blocks_per_platform": 3,
+  "separate_import_and_cold_processes_per_platform": 12,
+  "scope": "Same previously reviewed operator executables; complete preserved account state with explicit public scalar 1/2 substitutions; exact command-produced blocks, complete changed-account ledgers and per-owner temporal accounting. No real key, original 117 GB database, W: data, replay checkpoint or public peer opened. No new production code or additional forced crash cuts; not power-loss, full historical replay or independent implementation verification."
+}

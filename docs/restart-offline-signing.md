@@ -150,9 +150,9 @@ outside chain data as well as outside the journal.
 
 Before real-key use:
 
-1. Rehearse the [implemented operator commands and bounded key preflight](restart-operator-workflow.md)
-   with complete preserved state. Small-state command and interruption tests now
-   pass on Windows and Linux, including wrong-password recovery before reservation,
+1. Review the [implemented operator commands and bounded key preflight](restart-operator-workflow.md)
+   and their passing [complete-state command rehearsal](restart-full-state-operator.md).
+   Command and interruption tests pass on Windows and Linux, including wrong-password recovery before reservation,
    refusal to reopen keys for uncertain/completed attempts and report rebuilding.
    These controls do not authenticate the reviewer or externally attest the
    executable; finish actual operator review and key custody before real-key use.

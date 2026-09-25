@@ -4,6 +4,13 @@ Status: investigation and implementation plan; not a launch authorization or a c
 
 Last reviewed: 25 September 2026. Source baseline: local `master` / `develop` at `c5f0174` (5.0.3); recovery branch at `6981b00`; documentation branch at `c1806fc`. Narrow client corrections exist on the investigation branch; the complete restart implementation is still pending.
 
+The [permanent node patch review list](restart-node-patch-review.md) separates
+eight candidate fixes/rules from the recovery-only tool, optional bootstrap-list
+handling and inherited gateway deployment material. Each candidate has a source
+boundary, reason, lasting effect and evidence. Independent human/AI review and
+resolution of findings precede selection of the final release patch set; the
+investigation branch is not itself that selection.
+
 Latest progress: the D:-backed WSL environment contains a fully checksummed
 disposable database copy. The [integrity and replay investigation](restart-integrity-investigation.md)
 has verified all reachable current state and structural history through `B`,
@@ -50,8 +57,11 @@ preflight on both platforms, with Linux race detection. Wrong passwords leave no
 reservation; completed and uncertain attempts avoid key access; both database
 locks remain held during credential checks. Complete report rebuilding prevents
 altered human-readable metadata from differing from the approved block. The
-commands still need a complete-state rehearsal, trusted operator review, actual
-wallet/timing selection and final custody checks before real-key use.
+same executables now also pass the [complete-state command rehearsal](restart-full-state-operator.md):
+three fresh copies per platform, exact cross-platform blocks and reports,
+separate-process imports/cold checks and complete changed-account accounting.
+No production source change was needed. Trusted operator review, actual
+wallet/timing selection and final custody checks remain before real-key use.
 
 The [complete preserved-data restore rehearsal](restart-snapshot-restore.md)
 has packaged the original 117 GB database onto the user-selected W: network
@@ -608,7 +618,7 @@ Release acceptance requires all applicable phase gates and verification cases to
 2. Review the [purchase controller and recovery evidence](restart-purchase-controller.md). Initial submission, periodic retry, receipt monitoring, wallet/estimation/funding failures, conflicting replacements, controlled same-height replacement and clean disk/journal restart are covered. Complete-state operation and a real-service SIGKILL continuation now pass in the guarded two-node follow-up. Extend to systematic journal crash boundaries and live peer reorgs before release; ordinary auto-buy remains disabled during historical bridge construction.
 3. Review the [implemented narrow corrections](restart-corrections.md) and extend realistic mining/import concurrency coverage. Their 128 historical reconstruction checks and synthetic boundary cases pass. Compare Candidate A with the explicit current-time transition, and select a design based on validated behavior and accounting.
 4. Review and extend the [implemented anchor prototype](restart-anchor-implementation.md), [multi-process results](restart-node-rehearsal.md), [interrupted-write correction](restart-crash-rehearsal.md), [explicit-rewind correction](restart-rewind-rehearsal.md) and [reset/pivot evidence](restart-reset-pivot-rehearsal.md). Before/after write cuts now cover linear imports, compatible reorgs, rollback, six rewind cases, reset and four pivot cases. Full state acquisition, genesis resync, pruning/freezer recovery, large-batch memory cost, deep ancestry and concurrent peer mining/reorgs remain open. Freeze the production anchor only after the recovery artifacts are reviewed.
-5. Review the [guarded recovery command and full-state two-node result](restart-recovery-construction.md), alongside the [wallet handover](restart-wallet-handover.md) and [earlier full-state worker evidence](restart-full-state-handover.md). The command leaves all source database files unchanged; the actual services reject unsafe plans before signing and reproduce the reviewed three-block prefix. Donation auto-buy/mining starts immediately after cleanup, resumes after SIGKILL, and both cold databases agree on complete account ledgers. The [signing journal and saved-backup inventory](restart-signing-journal.md) now pass synthetic reservation/crash/conflict tests and find no saved purchases for either wallet. The complete preserved database now passes local package/restore and actual-service checks. Next demonstrate release hosting/download and final recovery-data distribution; review the passing complete-state offline interruption results, repeat the implemented operator command/key-preflight workflow with complete state, finish real-key/artifact custody and inventory/drain the live backup-wallet pool/journal before real signing. The compact state fixture lacks historical bodies and log indexes and is not that distribution package. Preserve the original backup; review real-address refunds/retreats and fresh timing parameters before choosing the production sequence.
+5. Review the [guarded recovery command and full-state two-node result](restart-recovery-construction.md), alongside the [wallet handover](restart-wallet-handover.md) and [earlier full-state worker evidence](restart-full-state-handover.md). The command leaves all source database files unchanged; the actual services reject unsafe plans before signing and reproduce the reviewed three-block prefix. Donation auto-buy/mining starts immediately after cleanup, resumes after SIGKILL, and both cold databases agree on complete account ledgers. The [signing journal and saved-backup inventory](restart-signing-journal.md) now pass synthetic reservation/crash/conflict tests and find no saved purchases for either wallet. The complete preserved database now passes local package/restore and actual-service checks. Next demonstrate release hosting/download and final recovery-data distribution; review the passing complete-state offline interruption and [actual operator command results](restart-full-state-operator.md), finish real-key/artifact custody and inventory/drain the live backup-wallet pool/journal before real signing. The compact state fixture lacks historical bodies and log indexes and is not that distribution package. Preserve the original backup; review real-address refunds/retreats and fresh timing parameters before choosing the production sequence.
 6. Resolve the decision register, prepare independent operators/infrastructure, and proceed through the release and launch gates.
 
 ## 16. Source map for future implementation

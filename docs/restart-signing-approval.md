@@ -125,8 +125,9 @@ and sequence checks and while retaining both locks. Wrong passwords can be
 corrected without consuming the allowance. Completed and uncertain attempts
 never reopen credentials. Its local key session signs only the approved payload
 once and closes afterward. Review/prepare/init/sign/export commands pass synthetic
-end-to-end tests. The new CLI still needs complete-state and final operator/custody
-rehearsals before real-key use; callback failures after reservation remain uncertain.
+end-to-end tests, and the [complete-state follow-up](restart-full-state-operator.md)
+passes with the same executables. Final operator/custody rehearsals remain before
+real-key use; callback failures after reservation remain uncertain.
 
 No real signature, real purchase submission or public release was performed.
 Power-loss durability, complete historical execution, general sync/distribution

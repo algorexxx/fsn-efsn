@@ -227,7 +227,9 @@ public scalars 1 and 2.
 
 The [operator command follow-up](restart-operator-workflow.md) now passes bounded
 encrypted-key preflight and actual review/prepare/init/sign/export commands on
-small fixtures. Repeat the final commands with complete state before real-key use.
+small fixtures. The same executables also pass the
+[complete-state command rehearsal](restart-full-state-operator.md), with separate
+import/cold processes and matching cross-platform blocks.
 In parallel with release preparation, finish real signer custody and the
 live purchase-drain procedures above, review the actual-address ledger and fresh
 ticket intervals, then select the authorized recovery artifact and anchor. Full
