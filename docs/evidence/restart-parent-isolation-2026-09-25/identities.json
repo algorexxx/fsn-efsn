@@ -1,0 +1,102 @@
+{
+  "date": "2026-09-25",
+  "baseline_commit": "bcbd1ceadd1748b9a34482f70ead1e53e337a952",
+  "source_identity_scope": "Final working sources below. Earlier failed/preparation runs are historical evidence, not asserted to use these final test blobs.",
+  "production_diff": {
+    "added_lines": 5,
+    "removed_lines": 22,
+    "paths": [
+      "consensus/datong/consensus.go",
+      "core/blockchain.go",
+      "core/headerchain.go"
+    ]
+  },
+  "sources": {
+    "consensus/datong/consensus.go": {
+      "git_blob": "3b7af9c1712f0d8235e20a449041226ebb4f583b",
+      "sha256_raw": "26a568a4c7b630b3ddd5600d14248f1d1273f04d0ea78e7e53c9259e11861427"
+    },
+    "core/blockchain.go": {
+      "git_blob": "c0bb42a46c43f245a9039ec6ab8450cc303cd0bc",
+      "sha256_raw": "a4162ea52710cd5b278212e25e9ebc7b057caef71436d3ab2c41fef4ffffb4b7"
+    },
+    "core/headerchain.go": {
+      "git_blob": "52ef671b59078fe1640bd4a6c3b083074778c161",
+      "sha256_raw": "603385e86d7c9530f51b003d36ecd057873eb0668561ccac20b2a30330b117eb"
+    },
+    "tests/restart/finalize_parent_test.go": {
+      "git_blob": "92b769737fb4813b081524820251bda136617bf6",
+      "sha256_raw": "b3578365308696d025592bebbb0c58b748ab8652ee9b279e4e25d3bc218c4781"
+    },
+    "tests/restart/two_miner_fixture_linux_test.go": {
+      "git_blob": "db8e6fc8d89577ed0e6dd9611e42b7dcc5e5b7ae",
+      "sha256_raw": "7ac58f160622b4b9d5cc43f95fa86b68125f1b6a9c91793e7c708fd41e2137ed"
+    },
+    "tests/restart/purchase_nonce_rollback_linux_test.go": {
+      "git_blob": "f9c589d65db741c9059e944f5f386136256b72c3",
+      "sha256_raw": "7273f3d45f7868d96e8b69338c0024510670791d258780f1ccb6fd37cd05f17a"
+    },
+    "tests/restart/competing_miners_linux_test.go": {
+      "git_blob": "a770c1af7a9bfb9acf03818f310d0361eb0305dd",
+      "sha256_raw": "a8564282e7eb790e9d6982ae21a3ef371bf602e6feac86d7a5fe03419a547e6a"
+    },
+    "tests/restart/node_rehearsal_linux_test.go": {
+      "git_blob": "8ea4097d29cde6ebb09c7ed7ebe8ea2450e05bc3",
+      "sha256_raw": "26bf5c557bf40f6c056241e2c94e01319267c9afa32f9d70a59697b1b316a918"
+    },
+    "tests/restart/preserved_reconstruction_test.go": {
+      "git_blob": "d2afbe3e99b81dcdb188efbad032fed711a69392",
+      "sha256_raw": "538da82707aa75cae0519c0660199079ed801cc25ffbfbf1a1eba7f506843a39"
+    }
+  },
+  "binaries": {
+    "tmp/parent-isolation-before-windows-tests.exe": {
+      "sha256": "7d21fd62b317bd3505c1ec95d5b4ec4523618de0433c8751eac0bbb865126183",
+      "scope": "Pre-P9 production and baseline-test.go.txt; expected functional failure."
+    },
+    "tmp/parent-isolation-windows-tests.exe": {
+      "sha256": "32a3638921c98ee4d01ffece0ebc1d6c71aae72c25fa832906864f5df5f04ea8",
+      "scope": "Final P9 production and both final deterministic regressions; Windows five repeats each."
+    },
+    "tmp/parent-isolation-linux-tests": {
+      "sha256": "483ab7c709a775f7c6f8cc5eac281ddb9643514dcd8b4481cdb46829cbca02c4",
+      "scope": "Final P9 production and listed tests; Linux race checks, anchor cases and five-node group."
+    },
+    "tmp/purchase-competing-linux-tests": {
+      "sha256": "7046da2ae51587b852527ef49ea8a72bfe65a3b5a24c9689617554786ead0c8b",
+      "scope": "Final P9 production and final miner/rollback sources; predates added header-batch regression in finalize_parent_test.go; Linux competing-miner pass."
+    }
+  },
+  "before_race_binary": {
+    "Hash": "BDDE8D8C02977C929FD27C40A790BCE1BF23CD53BE82A36186C3BEC93C0C8274",
+    "Path": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\purchase-competing-linux-tests"
+  },
+  "verified_results": {
+    "baseline_independent_unknown_ancestor_errors": 2,
+    "pre_fix_real_miner_race_reports": 2,
+    "deterministic_cases_per_platform": 2,
+    "repeats_per_deterministic_case_per_platform": 5,
+    "anchor_cases": [
+      "heavier_fork",
+      "checkpoint_direct",
+      "checkpoint_stored_fork",
+      "checkpoint_headers",
+      "checkpoint_receipts",
+      "checkpoint_commit_head",
+      "checkpoint_startup",
+      "checkpoint_late_init",
+      "checkpoint_body_shortcut"
+    ],
+    "actual_node_cases": [
+      "readiness_mining_crash",
+      "compatible_peer",
+      "purchase_peer_nonce_rollback",
+      "heavier_stored_fork_peer",
+      "incompatible_database_startup"
+    ],
+    "actual_node_group_seconds": 79.68,
+    "final_rollback_seconds": 49.95,
+    "final_competing_miners_seconds": 98.37,
+    "broader_core_tests": "Not run: package failed to compile due to unchanged legacy test APIs; raw failure retained."
+  }
+}

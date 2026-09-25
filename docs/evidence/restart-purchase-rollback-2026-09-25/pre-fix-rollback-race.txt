@@ -1,0 +1,211 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/purchase_peer_nonce_rollback
+    purchase_nonce_rollback_linux_test.go:76: two-block live peer rollback nonce 16 -> 14; only lowest displaced ticket was reinjected; missing nonce paused across cold restart; ordinary raw resubmission/mining restored nonce 16 and exact saved successor
+    node_rehearsal_linux_test.go:294: node process /tmp/fsn-purchase-peer-3392687629/process-1330970396.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|13:22:28.498] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|13:22:28.499] Allocated cache and file handles         database=/tmp/fsn-purchase-peer-3392687629/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|13:22:28.533] Persisted trie from memory database      nodes=8 size=996.00B time="141.809µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|13:22:28.536]  
+        INFO [09-25|13:22:28.536] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:22:28.536] Chain ID:  32659 (mainnet) 
+        INFO [09-25|13:22:28.536] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|13:22:28.536]  
+        INFO [09-25|13:22:28.536] hard forks: 
+        INFO [09-25|13:22:28.536]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|13:22:28.536]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|13:22:28.536]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|13:22:28.536]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:22:28.536]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:22:28.536]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|13:22:28.536]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|13:22:28.536]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|13:22:28.536]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|13:22:28.536]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|13:22:28.536]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|13:22:28.536]  - Fusion Eco:                  8250000  
+        INFO [09-25|13:22:28.536]  
+        INFO [09-25|13:22:28.536]  
+        INFO [09-25|13:22:28.536] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:22:28.536]  
+        INFO [09-25|13:22:28.536] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-25|13:22:28.540] Loaded most recent local header          number=15,130,098 hash="636e41…d86be9" td=119 age=18s
+        INFO [09-25|13:22:28.540] Loaded most recent local full block      number=15,130,098 hash="636e41…d86be9" td=119 age=18s
+        INFO [09-25|13:22:28.540] Loaded most recent local fast block      number=15,130,098 hash="636e41…d86be9" td=119 age=18s
+        INFO [09-25|13:22:28.541] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:22:28.541] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|13:22:28.542] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|13:22:28.542] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|13:22:28.542] Starting P2P networking 
+        ERROR[09-25|13:22:28.542] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:28.543] RLPx listener up                         self="enode://d86ede9c4826b3a17632871274771fe0ba345dbd3f7e89d81eae24b3d031d694267c0a3cd163d0851aaceaaa4af379007f29ad08d69991d80c1191ec1b321bd0@127.0.0.1:44779?discport=0"
+        INFO [09-25|13:22:28.547] IPC endpoint opened                      url=/tmp/fsn-purchase-peer-3392687629/lab.ipc
+        WARN [09-25|13:22:28.609] Automatic ticket purchase needs attention; retrying err="automatic ticket e\xf7:\xa6k\xde\xedB'\xc6\xcdҼἱ\a:\x05K:zHB\xcaۑ\x17\x00\xab\x91\x7f needs nonce 16, current nonce is 15"
+        INFO [09-25|13:22:28.610] Commit new mining work                   number=15,130,099 sealhash="0bafbd…a14158" uncles=0 txs=0 gas=0 fees=0 elapsed=3.315ms
+        WARN [09-25|13:22:28.611] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:22:51.909] Block synchronisation started 
+        INFO [09-25|13:22:51.909] Mining aborted due to sync 
+        INFO [09-25|13:22:51.913] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=148.16B throttle=8192
+        INFO [09-25|13:22:51.917] Imported new chain segment               blocks=1 txs=1 mgas=0.000 elapsed=4.510ms mgasps=0.000 order=0 number=15,130,099 hash="deac93…73f409" difficulty=11 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="22dabf…1e3ce4" parentHash="636e41…d86be9" time=1,790,335,341 cache=0.00B    ignored=1
+        INFO [09-25|13:22:51.918] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:51.920] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:51.922] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.588ms mgasps=4.639 order=1 number=15,130,100 hash="8d2352…30a947" difficulty=5  miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="6b192d…c33b84" parentHash="deac93…73f409" time=1,790,335,371 cache=0.00B
+        INFO [09-25|13:22:51.923] Mining too far in the future             wait=7s
+        ERROR[09-25|13:22:51.924] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:58.927] Commit new mining work                   number=15,130,101 sealhash="1de87a…ea6dcc" uncles=0 txs=0 gas=0 fees=0 elapsed=3.799ms
+        WARN [09-25|13:22:58.928] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:22:59.282] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-25|13:22:59.283] Submitted transaction                    hash=0x65f73aa66bdeed4227c6cdd2bce1bcb1073a054b3a7a4842cadb911700ab917f from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:59.283] Automatic ticket submitted; awaiting inclusion tx="65f73a…ab917f" nonce=16
+        INFO [09-25|13:22:59.926] Commit new mining work                   number=15,130,101 sealhash="0609ae…933156" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.703ms
+        WARN [09-25|13:22:59.926] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:23:05.315] IPC endpoint closed                      url=/tmp/fsn-purchase-peer-3392687629/lab.ipc
+        INFO [09-25|13:23:05.315] Stopping Ethereum protocol 
+        INFO [09-25|13:23:05.315] Ethereum protocol stopped 
+        INFO [09-25|13:23:05.315] Transaction pool stopped 
+        INFO [09-25|13:23:05.315] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (36.36s)
+        PASS
+    node_rehearsal_linux_test.go:294: node process /tmp/fsn-purchase-peer-2825927282/process-322367093.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|13:22:03.970] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|13:22:03.971] Allocated cache and file handles         database=/tmp/fsn-purchase-peer-2825927282/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|13:22:04.006] Persisted trie from memory database      nodes=8 size=996.00B time="177.688µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|13:22:04.008]  
+        INFO [09-25|13:22:04.008] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:22:04.008] Chain ID:  32659 (mainnet) 
+        INFO [09-25|13:22:04.008] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|13:22:04.008]  
+        INFO [09-25|13:22:04.008] hard forks: 
+        INFO [09-25|13:22:04.008]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|13:22:04.008]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|13:22:04.008]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|13:22:04.008]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:22:04.008]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:22:04.008]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|13:22:04.008]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|13:22:04.008]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|13:22:04.008]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|13:22:04.008]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|13:22:04.008]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|13:22:04.008]  - Fusion Eco:                  8250000  
+        INFO [09-25|13:22:04.008]  
+        INFO [09-25|13:22:04.008]  
+        INFO [09-25|13:22:04.008] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:22:04.008]  
+        INFO [09-25|13:22:04.008] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-25|13:22:04.012] Loaded most recent local header          number=15,130,097 hash="1333cb…b85e05" td=108 age=32m
+        INFO [09-25|13:22:04.012] Loaded most recent local full block      number=15,130,097 hash="1333cb…b85e05" td=108 age=32m
+        INFO [09-25|13:22:04.012] Loaded most recent local fast block      number=15,130,097 hash="1333cb…b85e05" td=108 age=32m
+        INFO [09-25|13:22:04.012] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:22:04.013] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|13:22:04.013] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|13:22:04.013] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|13:22:04.013] Starting P2P networking 
+        ERROR[09-25|13:22:04.017] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:04.017] RLPx listener up                         self="enode://1e87fae3c5e15d44e6968ace30f7e99ec84be88c677630cfe5fdb743d150ccd2e94909466b4cdae1f29ae49a69f826077b3a20bec0d709da5360febebc94641e@127.0.0.1:42983?discport=0"
+        INFO [09-25|13:22:04.020] IPC endpoint opened                      url=/tmp/fsn-purchase-peer-2825927282/lab.ipc
+        INFO [09-25|13:22:10.789] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-25|13:22:10.789] Submitted transaction                    hash=0x3dfd46e51f7e139a78eb15b87d92c519e6676cb214502be9e0158d76efc49af1 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:10.790] Transaction pool price threshold updated price=1
+        INFO [09-25|13:22:10.794] Commit new mining work                   number=15,130,098 sealhash="c4a87a…a2669f" uncles=0 txs=1 gas=21288 fees=2.1288e-05 elapsed=3.422ms
+        INFO [09-25|13:22:21.002] Successfully sealed new block            number=15,130,098 sealhash="c4a87a…a2669f" hash="636e41…d86be9" difficulty=11 elapsed=10.207s
+        INFO [09-25|13:22:21.002] 🔨 mined potential block                  number=15,130,098 hash="636e41…d86be9"
+        INFO [09-25|13:22:21.002] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:21.005] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:21.006] Commit new mining work                   number=15,130,099 sealhash="bb1c7a…2a60fe" uncles=0 txs=0 gas=0     fees=0          elapsed=4.686ms
+        INFO [09-25|13:22:32.001] Successfully sealed new block            number=15,130,099 sealhash="bb1c7a…2a60fe" hash="deac93…73f409" difficulty=11 elapsed=10.994s
+        INFO [09-25|13:22:32.001] 🔨 mined potential block                  number=15,130,099 hash="deac93…73f409"
+        INFO [09-25|13:22:32.001] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:32.002] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:34.614] Submitted transaction                    hash=0xbead38c71318ff493b1b1937835dab2ec836ff8e933d0715ddf035c10db0cb8e from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=15 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:34.615] Transaction pool price threshold updated price=1
+        INFO [09-25|13:22:34.618] Commit new mining work                   number=15,130,100 sealhash="bc1bbe…e5a968" uncles=0 txs=1 gas=21288 fees=2.1288e-05 elapsed=3.114ms
+        INFO [09-25|13:22:51.735] Successfully sealed new block            number=15,130,100 sealhash="bc1bbe…e5a968" hash="8d2352…30a947" difficulty=5  elapsed=16.383s
+        INFO [09-25|13:22:51.735] 🔨 mined potential block                  number=15,130,100 hash="8d2352…30a947"
+        INFO [09-25|13:22:51.735] Mining too far in the future             wait=7s
+        INFO [09-25|13:22:51.735] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:51.736] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:23:06.334] IPC endpoint closed                      url=/tmp/fsn-purchase-peer-2825927282/lab.ipc
+        INFO [09-25|13:23:06.334] Stopping Ethereum protocol 
+        INFO [09-25|13:23:06.334] Ethereum protocol stopped 
+        INFO [09-25|13:23:06.334] Transaction pool stopped 
+        INFO [09-25|13:23:06.334] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (61.83s)
+        PASS
+    node_rehearsal_linux_test.go:294: node process /tmp/fsn-purchase-peer-3392687629/process-3685686235.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|13:22:02.971] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|13:22:02.971] Allocated cache and file handles         database=/tmp/fsn-purchase-peer-3392687629/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|13:22:03.007] Persisted trie from memory database      nodes=8 size=996.00B time="148.869µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|13:22:03.009]  
+        INFO [09-25|13:22:03.009] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:22:03.009] Chain ID:  32659 (mainnet) 
+        INFO [09-25|13:22:03.009] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|13:22:03.009]  
+        INFO [09-25|13:22:03.009] hard forks: 
+        INFO [09-25|13:22:03.009]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|13:22:03.009]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|13:22:03.009]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|13:22:03.009]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:22:03.009]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:22:03.009]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|13:22:03.009]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|13:22:03.009]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|13:22:03.009]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|13:22:03.009]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|13:22:03.009]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|13:22:03.009]  - Fusion Eco:                  8250000  
+        INFO [09-25|13:22:03.009]  
+        INFO [09-25|13:22:03.009]  
+        INFO [09-25|13:22:03.009] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:22:03.009]  
+        INFO [09-25|13:22:03.009] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-25|13:22:03.014] Loaded most recent local header          number=15,130,096 hash="30269e…84e70e" td=92 age=34m2s
+        INFO [09-25|13:22:03.014] Loaded most recent local full block      number=15,130,096 hash="30269e…84e70e" td=92 age=34m2s
+        INFO [09-25|13:22:03.014] Loaded most recent local fast block      number=15,130,096 hash="30269e…84e70e" td=92 age=34m2s
+        INFO [09-25|13:22:03.014] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:22:03.015] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|13:22:03.015] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|13:22:03.016] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|13:22:03.016] Starting P2P networking 
+        ERROR[09-25|13:22:03.016] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:03.016] RLPx listener up                         self="enode://d86ede9c4826b3a17632871274771fe0ba345dbd3f7e89d81eae24b3d031d694267c0a3cd163d0851aaceaaa4af379007f29ad08d69991d80c1191ec1b321bd0@127.0.0.1:37599?discport=0"
+        INFO [09-25|13:22:03.020] IPC endpoint opened                      url=/tmp/fsn-purchase-peer-3392687629/lab.ipc
+        INFO [09-25|13:22:03.061] Commit new mining work                   number=15,130,097 sealhash="20a314…69508c" uncles=0 txs=0 gas=0 fees=0 elapsed=3.136ms
+        WARN [09-25|13:22:03.062] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:22:03.062] Automatic ticket purchase confirmed      tx="bead38…b0cb8e" block="30269e…84e70e"
+        INFO [09-25|13:22:03.071] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-25|13:22:03.071] Submitted transaction                    hash=0x65f73aa66bdeed4227c6cdd2bce1bcb1073a054b3a7a4842cadb911700ab917f from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:03.071] Automatic ticket submitted; awaiting inclusion tx="65f73a…ab917f" nonce=16
+        INFO [09-25|13:22:04.062] Commit new mining work                   number=15,130,097 sealhash="14c6a4…9e3e7f" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.529ms
+        WARN [09-25|13:22:04.062] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:22:04.174] Block synchronisation started 
+        INFO [09-25|13:22:04.175] Mining aborted due to sync 
+        INFO [09-25|13:22:04.182] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=160.36B throttle=8192
+        INFO [09-25|13:22:04.187] multiple block mined                     number=15,130,095 order=0 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf parentHash=0xc4519a54047d080a38a221bb8ff837af02b52482af49610ada59dbb0ab988e1d hash1=0x9923149e7141807aadd1cb360a0a3c39a7137063af56b311441c024b587df51e hash2=0x285089897d125323cbbb8c7fbcaa5bfe6e0bd1b236395286b6ec5ae93fb0e153
+        INFO [09-25|13:22:04.191] Imported new chain segment               blocks=2 txs=2 mgas=0.043 elapsed=7.772ms mgasps=5.478 order=0 number=15,130,096 hash="d8df81…344eae" difficulty=11 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ab7b02…7d69b4" parentHash="285089…b0e153" time=1,790,333,283 age=34m1s cache=0.00B
+        ERROR[09-25|13:22:04.192] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:04.195] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.568ms mgasps=4.659 order=0 number=15,130,097 hash="1333cb…b85e05" difficulty=11 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="fa49ef…f93655" parentHash="d8df81…344eae" time=1,790,333,404 age=32m   cache=0.00B
+        ERROR[09-25|13:22:04.196] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:04.198] Commit new mining work                   number=15,130,098 sealhash="75d71d…db16c6" uncles=0 txs=1 gas=21288 fees=2.1288e-05 elapsed=2.215ms
+        INFO [09-25|13:22:04.198] keep mining as order is first            sealHash=0x14c6a40fa9c84a784c22b6d71924875994bf6f07b1b10f08677245d5da9e3e7f number=15,130,097 hash="03b0fa…33264c"
+        WARN [09-25|13:22:04.198] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        WARN [09-25|13:22:08.021] Automatic ticket purchase needs attention; retrying err="another ticket purchase =\xfdF\xe5\x1f~\x13\x9ax\xeb\x15\xb8}\x92\xc5\x19\xe6gl\xb2\x14P+\xe9\xe0\x15\x8dv\xefĚ\xf1 is pending; awaiting nonce resolution"
+        INFO [09-25|13:22:21.007] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.552ms mgasps=5.992 order=0 number=15,130,098 hash="636e41…d86be9" difficulty=11 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="c00745…9ee3e3" parentHash="1333cb…b85e05" time=1,790,335,330 cache=0.00B
+        WARN [09-25|13:22:21.007] Automatic ticket purchase needs attention; retrying err="automatic ticket e\xf7:\xa6k\xde\xedB'\xc6\xcdҼἱ\a:\x05K:zHB\xcaۑ\x17\x00\xab\x91\x7f needs nonce 16, current nonce is 15"
+        INFO [09-25|13:22:21.007] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:21.009] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:21.011] Commit new mining work                   number=15,130,099 sealhash="0bafbd…a14158" uncles=0 txs=0 gas=0     fees=0          elapsed=3.888ms
+        WARN [09-25|13:22:21.011] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:22:27.183] IPC endpoint closed                      url=/tmp/fsn-purchase-peer-3392687629/lab.ipc
+        INFO [09-25|13:22:27.183] Stopping Ethereum protocol 
+        INFO [09-25|13:22:27.183] Ethereum protocol stopped 
+        INFO [09-25|13:22:27.183] Transaction pool stopped 
+        INFO [09-25|13:22:27.183] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (24.43s)
+        PASS
+--- PASS: TestRestartNodeRehearsal (64.20s)
+    --- PASS: TestRestartNodeRehearsal/purchase_peer_nonce_rollback (64.20s)
+PASS

@@ -403,3 +403,25 @@ heads and exact record recovery into an empty pool after process restart. Use a
 short Linux `TMPDIR` for IPC socket paths. See the
 [storage/peer report](../../docs/restart-purchase-storage-and-peers.md) for results
 and limits; neither case tests simultaneous live block producers.
+
+`TestRestartNodeRehearsal/purchase_peer_nonce_rollback` uses an explicit two-owner
+synthetic fixture and a valid heavier three-block peer branch to roll back two
+ticket purchases. It requires the saved successor to survive conflicting pool
+reinjection and a cold nonce-gap pause, then verifies ordinary raw resubmission
+and real mining of the missing purchases followed by byte-identical recovery.
+
+`TestRestartNodeRehearsal/competing_purchase_miners` runs two distinct normal
+miners/buyers on disconnected branches, bounds each initial purchase count,
+reconnects them, and checks continued purchases and matching canonical/persisted
+state. Only its final stable inspection holds block signing. Both tests use
+synthetic million-FSN funding to isolate concurrency from launch funding. See
+the [nonce rollback report](../../docs/restart-purchase-nonce-rollback.md) for the
+demonstrated manual-repair boundary and sparse-history limitations.
+
+`TestFinalizeParentIsolatedFromConcurrentImport` pauses processing of a batch's
+second block and verifies/finalizes an independent branch. It deterministically
+reproduces the inherited shared-parent ownership defect. The companion
+`TestHeaderBatchUsesUnstoredParents` validates three linked headers that are
+absent from the receiving database, guarding the explicit batch-parent path.
+See the [parent isolation report](../../docs/restart-parent-isolation.md) for
+baseline failures, repeated Windows/Linux checks and the separate P9 correction.

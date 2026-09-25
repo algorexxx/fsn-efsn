@@ -1,0 +1,519 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/competing_purchase_miners
+    competing_miners_linux_test.go:93: distinct live worker forks 0xbbe43befb6a1a6ae296d6d2a288eaf3cfa08d4249bee2862d1c0f97b59766a27 / 0x54299a71824f0c073c8d6a6d0c33ecdbea445ed27dcb04ada40e921d6ded37e0 joined at 15130096, continued to 15130099 0xfe3dda0f1715f5a00e32237908d9a87dc18d6c4edf032d27bf1caffc78c115a4; native purchases key1=3 key2=4; both persisted heads, roots and next-nonce records/pools agree
+    node_rehearsal_linux_test.go:294: node process /tmp/fsn-purchase-peer-1414642825/process-3889635306.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|13:21:49.980] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|13:21:49.981] Allocated cache and file handles         database=/tmp/fsn-purchase-peer-1414642825/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|13:21:50.027] Persisted trie from memory database      nodes=8 size=996.00B time="112.75µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|13:21:50.028]  
+        INFO [09-25|13:21:50.028] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:21:50.028] Chain ID:  32659 (mainnet) 
+        INFO [09-25|13:21:50.028] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|13:21:50.028]  
+        INFO [09-25|13:21:50.028] hard forks: 
+        INFO [09-25|13:21:50.029]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|13:21:50.029]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|13:21:50.029]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|13:21:50.029]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:21:50.029]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:21:50.029]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|13:21:50.029]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|13:21:50.029]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|13:21:50.029]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|13:21:50.029]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|13:21:50.029]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|13:21:50.029]  - Fusion Eco:                  8250000  
+        INFO [09-25|13:21:50.029]  
+        INFO [09-25|13:21:50.029]  
+        INFO [09-25|13:21:50.029] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:21:50.029]  
+        INFO [09-25|13:21:50.029] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-25|13:21:50.031] Loaded most recent local header          number=15,130,094 hash="0a64a7…f33e27" td=55 age=38m3s
+        INFO [09-25|13:21:50.031] Loaded most recent local full block      number=15,130,094 hash="0a64a7…f33e27" td=55 age=38m3s
+        INFO [09-25|13:21:50.031] Loaded most recent local fast block      number=15,130,094 hash="0a64a7…f33e27" td=55 age=38m3s
+        INFO [09-25|13:21:50.032] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:21:50.032] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|13:21:50.032] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|13:21:50.032] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|13:21:50.032] Starting P2P networking 
+        ERROR[09-25|13:21:50.033] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:21:50.033] RLPx listener up                         self="enode://33bfb471973f14a8b67add80a709eceedbbb2c6e621fcf5b1ea8de4bf998bed7107739a568056f3408de8efb0062ef74f0a90277aa1cad6327d192d7454462c8@127.0.0.1:40071?discport=0"
+        INFO [09-25|13:21:50.037] IPC endpoint opened                      url=/tmp/fsn-purchase-peer-1414642825/lab.ipc
+        INFO [09-25|13:21:50.075] Transaction pool price threshold updated price=1
+        INFO [09-25|13:21:50.078] Commit new mining work                   number=15,130,095 sealhash="187cb6…8a76cd" uncles=0 txs=0 gas=0 fees=0 elapsed=2.853ms
+        INFO [09-25|13:21:50.092] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [09-25|13:21:50.093] Submitted transaction                    hash=0xe9bbadd6da6f3de91bc16810137cf594d18fd90a76dcd060ba7ba498b55018d2 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:21:50.093] Automatic ticket submitted; awaiting inclusion tx="e9bbad…5018d2" nonce=14
+        INFO [09-25|13:21:51.079] Commit new mining work                   number=15,130,095 sealhash="46d7e7…bcf3a2" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.192ms
+        INFO [09-25|13:22:01.001] Successfully sealed new block            number=15,130,095 sealhash="46d7e7…bcf3a2" hash="54299a…ed37e0" difficulty=9 elapsed=9.922s
+        INFO [09-25|13:22:01.002] 🔨 mined potential block                  number=15,130,095 hash="54299a…ed37e0"
+        INFO [09-25|13:22:01.002] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:22:01.002] Automatic ticket purchase confirmed      tx="e9bbad…5018d2" block="54299a…ed37e0"
+        ERROR[09-25|13:22:01.003] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:01.005] Commit new mining work                   number=15,130,096 sealhash="629451…8c50b6" uncles=0 txs=0 gas=0     fees=0          elapsed=3.724ms
+        INFO [09-25|13:22:01.007] Submitted transaction                    hash=0xcfe585013c39e73291fee73afca769c6390ae44822390fe306ab7a370963be50 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=15 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:01.007] Automatic ticket submitted; awaiting inclusion tx="cfe585…63be50" nonce=15
+        INFO [09-25|13:22:12.584] Successfully sealed new block            number=15,130,096 sealhash="629451…8c50b6" hash="1d34bc…2a51a9" difficulty=9 elapsed=10.995s
+        INFO [09-25|13:22:12.585] 🔨 mined potential block                  number=15,130,096 hash="1d34bc…2a51a9"
+        INFO [09-25|13:22:12.585] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:12.588] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:27.622] Transaction pool price threshold updated price=1
+        INFO [09-25|13:22:27.626] Commit new mining work                   number=15,130,097 sealhash="95a607…7325d8" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=3.222ms
+        INFO [09-25|13:22:31.008] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.471ms mgasps=9.493 order=1 number=15,130,097 hash="ceb587…b3ab82" difficulty=4 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="115b86…2b6492" parentHash="1d34bc…2a51a9" time=1,790,335,351 cache=0.00B
+        INFO [09-25|13:22:31.008] Mining too far in the future             wait=7s
+        INFO [09-25|13:22:31.008] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:22:31.009] Automatic ticket purchase confirmed      tx="cfe585…63be50" block="ceb587…b3ab82"
+        ERROR[09-25|13:22:31.009] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:31.014] Submitted transaction                    hash=0x859f1ff4613f028135adce62b86f829ba6e39bb6d9ca58e4e3dda78082eb13b6 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:31.015] Automatic ticket submitted; awaiting inclusion tx="859f1f…eb13b6" nonce=16
+        INFO [09-25|13:22:38.001] Successfully sealed new block            number=15,130,097 sealhash="95a607…7325d8" hash="28e491…bdf69e" difficulty=8 elapsed=10.375s
+        INFO [09-25|13:22:38.002] 🔨 mined potential block                  number=15,130,097 hash="28e491…bdf69e"
+        ERROR[09-25|13:22:38.002] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:38.009] keep mining as my order is first         number=15,130,098 hash="5d4c5b…de2651"
+        INFO [09-25|13:22:38.012] Commit new mining work                   number=15,130,098 sealhash="c304d0…b52342" uncles=0 txs=0 gas=0     fees=0          elapsed=7.004s
+        INFO [09-25|13:22:38.016] Commit new mining work                   number=15,130,098 sealhash="006e4d…dfe30a" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.713ms
+        INFO [09-25|13:22:38.016] keep mining as order is first            sealHash=0xc304d036348cdd87906a3f4e7f69423a2fff2432b741f1404be978140ab52342 number=15,130,098 hash="6b2bdd…5f22a2"
+        INFO [09-25|13:22:49.734] Successfully sealed new block            number=15,130,098 sealhash="c304d0…b52342" hash="c0007b…ef8581" difficulty=8 elapsed=10.988s
+        INFO [09-25|13:22:49.735] 🔨 mined potential block                  number=15,130,098 hash="c0007b…ef8581"
+        INFO [09-25|13:22:49.735] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:49.738] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:49.739] Commit new mining work                   number=15,130,099 sealhash="4d1d20…eeaf5a" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.553ms
+        INFO [09-25|13:22:49.744] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.762ms mgasps=8.913 order=0 number=15,130,098 hash="fdf881…85d1c9" difficulty=9 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="af089e…7425f3" parentHash="28e491…bdf69e" time=1,790,335,358 cache=0.00B
+        INFO [09-25|13:22:49.744] Automatic ticket purchase confirmed      tx="859f1f…eb13b6" block="fdf881…85d1c9"
+        INFO [09-25|13:22:49.747] Commit new mining work                   number=15,130,099 sealhash="af06a0…98b7cb" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.345ms
+        ERROR[09-25|13:22:49.749] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:49.754] Submitted transaction                    hash=0x3b96f9657b3264fb89990b19643715cf12c0f1bd9f97e7441e591a4e7d5c15d5 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=17 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:49.754] Automatic ticket submitted; awaiting inclusion tx="3b96f9…5c15d5" nonce=17
+        INFO [09-25|13:22:50.748] Commit new mining work                   number=15,130,099 sealhash="7d8143…4b4c96" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=3.313ms
+        INFO [09-25|13:23:00.001] Successfully sealed new block            number=15,130,099 sealhash="7d8143…4b4c96" hash="fe3dda…c115a4" difficulty=10 elapsed=9.253s
+        INFO [09-25|13:23:00.002] 🔨 mined potential block                  number=15,130,099 hash="fe3dda…c115a4"
+        INFO [09-25|13:23:00.002] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:23:00.002] Automatic ticket purchase confirmed      tx="3b96f9…5c15d5" block="fe3dda…c115a4"
+        ERROR[09-25|13:23:00.004] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:23:00.006] Commit new mining work                   number=15,130,100 sealhash="52b44f…28a543" uncles=0 txs=0 gas=0     fees=0          elapsed=2.950ms
+        INFO [09-25|13:23:00.009] Submitted transaction                    hash=0x07b9d66c58f9f6735560ba4b97bdeefae5666001b3280c8f3dadbb968b7006e5 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=18 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:23:00.009] Automatic ticket submitted; awaiting inclusion tx="07b9d6…7006e5" nonce=18
+        INFO [09-25|13:23:06.112] Commit new mining work                   number=15,130,100 sealhash="fe0742…5fe803" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=2.971ms
+        WARN [09-25|13:23:06.112] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:23:12.124] IPC endpoint closed                      url=/tmp/fsn-purchase-peer-1414642825/lab.ipc
+        INFO [09-25|13:23:12.124] Stopping Ethereum protocol 
+        INFO [09-25|13:23:12.124] Ethereum protocol stopped 
+        INFO [09-25|13:23:12.124] Transaction pool stopped 
+        INFO [09-25|13:23:12.124] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (81.81s)
+        PASS
+    node_rehearsal_linux_test.go:290: node shutdown: exit status 1
+    node_rehearsal_linux_test.go:294: node process /tmp/fsn-purchase-peer-2226525053/process-2882725160.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-25|13:21:48.849] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-25|13:21:48.855] Allocated cache and file handles         database=/tmp/fsn-purchase-peer-2226525053/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-25|13:21:48.912] Persisted trie from memory database      nodes=8 size=996.00B time="187.487µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-25|13:21:48.914]  
+        INFO [09-25|13:21:48.914] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:21:48.915] Chain ID:  32659 (mainnet) 
+        INFO [09-25|13:21:48.915] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-25|13:21:48.915]  
+        INFO [09-25|13:21:48.915] hard forks: 
+        INFO [09-25|13:21:48.915]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-25|13:21:48.915]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-25|13:21:48.915]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-25|13:21:48.915]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:21:48.915]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-25|13:21:48.915]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-25|13:21:48.915]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-25|13:21:48.915]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-25|13:21:48.915]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-25|13:21:48.915]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-25|13:21:48.915]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-25|13:21:48.915]  - Fusion Eco:                  8250000  
+        INFO [09-25|13:21:48.915]  
+        INFO [09-25|13:21:48.915]  
+        INFO [09-25|13:21:48.915] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-25|13:21:48.915]  
+        INFO [09-25|13:21:48.916] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-25|13:21:48.929] Loaded most recent local header          number=15,130,094 hash="0a64a7…f33e27" td=55 age=38m1s
+        INFO [09-25|13:21:48.929] Loaded most recent local full block      number=15,130,094 hash="0a64a7…f33e27" td=55 age=38m1s
+        INFO [09-25|13:21:48.929] Loaded most recent local fast block      number=15,130,094 hash="0a64a7…f33e27" td=55 age=38m1s
+        INFO [09-25|13:21:48.930] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:21:48.935] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:21:48.936] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-25|13:21:48.938] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-25|13:21:48.938] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-25|13:21:48.939] Starting P2P networking 
+        INFO [09-25|13:21:48.941] RLPx listener up                         self="enode://3f902f9fc2c737edf51719718f8096ee9e613d7f2b7ba6ef932db9ed3efe5012d750ca0132e9e586668ed9d9bbfacffc65c260853814bd594b61503651d9bc69@127.0.0.1:39993?discport=0"
+        INFO [09-25|13:21:48.949] IPC endpoint opened                      url=/tmp/fsn-purchase-peer-2226525053/lab.ipc
+        INFO [09-25|13:21:50.072] Transaction pool price threshold updated price=1
+        INFO [09-25|13:21:50.075] Commit new mining work                   number=15,130,095 sealhash="87ca82…406697" uncles=0 txs=0 gas=0 fees=0 elapsed=2.907ms
+        INFO [09-25|13:21:50.076] Successfully sealed new block            number=15,130,095 sealhash="87ca82…406697" hash="bbe43b…766a27" difficulty=4 elapsed=1.207ms
+        INFO [09-25|13:21:50.077] 🔨 mined potential block                  number=15,130,095 hash="bbe43b…766a27"
+        INFO [09-25|13:21:50.080] Mining too far in the future             wait=7s
+        ERROR[09-25|13:21:50.088] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        WARN [09-25|13:21:50.094] Automatic ticket purchase needs attention; retrying err="head changed while constructing ticket purchase; retrying against new state"
+        INFO [09-25|13:21:50.098] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-25|13:21:50.098] Submitted transaction                    hash=0x27b7960cd20f0c3a8ec0decaaf7dcf9fc9d09516446fe5b9ff0ee4a3b9db0d3e from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:21:50.098] Automatic ticket submitted; awaiting inclusion tx="27b796…db0d3e" nonce=14
+        INFO [09-25|13:21:57.083] Commit new mining work                   number=15,130,096 sealhash="0a4e06…9c1c7a" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=7.003s
+        INFO [09-25|13:21:58.087] Commit new mining work                   number=15,130,096 sealhash="0a4e06…9c1c7a" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.674ms
+        INFO [09-25|13:22:20.584] Successfully sealed new block            number=15,130,096 sealhash="0a4e06…9c1c7a" hash="0a249d…004248" difficulty=3 elapsed=22.917s
+        INFO [09-25|13:22:20.584] 🔨 mined potential block                  number=15,130,096 hash="0a249d…004248"
+        INFO [09-25|13:22:20.585] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:22:20.585] Automatic ticket purchase confirmed      tx="27b796…db0d3e" block="0a249d…004248"
+        ERROR[09-25|13:22:20.585] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:20.585] Mining too far in the future             wait=7s
+        INFO [09-25|13:22:20.590] Submitted transaction                    hash=0xe3da2f6ad084f4c46752df196d7619db0f00c9591feee6289c41e6441a57d282 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=15 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:20.590] Automatic ticket submitted; awaiting inclusion tx="e3da2f…57d282" nonce=15
+        INFO [09-25|13:22:20.740] Block synchronisation started 
+        INFO [09-25|13:22:20.743] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=170.84B throttle=8192
+        INFO [09-25|13:22:20.747] Imported new chain segment               blocks=1 txs=3 mgas=0.021 elapsed=3.717ms mgasps=5.709 order=0 number=15,130,095 hash="54299a…ed37e0" difficulty=9 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="227089…036377" parentHash="0a64a7…f33e27" time=1,790,335,310 cache=0.00B    ignored=1
+        ERROR[09-25|13:22:20.748] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:20.750] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=2.669ms mgasps=0.000 order=0 number=15,130,096 hash="1d34bc…2a51a9" difficulty=9 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="5d69b3…cdc20b" parentHash="54299a…ed37e0" time=1,790,335,321 cache=0.00B
+        ERROR[09-25|13:22:20.752] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:20.752] Transaction pool price threshold updated price=1
+        INFO [09-25|13:22:27.587] keep mining as my order is first         number=15,130,097 hash="1d7431…22b1d5"
+        INFO [09-25|13:22:27.587] keep mining as my order is first         number=15,130,097 hash="1d7431…22b1d5"
+        INFO [09-25|13:22:27.590] Commit new mining work                   number=15,130,097 sealhash="145597…5a6991" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=2.702ms
+        WARN [09-25|13:22:27.622] Automatic ticket purchase needs attention; retrying err="another ticket purchase '\xb7\x96\f\xd2\x0f\f:\x8e\xc0\xdeʯ}ϟ\xc9Е\x16Do\xe5\xb9\xff\x0e䣹\xdb\r> is pending; awaiting nonce resolution"
+        INFO [09-25|13:22:31.001] Successfully sealed new block            number=15,130,097 sealhash="145597…5a6991" hash="ceb587…b3ab82" difficulty=4 elapsed=3.410s
+        INFO [09-25|13:22:31.001] 🔨 mined potential block                  number=15,130,097 hash="ceb587…b3ab82"
+        INFO [09-25|13:22:31.002] Mining too far in the future             wait=7s
+        INFO [09-25|13:22:31.002] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:31.002] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:31.003] Submitted transaction                    hash=0xe3da2f6ad084f4c46752df196d7619db0f00c9591feee6289c41e6441a57d282 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=15 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:31.003] Automatic ticket submitted; awaiting inclusion tx="e3da2f…57d282" nonce=15
+        ==================
+        WARNING: DATA RACE
+        Write at 0x000001adb4d0 by goroutine 784:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.SetHeaders()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/consensus/datong/consensus.go:244 +0x1a0f
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).insertChain()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:1492 +0x1a03
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).InsertChain()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:1411 +0x4a
+          github.com/FusionFoundation/efsn/v5/eth.NewProtocolManager.func6()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/handler.go:191 +0x89a
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).insert.func1()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:669 +0x8c1
+        
+        Previous read at 0x000001adb4d0 by goroutine 33:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.(*DaTong).Finalize()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/consensus/datong/consensus.go:376 +0x75
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commit()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:964 +0x2e3
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commitNewWork()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:953 +0x1f93
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).mainLoop()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:448 +0x630
+          github.com/FusionFoundation/efsn/v5/miner.newWorker.func1()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:221 +0x33
+        
+        Goroutine 784 (running) created at:
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).insert()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:643 +0x4f1
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).loop()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:314 +0x1d91
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).Start.func1()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:179 +0x33
+        
+        Goroutine 33 (running) created at:
+          github.com/FusionFoundation/efsn/v5/miner.newWorker()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:221 +0xc4d
+          github.com/FusionFoundation/efsn/v5/miner.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/miner.go:77 +0xe8
+          github.com/FusionFoundation/efsn/v5/eth.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/backend.go:194 +0x2084
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          github.com/syndtr/goleveldb/leveldb.(*DB).checkAndCleanFiles()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db_util.go:52 +0x23e
+          github.com/syndtr/goleveldb/leveldb.openDB()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:136 +0x884
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x224
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:657 +0x16e
+          fmt.(*ss).doScanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:1230 +0x3ee
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          github.com/syndtr/goleveldb/leveldb.(*DB).recoverJournal()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:482 +0xa6
+          github.com/syndtr/goleveldb/leveldb.openDB()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:131 +0x86d
+          github.com/syndtr/goleveldb/leveldb.Open()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:203 +0x330
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseNamePtr()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:666 +0x15a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).GetMeta.func1()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:332 +0xdb
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).GetMeta.func2()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:356 +0xc1
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).GetMeta()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:407 +0x716
+          github.com/syndtr/goleveldb/leveldb.(*session).recover()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/session.go:140 +0xf9
+          github.com/syndtr/goleveldb/leveldb.Open()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:189 +0xf6
+          github.com/syndtr/goleveldb/leveldb.OpenFile()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:225 +0x84
+          github.com/FusionFoundation/efsn/v5/ethdb/leveldb.NewCustom()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/ethdb/leveldb/leveldb.go:120 +0x54f
+          github.com/FusionFoundation/efsn/v5/ethdb/leveldb.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/ethdb/leveldb/leveldb.go:88 +0xb7
+          github.com/FusionFoundation/efsn/v5/core/rawdb.NewLevelDBDatabase()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/core/rawdb/database.go:233 +0x84
+          github.com/FusionFoundation/efsn/v5/node.(*Node).OpenDatabase()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/node/node.go:692 +0x2aa
+          github.com/FusionFoundation/efsn/v5/eth.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/backend.go:110 +0x794
+          github.com/FusionFoundation/efsn/v5/tests/restart.runRehearsalNode()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/node_rehearsal_linux_test.go:236 +0x1544
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestRestartNodeRehearsal()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/node_rehearsal_linux_test.go:170 +0x605
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        ==================
+        INFO [09-25|13:22:38.005] Commit new mining work                   number=15,130,098 sealhash="c34f6f…6b1c28" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=7.003s
+        ==================
+        WARNING: DATA RACE
+        Write at 0x000001adb4d0 by goroutine 784:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.SetHeaders()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/consensus/datong/consensus.go:244 +0x3f1d
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).insertChain()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:1578 +0x3f11
+          github.com/FusionFoundation/efsn/v5/core.(*BlockChain).InsertChain()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/core/blockchain.go:1411 +0x4a
+          github.com/FusionFoundation/efsn/v5/eth.NewProtocolManager.func6()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/handler.go:191 +0x89a
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).insert.func1()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:669 +0x8c1
+        
+        Previous read at 0x000001adb4d0 by goroutine 33:
+          github.com/FusionFoundation/efsn/v5/consensus/datong.(*DaTong).Finalize()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/consensus/datong/consensus.go:376 +0x75
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commit()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:964 +0x2e3
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).commitNewWork()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:953 +0x1f93
+          github.com/FusionFoundation/efsn/v5/miner.(*worker).mainLoop()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:448 +0x630
+          github.com/FusionFoundation/efsn/v5/miner.newWorker.func1()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:221 +0x33
+        
+        Goroutine 784 (running) created at:
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).insert()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:643 +0x4f1
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).loop()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:314 +0x1d91
+          github.com/FusionFoundation/efsn/v5/eth/fetcher.(*Fetcher).Start.func1()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/fetcher/fetcher.go:179 +0x33
+        
+        Goroutine 33 (running) created at:
+          github.com/FusionFoundation/efsn/v5/miner.newWorker()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/worker.go:221 +0xc4d
+          github.com/FusionFoundation/efsn/v5/miner.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/miner/miner.go:77 +0xe8
+          github.com/FusionFoundation/efsn/v5/eth.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/backend.go:194 +0x2084
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          github.com/syndtr/goleveldb/leveldb.(*DB).checkAndCleanFiles()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db_util.go:52 +0x23e
+          github.com/syndtr/goleveldb/leveldb.openDB()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:136 +0x884
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x224
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:657 +0x16e
+          fmt.(*ss).doScanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:1230 +0x3ee
+          fmt.Fscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:143 +0xdc
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).List()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:458 +0x3f8
+          github.com/syndtr/goleveldb/leveldb.(*DB).recoverJournal()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:482 +0xa6
+          github.com/syndtr/goleveldb/leveldb.openDB()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:131 +0x86d
+          github.com/syndtr/goleveldb/leveldb.Open()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:203 +0x330
+          fmt.Sscanf()
+              /opt/fusion-toolchain/go/src/fmt/scan.go:114 +0x164
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseName()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:643 +0x1a
+          github.com/syndtr/goleveldb/leveldb/storage.fsParseNamePtr()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:666 +0x15a
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).GetMeta.func1()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:332 +0xdb
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).GetMeta.func2()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:356 +0xc1
+          github.com/syndtr/goleveldb/leveldb/storage.(*fileStorage).GetMeta()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/storage/file_storage.go:407 +0x716
+          github.com/syndtr/goleveldb/leveldb.(*session).recover()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/session.go:140 +0xf9
+          github.com/syndtr/goleveldb/leveldb.Open()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:189 +0xf6
+          github.com/syndtr/goleveldb/leveldb.OpenFile()
+              /home/rehearsal/go/pkg/mod/github.com/syndtr/goleveldb@v1.0.1-0.20210819022825-2ae1ddf74ef7/leveldb/db.go:225 +0x84
+          github.com/FusionFoundation/efsn/v5/ethdb/leveldb.NewCustom()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/ethdb/leveldb/leveldb.go:120 +0x54f
+          github.com/FusionFoundation/efsn/v5/ethdb/leveldb.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/ethdb/leveldb/leveldb.go:88 +0xb7
+          github.com/FusionFoundation/efsn/v5/core/rawdb.NewLevelDBDatabase()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/core/rawdb/database.go:233 +0x84
+          github.com/FusionFoundation/efsn/v5/node.(*Node).OpenDatabase()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/node/node.go:692 +0x2aa
+          github.com/FusionFoundation/efsn/v5/eth.New()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/eth/backend.go:110 +0x794
+          github.com/FusionFoundation/efsn/v5/tests/restart.runRehearsalNode()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/node_rehearsal_linux_test.go:236 +0x1544
+          github.com/FusionFoundation/efsn/v5/tests/restart.TestRestartNodeRehearsal()
+              /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart/node_rehearsal_linux_test.go:170 +0x605
+          testing.tRunner()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1595 +0x238
+          testing.(*T).Run.func1()
+              /opt/fusion-toolchain/go/src/testing/testing.go:1648 +0x44
+        ==================
+        INFO [09-25|13:22:38.011] Commit new mining work                   number=15,130,098 sealhash="c34f6f…6b1c28" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=5.068ms
+        INFO [09-25|13:22:38.012] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=9.468ms mgasps=4.483 order=0 number=15,130,097 hash="28e491…bdf69e" difficulty=8 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="07597e…0c4e08" parentHash="1d34bc…2a51a9" time=1,790,335,347 cache=0.00B
+        ERROR[09-25|13:22:38.013] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:38.017] Commit new mining work                   number=15,130,098 sealhash="f801f0…5b2031" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=4.027ms
+        INFO [09-25|13:22:49.734] Successfully sealed new block            number=15,130,098 sealhash="f801f0…5b2031" hash="fdf881…85d1c9" difficulty=9 elapsed=10.984s
+        INFO [09-25|13:22:49.734] 🔨 mined potential block                  number=15,130,098 hash="fdf881…85d1c9"
+        INFO [09-25|13:22:49.735] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-25|13:22:49.735] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:49.735] Automatic ticket purchase confirmed      tx="e3da2f…57d282" block="fdf881…85d1c9"
+        INFO [09-25|13:22:49.738] Commit new mining work                   number=15,130,099 sealhash="7a00ad…0a7576" uncles=0 txs=0 gas=0     fees=0          elapsed=2.967ms
+        INFO [09-25|13:22:49.742] Submitted transaction                    hash=0xeae7f82e9a314849bac42e551643e21d48b2b91a05eb88a5d7b16aca38575b50 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:49.742] Automatic ticket submitted; awaiting inclusion tx="eae7f8…575b50" nonce=16
+        INFO [09-25|13:22:49.745] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=4.029ms mgasps=0.000 order=0 number=15,130,098 hash="c0007b…ef8581" difficulty=8 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="0c9aef…a8fc22" parentHash="ceb587…b3ab82" time=1,790,335,358 cache=0.00B
+        INFO [09-25|13:22:49.745] notify first order chain head event      number=15,130,098 hash="c0007b…ef8581"
+        ERROR[09-25|13:22:49.746] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:22:49.750] Commit new mining work                   number=15,130,099 sealhash="7a00ad…0a7576" uncles=0 txs=0 gas=0     fees=0          elapsed=4.020ms
+        INFO [09-25|13:22:50.748] Commit new mining work                   number=15,130,099 sealhash="7a00ad…0a7576" uncles=0 txs=0 gas=0     fees=0          elapsed=2.502ms
+        INFO [09-25|13:22:55.268] Submitted transaction                    hash=0xeae7f82e9a314849bac42e551643e21d48b2b91a05eb88a5d7b16aca38575b50 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:22:55.268] Automatic ticket submitted; awaiting inclusion tx="eae7f8…575b50" nonce=16
+        INFO [09-25|13:23:00.009] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.125ms mgasps=10.289 order=0 number=15,130,099 hash="fe3dda…c115a4" difficulty=10 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="0e772b…3c74be" parentHash="fdf881…85d1c9" time=1,790,335,369 cache=0.00B
+        INFO [09-25|13:23:00.009] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-25|13:23:00.010] Automatic ticket purchase confirmed      tx="eae7f8…575b50" block="fe3dda…c115a4"
+        ERROR[09-25|13:23:00.010] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        INFO [09-25|13:23:00.014] Commit new mining work                   number=15,130,100 sealhash="23178d…2096ba" uncles=0 txs=0 gas=0     fees=0          elapsed=4.552ms
+        INFO [09-25|13:23:00.017] Submitted transaction                    hash=0xc040acf99b09d9048585ae352a24467872534da309c78f967655832d6ec86f66 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=17 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-25|13:23:00.017] Automatic ticket submitted; awaiting inclusion tx="c040ac…c86f66" nonce=17
+        INFO [09-25|13:23:00.101] Commit new mining work                   number=15,130,100 sealhash="6131fd…abdf7a" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=3.161ms
+        WARN [09-25|13:23:00.101] Block sealing failed                     err="public peer fixture deliberately withholds block signatures"
+        INFO [09-25|13:23:13.150] IPC endpoint closed                      url=/tmp/fsn-purchase-peer-2226525053/lab.ipc
+        INFO [09-25|13:23:13.150] Stopping Ethereum protocol 
+        INFO [09-25|13:23:13.150] Ethereum protocol stopped 
+        INFO [09-25|13:23:13.150] Transaction pool stopped 
+        INFO [09-25|13:23:13.150] Blockchain manager stopped 
+            testing.go:1465: race detected during execution of test
+        --- FAIL: TestRestartNodeRehearsal (83.96s)
+        === NAME  
+            testing.go:1465: race detected during execution of test
+        FAIL
+    node_rehearsal_linux_test.go:296: node process reported a data race
+--- FAIL: TestRestartNodeRehearsal (84.37s)
+    --- FAIL: TestRestartNodeRehearsal/competing_purchase_miners (84.37s)
+FAIL

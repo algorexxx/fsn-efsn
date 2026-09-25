@@ -97,8 +97,12 @@ The subsequent [storage/peer rehearsal](restart-purchase-storage-and-peers.md)
 passes eight database-interface failure cases on both platforms and two
 compatible reorganizations through actual Linux peers/downloader, including
 receipt relocation/replacement and an empty-pool cold restart. Its block signer
-is held to prevent local production; simultaneous competing miners and deeper
-live-peer nonce rollback remain open. An uncertain successful record deletion
+is held to prevent local production. The later
+[nonce rollback and competing-miner investigation](restart-purchase-nonce-rollback.md)
+adds a two-purchase rollback with cold/manual repair and distinct real miners
+rejoining and continuing on one chain. Multi-purchase rollback can leave a nonce
+gap requiring operator repair; the release must explicitly address this
+availability boundary. An uncertain successful record deletion
 can omit a confirmation log; use canonical receipts when checking inclusion.
 Abrupt power loss, torn storage, cross-device recovery, cuts within database
 writes and every internal pool-journal boundary remain untested. The record uses

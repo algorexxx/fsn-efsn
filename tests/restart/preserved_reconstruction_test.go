@@ -40,7 +40,6 @@ func TestPreservedTicketReconstruction(t *testing.T) {
 	backup := openInspectionBackup(t)
 	chain := inspectionChain{backup}
 	engine := datong.New(backup.config.DaTong, backup.db)
-	datong.SetHeaders(nil)
 	t.Cleanup(func() { requireNoError(t, engine.Close()) })
 	end := backup.head.Number.Uint64()
 	for number := end - 125; number <= end; number++ {

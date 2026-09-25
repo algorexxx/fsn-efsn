@@ -98,12 +98,13 @@ invalidated by a compatible post-anchor reorganization. The fixed anchor's
 protection against incompatible old history has separate
 [peer evidence](restart-node-rehearsal.md).
 
-Deeper live-peer rollback that leaves a nonce gap, reorganization at each exact
-receipt-read/record-retirement instruction, simultaneous competing miners,
-expired or underpriced retained purchases, broader storage corruption and real
-key custody still need their own review or explicit operational decisions.
-The existing controlled rewind test demonstrates pausing on an unexplained
-nonce gap; it is not proof of every live-peer reinjection outcome.
+The later [nonce rollback and competing-miner investigation](restart-purchase-nonce-rollback.md)
+adds a two-purchase rollback through an actual peer, cold/manual nonce repair,
+and distinct real miners rejoining and continuing. It confirms that a nonce gap
+can require operator intervention. More fork depths and reinjection orders,
+exact concurrent receipt-read/record-retirement cuts, expired or underpriced
+retained purchases, broader storage corruption and real key custody still need
+their own review or explicit operational decisions.
 
 Commands and raw results are retained in
 [`restart-purchase-storage-2026-09-25`](evidence/restart-purchase-storage-2026-09-25).

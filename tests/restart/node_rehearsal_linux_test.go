@@ -176,6 +176,8 @@ func TestRestartNodeRehearsal(t *testing.T) {
 	t.Run("compatible_peer", rehearseCompatiblePeer)
 	t.Run("purchase_peer_reinclusion", func(t *testing.T) { rehearsePurchasePeer(t, false) })
 	t.Run("purchase_peer_replacement", func(t *testing.T) { rehearsePurchasePeer(t, true) })
+	t.Run("purchase_peer_nonce_rollback", rehearsePurchaseNonceRollback)
+	t.Run("competing_purchase_miners", rehearseCompetingPurchaseMiners)
 	t.Run("heavier_stored_fork_peer", rehearseHeavierPeer)
 	t.Run("incompatible_database_startup", rehearseIncompatibleStartup)
 }
