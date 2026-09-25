@@ -11,6 +11,11 @@ nor several servers under one person's control guarantees survival after that
 person leaves. This work preserves the selected minimal initial launch and adds
 a concrete path toward independent operation.
 
+The subsequent [peer-cache investigation](restart-discovery-cache.md) now verifies
+cold-process reconnection from genuinely learned saved contacts, establishes age
+limits and corrects lost timestamps and sparse-reply penalties as P11. DNS failure
+tolerance remains pending. The results below describe the earlier seed-outage rehearsal.
+
 ## Results against the actual client
 
 The opt-in Linux rehearsal uses a private network namespace with only loopback,
@@ -112,6 +117,11 @@ or explicitly override bootstrap lists, for example
 `--bootnodesv4="" --bootnodesv5=""`, and supply a reachable peer. Leaving
 discovery enabled allows that initial contact to introduce more peers.
 
+If a failed hostname is inside a TOML bootstrap list, remove or repair that
+entry too: TOML decoding resolves it before CLI overrides run. The
+[configuration-path follow-up](restart-discovery-cache.md) records this source
+finding and the required DNS patch coverage.
+
 A running node can receive a reachable enode through the existing private
 `admin.addPeer` interface. That API parses the URL at the time it is called;
 re-adding a hostname can therefore resolve a changed address. Persist deliberate
@@ -136,10 +146,12 @@ a validator fleet before the agreed two-node launch.
    invalid node identities as configuration errors. Simply skipping a failed
    lookup permanently is insufficient. This is proposed, not implemented by P10.
 2. **Retain working contacts.** Verify actual on-disk discovery peer persistence
-   and cold restart with all original seeds unavailable. Existing code has a
-   node database and seed loading; the live test above uses fresh in-memory
-   databases and does not prove this restart behavior. Test persistence maturity,
-   aging, cold restart and all-seeds-down recovery before relying on it.
+   and cold restart with all original seeds unavailable. The subsequent
+   [cache test](restart-discovery-cache.md) now demonstrates this with real
+   persistence timers and separate processes, while boundary tests establish
+   aging and expose timestamp/sparse-reply defects corrected together by P11. The
+   original live test above still uses fresh in-memory databases. DNS-error startup and public
+   networking remain to be covered.
 3. **Add independent introductions as people join.** Encourage reachable
    community nodes to serve discovery, publish their enodes and put independently
    controlled endpoints into release configuration. Two or three operators on

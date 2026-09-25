@@ -1,0 +1,98 @@
+{
+  "date": "2026-09-25",
+  "baseline": "31433ca14b3f7cac222df4e653ce22effc2191c8",
+  "production_change": "Six added/one removed lines across table.go and udp.go: preserve original addedAt on replacement and accept a collection timeout only with validated nonempty neighbors.",
+  "baseline_sources": {
+    "baseline": "31433ca14b3f7cac222df4e653ce22effc2191c8",
+    "scope": "Discovery table.go and udp.go are replaced with pre-P11 sources; P10 initialization ordering remains included.",
+    "sources": {
+      "p2p/discover/table.go": {
+        "git_blob": "5d5119dd194af5672ae21567ddafdbd427c7ae02",
+        "sha256": "b8e2c79a1b631c7ec7d1450b2370f69293ec0dc3737788f5d8f47dac3115bdc0"
+      },
+      "p2p/discover/udp.go": {
+        "git_blob": "00f0f0575057d89d6349b9d5b2a711ebfc1d0cd9",
+        "sha256": "7408763f3d2ecf1b4a865f69f34152a515d524352933fb351ad7b6a96aa0a8a2"
+      }
+    }
+  },
+  "sources": {
+    "p2p/discover/table.go": {
+      "git_blob": "2084fe0b365856de68622ff12f8d4b90cc76ac03",
+      "sha256_raw": "bee22830a919de15d9bd9e4a938b36134586d8ccac531043e6c535fd46b37e54"
+    },
+    "p2p/discover/database.go": {
+      "git_blob": "55015aac87e96a49ec48695a8e91e7d5bd4df7c8",
+      "sha256_raw": "e3800383acfcfefba461d6bae71a0437c00c43082f78cdba3733e8f1233ad216"
+    },
+    "p2p/discover/udp.go": {
+      "git_blob": "ace82df454bdddc76e1d92f5159d7c6aa1ac4b87",
+      "sha256_raw": "d3953c9a6e5255607d9358b7c96fa22fa7b0032783e4f3d0b89e9d894f7428f4"
+    },
+    "p2p/discover/restart_cache_test.go": {
+      "git_blob": "a11a0317c054c4fe29b920ead35c1adbb996926c",
+      "sha256_raw": "521991bded7f4610f3ab7c115890c05da523f0cc5273ceb84d78c9a15dec634f"
+    },
+    "p2p/discover/restart_partial_reply_test.go": {
+      "git_blob": "c08c2fd662d21d5616d45a2c0d29a7444afc3422",
+      "sha256_raw": "c45042bbd2e597165f21fc2c67c057711d02593cf6721dcf62543181714e7442"
+    },
+    "tests/restart/discovery_linux_test.go": {
+      "git_blob": "c6705c1253aabc75ff24d6407ee9afacab48f63f",
+      "sha256_raw": "7624592761ef4ce047ab6223acda874cf85217cc682a88c52747816b06510674"
+    },
+    "tests/restart/discovery_persistence_linux_test.go": {
+      "git_blob": "df833627c0f3cf94b4bac00f09314d5ab54724da",
+      "sha256_raw": "661dfac3ce1fa4b2adfff78971c78ffd1703d782dfeb8698d7f00bc2cf7e4d60"
+    },
+    "p2p/server.go": {
+      "git_blob": "731967c52e0986a4a45523807ba5dea8e21c5067",
+      "sha256_raw": "aa9205a7008bc452b971146d3a2f3d194549071a7c456059f7a6d9af5d66dc32"
+    },
+    "p2p/discover/node.go": {
+      "git_blob": "e13a09b8018572a645a312c03d09b6ec0f67d7e3",
+      "sha256_raw": "bfab31ce3489a9e693dbf4a88686221a93ad9be025067e1552ffeeb09c944eae"
+    },
+    "node/node.go": {
+      "git_blob": "b7447d17ef5cea8780241f27990cd358c753c88d",
+      "sha256_raw": "bc6fd3816465bbd6ff6538db79795e76e7b2ec1f9fe418ff2c7e3855a4e5f1dd"
+    },
+    "node/config.go": {
+      "git_blob": "8fb3d8e940a8394c952c8305bc7d0f0b9f2ed772",
+      "sha256_raw": "a3eb25a56b103dc6bfed0ecb4a1d47c77160afe7d5b740e24699adccfca7fdce"
+    },
+    "cmd/efsn/config.go": {
+      "git_blob": "2c6b4fcf3a673feb9c5bbbf5db61586f8303f5aa",
+      "sha256_raw": "828a52e278acbb66f9b0ed5963ef0c716d5f87d51527c4a31ee3ce729ca47c20"
+    }
+  },
+  "binaries": {
+    "tmp/discovery-cache-linux-tests": "2c1f93c3f4882717c0d15e7d5324d75a96c8a66dbbc9fe136d17fdacd27a4b41",
+    "tmp/discovery-cache-timestamp-only-linux-tests": "d7e3c3e6502439792a81207b73fa71af1ec2d8d14444d1deed81e000ae30dd0b",
+    "tmp/discovery-cache-current-linux-tests": "faa63798e2822b4f882445b709bbb11bf581dbce3db04ad962a4240cf2efe95a"
+  },
+  "live_results": {
+    "baseline-persistence-race.txt": {
+      "duration": "370.82s",
+      "separate_child_processes": 5,
+      "result": "PASS with race detection"
+    },
+    "current-race.txt": {
+      "duration": "400.69s",
+      "separate_child_processes": 5,
+      "result": "PASS with race detection"
+    }
+  },
+  "boundary_results": {
+    "before": "lost timestamp and premature persistence",
+    "after": "three tests pass with race detection"
+  },
+  "timestamp_only_result": "FAIL: mature live community endpoint was absent from the closed database; timestamp correction alone is insufficient.",
+  "sparse_reply_results": {
+    "before": "valid one/two-neighbor replies return timeout and penalize responder",
+    "after": "five cases pass with race detection, including missing/invalid reply controls"
+  },
+  "regressions": "PASS with race detection; full-package legacy failures remain documented in prior evidence",
+  "baseline_wrapper": "Test completed with PASS; post-test shell output-tail step failed because its script was edited during execution. Current runner is stable and completed separately.",
+  "limits": "Actual loopback peer discovery/RLPx with genuine saved endpoints; no real keys or chain execution. Age tests use synthetic timestamps. DNS-error startup is still unfixed. No full-package green claim."
+}

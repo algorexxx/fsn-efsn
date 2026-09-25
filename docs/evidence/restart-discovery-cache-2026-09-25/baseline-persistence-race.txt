@@ -1,0 +1,44 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartDiscoveryRehearsal
+=== RUN   TestRestartDiscoveryRehearsal/persisted_peers_after_seed_shutdown
+    discovery_persistence_linux_test.go:45: mature child connected; waiting 340 real seconds for the five-minute eligibility period and 30-second persistence tick
+    discovery_persistence_linux_test.go:52: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=learn_short pid=458 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown358787340/001/short
+            discovery_persistence_linux_test.go:164: community connection established
+        --- PASS: TestRestartDiscoveryRehearsal (1.58s)
+        PASS
+    discovery_persistence_linux_test.go:53: closed database contains recent pong metadata but no complete endpoint record
+    discovery_persistence_linux_test.go:56: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=short_cold pid=465 bootstrap=0 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown358787340/001/short
+            discovery_persistence_linux_test.go:154: no connection acquired during 25-second observation
+        --- PASS: TestRestartDiscoveryRehearsal (25.03s)
+        PASS
+    discovery_persistence_linux_test.go:57: short-lived child had pong metadata but no saved endpoint; a separate cold process with no seed remained disconnected
+    discovery_persistence_linux_test.go:59: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=learn_mature pid=452 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown358787340/001/mature
+            discovery_persistence_linux_test.go:164: community connection established
+            discovery_persistence_linux_test.go:173: 340-second real-time peer maturation complete
+        --- PASS: TestRestartDiscoveryRehearsal (341.58s)
+        PASS
+    discovery_persistence_linux_test.go:60: read-only cold inspection verified exact community endpoint and recent pong: enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:46255
+    discovery_persistence_linux_test.go:64: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=mature_cold pid=986 bootstrap=0 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown358787340/001/mature
+            discovery_persistence_linux_test.go:164: community connection established
+            discovery_persistence_linux_test.go:186: sent message 42 through connection obtained from saved contacts
+        --- PASS: TestRestartDiscoveryRehearsal (1.10s)
+        PASS
+    discovery_persistence_linux_test.go:73: separate cold process reconnected from its genuine on-disk peer cache and sent message 42: no seeds, no static peers, original seed stopped, community outbound dialing disabled
+    discovery_persistence_linux_test.go:79: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=fresh_cold pid=992 bootstrap=0 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown358787340/001/fresh
+            discovery_persistence_linux_test.go:154: no connection acquired during 25-second observation
+        --- PASS: TestRestartDiscoveryRehearsal (25.03s)
+        PASS
+    discovery_persistence_linux_test.go:80: fresh node with no saved contacts and no seeds remained disconnected while the same community node was reachable
+--- PASS: TestRestartDiscoveryRehearsal (370.82s)
+    --- PASS: TestRestartDiscoveryRehearsal/persisted_peers_after_seed_shutdown (370.81s)
+PASS

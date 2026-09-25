@@ -1,0 +1,18 @@
+=== RUN   TestRestartSparseFindnodeReplies
+=== RUN   TestRestartSparseFindnodeReplies/one_valid
+    restart_partial_reply_test.go:51: neighbors=1 err=RPC timeout; want neighbors=1 err=<nil>
+=== RUN   TestRestartSparseFindnodeReplies/two_packets
+    restart_partial_reply_test.go:51: neighbors=2 err=RPC timeout; want neighbors=2 err=<nil>
+=== RUN   TestRestartSparseFindnodeReplies/invalid_only
+=== RUN   TestRestartSparseFindnodeReplies/no_reply
+--- FAIL: TestRestartSparseFindnodeReplies (2.02s)
+    --- FAIL: TestRestartSparseFindnodeReplies/one_valid (0.51s)
+    --- FAIL: TestRestartSparseFindnodeReplies/two_packets (0.50s)
+    --- PASS: TestRestartSparseFindnodeReplies/invalid_only (0.50s)
+    --- PASS: TestRestartSparseFindnodeReplies/no_reply (0.50s)
+=== RUN   TestRestartSparseReplyDoesNotPenalizePeer
+    restart_partial_reply_test.go:79: valid sparse reply penalized responding peer: failures=1
+--- FAIL: TestRestartSparseReplyDoesNotPenalizePeer (0.50s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/p2p/discover	2.579s
+FAIL

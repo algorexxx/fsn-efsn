@@ -666,6 +666,7 @@ func (tab *Table) replace(b *bucket, last *Node) *Node {
 func (b *bucket) bump(n *Node) bool {
 	for i := range b.entries {
 		if b.entries[i].ID == n.ID {
+			n.addedAt = b.entries[i].addedAt
 			// move it to the front
 			copy(b.entries[1:], b.entries[:i])
 			b.entries[0] = n

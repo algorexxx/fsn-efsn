@@ -1,0 +1,85 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartDiscoveryRehearsal
+=== RUN   TestRestartDiscoveryRehearsal/dns_parse_move_and_multiple_answers
+    discovery_linux_test.go:162: v4 resolves once, keeps one IP, loses hostname and does not dial the second answer; reparse moves IP with identical node ID; v5 rejects DNS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/healthy
+    discovery_linux_test.go:183: healthy:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:212: bootstrap configuration returned: v4=1 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/bad_then_good
+    discovery_linux_test.go:183: bad_then_good:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|16:13:20.477] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/good_then_bad
+    discovery_linux_test.go:183: good_then_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|16:13:20.505] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/all_bad
+    discovery_linux_test.go:183: all_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|16:13:20.534] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_bad
+    discovery_linux_test.go:183: nodiscover_bad:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|16:13:20.568] Bootstrap URL invalid                    enode=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@missing.restart.invalid:40408 err="invalid host"
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/empty
+    discovery_linux_test.go:183: empty:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:212: bootstrap configuration returned: v4=0 v5=0 discoveryDisabled=false
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_empty
+    discovery_linux_test.go:183: nodiscover_empty:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_linux_test.go:212: bootstrap configuration returned: v4=0 v5=0 discoveryDisabled=true
+        --- PASS: TestRestartDiscoveryRehearsal (0.00s)
+        PASS
+=== RUN   TestRestartDiscoveryRehearsal/cli_bootstrap_failures/malformed
+    discovery_linux_test.go:183: malformed:
+        === RUN   TestRestartDiscoveryRehearsal
+        CRIT [09-25|16:13:22.652] Bootstrap URL invalid                    enode=not-an-enode err="invalid URL scheme, want \"enode\""
+=== RUN   TestRestartDiscoveryRehearsal/seed_outage_and_static_recovery
+    discovery_linux_test.go:335: two fresh nodes discovered each other through one seed and exchanged an authenticated RLPx subprotocol message
+    discovery_linux_test.go:348: existing peers still exchange messages after 25 seconds with seed stopped; fresh nodes with an offline seed or no seeds remain disconnected
+    discovery_linux_test.go:356: both fresh nodes recovered through a literal-IP static peer without restarting or restoring the seed
+=== RUN   TestRestartDiscoveryRehearsal/persisted_peers_after_seed_shutdown
+    discovery_persistence_linux_test.go:45: mature child connected; waiting 340 real seconds for the five-minute eligibility period and 30-second persistence tick
+    discovery_persistence_linux_test.go:52: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=learn_short pid=1004 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown1338390640/001/short
+            discovery_persistence_linux_test.go:164: community connection established
+        --- PASS: TestRestartDiscoveryRehearsal (1.58s)
+        PASS
+    discovery_persistence_linux_test.go:53: closed database contains recent pong metadata but no complete endpoint record
+    discovery_persistence_linux_test.go:56: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=short_cold pid=1011 bootstrap=0 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown1338390640/001/short
+            discovery_persistence_linux_test.go:154: no connection acquired during 25-second observation
+        --- PASS: TestRestartDiscoveryRehearsal (25.04s)
+        PASS
+    discovery_persistence_linux_test.go:57: short-lived child had pong metadata but no saved endpoint; a separate cold process with no seed remained disconnected
+    discovery_persistence_linux_test.go:59: cold-process evidence:
+        === RUN   TestRestartDiscoveryRehearsal
+            discovery_persistence_linux_test.go:145: mode=learn_mature pid=998 bootstrap=1 static=0 database=/tmp/TestRestartDiscoveryRehearsalpersisted_peers_after_seed_shutdown1338390640/001/mature
+            discovery_persistence_linux_test.go:164: community connection established
+            discovery_persistence_linux_test.go:173: 340-second real-time peer maturation complete
+        --- PASS: TestRestartDiscoveryRehearsal (341.60s)
+        PASS
+    discovery_persistence_linux_test.go:60: leveldb: not found
+--- FAIL: TestRestartDiscoveryRehearsal (372.57s)
+    --- PASS: TestRestartDiscoveryRehearsal/dns_parse_move_and_multiple_answers (0.01s)
+    --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures (3.23s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/healthy (1.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/bad_then_good (0.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/good_then_bad (0.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/all_bad (0.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_bad (0.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/empty (1.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/nodiscover_empty (1.03s)
+        --- PASS: TestRestartDiscoveryRehearsal/cli_bootstrap_failures/malformed (0.02s)
+    --- PASS: TestRestartDiscoveryRehearsal/seed_outage_and_static_recovery (26.67s)
+    --- FAIL: TestRestartDiscoveryRehearsal/persisted_peers_after_seed_shutdown (342.64s)
+FAIL

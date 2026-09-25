@@ -6,6 +6,8 @@
 candidate from baseline `bcbd1ce`, pinned by source blobs in its evidence.
 P10 is a discovery startup correction from baseline `0df4014`, also pinned by
 source blobs and before/after race evidence.
+P11 preserves discovery peer age and accepts validated sparse discovery replies,
+from baseline `31433ca`, with deterministic failures and cold-process evidence.
 This is the review inventory, not
 an approved release. Later test/document changes do not approve these patches.
 
@@ -28,6 +30,7 @@ investigation commit is not a substitute for selecting its intended changes.
 | P8 | Do not call the database repair routine after a corrupt database fails a read-only open. | Required for the investigation/recovery tools' promise to leave the source unchanged. It is not required to alter ordinary writable node operation. | A read-only corrupt open fails instead of attempting repair. Review `ethdb/leveldb/readonly_test.go` and [offline signing evidence](restart-offline-signing.md). This is also a candidate standalone upstream bug fix. |
 | P9 | Remove the package-global parent-header list; use each chain reader for single-block work and explicit parent prefixes through the existing header-batch API. | Required to fix the reproduced import/miner race and deterministic cross-branch `unknown ancestor` failures. | Validation-context isolation, with no difficulty, ticket-economics or finality change. Review [parent isolation](restart-parent-isolation.md), baseline failures and corrected concurrency/header-batch tests. The [cold-header follow-up](restart-cold-header-validation.md) distinguishes cached parent routing from state availability; the header-only limit predates P9 and full import/cold reopen passes. Independent validation review remains required. |
 | P10 | Start the discovery table's background loop only after the UDP transport has received its table. | Required to remove the inherited startup race reproduced by real seed discovery. | One goroutine-start line moved across two files. Affects discovery startup, with no wire-format, DNS policy, consensus or economic change. Review [discovery resilience](restart-discovery-resilience.md) and retained before/after race results. The relevant focused tests pass; three inherited full-package test failures remain documented. |
+| P11 | Preserve a peer's original table timestamp; treat a timed-out reply collection containing validated neighbors as a successful discovery reply. | Corrects a bypass of the existing cache maturity filter and erroneous penalties against healthy small-network peers. The timestamp hunk alone failed the live persistence test; review both together. | Six added/one removed production lines in two files. Affects peer residence and persistence; no schema, DNS, wire-format, ticket or consensus change. Review [cache boundaries and cold restart](restart-discovery-cache.md), baseline failures, the timestamp-only regression and combined checks. |
 
 ## Source boundaries
 
@@ -47,6 +50,7 @@ the recovery-only section. Tests and evidence must accompany any extracted patch
 | P8 | `ethdb/leveldb/leveldb.go`: read-only corruption handling. |
 | P9 | `consensus/datong/consensus.go`: remove `glb_parents` / `SetHeaders`, update `VerifyHeader` / `Finalize`; `core/blockchain.go`: remove setter calls; `core/headerchain.go`: use `VerifyHeaders` results. |
 | P10 | `p2p/discover/table.go`: remove loop startup from `newTable`; `p2p/discover/udp.go`: start it in `newUDP` after transport initialization. The six direct table-test callers start their own loop. |
+| P11 | `p2p/discover/table.go`: `bucket.bump` copies `addedAt` to the replacement; `p2p/discover/udp.go`: `findnode` clears only a collection timeout with a nonempty validated result. Both hunks are separate from P10's initialization hunks in the same files. |
 | O1 | `cmd/utils/flags.go`: trim/filter explicit bootstrap lists. Inherited gateway usability fix; optional for the restart protocol. Does not create DNS discovery. Review independently if retained. |
 
 P1, P5, P6, P7 and P9 overlap in chain/header code. Extract and test them in a defined

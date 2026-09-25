@@ -33,6 +33,10 @@ func TestRestartDiscoveryRehearsal(t *testing.T) {
 		t.Fatal("requires exactly one enabled loopback interface")
 	}
 	log.Root().SetHandler(log.LvlFilterHandler(log.LvlWarn, log.StreamHandler(os.Stderr, log.TerminalFormat(false))))
+	if config := os.Getenv("FUSION_RESTART_DISCOVERY_PERSISTENCE"); config != "" {
+		runDiscoveryPersistenceChild(t, config)
+		return
+	}
 	if mode := os.Getenv("FUSION_RESTART_DISCOVERY_CLI"); mode != "" {
 		rehearseDiscoveryCLI(t, mode)
 		return
@@ -40,6 +44,7 @@ func TestRestartDiscoveryRehearsal(t *testing.T) {
 	t.Run("dns_parse_move_and_multiple_answers", rehearseDiscoveryDNS)
 	t.Run("cli_bootstrap_failures", rehearseDiscoveryCLIFailures)
 	t.Run("seed_outage_and_static_recovery", rehearseDiscoverySeedOutage)
+	t.Run("persisted_peers_after_seed_shutdown", rehearseDiscoveryPersistence)
 }
 
 type rehearsalDNS struct {
@@ -221,6 +226,11 @@ type discoveryProbeMessage struct {
 
 func startDiscoveryProbe(t *testing.T, keyNumber int, bootnodes []*discover.Node) *discoveryProbe {
 	t.Helper()
+	return startConfiguredDiscoveryProbe(t, keyNumber, p2p.Config{BootstrapNodes: bootnodes})
+}
+
+func startConfiguredDiscoveryProbe(t *testing.T, keyNumber int, config p2p.Config) *discoveryProbe {
+	t.Helper()
 	key, err := crypto.HexToECDSA(fmt.Sprintf("%064x", keyNumber))
 	requireNoError(t, err)
 	restrict, err := netutil.ParseNetlist("127.0.0.0/8")
@@ -230,7 +240,14 @@ func startDiscoveryProbe(t *testing.T, keyNumber int, bootnodes []*discover.Node
 	listenAddr := reservation.Addr().String()
 	requireNoError(t, reservation.Close())
 	probe := &discoveryProbe{writers: make(map[discover.NodeID]p2p.MsgReadWriter), received: make(chan discoveryProbeMessage, 32)}
-	probe.server = &p2p.Server{Config: p2p.Config{PrivateKey: key, Name: "restart-discovery-rehearsal", MaxPeers: 12, DialRatio: 2, ListenAddr: listenAddr, BootstrapNodes: bootnodes, NetRestrict: restrict, Protocols: []p2p.Protocol{{Name: "restartprobe", Version: 1, Length: 1, Run: probe.run}}}}
+	config.PrivateKey = key
+	config.Name = "restart-discovery-rehearsal"
+	config.MaxPeers = 12
+	config.DialRatio = 2
+	config.ListenAddr = listenAddr
+	config.NetRestrict = restrict
+	config.Protocols = []p2p.Protocol{{Name: "restartprobe", Version: 1, Length: 1, Run: probe.run}}
+	probe.server = &p2p.Server{Config: config}
 	requireNoError(t, probe.server.Start())
 	t.Cleanup(probe.server.Stop)
 	return probe
