@@ -36,20 +36,21 @@ type SigningJournal struct {
 	mu       sync.Mutex
 	db       *leveldb.DB
 	identity SigningIdentity
+	policy   *SigningPolicy
 	fault    error
 }
 
 // CreateSigningJournal is an explicit, one-time initialization, never a recovery
 // action. Copies, rollbacks and other signers using the same key are not protected.
 func CreateSigningJournal(path string, identity SigningIdentity) (*SigningJournal, error) {
-	return openSigningJournal(path, identity, true)
+	return openSigningJournal(path, identity, true, nil)
 }
 
 func OpenSigningJournal(path string, identity SigningIdentity) (*SigningJournal, error) {
-	return openSigningJournal(path, identity, false)
+	return openSigningJournal(path, identity, false, nil)
 }
 
-func openSigningJournal(path string, identity SigningIdentity, create bool) (*SigningJournal, error) {
+func openSigningJournal(path string, identity SigningIdentity, create bool, policy *SigningPolicy) (*SigningJournal, error) {
 	if !filepath.IsAbs(path) || identity.GenesisHash == (common.Hash{}) || identity.ChainID == 0 || identity.Signer == (common.Address{}) {
 		return nil, fmt.Errorf("absolute journal path and explicit signing identity required")
 	}
@@ -60,7 +61,21 @@ func openSigningJournal(path string, identity SigningIdentity, create bool) (*Si
 	j := &SigningJournal{db: db, identity: identity}
 	encoded, err := rlp.EncodeToBytes(identity)
 	if err == nil && create {
-		err = db.Put([]byte("identity-v1"), encoded, &opt.WriteOptions{Sync: true})
+		batch := new(leveldb.Batch)
+		batch.Put([]byte("identity-v1"), encoded)
+		if policy != nil {
+			var data []byte
+			data, err = rlp.EncodeToBytes(policy)
+			if err == nil {
+				batch.Put([]byte("policy-v1"), data)
+			}
+		}
+		if err == nil {
+			err = db.Write(batch, &opt.WriteOptions{Sync: true})
+		}
+	}
+	if err == nil {
+		err = j.readPolicy()
 	}
 	if err == nil {
 		var stored []byte
@@ -84,7 +99,7 @@ func (j *SigningJournal) validateRecords() error {
 	defer iterator.Release()
 	for iterator.Next() {
 		key := iterator.Key()
-		if bytes.Equal(key, []byte("identity-v1")) {
+		if bytes.Equal(key, []byte("identity-v1")) || bytes.Equal(key, []byte("policy-v1")) {
 			continue
 		}
 		if len(key) != 33 || key[0] != 'p' {
@@ -94,7 +109,10 @@ func (j *SigningJournal) validateRecords() error {
 			return err
 		}
 	}
-	return iterator.Error()
+	if err := iterator.Error(); err != nil {
+		return err
+	}
+	return j.checkPolicySequence(nil)
 }
 
 // Sign rebuilds an explicitly reviewed candidate against a stopped chain reader.
@@ -104,6 +122,13 @@ func (j *SigningJournal) validateRecords() error {
 func (j *SigningJournal) Sign(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	if j.policy != nil {
+		return nil, fmt.Errorf("policy journal requires approved offline signing")
+	}
+	return j.signReviewed(chain, plan, txs, reviewed, signer)
+}
+
+func (j *SigningJournal) signReviewed(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
 	if j.fault != nil {
 		return nil, j.fault
 	}
@@ -125,6 +150,9 @@ func (j *SigningJournal) Sign(chain Chain, plan Plan, txs types.Transactions, re
 }
 
 func (j *SigningJournal) signBlock(block *types.Block, encoded []byte, signer datong.SignerFn) (*types.Block, error) {
+	if err := j.checkPolicySequence(block); err != nil {
+		return nil, err
+	}
 	key := append([]byte{'p'}, block.ParentHash().Bytes()...)
 	stored, err := j.db.Get(key, nil)
 	if err == nil {

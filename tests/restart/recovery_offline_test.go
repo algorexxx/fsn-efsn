@@ -167,7 +167,7 @@ func TestOfflineRecoveryChild(t *testing.T) {
 	var tx types.Transaction
 	requireNoError(t, rlp.DecodeBytes(step.Purchase, &tx))
 	identity := recovery.SigningIdentity{GenesisHash: step.Plan.GenesisHash, ChainID: step.Plan.ChainID, Signer: step.Plan.Signer}
-	journalPath := filepath.Join(directory, step.Plan.Signer.Hex())
+	journalPath := offlineJournalPath(directory, step.Plan.Signer.Hex())
 	chainPath := offlineChainPath(t, directory, "working", step.FullState)
 	output := filepath.Join(directory, fmt.Sprintf("export-%d.rlp", stage))
 	cut := os.Getenv("FUSION_OFFLINE_TEST_CUT")
@@ -187,7 +187,7 @@ func TestOfflineRecoveryChild(t *testing.T) {
 		if crypto.PubkeyToAddress(key.PublicKey) != step.Plan.Signer {
 			t.Fatal("test accepts only the two public synthetic signers")
 		}
-		sealed, err := recovery.SignOffline(chainPath, journalPath, step.Plan, types.Transactions{&tx}, step.Unsigned, func(account accounts.Account, mime string, payload []byte) ([]byte, error) {
+		sealed, err := signOfflineStep(t, directory, chainPath, journalPath, step, func(account accounts.Account, mime string, payload []byte) ([]byte, error) {
 			if account.Address != identity.Signer || mime != "" {
 				t.Fatal("wrong signer callback identity")
 			}
@@ -230,7 +230,7 @@ func TestOfflineRecoveryChild(t *testing.T) {
 		t.Fatal("unknown offline child action")
 	}
 	calls := 0
-	sealed, err := recovery.SignOffline(chainPath, journalPath, step.Plan, types.Transactions{&tx}, step.Unsigned, func(accounts.Account, string, []byte) ([]byte, error) {
+	sealed, err := signOfflineStep(t, directory, chainPath, journalPath, step, func(accounts.Account, string, []byte) ([]byte, error) {
 		calls++
 		return nil, errors.New("recovery must never invoke signer")
 	})
@@ -370,8 +370,8 @@ func requireOfflineUncertain(t *testing.T, directory, cut string) {
 	var tx types.Transaction
 	requireNoError(t, rlp.DecodeBytes(step.Purchase, &tx))
 	calls := 0
-	path := filepath.Join(directory, step.Plan.Signer.Hex())
-	_, err := recovery.SignOffline(chainPath, path, step.Plan, types.Transactions{&tx}, step.Unsigned, func(accounts.Account, string, []byte) ([]byte, error) {
+	path := offlineJournalPath(directory, step.Plan.Signer.Hex())
+	_, err := signOfflineStep(t, directory, chainPath, path, step, func(accounts.Account, string, []byte) ([]byte, error) {
 		calls++
 		return nil, errors.New("unexpected callback")
 	})

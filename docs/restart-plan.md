@@ -39,6 +39,16 @@ refused. Owner-by-owner accounting of the controlled three-block prefix also
 passes. Production key access, operator approval and key/journal custody remain
 open; no real key was used.
 
+The [reviewed-input and handover-policy follow-up](restart-signing-approval.md)
+now adds canonical approval-byte checking and immutable journal limits: one
+backup block or two consecutive donation blocks, bound to the initial parent,
+purchaser, executable and chain configuration. Small-state Windows and Linux
+rehearsals (with Linux race detection) pass the same eleven cuts and quota/input
+refusals. The operator commands, trusted approval channel and bounded real-key
+adapter remain to be integrated; the new layer has not repeated the earlier
+complete-state rehearsal. Credential preflight must avoid reserving a signing
+attempt merely because the operator mistyped a password.
+
 The [complete preserved-data restore rehearsal](restart-snapshot-restore.md)
 has packaged the original 117 GB database onto the user-selected W: network
 share. Every packaged file hash matches the independently retained original

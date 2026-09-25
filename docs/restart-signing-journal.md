@@ -211,10 +211,12 @@ The operator workflow around these library operations still needs to:
    If interruption follows a completed journal write, use `Saved(parent)` to
    recover those bytes, including after the working head has advanced. Never
    recreate a missing journal or retry an unfinished reservation.
-4. Enforce the reviewed one-backup-block sequence in the adapter's approved
-   inputs and custody procedure. The journal's same-parent restriction is not
-   a lifetime block quota. Enable ordinary donation mining only after controlled
-   construction has ended and the reviewed cleanup state is present.
+4. Use the [immutable handover policy and reviewed-input wrapper](restart-signing-approval.md)
+   added in the 25 September follow-up. New policy journals enforce one backup
+   block or two consecutive donation blocks across reopen; legacy journals only
+   enforce the same-parent restriction. Complete the operator approval/key-custody
+   procedure. Enable ordinary donation mining only after controlled construction
+   has ended and the reviewed cleanup state is present.
 
 The complete-state offline rehearsal now passes nine completed process cuts and
 two unfinished cuts per platform, alongside the small-state conflicting-input

@@ -17,6 +17,13 @@ import (
 // construction and signing. The existing journal must live outside chain data.
 // It does not open a key, import a block, export a file or contact the network.
 func SignOffline(chainPath, journalPath string, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
+	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
+	return withOfflineJournal(chainPath, journalPath, identity, func(reader *Reader, journal *SigningJournal) (*types.Block, error) {
+		return journal.Sign(reader, plan, txs, reviewed, signer)
+	})
+}
+
+func withOfflineJournal(chainPath, journalPath string, identity SigningIdentity, sign func(*Reader, *SigningJournal) (*types.Block, error)) (*types.Block, error) {
 	chainPath, err := existingDirectory(chainPath)
 	if err != nil {
 		return nil, err
@@ -37,13 +44,12 @@ func SignOffline(chainPath, journalPath string, plan Plan, txs types.Transaction
 	if err != nil {
 		return nil, err
 	}
-	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
 	journal, err := OpenSigningJournal(journalPath, identity)
 	if err != nil {
 		return nil, err
 	}
 	defer journal.Close()
-	return journal.Sign(reader, plan, txs, reviewed, signer)
+	return sign(reader, journal)
 }
 
 // ExportSavedBlock retrieves a completed journal record without any signing

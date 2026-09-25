@@ -1,0 +1,60 @@
+?   	github.com/FusionFoundation/efsn/v5/cmd/fsn-recovery	[no test files]
+=== RUN   TestNativeErrorDespiteSuccessfulReceipt
+--- PASS: TestNativeErrorDespiteSuccessfulReceipt (0.00s)
+=== RUN   TestExportSavedBlock
+--- PASS: TestExportSavedBlock (0.27s)
+=== RUN   TestExportSavedBlockRefusesUnfinished
+--- PASS: TestExportSavedBlockRefusesUnfinished (0.08s)
+=== RUN   TestOfflineResolvedPaths
+    offline_test.go:105: Windows symbolic-link privilege unavailable: symlink C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\offline-signing-temp\TestOfflineResolvedPaths1653616803\001\journal C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\offline-signing-temp\TestOfflineResolvedPaths1653616803\001\alias: A required privilege is not held by the client.
+--- SKIP: TestOfflineResolvedPaths (0.04s)
+=== RUN   TestApprovedJournalQuotaAndSequence
+    policy_test.go:91: 1-block policy retained across reopen; out-of-sequence and extra signatures refused; saved export retained
+    policy_test.go:91: 2-block policy retained across reopen; out-of-sequence and extra signatures refused; saved export retained
+--- PASS: TestApprovedJournalQuotaAndSequence (0.31s)
+=== RUN   TestApprovedJournalRefusesInvalidPolicy
+--- PASS: TestApprovedJournalRefusesInvalidPolicy (0.00s)
+=== RUN   TestApprovedJournalRefusesStoredSequenceViolation
+--- PASS: TestApprovedJournalRefusesStoredSequenceViolation (0.12s)
+=== RUN   TestSigningApprovalExactBytes
+--- PASS: TestSigningApprovalExactBytes (0.00s)
+=== RUN   TestSigningJournalReplayAndConflict
+--- PASS: TestSigningJournalReplayAndConflict (0.08s)
+=== RUN   TestSigningJournalTruncatedWAL
+    signing_test.go:119: truncated reservation refused: leveldb/journal: block/chunk corrupted: chunk length overflows block (668 bytes) [file=000001.log]
+--- PASS: TestSigningJournalTruncatedWAL (0.05s)
+=== RUN   TestSigningJournalAmbiguousCallback
+=== RUN   TestSigningJournalAmbiguousCallback/error
+=== RUN   TestSigningJournalAmbiguousCallback/short
+=== RUN   TestSigningJournalAmbiguousCallback/wrong_key
+=== RUN   TestSigningJournalAmbiguousCallback/write_failure
+=== RUN   TestSigningJournalAmbiguousCallback/panic
+--- PASS: TestSigningJournalAmbiguousCallback (0.36s)
+    --- PASS: TestSigningJournalAmbiguousCallback/error (0.07s)
+    --- PASS: TestSigningJournalAmbiguousCallback/short (0.07s)
+    --- PASS: TestSigningJournalAmbiguousCallback/wrong_key (0.07s)
+    --- PASS: TestSigningJournalAmbiguousCallback/write_failure (0.07s)
+    --- PASS: TestSigningJournalAmbiguousCallback/panic (0.08s)
+=== RUN   TestSigningJournalIdentityAndCorruption
+--- PASS: TestSigningJournalIdentityAndCorruption (0.21s)
+=== RUN   TestSigningJournalProcessLock
+--- PASS: TestSigningJournalProcessLock (0.08s)
+=== RUN   TestSigningJournalProcessCuts
+=== RUN   TestSigningJournalProcessCuts/before_reservation
+    signing_test.go:293: forced termination at before_reservation: new signer calls=1, outcome=<nil>
+=== RUN   TestSigningJournalProcessCuts/after_reservation
+    signing_test.go:293: forced termination at after_reservation: new signer calls=0, outcome=signing reservation is unfinished; do not sign again
+=== RUN   TestSigningJournalProcessCuts/after_signature
+    signing_test.go:293: forced termination at after_signature: new signer calls=0, outcome=signing reservation is unfinished; do not sign again
+=== RUN   TestSigningJournalProcessCuts/after_completion
+    signing_test.go:293: forced termination at after_completion: new signer calls=0, outcome=<nil>
+--- PASS: TestSigningJournalProcessCuts (0.61s)
+    --- PASS: TestSigningJournalProcessCuts/before_reservation (0.14s)
+    --- PASS: TestSigningJournalProcessCuts/after_reservation (0.17s)
+    --- PASS: TestSigningJournalProcessCuts/after_signature (0.15s)
+    --- PASS: TestSigningJournalProcessCuts/after_completion (0.15s)
+=== RUN   TestSigningJournalChild
+    signing_test.go:312: subprocess helper
+--- SKIP: TestSigningJournalChild (0.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/internal/recovery	2.803s

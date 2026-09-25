@@ -150,14 +150,17 @@ outside chain data as well as outside the journal.
 
 Before real-key use:
 
-1. Integrate bounded key access and an operator workflow pinning the reviewed
-   plan, purchase, unsigned report, configuration and executable. The library
-   checks chain identity and reviewed block bytes; it does not authenticate the
-   operator's approval or attest the executable/configuration externally.
+1. Integrate bounded key access and the operator commands around the
+   [reviewed-input and immutable-policy layer](restart-signing-approval.md).
+   That follow-up binds the plan, purchase, unsigned bytes, configuration and
+   executable, with passing small-state interruption tests. It does not
+   authenticate the reviewer or externally attest the executable. Test credential
+   preflight before reservation without allowing uncertain attempts to retry.
 2. Keep the authoritative journal on reliable local storage outside snapshots;
    enforce one active holder per key and the approved one-backup-block custody
    sequence. Path separation cannot detect journal rollback, copied journals or
-   signatures made elsewhere. The journal is not a lifetime one-block quota.
+   signatures made elsewhere. Legacy journals have no lifetime quota; the new
+   policy journal limits its own handover sequence, not all use of a wallet key.
 3. Complete the live backup-wallet purchase drain, real-address ledger/timing
    review, independent recovery import and mandatory ancestry-anchor selection.
    Enable ordinary donation mining only after the controlled sequence is verified.

@@ -1,0 +1,29 @@
+{
+  "baseline_commit": "cedde9fe14089583acf62a4b78e97a967cfcdbd9",
+  "toolchain": "Go 1.21.3; Windows CGO_ENABLED=0; Linux CGO_ENABLED=1 with race detection; GOMAXPROCS=2; offline cached modules; Linux integration network isolated",
+  "source_sha256": {
+    "internal/recovery/approval.go": "9ef05ff58fb50e29ddc60d4303e61cc68ef3c65302093af31e85e89f8bb19064",
+    "internal/recovery/policy.go": "69feac39f4db353c302827eeec8413f426b6e64c49e84b5009b1f3f6e1a906d5",
+    "internal/recovery/policy_test.go": "6b468266aa2e62f38cbbaa91e60d3bc2be3b9c4851bbad978214433e3fb3ad0c",
+    "internal/recovery/signing.go": "3be05eb41d13d856cc1933e4e02cb64175d7d7a77ad4d1616e9021b2b6ba39ef",
+    "internal/recovery/offline.go": "629579ee17e7abfe808ba111875e7963619f2f0a99d3ae38be50004d038599c3",
+    "tests/restart/recovery_approval_test.go": "284dbd1e537be4e5a8bfa613ac84465096e5b1a8c00168b692d9272d8ae8fd17",
+    "tests/restart/recovery_offline_test.go": "a4d13e766cfa9b00a53e6a2c5f91edac19925c9e412aa5bdc8b4692a1b035bfb"
+  },
+  "source_git_blobs": {
+    "internal/recovery/approval.go": "c7998a379ee482301a80cc601d472e0414747b52",
+    "internal/recovery/policy.go": "e100015da58dcb4e731d4260cedec5857fc457da",
+    "internal/recovery/policy_test.go": "29a298a5c675f467c4d9b110a4907f0352bb52a3",
+    "internal/recovery/signing.go": "a2f7a31989b896f4a08f5982c08be77eea383f88",
+    "internal/recovery/offline.go": "aa5ec36c0fa2bc4512ad29aad3c1efc108d3dfc2",
+    "tests/restart/recovery_approval_test.go": "e2620e7ea6699abb1edafea499c14325c9df872c",
+    "tests/restart/recovery_offline_test.go": "07f44bd5f03ff89ba41d1a280b10441f67a47dda"
+  },
+  "binary_sha256": {
+    "tmp/signing-approval-windows-tests.exe": "496fd46cb7540d1b1aac81349e03dfe17697b6ced4442d94e5e9357c939787fe",
+    "tmp/signing-approval-linux-tests": "9a7a14d0b24a8e4de4bf6182824fba13ddf68071fda5e3d0f33c5ff81ae7886d"
+  },
+  "approved_completed_cuts_per_platform": 9,
+  "approved_uncertain_cuts_per_platform": 2,
+  "scope": "Small-state approved and legacy offline signing tests with public scalars 1 and 2 only. Policy and exact-input checks run before reservation/signing; no real-key adapter, CLI signing command, complete-state fixture or W: data opened. Final unit logs include the added unfinished-donation advancement test; production and integration sources were unchanged after binary builds. This is not a reproducible release-build attestation."
+}
