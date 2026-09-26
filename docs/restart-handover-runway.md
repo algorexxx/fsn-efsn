@@ -96,6 +96,9 @@ account; none is established by the synthetic sponsor tests.
 
 The [manual recovery runbook](restart-operator-recovery.md) now collects the
 demonstrated retrieval, nonce, interval, funding and acceptance checks. Its use
-as the supported release policy remains a decision. A live complete-state
-outage/repair rehearsal, unavailable or expired original bytes, real signing
-custody, final recovery parameters and monitoring deployment remain open.
+as the supported release policy remains a decision. The subsequent
+[live single-producer outage](restart-full-state-outage.md) now passes packet
+loss, SIGKILL with a pending purchase, exact record recovery, automatic successors
+and both cold complete-account ledgers. Competing-producer rollback/manual repair,
+unavailable or expired original bytes, real signing custody, final recovery
+parameters and monitoring deployment remain open.

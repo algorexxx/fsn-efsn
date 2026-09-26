@@ -511,3 +511,15 @@ calculations. Six frozen-state future samples per platform separate free funds
 from tickets whose intervals remain live. No backup, chain database, node service
 or network access is used. See the [funding coverage report](../../docs/restart-handover-runway.md)
 for the initial incorrect no-retreat assertion, the final pass and limits.
+
+`TestFullStateSingleProducerOutage` requires fresh verified complete-state copies
+under `FUSION_RESTART_FULL_STATE_OUTAGE`, the node/partition opt-ins and the
+existing private loopback-only namespace. Both copies execute the retained
+three-block recovery. One donation producer and a non-producing verifier then
+experience 90 seconds of packet loss, followed by a producer SIGKILL with an
+observed persisted pending purchase. Reopen must retain the exact bytes/nonce
+into an empty pool. After normal miner start and network healing, acceptance
+requires automatic execution plus two fresh successors, ordinary peer catch-up,
+matching cold account ledgers and independent interval conservation. It does
+not create competing branches or exercise manual nonce repair. See the
+[complete-state outage report](../../docs/restart-full-state-outage.md).

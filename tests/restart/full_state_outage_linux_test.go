@@ -1,0 +1,218 @@
+package restart
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/p2p"
+	"github.com/FusionFoundation/efsn/v5/rlp"
+)
+
+func TestFullStateSingleProducerOutage(t *testing.T) {
+	root := os.Getenv("FUSION_RESTART_FULL_STATE_OUTAGE")
+	if root == "" {
+		t.Skip("requires two fresh verified complete-state copies")
+	}
+	requirePartitionNamespace(t)
+	if !filepath.IsAbs(root) || os.Getenv("FUSION_RESTART_NODE_REHEARSAL") != "1" || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
+		t.Fatal("absolute disposable root and isolated node rehearsal required")
+	}
+	anchor := prepareFullStateOutage(t, root)
+	producerPath := seedFullStateRecoveryNode(t, filepath.Join(root, "producer"), anchor, 2)
+	verifierPath := seedFullStateRecoveryNode(t, filepath.Join(root, "verifier"), anchor, 1)
+	configureFullStateOutageRestart(t, producerPath, "")
+	producer := startRehearsalNodeWithTimeout(t, producerPath, 10*time.Minute)
+	verifier := startRehearsalNodeWithTimeout(t, verifierPath, 10*time.Minute)
+	connectRehearsalPeer(t, verifier, producer)
+	awaitMinerPartitionPeers(t, producer, verifier, 1, 5*time.Second)
+	var info p2p.NodeInfo
+	requireNoError(t, producer.call(t, &info, "admin_nodeInfo"))
+	configureFullStateOutageRestart(t, producerPath, fmt.Sprintf("127.0.0.1:%d", info.Ports.Listener))
+	requireNoError(t, producer.call(t, nil, "miner_start", 1))
+	awaitRehearsal(t, 10*time.Second, func() bool { return producer.status(t).Mining })
+	warm := awaitSingleProducerProgress(t, producer, verifier, anchor.NumberU64()+2, 60*time.Second)
+	heal := dropRehearsalPackets(t, "match", "ip", "dst", "127.0.0.0/8")
+	cut := time.Now()
+	for time.Since(cut) < 90*time.Second {
+		requireSingleProducerRoles(t, producer, verifier)
+		time.Sleep(500 * time.Millisecond)
+	}
+	awaitMinerPartitionPeers(t, producer, verifier, 0, 5*time.Second)
+	isolated := producer.status(t)
+	if isolated.Number < warm.NumberU64()+3 || verifier.status(t).Number >= isolated.Number-2 {
+		t.Fatal("packet outage did not leave a lagging verifier and advancing sole producer")
+	}
+	t.Logf("full-state outage isolated for %s: producer=%d %s verifier=%d; sole producer and automatic buyer continued", time.Since(cut), isolated.Number, isolated.Hash.Hex(), verifier.status(t).Number)
+	var pending peerPurchaseState
+	var saved types.Transaction
+	awaitRehearsal(t, 30*time.Second, func() bool {
+		pending = readPeerPurchase(t, producer)
+		if len(pending.Saved) == 0 || len(pending.Pending) != 1 || len(pending.Queued) != 0 {
+			return false
+		}
+		requireNoError(t, saved.UnmarshalBinary(pending.Saved))
+		return saved.Nonce() == pending.Nonce && pending.Pending[0].Hash() == saved.Hash()
+	})
+	producer.stop(t, true)
+	t.Logf("full-state outage SIGKILL pending nonce=%d hash=%s signed-bytes=%d", saved.Nonce(), saved.Hash().Hex(), len(pending.Saved))
+	frozen := verifier.status(t)
+	down := time.Now()
+	for time.Since(down) < 20*time.Second {
+		if verifier.status(t).Hash != frozen.Hash {
+			t.Fatal("non-producing verifier advanced while sole signer was stopped and isolated")
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+	producer = startRehearsalNodeWithTimeout(t, producerPath, 10*time.Minute)
+	reopened := readPeerPurchase(t, producer)
+	if reopened.Nonce != saved.Nonce() || !bytes.Equal(reopened.Saved, pending.Saved) || len(reopened.Pending)+len(reopened.Queued) != 0 || producer.status(t).Mining || !producer.status(t).AutoBuy {
+		t.Fatal("crash reopen did not retain the exact pending intent into an empty pool with intended startup flags")
+	}
+	t.Logf("full-state outage cold reopen: same saved bytes, canonical nonce=%d, empty pool, automatic buying enabled; down=%s", reopened.Nonce, time.Since(down))
+	requireNoError(t, producer.call(t, nil, "miner_start", 1))
+	awaitRehearsal(t, 10*time.Second, func() bool { return producer.status(t).Mining })
+	heal()
+	awaitMinerPartitionPeers(t, producer, verifier, 1, 90*time.Second)
+	resumed := awaitSingleProducerProgress(t, producer, verifier, isolated.Number+3, 120*time.Second)
+	owner := common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF")
+	awaitRehearsal(t, 90*time.Second, func() bool {
+		requireSingleProducerRoles(t, producer, verifier)
+		return readPeerPurchase(t, producer).Nonce >= saved.Nonce()+3
+	})
+	resumed = awaitSingleProducerProgress(t, producer, verifier, producer.status(t).Number, 90*time.Second)
+	var purchases types.Transactions
+	for number := anchor.NumberU64() + 1; number <= resumed.NumberU64(); number++ {
+		block := readRecoveryNodeBlock(t, producer, number)
+		for _, tx := range block.Transactions() {
+			if tx.Nonce() >= saved.Nonce() && tx.Nonce() <= saved.Nonce()+2 {
+				purchases = append(purchases, tx)
+				for _, node := range []*rehearsalNode{producer, verifier} {
+					requirePartitionPurchaseReceipt(t, node, block, tx, owner)
+				}
+			}
+		}
+	}
+	if len(purchases) != 3 || purchases[0].Hash() != saved.Hash() || purchases[1].Nonce() != saved.Nonce()+1 || purchases[2].Nonce() != saved.Nonce()+2 {
+		t.Fatal("exact crash intent and two fresh canonical automatic successors were not recovered")
+	}
+	t.Logf("full-state outage automatic recovery: saved=%s successors=%s/%s common=%d %s; no raw resubmission, external funding or forced sync", saved.Hash().Hex(), purchases[1].Hash().Hex(), purchases[2].Hash().Hex(), resumed.NumberU64(), resumed.Hash().Hex())
+	stopPeerAutoMiner(t, producer)
+	final := awaitStoppedPartitionHead(t, producer, verifier)
+	for _, node := range []*rehearsalNode{producer, verifier} {
+		requireRehearsalHead(t, node.status(t), final)
+		node.stop(t, false)
+	}
+	verifyFullStateOutageCold(t, root, final)
+	t.Logf("full-state single-producer outage passed: final=%d %s state=%s tickets=%s; both cold complete-account ledgers agree; no competing producer or nonce rollback exercised", final.NumberU64(), final.Hash().Hex(), final.Root().Hex(), final.MixDigest().Hex())
+}
+
+func prepareFullStateOutage(t *testing.T, root string) *types.Block {
+	t.Helper()
+	var anchor *types.Block
+	for _, role := range []string{"producer", "verifier"} {
+		if !t.Run("prepare-"+role, func(t *testing.T) {
+			directory := filepath.Join(root, role)
+			requireFullStateCopy(t, directory)
+			prepareFullStateHandover(t, directory)
+			f, _, funding := openFullStateHandover(t, directory)
+			for i := 1; i <= 3; i++ {
+				data, err := os.ReadFile(filepath.Join("..", "..", "docs", "evidence", "restart-full-state-handover-2026-09-24", "windows-blocks", fmt.Sprintf("block-%02d.rlp", i)))
+				requireNoError(t, err)
+				var block *types.Block
+				requireNoError(t, rlp.DecodeBytes(data, &block))
+				f.importBlock(t, block)
+				anchor = block
+			}
+			t.Logf("complete-state %s prepared: parent=%s cleanup=%s root=%s donation-funding-wei=%s", role, funding.Parent.Hash().Hex(), anchor.Hash().Hex(), anchor.Root().Hex(), funding.Liquid)
+		}) {
+			t.Fatal("complete-state preparation failed")
+		}
+	}
+	return anchor
+}
+
+func configureFullStateOutageRestart(t *testing.T, path, listen string) {
+	t.Helper()
+	var config nodeRehearsalConfig
+	readHandoverJSON(t, filepath.Join(path, "lab.json"), &config)
+	config.AutoBuy, config.ListenAddr = true, listen
+	data, err := json.MarshalIndent(config, "", "  ")
+	requireNoError(t, err)
+	requireNoError(t, os.WriteFile(filepath.Join(path, "lab.json"), data, 0600))
+}
+
+func requireSingleProducerRoles(t *testing.T, producer, verifier *rehearsalNode) {
+	t.Helper()
+	left, right := producer.status(t), verifier.status(t)
+	if !left.Mining || !left.AutoBuy || right.Mining || right.AutoBuy || right.Signatures != 0 {
+		t.Fatal("single-producer or retired-backup role changed")
+	}
+}
+
+func awaitSingleProducerProgress(t *testing.T, producer, verifier *rehearsalNode, floor uint64, timeout time.Duration) *types.Block {
+	t.Helper()
+	var matched *types.Block
+	awaitRehearsal(t, timeout, func() bool {
+		requireSingleProducerRoles(t, producer, verifier)
+		left, right := producer.status(t), verifier.status(t)
+		number := left.Number
+		if right.Number < number {
+			number = right.Number
+		}
+		if number < floor {
+			return false
+		}
+		block := readRecoveryNodeBlock(t, producer, number)
+		if readRecoveryNodeBlock(t, verifier, number).Hash() != block.Hash() {
+			return false
+		}
+		matched = block
+		return true
+	})
+	return matched
+}
+
+func verifyFullStateOutageCold(t *testing.T, root string, final *types.Block) {
+	t.Helper()
+	artifacts := filepath.Join(root, "blocks")
+	requireNoError(t, os.Mkdir(artifacts, 0700))
+	count := 0
+	for _, role := range []string{"producer", "verifier"} {
+		if !t.Run("cold-"+role, func(t *testing.T) {
+			f, _, funding := openFullStateHandover(t, filepath.Join(root, role))
+			if f.chain.CurrentBlock().Hash() != final.Hash() {
+				t.Fatal("cold full-state head differs")
+			}
+			count = int(final.NumberU64() - funding.Parent.Number.Uint64())
+			for i := 1; i <= count; i++ {
+				block := f.chain.GetBlockByNumber(funding.Parent.Number.Uint64() + uint64(i))
+				if block == nil {
+					t.Fatal("cold canonical suffix block missing")
+				}
+				if role == "producer" {
+					recordFullStateHandoverBlock(t, f, artifacts, funding.Parent.Number.Uint64(), block)
+					continue
+				}
+				parent := f.chain.GetHeader(block.ParentHash(), block.NumberU64()-1)
+				actual, err := json.MarshalIndent(captureFullStateBlock(t, f, parent.Root, block), "", "  ")
+				requireNoError(t, err)
+				expected, err := os.ReadFile(filepath.Join(artifacts, fmt.Sprintf("block-%02d.json", i)))
+				requireNoError(t, err)
+				if !bytes.Equal(bytes.TrimSpace(expected), actual) {
+					t.Fatal("cold full-state receipts, tickets or account differences diverge")
+				}
+			}
+			t.Logf("full-state outage cold %s verified: blocks=%d head=%s root=%s", role, count, final.Hash().Hex(), final.Root().Hex())
+		}) {
+			t.Fatal("cold complete-state verification failed")
+		}
+	}
+	auditFullStateHandover(t, filepath.Join(root, "producer"), artifacts, count)
+}

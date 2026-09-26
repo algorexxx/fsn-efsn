@@ -135,6 +135,10 @@ the available producer; do not cycle every service merely to satisfy a checklist
 
 Release review still needs a chosen monitored/manual policy, alert delivery and
 response responsibility, validated real-address interval schedules and funding
-availability. A live complete-state outage/repair exercise remains open. This
-procedure deliberately stops at unsupported conditions instead of treating a
-successful short rehearsal as an automatic recovery guarantee.
+availability. The [single-producer complete-state outage](restart-full-state-outage.md)
+now passes a 90-second network loss, process kill with a pending intent, exact
+cold record recovery, automatic successors, ordinary peer catch-up and matching
+cold ledgers. It requires the normal miner-start action after process restart
+and does not create a nonce rollback. A complete-state competing-producer/manual
+repair exercise remains open. This procedure stops at unsupported conditions
+instead of treating a successful short rehearsal as an automatic recovery guarantee.
