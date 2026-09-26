@@ -50,6 +50,17 @@ ticket refund. With only the successor's ticket remaining, the chain cannot
 simply consume it and leave zero tickets. This demonstrates why funding one
 ticket plus gas is insufficient for this particular standalone successor setup.
 
+The [controlled reserve comparison](restart-controlled-reserves.md) separately
+tests a synthetic wallet with the same initial balance after two finite-ticket
+first-retreat losses. One 5,000-FSN transfer permits repeated purchases when
+another producer advances the chain and ordinary selection returns the stake;
+another first retreat exhausts that restored capacity. The initial 2,020.102 FSN
+above two ticket tranches is not enough to replace a lost 5,000-FSN interval.
+This does not change the passing initial handover budget or prove long-term
+recoverability. Complete-state reserve checks must include the long-lived bridge
+ticket, later purchase intervals and a real funding source if external repair
+funding is part of the operator policy.
+
 ## Selected one-block startup
 
 1. Prepare two nodes with separately writable, verified copies of the accepted

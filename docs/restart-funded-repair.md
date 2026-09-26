@@ -151,10 +151,16 @@ absence, expired signed purchases or loss of every eligible producer. Manual
 nonce repair and usable funding remain separate requirements. No automatic
 recovery mechanism or consensus rule is introduced.
 
-Next use controlled starting inventories to resolve recovery after two
-first-retreat losses with zero usable tickets, including whether waiting alone
-can suffice and how much additional funding permits purchase-before-refund
-operation. Preserve both failed live attempts as counterexamples to assuming
-instant or fixed-time recovery. Then evaluate the real donation wallet against
-complete-state accounting and choose an operator monitoring/repair policy.
-The initially agreed backup-to-donation handover sequence is unchanged.
+The [controlled reserve follow-up](restart-controlled-reserves.md) now compares
+four branches from the same zero-ticket parent after exactly two finite-ticket
+first retreats. No funding remains insufficient through twelve healthy blocks;
+5,000 and 10,000 FSN transfers each allow seven synthetic purchases when ordinary
+selection returns stake, with different waits. Another first retreat after the
+5,000-FSN repair leaves the next purchase unfunded again. Both cold databases
+and all four interval ledgers pass. This isolates funding from the varying
+inventories above; it is not another live automatic-buyer recovery pass.
+
+Preserve both failed live attempts as counterexamples to assuming instant or
+fixed-time recovery. Complete-state operational reserves and an operator
+monitoring/repair policy remain open. The initially agreed backup-to-donation
+handover sequence is unchanged.

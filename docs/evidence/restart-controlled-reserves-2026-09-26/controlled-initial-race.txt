@@ -1,0 +1,600 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/dense_miner_fixture
+    dense_miner_fixture_linux_test.go:159: complete synthetic genesis-to-24 ancestry independently executed in two databases and accepted by both cold services; anchor=0xbfa2d416fd927e4b7c379ec6de140d57fb432f722b12bd07993492046205f303
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-3536867879/process-2491728733.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:46.976] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:47.813] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:09:47.814] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3536867879/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:09:47.853] Persisted trie from memory database      nodes=13 size=1.89KiB time="170.435µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:09:47.854]  
+        INFO [09-26|22:09:47.854] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:47.854] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:09:47.854] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:09:47.854]  
+        INFO [09-26|22:09:47.854] hard forks: 
+        INFO [09-26|22:09:47.854]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:09:47.854]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:09:47.854]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:09:47.854]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:47.854]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:47.854]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:09:47.854]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:09:47.854]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:09:47.855]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:09:47.855]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:09:47.855]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:09:47.855]  - Fusion Eco:                  0        
+        INFO [09-26|22:09:47.855]  
+        INFO [09-26|22:09:47.855]  
+        INFO [09-26|22:09:47.855] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:47.855]  
+        INFO [09-26|22:09:47.855] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:09:47.862] Loaded most recent local header          number=24 hash="bfa2d4…05f303" td=372 age=12m2s
+        INFO [09-26|22:09:47.862] Loaded most recent local full block      number=24 hash="bfa2d4…05f303" td=372 age=12m2s
+        INFO [09-26|22:09:47.862] Loaded most recent local fast block      number=24 hash="bfa2d4…05f303" td=372 age=12m2s
+        INFO [09-26|22:09:47.865] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:09:47.865] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:47.865] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:09:47.865] Starting P2P networking 
+        INFO [09-26|22:09:47.866] RLPx listener up                         self="enode://ac9236915beff438b5f5cf3e2105a11a0fb5150924f749e663ce7ce46c49b2fdfc3a5aaea27819c0ba5bad68f2924ae77291423fe9e58735916ede26ab31bd24@127.0.0.1:40825?discport=0"
+        INFO [09-26|22:09:47.870] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3536867879/lab.ipc
+        INFO [09-26|22:09:47.957] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3536867879/lab.ipc
+        INFO [09-26|22:09:47.957] Stopping Ethereum protocol 
+        INFO [09-26|22:09:47.957] Ethereum protocol stopped 
+        INFO [09-26|22:09:47.958] Transaction pool stopped 
+        INFO [09-26|22:09:47.958] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.98s)
+        PASS
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-794760128/process-3468297221.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:45.957] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:46.792] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:09:46.793] Allocated cache and file handles         database=/tmp/fsn-dense-miner-794760128/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:09:46.827] Persisted trie from memory database      nodes=13 size=1.89KiB time="152.452µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:09:46.829]  
+        INFO [09-26|22:09:46.829] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:46.829] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:09:46.829] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:09:46.829]  
+        INFO [09-26|22:09:46.829] hard forks: 
+        INFO [09-26|22:09:46.829]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:09:46.829]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:09:46.829]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:09:46.829]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:46.829]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:46.829]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:09:46.829]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:09:46.829]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:09:46.829]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:09:46.829]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:09:46.829]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:09:46.829]  - Fusion Eco:                  0        
+        INFO [09-26|22:09:46.829]  
+        INFO [09-26|22:09:46.829]  
+        INFO [09-26|22:09:46.829] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:46.829]  
+        INFO [09-26|22:09:46.830] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:09:46.835] Loaded most recent local header          number=24 hash="bfa2d4…05f303" td=372 age=12m1s
+        INFO [09-26|22:09:46.835] Loaded most recent local full block      number=24 hash="bfa2d4…05f303" td=372 age=12m1s
+        INFO [09-26|22:09:46.835] Loaded most recent local fast block      number=24 hash="bfa2d4…05f303" td=372 age=12m1s
+        INFO [09-26|22:09:46.840] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:09:46.841] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:46.841] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:09:46.842] Starting P2P networking 
+        INFO [09-26|22:09:46.845] RLPx listener up                         self="enode://4e004baadcd9a566f23fc17f9b8e761b478a54d341c3e62444e3832c55eb66e77a3249b9d4a2a6b439f9e3b71976cff987f42468ba5a8f69ce893d3a1af6ebb5@127.0.0.1:34713?discport=0"
+        INFO [09-26|22:09:46.848] IPC endpoint opened                      url=/tmp/fsn-dense-miner-794760128/lab.ipc
+        INFO [09-26|22:09:48.978] IPC endpoint closed                      url=/tmp/fsn-dense-miner-794760128/lab.ipc
+        INFO [09-26|22:09:48.978] Stopping Ethereum protocol 
+        INFO [09-26|22:09:48.978] Ethereum protocol stopped 
+        INFO [09-26|22:09:48.978] Transaction pool stopped 
+        INFO [09-26|22:09:48.978] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (3.02s)
+        PASS
+=== RUN   TestRestartNodeRehearsal/controlled_zero_ticket_reserves
+    controlled_reserve_linux_test.go:15: small reserve anchor owner=1 initial-wei=12020102000000000000000 tickets=1 nonce=13 liquid-wei=2055102084896000000000 timelocks=[{"StartTime":1790369630,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961751,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]
+    controlled_reserve_linux_test.go:15: small reserve anchor owner=2 initial-wei=12020102000000000000000 tickets=2 nonce=12 liquid-wei=2045101915104000000000 timelocks=[{"StartTime":1792960671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961271,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]
+    controlled_reserve_linux_test.go:15: controlled prefix first-retreat=1 affected=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF block=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 ticket=0x0652a849352d66d193b4cfc5afd54d1b71096d2a0f86b2fd7658ab7ab5ec4111
+    controlled_reserve_linux_test.go:15: controlled prefix first-retreat=2 affected=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF block=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f ticket=0xbe8a7df2cf468b68e1e77c47ba8dc6e861a8a580264ccf2318acf26a99842729
+    controlled_reserve_linux_test.go:15: controlled zero-ticket parent height=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f state=0x1c5193decdc337409c29535e1479211d329b81df9e7845b5e716b783d91f3f46 tickets=0x3b6172fb2dcd65ddee1168bfd0b73a392000d341b90aad814bff4f2487d066c4 affected=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=12 liquid-wei=2045101915104000000000 locks=[{"StartTime":1792960671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961271,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]; identical prefix and seven signed purchases used in every branch
+=== RUN   TestRestartNodeRehearsal/controlled_zero_ticket_reserves/no_funding
+    controlled_reserve_linux_test.go:39: controlled no-funding: twelve canonical blocks advanced; zero tickets and no repair admitted
+    controlled_reserve_linux_test.go:68: controlled result case=no_funding baseline=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f topup-wei=0 included=0 funding-wait-blocks=0 final=40 hash=0x6fd7d6ac16431510ba3e48adf495f8261aec46cbb419d0209a3fba107afa5750 state=0xc6f64616a8ad3eee9b9fd02871910c6f4df9595294710c8e8a7f5dfa8bce888e tickets=0xbc5279acee235ed6807df25c10e8a3be76c8403803aa2359d30985437c73d85f
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=25 hash=0x5e2e29db0b3b17e5ba73ed4254dddff8543d6996d2edfc09163649f7b4f5c80a selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x17fd3307f9a69efa51f5198b285c061acf8e251be9e2bddfa31692b51551a640 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0x0652a849352d66d193b4cfc5afd54d1b71096d2a0f86b2fd7658ab7ab5ec4111 start=1790368670 end=1792960670 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xac0bf73f314b8642e8473af0d1a2a78f96e4ca4b9dbeea2b82d26060a650f9e8 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=27 hash=0xcec33040ec463b36a4053f5504f5eadd202913ead0dd52ae3192f3183ed838b3 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x1a1d76363d3738a5d283c8c4deef7848be7c2263b02ab8113b964091e72a1040 returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0xbe8a7df2cf468b68e1e77c47ba8dc6e861a8a580264ccf2318acf26a99842729 start=1790369270 end=1792961270 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x8800de8b38f8fb944c568d20936e0abbe9fd31197941244ec9b14c43cca5728b returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=29 hash=0xb0100074d45556f4d3623cd0be4cff39088d189c98b851fcec82b6ddb8cef92e selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xb01669ba6c72dfd3ac7ee8b62c6cc8a2438818f2ea23d27d300bff4d6be7f638 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=30 hash=0x019af87850d6f542dd9c4028cbe5566d17c5c13952b72cc3b8e7893b2e14d3b5 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x91684b907ba873663f0a4cfb1517f4389c277e965a846c6c85db18246639a157 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=31 hash=0xcb3b31e832e33b1b909f4da36efc8105c1bc3b52944dc55066b89f2d21b430a0 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x6e98c64f9dc2ecb807098a0789efa25f130e1f82423f2679de0a7316f7cf3019 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=32 hash=0x93c0147316bef183e8110ec1d42f86d5720075f8b2f9e90a010b8428934afc48 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x3f00a52f0a387198e74b590c0410c594dd6e6787f7473cd5d0e4f4f07af14dc9 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=33 hash=0x1a70bdfd373884e3161940516d0178276ad132c403981450dd3177d4d62c9d23 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x7cf08d64d0c40959bfca4075aa888c921502c46b411a8a532887d22f2a1e0ecd returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=34 hash=0xe54120cb4559e5038b19b79a7e760c39c4e09047a4bc20cfcccb2e746b229ee5 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x486b29dc10b64667a93990c7d314a6ace27d565de2cd0d346dc86a3372697b97 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=35 hash=0xbcd3418d2c9f61e7189184c79d8b852daa2174e89026546c0390e01c05591c81 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x50e919cb6ce95a3bd09f486e639a0921d21271d647ab61a901d4f5477dce9c18 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=36 hash=0x7adc18fd19d837580c09f6a925b9676555886c9ee905d3108d41fc545efc507c selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x095f4c31cf233cbefecc01d9bb2e1e0b1239082184d7f58be9a0364a8a62ec9b returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=37 hash=0x113b87031bf908726659ac4cdee5e964783b1378763e3167550a25f643069cbe selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x0e244ff46c306c02db16b50fc727cecd8bd2ad11ef2bd2f209f3f1fb033cb2f6 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=38 hash=0x1f380a2ebef3de2d611a88beb14ec000dc11790a80d67b3799e29e69faa008cf selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x5fffcbdd1474d444225574c6940b49f16d5283f19cbd5eef9ad3ec86947da00f returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=39 hash=0xd6262c98f74a82f1b8f97317dbf5cc7e44987c0a7448faeb7e9e78c61410dda3 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x668efdf7a5c3b7707610eb76081c96b576bd66b432dd6ecc16506ecd1d6a8316 returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=40 hash=0x6fd7d6ac16431510ba3e48adf495f8261aec46cbb419d0209a3fba107afa5750 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x2847c582cb8b00ac871bfc040c186d63f363fe9b887e51027a86f4180e592ede returned=true boundaries=8 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=40 owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf first-retreats=0 liquid-wei=2095102084896000000000 time-locks={"Items":[{"StartTime":1790371550,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792963671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=40 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF first-retreats=2 liquid-wei=2045101915104000000000 time-locks={"Items":[{"StartTime":1792960671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961271,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=40 owner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 first-retreats=0 liquid-wei=11000000000000000000000 time-locks={"Items":[]}
+    controlled_reserve_linux_test.go:69: partition ledger verified phase=controlled range=25..40 head=0x6fd7d6ac16431510ba3e48adf495f8261aec46cbb419d0209a3fba107afa5750; all future interval rights reconcile with rewards, fees, transfers and first-retreat losses
+    controlled_reserve_linux_test.go:69: controlled cold node=1 purchases=0 sponsor-nonce=0 sponsor-liquid-wei=11000000000000000000000 head=0x6fd7d6ac16431510ba3e48adf495f8261aec46cbb419d0209a3fba107afa5750
+    controlled_reserve_linux_test.go:69: controlled cold node=2 purchases=0 sponsor-nonce=0 sponsor-liquid-wei=11000000000000000000000 head=0x6fd7d6ac16431510ba3e48adf495f8261aec46cbb419d0209a3fba107afa5750
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-4073983447/process-3556080351.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:52.721] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:53.549] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:09:53.549] Allocated cache and file handles         database=/tmp/fsn-dense-miner-4073983447/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:09:53.590] Persisted trie from memory database      nodes=14 size=2.10KiB time="161.177µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:09:53.592]  
+        INFO [09-26|22:09:53.592] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:53.592] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:09:53.592] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:09:53.592]  
+        INFO [09-26|22:09:53.592] hard forks: 
+        INFO [09-26|22:09:53.592]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:09:53.592]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:09:53.592]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:09:53.592]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:53.592]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:53.592]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:09:53.592]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:09:53.592]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:09:53.592]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:09:53.592]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:09:53.592]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:09:53.592]  - Fusion Eco:                  0        
+        INFO [09-26|22:09:53.592]  
+        INFO [09-26|22:09:53.592]  
+        INFO [09-26|22:09:53.592] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:53.592]  
+        INFO [09-26|22:09:53.592] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:09:53.595] Loaded most recent local header          number=40 hash="6fd7d6…fa5750" td=155 age=22h40m3s
+        INFO [09-26|22:09:53.596] Loaded most recent local full block      number=40 hash="6fd7d6…fa5750" td=155 age=22h40m3s
+        INFO [09-26|22:09:53.596] Loaded most recent local fast block      number=40 hash="6fd7d6…fa5750" td=155 age=22h40m3s
+        INFO [09-26|22:09:53.597] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:09:53.597] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:53.597] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:09:53.597] Starting P2P networking 
+        INFO [09-26|22:09:53.598] RLPx listener up                         self="enode://9fa072619410e12c6cf9f0a8282908193b7bcd0e8f393de4d31000fde9ee5eeaff81101747579a4a7aa3b7206c4b1b44e5fb0a0676a2b3e396012487f07742b2@127.0.0.1:34829?discport=0"
+        INFO [09-26|22:09:53.602] IPC endpoint opened                      url=/tmp/fsn-dense-miner-4073983447/lab.ipc
+        INFO [09-26|22:09:53.610] IPC endpoint closed                      url=/tmp/fsn-dense-miner-4073983447/lab.ipc
+        INFO [09-26|22:09:53.610] Stopping Ethereum protocol 
+        INFO [09-26|22:09:53.610] Ethereum protocol stopped 
+        INFO [09-26|22:09:53.610] Transaction pool stopped 
+        INFO [09-26|22:09:53.610] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.89s)
+        PASS
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-1235391908/process-3177055635.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:50.652] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:51.466] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:09:51.466] Allocated cache and file handles         database=/tmp/fsn-dense-miner-1235391908/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:09:51.512] Persisted trie from memory database      nodes=14 size=2.10KiB time="159.756µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:09:51.513]  
+        INFO [09-26|22:09:51.513] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:51.513] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:09:51.513] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:09:51.513]  
+        INFO [09-26|22:09:51.513] hard forks: 
+        INFO [09-26|22:09:51.513]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:09:51.513]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:09:51.513]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:09:51.513]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:51.513]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:51.513]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:09:51.513]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:09:51.513]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:09:51.513]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:09:51.513]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:09:51.513]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:09:51.513]  - Fusion Eco:                  0        
+        INFO [09-26|22:09:51.513]  
+        INFO [09-26|22:09:51.513]  
+        INFO [09-26|22:09:51.513] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:51.513]  
+        INFO [09-26|22:09:51.513] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:09:51.518] Loaded most recent local header          number=40 hash="6fd7d6…fa5750" td=155 age=22h40m1s
+        INFO [09-26|22:09:51.518] Loaded most recent local full block      number=40 hash="6fd7d6…fa5750" td=155 age=22h40m1s
+        INFO [09-26|22:09:51.518] Loaded most recent local fast block      number=40 hash="6fd7d6…fa5750" td=155 age=22h40m1s
+        INFO [09-26|22:09:51.519] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:09:51.521] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:51.521] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:09:51.521] Starting P2P networking 
+        INFO [09-26|22:09:51.522] RLPx listener up                         self="enode://f1442996c5929cdc372fa6dfa70a9df015d96b3850c1a0ca6973fb646fec991cb6440431cf073aafa399dd4b164f08bcd585189ac85fa0f2ae9b1dec74fa777c@127.0.0.1:45025?discport=0"
+        INFO [09-26|22:09:51.527] IPC endpoint opened                      url=/tmp/fsn-dense-miner-1235391908/lab.ipc
+        INFO [09-26|22:09:51.675] IPC endpoint closed                      url=/tmp/fsn-dense-miner-1235391908/lab.ipc
+        INFO [09-26|22:09:51.675] Stopping Ethereum protocol 
+        INFO [09-26|22:09:51.675] Ethereum protocol stopped 
+        INFO [09-26|22:09:51.675] Transaction pool stopped 
+        INFO [09-26|22:09:51.675] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (1.02s)
+        PASS
+=== RUN   TestRestartNodeRehearsal/controlled_zero_ticket_reserves/one_ticket_funding
+    controlled_reserve_linux_test.go:46: controlled admission nonce=12 hash=0xf4e46583491349016a5ace80c02aaa43c55579c658a9b92fffc4f3c0a1f57505 waited-blocks=0
+    controlled_reserve_linux_test.go:55: controlled original nonce=12 hash=0xf4e46583491349016a5ace80c02aaa43c55579c658a9b92fffc4f3c0a1f57505 included=30 block=0x0e844d929b524fd0680875817e9b2fea93e45cb92c756df4d28bcb677d40d5da
+    controlled_reserve_linux_test.go:46: controlled admission nonce=13 hash=0xdc0599bcd928ea06f63b3645e52baeb5d3692fab9b92ce9e4b1effd525863a3a waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=13 hash=0xdc0599bcd928ea06f63b3645e52baeb5d3692fab9b92ce9e4b1effd525863a3a included=32 block=0x7e1e2bbd679e41d2accd1fabf5e0da53fd5f5783320becb9300da2fb1c5d63ef
+    controlled_reserve_linux_test.go:46: controlled admission nonce=14 hash=0xa2408b8bf10e7caca039666f775737b46167376a10bb02e89ed80f5b8741ba4e waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=14 hash=0xa2408b8bf10e7caca039666f775737b46167376a10bb02e89ed80f5b8741ba4e included=34 block=0xd27adf2e5011731f37aa2efa9590b2e28f2132d005f9f68adbe94a00832ae44e
+    controlled_reserve_linux_test.go:46: controlled admission nonce=15 hash=0x4670ea63ba3b9a6bae22db9489f98d7398ccc7e7edd9fafa0a7c3b60fb3c6a2f waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=15 hash=0x4670ea63ba3b9a6bae22db9489f98d7398ccc7e7edd9fafa0a7c3b60fb3c6a2f included=36 block=0x8812b9112689d72f2d47c57cf4dbc462f55f09107a717e822bd2332fb7ce411c
+    controlled_reserve_linux_test.go:46: controlled admission nonce=16 hash=0xf7bb6a44690bf1b2266f3488aeb1a5baa23d19eaa2463cfbf7b720c33a6b65a7 waited-blocks=2
+    controlled_reserve_linux_test.go:55: controlled original nonce=16 hash=0xf7bb6a44690bf1b2266f3488aeb1a5baa23d19eaa2463cfbf7b720c33a6b65a7 included=39 block=0x65de992f9ee3ea6c8f8837c9f9898a5f63ec37048e0ec342a6a6a73f48c8f017
+    controlled_reserve_linux_test.go:46: controlled admission nonce=17 hash=0xb5bd8b17673c9716e1f4c3a06eb37bdef1e82f11ccf14a534704152130dcf672 waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=17 hash=0xb5bd8b17673c9716e1f4c3a06eb37bdef1e82f11ccf14a534704152130dcf672 included=41 block=0x50850f24b01a40b117833a90a2633d12dc5213ed38bed31dab930c474f373756
+    controlled_reserve_linux_test.go:46: controlled admission nonce=18 hash=0x3ac7e1c45fbbfc81c50ebfbc8631eb2ca222ef7edbd751a526638afac58708bb waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=18 hash=0x3ac7e1c45fbbfc81c50ebfbc8631eb2ca222ef7edbd751a526638afac58708bb included=43 block=0xb25ea564f6e83fe731bc75a31dc24e7ddd687fada488f9decdb03530846f4f80
+    controlled_reserve_linux_test.go:68: controlled result case=one_ticket_funding baseline=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f topup-wei=5000000000000000000000 included=7 funding-wait-blocks=7 final=43 hash=0xb25ea564f6e83fe731bc75a31dc24e7ddd687fada488f9decdb03530846f4f80 state=0xd65fcd31e1a93ad31401eed4ad6248542c8e5172336c8972c500c7bea1a24345 tickets=0x657d30a9c58f91aa769c10d50603baab716106c40b0e0f6ea7eb0845e210c269
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=25 hash=0x5e2e29db0b3b17e5ba73ed4254dddff8543d6996d2edfc09163649f7b4f5c80a selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x17fd3307f9a69efa51f5198b285c061acf8e251be9e2bddfa31692b51551a640 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0x0652a849352d66d193b4cfc5afd54d1b71096d2a0f86b2fd7658ab7ab5ec4111 start=1790368670 end=1792960670 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xac0bf73f314b8642e8473af0d1a2a78f96e4ca4b9dbeea2b82d26060a650f9e8 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=27 hash=0xcec33040ec463b36a4053f5504f5eadd202913ead0dd52ae3192f3183ed838b3 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x1a1d76363d3738a5d283c8c4deef7848be7c2263b02ab8113b964091e72a1040 returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0xbe8a7df2cf468b68e1e77c47ba8dc6e861a8a580264ccf2318acf26a99842729 start=1790369270 end=1792961270 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x8800de8b38f8fb944c568d20936e0abbe9fd31197941244ec9b14c43cca5728b returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=29 hash=0x3d7bd7b940277ab665d2fd661414e128202144be463e620f4cef299dcdc6039f selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xb01669ba6c72dfd3ac7ee8b62c6cc8a2438818f2ea23d27d300bff4d6be7f638 returned=true boundaries=8 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=30 hash=0x0e844d929b524fd0680875817e9b2fea93e45cb92c756df4d28bcb677d40d5da selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x91684b907ba873663f0a4cfb1517f4389c277e965a846c6c85db18246639a157 returned=true boundaries=8 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=31 hash=0xdc592a22e637e3eb15adb0df23fc1abaa6a78820df28515ff098e771e3ed6bcb selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0xc43fed0468b4ca8a98460504d191ce6059fcf63218d37d2111aa5dbbdfa83132 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=32 hash=0x7e1e2bbd679e41d2accd1fabf5e0da53fd5f5783320becb9300da2fb1c5d63ef selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x649f98ae393dcb3e257b07f61fac544ec1244dba661c8b63e2de7785ebabb9e3 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=33 hash=0x92b9a04a58b313ef3bb2d1ddd74e5a88318642b614e9e93e7f11f2dabbf0539b selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x872e0ea242d6f5d7e362a1919805faf7f72c10a4f2b48dbc8cb94e0d5f5f0148 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=34 hash=0xd27adf2e5011731f37aa2efa9590b2e28f2132d005f9f68adbe94a00832ae44e selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xe7864a2e77761a0baebb317ab2c88c04914c6ada1977f1be5af7312f261e41e0 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=35 hash=0xb033187b93c7f3c344afed7883dc3c61533c17de66eb220d6d482205ff99d736 selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x6220cab294ba2f1cdaa9a4c9f585e0fac256ccffb2492b1236e866555bc0a719 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=36 hash=0x8812b9112689d72f2d47c57cf4dbc462f55f09107a717e822bd2332fb7ce411c selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x36c94a700a304c6d0bbc67141a129fcbbcf8e0006c4afe8b34e7440d2f6b3a3c returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=37 hash=0x3bcdf2d51353153bd18548299b46d9beaa33b4135382ab5997f163138767d558 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xb2c3f81c9cd4ab4ae1b2e058d9bab7c11dc6da96343eef56c310b9ad3c1f3aad returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=38 hash=0x9e5f833e5d30c9eee18028f340a9db16318ea6440013bdf21933732a7cc40a4d selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0xccb3a06ee656cd7fff6baf89e2b64791042ea1a63a6dfcbc339417a234103126 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=39 hash=0x65de992f9ee3ea6c8f8837c9f9898a5f63ec37048e0ec342a6a6a73f48c8f017 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x96eb23432dab3c59342ac1a5e522b44a1784d5e413ec7957011e683911d45ab2 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=40 hash=0x6bce3335f572b73d6c89db8594abd6cf0df9645565f493dcfaced7b14401821d selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0xecbaf65a47d64768d1a63d1ee423ee7b4ae995638a593c0b564f7b9415a34873 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=41 hash=0x50850f24b01a40b117833a90a2633d12dc5213ed38bed31dab930c474f373756 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xe76811f0a66584052295c14bf172bce82bbf0cd25ae46c7de149f6e158147154 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=42 hash=0x50201d394da6870507dad29bc3a0c9f8a86ca7692f1ab52ee685838dea736c44 selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x554e913f1fc4c554d05d298af029da760fa345b1a234889f960293705f861fb8 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=43 hash=0xb25ea564f6e83fe731bc75a31dc24e7ddd687fada488f9decdb03530846f4f80 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xd936955fd6a3eadc58fb5193a2b9947cb57042964ed5764c9f9b92e4da424d80 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=43 owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf first-retreats=0 liquid-wei=2087602148344000000000 time-locks={"Items":[{"StartTime":1790371910,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792963431,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=43 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF first-retreats=2 liquid-wei=2060101872656000000000 time-locks={"Items":[{"StartTime":1792960671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961271,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792962351,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=43 owner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 first-retreats=0 liquid-wei=5999999979000000000000 time-locks={"Items":[]}
+    controlled_reserve_linux_test.go:69: partition ledger verified phase=controlled range=25..43 head=0xb25ea564f6e83fe731bc75a31dc24e7ddd687fada488f9decdb03530846f4f80; all future interval rights reconcile with rewards, fees, transfers and first-retreat losses
+    controlled_reserve_linux_test.go:69: controlled cold node=1 purchases=7 sponsor-nonce=1 sponsor-liquid-wei=5999999979000000000000 head=0xb25ea564f6e83fe731bc75a31dc24e7ddd687fada488f9decdb03530846f4f80
+    controlled_reserve_linux_test.go:69: controlled cold node=2 purchases=7 sponsor-nonce=1 sponsor-liquid-wei=5999999979000000000000 head=0xb25ea564f6e83fe731bc75a31dc24e7ddd687fada488f9decdb03530846f4f80
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-2197714020/process-3990415064.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:57.136] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:57.964] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:09:57.964] Allocated cache and file handles         database=/tmp/fsn-dense-miner-2197714020/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:09:58.008] Persisted trie from memory database      nodes=14 size=2.10KiB time="150.348µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:09:58.009]  
+        INFO [09-26|22:09:58.009] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:58.009] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:09:58.009] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:09:58.009]  
+        INFO [09-26|22:09:58.009] hard forks: 
+        INFO [09-26|22:09:58.009]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:09:58.009]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:09:58.009]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:09:58.009]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:58.009]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:58.009]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:09:58.009]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:09:58.009]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:09:58.009]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:09:58.009]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:09:58.009]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:09:58.009]  - Fusion Eco:                  0        
+        INFO [09-26|22:09:58.009]  
+        INFO [09-26|22:09:58.009]  
+        INFO [09-26|22:09:58.009] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:58.009]  
+        INFO [09-26|22:09:58.009] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:09:58.013] Loaded most recent local header          number=43 hash="b25ea5…6f4f80" td=181 age=22h34m8s
+        INFO [09-26|22:09:58.013] Loaded most recent local full block      number=43 hash="b25ea5…6f4f80" td=181 age=22h34m8s
+        INFO [09-26|22:09:58.013] Loaded most recent local fast block      number=43 hash="b25ea5…6f4f80" td=181 age=22h34m8s
+        INFO [09-26|22:09:58.013] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:09:58.016] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:58.016] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:09:58.016] Starting P2P networking 
+        INFO [09-26|22:09:58.017] RLPx listener up                         self="enode://f7aa166364b68687b55f09084c6c62aff3e619152f309820a2eb22363271f6ab51640f84ac0f07867bbe389ae1d40af1f568e42a88bbcff03197b3a97732ece5@127.0.0.1:34453?discport=0"
+        INFO [09-26|22:09:58.021] IPC endpoint opened                      url=/tmp/fsn-dense-miner-2197714020/lab.ipc
+        INFO [09-26|22:09:58.043] IPC endpoint closed                      url=/tmp/fsn-dense-miner-2197714020/lab.ipc
+        INFO [09-26|22:09:58.043] Stopping Ethereum protocol 
+        INFO [09-26|22:09:58.043] Ethereum protocol stopped 
+        INFO [09-26|22:09:58.043] Transaction pool stopped 
+        INFO [09-26|22:09:58.043] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.91s)
+        PASS
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-1113131384/process-2573118870.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:55.032] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:55.854] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:09:55.854] Allocated cache and file handles         database=/tmp/fsn-dense-miner-1113131384/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:09:55.902] Persisted trie from memory database      nodes=14 size=2.10KiB time="156.997µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:09:55.904]  
+        INFO [09-26|22:09:55.904] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:55.904] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:09:55.904] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:09:55.904]  
+        INFO [09-26|22:09:55.904] hard forks: 
+        INFO [09-26|22:09:55.904]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:09:55.904]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:09:55.904]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:09:55.904]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:55.904]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:09:55.904]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:09:55.904]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:09:55.904]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:09:55.904]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:09:55.904]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:09:55.904]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:09:55.904]  - Fusion Eco:                  0        
+        INFO [09-26|22:09:55.904]  
+        INFO [09-26|22:09:55.904]  
+        INFO [09-26|22:09:55.904] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:09:55.904]  
+        INFO [09-26|22:09:55.904] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:09:55.908] Loaded most recent local header          number=43 hash="b25ea5…6f4f80" td=181 age=22h34m5s
+        INFO [09-26|22:09:55.908] Loaded most recent local full block      number=43 hash="b25ea5…6f4f80" td=181 age=22h34m5s
+        INFO [09-26|22:09:55.908] Loaded most recent local fast block      number=43 hash="b25ea5…6f4f80" td=181 age=22h34m5s
+        INFO [09-26|22:09:55.908] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:09:55.911] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:09:55.911] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:09:55.911] Starting P2P networking 
+        INFO [09-26|22:09:55.911] RLPx listener up                         self="enode://86e56f6dbf28984e8d8d4af5047c6189585c40314c687105d785657030c0c887691e2b2d17243cb8cc1fdca3c1068c5fb8e7602639572d3e330a585d063e4635@127.0.0.1:34079?discport=0"
+        INFO [09-26|22:09:55.916] IPC endpoint opened                      url=/tmp/fsn-dense-miner-1113131384/lab.ipc
+        INFO [09-26|22:09:56.099] IPC endpoint closed                      url=/tmp/fsn-dense-miner-1113131384/lab.ipc
+        INFO [09-26|22:09:56.099] Stopping Ethereum protocol 
+        INFO [09-26|22:09:56.099] Ethereum protocol stopped 
+        INFO [09-26|22:09:56.099] Transaction pool stopped 
+        INFO [09-26|22:09:56.099] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (1.07s)
+        PASS
+=== RUN   TestRestartNodeRehearsal/controlled_zero_ticket_reserves/two_ticket_funding
+    controlled_reserve_linux_test.go:46: controlled admission nonce=12 hash=0xf4e46583491349016a5ace80c02aaa43c55579c658a9b92fffc4f3c0a1f57505 waited-blocks=0
+    controlled_reserve_linux_test.go:55: controlled original nonce=12 hash=0xf4e46583491349016a5ace80c02aaa43c55579c658a9b92fffc4f3c0a1f57505 included=30 block=0xd63c85efb661dbdb3087f06fd26ce0bf6948579ced6a8a8fbf613878db1e116c
+    controlled_reserve_linux_test.go:46: controlled admission nonce=13 hash=0xdc0599bcd928ea06f63b3645e52baeb5d3692fab9b92ce9e4b1effd525863a3a waited-blocks=0
+    controlled_reserve_linux_test.go:55: controlled original nonce=13 hash=0xdc0599bcd928ea06f63b3645e52baeb5d3692fab9b92ce9e4b1effd525863a3a included=31 block=0xb3f79cc70873f7e42f8452dfa77bfbd7cd20adacce886944125a1fbe976f168a
+    controlled_reserve_linux_test.go:46: controlled admission nonce=14 hash=0xa2408b8bf10e7caca039666f775737b46167376a10bb02e89ed80f5b8741ba4e waited-blocks=0
+    controlled_reserve_linux_test.go:55: controlled original nonce=14 hash=0xa2408b8bf10e7caca039666f775737b46167376a10bb02e89ed80f5b8741ba4e included=32 block=0x167c17297d08671c06fffa2175b9504d94f85b483276b6eacd72551dbf57a687
+    controlled_reserve_linux_test.go:46: controlled admission nonce=15 hash=0x4670ea63ba3b9a6bae22db9489f98d7398ccc7e7edd9fafa0a7c3b60fb3c6a2f waited-blocks=2
+    controlled_reserve_linux_test.go:55: controlled original nonce=15 hash=0x4670ea63ba3b9a6bae22db9489f98d7398ccc7e7edd9fafa0a7c3b60fb3c6a2f included=35 block=0x891697e81201047f2358ad58e326b530cce9d0bcaa5a11a10ad64a4b9060f2ec
+    controlled_reserve_linux_test.go:46: controlled admission nonce=16 hash=0xf7bb6a44690bf1b2266f3488aeb1a5baa23d19eaa2463cfbf7b720c33a6b65a7 waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=16 hash=0xf7bb6a44690bf1b2266f3488aeb1a5baa23d19eaa2463cfbf7b720c33a6b65a7 included=37 block=0xda9eb738825c49db63d70a2a89b8810bca4f490b1066c1dc0d9ea9d0a8277742
+    controlled_reserve_linux_test.go:46: controlled admission nonce=17 hash=0xb5bd8b17673c9716e1f4c3a06eb37bdef1e82f11ccf14a534704152130dcf672 waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=17 hash=0xb5bd8b17673c9716e1f4c3a06eb37bdef1e82f11ccf14a534704152130dcf672 included=39 block=0x365d973743c615c07bd78605920f9e40ca2a715a2f7c345c95928e856e2e084d
+    controlled_reserve_linux_test.go:46: controlled admission nonce=18 hash=0x3ac7e1c45fbbfc81c50ebfbc8631eb2ca222ef7edbd751a526638afac58708bb waited-blocks=1
+    controlled_reserve_linux_test.go:55: controlled original nonce=18 hash=0x3ac7e1c45fbbfc81c50ebfbc8631eb2ca222ef7edbd751a526638afac58708bb included=41 block=0x9fac89e2b4b960b3976e8c97722e4002452f54eb407bb5f68fd0f383b79acb8d
+    controlled_reserve_linux_test.go:68: controlled result case=two_ticket_funding baseline=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f topup-wei=10000000000000000000000 included=7 funding-wait-blocks=5 final=41 hash=0x9fac89e2b4b960b3976e8c97722e4002452f54eb407bb5f68fd0f383b79acb8d state=0x22365512fc303a8fd694c2ce9be6e290ad36f20ff98809a626c65307dfeed860 tickets=0x006e21dca164e1397a28e7cb631004dd5d266b9991c745b4b389f7be7fcaf57b
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=25 hash=0x5e2e29db0b3b17e5ba73ed4254dddff8543d6996d2edfc09163649f7b4f5c80a selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x17fd3307f9a69efa51f5198b285c061acf8e251be9e2bddfa31692b51551a640 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0x0652a849352d66d193b4cfc5afd54d1b71096d2a0f86b2fd7658ab7ab5ec4111 start=1790368670 end=1792960670 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xac0bf73f314b8642e8473af0d1a2a78f96e4ca4b9dbeea2b82d26060a650f9e8 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=27 hash=0xcec33040ec463b36a4053f5504f5eadd202913ead0dd52ae3192f3183ed838b3 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x1a1d76363d3738a5d283c8c4deef7848be7c2263b02ab8113b964091e72a1040 returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0xbe8a7df2cf468b68e1e77c47ba8dc6e861a8a580264ccf2318acf26a99842729 start=1790369270 end=1792961270 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x8800de8b38f8fb944c568d20936e0abbe9fd31197941244ec9b14c43cca5728b returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=29 hash=0x7d6971df131bc1da4897eba8463bae1197fe81af00e716a8c730693559de4819 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xb01669ba6c72dfd3ac7ee8b62c6cc8a2438818f2ea23d27d300bff4d6be7f638 returned=true boundaries=8 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=30 hash=0xd63c85efb661dbdb3087f06fd26ce0bf6948579ced6a8a8fbf613878db1e116c selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x91684b907ba873663f0a4cfb1517f4389c277e965a846c6c85db18246639a157 returned=true boundaries=8 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=31 hash=0xb3f79cc70873f7e42f8452dfa77bfbd7cd20adacce886944125a1fbe976f168a selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0xde27bec0d16722621b54b0f088dfa3367814020e0acd0d0a33cec7e8e791284e returned=true boundaries=10 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=32 hash=0x167c17297d08671c06fffa2175b9504d94f85b483276b6eacd72551dbf57a687 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x82fcc8d8df0f05ef9289fc0e16c75a92c0c33b6bfb5f46416dd3a0d531fdc648 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=33 hash=0xcdb60c317ded483c8d9c70828d9e9e50ddf0d086f1fb3ff0548b18294f724471 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x3a70131a94544473513437c3ecebd18d96bb23871ebf244258c99d20af0c4c06 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=34 hash=0xe011a7bbda258e6f7cad6e4b3bd1eb6cdc1f557d5c8469551b35c34c6449ed76 selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x17a90340d4617681d6606e2e9428dd848211708368029bc680684fb36ba73371 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=35 hash=0x891697e81201047f2358ad58e326b530cce9d0bcaa5a11a10ad64a4b9060f2ec selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xe904df725698c64a6ee846885affe1087683e4e60134c2da74eeb16df0db896d returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=36 hash=0x4a6981b7b0f937d82a676c8303ff82f2454b4dee374859f2030cfec77ef6fd54 selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x7bca35d529e40ded71cb7da45341e42bae42fd3b86243516e5a2fa81bc925798 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=37 hash=0xda9eb738825c49db63d70a2a89b8810bca4f490b1066c1dc0d9ea9d0a8277742 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x721255be2c8a8e7942a6fc0b4126af4c1f5e2d12991867097f4dd9325f147f87 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=38 hash=0x8304bdf4ce371874ef4545d2b5c7031c2ecbd5a2113b0356eaee31a714337f34 selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0xfcffed5004d4c45025cec7ecd8651af264a7fd847e6443994fb3fc6ae33c5e02 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=39 hash=0x365d973743c615c07bd78605920f9e40ca2a715a2f7c345c95928e856e2e084d selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x4e9ff8d28da7c42dee97a1026ef92f9f5d8c76b8c9a719813dbba70a577139d3 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=40 hash=0xd81907da9fd4507f5483a8c56bbd4ef034a67280db1fde18dc8f17aca9de732e selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x3ccc19cab6d5e8ed35704e713fc6d1dfff5af1806740c694bf933b029f05b353 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=41 hash=0x9fac89e2b4b960b3976e8c97722e4002452f54eb407bb5f68fd0f383b79acb8d selected-owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF selected=0x10c00310c59b24d0a5a3da6a7b02a27741eb0128c68c0c35c06e54c60c7cb332 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=41 owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf first-retreats=0 liquid-wei=2082602105896000000000 time-locks={"Items":[{"StartTime":1792963431,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792963671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=41 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF first-retreats=2 liquid-wei=2060101915104000000000 time-locks={"Items":[{"StartTime":1790370350,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792960671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961271,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792962351,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=41 owner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 first-retreats=0 liquid-wei=999999979000000000000 time-locks={"Items":[]}
+    controlled_reserve_linux_test.go:69: partition ledger verified phase=controlled range=25..41 head=0x9fac89e2b4b960b3976e8c97722e4002452f54eb407bb5f68fd0f383b79acb8d; all future interval rights reconcile with rewards, fees, transfers and first-retreat losses
+    controlled_reserve_linux_test.go:69: controlled cold node=1 purchases=7 sponsor-nonce=1 sponsor-liquid-wei=999999979000000000000 head=0x9fac89e2b4b960b3976e8c97722e4002452f54eb407bb5f68fd0f383b79acb8d
+    controlled_reserve_linux_test.go:69: controlled cold node=2 purchases=7 sponsor-nonce=1 sponsor-liquid-wei=999999979000000000000 head=0x9fac89e2b4b960b3976e8c97722e4002452f54eb407bb5f68fd0f383b79acb8d
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-3335767169/process-319851611.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:10:01.519] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:02.329] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:10:02.329] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3335767169/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:10:02.371] Persisted trie from memory database      nodes=14 size=2.10KiB time="144.308µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:10:02.372]  
+        INFO [09-26|22:10:02.372] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:02.372] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:10:02.372] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:10:02.372]  
+        INFO [09-26|22:10:02.372] hard forks: 
+        INFO [09-26|22:10:02.372]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:10:02.372]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:10:02.372]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:10:02.372]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:02.372]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:02.372]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:10:02.372]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:10:02.372]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:10:02.372]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:10:02.372]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:10:02.372]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:10:02.372]  - Fusion Eco:                  0        
+        INFO [09-26|22:10:02.372]  
+        INFO [09-26|22:10:02.372]  
+        INFO [09-26|22:10:02.372] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:02.372]  
+        INFO [09-26|22:10:02.373] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:10:02.376] Loaded most recent local header          number=41 hash="9fac89…9acb8d" td=189 age=22h38m12s
+        INFO [09-26|22:10:02.376] Loaded most recent local full block      number=41 hash="9fac89…9acb8d" td=189 age=22h38m12s
+        INFO [09-26|22:10:02.376] Loaded most recent local fast block      number=41 hash="9fac89…9acb8d" td=189 age=22h38m12s
+        INFO [09-26|22:10:02.377] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:10:02.377] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:02.377] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:10:02.377] Starting P2P networking 
+        INFO [09-26|22:10:02.378] RLPx listener up                         self="enode://20aa591c28228ea85095cc5ccc8ec3367d10cc2f35f5cee43716ba85e3c1da16904255284da8a08af567614d9377a1ac3f26c12969078acf5612e395e92e5664@127.0.0.1:38765?discport=0"
+        INFO [09-26|22:10:02.382] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3335767169/lab.ipc
+        INFO [09-26|22:10:02.427] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3335767169/lab.ipc
+        INFO [09-26|22:10:02.427] Stopping Ethereum protocol 
+        INFO [09-26|22:10:02.427] Ethereum protocol stopped 
+        INFO [09-26|22:10:02.427] Transaction pool stopped 
+        INFO [09-26|22:10:02.427] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.91s)
+        PASS
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-317236991/process-4071012106.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:09:59.422] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:00.212] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:10:00.212] Allocated cache and file handles         database=/tmp/fsn-dense-miner-317236991/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:10:00.252] Persisted trie from memory database      nodes=14 size=2.10KiB time="156.699µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:10:00.253]  
+        INFO [09-26|22:10:00.253] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:00.253] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:10:00.253] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:10:00.253]  
+        INFO [09-26|22:10:00.253] hard forks: 
+        INFO [09-26|22:10:00.253]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:10:00.253]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:10:00.253]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:10:00.253]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:00.253]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:00.253]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:10:00.253]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:10:00.253]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:10:00.253]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:10:00.253]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:10:00.253]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:10:00.253]  - Fusion Eco:                  0        
+        INFO [09-26|22:10:00.253]  
+        INFO [09-26|22:10:00.253]  
+        INFO [09-26|22:10:00.254] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:00.254]  
+        INFO [09-26|22:10:00.254] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:10:00.257] Loaded most recent local header          number=41 hash="9fac89…9acb8d" td=189 age=22h38m10s
+        INFO [09-26|22:10:00.257] Loaded most recent local full block      number=41 hash="9fac89…9acb8d" td=189 age=22h38m10s
+        INFO [09-26|22:10:00.257] Loaded most recent local fast block      number=41 hash="9fac89…9acb8d" td=189 age=22h38m10s
+        INFO [09-26|22:10:00.258] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:10:00.258] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:00.258] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:10:00.258] Starting P2P networking 
+        INFO [09-26|22:10:00.261] RLPx listener up                         self="enode://4b26cde55d2aa47c4d967498d034b829e4bcf9c39f96c0bad4ce39a204f609793c09de544aed23a7993b0f0e7c0033f701223a582bce694194bdf2c39212f6c5@127.0.0.1:38599?discport=0"
+        INFO [09-26|22:10:00.264] IPC endpoint opened                      url=/tmp/fsn-dense-miner-317236991/lab.ipc
+        INFO [09-26|22:10:00.474] IPC endpoint closed                      url=/tmp/fsn-dense-miner-317236991/lab.ipc
+        INFO [09-26|22:10:00.474] Stopping Ethereum protocol 
+        INFO [09-26|22:10:00.474] Ethereum protocol stopped 
+        INFO [09-26|22:10:00.474] Transaction pool stopped 
+        INFO [09-26|22:10:00.474] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (1.05s)
+        PASS
+=== RUN   TestRestartNodeRehearsal/controlled_zero_ticket_reserves/one_ticket_missed_again
+    controlled_reserve_linux_test.go:46: controlled admission nonce=12 hash=0xf4e46583491349016a5ace80c02aaa43c55579c658a9b92fffc4f3c0a1f57505 waited-blocks=0
+    controlled_reserve_linux_test.go:55: controlled original nonce=12 hash=0xf4e46583491349016a5ace80c02aaa43c55579c658a9b92fffc4f3c0a1f57505 included=30 block=0x0e844d929b524fd0680875817e9b2fea93e45cb92c756df4d28bcb677d40d5da
+    controlled_reserve_linux_test.go:57: controlled missed-again: replacement retreated at block=31 hash=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c ticket=0xc43fed0468b4ca8a98460504d191ce6059fcf63218d37d2111aa5dbbdfa83132; next nonce=13 remains unfunded
+    controlled_reserve_linux_test.go:68: controlled result case=one_ticket_missed_again baseline=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f topup-wei=5000000000000000000000 included=1 funding-wait-blocks=0 final=31 hash=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c state=0x937b131c45663a53a9a81403e1eb7dc9b4ca050f1c101beb260e855507a8dd4b tickets=0x1243ae97908b1a8a95bd142c10abfa4274f89c6f7790fae3616a949836a1bdb4
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=25 hash=0x5e2e29db0b3b17e5ba73ed4254dddff8543d6996d2edfc09163649f7b4f5c80a selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x17fd3307f9a69efa51f5198b285c061acf8e251be9e2bddfa31692b51551a640 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0x0652a849352d66d193b4cfc5afd54d1b71096d2a0f86b2fd7658ab7ab5ec4111 start=1790368670 end=1792960670 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=26 hash=0x24263c1f9afc596049efe451664168ebde71ef03789ad2f3b57d11073c263663 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xac0bf73f314b8642e8473af0d1a2a78f96e4ca4b9dbeea2b82d26060a650f9e8 returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=27 hash=0xcec33040ec463b36a4053f5504f5eadd202913ead0dd52ae3192f3183ed838b3 selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x1a1d76363d3738a5d283c8c4deef7848be7c2263b02ab8113b964091e72a1040 returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0xbe8a7df2cf468b68e1e77c47ba8dc6e861a8a580264ccf2318acf26a99842729 start=1790369270 end=1792961270 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=28 hash=0x75ff1cc93ccda7b14609d406e81d8a15b38887635b1774046f609ea683b5907f selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x8800de8b38f8fb944c568d20936e0abbe9fd31197941244ec9b14c43cca5728b returned=true boundaries=9 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=29 hash=0x3d7bd7b940277ab665d2fd661414e128202144be463e620f4cef299dcdc6039f selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xb01669ba6c72dfd3ac7ee8b62c6cc8a2438818f2ea23d27d300bff4d6be7f638 returned=true boundaries=8 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=30 hash=0x0e844d929b524fd0680875817e9b2fea93e45cb92c756df4d28bcb677d40d5da selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0x91684b907ba873663f0a4cfb1517f4389c277e965a846c6c85db18246639a157 returned=true boundaries=8 transactions=2
+    controlled_reserve_linux_test.go:69: partition ledger retreat phase=controlled block=31 hash=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0xc43fed0468b4ca8a98460504d191ce6059fcf63218d37d2111aa5dbbdfa83132 start=1790370350 end=1792962350 value-wei=5000000000000000000000 returned=false
+    controlled_reserve_linux_test.go:69: partition ledger block phase=controlled height=31 hash=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c selected-owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf selected=0xb2c3f81c9cd4ab4ae1b2e058d9bab7c11dc6da96343eef56c310b9ad3c1f3aad returned=true boundaries=10 transactions=1
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=31 owner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf first-retreats=0 liquid-wei=2072602148344000000000 time-locks={"Items":[{"StartTime":1790370470,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792962591,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=31 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF first-retreats=3 liquid-wei=2045101872656000000000 time-locks={"Items":[{"StartTime":1792960671,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792961271,"EndTime":18446744073709551615,"Value":"5000000000000000000000"},{"StartTime":1792962351,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]}
+    controlled_reserve_linux_test.go:69: partition ledger end phase=controlled height=31 owner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 first-retreats=0 liquid-wei=5999999979000000000000 time-locks={"Items":[]}
+    controlled_reserve_linux_test.go:69: partition ledger verified phase=controlled range=25..31 head=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c; all future interval rights reconcile with rewards, fees, transfers and first-retreat losses
+    controlled_reserve_linux_test.go:69: controlled cold node=1 purchases=1 sponsor-nonce=1 sponsor-liquid-wei=5999999979000000000000 head=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c
+    controlled_reserve_linux_test.go:69: controlled cold node=2 purchases=1 sponsor-nonce=1 sponsor-liquid-wei=5999999979000000000000 head=0xea628afb30695a5225f841384697c4ecfc7052778f08b9590b262c86fb91826c
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-1176757381/process-681096060.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:10:05.839] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:06.667] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:10:06.667] Allocated cache and file handles         database=/tmp/fsn-dense-miner-1176757381/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:10:06.709] Persisted trie from memory database      nodes=14 size=2.10KiB time="152.64µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:10:06.711]  
+        INFO [09-26|22:10:06.711] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:06.711] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:10:06.711] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:10:06.711]  
+        INFO [09-26|22:10:06.711] hard forks: 
+        INFO [09-26|22:10:06.711]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:10:06.711]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:10:06.711]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:10:06.711]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:06.711]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:06.711]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:10:06.711]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:10:06.711]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:10:06.711]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:10:06.711]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:10:06.711]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:10:06.711]  - Fusion Eco:                  0        
+        INFO [09-26|22:10:06.711]  
+        INFO [09-26|22:10:06.711]  
+        INFO [09-26|22:10:06.711] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:06.711]  
+        INFO [09-26|22:10:06.711] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:10:06.714] Loaded most recent local header          number=31 hash="ea628a…91826c" td=137 age=22h58m16s
+        INFO [09-26|22:10:06.714] Loaded most recent local full block      number=31 hash="ea628a…91826c" td=137 age=22h58m16s
+        INFO [09-26|22:10:06.714] Loaded most recent local fast block      number=31 hash="ea628a…91826c" td=137 age=22h58m16s
+        INFO [09-26|22:10:06.715] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:10:06.715] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:06.715] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:10:06.715] Starting P2P networking 
+        INFO [09-26|22:10:06.717] RLPx listener up                         self="enode://141cddd8ef99923824962491930813dfff0c8287d6e7c64205c9e069536d835a2d2e0e566609dde9a076e6424db4aade25d98fa3e044884fe21115cda58c67ca@127.0.0.1:43833?discport=0"
+        INFO [09-26|22:10:06.721] IPC endpoint opened                      url=/tmp/fsn-dense-miner-1176757381/lab.ipc
+        INFO [09-26|22:10:06.734] IPC endpoint closed                      url=/tmp/fsn-dense-miner-1176757381/lab.ipc
+        INFO [09-26|22:10:06.734] Stopping Ethereum protocol 
+        INFO [09-26|22:10:06.734] Ethereum protocol stopped 
+        INFO [09-26|22:10:06.734] Transaction pool stopped 
+        INFO [09-26|22:10:06.734] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.90s)
+        PASS
+    node_rehearsal_linux_test.go:317: node process /tmp/fsn-dense-miner-3484969105/process-1322161175.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|22:10:03.729] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:04.568] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|22:10:04.568] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3484969105/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|22:10:04.611] Persisted trie from memory database      nodes=14 size=2.10KiB time="168.336µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|22:10:04.613]  
+        INFO [09-26|22:10:04.613] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:04.613] Chain ID:  55555 (devnet) 
+        INFO [09-26|22:10:04.613] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|22:10:04.613]  
+        INFO [09-26|22:10:04.613] hard forks: 
+        INFO [09-26|22:10:04.613]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|22:10:04.613]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|22:10:04.613]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|22:10:04.613]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:04.613]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|22:10:04.613]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|22:10:04.613]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|22:10:04.613]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|22:10:04.613]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|22:10:04.613]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|22:10:04.613]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|22:10:04.613]  - Fusion Eco:                  0        
+        INFO [09-26|22:10:04.613]  
+        INFO [09-26|22:10:04.613]  
+        INFO [09-26|22:10:04.613] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|22:10:04.613]  
+        INFO [09-26|22:10:04.613] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|22:10:04.618] Loaded most recent local header          number=31 hash="ea628a…91826c" td=137 age=22h58m14s
+        INFO [09-26|22:10:04.618] Loaded most recent local full block      number=31 hash="ea628a…91826c" td=137 age=22h58m14s
+        INFO [09-26|22:10:04.618] Loaded most recent local fast block      number=31 hash="ea628a…91826c" td=137 age=22h58m14s
+        INFO [09-26|22:10:04.621] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|22:10:04.621] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|22:10:04.621] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|22:10:04.621] Starting P2P networking 
+        INFO [09-26|22:10:04.621] RLPx listener up                         self="enode://6d64807fcb42b5cf6304010e7e6cd6f3667984d079484cdcd8058bf27038b5b7b5ef64a3a7e381ec61f48184e6fe7b058cb50c0e041a2fe266ff77df272fee25@127.0.0.1:42501?discport=0"
+        INFO [09-26|22:10:04.626] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3484969105/lab.ipc
+        INFO [09-26|22:10:04.793] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3484969105/lab.ipc
+        INFO [09-26|22:10:04.793] Stopping Ethereum protocol 
+        INFO [09-26|22:10:04.793] Ethereum protocol stopped 
+        INFO [09-26|22:10:04.794] Transaction pool stopped 
+        INFO [09-26|22:10:04.794] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (1.07s)
+        PASS
+--- PASS: TestRestartNodeRehearsal (22.18s)
+    --- PASS: TestRestartNodeRehearsal/dense_miner_fixture (4.42s)
+    --- PASS: TestRestartNodeRehearsal/controlled_zero_ticket_reserves (17.76s)
+        --- PASS: TestRestartNodeRehearsal/controlled_zero_ticket_reserves/no_funding (4.32s)
+        --- PASS: TestRestartNodeRehearsal/controlled_zero_ticket_reserves/one_ticket_funding (4.43s)
+        --- PASS: TestRestartNodeRehearsal/controlled_zero_ticket_reserves/two_ticket_funding (4.38s)
+        --- PASS: TestRestartNodeRehearsal/controlled_zero_ticket_reserves/one_ticket_missed_again (4.31s)
+PASS

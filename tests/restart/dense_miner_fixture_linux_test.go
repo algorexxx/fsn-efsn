@@ -36,6 +36,11 @@ func seedDenseMinerPairWithReserve(t *testing.T, balance string, ticketLimit uin
 
 func seedDenseMinerPairWithFunding(t *testing.T, balance string, ticketLimit uint64, funding core.GenesisAlloc) *denseMinerPair {
 	t.Helper()
+	return seedDenseMinerPairWithWindow(t, balance, ticketLimit, funding, uint64(time.Now().Unix())-3600, 0)
+}
+
+func seedDenseMinerPairWithWindow(t *testing.T, balance string, ticketLimit uint64, funding core.GenesisAlloc, timestamp, lifetime uint64) *denseMinerPair {
+	t.Helper()
 	previous := common.UseDevnetRule
 	common.UseDevnetRule = true
 	datong.InitCheckPoints("")
@@ -44,7 +49,7 @@ func seedDenseMinerPairWithFunding(t *testing.T, balance string, ticketLimit uin
 	config := *params.DevnetChainConfig
 	config.ConstantinopleBlock, config.PetersburgBlock, config.IstanbulBlock = common.Big0, common.Big0, common.Big0
 	config.BerlinBlock, config.LondonBlock, config.EcoBlock = common.Big0, common.Big0, common.Big0
-	pair.genesis = &core.Genesis{Config: &config, GasLimit: 15000000, Difficulty: big.NewInt(1), Timestamp: uint64(time.Now().Unix()) - 3600, Alloc: make(core.GenesisAlloc)}
+	pair.genesis = &core.Genesis{Config: &config, GasLimit: 15000000, Difficulty: big.NewInt(1), Timestamp: timestamp, Alloc: make(core.GenesisAlloc)}
 	for owner, account := range funding {
 		pair.genesis.Alloc[owner] = account
 	}
@@ -57,21 +62,7 @@ func seedDenseMinerPairWithFunding(t *testing.T, balance string, ticketLimit uin
 		pair.genesis.Alloc[pair.miners[i].owner] = core.GenesisAccount{Balance: decimal(t, balance)}
 	}
 	pair.genesis.TicketCreateInfo = &core.TicketsCreate{Owner: pair.miners[0].owner, Count: 2, Time: pair.genesis.Timestamp}
-	for i, f := range pair.miners {
-		f := f
-		path, err := os.MkdirTemp("", "fsn-dense-miner-")
-		requireNoError(t, err)
-		pair.paths[i] = path
-		t.Cleanup(func() { os.RemoveAll(path) })
-		f.db, err = rawdb.NewLevelDBDatabase(filepath.Join(path, "anchor-lab", "chaindata"), 16, 16, "", false)
-		requireNoError(t, err)
-		f.parent, err = pair.genesis.Commit(f.db)
-		requireNoError(t, err)
-		f.engine = datong.New(config.DaTong, f.db)
-		f.chain, err = core.NewBlockChain(f.db, &core.CacheConfig{TrieDirtyDisabled: true}, &config, f.engine, vm.Config{}, nil)
-		requireNoError(t, err)
-		t.Cleanup(func() { f.chain.Stop(); f.db.Close() })
-	}
+	openDenseMinerDatabases(t, pair)
 	for i := 0; i < 24; i++ {
 		first, second := pair.miners[0], pair.miners[1]
 		parent := first.chain.CurrentBlock()
@@ -80,9 +71,13 @@ func seedDenseMinerPairWithFunding(t *testing.T, balance string, ticketLimit uin
 		tickets, err := state.AllTickets()
 		requireNoError(t, err)
 		var txs []*types.Transaction
+		end := uint64(common.TimeLockForever)
+		if lifetime > 0 {
+			end = parent.Time() + lifetime
+		}
 		for _, owner := range pair.miners {
 			if ticketLimit == 0 || tickets.NumberOfTicketsByAddress(owner.owner) < ticketLimit {
-				txs = append(txs, owner.signPurchase(t, parent.Time(), common.TimeLockForever))
+				txs = append(txs, owner.signPurchase(t, parent.Time(), end))
 			}
 		}
 		producer := preferredFixtureProducer(t, first, second)
@@ -104,6 +99,25 @@ func seedDenseMinerPairWithFunding(t *testing.T, balance string, ticketLimit uin
 		}
 	}
 	return pair
+}
+
+func openDenseMinerDatabases(t *testing.T, pair *denseMinerPair) {
+	t.Helper()
+	for i, f := range pair.miners {
+		f := f
+		path, err := os.MkdirTemp("", "fsn-dense-miner-")
+		requireNoError(t, err)
+		pair.paths[i] = path
+		t.Cleanup(func() { os.RemoveAll(path) })
+		f.db, err = rawdb.NewLevelDBDatabase(filepath.Join(path, "anchor-lab", "chaindata"), 16, 16, "", false)
+		requireNoError(t, err)
+		f.parent, err = pair.genesis.Commit(f.db)
+		requireNoError(t, err)
+		f.engine = datong.New(pair.genesis.Config.DaTong, f.db)
+		f.chain, err = core.NewBlockChain(f.db, &core.CacheConfig{TrieDirtyDisabled: true}, pair.genesis.Config, f.engine, vm.Config{}, nil)
+		requireNoError(t, err)
+		t.Cleanup(func() { f.chain.Stop(); f.db.Close() })
+	}
 }
 
 func closeDenseMinerPair(t *testing.T, pair *denseMinerPair) {

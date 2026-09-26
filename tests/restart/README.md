@@ -485,3 +485,19 @@ isolated branch, before funding and after repair against ordinary rewards,
 fees, transfers and first-retreat losses. See the
 [funded repair report](../../docs/restart-funded-repair.md) for the retained
 attempts and limits; this does not add an automatic repair or funding mechanism.
+
+`TestRestartNodeRehearsal/controlled_zero_ticket_reserves` replays the same fully
+executed synthetic prefix into fresh databases for four funding comparisons.
+All ordinary setup tickets have finite 30-day intervals. After two first-retreat
+losses leave one owner with zero tickets and insufficient funds, it compares no
+transfer, 5,000 FSN, 10,000 FSN and 5,000 FSN followed by another missed ticket.
+The same seven manually signed purchases are used across branches. Cooperative
+branches advance with the first-ranked producer between insufficient-balance
+probes and reject any additional retreat. Both cold services, exact sponsor
+spending and per-block interval accounting are checked in every branch.
+This constructs/imports valid blocks and uses actual pool admission; it does not
+exercise live worker scheduling, a partition, recovered orphan bytes or a saved
+automatic intent. It needs the node-rehearsal opt-in and isolated loopback
+namespace, but not the packet-loss opt-in. See the
+[controlled reserve report](../../docs/restart-controlled-reserves.md) for the
+observed waits, repeat-loss boundary and preserved-wallet accounting limits.
