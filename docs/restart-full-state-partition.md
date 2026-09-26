@@ -96,12 +96,18 @@ files are rehashed against the original manifest by the evidence verifier.
 
 ## Next investigation
 
-Provide genuine historical headers and bodies from the verified preserved
-backup across the downloader's applicable ancestor-search window, or run on
-the existing complete restored database after checking capacity. Measure the
-incremental storage first; avoid another full backup copy merely for this test.
-Validate continuity and original identities. Do not fabricate ancestry, reduce
-the search window or change fork choice to make the rehearsal pass.
+The [genuine-history follow-up](restart-partition-history.md) now exports and
+validates the 67-MiB ancestry segment. Repeating this exact stopped-fork downloader
+request passes its earlier missing-header point; the equal-weight heads remain
+separate. A fresh live attempt fails earlier when the donation producer cannot
+sustain isolated production. Its stopped heavier-peer sync and matching cold
+ledgers pass, while the donation wallet has zero tickets and insufficient funds
+for its correct-nonce saved purchase. That is a funding failure, not a nonce gap.
+
+The new segment covers the downloader's applicable ancestor-search window
+without another complete backup copy. Preserve its continuity and original
+identities. Do not fabricate ancestry, reduce the search window or change fork
+choice to make subsequent rehearsals pass.
 
 Repeat the partition with peer counts, advertised heads/difficulties and sync
 diagnostics recorded during healing. Keep equal-weight and strictly heavier

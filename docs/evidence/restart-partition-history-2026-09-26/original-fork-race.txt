@@ -1,0 +1,253 @@
+=== RUN   TestFullStateOriginalForkHistory
+=== RUN   TestFullStateOriginalForkHistory/history-producer
+INFO [09-27|00:01:00.528] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-partition-2026-09-26/producer/chaindata cache=256.00MiB handles=128
+INFO [09-27|00:01:00.627] Loaded most recent local header          number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m
+INFO [09-27|00:01:00.627] Loaded most recent local full block      number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m
+INFO [09-27|00:01:00.628] Loaded most recent local fast block      number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m
+    full_state_history_linux_test.go:246: genuine ancestry installed role=producer blocks=90000 from=15040080 through=15130079 bytes=70098887 sha256=99185867e8dd894c27bf8bf304193d3247c8ef76bbc86cd4387d48342265c73d; audited parent and all heads unchanged
+INFO [09-27|00:01:25.072] Blockchain manager stopped 
+=== RUN   TestFullStateOriginalForkHistory/history-verifier
+INFO [09-27|00:01:25.092] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-partition-2026-09-26/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-27|00:01:25.220] Loaded most recent local header          number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m23s
+INFO [09-27|00:01:25.221] Loaded most recent local full block      number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m23s
+INFO [09-27|00:01:25.221] Loaded most recent local fast block      number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m23s
+    full_state_history_linux_test.go:246: genuine ancestry installed role=verifier blocks=90000 from=15040080 through=15130079 bytes=70098887 sha256=99185867e8dd894c27bf8bf304193d3247c8ef76bbc86cd4387d48342265c73d; audited parent and all heads unchanged
+INFO [09-27|00:01:49.519] Blockchain manager stopped 
+=== RUN   TestFullStateOriginalForkHistory/original-head-producer
+INFO [09-27|00:01:49.532] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-partition-2026-09-26/producer/chaindata cache=256.00MiB handles=128
+INFO [09-27|00:01:52.923] Loaded most recent local header          number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m52s
+INFO [09-27|00:01:52.924] Loaded most recent local full block      number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m52s
+INFO [09-27|00:01:52.924] Loaded most recent local fast block      number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m52s
+INFO [09-27|00:01:52.929] Blockchain manager stopped 
+=== RUN   TestFullStateOriginalForkHistory/original-head-verifier
+INFO [09-27|00:01:53.328] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-partition-2026-09-26/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-27|00:01:56.452] Loaded most recent local header          number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m54s
+INFO [09-27|00:01:56.453] Loaded most recent local full block      number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m54s
+INFO [09-27|00:01:56.453] Loaded most recent local fast block      number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m54s
+INFO [09-27|00:01:56.460] Blockchain manager stopped 
+=== NAME  TestFullStateOriginalForkHistory
+    full_state_original_history_linux_test.go:69: original fork ancestry recheck passed: explicit downloader stored remote=0xdbb89fb52cd078d8390be3f5f4e30976472d5847831627a98178c790dbccf320 at height=15130106 with no signing; final heads=0x06091659c936675419b4f309db8aa243d1d0107d9c6ed1bdc866cfbed891cc5d/0xdbb89fb52cd078d8390be3f5f4e30976472d5847831627a98178c790dbccf320
+    node_rehearsal_linux_test.go:321: node process /tmp/TestFullStateOriginalForkHistory2143406760/002/process-1568902558.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-27|00:01:57.963] FS scan times                            list="38.797µs" set=703ns diff="1.275µs"
+        DEBUG[09-27|00:01:58.742] FS scan times                            list="189.199µs" set="14.974µs" diff="7.11µs"
+        INFO [09-27|00:01:58.809] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-27|00:01:58.809] Allocated cache and file handles         database=/tmp/TestFullStateOriginalForkHistory2143406760/002/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-27|00:01:58.892] Persisted trie from memory database      nodes=24 size=3.95KiB time="244.826µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-27|00:01:58.895]  
+        INFO [09-27|00:01:58.895] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|00:01:58.895] Chain ID:  32659 (mainnet) 
+        INFO [09-27|00:01:58.895] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-27|00:01:58.895]  
+        INFO [09-27|00:01:58.895] hard forks: 
+        INFO [09-27|00:01:58.895]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-27|00:01:58.895]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-27|00:01:58.895]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-27|00:01:58.895]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|00:01:58.895]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|00:01:58.895]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-27|00:01:58.895]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-27|00:01:58.895]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-27|00:01:58.895]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-27|00:01:58.895]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-27|00:01:58.895]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-27|00:01:58.895]  - Fusion Eco:                  8250000  
+        INFO [09-27|00:01:58.895]  
+        INFO [09-27|00:01:58.895]  
+        INFO [09-27|00:01:58.895] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|00:01:58.895]  
+        INFO [09-27|00:01:58.901] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-27|00:01:58.908] Loaded most recent local header          number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m56s
+        INFO [09-27|00:01:58.908] Loaded most recent local full block      number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m56s
+        INFO [09-27|00:01:58.908] Loaded most recent local fast block      number=15,130,106 hash="dbb89f…ccf320" td=63,370,514,724 age=38m56s
+        DEBUG[09-27|00:01:58.913] Reinjecting stale transactions           count=0
+        INFO [09-27|00:01:58.914] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-27|00:01:58.919] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|00:01:58.919] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-27|00:01:58.921] Gasprice oracle is ignoring threshold set threshold=2
+        DEBUG[09-27|00:01:58.921] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        INFO [09-27|00:01:58.921] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-27|00:01:58.921] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-27|00:01:58.921] Starting P2P networking 
+        INFO [09-27|00:01:58.922] RLPx listener up                         self="enode://af6c47ad53adc30bee4fd4b6c44eeba1820f442b806c37011fe6424f5ccffe8acf4b71266a8fa5bc27628c0d9ac4fc6f79e179b8bd02036869fc0188dde8772e@127.0.0.1:46399?discport=0"
+        DEBUG[09-27|00:01:58.926] IPCs registered                          namespaces=admin,debug,web3,eth,txpool,personal,fsn,fsntx,fsnbt,miner,net,lab
+        INFO [09-27|00:01:58.926] IPC endpoint opened                      url=/tmp/TestFullStateOriginalForkHistory2143406760/002/lab.ipc
+        DEBUG[09-27|00:01:58.949] Served admin_nodeInfo                    reqid=1 duration="332.471µs"
+        DEBUG[09-27|00:01:58.953] Adding p2p peer                          name=anchor-lab/linux-amd... addr=127.0.0.1:50880 peers=1
+        DEBUG[09-27|00:01:58.953] Ethereum peer connected                  id=a7384a5826fba28e conn=inbound name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-27|00:01:59.054] Served lab_status                        reqid=2 duration="336.191µs"
+        DEBUG[09-27|00:01:59.234] Served lab_status                        reqid=3 duration="434.713µs"
+        DEBUG[09-27|00:01:59.238] Ethereum message handling failed         id=a7384a5826fba28e conn=inbound err=EOF
+        DEBUG[09-27|00:01:59.238] Removing Ethereum peer                   peer=a7384a5826fba28e
+        DEBUG[09-27|00:01:59.238] Removing p2p peer                        id=a7384a5826fba28e conn=inbound duration=285.196ms   peers=0 req=true err="client quitting"
+        DEBUG[09-27|00:02:02.265] RPC connection read error                err=EOF
+        DEBUG[09-27|00:02:02.265] RPC server shutting down 
+        INFO [09-27|00:02:02.265] IPC endpoint closed                      url=/tmp/TestFullStateOriginalForkHistory2143406760/002/lab.ipc
+        DEBUG[09-27|00:02:02.265] RPC server shutting down 
+        INFO [09-27|00:02:02.265] Stopping Ethereum protocol 
+        INFO [09-27|00:02:02.265] Ethereum protocol stopped 
+        INFO [09-27|00:02:02.265] Transaction pool stopped 
+        INFO [09-27|00:02:02.265] Blockchain manager stopped 
+        DEBUG[09-27|00:02:02.294] Read error                               err="accept tcp 127.0.0.1:46399: use of closed network connection"
+        --- PASS: TestRestartNodeRehearsal (2.59s)
+        PASS
+    node_rehearsal_linux_test.go:321: node process /tmp/TestFullStateOriginalForkHistory2143406760/001/process-269816421.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-27|00:01:56.957] FS scan times                            list="69.978µs" set="3.108µs" diff="1.105µs"
+        DEBUG[09-27|00:01:57.732] FS scan times                            list="116.919µs" set="12.209µs" diff="2.502µs"
+        INFO [09-27|00:01:57.782] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-27|00:01:57.783] Allocated cache and file handles         database=/tmp/TestFullStateOriginalForkHistory2143406760/001/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-27|00:01:57.857] Persisted trie from memory database      nodes=24 size=3.95KiB time="253.386µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-27|00:01:57.860]  
+        INFO [09-27|00:01:57.860] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|00:01:57.860] Chain ID:  32659 (mainnet) 
+        INFO [09-27|00:01:57.860] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-27|00:01:57.860]  
+        INFO [09-27|00:01:57.860] hard forks: 
+        INFO [09-27|00:01:57.860]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-27|00:01:57.860]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-27|00:01:57.860]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-27|00:01:57.860]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|00:01:57.860]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|00:01:57.860]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-27|00:01:57.860]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-27|00:01:57.860]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-27|00:01:57.860]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-27|00:01:57.860]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-27|00:01:57.860]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-27|00:01:57.860]  - Fusion Eco:                  8250000  
+        INFO [09-27|00:01:57.860]  
+        INFO [09-27|00:01:57.860]  
+        INFO [09-27|00:01:57.860] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|00:01:57.860]  
+        INFO [09-27|00:01:57.864] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-27|00:01:57.870] Loaded most recent local header          number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m57s
+        INFO [09-27|00:01:57.870] Loaded most recent local full block      number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m57s
+        INFO [09-27|00:01:57.870] Loaded most recent local fast block      number=15,130,106 hash="060916…91cc5d" td=63,370,514,724 age=38m57s
+        INFO [09-27|00:01:57.873] Upgrading chain index                    type=bloombits percentage=0
+        DEBUG[09-27|00:01:57.873] Reinjecting stale transactions           count=0
+        ERROR[09-27|00:01:57.877] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|00:01:57.877] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|00:01:57.880] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        INFO [09-27|00:01:57.881] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-27|00:01:57.881] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-27|00:01:57.881] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-27|00:01:57.882] Starting P2P networking 
+        INFO [09-27|00:01:57.885] RLPx listener up                         self="enode://a7384a5826fba28ed114b40158343a71ae558c2bfc6e2214b530e1eb49d9f5b4e15c87df01e4a2cc6d27299c7f88ca749d61ea030bf3500663e92e7322f83d22@127.0.0.1:43797?discport=0"
+        DEBUG[09-27|00:01:57.889] IPCs registered                          namespaces=admin,debug,web3,eth,txpool,personal,fsn,fsntx,fsnbt,miner,net,lab
+        INFO [09-27|00:01:57.889] IPC endpoint opened                      url=/tmp/TestFullStateOriginalForkHistory2143406760/001/lab.ipc
+        DEBUG[09-27|00:01:58.950] Served admin_addPeer                     reqid=1 duration="277.337µs"
+        DEBUG[09-27|00:01:58.952] Served admin_peers                       reqid=2 duration="211.11µs"
+        DEBUG[09-27|00:01:58.953] Adding p2p peer                          name=anchor-lab/linux-amd... addr=127.0.0.1:46399 peers=1
+        DEBUG[09-27|00:01:58.953] Ethereum peer connected                  id=af6c47ad53adc30b conn=staticdial name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-27|00:01:59.053] Served admin_peers                       reqid=3 duration="179.39µs"
+        DEBUG[09-27|00:01:59.053] Served lab_status                        reqid=4 duration="354.203µs"
+        INFO [09-27|00:01:59.055] Block synchronisation started 
+        DEBUG[09-27|00:01:59.055] Synchronising with the network           peer=af6c47ad53adc30b eth=63 head="dbb89f…ccf320" td=63,370,514,724 mode=full
+        DEBUG[09-27|00:01:59.055] Retrieving remote chain head             peer=af6c47ad53adc30b
+        DEBUG[09-27|00:01:59.055] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromhash="dbb89f…ccf320" skip=63 reverse=true
+        DEBUG[09-27|00:01:59.057] Remote head identified, no pivot         peer=af6c47ad53adc30b number=15,130,106 hash="dbb89f…ccf320"
+        DEBUG[09-27|00:01:59.057] Looking for common ancestor              peer=af6c47ad53adc30b local=15,130,106 remote=15,130,106
+        DEBUG[09-27|00:01:59.057] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=2 fromnum=15,130,103 skip=1  reverse=false
+        DEBUG[09-27|00:01:59.061] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,085,106 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.063] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,107,606 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.065] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,118,856 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.066] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,124,481 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.068] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,127,293 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.070] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,128,699 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.072] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,129,402 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.073] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,129,754 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.076] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,129,930 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.078] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,018 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.080] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,062 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.082] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,084 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.084] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,095 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.086] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,089 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.087] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,092 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.088] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=1 fromnum=15,130,090 skip=0  reverse=false
+        DEBUG[09-27|00:01:59.089] Found common ancestor                    peer=af6c47ad53adc30b number=15,130,089 hash="192998…4785f1"
+        DEBUG[09-27|00:01:59.089] Downloading transaction receipts         origin=15,130,090
+        DEBUG[09-27|00:01:59.089] Downloading block bodies                 origin=15,130,090
+        DEBUG[09-27|00:01:59.089] Directing header downloads               peer=af6c47ad53adc30b origin=15,130,090
+        DEBUG[09-27|00:01:59.089] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=128 fromnum=15,130,281 skip=191 reverse=false
+        DEBUG[09-27|00:01:59.090] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=192 fromnum=15,130,090 skip=0   reverse=false
+        DEBUG[09-27|00:01:59.093] Fetching batch of headers                id=af6c47ad53adc30b conn=staticdial count=192 fromnum=15,130,107 skip=0   reverse=false
+        DEBUG[09-27|00:01:59.093] Fetching batch of block bodies           id=af6c47ad53adc30b conn=staticdial count=2
+        DEBUG[09-27|00:01:59.093] No more headers available                peer=af6c47ad53adc30b
+        DEBUG[09-27|00:01:59.093] Header download terminated               peer=af6c47ad53adc30b
+        DEBUG[09-27|00:01:59.093] Data fetching completed                  type=receipts
+        DEBUG[09-27|00:01:59.093] Transaction receipt download terminated  err=nil
+        DEBUG[09-27|00:01:59.094] Fetching batch of block bodies           id=af6c47ad53adc30b conn=staticdial count=15
+        INFO [09-27|00:01:59.094] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=159.41B throttle=8192
+        DEBUG[09-27|00:01:59.096] Inserting downloaded chain               items=2 firstnum=15,130,090 firsthash="714500…fcc23f" lastnum=15,130,091 lasthash="e97167…b7c3d6"
+        DEBUG[09-27|00:01:59.098] Data fetching completed                  type=bodies
+        DEBUG[09-27|00:01:59.098] Block body download terminated           err=nil
+        DEBUG[09-27|00:01:59.128] Persisted trie from memory database      nodes=19 size=7.67KiB time=1.316207ms  gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        DEBUG[09-27|00:01:59.129] Inserted forked block                    number=15,130,090 hash="714500…fcc23f" diff=5         elapsed=31.963ms txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.135] Persisted trie from memory database      nodes=13 size=5.22KiB time=1.006858ms  gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        DEBUG[09-27|00:01:59.135] Inserted forked block                    number=15,130,091 hash="e97167…b7c3d6" diff=5         elapsed=6.525ms  txs=1 gas=21224 uncles=0
+        INFO [09-27|00:01:59.135] Imported new chain segment               blocks=2 txs=2 mgas=0.042 elapsed=38.681ms mgasps=1.097 order=0 number=15,130,091 hash="e97167…b7c3d6" difficulty=5 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="41f42a…94c5fd" parentHash="714500…fcc23f" time=1,790,457,564 age=42m35s cache=0.00B
+        INFO [09-27|00:01:59.135] notify first order chain head event      number=15,130,091 hash="e97167…b7c3d6"
+        DEBUG[09-27|00:01:59.136] Inserting downloaded chain               items=15 firstnum=15,130,092 firsthash="08f35f…c4dcf9" lastnum=15,130,106 lasthash="dbb89f…ccf320"
+        ERROR[09-27|00:01:59.138] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|00:01:59.138] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|00:01:59.142] Reinjecting stale transactions           count=16
+        DEBUG[09-27|00:01:59.146] Persisted trie from memory database      nodes=13 size=5.18KiB time="947.969µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-246.00B
+        DEBUG[09-27|00:01:59.146] Inserted forked block                    number=15,130,092 hash="08f35f…c4dcf9" diff=2         elapsed=10.164ms txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.151] Persisted trie from memory database      nodes=13 size=5.11KiB time="945.589µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-328.00B
+        DEBUG[09-27|00:01:59.152] Inserted forked block                    number=15,130,093 hash="e35eb9…550348" diff=2         elapsed=5.078ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.157] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.166067ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-410.00B
+        DEBUG[09-27|00:01:59.158] Inserted forked block                    number=15,130,094 hash="24edd3…836181" diff=2         elapsed=5.896ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.162] Persisted trie from memory database      nodes=13 size=5.11KiB time="730.146µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-492.00B
+        DEBUG[09-27|00:01:59.162] Inserted forked block                    number=15,130,095 hash="7e7368…c1dc3e" diff=2         elapsed=4.483ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.167] Persisted trie from memory database      nodes=13 size=5.11KiB time="853.32µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-574.00B
+        DEBUG[09-27|00:01:59.167] Inserted forked block                    number=15,130,096 hash="d27f45…4eec5d" diff=2         elapsed=4.894ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.172] Persisted trie from memory database      nodes=13 size=5.11KiB time="832.995µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-656.00B
+        DEBUG[09-27|00:01:59.173] Inserted forked block                    number=15,130,097 hash="5f8e54…f2678f" diff=2         elapsed=5.365ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.178] Persisted trie from memory database      nodes=13 size=5.11KiB time="958.333µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-738.00B
+        DEBUG[09-27|00:01:59.178] Inserted forked block                    number=15,130,098 hash="3d63a4…2616b2" diff=2         elapsed=5.684ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.186] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.412877ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-820.00B
+        DEBUG[09-27|00:01:59.186] Inserted forked block                    number=15,130,099 hash="8ec079…31de30" diff=2         elapsed=7.993ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.193] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.068331ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-902.00B
+        DEBUG[09-27|00:01:59.193] Inserted forked block                    number=15,130,100 hash="0d892c…18fa76" diff=2         elapsed=6.331ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.199] Persisted trie from memory database      nodes=13 size=5.11KiB time="870.19µs"    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-984.00B
+        DEBUG[09-27|00:01:59.199] Inserted forked block                    number=15,130,101 hash="1a531a…3595aa" diff=2         elapsed=6.487ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.206] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.05951ms     gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-1066.00B
+        DEBUG[09-27|00:01:59.206] Inserted forked block                    number=15,130,102 hash="76f4cf…ce775c" diff=2         elapsed=6.275ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.211] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.106718ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-1148.00B
+        DEBUG[09-27|00:01:59.211] Inserted forked block                    number=15,130,103 hash="40db96…66ba57" diff=2         elapsed=5.392ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.218] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.381679ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-1230.00B
+        DEBUG[09-27|00:01:59.218] Inserted forked block                    number=15,130,104 hash="068255…79ab60" diff=2         elapsed=6.868ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.223] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.087611ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-1312.00B
+        DEBUG[09-27|00:01:59.224] Inserted forked block                    number=15,130,105 hash="61b8f7…5354f0" diff=2         elapsed=5.347ms  txs=1 gas=21224 uncles=0
+        DEBUG[09-27|00:01:59.228] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.02153ms     gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-1394.00B
+        DEBUG[09-27|00:01:59.229] Inserted forked block                    number=15,130,106 hash="dbb89f…ccf320" diff=2         elapsed=4.890ms  txs=1 gas=21224 uncles=0
+        INFO [09-27|00:01:59.229] Imported new chain segment               blocks=15 txs=15 mgas=0.318 elapsed=92.472ms mgasps=3.443 order=0 number=15,130,106 hash="dbb89f…ccf320" difficulty=2 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="eb20fe…a282c6" parentHash="61b8f7…5354f0" time=1,790,457,782 age=38m57s cache=0.00B
+        INFO [09-27|00:01:59.229] notify first order chain head event      number=15,130,106 hash="dbb89f…ccf320"
+        DEBUG[09-27|00:01:59.229] Reinjecting stale transactions           count=0
+        DEBUG[09-27|00:01:59.230] Synchronisation terminated               elapsed=175.011ms
+        DEBUG[09-27|00:01:59.230] Served lab_sync                          reqid=5 duration=175.321996ms
+        ERROR[09-27|00:01:59.230] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|00:01:59.230] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|00:01:59.231] Served eth_getBlockByHash                reqid=6 duration="576.806µs"
+        DEBUG[09-27|00:01:59.233] Served lab_status                        reqid=7 duration="616.168µs"
+        DEBUG[09-27|00:01:59.237] RPC connection read error                err=EOF
+        DEBUG[09-27|00:01:59.237] RPC server shutting down 
+        INFO [09-27|00:01:59.237] IPC endpoint closed                      url=/tmp/TestFullStateOriginalForkHistory2143406760/001/lab.ipc
+        DEBUG[09-27|00:01:59.237] RPC server shutting down 
+        INFO [09-27|00:01:59.237] Stopping Ethereum protocol 
+        DEBUG[09-27|00:01:59.237] Ethereum message handling failed         id=af6c47ad53adc30b conn=staticdial err=EOF
+        DEBUG[09-27|00:01:59.237] Removing Ethereum peer                   peer=af6c47ad53adc30b
+        INFO [09-27|00:01:59.237] Ethereum protocol stopped 
+        DEBUG[09-27|00:01:59.238] Removing p2p peer                        id=af6c47ad53adc30b conn=staticdial duration=284.869ms    peers=0 req=false err="client quitting"
+        INFO [09-27|00:01:59.238] Transaction pool stopped 
+        INFO [09-27|00:01:59.238] Blockchain manager stopped 
+        DEBUG[09-27|00:02:01.247] Read error                               err="accept tcp 127.0.0.1:43797: use of closed network connection"
+        --- PASS: TestRestartNodeRehearsal (2.55s)
+        PASS
+--- PASS: TestFullStateOriginalForkHistory (70.26s)
+    --- PASS: TestFullStateOriginalForkHistory/history-producer (24.56s)
+    --- PASS: TestFullStateOriginalForkHistory/history-verifier (24.45s)
+    --- PASS: TestFullStateOriginalForkHistory/original-head-producer (3.80s)
+    --- PASS: TestFullStateOriginalForkHistory/original-head-verifier (3.60s)
+PASS

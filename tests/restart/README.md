@@ -553,3 +553,30 @@ if ordinary sync fails. `FUSION_RESTART_NODE_DEBUG=1` enables debug output only
 in test child services. The diagnostic must not be run against a live database
 or an original backup. See the [partition report](../../docs/restart-full-state-partition.md)
 for the equal-weight observation, missing-history failure and required follow-up.
+
+The partition test now additionally requires `FUSION_RESTART_HISTORY_INPUT`:
+the genuine historical segment exported by `TestExportFullStateHistory`. The
+extractor requires the existing read-only backup opt-in/mount, an absolute
+`FUSION_RESTART_HISTORY_OUTPUT`, host storage reserve and mode `measure` or
+`export`. It measures before copying, preserves linked original headers and
+bodies, checks transaction commitments and stored difficulty, and authenticates
+the end against the retained preserved context. It deliberately treats Fusion's
+`UncleHash` as the existing PoS field and requires an empty actual uncle list.
+`TestFullStateHistoryBodyValidation` covers that distinction and damaged bodies
+or ancestry. Installation validates the whole file before writing only genuine
+blocks below the audited synthetic parent, and requires unchanged active heads.
+The recovery observer logs both local and advertised peer heads/difficulty every
+ten seconds. See the [genuine ancestry follow-up](../../docs/restart-partition-history.md).
+
+`TestFullStatePostSyncAccounting`, with `FUSION_RESTART_POST_SYNC` pointing at
+stopped disposable copies, compares the complete cold canonical suffix after
+successful synchronization. It verifies unchanged saved bytes, nonce, tickets,
+liquid and head/current-time interval coverage, and checks actual local pool
+admission without starting a miner or network service.
+
+`TestFullStateOriginalForkHistory` takes `FUSION_RESTART_HISTORY_RECHECK` plus
+the history input and isolated-node opt-ins. It augments the prior stopped fork,
+requires its original equal-weight heads, and repeats the previously failed
+explicit downloader request with signing/buying disabled. Storing the remote
+branch is its acceptance condition; it does not require equal-weight heads to
+converge or alter fork choice.

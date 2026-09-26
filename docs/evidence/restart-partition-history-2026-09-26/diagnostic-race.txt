@@ -1,0 +1,351 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestFullStatePartitionColdDiagnosis
+=== RUN   TestFullStatePartitionColdDiagnosis/audit-producer
+INFO [09-26|23:54:57.443] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-history-partition-2026-09-26/producer/chaindata cache=256.00MiB handles=128
+INFO [09-26|23:54:57.577] Loaded most recent local header          number=15,130,089 hash="3b9cc2…debabf" td=63,370,514,683 age=3m8s
+INFO [09-26|23:54:57.577] Loaded most recent local full block      number=15,130,089 hash="3b9cc2…debabf" td=63,370,514,683 age=3m8s
+INFO [09-26|23:54:57.578] Loaded most recent local fast block      number=15,130,089 hash="3b9cc2…debabf" td=63,370,514,683 age=3m8s
+    full_state_partition_diagnostic_linux_test.go:50: block=1 height=15130081 time=1759826750 signer=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf hash=0x7e16c5dabebb465314f9d48ba24bbb2cb836768a5264d5193329b46fd69af3da root=0xdfab33d93bdcb5e278b642a8894bd8422ca0a47bd86e111f117bd00c3500ad59 tickets=485 changedAccounts=8
+    full_state_partition_diagnostic_linux_test.go:50: block=2 height=15130082 time=1790121600 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x9aaa779dad8d3883bff738d99f6a3c360812f658ccffd4778a6a4aa0c9ec862a root=0xf19455dbbd7f131bcb9179c591c967d614470d07d0814fb74b52ac458f201be8 tickets=480 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=3 height=15130083 time=1790121720 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x94ed041a999c47e4a3797f3f33067e3cdf011add53b786832f3ad334d9727345 root=0xea437527f99ff52f682abfe458941f2a4a56b8023d8fd7f3d4e99dd7efaf6cf4 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=4 height=15130084 time=1790459121 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x71373103845b8ba8af7abba367a9c78827e970647abd7b9954dba8fbeda85af0 root=0x2dd5ce143bc371b7e8c57e07022b9f8411e7e3223c81ee39352daed2f7a38909 tickets=1 changedAccounts=4
+    full_state_partition_diagnostic_linux_test.go:50: block=5 height=15130085 time=1790459241 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x67b8cf996023beff230ce5b0f45ae21df6252490ca7c8784d7babdcc7ae9d577 root=0x490d0ac4dae32c6ca18796a45c541a91f38aad220fbdef13e572e4d569427e54 tickets=1 changedAccounts=4
+    full_state_partition_diagnostic_linux_test.go:50: block=6 height=15130086 time=1790459361 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x9b4fc9db2bc67ee870e7570f8d92edcea7ac98e7100dad1e6907906724cef94d root=0xf95dd02b8269446c6acd47e808f1d004976b6064c47d99fd9065283aea308fd2 tickets=2 changedAccounts=3
+    full_state_partition_diagnostic_linux_test.go:50: block=7 height=15130087 time=1790459487 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0xbf7d72b4988fec3958b733aa86a384c8709998900b5aa6e555efd144ebec66b3 root=0x02b821eb7550413960a2d6870ca6116a738e234ce1e33cfab1fd5a44794c4ed0 tickets=3 changedAccounts=3
+    full_state_partition_diagnostic_linux_test.go:50: block=8 height=15130088 time=1790459498 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0xe165ae8711640f1c4fb31de5e7c4a31d2d997ecea120e119b7ee179dd2712f48 root=0xa871a8df55c9cd9e92c5cdfad44ddb2d9a075cf9b816948c664907d2be008e3f tickets=2 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=9 height=15130089 time=1790459509 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x3b9cc2c0f02e56bd465b59328343c82d78ea32ab9d32e4d59bf370d6cbdebabf root=0x8764363701649c4cb9e59249a7c213ef00d8818279eadce04cc56e545d70997f tickets=2 changedAccounts=3
+    full_state_partition_diagnostic_linux_test.go:52: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_partition_diagnostic_linux_test.go:52: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_partition_diagnostic_linux_test.go:52: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_partition_diagnostic_linux_test.go:52: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; blocks=3 totalRewardWei=937500000000000000; no database opened
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=4 height=15130084 hash=0x71373103845b8ba8af7abba367a9c78827e970647abd7b9954dba8fbeda85af0 accounts=4 boundaries=6 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=5 height=15130085 hash=0x67b8cf996023beff230ce5b0f45ae21df6252490ca7c8784d7babdcc7ae9d577 accounts=4 boundaries=6 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=6 height=15130086 hash=0x9b4fc9db2bc67ee870e7570f8d92edcea7ac98e7100dad1e6907906724cef94d accounts=3 boundaries=6 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=7 height=15130087 hash=0xbf7d72b4988fec3958b733aa86a384c8709998900b5aa6e555efd144ebec66b3 accounts=3 boundaries=4 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=8 height=15130088 hash=0xe165ae8711640f1c4fb31de5e7c4a31d2d997ecea120e119b7ee179dd2712f48 accounts=2 boundaries=4 transactions=0 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=9 height=15130089 hash=0x3b9cc2c0f02e56bd465b59328343c82d78ea32ab9d32e4d59bf370d6cbdebabf accounts=3 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger passed: blocks=6 ordinary-conversions=1 ordinary-transfers=1 successful-purchases=7; aggregate funding=12020.102 FSN, native conversion fee=0.001 FSN plus gas; all future rights reconcile
+    full_state_partition_diagnostic_linux_test.go:64: partition cold audit role=producer blocks=9 head=15130089 0x3b9cc2c0f02e56bd465b59328343c82d78ea32ab9d32e4d59bf370d6cbdebabf td=63370514683 nonce=7 saved-bytes=117
+INFO [09-26|23:55:00.903] Blockchain manager stopped 
+=== RUN   TestFullStatePartitionColdDiagnosis/audit-verifier
+INFO [09-26|23:55:00.941] Allocated cache and file handles         database=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/full-state-history-partition-2026-09-26/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-26|23:55:01.072] Loaded most recent local header          number=15,130,096 hash="482127…034291" td=63,370,514,696 age=1m41s
+INFO [09-26|23:55:01.072] Loaded most recent local full block      number=15,130,096 hash="482127…034291" td=63,370,514,696 age=1m41s
+INFO [09-26|23:55:01.073] Loaded most recent local fast block      number=15,130,096 hash="482127…034291" td=63,370,514,696 age=1m41s
+    full_state_partition_diagnostic_linux_test.go:50: block=1 height=15130081 time=1759826750 signer=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf hash=0x7e16c5dabebb465314f9d48ba24bbb2cb836768a5264d5193329b46fd69af3da root=0xdfab33d93bdcb5e278b642a8894bd8422ca0a47bd86e111f117bd00c3500ad59 tickets=485 changedAccounts=8
+    full_state_partition_diagnostic_linux_test.go:50: block=2 height=15130082 time=1790121600 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x9aaa779dad8d3883bff738d99f6a3c360812f658ccffd4778a6a4aa0c9ec862a root=0xf19455dbbd7f131bcb9179c591c967d614470d07d0814fb74b52ac458f201be8 tickets=480 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=3 height=15130083 time=1790121720 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x94ed041a999c47e4a3797f3f33067e3cdf011add53b786832f3ad334d9727345 root=0xea437527f99ff52f682abfe458941f2a4a56b8023d8fd7f3d4e99dd7efaf6cf4 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=4 height=15130084 time=1790459121 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x71373103845b8ba8af7abba367a9c78827e970647abd7b9954dba8fbeda85af0 root=0x2dd5ce143bc371b7e8c57e07022b9f8411e7e3223c81ee39352daed2f7a38909 tickets=1 changedAccounts=4
+    full_state_partition_diagnostic_linux_test.go:50: block=5 height=15130085 time=1790459241 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x67b8cf996023beff230ce5b0f45ae21df6252490ca7c8784d7babdcc7ae9d577 root=0x490d0ac4dae32c6ca18796a45c541a91f38aad220fbdef13e572e4d569427e54 tickets=1 changedAccounts=4
+    full_state_partition_diagnostic_linux_test.go:50: block=6 height=15130086 time=1790459361 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF hash=0x9b4fc9db2bc67ee870e7570f8d92edcea7ac98e7100dad1e6907906724cef94d root=0xf95dd02b8269446c6acd47e808f1d004976b6064c47d99fd9065283aea308fd2 tickets=2 changedAccounts=3
+    full_state_partition_diagnostic_linux_test.go:50: block=7 height=15130087 time=1790459487 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0xf81dd56baffc6fd39efbee5296ae52f4dd6a72c85deb21b4ba76f12e333a77c3 root=0x51280de0e6566f077e9876c8841f5bcfd2c290a4cd07db2f53b553ad6622b1d1 tickets=2 changedAccounts=3
+    full_state_partition_diagnostic_linux_test.go:50: block=8 height=15130088 time=1790459494 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x05fe89175060ec6ef5ad397cd0ea99abafe5e300532d5a8c1b11f41f9d882527 root=0x90547f0bce9b3d0796ec97a9943b3d0ce8cecbb7ae5efb78c8964a96f1e2f8fe tickets=2 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=9 height=15130089 time=1790459505 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x7c8694a1a57a5d46d22c0b3285d731b9f20076602976c5d381c0ed1460265415 root=0x1f25c9cd750b732abc9488aacc253e9060659eb4ff95a108b4313e5adf52d081 tickets=2 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=10 height=15130090 time=1790459517 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x03d58b711e1f9684e2bf2ee45beb87e7221b09e5771f96e0ec13ca768607dec1 root=0xaa7f6eec0610b2104ea35ab9ba82e9c2bb154d03c1cb6f5521da52235e5d4c51 tickets=2 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=11 height=15130091 time=1790459547 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0xb8858de1e038c4ed34151591f097df55a124f3fe3f799dfd54c51f3892213f67 root=0xbedb605ff4eee2bb111126dba9d4d75c862b9eec6c949d2aa4943c58d717f451 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=12 height=15130092 time=1790459554 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x61f1d43d9eb5fba9437c6365f3a6259425799ddee5cb04659ab78c0365447391 root=0x7f68ddfd32019e8887d95517c6899cfa98a7f6d1f60c34a2a2a42e1325f38dfd tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=13 height=15130093 time=1790459565 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x5df4948e26bcd9d26189596d06d91a62eef5fa6d216d224d1d8a7e1b55f449bd root=0xdba1d58c12fca043a055a0bacf1d8e9f50487f65d4e1f7d7d37926dcfa44cdb2 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=14 height=15130094 time=1790459576 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0xc1c1f0531a183f74482fa2830600e2208b77ccdaec9fc2c465911253c524fd18 root=0x615bd7b9aaf6d468f49aef54083c8eb57de06b9a81ed456c21d8b877a7b15662 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=15 height=15130095 time=1790459589 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x2d4520e70a2ae03bc54f986e8e55282d02e70bd88e4b2d7dd576414046650028 root=0x8ecb4c35be1ec25cd0b1045fefb8cdde45d17b4a1949561c8aafdec38586f6e0 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:50: block=16 height=15130096 time=1790459600 signer=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 hash=0x48212779e0851316084461094494cffcbb2c380362d1877a450c874913034291 root=0x0775498339f8ecd2a231f36be037af5f4e0e58047b7ec133e8c09299dd128a41 tickets=1 changedAccounts=2
+    full_state_partition_diagnostic_linux_test.go:52: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_partition_diagnostic_linux_test.go:52: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_partition_diagnostic_linux_test.go:52: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_partition_diagnostic_linux_test.go:52: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; blocks=3 totalRewardWei=937500000000000000; no database opened
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=4 height=15130084 hash=0x71373103845b8ba8af7abba367a9c78827e970647abd7b9954dba8fbeda85af0 accounts=4 boundaries=6 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=5 height=15130085 hash=0x67b8cf996023beff230ce5b0f45ae21df6252490ca7c8784d7babdcc7ae9d577 accounts=4 boundaries=6 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=6 height=15130086 hash=0x9b4fc9db2bc67ee870e7570f8d92edcea7ac98e7100dad1e6907906724cef94d accounts=3 boundaries=6 transactions=2 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger retreat block=7 height=15130087 index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0xeae9c40c0b0a962f0d7a17e3e524754b4ab1feb2c1b486fada979558100e0e64 start=1790459241 end=1793051361 value-wei=5000000000000000000000 returned=false
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=7 height=15130087 hash=0xf81dd56baffc6fd39efbee5296ae52f4dd6a72c85deb21b4ba76f12e333a77c3 accounts=3 boundaries=4 transactions=2 retreats=1; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=8 height=15130088 hash=0x05fe89175060ec6ef5ad397cd0ea99abafe5e300532d5a8c1b11f41f9d882527 accounts=2 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=9 height=15130089 hash=0x7c8694a1a57a5d46d22c0b3285d731b9f20076602976c5d381c0ed1460265415 accounts=2 boundaries=8 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=10 height=15130090 hash=0x03d58b711e1f9684e2bf2ee45beb87e7221b09e5771f96e0ec13ca768607dec1 accounts=2 boundaries=8 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger retreat block=11 height=15130091 index=0 owner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF ticket=0x5c82f80405afa62fa24bdfdc30f045fa1c1ad3bd2b4640395e92f4d1c1eb1bcc start=1790459361 end=1793051361 value-wei=5000000000000000000000 returned=false
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=11 height=15130091 hash=0xb8858de1e038c4ed34151591f097df55a124f3fe3f799dfd54c51f3892213f67 accounts=2 boundaries=8 transactions=1 retreats=1; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=12 height=15130092 hash=0x61f1d43d9eb5fba9437c6365f3a6259425799ddee5cb04659ab78c0365447391 accounts=2 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=13 height=15130093 hash=0x5df4948e26bcd9d26189596d06d91a62eef5fa6d216d224d1d8a7e1b55f449bd accounts=2 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=14 height=15130094 hash=0xc1c1f0531a183f74482fa2830600e2208b77ccdaec9fc2c465911253c524fd18 accounts=2 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=15 height=15130095 hash=0x2d4520e70a2ae03bc54f986e8e55282d02e70bd88e4b2d7dd576414046650028 accounts=2 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger block=16 height=15130096 hash=0x48212779e0851316084461094494cffcbb2c380362d1877a450c874913034291 accounts=2 boundaries=6 transactions=1 retreats=0; exact future interval accounting and unrelated fields verified
+    full_state_partition_diagnostic_linux_test.go:53: participant ledger passed: blocks=13 ordinary-conversions=1 ordinary-transfers=1 successful-purchases=15; aggregate funding=12020.102 FSN, native conversion fee=0.001 FSN plus gas; all future rights reconcile
+    full_state_partition_diagnostic_linux_test.go:64: partition cold audit role=verifier blocks=16 head=15130096 0x48212779e0851316084461094494cffcbb2c380362d1877a450c874913034291 td=63370514696 nonce=11 saved-bytes=117
+INFO [09-26|23:55:04.034] Blockchain manager stopped 
+=== NAME  TestFullStatePartitionColdDiagnosis
+    full_state_partition_diagnostic_linux_test.go:97: partition cold automatic sync elapsed=9.084782392s matched=true td=63370514696/63370514696 peers=1/1
+    node_rehearsal_linux_test.go:321: node process /tmp/TestFullStatePartitionColdDiagnosis1968991503/002/process-1530821637.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-26|23:55:05.103] FS scan times                            list="28.858µs" set="2.245µs" diff="1.175µs"
+        DEBUG[09-26|23:55:05.877] FS scan times                            list="107.733µs" set="11.949µs" diff="3.428µs"
+        INFO [09-26|23:55:05.923] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|23:55:05.923] Allocated cache and file handles         database=/tmp/TestFullStatePartitionColdDiagnosis1968991503/002/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|23:55:05.985] Persisted trie from memory database      nodes=24 size=3.95KiB time="216.039µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|23:55:05.986]  
+        INFO [09-26|23:55:05.986] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|23:55:05.986] Chain ID:  32659 (mainnet) 
+        INFO [09-26|23:55:05.986] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|23:55:05.986]  
+        INFO [09-26|23:55:05.986] hard forks: 
+        INFO [09-26|23:55:05.986]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|23:55:05.986]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|23:55:05.986]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|23:55:05.986]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|23:55:05.986]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|23:55:05.986]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|23:55:05.986]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|23:55:05.986]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|23:55:05.986]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|23:55:05.986]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|23:55:05.986]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|23:55:05.986]  - Fusion Eco:                  8250000  
+        INFO [09-26|23:55:05.986]  
+        INFO [09-26|23:55:05.986]  
+        INFO [09-26|23:55:05.986] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|23:55:05.986]  
+        INFO [09-26|23:55:05.988] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-26|23:55:05.993] Loaded most recent local header          number=15,130,096 hash="482127…034291" td=63,370,514,696 age=1m45s
+        INFO [09-26|23:55:05.993] Loaded most recent local full block      number=15,130,096 hash="482127…034291" td=63,370,514,696 age=1m45s
+        INFO [09-26|23:55:05.994] Loaded most recent local fast block      number=15,130,096 hash="482127…034291" td=63,370,514,696 age=1m45s
+        DEBUG[09-26|23:55:05.996] Reinjecting stale transactions           count=0
+        INFO [09-26|23:55:05.996] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-26|23:55:05.997] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|23:55:05.997] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-26|23:55:05.997] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|23:55:05.997] Starting P2P networking 
+        ERROR[09-26|23:55:05.998] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-26|23:55:05.998] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-26|23:55:05.998] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        INFO [09-26|23:55:05.998] RLPx listener up                         self="enode://059c8bacdadd117c76054c24d1a26ccb11a8082594535086aab2e3e1afbd118c72659dda54091be32d9c2b4543eab5e1e149a9b4af0e62921fda377ee241766d@127.0.0.1:40477?discport=0"
+        DEBUG[09-26|23:55:06.002] IPCs registered                          namespaces=admin,debug,web3,eth,txpool,personal,fsn,fsntx,fsnbt,miner,net,lab
+        INFO [09-26|23:55:06.002] IPC endpoint opened                      url=/tmp/TestFullStatePartitionColdDiagnosis1968991503/002/lab.ipc
+        DEBUG[09-26|23:55:06.085] Served lab_status                        reqid=1 duration="271.029µs"
+        DEBUG[09-26|23:55:06.086] Served lab_status                        reqid=2 duration="163.112µs"
+        DEBUG[09-26|23:55:06.087] Served admin_nodeInfo                    reqid=3 duration="248.835µs"
+        DEBUG[09-26|23:55:06.091] Adding p2p peer                          name=anchor-lab/linux-amd... addr=127.0.0.1:60678 peers=1
+        DEBUG[09-26|23:55:06.091] Ethereum peer connected                  id=fbbb8825d617cd14 conn=inbound name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-26|23:55:06.191] Served admin_addPeer                     reqid=4 duration="182.57µs"
+        DEBUG[09-26|23:55:06.192] Served admin_peers                       reqid=5 duration="271.796µs"
+        DEBUG[09-26|23:55:06.193] Served lab_status                        reqid=6 duration="158.871µs"
+        DEBUG[09-26|23:55:06.194] Served lab_status                        reqid=7 duration="205.152µs"
+        DEBUG[09-26|23:55:06.697] Served lab_status                        reqid=8 duration="228.4µs"
+        DEBUG[09-26|23:55:06.713] Served lab_status                        reqid=9 duration="236.963µs"
+        DEBUG[09-26|23:55:07.216] Served lab_status                        reqid=10 duration="222.202µs"
+        DEBUG[09-26|23:55:07.217] Served lab_status                        reqid=11 duration="183.937µs"
+        DEBUG[09-26|23:55:07.719] Served lab_status                        reqid=12 duration="201.206µs"
+        DEBUG[09-26|23:55:07.721] Served lab_status                        reqid=13 duration="172.241µs"
+        DEBUG[09-26|23:55:08.223] Served lab_status                        reqid=14 duration="270.097µs"
+        DEBUG[09-26|23:55:08.224] Served lab_status                        reqid=15 duration="155.39µs"
+        DEBUG[09-26|23:55:08.727] Served lab_status                        reqid=16 duration="250.324µs"
+        DEBUG[09-26|23:55:08.728] Served lab_status                        reqid=17 duration="205.504µs"
+        DEBUG[09-26|23:55:09.231] Served lab_status                        reqid=18 duration="180.413µs"
+        DEBUG[09-26|23:55:09.232] Served lab_status                        reqid=19 duration="171.609µs"
+        DEBUG[09-26|23:55:09.734] Served lab_status                        reqid=20 duration="174.789µs"
+        DEBUG[09-26|23:55:09.735] Served lab_status                        reqid=21 duration="170.951µs"
+        DEBUG[09-26|23:55:10.238] Served lab_status                        reqid=22 duration="309.779µs"
+        DEBUG[09-26|23:55:10.239] Served lab_status                        reqid=23 duration="157.567µs"
+        DEBUG[09-26|23:55:10.741] Served lab_status                        reqid=24 duration="226.489µs"
+        DEBUG[09-26|23:55:10.743] Served lab_status                        reqid=25 duration="202.508µs"
+        DEBUG[09-26|23:55:11.245] Served lab_status                        reqid=26 duration="231.853µs"
+        DEBUG[09-26|23:55:11.246] Served lab_status                        reqid=27 duration="143.939µs"
+        DEBUG[09-26|23:55:11.748] Served lab_status                        reqid=28 duration="174.458µs"
+        DEBUG[09-26|23:55:11.750] Served lab_status                        reqid=29 duration="157.06µs"
+        DEBUG[09-26|23:55:12.252] Served lab_status                        reqid=30 duration="226.627µs"
+        DEBUG[09-26|23:55:12.253] Served lab_status                        reqid=31 duration="153.725µs"
+        DEBUG[09-26|23:55:12.755] Served lab_status                        reqid=32 duration="276.355µs"
+        DEBUG[09-26|23:55:12.757] Served lab_status                        reqid=33 duration="186.314µs"
+        DEBUG[09-26|23:55:13.259] Served lab_status                        reqid=34 duration="177.076µs"
+        DEBUG[09-26|23:55:13.260] Served lab_status                        reqid=35 duration="305.625µs"
+        DEBUG[09-26|23:55:13.763] Served lab_status                        reqid=36 duration="229.686µs"
+        DEBUG[09-26|23:55:13.764] Served lab_status                        reqid=37 duration="164.773µs"
+        DEBUG[09-26|23:55:14.266] Served lab_status                        reqid=38 duration="267.361µs"
+        DEBUG[09-26|23:55:14.267] Served lab_status                        reqid=39 duration="161.966µs"
+        DEBUG[09-26|23:55:14.770] Served lab_status                        reqid=40 duration="180.358µs"
+        DEBUG[09-26|23:55:14.771] Served lab_status                        reqid=41 duration="307.106µs"
+        DEBUG[09-26|23:55:15.273] Served lab_status                        reqid=42 duration="168.587µs"
+        DEBUG[09-26|23:55:15.275] Served lab_status                        reqid=43 duration="202.096µs"
+        DEBUG[09-26|23:55:15.275] Served lab_status                        reqid=44 duration="175.433µs"
+        DEBUG[09-26|23:55:15.276] Served admin_peers                       reqid=45 duration="102.64µs"
+        DEBUG[09-26|23:55:15.278] Served lab_status                        reqid=46 duration="149.063µs"
+        DEBUG[09-26|23:55:15.282] Ethereum message handling failed         id=fbbb8825d617cd14 conn=inbound err=EOF
+        DEBUG[09-26|23:55:15.282] Removing Ethereum peer                   peer=fbbb8825d617cd14
+        DEBUG[09-26|23:55:15.282] Removing p2p peer                        id=fbbb8825d617cd14 conn=inbound duration=9.191s      peers=0 req=true err="client quitting"
+        DEBUG[09-26|23:55:15.284] Adding p2p peer                          name=anchor-lab/linux-amd...         addr=127.0.0.1:39131 peers=1
+        DEBUG[09-26|23:55:15.284] Ethereum peer connected                  id=fbbb8825d617cd14 conn=staticdial name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-26|23:55:15.284] Ethereum handshake failed                id=fbbb8825d617cd14 conn=staticdial err="write tcp 127.0.0.1:50370->127.0.0.1:39131: write: broken pipe"
+        DEBUG[09-26|23:55:15.284] Removing p2p peer                        id=fbbb8825d617cd14 conn=staticdial duration="348.07µs"  peers=0 req=false err="write tcp 127.0.0.1:50370->127.0.0.1:39131: write: broken pipe"
+        DEBUG[09-26|23:55:16.310] RPC connection read error                err=EOF
+        DEBUG[09-26|23:55:16.310] RPC server shutting down 
+        INFO [09-26|23:55:16.310] IPC endpoint closed                      url=/tmp/TestFullStatePartitionColdDiagnosis1968991503/002/lab.ipc
+        DEBUG[09-26|23:55:16.310] RPC server shutting down 
+        INFO [09-26|23:55:16.310] Stopping Ethereum protocol 
+        INFO [09-26|23:55:16.310] Ethereum protocol stopped 
+        INFO [09-26|23:55:16.310] Transaction pool stopped 
+        INFO [09-26|23:55:16.310] Blockchain manager stopped 
+        DEBUG[09-26|23:55:16.314] Read error                               err="accept tcp 127.0.0.1:40477: use of closed network connection"
+        --- PASS: TestRestartNodeRehearsal (11.21s)
+        PASS
+    node_rehearsal_linux_test.go:321: node process /tmp/TestFullStatePartitionColdDiagnosis1968991503/001/process-3780632869.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-26|23:55:04.100] FS scan times                            list="35.932µs" set=747ns diff="1.136µs"
+        DEBUG[09-26|23:55:04.878] FS scan times                            list="122.113µs" set="11.496µs" diff="3.833µs"
+        INFO [09-26|23:55:04.927] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|23:55:04.928] Allocated cache and file handles         database=/tmp/TestFullStatePartitionColdDiagnosis1968991503/001/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|23:55:04.994] Persisted trie from memory database      nodes=24 size=3.95KiB time="238.753µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|23:55:04.996]  
+        INFO [09-26|23:55:04.996] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|23:55:04.996] Chain ID:  32659 (mainnet) 
+        INFO [09-26|23:55:04.996] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|23:55:04.996]  
+        INFO [09-26|23:55:04.996] hard forks: 
+        INFO [09-26|23:55:04.996]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|23:55:04.996]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|23:55:04.996]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|23:55:04.998]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|23:55:04.998]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|23:55:04.998]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|23:55:04.998]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|23:55:04.998]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|23:55:04.998]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|23:55:04.998]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|23:55:04.998]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|23:55:04.998]  - Fusion Eco:                  8250000  
+        INFO [09-26|23:55:04.998]  
+        INFO [09-26|23:55:04.998]  
+        INFO [09-26|23:55:04.998] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|23:55:04.998]  
+        INFO [09-26|23:55:05.001] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-26|23:55:05.006] Loaded most recent local header          number=15,130,089 hash="3b9cc2…debabf" td=63,370,514,683 age=3m16s
+        INFO [09-26|23:55:05.006] Loaded most recent local full block      number=15,130,089 hash="3b9cc2…debabf" td=63,370,514,683 age=3m16s
+        INFO [09-26|23:55:05.006] Loaded most recent local fast block      number=15,130,089 hash="3b9cc2…debabf" td=63,370,514,683 age=3m16s
+        DEBUG[09-26|23:55:05.008] Reinjecting stale transactions           count=0
+        INFO [09-26|23:55:05.008] Upgrading chain index                    type=bloombits percentage=0
+        INFO [09-26|23:55:05.010] Gasprice oracle is ignoring threshold set threshold=2
+        ERROR[09-26|23:55:05.011] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-26|23:55:05.011] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-26|23:55:05.011] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-26|23:55:05.011] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-26|23:55:05.011] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        INFO [09-26|23:55:05.011] Starting P2P networking 
+        INFO [09-26|23:55:05.013] RLPx listener up                         self="enode://fbbb8825d617cd14439f56c4825024f6097daa334119aaa6ffd0584618e8e4d893485484247c073f3d4c6151baee64dae13c07bd33f72b521adde72c40c3262e@127.0.0.1:39131?discport=0"
+        DEBUG[09-26|23:55:05.017] IPCs registered                          namespaces=admin,debug,web3,eth,txpool,personal,fsn,fsntx,fsnbt,miner,net,lab
+        INFO [09-26|23:55:05.017] IPC endpoint opened                      url=/tmp/TestFullStatePartitionColdDiagnosis1968991503/001/lab.ipc
+        DEBUG[09-26|23:55:06.084] Served lab_status                        reqid=1 duration="288.196µs"
+        DEBUG[09-26|23:55:06.086] Served lab_status                        reqid=2 duration="176.571µs"
+        DEBUG[09-26|23:55:06.088] Served admin_addPeer                     reqid=3 duration="184.597µs"
+        DEBUG[09-26|23:55:06.088] Served admin_peers                       reqid=4 duration="140.156µs"
+        DEBUG[09-26|23:55:06.091] Adding p2p peer                          name=anchor-lab/linux-amd... addr=127.0.0.1:40477 peers=1
+        DEBUG[09-26|23:55:06.091] Ethereum peer connected                  id=059c8bacdadd117c conn=staticdial name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-26|23:55:06.189] Served admin_peers                       reqid=5 duration="201.986µs"
+        DEBUG[09-26|23:55:06.190] Served admin_nodeInfo                    reqid=6 duration="279.039µs"
+        DEBUG[09-26|23:55:06.192] Served lab_status                        reqid=7 duration="185.245µs"
+        DEBUG[09-26|23:55:06.194] Served lab_status                        reqid=8 duration="222.3µs"
+        DEBUG[09-26|23:55:06.696] Served lab_status                        reqid=9 duration="204.774µs"
+        DEBUG[09-26|23:55:06.713] Served lab_status                        reqid=10 duration="233.38µs"
+        DEBUG[09-26|23:55:07.215] Served lab_status                        reqid=11 duration="238.47µs"
+        DEBUG[09-26|23:55:07.216] Served lab_status                        reqid=12 duration="170.653µs"
+        DEBUG[09-26|23:55:07.719] Served lab_status                        reqid=13 duration="255.948µs"
+        DEBUG[09-26|23:55:07.720] Served lab_status                        reqid=14 duration="212.879µs"
+        DEBUG[09-26|23:55:08.222] Served lab_status                        reqid=15 duration="285.986µs"
+        DEBUG[09-26|23:55:08.224] Served lab_status                        reqid=16 duration="215.11µs"
+        DEBUG[09-26|23:55:08.726] Served lab_status                        reqid=17 duration="328.181µs"
+        DEBUG[09-26|23:55:08.728] Served lab_status                        reqid=18 duration="169.726µs"
+        DEBUG[09-26|23:55:09.230] Served lab_status                        reqid=19 duration="220.991µs"
+        DEBUG[09-26|23:55:09.231] Served lab_status                        reqid=20 duration="177.098µs"
+        DEBUG[09-26|23:55:09.733] Served lab_status                        reqid=21 duration="251.981µs"
+        DEBUG[09-26|23:55:09.735] Served lab_status                        reqid=22 duration="163.363µs"
+        DEBUG[09-26|23:55:10.237] Served lab_status                        reqid=23 duration="303.716µs"
+        DEBUG[09-26|23:55:10.238] Served lab_status                        reqid=24 duration="167.279µs"
+        DEBUG[09-26|23:55:10.741] Served lab_status                        reqid=25 duration="288.44µs"
+        DEBUG[09-26|23:55:10.742] Served lab_status                        reqid=26 duration="167.366µs"
+        DEBUG[09-26|23:55:11.244] Served lab_status                        reqid=27 duration="273.412µs"
+        DEBUG[09-26|23:55:11.246] Served lab_status                        reqid=28 duration="169.479µs"
+        DEBUG[09-26|23:55:11.748] Served lab_status                        reqid=29 duration="227.127µs"
+        DEBUG[09-26|23:55:11.749] Served lab_status                        reqid=30 duration="203.42µs"
+        DEBUG[09-26|23:55:12.251] Served lab_status                        reqid=31 duration="205.235µs"
+        DEBUG[09-26|23:55:12.252] Served lab_status                        reqid=32 duration="182.401µs"
+        DEBUG[09-26|23:55:12.755] Served lab_status                        reqid=33 duration="194.82µs"
+        DEBUG[09-26|23:55:12.756] Served lab_status                        reqid=34 duration="212.864µs"
+        DEBUG[09-26|23:55:13.258] Served lab_status                        reqid=35 duration="215.352µs"
+        DEBUG[09-26|23:55:13.260] Served lab_status                        reqid=36 duration="209.889µs"
+        DEBUG[09-26|23:55:13.762] Served lab_status                        reqid=37 duration="196.539µs"
+        DEBUG[09-26|23:55:13.763] Served lab_status                        reqid=38 duration="170.299µs"
+        DEBUG[09-26|23:55:14.265] Served lab_status                        reqid=39 duration="197.664µs"
+        DEBUG[09-26|23:55:14.267] Served lab_status                        reqid=40 duration="218.745µs"
+        DEBUG[09-26|23:55:14.769] Served lab_status                        reqid=41 duration="224.564µs"
+        DEBUG[09-26|23:55:14.770] Served lab_status                        reqid=42 duration="148.1µs"
+        INFO [09-26|23:55:15.019] Block synchronisation started 
+        DEBUG[09-26|23:55:15.019] Synchronising with the network           peer=059c8bacdadd117c eth=63 head="482127…034291" td=63,370,514,696 mode=full
+        DEBUG[09-26|23:55:15.020] Retrieving remote chain head             peer=059c8bacdadd117c
+        DEBUG[09-26|23:55:15.020] Fetching batch of headers                id=059c8bacdadd117c conn=staticdial count=1 fromhash="482127…034291" skip=63 reverse=true
+        DEBUG[09-26|23:55:15.022] Remote head identified, no pivot         peer=059c8bacdadd117c number=15,130,096 hash="482127…034291"
+        DEBUG[09-26|23:55:15.022] Looking for common ancestor              peer=059c8bacdadd117c local=15,130,089 remote=15,130,096
+        DEBUG[09-26|23:55:15.022] Fetching batch of headers                id=059c8bacdadd117c conn=staticdial count=4 fromnum=15,130,089 skip=1  reverse=false
+        DEBUG[09-26|23:55:15.024] Found common ancestor                    peer=059c8bacdadd117c number=15,130,089 hash="7c8694…265415"
+        DEBUG[09-26|23:55:15.025] Downloading block bodies                 origin=15,130,090
+        DEBUG[09-26|23:55:15.025] Downloading transaction receipts         origin=15,130,090
+        DEBUG[09-26|23:55:15.025] Directing header downloads               peer=059c8bacdadd117c origin=15,130,090
+        DEBUG[09-26|23:55:15.025] Fetching batch of headers                id=059c8bacdadd117c conn=staticdial count=128 fromnum=15,130,281 skip=191 reverse=false
+        DEBUG[09-26|23:55:15.025] Fetching batch of headers                id=059c8bacdadd117c conn=staticdial count=192 fromnum=15,130,090 skip=0   reverse=false
+        DEBUG[09-26|23:55:15.026] Fetching batch of headers                id=059c8bacdadd117c conn=staticdial count=192 fromnum=15,130,097 skip=0   reverse=false
+        DEBUG[09-26|23:55:15.026] Fetching batch of block bodies           id=059c8bacdadd117c conn=staticdial count=2
+        DEBUG[09-26|23:55:15.027] No more headers available                peer=059c8bacdadd117c
+        DEBUG[09-26|23:55:15.027] Header download terminated               peer=059c8bacdadd117c
+        DEBUG[09-26|23:55:15.027] Data fetching completed                  type=receipts
+        DEBUG[09-26|23:55:15.027] Transaction receipt download terminated  err=nil
+        INFO [09-26|23:55:15.028] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=162.62B throttle=8192
+        DEBUG[09-26|23:55:15.028] Fetching batch of block bodies           id=059c8bacdadd117c conn=staticdial count=5
+        DEBUG[09-26|23:55:15.028] Inserting downloaded chain               items=2 firstnum=15,130,090 firsthash="03d58b…07dec1" lastnum=15,130,091 lasthash="b8858d…213f67"
+        DEBUG[09-26|23:55:15.028] Data fetching completed                  type=bodies
+        DEBUG[09-26|23:55:15.028] Block body download terminated           err=nil
+        DEBUG[09-26|23:55:15.045] Persisted trie from memory database      nodes=13 size=5.18KiB time="773.574µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        DEBUG[09-26|23:55:15.047] Chain split detected                     number=15,130,086 hash="9b4fc9…cef94d" drop=3 dropfrom="3b9cc2…debabf" droporder=0 add=4 addfrom="03d58b…07dec1" addorder=0
+        DEBUG[09-26|23:55:15.048] Inserted new block                       number=15,130,090 hash="03d58b…07dec1" uncles=0 txs=1 gas=21224 elapsed=20.082ms
+        DEBUG[09-26|23:55:15.052] Persisted trie from memory database      nodes=13 size=5.11KiB time="643.353µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        DEBUG[09-26|23:55:15.053] Inserted new block                       number=15,130,091 hash="b8858d…213f67" uncles=0 txs=1 gas=21224 elapsed=4.545ms
+        INFO [09-26|23:55:15.053] Imported new chain segment               blocks=2 txs=2 mgas=0.042 elapsed=24.894ms mgasps=1.705 order=1 number=15,130,091 hash="b8858d…213f67" difficulty=2 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="bedb60…17f451" parentHash="03d58b…07dec1" time=1,790,459,547 age=2m48s cache=0.00B
+        INFO [09-26|23:55:15.053] notify first order chain head event      number=15,130,090 hash="03d58b…07dec1"
+        INFO [09-26|23:55:15.054] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-26|23:55:15.054] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-26|23:55:15.054] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-26|23:55:15.055] Reinjecting stale transactions           count=0
+        DEBUG[09-26|23:55:15.055] Reinjecting stale transactions           count=0
+        DEBUG[09-26|23:55:15.055] Inserting downloaded chain               items=5 firstnum=15,130,092 firsthash="61f1d4…447391" lastnum=15,130,096 lasthash="482127…034291"
+        DEBUG[09-26|23:55:15.062] Persisted trie from memory database      nodes=13 size=5.11KiB time="920.896µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-246.00B
+        DEBUG[09-26|23:55:15.062] Inserted new block                       number=15,130,092 hash="61f1d4…447391" uncles=0 txs=1 gas=21224 elapsed=7.416ms
+        DEBUG[09-26|23:55:15.068] Persisted trie from memory database      nodes=13 size=5.11KiB time="708.357µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-328.00B
+        DEBUG[09-26|23:55:15.068] Inserted new block                       number=15,130,093 hash="5df494…f449bd" uncles=0 txs=1 gas=21224 elapsed=5.755ms
+        DEBUG[09-26|23:55:15.073] Persisted trie from memory database      nodes=13 size=5.11KiB time=1.009449ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-410.00B
+        DEBUG[09-26|23:55:15.073] Inserted new block                       number=15,130,094 hash="c1c1f0…24fd18" uncles=0 txs=1 gas=21224 elapsed=4.766ms
+        DEBUG[09-26|23:55:15.077] Persisted trie from memory database      nodes=13 size=5.11KiB time="763.457µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-492.00B
+        DEBUG[09-26|23:55:15.078] Inserted new block                       number=15,130,095 hash="2d4520…650028" uncles=0 txs=1 gas=21224 elapsed=4.509ms
+        DEBUG[09-26|23:55:15.082] Persisted trie from memory database      nodes=13 size=5.11KiB time="709.814µs"   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-574.00B
+        DEBUG[09-26|23:55:15.082] Inserted new block                       number=15,130,096 hash="482127…034291" uncles=0 txs=1 gas=21224 elapsed=4.347ms
+        INFO [09-26|23:55:15.082] Imported new chain segment               blocks=5 txs=5 mgas=0.106 elapsed=27.193ms mgasps=3.902 order=0 number=15,130,096 hash="482127…034291" difficulty=2 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="077549…128a41" parentHash="2d4520…650028" time=1,790,459,600 age=1m55s cache=0.00B
+        DEBUG[09-26|23:55:15.082] Synchronisation terminated               elapsed=62.908ms
+        DEBUG[09-26|23:55:15.083] Reinjecting stale transactions           count=0
+        ERROR[09-26|23:55:15.083] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-26|23:55:15.083] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-26|23:55:15.273] Served lab_status                        reqid=43 duration="152.481µs"
+        DEBUG[09-26|23:55:15.274] Served lab_status                        reqid=44 duration="112.473µs"
+        DEBUG[09-26|23:55:15.275] Served lab_status                        reqid=45 duration="66.065µs"
+        DEBUG[09-26|23:55:15.276] Served admin_peers                       reqid=46 duration="165.854µs"
+        DEBUG[09-26|23:55:15.278] Served lab_status                        reqid=47 duration="80.183µs"
+        DEBUG[09-26|23:55:15.281] RPC connection read error                err=EOF
+        DEBUG[09-26|23:55:15.281] RPC server shutting down 
+        INFO [09-26|23:55:15.281] IPC endpoint closed                      url=/tmp/TestFullStatePartitionColdDiagnosis1968991503/001/lab.ipc
+        DEBUG[09-26|23:55:15.281] RPC server shutting down 
+        INFO [09-26|23:55:15.281] Stopping Ethereum protocol 
+        DEBUG[09-26|23:55:15.282] Ethereum message handling failed         id=059c8bacdadd117c conn=staticdial err=EOF
+        DEBUG[09-26|23:55:15.282] Removing Ethereum peer                   peer=059c8bacdadd117c
+        INFO [09-26|23:55:15.282] Ethereum protocol stopped 
+        DEBUG[09-26|23:55:15.282] Removing p2p peer                        id=059c8bacdadd117c conn=staticdial duration=9.191s      peers=0 req=false err="client quitting"
+        INFO [09-26|23:55:15.282] Transaction pool stopped 
+        INFO [09-26|23:55:15.282] Blockchain manager stopped 
+        DEBUG[09-26|23:55:15.284] Adding p2p peer                          name=anchor-lab/linux-amd...         addr=127.0.0.1:50370 peers=1
+        DEBUG[09-26|23:55:15.284] Removing p2p peer                        id=059c8bacdadd117c conn=inbound    duration="191.327µs" peers=0 req=false err="client quitting"
+        DEBUG[09-26|23:55:15.288] Read error                               err="accept tcp 127.0.0.1:39131: use of closed network connection"
+        --- PASS: TestRestartNodeRehearsal (11.19s)
+        PASS
+--- PASS: TestFullStatePartitionColdDiagnosis (19.91s)
+    --- PASS: TestFullStatePartitionColdDiagnosis/audit-producer (3.50s)
+    --- PASS: TestFullStatePartitionColdDiagnosis/audit-verifier (3.13s)
+PASS

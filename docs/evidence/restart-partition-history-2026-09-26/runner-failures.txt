@@ -1,0 +1,8 @@
+The first body-check invocation printed PASS for all six cases, but its inline shell wrapper exited 1 with:
+bash: line 1: exit: : numeric argument required
+The saved runner subsequently exited 0; body-validation-verified-race.txt is the accepted command result.
+
+The corrected measurement test printed PASS after 49.23 seconds and wrote history.rlp.measure.json.
+Its runner nevertheless exited 1 after the active script was edited to add the body-check mode:
+run-history.sh: line 30: $2: unbound variable
+The measurement test result is retained, but no successful wrapper exit is claimed. The later export uses the completed saved script without edits during execution and must match the measurement byte count and SHA-256.

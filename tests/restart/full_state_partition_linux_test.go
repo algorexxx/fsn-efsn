@@ -37,6 +37,7 @@ func TestFullStatePartitionRepair(t *testing.T) {
 		t.Fatal("absolute disposable root and isolated node rehearsal required")
 	}
 	cleanup := prepareFullStateOutage(t, root)
+	installFullStateHistory(t, root)
 	anchor := prepareFullStateParticipant(t, root, cleanup)
 	paths := [2]string{seedFullStateRecoveryNode(t, filepath.Join(root, "producer"), cleanup, 2), seedFullStateRecoveryNode(t, filepath.Join(root, "verifier"), cleanup, 3)}
 	nodes := [2]*rehearsalNode{startRehearsalNodeWithTimeout(t, paths[0], 12*time.Minute), startRehearsalNodeWithTimeout(t, paths[1], 12*time.Minute)}

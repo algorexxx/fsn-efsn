@@ -2,12 +2,14 @@ package restart
 
 import (
 	"bytes"
+	"encoding/json"
 	"testing"
 	"time"
 
 	"github.com/FusionFoundation/efsn/v5/common"
 	"github.com/FusionFoundation/efsn/v5/common/hexutil"
 	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/p2p"
 	"github.com/FusionFoundation/efsn/v5/rlp"
 )
 
@@ -220,8 +222,19 @@ func awaitLivePurchaseGap(t *testing.T, nodes [2]*rehearsalNode, owners [2]commo
 	var candidate livePurchaseGap
 	var since time.Time
 	var paused [2]time.Time
+	var observed time.Time
 	deadline := time.Now().Add(150 * time.Second)
 	for time.Now().Before(deadline) {
+		if time.Since(observed) >= 10*time.Second {
+			for i, node := range nodes {
+				var peers []*p2p.PeerInfo
+				requireNoError(t, node.call(t, &peers, "admin_peers"))
+				sample, err := json.Marshal(map[string]interface{}{"status": node.status(t), "peers": peers})
+				requireNoError(t, err)
+				t.Logf("partition sync sample node=%d %s", i+1, sample)
+			}
+			observed = time.Now()
+		}
 		ready := true
 		states := [2]peerPurchaseState{}
 		for i, node := range nodes {

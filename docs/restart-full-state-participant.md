@@ -112,8 +112,12 @@ rollback or run manual repair. The subsequent
 [complete-state partition attempt](restart-full-state-partition.md) failed before
 the repair gate: the branches kept advancing separately. Both cold account
 ledgers passed; a separate stopped-node diagnostic found equal total difficulty
-and unavailable historical ancestry in the compact fixture. Extend genuine
-history and record live peer/TD behavior before repeating the recovery exercise.
+and unavailable historical ancestry in the compact fixture.
+The [genuine-history follow-up](restart-partition-history.md) has since supplied
+that ancestry and passed the exact missing-header request. Its fresh attempt
+exposes a complete-state funding stall after ticket losses, while stopped
+heavier-peer synchronization and matching cold ledgers pass. Live nonce repair
+remains open; the initial balance is not a guaranteed competing-producer reserve.
 The entry result cannot establish a
 universal reserve balance, indefinite unattended operation or funds available
 from the real backup owner.

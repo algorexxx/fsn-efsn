@@ -147,3 +147,13 @@ equal-weight stopped peers and a downloader failure on missing historical
 ancestry in the compact fixture. A peer count alone does not establish a shared
 canonical branch; repair remains gated on that evidence. This procedure stops at unsupported conditions
 instead of treating a successful short rehearsal as an automatic recovery guarantee.
+
+The [genuine-history follow-up](restart-partition-history.md) now removes the
+exact compact-history ancestor failure. A separate stopped heavier-peer case
+converges normally and passes both cold ledgers. It also demonstrates a different
+stall: the donation owner's saved and canonical nonces are both 7, but it has
+zero tickets, 2,021.665544264 liquid FSN and no free lock coverage for the saved
+interval. The real pool rejects its 5,000.000042448-FSN liquid requirement.
+Do not apply missing-nonce repair to this state. Recheck authorized usable funds
+and intervals; waiting for an absent ticket or clearing a record cannot supply
+them. Future rights outside the purchase interval are not available coverage.
