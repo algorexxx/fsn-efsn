@@ -98,6 +98,12 @@ alone may no longer find a purchase absent from the pool. This follows
 `internal/ethapi/api.go`, `eth/api_backend.go` and `core/blockchain.go`; this live
 test uses preserved bytes and does not yet validate post-reorg RPC retrieval.
 
+The subsequent [retrieval and small-reserve follow-up](restart-small-reserve-and-retrieval.md)
+now verifies that RPC path before and after a cold restart and uses the retrieved
+purchase to repair the gap. It also tests the existing read-only `efsn db get`
+command for the latest saved intent, with unchanged chain-database file hashes
+and rejection of a locked database. These are existing interfaces, not new RPCs.
+
 The test's `lab_purchaseState` endpoint exposes the private saved record only in
 the rehearsal service. Production does not gain that endpoint. A complete
 operator runbook still needs a supported way to preserve/inspect the live saved
@@ -112,6 +118,13 @@ tickets. Its observations do not establish the real donation wallet's recovery
 runway, prolonged operator absence, ticket exhaustion, or recovery when no
 available signer has a usable ticket. Those are separate from whether sequential
 resubmission works while eligible miners remain active.
+
+The small-reserve follow-up demonstrates a further failure: the missing purchase
+can be unfundable even with its original bytes and another eligible producer.
+The initial 12,020.102-per-wallet synthetic case reaches a common advancing chain
+but normal admission rejects the stalled owner's first repair purchase with only
+about 2,057.60 liquid FSN remaining. Do not generalize this generous-reserve pass
+to the real donation wallet's post-partition recovery budget.
 
 The manual repair pass does not change the failed unattended-replenishment
 result. Before release, decide whether monitored manual repair is acceptable or

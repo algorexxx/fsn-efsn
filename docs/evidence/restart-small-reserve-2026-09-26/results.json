@@ -1,0 +1,88 @@
+{
+  "results": {
+    "rpc-initial": {
+      "exit": 0,
+      "test_seconds": 58.66,
+      "retrieval": {
+        "nonce": "15",
+        "hash": "0x67435cba78c68d6b4d0e2d91aa4ad6db499077d8ae351cc767163126d55fb5c6",
+        "bytes": "122",
+        "old_height": "15130096",
+        "old_hash": "0xb98d29fc4c4c54af114956063545f89c76b05d91fc7c6b829b51d5267d98dcbb",
+        "index": "0",
+        "canonical_hash": "0x403ba862b143e28cb11e45a24960f9a35756a69fe016dcd1aae4a3924683a0d3"
+      }
+    },
+    "small-initial": {
+      "exit": 1,
+      "test_seconds": 185.61,
+      "reason": "insufficient funding for first missing purchase",
+      "gap": {
+        "node": 1,
+        "canonical_nonce": 15,
+        "saved_nonce": 22,
+        "saved_hash": "0xf525069a9af200c1c481e5020e460945581e3f04b3c1daef8c93a0f44e3e5464",
+        "common_block": 37
+      },
+      "head": {
+        "height": 38,
+        "hash": "0x13d5ad39ffeaab8837270341743e2d69a9c6ea7cefa93a3b264ae5942daa8733"
+      },
+      "liquid_wei": "2057601957656000000000",
+      "required_wei": "5000000042448000000000",
+      "manual_repair_admitted": false,
+      "cold_acceptance_reached": false
+    },
+    "rich-initial": {
+      "exit": 1,
+      "test_seconds": 161.37,
+      "reason": "harness rejected the ordinary downloader-induced worker pause"
+    },
+    "small-final": {
+      "exit": 1,
+      "test_seconds": 173.89,
+      "reason": "insufficient funding for first missing purchase",
+      "gap": {
+        "node": 1,
+        "canonical_nonce": 18,
+        "saved_nonce": 24,
+        "saved_hash": "0xd8992818a9073135910df87e46c6d356362f2ebc05e020426b0bab16b46356f3",
+        "common_block": 35
+      },
+      "head": {
+        "height": 36,
+        "hash": "0x963e9b781b81fbcaa9584c19f71eadfa8bacb7861b38009ef27fad4e929a1299"
+      },
+      "liquid_wei": "2065101957680000000000",
+      "required_wei": "5000000042448000000000",
+      "manual_repair_admitted": false,
+      "cold_acceptance_reached": false,
+      "time_locks": [
+        {
+          "StartTime": 1793042189,
+          "EndTime": 18446744073709551615,
+          "Value": "5000000000000000000000"
+        },
+        {
+          "StartTime": 1793042212,
+          "EndTime": 18446744073709551615,
+          "Value": "5000000000000000000000"
+        }
+      ]
+    },
+    "rich-final": {
+      "exit": 0,
+      "test_seconds": 338.64,
+      "originals": 5,
+      "automatic_successors": 2,
+      "cold_nodes": 2
+    },
+    "record": {
+      "exit": 0,
+      "test_seconds": 1.86
+    }
+  },
+  "runtime_changes": 0,
+  "patch_inventory": "P1-P15",
+  "scope": "RPC retrieval and existing offline command pass; generous repair passes after harness correction; two small-reserve funding failures retained. Synthetic devnet results are not complete-state donation-wallet reserve accounting. No public peers, original backup or real keys."
+}

@@ -456,3 +456,19 @@ tickets, then checks both cold databases and receipts. This tests explicit repai
 with generous synthetic funding and available original bytes; it does not change
 the failed unattended-replenishment requirement. See the
 [live repair report](../../docs/restart-live-nonce-repair.md).
+
+`purchase_peer_nonce_rollback` additionally verifies exact signed-byte retrieval
+from a discarded block through ordinary RPC before and after cold restart, then
+repairs using the retrieved transaction. `small_reserve_nonce_repair` exercises
+the live repair requirement with 12,020.102 synthetic FSN per wallet and only one
+or two setup tickets per owner. A zero-ticket owner is logged while another
+eligible owner remains; insufficient repair funding fails the requirement.
+During initial downloader synchronization, the repair observer permits the
+normal temporary worker pause and requires automatic resumption within 30 seconds.
+
+`TestRestartPurchaseRecordCommand` uses the same isolated-network opt-in and an
+absolute `FUSION_RESTART_EFSN_COMMAND` path to a built executable. It checks the
+existing `db get` command against a stopped synthetic database, exact saved bytes,
+unchanged database file hashes, a missing record and an open database lock.
+See the [retrieval and small-reserve report](../../docs/restart-small-reserve-and-retrieval.md)
+for retained passes, failures and production-accounting limits.

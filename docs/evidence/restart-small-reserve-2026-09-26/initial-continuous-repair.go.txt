@@ -198,35 +198,12 @@ func awaitLivePurchaseGap(t *testing.T, nodes [2]*rehearsalNode, owners [2]commo
 	t.Helper()
 	var candidate livePurchaseGap
 	var since time.Time
-	var paused [2]time.Time
 	deadline := time.Now().Add(150 * time.Second)
 	for time.Now().Before(deadline) {
-		ready := true
+		requireContinuousMiners(t, nodes[0], nodes[1])
 		states := [2]peerPurchaseState{}
 		for i, node := range nodes {
-			status := node.status(t)
-			if !status.AutoBuy {
-				t.Fatal("automatic buyer was disabled during ordinary synchronization")
-			}
-			if !status.Mining {
-				ready = false
-				if paused[i].IsZero() {
-					paused[i] = time.Now()
-					t.Logf("live repair observed automatic synchronization pause node=%d", i+1)
-				}
-				if time.Since(paused[i]) > 30*time.Second {
-					t.Fatal("ordinary miner did not resume automatically within 30 seconds")
-				}
-			} else if !paused[i].IsZero() {
-				t.Logf("live repair miner resumed automatically node=%d pause=%s", i+1, time.Since(paused[i]))
-				paused[i] = time.Time{}
-			}
 			states[i] = captureLivePurchases(t, node, owners[i], originals[i])
-		}
-		if !ready {
-			candidate = livePurchaseGap{}
-			time.Sleep(250 * time.Millisecond)
-			continue
 		}
 		height := nodes[0].status(t).Number
 		if other := nodes[1].status(t).Number; other < height {
@@ -282,18 +259,6 @@ func validateLiveRepairPurchase(t *testing.T, node *rehearsalNode, tx *types.Tra
 	if tx.GasPrice().Cmp(head.BaseFee()) < 0 {
 		t.Fatal("original purchase is below the current base fee")
 	}
-	owner, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
-	requireNoError(t, err)
-	var liquid string
-	var locks common.TimeLock
-	number := hexutil.EncodeUint64(head.NumberU64())
-	requireNoError(t, node.call(t, &liquid, "fsn_getBalance", common.SystemAssetID, owner, number))
-	requireNoError(t, node.call(t, &locks, "fsn_getTimeLockBalance", common.SystemAssetID, owner, number))
-	need := common.NewTimeLock(&common.TimeLockItem{StartTime: common.MaxUint64(purchase.Start, uint64(time.Now().Unix())), EndTime: purchase.End, Value: common.TicketPrice(head.Number())})
-	if readRecoveryNodeBlock(t, node, head.NumberU64()).Hash() != head.Hash() {
-		t.Fatal("funding snapshot changed branches during repair")
-	}
-	t.Logf("live repair funding nonce=%d block=%d owner=%s liquid-wei=%s covers-current-interval=%t timelocks=%s", tx.Nonce(), head.NumberU64(), owner.Hex(), liquid, locks.Cmp(need) >= 0, &locks)
 }
 
 func awaitLiveRepairReceipt(t *testing.T, nodes [2]*rehearsalNode, tx *types.Transaction, owner common.Address) *types.Block {

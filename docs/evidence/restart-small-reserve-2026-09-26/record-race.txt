@@ -1,0 +1,21 @@
+=== RUN   TestRestartPurchaseRecordCommand
+INFO [09-26|21:16:55.899] Allocated cache and file handles         database=/tmp/TestRestartPurchaseRecordCommand1878631727/001/efsn/chaindata cache=16.00MiB handles=16
+    purchase_record_command_linux_test.go:62: db get result=<nil> stderr=INFO [09-26|21:16:56.108] Maximum peer count                       ETH=25 LES=0 total=25
+        INFO [09-26|21:16:56.118] Set global gas cap                       cap=50,000,000
+        INFO [09-26|21:16:56.119] SetEthConfig finished                    NetworkId=32659 SyncMode=full NoPruning=false
+        INFO [09-26|21:16:56.120] Allocated cache and file handles         database=/tmp/TestRestartPurchaseRecordCommand1878631727/001/efsn/chaindata cache=512.00MiB handles=524,288 readonly=true
+    purchase_record_command_linux_test.go:66: db get result=exit status 1 stderr=INFO [09-26|21:16:57.407] Maximum peer count                       ETH=25 LES=0 total=25
+        INFO [09-26|21:16:57.418] Set global gas cap                       cap=50,000,000
+        INFO [09-26|21:16:57.418] SetEthConfig finished                    NetworkId=32659 SyncMode=full NoPruning=false
+        INFO [09-26|21:16:57.419] Allocated cache and file handles         database=/tmp/TestRestartPurchaseRecordCommand1878631727/001/efsn/chaindata cache=512.00MiB handles=524,288 readonly=true
+        INFO [09-26|21:16:57.478] Get operation failed                     key=0x00 error="leveldb: not found"
+        leveldb: not found
+INFO [09-26|21:16:57.502] Allocated cache and file handles         database=/tmp/TestRestartPurchaseRecordCommand1878631727/001/efsn/chaindata cache=16.00MiB handles=16
+    purchase_record_command_linux_test.go:75: db get result=exit status 1 stderr=INFO [09-26|21:16:57.722] Maximum peer count                       ETH=25 LES=0 total=25
+        INFO [09-26|21:16:57.733] Set global gas cap                       cap=50,000,000
+        INFO [09-26|21:16:57.734] SetEthConfig finished                    NetworkId=32659 SyncMode=full NoPruning=false
+        INFO [09-26|21:16:57.734] Allocated cache and file handles         database=/tmp/TestRestartPurchaseRecordCommand1878631727/001/efsn/chaindata cache=512.00MiB handles=524,288 readonly=true
+        Fatal: Could not open database: resource temporarily unavailable
+    purchase_record_command_linux_test.go:83: existing db get preserved exact signed purchase nonce=17 hash=0x4f79714e0d3cdefc2b1bafb035d242804227c49a7208a63622853e49d799e420 and all database file hashes; missing record and locked database rejected
+--- PASS: TestRestartPurchaseRecordCommand (1.86s)
+PASS

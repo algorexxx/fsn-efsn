@@ -1,0 +1,100 @@
+package main
+
+import (
+	"bytes"
+	"crypto/sha256"
+	"fmt"
+	"math/big"
+	"os"
+	"path/filepath"
+	"reflect"
+	"testing"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/crypto"
+	"github.com/FusionFoundation/efsn/v5/rlp"
+)
+
+func TestDBGetAutomaticPurchase(t *testing.T) {
+	directory := t.TempDir()
+	path := filepath.Join(directory, "efsn", "chaindata")
+	db, err := rawdb.NewLevelDBDatabase(path, 16, 16, "", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, err := rlp.EncodeToBytes(&common.BuyTicketParam{Start: 1, End: common.TimeLockForever})
+	if err != nil {
+		t.Fatal(err)
+	}
+	payload, err := rlp.EncodeToBytes(&common.FSNCallParam{Func: common.BuyTicketFunc, Data: body})
+	if err != nil {
+		t.Fatal(err)
+	}
+	key, err := crypto.HexToECDSA("0000000000000000000000000000000000000000000000000000000000000001")
+	if err != nil {
+		t.Fatal(err)
+	}
+	tx, err := types.SignTx(types.NewTransaction(17, common.FSNCallAddress, new(big.Int), 100000, big.NewInt(1000000000), payload), types.NewEIP155Signer(big.NewInt(55555)), key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded, err := tx.MarshalBinary()
+	if err != nil {
+		t.Fatal(err)
+	}
+	recordKey := common.FromHex("0x66736e2d6175746f2d7469636b65742d76312d7e5f4552091a69125d5dfcb7b8c2659029395bdf")
+	if err := db.Put(recordKey, encoded); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.Close(); err != nil {
+		t.Fatal(err)
+	}
+	before := purchaseDatabaseFiles(t, path)
+	command := runGeth(t, "--datadir", directory, "--syncmode", "full", "db", "get", fmt.Sprintf("%#x", recordKey))
+	command.Expect(fmt.Sprintf("key %#x: %#x\n", recordKey, encoded))
+	command.ExpectExit()
+	if command.ExitStatus() != 0 || !reflect.DeepEqual(before, purchaseDatabaseFiles(t, path)) {
+		t.Fatal("read-only purchase extraction failed or changed database files")
+	}
+	absent := runGeth(t, "--datadir", directory, "--syncmode", "full", "db", "get", "0x00")
+	absent.ExpectExit()
+	if absent.ExitStatus() == 0 || !reflect.DeepEqual(before, purchaseDatabaseFiles(t, path)) {
+		t.Fatal("absent record was not rejected without changing database files")
+	}
+	db, err = rawdb.NewLevelDBDatabase(path, 16, 16, "", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	locked := runGeth(t, "--datadir", directory, "--syncmode", "full", "db", "get", fmt.Sprintf("%#x", recordKey))
+	locked.WaitExit()
+	if locked.ExitStatus() == 0 {
+		t.Fatal("purchase extraction bypassed the open database lock")
+	}
+	after, err := db.Get(recordKey)
+	if err != nil || !bytes.Equal(after, encoded) {
+		t.Fatal("locked extraction changed the saved record")
+	}
+	t.Logf("existing db get preserved exact signed purchase nonce=17 hash=%s and all database file hashes; missing record and locked database rejected", tx.Hash().Hex())
+}
+
+func purchaseDatabaseFiles(t *testing.T, root string) map[string][32]byte {
+	t.Helper()
+	files := make(map[string][32]byte)
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() {
+			return err
+		}
+		data, err := os.ReadFile(path)
+		if err == nil {
+			files[path] = sha256.Sum256(data)
+		}
+		return err
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return files
+}

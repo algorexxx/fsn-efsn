@@ -1,0 +1,340 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/small_reserve_nonce_repair
+    continuous_repair_linux_test.go:28: small reserve anchor owner=1 initial-wei=12020102000000000000000 tickets=1 nonce=12 liquid-wei=2052602042552000000000 timelocks=[{"StartTime":1790448120,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]
+    continuous_repair_linux_test.go:28: small reserve anchor owner=2 initial-wei=12020102000000000000000 tickets=2 nonce=13 liquid-wei=2047601957448000000000 timelocks=[]
+    continuous_repair_linux_test.go:28: live repair tickets phase=before-outage block=27 owner=1 stored=2 valid-next-period=2
+    continuous_repair_linux_test.go:28: live repair tickets phase=before-outage block=27 owner=2 stored=1 valid-next-period=1
+    continuous_repair_linux_test.go:28: kernel packet-loss filter: [match ip dst 127.0.0.0/8]
+    continuous_repair_linux_test.go:28: live repair tickets phase=isolated block=33 owner=1 stored=1 valid-next-period=1
+    continuous_repair_linux_test.go:28: live repair tickets phase=isolated block=33 owner=2 stored=0 valid-next-period=0
+    continuous_repair_linux_test.go:28: live repair tickets phase=isolated block=34 owner=1 stored=0 valid-next-period=0
+    continuous_repair_linux_test.go:28: live repair tickets phase=isolated block=34 owner=2 stored=1 valid-next-period=1
+    continuous_repair_linux_test.go:28: live repair outage=1m30.142031985s isolated heads=33/34; original signed purchases preserved before healing
+    continuous_repair_linux_test.go:28: healed partition; netem dropped=44; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":0,"packets":0,"drops":44,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":44,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+    continuous_repair_linux_test.go:28: continuous node=1 height=38 hash=0x13d5ad39ffeaab8837270341743e2d69a9c6ea7cefa93a3b264ae5942daa8733 nonce=15 saved=0xf525069a9af200c1c481e5020e460945581e3f04b3c1daef8c93a0f44e3e5464 nonce=22 pending=0 queued=0 mining=true autobuy=true
+    continuous_repair_linux_test.go:28: continuous node=2 height=38 hash=0x13d5ad39ffeaab8837270341743e2d69a9c6ea7cefa93a3b264ae5942daa8733 nonce=24 saved=0x2c99b237cefdefca4dd96ad56a5e9566535377fe9afdafb71a4843e48a0ec6b5 nonce=24 pending=1 queued=0 mining=true autobuy=true
+    continuous_repair_linux_test.go:28: live repair tickets phase=paused-before-repair block=37 owner=1 stored=0 valid-next-period=0
+    continuous_repair_linux_test.go:28: live repair tickets phase=paused-before-repair block=37 owner=2 stored=1 valid-next-period=1
+    continuous_repair_linux_test.go:28: live repair stable gap node=1 canonical=15 saved=22 hash=0xf525069a9af200c1c481e5020e460945581e3f04b3c1daef8c93a0f44e3e5464 common=37 after-heal=48.945298913s
+    continuous_repair_linux_test.go:28: insufficient balance(2057601957656000000000), need 5000000042448000000000 = (gas:21224 * price:2000000000 + value:5000000000000000000000 + fee:0)
+    node_rehearsal_linux_test.go:315: node process /tmp/fsn-dense-miner-3826746636/process-2099882670.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|21:08:01.630] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:08:02.507] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|21:08:02.507] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3826746636/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|21:08:02.546] Persisted trie from memory database      nodes=13 size=1.89KiB time="152.577µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|21:08:02.547]  
+        INFO [09-26|21:08:02.547] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:08:02.547] Chain ID:  55555 (devnet) 
+        INFO [09-26|21:08:02.547] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|21:08:02.547]  
+        INFO [09-26|21:08:02.547] hard forks: 
+        INFO [09-26|21:08:02.547]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|21:08:02.547]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|21:08:02.547]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|21:08:02.547]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:08:02.547]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:08:02.547]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|21:08:02.547]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|21:08:02.547]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|21:08:02.547]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|21:08:02.547]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|21:08:02.547]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|21:08:02.547]  - Fusion Eco:                  0        
+        INFO [09-26|21:08:02.547]  
+        INFO [09-26|21:08:02.547]  
+        INFO [09-26|21:08:02.547] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:08:02.547]  
+        INFO [09-26|21:08:02.547] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|21:08:02.551] Loaded most recent local header          number=24 hash="08b63f…cb711d" td=118 age=12m2s
+        INFO [09-26|21:08:02.551] Loaded most recent local full block      number=24 hash="08b63f…cb711d" td=118 age=12m2s
+        INFO [09-26|21:08:02.551] Loaded most recent local fast block      number=24 hash="08b63f…cb711d" td=118 age=12m2s
+        INFO [09-26|21:08:02.552] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|21:08:02.554] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:08:02.554] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|21:08:02.554] Starting P2P networking 
+        INFO [09-26|21:08:02.555] RLPx listener up                         self="enode://a39a150aad2a4809290815c05efa8a6c943f2033110c596539a6779350d42a65c3a59b04b61bfc2aca2d8e3e3122f58d2774ed3b95c0941e915ed80b484654bb@127.0.0.1:42857?discport=0"
+        INFO [09-26|21:08:02.560] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3826746636/lab.ipc
+        INFO [09-26|21:08:02.721] Transaction pool price threshold updated price=1
+        WARN [09-26|21:08:02.722] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        INFO [09-26|21:08:02.724] Commit new mining work                   number=25 sealhash="d68645…c4ca83" uncles=0 txs=0 gas=0 fees=0 elapsed=2.973ms
+        INFO [09-26|21:08:02.724] Successfully sealed new block            number=25 sealhash="d68645…c4ca83" hash="61d99a…962ae6" difficulty=2 elapsed=1.075ms
+        INFO [09-26|21:08:02.725] 🔨 mined potential block                  number=25 hash="61d99a…962ae6"
+        INFO [09-26|21:08:02.725] Mining too far in the future             wait=7s
+        INFO [09-26|21:08:02.736] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [09-26|21:08:02.737] Submitted transaction                    hash=0xeb5749f5200f60cd116beac61356dae15be32c21eaab27bdc1c5404788460557 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:02.737] Automatic ticket submitted; awaiting inclusion tx="eb5749…460557" nonce=13
+        INFO [09-26|21:08:09.729] Commit new mining work                   number=26 sealhash="7196ab…714259" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=7.004s
+        INFO [09-26|21:08:10.732] Commit new mining work                   number=26 sealhash="7196ab…714259" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.494ms
+        INFO [09-26|21:08:13.007] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=3.188ms mgasps=0.000 order=0 number=25 hash="3cffab…17cd43" difficulty=5 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="febc9b…26dd93" parentHash="08b63f…cb711d" time=1,790,449,682 cache=0.00B
+        INFO [09-26|21:08:13.009] Commit new mining work                   number=26 sealhash="4e412f…c2a81b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.577ms
+        INFO [09-26|21:08:13.010] keep mining as order is first            sealHash=0x7196ab0affd529c5b75a4592a53ad89ff54eb0d884cdb70d08cea80732714259 number=26 hash="d7b9e8…40cea8"
+        INFO [09-26|21:08:20.002] Successfully sealed new block            number=26 sealhash="7196ab…714259" hash="079f8e…9ba7db" difficulty=2 elapsed=10.272s
+        INFO [09-26|21:08:20.002] 🔨 mined potential block                  number=26 hash="079f8e…9ba7db"
+        WARN [09-26|21:08:22.562] Automatic ticket purchase needs attention; retrying err="insufficient balance(2047601957448000000000), need 5000000042448000000000 = (gas:21224 * price:2000000000 + value:5000000000000000000000 + fee:0)"
+        INFO [09-26|21:08:24.001] Successfully sealed new block            number=26 sealhash="4e412f…c2a81b" hash="3123e3…16e64a" difficulty=3 elapsed=10.991s
+        INFO [09-26|21:08:24.016] 🔨 mined potential block                  number=26 hash="3123e3…16e64a"
+        INFO [09-26|21:08:24.019] Commit new mining work                   number=27 sealhash="7f9340…8ac6ab" uncles=0 txs=0 gas=0     fees=0          elapsed=2.389ms
+        INFO [09-26|21:08:25.019] Commit new mining work                   number=27 sealhash="a40e84…82ac3c" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.380ms
+        INFO [09-26|21:08:34.005] Submitted transaction                    hash=0xeb5749f5200f60cd116beac61356dae15be32c21eaab27bdc1c5404788460557 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:34.005] Automatic ticket submitted; awaiting inclusion tx="eb5749…460557" nonce=13
+        INFO [09-26|21:08:34.472] Commit new mining work                   number=27 sealhash="d869a8…3fac96" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=6.183ms
+        INFO [09-26|21:08:35.001] Successfully sealed new block            number=27 sealhash="d869a8…3fac96" hash="40304e…18c34c" difficulty=4 elapsed=528.693ms
+        INFO [09-26|21:08:35.001] 🔨 mined potential block                  number=27 hash="40304e…18c34c"
+        INFO [09-26|21:08:35.001] Automatic ticket purchase confirmed      tx="eb5749…460557" block="40304e…18c34c"
+        INFO [09-26|21:08:35.004] Commit new mining work                   number=28 sealhash="8a2261…64ca11" uncles=0 txs=0 gas=0     fees=0          elapsed=2.117ms
+        INFO [09-26|21:08:35.008] Submitted transaction                    hash=0xa98528516fcf840960352d2592377762faa231319d8dbc15289b1c4a1495cd89 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:35.008] Automatic ticket submitted; awaiting inclusion tx="a98528…95cd89" nonce=14
+        INFO [09-26|21:08:36.004] Commit new mining work                   number=28 sealhash="8f8a96…8252ce" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.231ms
+        INFO [09-26|21:08:46.007] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.068ms   mgasps=6.917 order=0 number=28 hash="27f5b6…daf822" difficulty=5 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="221392…f6e7e4" parentHash="40304e…18c34c" time=1,790,449,715 cache=0.00B
+        INFO [09-26|21:08:46.008] Automatic ticket purchase confirmed      tx="a98528…95cd89" block="27f5b6…daf822"
+        WARN [09-26|21:08:46.008] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        INFO [09-26|21:08:46.010] Commit new mining work                   number=29 sealhash="dc1a10…4ed00b" uncles=0 txs=0 gas=0     fees=0          elapsed=2.977ms
+        INFO [09-26|21:08:57.001] Successfully sealed new block            number=29 sealhash="dc1a10…4ed00b" hash="3ea7b5…2a6ac0" difficulty=5 elapsed=10.990s
+        INFO [09-26|21:08:57.001] 🔨 mined potential block                  number=29 hash="3ea7b5…2a6ac0"
+        INFO [09-26|21:08:57.002] commit work in Finalize                  err="UpdateTickets failed: UpdateTickets: Next block have no ticket, wait buy ticket."
+        INFO [09-26|21:08:57.007] Submitted transaction                    hash=0xc3435e24fdbd601044686a57c1ef208fcdeec4b91bf992950e1f87244e365db4 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=15 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:57.007] Automatic ticket submitted; awaiting inclusion tx="c3435e…365db4" nonce=15
+        INFO [09-26|21:08:58.004] Commit new mining work                   number=30 sealhash="6c8321…e67099" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.314ms
+        INFO [09-26|21:09:17.189] Successfully sealed new block            number=30 sealhash="6c8321…e67099" hash="e926ae…b139ac" difficulty=2 elapsed=17.996s
+        INFO [09-26|21:09:17.189] 🔨 mined potential block                  number=30 hash="e926ae…b139ac"
+        INFO [09-26|21:09:17.189] Mining too far in the future             wait=6s
+        INFO [09-26|21:09:17.190] Automatic ticket purchase confirmed      tx="c3435e…365db4" block="e926ae…b139ac"
+        INFO [09-26|21:09:17.195] Submitted transaction                    hash=0x4c14ee5f99e45401dceb1f33195d5ad2b2fb68df3e11f864a42dc3eafac52572 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:17.195] Automatic ticket submitted; awaiting inclusion tx="4c14ee…c52572" nonce=16
+        INFO [09-26|21:09:23.191] Commit new mining work                   number=31 sealhash="88a657…02e054" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=6.002s
+        INFO [09-26|21:09:24.194] Commit new mining work                   number=31 sealhash="88a657…02e054" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.373ms
+        INFO [09-26|21:09:34.001] Successfully sealed new block            number=31 sealhash="88a657…02e054" hash="64d5a2…87d70f" difficulty=2 elapsed=10.810s
+        INFO [09-26|21:09:34.001] 🔨 mined potential block                  number=31 hash="64d5a2…87d70f"
+        WARN [09-26|21:09:34.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:09:34.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:09:34.002] Automatic ticket purchase confirmed      tx="4c14ee…c52572" block="64d5a2…87d70f"
+        INFO [09-26|21:09:34.008] Submitted transaction                    hash=0x663ca46c6cb848569d339799bb9302d3593ff729b8d0cd1d16122ab7cc8b141b from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=17 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:34.008] Automatic ticket submitted; awaiting inclusion tx="663ca4…8b141b" nonce=17
+        INFO [09-26|21:09:35.005] Commit new mining work                   number=32 sealhash="5b07a6…e9914b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.132ms
+        INFO [09-26|21:09:46.423] Successfully sealed new block            number=32 sealhash="5b07a6…e9914b" hash="b43206…60e3a2" difficulty=2 elapsed=9.996s
+        INFO [09-26|21:09:46.423] 😱 block lost                             number=25 hash="61d99a…962ae6" order=0
+        INFO [09-26|21:09:46.423] 🔨 mined potential block                  number=32 hash="b43206…60e3a2"
+        WARN [09-26|21:09:46.423] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:09:46.423] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:09:46.424] Automatic ticket purchase confirmed      tx="663ca4…8b141b" block="b43206…60e3a2"
+        INFO [09-26|21:09:46.429] Submitted transaction                    hash=0x5e5ed6ec202a3143df531c3963d35c957e9a7780abc68d50ac4638e93acadd3c from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=18 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:46.429] Automatic ticket submitted; awaiting inclusion tx="5e5ed6…cadd3c" nonce=18
+        INFO [09-26|21:09:47.426] Commit new mining work                   number=33 sealhash="82a8e3…3bc98c" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.254ms
+        INFO [09-26|21:09:57.001] Successfully sealed new block            number=33 sealhash="82a8e3…3bc98c" hash="a0f3b4…308a60" difficulty=2 elapsed=9.574s
+        INFO [09-26|21:09:57.001] 😱 block lost                             number=26 hash="079f8e…9ba7db" order=0
+        INFO [09-26|21:09:57.001] 🔗 block reached canonical chain          number=26 hash="3123e3…16e64a"
+        INFO [09-26|21:09:57.001] 🔨 mined potential block                  number=33 hash="a0f3b4…308a60"
+        WARN [09-26|21:09:57.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:09:57.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:09:57.002] Automatic ticket purchase confirmed      tx="5e5ed6…cadd3c" block="a0f3b4…308a60"
+        INFO [09-26|21:09:57.007] Submitted transaction                    hash=0xdfd4e5754b30230e66d108326a7781cb3dfcf195fae676a4000b4e6fb088fc78 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=19 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:57.007] Automatic ticket submitted; awaiting inclusion tx="dfd4e5…88fc78" nonce=19
+        INFO [09-26|21:09:58.004] Commit new mining work                   number=34 sealhash="2eb9ed…110866" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.465ms
+        INFO [09-26|21:10:08.002] Successfully sealed new block            number=34 sealhash="2eb9ed…110866" hash="136f71…952891" difficulty=2 elapsed=9.997s
+        INFO [09-26|21:10:08.002] 🔗 block reached canonical chain          number=27 hash="40304e…18c34c"
+        INFO [09-26|21:10:08.002] 🔨 mined potential block                  number=34 hash="136f71…952891"
+        INFO [09-26|21:10:08.002] Automatic ticket purchase confirmed      tx="dfd4e5…88fc78" block="136f71…952891"
+        WARN [09-26|21:10:08.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:08.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:08.008] Submitted transaction                    hash=0xc4784909ca41b47ace1b4334a8a97a8c13aafb3674a3d7c6b68587024b4d33c0 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=20 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:08.008] Automatic ticket submitted; awaiting inclusion tx="c47849…4d33c0" nonce=20
+        INFO [09-26|21:10:09.005] Commit new mining work                   number=35 sealhash="6313d3…7af60b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.545ms
+        INFO [09-26|21:10:20.436] Successfully sealed new block            number=35 sealhash="6313d3…7af60b" hash="efcf42…0c2d97" difficulty=2 elapsed=9.996s
+        INFO [09-26|21:10:20.436] 🔨 mined potential block                  number=35 hash="efcf42…0c2d97"
+        INFO [09-26|21:10:20.437] Automatic ticket purchase confirmed      tx="c47849…4d33c0" block="efcf42…0c2d97"
+        WARN [09-26|21:10:20.441] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:20.441] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:20.443] Submitted transaction                    hash=0x403bafee4285e9ace54116b62ac1195c6db355419537c571f998762acb957fea from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=21 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:20.443] Automatic ticket submitted; awaiting inclusion tx="403baf…957fea" nonce=21
+        INFO [09-26|21:10:21.440] Commit new mining work                   number=36 sealhash="776b51…5077c0" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.456ms
+        INFO [09-26|21:10:33.242] Successfully sealed new block            number=36 sealhash="776b51…5077c0" hash="47ccf1…a612bc" difficulty=2 elapsed=11.801s
+        INFO [09-26|21:10:33.242] 🔗 block reached canonical chain          number=29 hash="3ea7b5…2a6ac0"
+        INFO [09-26|21:10:33.242] 🔨 mined potential block                  number=36 hash="47ccf1…a612bc"
+        INFO [09-26|21:10:33.242] Automatic ticket purchase confirmed      tx="403baf…957fea" block="47ccf1…a612bc"
+        WARN [09-26|21:10:33.242] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:33.242] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:33.247] Submitted transaction                    hash=0x2a9677b604632d713d376475fa32f5d2c4d5cad0371ace19250ffc823f6823c9 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=22 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:33.247] Automatic ticket submitted; awaiting inclusion tx="2a9677…6823c9" nonce=22
+        INFO [09-26|21:10:34.246] Commit new mining work                   number=37 sealhash="442464…3cf8a6" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.257ms
+        INFO [09-26|21:10:47.670] Successfully sealed new block            number=37 sealhash="442464…3cf8a6" hash="a54b57…7ddbc5" difficulty=2 elapsed=11.984s
+        INFO [09-26|21:10:47.670] 🔗 block reached canonical chain          number=30 hash="e926ae…b139ac"
+        INFO [09-26|21:10:47.670] 🔨 mined potential block                  number=37 hash="a54b57…7ddbc5"
+        WARN [09-26|21:10:47.671] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:47.671] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:47.671] Automatic ticket purchase confirmed      tx="2a9677…6823c9" block="a54b57…7ddbc5"
+        INFO [09-26|21:10:47.676] Submitted transaction                    hash=0x11207b53ca2e854ec046a1ca3eb5b1d5bcf42c6b1f50cc9415c5b91b143c48bd from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=23 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:47.676] Automatic ticket submitted; awaiting inclusion tx="11207b…3c48bd" nonce=23
+        INFO [09-26|21:10:48.673] Commit new mining work                   number=38 sealhash="1cc62b…756016" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.522ms
+        INFO [09-26|21:11:00.211] Successfully sealed new block            number=38 sealhash="1cc62b…756016" hash="13d5ad…aa8733" difficulty=2 elapsed=11.538s
+        INFO [09-26|21:11:00.211] 🔗 block reached canonical chain          number=31 hash="64d5a2…87d70f"
+        INFO [09-26|21:11:00.211] 🔨 mined potential block                  number=38 hash="13d5ad…aa8733"
+        INFO [09-26|21:11:00.212] Automatic ticket purchase confirmed      tx="11207b…3c48bd" block="13d5ad…aa8733"
+        INFO [09-26|21:11:00.212] commit work in Finalize                  err="UpdateTickets failed: UpdateTickets: Next block have no ticket, wait buy ticket."
+        INFO [09-26|21:11:00.219] Submitted transaction                    hash=0x2c99b237cefdefca4dd96ad56a5e9566535377fe9afdafb71a4843e48a0ec6b5 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=24 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:11:00.219] Automatic ticket submitted; awaiting inclusion tx="2c99b2…0ec6b5" nonce=24
+        INFO [09-26|21:11:01.216] Commit new mining work                   number=39 sealhash="b1c950…5fa609" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.883ms
+        INFO [09-26|21:11:10.674] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3826746636/lab.ipc
+        INFO [09-26|21:11:10.674] Stopping Ethereum protocol 
+        INFO [09-26|21:11:10.674] Ethereum protocol stopped 
+        INFO [09-26|21:11:10.674] Transaction pool stopped 
+        INFO [09-26|21:11:10.675] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (182.12s)
+        PASS
+    node_rehearsal_linux_test.go:315: node process /tmp/fsn-dense-miner-3503689294/process-1126527053.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|21:08:00.632] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:08:01.514] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|21:08:01.515] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3503689294/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|21:08:01.561] Persisted trie from memory database      nodes=13 size=1.89KiB time="144.434µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|21:08:01.562]  
+        INFO [09-26|21:08:01.562] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:08:01.562] Chain ID:  55555 (devnet) 
+        INFO [09-26|21:08:01.563] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|21:08:01.563]  
+        INFO [09-26|21:08:01.563] hard forks: 
+        INFO [09-26|21:08:01.563]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|21:08:01.563]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|21:08:01.563]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|21:08:01.563]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:08:01.563]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:08:01.563]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|21:08:01.563]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|21:08:01.563]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|21:08:01.563]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|21:08:01.563]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|21:08:01.563]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|21:08:01.563]  - Fusion Eco:                  0        
+        INFO [09-26|21:08:01.563]  
+        INFO [09-26|21:08:01.563]  
+        INFO [09-26|21:08:01.563] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:08:01.563]  
+        INFO [09-26|21:08:01.563] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|21:08:01.567] Loaded most recent local header          number=24 hash="08b63f…cb711d" td=118 age=12m1s
+        INFO [09-26|21:08:01.567] Loaded most recent local full block      number=24 hash="08b63f…cb711d" td=118 age=12m1s
+        INFO [09-26|21:08:01.567] Loaded most recent local fast block      number=24 hash="08b63f…cb711d" td=118 age=12m1s
+        INFO [09-26|21:08:01.569] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|21:08:01.572] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:08:01.572] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|21:08:01.572] Starting P2P networking 
+        INFO [09-26|21:08:01.572] RLPx listener up                         self="enode://923223b6b157dc56660f812f80eb80063f95c4dbcfc751f6ff8062f354838231aaca2497ea8a73ca2babaf936c9fdf016d6387c80b960c239652601bbbdeb3d5@127.0.0.1:39201?discport=0"
+        INFO [09-26|21:08:01.576] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3503689294/lab.ipc
+        INFO [09-26|21:08:02.719] Transaction pool price threshold updated price=1
+        INFO [09-26|21:08:02.722] Commit new mining work                   number=25 sealhash="258079…efe0f9" uncles=0 txs=0 gas=0 fees=0 elapsed=2.902ms
+        INFO [09-26|21:08:02.733] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-26|21:08:02.734] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=4.669ms mgasps=0.000 order=1 number=25 hash="61d99a…962ae6" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="bce7e9…735b22" parentHash="08b63f…cb711d" time=1,790,449,682 cache=0.00B
+        INFO [09-26|21:08:02.734] Submitted transaction                    hash=0xb3d49d9fa3dcf3c28a74360c11dc47a0f4e0b096e0d22ba816691bf7bef67c35 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=12 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:02.734] Automatic ticket submitted; awaiting inclusion tx="b3d49d…f67c35" nonce=12
+        INFO [09-26|21:08:02.735] Mining too far in the future             wait=7s
+        INFO [09-26|21:08:13.002] Successfully sealed new block            number=25 sealhash="258079…efe0f9" hash="3cffab…17cd43" difficulty=5 elapsed=10.279s
+        INFO [09-26|21:08:13.002] 🔨 mined potential block                  number=25 hash="3cffab…17cd43"
+        INFO [09-26|21:08:20.007] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=3.970ms mgasps=10.692 order=0 number=26 hash="079f8e…9ba7db" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="4d8545…afc98b" parentHash="61d99a…962ae6" time=1,790,449,689 cache=0.00B
+        INFO [09-26|21:08:20.007] notify first order chain head event      number=26 hash="079f8e…9ba7db"
+        WARN [09-26|21:08:21.579] Automatic ticket purchase needs attention; retrying err="nonce too low"
+        INFO [09-26|21:08:24.021] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.049ms mgasps=5.242  order=0 number=26 hash="3123e3…16e64a" difficulty=3 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="2595ee…182fed" parentHash="3cffab…17cd43" time=1,790,449,693 cache=0.00B
+        INFO [09-26|21:08:24.022] Automatic ticket purchase confirmed      tx="b3d49d…f67c35" block="3123e3…16e64a"
+        INFO [09-26|21:08:24.025] Commit new mining work                   number=27 sealhash="ea76c6…d7ca61" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.046ms
+        INFO [09-26|21:08:24.027] Submitted transaction                    hash=0x48b9f03fb05c06250595aaa9b3dcb43e2b8c55b5312c40e49e7185aa8f1daa73 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:24.027] Automatic ticket submitted; awaiting inclusion tx="48b9f0…1daa73" nonce=13
+        INFO [09-26|21:08:25.025] Commit new mining work                   number=27 sealhash="95172a…a7709f" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.689ms
+        INFO [09-26|21:08:35.006] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=3.914ms mgasps=10.845 order=0 number=27 hash="40304e…18c34c" difficulty=4 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="9b2f9a…788acc" parentHash="3123e3…16e64a" time=1,790,449,704 cache=0.00B
+        INFO [09-26|21:08:35.007] Automatic ticket purchase confirmed      tx="48b9f0…1daa73" block="40304e…18c34c"
+        WARN [09-26|21:08:35.007] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        INFO [09-26|21:08:35.009] Commit new mining work                   number=28 sealhash="40658e…c6404a" uncles=0 txs=0 gas=0     fees=0          elapsed=2.118ms
+        INFO [09-26|21:08:36.009] Commit new mining work                   number=28 sealhash="e4b7c3…a26517" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.376ms
+        INFO [09-26|21:08:46.001] Successfully sealed new block            number=28 sealhash="e4b7c3…a26517" hash="27f5b6…daf822" difficulty=5 elapsed=9.991s
+        INFO [09-26|21:08:46.001] 🔨 mined potential block                  number=28 hash="27f5b6…daf822"
+        INFO [09-26|21:08:46.003] Commit new mining work                   number=29 sealhash="cc2b48…0590f8" uncles=0 txs=0 gas=0     fees=0          elapsed=2.202ms
+        INFO [09-26|21:08:46.006] Submitted transaction                    hash=0xc0cae586f958adbab785490c0ef12775140012bd66477bc7316c9a2007e18076 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:08:46.006] Automatic ticket submitted; awaiting inclusion tx="c0cae5…e18076" nonce=14
+        INFO [09-26|21:08:47.003] Commit new mining work                   number=29 sealhash="5e9962…a1c904" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.179ms
+        INFO [09-26|21:09:06.189] Successfully sealed new block            number=29 sealhash="5e9962…a1c904" hash="887c71…ec9cbd" difficulty=2 elapsed=17.997s
+        INFO [09-26|21:09:06.189] 🔨 mined potential block                  number=29 hash="887c71…ec9cbd"
+        INFO [09-26|21:09:06.189] Mining too far in the future             wait=6s
+        INFO [09-26|21:09:06.190] Automatic ticket purchase confirmed      tx="c0cae5…e18076" block="887c71…ec9cbd"
+        INFO [09-26|21:09:06.194] Submitted transaction                    hash=0xfd7a9c82b70776eb128e2ff355c4a1fe0fb02ed7421bab6dbb7926f047a68091 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=15 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:06.194] Automatic ticket submitted; awaiting inclusion tx="fd7a9c…a68091" nonce=15
+        INFO [09-26|21:09:12.192] Commit new mining work                   number=30 sealhash="c5d6cc…8a8c49" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=6.002s
+        INFO [09-26|21:09:12.197] Commit new mining work                   number=30 sealhash="c5d6cc…8a8c49" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.491ms
+        INFO [09-26|21:09:23.017] Successfully sealed new block            number=30 sealhash="c5d6cc…8a8c49" hash="f7b2fe…8580bf" difficulty=4 elapsed=10.824s
+        INFO [09-26|21:09:23.017] 🔨 mined potential block                  number=30 hash="f7b2fe…8580bf"
+        INFO [09-26|21:09:23.017] Automatic ticket purchase confirmed      tx="fd7a9c…a68091" block="f7b2fe…8580bf"
+        INFO [09-26|21:09:23.017] commit work in Finalize                  err="UpdateTickets failed: UpdateTickets: Next block have no ticket, wait buy ticket."
+        INFO [09-26|21:09:23.022] Submitted transaction                    hash=0x5c02ad28fb8324ad57bc23aaef70d03b060f79e69e665f4b9ec3cdf79544d010 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=16 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:23.022] Automatic ticket submitted; awaiting inclusion tx="5c02ad…44d010" nonce=16
+        INFO [09-26|21:09:24.020] Commit new mining work                   number=31 sealhash="54ca01…0ec0be" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.176ms
+        INFO [09-26|21:09:43.422] Successfully sealed new block            number=31 sealhash="54ca01…0ec0be" hash="e40bcb…ccf32b" difficulty=2 elapsed=17.980s
+        INFO [09-26|21:09:43.422] 🔨 mined potential block                  number=31 hash="e40bcb…ccf32b"
+        INFO [09-26|21:09:43.422] Mining too far in the future             wait=6s
+        INFO [09-26|21:09:43.423] Automatic ticket purchase confirmed      tx="5c02ad…44d010" block="e40bcb…ccf32b"
+        INFO [09-26|21:09:43.427] Submitted transaction                    hash=0x8b360b79beb7e239b86210a08344fe6c2e8c2fcd56ea8751f6ce8c233cd041ae from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=17 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:09:43.428] Automatic ticket submitted; awaiting inclusion tx="8b360b…d041ae" nonce=17
+        INFO [09-26|21:09:49.425] Commit new mining work                   number=32 sealhash="8202d6…17a27b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=6.003s
+        INFO [09-26|21:09:50.429] Commit new mining work                   number=32 sealhash="8202d6…17a27b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.365ms
+        INFO [09-26|21:10:00.001] Successfully sealed new block            number=32 sealhash="8202d6…17a27b" hash="97ffea…dfbf75" difficulty=2 elapsed=10.575s
+        INFO [09-26|21:10:00.001] 🔗 block reached canonical chain          number=25 hash="3cffab…17cd43"
+        INFO [09-26|21:10:00.001] 🔨 mined potential block                  number=32 hash="97ffea…dfbf75"
+        INFO [09-26|21:10:00.002] Automatic ticket purchase confirmed      tx="8b360b…d041ae" block="97ffea…dfbf75"
+        WARN [09-26|21:10:00.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:00.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:00.007] Submitted transaction                    hash=0xcaba041469a9ac7e6f26f5c59ddc121234b746c7f8e92d5d2b07625defd687eb from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=18 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:00.007] Automatic ticket submitted; awaiting inclusion tx="caba04…d687eb" nonce=18
+        INFO [09-26|21:10:01.004] Commit new mining work                   number=33 sealhash="3e806f…6c078f" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.259ms
+        INFO [09-26|21:10:11.001] Successfully sealed new block            number=33 sealhash="3e806f…6c078f" hash="1c5f8b…ec2982" difficulty=2 elapsed=9.997s
+        INFO [09-26|21:10:11.002] 🔨 mined potential block                  number=33 hash="1c5f8b…ec2982"
+        WARN [09-26|21:10:11.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:11.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:11.002] Automatic ticket purchase confirmed      tx="caba04…d687eb" block="1c5f8b…ec2982"
+        INFO [09-26|21:10:11.007] Submitted transaction                    hash=0x04288211638d3bb628646ee00d70eefa725fcfa42f8cc43ae8c8565e3ce9d4ec from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=19 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:11.007] Automatic ticket submitted; awaiting inclusion tx="042882…e9d4ec" nonce=19
+        INFO [09-26|21:10:13.440] Commit new mining work                   number=34 sealhash="694a42…9d3bf3" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.287ms
+        INFO [09-26|21:10:22.001] Successfully sealed new block            number=34 sealhash="694a42…9d3bf3" hash="8bbdb3…54173e" difficulty=2 elapsed=8.560s
+        INFO [09-26|21:10:22.001] 🔨 mined potential block                  number=34 hash="8bbdb3…54173e"
+        WARN [09-26|21:10:22.001] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:22.001] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:22.001] Automatic ticket purchase confirmed      tx="042882…e9d4ec" block="8bbdb3…54173e"
+        INFO [09-26|21:10:22.006] Submitted transaction                    hash=0x52279504f1eb9545318220bc6e02bf4a0bbd60ca4c9887ddd3874fabd966cab0 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=20 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:22.006] Automatic ticket submitted; awaiting inclusion tx="522795…66cab0" nonce=20
+        INFO [09-26|21:10:23.004] Commit new mining work                   number=35 sealhash="f5978f…edb017" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.146ms
+        INFO [09-26|21:10:33.000] Successfully sealed new block            number=35 sealhash="f5978f…edb017" hash="0904d9…5a71fe" difficulty=2 elapsed=9.996s
+        INFO [09-26|21:10:33.001] 🔗 block reached canonical chain          number=28 hash="27f5b6…daf822"
+        INFO [09-26|21:10:33.001] 🔨 mined potential block                  number=35 hash="0904d9…5a71fe"
+        WARN [09-26|21:10:33.001] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:33.001] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:33.001] Automatic ticket purchase confirmed      tx="522795…66cab0" block="0904d9…5a71fe"
+        INFO [09-26|21:10:33.006] Submitted transaction                    hash=0x4a59482517aea3254a799e70b9b602cc75f8a447ab5b6385f56279f3efdfa892 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=21 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:33.006] Automatic ticket submitted; awaiting inclusion tx="4a5948…dfa892" nonce=21
+        INFO [09-26|21:10:34.004] Commit new mining work                   number=36 sealhash="fa5cb0…a369fc" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.593ms
+        INFO [09-26|21:10:47.540] Successfully sealed new block            number=36 sealhash="fa5cb0…a369fc" hash="fef248…0c9425" difficulty=2 elapsed=12.097s
+        INFO [09-26|21:10:47.540] 🔗 block reached canonical chain          number=29 hash="887c71…ec9cbd"
+        INFO [09-26|21:10:47.540] 🔨 mined potential block                  number=36 hash="fef248…0c9425"
+        INFO [09-26|21:10:47.541] Automatic ticket purchase confirmed      tx="4a5948…dfa892" block="fef248…0c9425"
+        WARN [09-26|21:10:47.541] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-26|21:10:47.541] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-26|21:10:47.546] Submitted transaction                    hash=0xf525069a9af200c1c481e5020e460945581e3f04b3c1daef8c93a0f44e3e5464 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=22 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|21:10:47.546] Automatic ticket submitted; awaiting inclusion tx="f52506…3e5464" nonce=22
+        INFO [09-26|21:10:48.505] Block synchronisation started 
+        INFO [09-26|21:10:48.506] Mining aborted due to sync 
+        INFO [09-26|21:10:48.511] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=151.80B throttle=8192
+        INFO [09-26|21:10:48.518] Imported new chain segment               blocks=2 txs=1 mgas=0.021 elapsed=5.943ms mgasps=3.571  order=1 number=30 hash="e926ae…b139ac" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="37b4d7…f1f443" parentHash="3ea7b5…2a6ac0" time=1,790,449,756 age=1m32s cache=0.00B
+        INFO [09-26|21:10:48.518] notify first order chain head event      number=29 hash="3ea7b5…2a6ac0"
+        INFO [09-26|21:10:48.541] Imported new chain segment               blocks=7 txs=7 mgas=0.149 elapsed=22.682ms mgasps=6.550  order=0 number=37 hash="a54b57…7ddbc5" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ce3b70…d11ceb" parentHash="47ccf1…a612bc" time=1,790,449,833 cache=0.00B
+        WARN [09-26|21:10:53.506] Automatic ticket purchase needs attention; retrying err="another ticket purchase \xc0\xca\xe5\x86\xf9X\xad\xba\xb7\x85I\f\x0e\xf1'u\x14\x00\x12\xbdfG{\xc71l\x9a \a\xe1\x80v is pending; awaiting nonce resolution"
+        INFO [09-26|21:11:00.216] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=3.279ms  mgasps=12.943 order=0 number=38 hash="13d5ad…aa8733" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="cd245b…58c35d" parentHash="a54b57…7ddbc5" time=1,790,449,847 cache=0.00B
+        WARN [09-26|21:11:00.216] Automatic ticket purchase needs attention; retrying err="automatic ticket \xf5%\x06\x9a\x9a\xf2\x00\xc1ā\xe5\x02\x0eF\tEX\x1e?\x04\xb3\xc1\xda\uf313\xa0\xf4N>Td needs nonce 22, current nonce is 15"
+        INFO [09-26|21:11:00.218] 😱 block lost                             number=30 hash="f7b2fe…8580bf" order=1
+        INFO [09-26|21:11:00.218] 😱 block lost                             number=31 hash="e40bcb…ccf32b" order=0
+        INFO [09-26|21:11:00.218] Commit new mining work                   number=39 sealhash="d9a855…0c3153" uncles=0 txs=0 gas=0     fees=0          elapsed=2.022ms
+        INFO [09-26|21:11:01.218] Commit new mining work                   number=39 sealhash="e7ade3…c46194" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.009ms
+        WARN [09-26|21:11:10.673] Served eth_sendRawTransaction            reqid=1573 duration="302.525µs" err="insufficient balance(2057601957656000000000), need 5000000042448000000000 = (gas:21224 * price:2000000000 + value:5000000000000000000000 + fee:0)"
+        INFO [09-26|21:11:11.698] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3503689294/lab.ipc
+        INFO [09-26|21:11:11.698] Stopping Ethereum protocol 
+        INFO [09-26|21:11:11.698] Ethereum protocol stopped 
+        INFO [09-26|21:11:11.698] Transaction pool stopped 
+        INFO [09-26|21:11:11.698] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (184.14s)
+        PASS
+--- FAIL: TestRestartNodeRehearsal (185.61s)
+    --- FAIL: TestRestartNodeRehearsal/small_reserve_nonce_repair (185.60s)
+FAIL

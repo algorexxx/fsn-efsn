@@ -26,6 +26,11 @@ type denseMinerPair struct {
 
 func seedDenseMinerPair(t *testing.T) *denseMinerPair {
 	t.Helper()
+	return seedDenseMinerPairWithReserve(t, "1000000000000000000000000", 0)
+}
+
+func seedDenseMinerPairWithReserve(t *testing.T, balance string, ticketLimit uint64) *denseMinerPair {
+	t.Helper()
 	previous := common.UseDevnetRule
 	common.UseDevnetRule = true
 	datong.InitCheckPoints("")
@@ -41,7 +46,7 @@ func seedDenseMinerPair(t *testing.T) *denseMinerPair {
 		key, err := crypto.ToECDSA(keyBytes)
 		requireNoError(t, err)
 		pair.miners[i] = &fixture{key: key, owner: crypto.PubkeyToAddress(key.PublicKey)}
-		pair.genesis.Alloc[pair.miners[i].owner] = core.GenesisAccount{Balance: decimal(t, "1000000000000000000000000")}
+		pair.genesis.Alloc[pair.miners[i].owner] = core.GenesisAccount{Balance: decimal(t, balance)}
 	}
 	pair.genesis.TicketCreateInfo = &core.TicketsCreate{Owner: pair.miners[0].owner, Count: 2, Time: pair.genesis.Timestamp}
 	for i, f := range pair.miners {
@@ -62,11 +67,33 @@ func seedDenseMinerPair(t *testing.T) *denseMinerPair {
 	for i := 0; i < 24; i++ {
 		first, second := pair.miners[0], pair.miners[1]
 		parent := first.chain.CurrentBlock()
-		txs := []*types.Transaction{first.signPurchase(t, parent.Time(), common.TimeLockForever), second.signPurchase(t, parent.Time(), common.TimeLockForever)}
+		state, err := first.chain.State()
+		requireNoError(t, err)
+		tickets, err := state.AllTickets()
+		requireNoError(t, err)
+		var txs []*types.Transaction
+		for _, owner := range pair.miners {
+			if ticketLimit == 0 || tickets.NumberOfTicketsByAddress(owner.owner) < ticketLimit {
+				txs = append(txs, owner.signPurchase(t, parent.Time(), common.TimeLockForever))
+			}
+		}
 		producer := preferredFixtureProducer(t, first, second)
 		block := producer.buildBlockWithTransactions(t, parent.Time()+120, txs)
 		first.importBlock(t, block)
 		second.importBlock(t, block)
+	}
+	if ticketLimit > 0 {
+		state, err := pair.miners[0].chain.State()
+		requireNoError(t, err)
+		tickets, err := state.AllTickets()
+		requireNoError(t, err)
+		for i, owner := range pair.miners {
+			count := tickets.NumberOfTicketsByAddress(owner.owner)
+			if count == 0 || count > ticketLimit {
+				t.Fatalf("small reserve fixture owner %d has %d tickets", i+1, count)
+			}
+			t.Logf("small reserve anchor owner=%d initial-wei=%s tickets=%d nonce=%d liquid-wei=%s timelocks=%s", i+1, balance, count, state.GetNonce(owner.owner), state.GetBalance(common.SystemAssetID, owner.owner), state.GetTimeLockBalance(common.SystemAssetID, owner.owner))
+		}
 	}
 	return pair
 }
