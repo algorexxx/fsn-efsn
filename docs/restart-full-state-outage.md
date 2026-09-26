@@ -95,11 +95,14 @@ public discovery, competing fork choice or manual nonce repair after rollback.
 The earlier observation that already-signed work can publish after `miner_stop`
 still requires clean process shutdown for key handover.
 
-Next construct the complete-state competing-producer case with an explicitly
-audited source of ordinary funded tickets. Keep it separate from the day-one
-deployment requirement. Then apply the [manual recovery procedure](restart-operator-recovery.md)
-if that case creates a missing-nonce gap. Monitoring, real reserve availability
-and the release decision on manual recovery remain open.
+The subsequent [funded participant entry](restart-full-state-participant.md)
+now establishes an audited ordinary-funding prefix and shared live production
+with a second public test key. That hypothetical contribution is separate from
+the day-one deployment requirement and real funding availability. Next inject
+the competing-producer partition and apply the
+[manual recovery procedure](restart-operator-recovery.md) if it creates a
+missing-nonce gap. Monitoring, real reserve availability and the release decision
+on manual recovery remain open.
 
 Raw logs, copy proofs, executable/source identities and all 16 block/ledger pairs
 are retained in [the evidence directory](evidence/restart-full-state-outage-2026-09-26).

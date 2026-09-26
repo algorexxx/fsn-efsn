@@ -523,3 +523,16 @@ requires automatic execution plus two fresh successors, ordinary peer catch-up,
 matching cold account ledgers and independent interval conservation. It does
 not create competing branches or exercise manual nonce repair. See the
 [complete-state outage report](../../docs/restart-full-state-outage.md).
+
+`TestFullStateParticipantEntry` requires fresh complete-state copies under
+`FUSION_RESTART_PARTICIPANT` and the same isolated-node/namespace opt-ins. It
+executes the reviewed recovery prefix, then funds public test key 3 using the
+backup fixture's existing mature rights and an ordinary transfer. The donation
+key signs every additional constructed block; the backup only signs two funding
+transactions and buys no ticket. Both donation and entrant services must then
+buy and sign canonical blocks, followed by matching cold databases and complete
+interval accounting. The shared node harness permits only public test keys
+1, 2 and 3. This hypothetical funding is not a launch requirement or permission
+to use the real backup owner's funds. No partition or manual repair is exercised.
+See the [participant entry report](../../docs/restart-full-state-participant.md)
+for the two preserved setup failures and corrected passing run.

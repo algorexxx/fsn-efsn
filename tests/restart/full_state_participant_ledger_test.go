@@ -1,0 +1,170 @@
+package restart
+
+import (
+	"bytes"
+	"fmt"
+	"math/big"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/consensus/datong"
+	"github.com/FusionFoundation/efsn/v5/core/state"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/crypto"
+	"github.com/FusionFoundation/efsn/v5/params"
+	"github.com/FusionFoundation/efsn/v5/rlp"
+)
+
+func auditFullStateParticipant(t *testing.T, artifacts string, count int) {
+	t.Helper()
+	owners := []common.Address{
+		common.HexToAddress("0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf"),
+		common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"),
+		common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69"),
+	}
+	addresses := make(map[common.Hash]common.Address)
+	for _, owner := range owners {
+		addresses[crypto.Keccak256Hash(owner.Bytes())] = owner
+	}
+	var previous fullStateBlockLedger
+	readHandoverJSON(t, filepath.Join(artifacts, "block-03.json"), &previous)
+	var created, conversions, transfers int
+	for i := 4; i <= count; i++ {
+		var entry fullStateBlockLedger
+		readHandoverJSON(t, filepath.Join(artifacts, fmt.Sprintf("block-%02d.json", i)), &entry)
+		encoded, err := os.ReadFile(filepath.Join(artifacts, fmt.Sprintf("block-%02d.rlp", i)))
+		requireNoError(t, err)
+		var block *types.Block
+		requireNoError(t, rlp.DecodeBytes(encoded, &block))
+		if block.Hash() != entry.Header.Hash() || block.ParentHash() != previous.Header.Hash() || (block.Coinbase() != owners[1] && block.Coinbase() != owners[2]) || len(entry.Receipts) != len(block.Transactions()) {
+			t.Fatal("participant ledger identity, signer or transaction count differs")
+		}
+		deltas := make(map[common.Address]*big.Int)
+		nonces := make(map[common.Address]uint64)
+		for _, owner := range owners {
+			deltas[owner] = new(big.Int)
+		}
+		deltas[block.Coinbase()].SetString("312500000000000000", 10)
+		for index, tx := range block.Transactions() {
+			sender, err := types.Sender(types.MakeSigner(params.MainnetChainConfig, block.Number()), tx)
+			requireNoError(t, err)
+			receipt := entry.Receipts[index]
+			if deltas[sender] == nil || tx.Type() != types.LegacyTxType || receipt.TxHash != tx.Hash() || receipt.Status != types.ReceiptStatusSuccessful {
+				t.Fatal("participant ledger requires known successful legacy transactions")
+			}
+			nonces[sender]++
+			fee := new(big.Int).Mul(new(big.Int).SetUint64(receipt.GasUsed), tx.GasPrice())
+			if tx.IsBuyTicketTx() {
+				if sender == owners[0] {
+					t.Fatal("retired backup purchased another ticket")
+				}
+				purchaseEntry := entry
+				purchaseEntry.Receipts = entry.Receipts[index : index+1]
+				verifyHandoverPurchaseReceipt(t, tx, purchaseEntry, sender)
+				created++
+			} else if tx.To() != nil && *tx.To() == common.FSNCallAddress {
+				requireParticipantConversion(t, tx, receipt, owners[0], owners[2], sender, previous.Header.Time)
+				if i != 4 || conversions != 0 {
+					t.Fatal("unexpected additional native conversion")
+				}
+				value := decimal(t, "10000000000000000000000")
+				deltas[owners[0]].Sub(deltas[owners[0]], value)
+				deltas[owners[2]].Add(deltas[owners[2]], value)
+				fee.Add(fee, decimal(t, "1000000000000000"))
+				conversions++
+			} else {
+				if i != 5 || transfers != 0 || sender != owners[0] || tx.To() == nil || *tx.To() != owners[2] || tx.Value().String() != "2020102000000000000000" || len(tx.Data()) != 0 || receipt.GasUsed != 21000 || len(receipt.Logs) != 0 {
+					t.Fatal("unexpected participant funding transfer")
+				}
+				deltas[owners[0]].Sub(deltas[owners[0]], tx.Value())
+				deltas[owners[2]].Add(deltas[owners[2]], tx.Value())
+				transfers++
+			}
+			deltas[sender].Sub(deltas[sender], fee)
+			deltas[block.Coinbase()].Add(deltas[block.Coinbase()], fee)
+		}
+		before, after := make(map[common.Address]state.Account), make(map[common.Address]state.Account)
+		for _, difference := range entry.Differences {
+			a := state.Account{Root: types.EmptyRootHash, CodeHash: crypto.Keccak256(nil)}
+			var b state.Account
+			if len(difference.Before) != 0 {
+				requireNoError(t, rlp.DecodeBytes(difference.Before, &a))
+			}
+			requireNoError(t, rlp.DecodeBytes(difference.After, &b))
+			if difference.AccountKey == crypto.Keccak256Hash(common.TicketKeyAddress.Bytes()) {
+				if !bytes.Equal(a.CodeHash, previous.Header.MixDigest.Bytes()) || !bytes.Equal(b.CodeHash, entry.Header.MixDigest.Bytes()) {
+					t.Fatal("participant ticket store commitment mismatch")
+				}
+				a.CodeHash = b.CodeHash
+			} else {
+				address, exists := addresses[difference.AccountKey]
+				if !exists || (address == owners[0] && i > 5) {
+					t.Fatal("unknown changed account or post-funding backup mutation")
+				}
+				before[address], after[address] = a, b
+				a.Nonce += nonces[address]
+				a, b = withoutHandoverFSN(a), withoutHandoverFSN(b)
+			}
+			expected, err := rlp.EncodeToBytes(a)
+			requireNoError(t, err)
+			actual, err := rlp.EncodeToBytes(b)
+			requireNoError(t, err)
+			if !bytes.Equal(expected, actual) {
+				t.Fatal("participant operation changed unrelated assets, nonce, notation, code or storage")
+			}
+		}
+		snapshot, err := datong.NewSnapshotFromHeader(entry.Header)
+		requireNoError(t, err)
+		selected, exists := previous.Tickets[snapshot.Selected]
+		if !exists || selected.Owner != block.Coinbase() {
+			t.Fatal("participant selected ticket does not belong to producer")
+		}
+		for _, id := range append([]common.Hash{snapshot.Selected}, snapshot.Retreat...) {
+			if _, exists := previous.Tickets[id]; !exists {
+				t.Fatal("consumed ticket missing from parent")
+			}
+			if _, exists := entry.Tickets[id]; exists {
+				t.Fatal("consumed ticket remains live")
+			}
+		}
+		points := handoverTimeBoundaries(block.Time(), before, after, previous.Tickets, entry.Tickets)
+		for _, owner := range owners {
+			for point := range points {
+				delta := new(big.Int).Sub(handoverValueAt(after[owner], entry.Tickets, owner, point), handoverValueAt(before[owner], previous.Tickets, owner, point))
+				expected := new(big.Int).Set(deltas[owner])
+				if len(snapshot.Retreat) > 0 {
+					penalty := previous.Tickets[snapshot.Retreat[0]]
+					if penalty.Owner == owner && point >= penalty.StartTime && point <= penalty.ExpireTime {
+						expected.Sub(expected, penalty.Value)
+					}
+				}
+				if delta.Cmp(expected) != 0 {
+					t.Fatalf("participant rights mismatch block=%d owner=%s time=%d actual=%s expected=%s", i, owner.Hex(), point, delta, expected)
+				}
+			}
+		}
+		t.Logf("participant ledger block=%d height=%d hash=%s accounts=%d boundaries=%d transactions=%d retreats=%d; exact future interval accounting and unrelated fields verified", i, block.NumberU64(), block.Hash().Hex(), len(entry.Differences), len(points), len(block.Transactions()), len(snapshot.Retreat))
+		previous = entry
+	}
+	if conversions != 1 || transfers != 1 || created < 4 {
+		t.Fatal("participant ledger did not cover funding and purchases")
+	}
+	t.Logf("participant ledger passed: blocks=%d ordinary-conversions=%d ordinary-transfers=%d successful-purchases=%d; aggregate funding=12020.102 FSN, native conversion fee=0.001 FSN plus gas; all future rights reconcile", count-3, conversions, transfers, created)
+}
+
+func requireParticipantConversion(t *testing.T, tx *types.Transaction, receipt *types.Receipt, source, target, sender common.Address, parentTime uint64) {
+	t.Helper()
+	var envelope common.FSNCallParam
+	var conversion common.TimeLockParam
+	requireNoError(t, rlp.DecodeBytes(tx.Data(), &envelope))
+	requireNoError(t, rlp.DecodeBytes(envelope.Data, &conversion))
+	if sender != source || tx.Value().Sign() != 0 || envelope.Func != common.TimeLockFunc || conversion.Type != common.TimeLockToAsset || conversion.AssetID != common.SystemAssetID || conversion.To != target || conversion.Value.String() != "10000000000000000000000" || conversion.StartTime > parentTime || conversion.EndTime != common.TimeLockForever || len(receipt.Logs) != 1 {
+		t.Fatal("unexpected participant native conversion")
+	}
+	log := receipt.Logs[0]
+	if log.Address != common.FSNCallAddress || len(log.Topics) != 1 || log.Topics[0] != common.BytesToHash([]byte{common.TimeLockFunc}) || bytes.Contains(log.Data, []byte(`"Error"`)) {
+		t.Fatal("participant conversion lacks native success")
+	}
+}

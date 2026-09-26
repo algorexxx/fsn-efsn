@@ -203,8 +203,8 @@ func runRehearsalNode(t *testing.T, path string) {
 	if lab.TestKey == 0 {
 		lab.TestKey = 1
 	}
-	if lab.TestKey != 1 && lab.TestKey != 2 && lab.TestKey != 3 {
-		t.Fatal("only public rehearsal keys 1, 2 and 3 are permitted")
+	if lab.TestKey != 1 && lab.TestKey != 2 {
+		t.Fatal("only public rehearsal keys 1 and 2 are permitted")
 	}
 	if lab.ListenAddr == "" {
 		lab.ListenAddr = "127.0.0.1:0"

@@ -1,0 +1,133 @@
+package restart
+
+import (
+	"math/big"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/crypto"
+	"github.com/FusionFoundation/efsn/v5/rlp"
+)
+
+func TestFullStateParticipantEntry(t *testing.T) {
+	root := os.Getenv("FUSION_RESTART_PARTICIPANT")
+	if root == "" {
+		t.Skip("requires fresh verified complete-state participant copies")
+	}
+	requirePartitionNamespace(t)
+	if !filepath.IsAbs(root) || os.Getenv("FUSION_RESTART_NODE_REHEARSAL") != "1" || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
+		t.Fatal("absolute disposable root and isolated node rehearsal required")
+	}
+	cleanup := prepareFullStateOutage(t, root)
+	anchor := prepareFullStateParticipant(t, root, cleanup)
+	paths := [2]string{
+		seedFullStateRecoveryNode(t, filepath.Join(root, "producer"), cleanup, 2),
+		seedFullStateRecoveryNode(t, filepath.Join(root, "verifier"), cleanup, 3),
+	}
+	nodes := [2]*rehearsalNode{startRehearsalNode(t, paths[0]), startRehearsalNode(t, paths[1])}
+	owners := [2]common.Address{common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
+	connectRehearsalPeer(t, nodes[0], nodes[1])
+	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
+	initial := [2]uint64{readPeerPurchase(t, nodes[0]).Nonce, readPeerPurchase(t, nodes[1]).Nonce}
+	for _, node := range nodes {
+		requireRehearsalHead(t, node.status(t), anchor)
+		startCompetingMiner(t, node)
+	}
+	head := awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, initial, anchor.NumberU64(), 120*time.Second)
+	awaitRehearsal(t, 120*time.Second, func() bool {
+		head = awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, initial, anchor.NumberU64(), 30*time.Second)
+		produced := make(map[common.Address]bool)
+		for number := anchor.NumberU64() + 1; number <= head.NumberU64(); number++ {
+			produced[readRecoveryNodeBlock(t, nodes[0], number).Coinbase()] = true
+		}
+		return produced[owners[0]] && produced[owners[1]]
+	})
+	t.Logf("complete-state participant live entry: both owners bought and signed canonical blocks; common=%d %s", head.NumberU64(), head.Hash().Hex())
+	for _, node := range nodes {
+		stopPeerAutoMiner(t, node)
+	}
+	final := awaitStoppedPartitionHead(t, nodes[0], nodes[1])
+	for _, node := range nodes {
+		requireRehearsalHead(t, node.status(t), final)
+		node.stop(t, false)
+	}
+	count := captureFullStateColdSuffix(t, root, final)
+	artifacts := filepath.Join(root, "blocks")
+	auditFullStateHandover(t, filepath.Join(root, "producer"), artifacts, 3)
+	auditFullStateParticipant(t, artifacts, count)
+	t.Logf("complete-state participant entry passed: final=%d %s state=%s tickets=%s blocks=%d; exact preserved rights funded entrant through ordinary transactions; no added balance or post-cleanup backup block", final.NumberU64(), final.Hash().Hex(), final.Root().Hex(), final.MixDigest().Hex(), count)
+}
+
+func prepareFullStateParticipant(t *testing.T, root string, cleanup *types.Block) *types.Block {
+	t.Helper()
+	var blocks types.Blocks
+	var anchor *types.Block
+	for _, role := range []string{"producer", "verifier"} {
+		if !t.Run("fund-"+role, func(t *testing.T) {
+			f, original, funding := openFullStateHandover(t, filepath.Join(root, role))
+			if f.chain.CurrentBlock().Hash() != cleanup.Hash() {
+				t.Fatal("participant funding requires the reviewed cleanup head")
+			}
+			donation := *f
+			selectHandoverSuccessor(t, &donation, funding)
+			keyBytes := make([]byte, 32)
+			keyBytes[31] = 3
+			key, err := crypto.ToECDSA(keyBytes)
+			requireNoError(t, err)
+			entrant := *f
+			entrant.key, entrant.owner = key, crypto.PubkeyToAddress(key.PublicKey)
+			s, err := f.chain.State()
+			requireNoError(t, err)
+			if s.Exist(entrant.owner) || s.GetNonce(original.SyntheticOwner) != original.Nonce {
+				t.Fatal("entrant already exists or backup transaction nonce changed")
+			}
+			start := uint64(time.Now().Unix()) - 360
+			if start <= cleanup.Time()+120 {
+				t.Fatal("funding window must follow cleanup with consensus timing margin")
+			}
+			for i := 0; i < 3; i++ {
+				if role == "producer" {
+					timestamp := start + uint64(i)*120
+					purchase := donation.signPurchase(t, timestamp-120, timestamp+30*24*3600)
+					var extra *types.Transaction
+					switch i {
+					case 0:
+						body, err := rlp.EncodeToBytes(&common.TimeLockParam{Type: common.TimeLockToAsset, AssetID: common.SystemAssetID, To: entrant.owner, StartTime: cleanup.Time(), EndTime: common.TimeLockForever, Value: decimal(t, "10000000000000000000000")})
+						requireNoError(t, err)
+						data, err := rlp.EncodeToBytes(&common.FSNCallParam{Func: common.TimeLockFunc, Data: body})
+						requireNoError(t, err)
+						extra = f.signPurchaseData(t, data)
+					case 1:
+						extra, err = types.SignTx(types.NewTransaction(original.Nonce+1, entrant.owner, decimal(t, "2020102000000000000000"), 21000, big.NewInt(2000000000), nil), types.LatestSigner(f.chain.Config()), f.key)
+						requireNoError(t, err)
+					case 2:
+						s, err := f.chain.State()
+						requireNoError(t, err)
+						if s.GetBalance(common.SystemAssetID, entrant.owner).String() != "12020102000000000000000" || s.GetNonce(entrant.owner) != 0 {
+							t.Fatal("entrant lacks exact ordinary funding before first purchase")
+						}
+						extra = entrant.signPurchase(t, timestamp-120, timestamp+30*24*3600)
+					}
+					blocks = append(blocks, donation.buildBlockWithTransactions(t, timestamp, types.Transactions{purchase, extra}))
+				}
+				f.importBlock(t, blocks[i])
+			}
+			s, err = f.chain.State()
+			requireNoError(t, err)
+			tickets, err := s.AllTickets()
+			requireNoError(t, err)
+			if tickets.NumberOfTickets() != 2 || tickets.NumberOfTicketsByAddress(donation.owner) != 1 || tickets.NumberOfTicketsByAddress(entrant.owner) != 1 || tickets.NumberOfTicketsByAddress(original.SyntheticOwner) != 0 || s.GetNonce(original.SyntheticOwner) != original.Nonce+2 {
+				t.Fatal("funded prefix must leave one ordinary ticket per producer and the backup retired")
+			}
+			anchor = f.chain.CurrentBlock()
+			t.Logf("complete-state participant funding role=%s head=%d %s entrant=%s liquid-wei=%s nonce=%d backup-liquid-wei=%s; native conversion=10000 FSN plus ordinary transfer=2020.102 FSN", role, anchor.NumberU64(), anchor.Hash().Hex(), entrant.owner.Hex(), s.GetBalance(common.SystemAssetID, entrant.owner), s.GetNonce(entrant.owner), s.GetBalance(common.SystemAssetID, original.SyntheticOwner))
+		}) {
+			t.Fatal("ordinary participant funding failed")
+		}
+	}
+	return anchor
+}
