@@ -1,6 +1,6 @@
 # Proposed permanent node patches
 
-25 September 2026. Review baseline: original local `master` at
+26 September 2026. Review baseline: original local `master` at
 `c5f0174d88ab2b9c3086c6a9cc9ccf38a072992f`; candidate implementation at
 `04a676c42015dfe7f86aed47e598fb2920ed1e69` for P1–P8. P9 is an additional
 candidate from baseline `bcbd1ce`, pinned by source blobs in its evidence.
@@ -12,6 +12,8 @@ P12 adds bootstrap DNS outage/retry handling; P13 corrects restored seed identit
 and endpoint handling, both from baseline `d7fa207`.
 P14 corrects discovery address reservations, replacement promotion and stale
 probe results, from baseline `a5a6bea`.
+P15 excludes the node's own identity from discovery admission, from baseline
+`27b1186`, with deterministic and signed-UDP before/after evidence.
 This is the review inventory, not
 an approved release. Later test/document changes do not approve these patches.
 
@@ -38,6 +40,7 @@ investigation commit is not a substitute for selecting its intended changes.
 | P12 | Parse bootstrap configuration without DNS, retain hostnames, resolve/retry asynchronously with deadlines and cancellation, and introduce authenticated allowed endpoints through discovery. | Supports the requested DNS-based introductions through outages and IP changes. It is a networking resilience feature, not a consensus prerequisite. | Changes v4 bootstrap startup and refresh behavior, including CLI/TOML and UDP-only seeds. Ordinary static/trusted parsing and v5 remain separate. Review [DNS behavior, bounds and live evidence](restart-bootstrap-dns.md); public networking checks remain open. |
 | P13 | Reconstruct routing hashes for decoded seed records; do not replace an existing table entry with an older cached endpoint. | Prevents duplicate identities in different discovery buckets and stale cache interference with a newly resolved address. Review with P12. | Local seed-cache insertion correction, with unchanged record format and age limits. The targeted duplicate-address regression fails before and passes after correction; see [cache interaction](restart-bootstrap-dns.md). |
 | P14 | Transfer discovery subnet reservations when endpoints change, reuse replacement reservations on promotion, start promotion maturity, and ignore probe/deletion results for superseded entries. | Corrects reproduced quota bypass/leaks, stale-endpoint overwrite/eviction and premature replacement persistence. Review with P11–P13. | Local discovery behavior after startup and recovery; no consensus, economic, wire-format or limit-policy change. One runtime file, 63 added/23 removed lines. See [address-move evidence](restart-peer-addresses.md), including deterministic before/after cases and a signed UDP move in an isolated namespace. |
+| P15 | Reject the local node ID at the common discovery-table admission entry point. | Prevents self-contacts from occupying active/replacement entries and address reservations, and from suppressing empty-table refresh after real contacts disappear. | Three added runtime lines in `Table.add`. No timer, record format, wire protocol, ticket, fork-choice or consensus change. See [partition/self-contact evidence](restart-network-partitions.md), including four deterministic failures and a real signed-UDP admission failure before correction. |
 
 ## Source boundaries
 
@@ -61,6 +64,7 @@ the recovery-only section. Tests and evidence must accompany any extracted patch
 | P12 | `p2p/discover/bootstrap.go`: bootstrap parser, TOML slice decoder and resolver workers; `node.go`: private hostname and shared endpoint parsing; `table.go`: hostname/literal separation and worker lifecycle; `udp.go`: supply network restriction; `p2p/server.go`: bootstrap slice type and literal TCP fallback; `cmd/utils/flags.go`: use bootstrap parser. |
 | P13 | `p2p/discover/database.go`: `nextNode` reconstructs the private routing hash; `p2p/discover/table.go`: `loadSeedNodes` preserves an existing entry when loading cached contacts. |
 | P14 | `p2p/discover/table.go`: `findnode`, `doRevalidate`, `updateIP`, `addReplacement`, `replace`, `bumpOrAdd`, `deleteInBucket`, shared `findNode`; extend `loadSeedNodes` preservation to replacements. |
+| P15 | `p2p/discover/table.go`: three-line local-ID check at the start of `Table.add`, before locking or changing address reservations. |
 | O1 | `cmd/utils/flags.go`: trim/filter explicit bootstrap lists. Inherited gateway usability fix; optional for the restart protocol. Does not create DNS discovery. Review independently if retained. |
 
 P1, P5, P6, P7 and P9 overlap in chain/header code. Extract and test them in a defined
@@ -91,7 +95,13 @@ not claim those are implemented or that the candidate node is ready to launch.
 The [operator network-profile follow-up](restart-network-profile.md) adds no
 runtime patch. It records tested configuration workarounds for inherited NAT,
 diagnostic dump, discovery-flag and restored-peer-list behavior, plus the remaining
-release endpoint/image changes. The inventory remains P1–P14.
+release endpoint/image changes. The current inventory is P1–P15.
+
+The [packet-loss follow-up](restart-network-partitions.md) adds P15 after
+reproducing self-contact admission and suppressed refresh. It exercises timeout,
+retry and discovery recovery with kernel packet drops, and retains the earlier
+timing-dependent failures and inbound-only limitations. No new consensus or
+finality rule is proposed.
 
 ## Independent review handoff
 

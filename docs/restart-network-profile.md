@@ -108,6 +108,16 @@ its advertised address. For two nodes behind a router without NAT loopback, use
 reviewed local-address static contacts for their mutual connection and test the
 published contact from another network.
 
+Keep ordinary outbound dialing enabled; do not carry `NoDial = true` into the
+continuing producer's configuration. The [packet-loss follow-up](restart-network-partitions.md)
+retains two baseline cases where an inbound-only community peer did not recover
+within 90 seconds after connectivity returned. Ordinary dialing also exposed a
+separate self-contact defect, corrected by P15. Its corrected fixtures keep
+outbound dialing enabled; they do not prove prompt inbound-only recovery.
+Keep explicit static contacts between the two startup nodes, and verify remote
+communication/head progress after an
+outage; process status and a briefly retained peer count are insufficient.
+
 ## Old infrastructure inventory
 
 The [machine-readable inventory](evidence/restart-network-profile-2026-09-25/endpoint-inventory.json)
@@ -139,8 +149,11 @@ IPv6 UDP-only seed introduction followed by authenticated RLPx messaging, and
 static TCP messaging with UDP discovery disabled. The NAT adapter is synthetic;
 no real router, Foundation service, chain data or production wallet is used.
 
-Public IPv4/IPv6 routing, firewall and NAT translation, DNS from another network,
-loss/partition behavior and the actual release deployment remain unverified.
+The later [partition rehearsal](restart-network-partitions.md) records kernel
+packet-loss behavior and the inbound-only limitation separately. Public IPv4/IPv6
+routing, firewall and NAT translation, DNS from another network and the actual
+release deployment remain unverified. Mining and chain convergence during a
+partition also require separate coverage.
 Once hosts and a domain are selected, use a disposable fresh public client to
 verify signed UDP discovery and a real peer handshake against the published enode,
 then repeat after a seed IP move and after the temporary backup node is stopped.

@@ -1,0 +1,76 @@
+{
+  "baseline": "27b11869e7835e43c1b3dd6ac98fe80a1efb5430",
+  "runtime_change": "P15: three lines at Table.add rejecting the local node ID",
+  "sources": {
+    "p2p/discover/restart_self_test.go": {
+      "git_blob": "22dc97d28d8fe98b940fc049714832b7b8a96c4b",
+      "sha256_raw": "4e09ad66c9becd276ebde697ff2077b91236956c5d98e1637692012bb02d534c"
+    },
+    "p2p/discover/restart_self_linux_test.go": {
+      "git_blob": "701ac8a148be6373a54b5f7fd483c497d773f6ff",
+      "sha256_raw": "b983dca37072f1a4ec1feb05a6647c696b42adf82dc0947c12493b9e1aeb24ee"
+    },
+    "p2p/discover/restart_address_linux_test.go": {
+      "git_blob": "a59c2df3500430be7e174a65db54b070c002208a",
+      "sha256_raw": "5087f6b35d09bf339c19a6d9870d6bc21b3556ebcd6ed2cb5706bee4ea087383"
+    },
+    "p2p/discover/restart_cache_test.go": {
+      "git_blob": "a11a0317c054c4fe29b920ead35c1adbb996926c",
+      "sha256_raw": "521991bded7f4610f3ab7c115890c05da523f0cc5273ceb84d78c9a15dec634f"
+    },
+    "tests/restart/network_partition_linux_test.go": {
+      "git_blob": "c47d50cc23c9cbed9bdc9af1aa956dc8aa95ee30",
+      "sha256_raw": "37d2aa80af746405d920674f5b12138df0764277bc19b9541ccdd734cb41ea7c"
+    },
+    "tests/restart/discovery_linux_test.go": {
+      "git_blob": "a6051932393b627d5aa02cdaa4d70ee540eb7f6d",
+      "sha256_raw": "fc04dc96a1cd87287c006d10288a2ee719293f9bb762f188d872b1ac7dd21e61"
+    },
+    "tests/restart/bootstrap_dns_linux_test.go": {
+      "git_blob": "aede22c7182d32595fc565ec7f2d3732e6607b2c",
+      "sha256_raw": "0909884cd57a02bbfe3447a7f166442e3fe18191c238e6209df07ba29a77651f"
+    },
+    "p2p/server.go": {
+      "git_blob": "eed0b6cb782337a4f91dd90841dfb2d64162a977",
+      "sha256_raw": "eee240f2d77c380d234e98d2677f76151012848c467aff743493d52f32e1c88c"
+    },
+    "p2p/peer.go": {
+      "git_blob": "3a1f12ead90ca1931e7a7b611d88b9b402da2c6a",
+      "sha256_raw": "cebdfb53b9e05fc3177a8ffca3e0ede26ba56280128beccfec3c8e60b385df7e"
+    },
+    "p2p/rlpx.go": {
+      "git_blob": "8afef81ec8008b3a7559ef52a57766c63c357c8e",
+      "sha256_raw": "9f068a7a3ce9761efde7a23ee85ce44f6483e54bd30d3b33480718217994bb02"
+    },
+    "p2p/dial.go": {
+      "git_blob": "24b7b42ce8804a6a64887dc9531ad65139256b44",
+      "sha256_raw": "ac9d71b90169e5f33399f8549c1255c9b13182f4590ee34c51b9fdf6bc8503b8"
+    },
+    "p2p/discover/bootstrap.go": {
+      "git_blob": "e61c4d9b751b744959d1eef0c06c6710b5e741ed",
+      "sha256_raw": "f9e7fde45e00634ab1dfee8bf8b72ac67756970f443b93a5083a9657be415e27"
+    },
+    "p2p/discover/table.go": {
+      "git_blob": "cb0b626376d75035dd2dfbb137abd296510eb6e9",
+      "sha256_raw": "9f30e8a16df0bd3bc6c09e963f9040b240e39329bce73ea134b39cbc26498c98"
+    },
+    "p2p/discover/udp.go": {
+      "git_blob": "5992615a2bac406e4d9823f39e5fe8b86325edff",
+      "sha256_raw": "64ff2e261503a863e329be797835f99ad0d124044bf6702e758a379dc6d0121b"
+    },
+    "p2p/discover/database.go": {
+      "git_blob": "f599097ecb2b9e90177c2b57869c55326f0ccead",
+      "sha256_raw": "757d634cfb3101fa5ff77f4c7e95a6b631cfd9572bf5db43382353059a7019f1"
+    }
+  },
+  "binaries": {
+    "tmp/network-partition-tests": "30cec989d146148be7aeeba7cc79e0fc51fe0e7eaf2815ee4dbf248296322ff2",
+    "tmp/network-partition-final-tests": "18eaefa38e42fba6e96399cb1238bb88a073e4f25d947b25fada141151e7ef4c",
+    "tmp/network-partition-trace-tests": "3522db28edc73b9c3b0db58ba05e1b4641ae53d516774695d593f2439b4f2ff9",
+    "tmp/network-partition-corrected-tests": "3db8557128ff5641c33670aecba16fc95827a998a30dc666b411517fd9b1337a",
+    "tmp/network-self-windows-tests.exe": "558c7cdc04a5a5272b3a993cedb94994180c0e7341655045e80f72970af8c3fc"
+  },
+  "initial_fixture_sha256": "93469d5cb7f7738bfde68170655b17504cf594207bba35a585399496322d5250",
+  "trace_fixture_sha256": "bf8a35c4dbb128a3ecd29dbe50241db1d47c37a0146b5177a35d737b55ec2722",
+  "binary_scope": "Initial/ordinary-dialing/trace executables use the P1-P14 baseline; corrected and Windows executables add only the three-line P15 runtime guard. Trace overlay only enables test logging. Before-fix signed-UDP test uses the retained baseline table overlay."
+}

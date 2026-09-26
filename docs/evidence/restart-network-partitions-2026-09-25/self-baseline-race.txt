@@ -1,0 +1,17 @@
+=== RUN   TestRestartDiscoveryRejectsSelf
+=== RUN   TestRestartDiscoveryRejectsSelf/neighbors
+    restart_self_test.go:54: own identity admitted or reserved an address: entries=1 replacements=0 ips={172.0.1.0×1}
+=== RUN   TestRestartDiscoveryRejectsSelf/ping
+    restart_self_test.go:54: own identity admitted or reserved an address: entries=1 replacements=0 ips={172.0.1.0×1}
+=== RUN   TestRestartDiscoveryRejectsSelf/replacement
+    restart_self_test.go:54: own identity admitted or reserved an address: entries=16 replacements=1 ips={172.0.1.0×1}
+=== RUN   TestRestartDiscoveryRejectsSelf/empty_lookup_refresh
+    restart_self_test.go:40: self contact suppressed empty-table refresh: [enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@172.0.1.9:40409]
+--- FAIL: TestRestartDiscoveryRejectsSelf (0.03s)
+    --- FAIL: TestRestartDiscoveryRejectsSelf/neighbors (0.01s)
+    --- FAIL: TestRestartDiscoveryRejectsSelf/ping (0.00s)
+    --- FAIL: TestRestartDiscoveryRejectsSelf/replacement (0.00s)
+    --- FAIL: TestRestartDiscoveryRejectsSelf/empty_lookup_refresh (0.01s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/p2p/discover	0.097s
+FAIL

@@ -1,0 +1,70 @@
+{
+  "result": "Focused P15 before/after and corrected partition cases pass; three inherited broad-suite failures remain",
+  "deterministic_before_failures": 4,
+  "deterministic_after_linux_race_passes": 4,
+  "deterministic_after_native_windows_passes": 4,
+  "signed_udp_before_failures": 1,
+  "signed_udp_after_race_passes": 1,
+  "corrected_partition_leaf_passes": 5,
+  "corrected_udp_recovery_repeat_passes": 3,
+  "kernel_dropped_packets_in_test_order": [
+    9,
+    34,
+    30,
+    76,
+    9
+  ],
+  "initial_inbound_only_results": [
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/short_loss_retains_tcp_connection"
+    ],
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/long_static_partition"
+    ],
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/one_way_static_partition"
+    ],
+    [
+      "FAIL",
+      "TestRestartNetworkPartitionRehearsal/dynamic_peers_and_seed_recover"
+    ],
+    [
+      "FAIL",
+      "TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked"
+    ]
+  ],
+  "baseline_ordinary_dialing_results": [
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/short_loss_retains_tcp_connection"
+    ],
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/long_static_partition"
+    ],
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/one_way_static_partition"
+    ],
+    [
+      "PASS",
+      "TestRestartNetworkPartitionRehearsal/dynamic_peers_and_seed_recover"
+    ],
+    [
+      "FAIL",
+      "TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked"
+    ]
+  ],
+  "baseline_trace_passes": 4,
+  "known_broad_suite_failures": [
+    "TestForwardCompatibility",
+    "TestParseNode",
+    "TestProtocolHandshake"
+  ],
+  "runtime_added_lines": 3,
+  "permanent_patch_inventory": "P1-P15",
+  "limitations": "Isolated IPv4 networking with fixed endpoints; no chain mining/import, production wallets, public routing, real NAT, prolonged or repeated mining partitions, native Windows packet-loss execution or proof of prompt inbound-only recovery"
+}

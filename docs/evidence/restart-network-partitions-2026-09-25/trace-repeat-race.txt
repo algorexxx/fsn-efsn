@@ -1,0 +1,922 @@
+=== RUN   TestRestartNetworkPartitionRehearsal
+=== RUN   TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked
+INFO [09-25|18:57:47.719] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40407
+INFO [09-25|18:57:47.721] Starting P2P networking 
+INFO [09-25|18:57:47.723] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:39829
+INFO [09-25|18:57:47.725] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:39829
+TRACE[09-25|18:57:47.726] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:47.729] >> PONG/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.725] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.730] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.730] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.730] >> PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.731] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.732] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.732] << PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.733] >> PONG/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.733] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.735] >> PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.736] << PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.736] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.737] << PONG/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:47.737] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:47.738] << PONG/v4                               addr=127.0.0.1:39829 err=nil
+    network_partition_linux_test.go:208: kernel packet-loss filter: [match ip protocol 17 0xff match ip dport 40407 0xffff]
+INFO [09-25|18:57:47.785] Starting P2P networking 
+INFO [09-25|18:57:47.786] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:32999
+INFO [09-25|18:57:47.787] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:32999
+TRACE[09-25|18:57:47.789] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:47.791] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:57:47.791] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:47.792] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+INFO [09-25|18:57:47.838] Starting P2P networking 
+TRACE[09-25|18:57:47.839] New dial task                            task="staticdial c6047f9441ed7d6d 127.0.0.1:39829"
+INFO [09-25|18:57:47.841] RLPx listener up                         self="enode://e493dbf1c10d80f3581e4904930b1404cc6c13900ee0758474fa94abe8c4cd1351ed993ea0d455b75642e2098ea51448d967ae33bfbdfe40cfe97bdc47739922@127.0.0.1:36775?discport=0"
+TRACE[09-25|18:57:47.843] Accepted connection                      addr=127.0.0.1:48710
+DEBUG[09-25|18:57:47.849] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:39829 peers=1
+DEBUG[09-25|18:57:47.849] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:48710 peers=1
+TRACE[09-25|18:57:47.850] connection set up                        id=c6047f9441ed7d6d addr=127.0.0.1:39829 conn=staticdial inbound=false
+TRACE[09-25|18:57:47.851] Dial task done                           task="staticdial c6047f9441ed7d6d 127.0.0.1:39829"
+TRACE[09-25|18:57:47.850] Starting protocol restartprobe/1         id=c6047f9441ed7d6d conn=staticdial
+TRACE[09-25|18:57:47.850] connection set up                        id=e493dbf1c10d80f3 addr=127.0.0.1:48710 conn=inbound    inbound=true
+TRACE[09-25|18:57:47.850] Starting protocol restartprobe/1         id=e493dbf1c10d80f3 conn=inbound
+TRACE[09-25|18:57:47.851] New dial task                            task="wait for dial hist expire (29.999994427s)"
+TRACE[09-25|18:57:48.231] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:48.234] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+WARN [09-25|18:57:48.293] Bootstrap contact unavailable; retrying  host=partition.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for partition.restart.invalid"
+TRACE[09-25|18:57:48.731] Findnode failed                          id=79be667ef9dcbbac failcount=1 err="RPC timeout"
+TRACE[09-25|18:57:48.733] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:48.735] Findnode failed                          id=79be667ef9dcbbac failcount=2 err="RPC timeout"
+TRACE[09-25|18:57:48.738] Dial task done                           task="discovery lookup (1 results)"
+TRACE[09-25|18:57:48.738] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:57:48.739] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:48.739] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:0" err="dial tcp 127.0.0.1:0: connect: connection refused"
+TRACE[09-25|18:57:48.740] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:57:49.233] Findnode failed                          id=79be667ef9dcbbac failcount=3 err="RPC timeout"
+TRACE[09-25|18:57:49.234] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:49.393] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:49.735] Findnode failed                          id=79be667ef9dcbbac failcount=4 err="RPC timeout"
+TRACE[09-25|18:57:49.736] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:49.894] Removed dead node                        b=14 id=79be667ef9dcbbac ip=127.0.0.1
+TRACE[09-25|18:57:51.731] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:51.791] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:57:51.792] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:52.232] Findnode failed                          id=79be667ef9dcbbac failcount=5 err="RPC timeout"
+TRACE[09-25|18:57:52.233] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=5
+TRACE[09-25|18:57:52.233] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:57:52.234] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:54.514] >> PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:57:54.514] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:54.515] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:55.014] Removed dead node                        b=14 id=c6047f9441ed7d6d ip=127.0.0.1
+TRACE[09-25|18:57:55.730] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:55.791] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:57:55.792] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:56.230] Findnode failed                          id=79be667ef9dcbbac failcount=6 err="RPC timeout"
+TRACE[09-25|18:57:56.231] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=6
+TRACE[09-25|18:57:56.232] Dial task done                           task="discovery lookup (1 results)"
+TRACE[09-25|18:57:56.233] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:57:56.233] New dial task                            task="discovery lookup"
+TRACE[09-25|18:57:58.294] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:59.732] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:57:59.792] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:57:59.792] New dial task                            task="discovery lookup"
+    network_partition_linux_test.go:220: DNS answered 4 questions and independent static TCP message 81 arrived, but fresh client stayed peerless while seed UDP was blocked
+    network_partition_linux_test.go:221: healed partition; netem dropped=12; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":4458,"packets":42,"drops":12,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":12,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+TRACE[09-25|18:58:00.233] Findnode failed                          id=79be667ef9dcbbac failcount=7 err="RPC timeout"
+TRACE[09-25|18:58:00.234] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=7
+TRACE[09-25|18:58:00.234] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:00.236] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:03.733] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:03.734] >> NEIGHBORS/v4                          addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:03.735] << FINDNODE/v4                           addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:03.734] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:03.793] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:03.794] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:04.234] Findnode failed                          id=79be667ef9dcbbac failcount=8 err="RPC timeout"
+TRACE[09-25|18:58:04.235] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=8
+TRACE[09-25|18:58:04.235] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:04.236] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:07.734] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:07.734] >> NEIGHBORS/v4                          addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:07.735] << FINDNODE/v4                           addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:07.734] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:07.793] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:07.794] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:08.235] Findnode failed                          id=79be667ef9dcbbac failcount=9 err="RPC timeout"
+TRACE[09-25|18:58:08.235] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=9
+TRACE[09-25|18:58:08.236] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:08.237] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:11.735] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:11.735] >> NEIGHBORS/v4                          addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:11.736] << FINDNODE/v4                           addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:11.735] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:11.794] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:11.794] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:12.235] Findnode failed                          id=79be667ef9dcbbac failcount=10 err="RPC timeout"
+TRACE[09-25|18:58:12.236] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=10
+TRACE[09-25|18:58:12.237] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:12.238] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:15.735] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:15.735] >> NEIGHBORS/v4                          addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:15.735] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:15.736] << FINDNODE/v4                           addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:15.794] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:15.795] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:16.235] Findnode failed                          id=79be667ef9dcbbac failcount=11 err="RPC timeout"
+TRACE[09-25|18:58:16.236] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=11
+TRACE[09-25|18:58:16.237] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:16.237] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:17.854] Dial task done                           task="wait for dial hist expire (29.999994427s)"
+TRACE[09-25|18:58:19.988] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.988] >> PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.989] >> PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.989] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+INFO [09-25|18:58:19.989] Bootstrap contact recovered              host=partition.restart.invalid id=79be667ef9dcbbac
+TRACE[09-25|18:58:19.988] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.990] << PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.991] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.992] >> PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.992] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.992] >> PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.993] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.993] << PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.994] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.994] << PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:19.995] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:19.995] << PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.493] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.494] >> NEIGHBORS/v4                          addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.495] << FINDNODE/v4                           addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.494] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.840] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.841] Revalidated node                         b=16 id=79be667ef9dcbbac
+TRACE[09-25|18:58:20.840] >> PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.840] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.842] << PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.927] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.928] >> NEIGHBORS/v4                          addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:20.929] << FINDNODE/v4                           addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:20.928] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.987] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.987] >> NEIGHBORS/v4                          addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.987] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.988] << FINDNODE/v4                           addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.994] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:20.994] >> NEIGHBORS/v4                          addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.995] << FINDNODE/v4                           addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:20.994] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.428] >> PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.428] >> PONG/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:21.429] << PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.429] >> PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:21.430] >> PONG/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.431] << PING/v4                               addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.430] << PING/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:21.432] << PONG/v4                               addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:21.488] Dial task done                           task="discovery lookup (2 results)"
+TRACE[09-25|18:58:21.488] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.489] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.489] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="already dialing"
+TRACE[09-25|18:58:21.489] New dial task                            task="dyndial c6047f9441ed7d6d 127.0.0.1:39829"
+TRACE[09-25|18:58:21.490] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:58:21.490] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:21.491] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:40407" err="dial tcp 127.0.0.1:40407: connect: connection refused"
+TRACE[09-25|18:58:21.491] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:58:21.492] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:39829 err="already dialing"
+TRACE[09-25|18:58:21.492] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.491] Accepted connection                      addr=127.0.0.1:54926
+TRACE[09-25|18:58:21.494] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:58:21.494] New dial task                            task="dyndial f9308a019258c310 127.0.0.1:32999"
+DEBUG[09-25|18:58:21.495] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:54926 peers=2
+TRACE[09-25|18:58:21.495] Invalid neighbor node received           ip=127.0.0.1 addr=127.0.0.1:39829 err="missing TCP port"
+TRACE[09-25|18:58:21.496] Starting protocol restartprobe/1         id=f9308a019258c310 conn=inbound
+TRACE[09-25|18:58:21.495] >> NEIGHBORS/v4                          addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.494] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.495] connection set up                        id=f9308a019258c310 addr=127.0.0.1:54926 conn=inbound    inbound=true
+TRACE[09-25|18:58:21.494] >> FINDNODE/v4                           addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:21.495] >> NEIGHBORS/v4                          addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.494] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:39829 err="already dialing"
+TRACE[09-25|18:58:21.496] << NEIGHBORS/v4                          addr=127.0.0.1:39829 err=nil
+TRACE[09-25|18:58:21.496] Accepted connection                      addr=127.0.0.1:41254
+TRACE[09-25|18:58:21.496] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="already dialing"
+TRACE[09-25|18:58:21.496] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:0" err="dial tcp 127.0.0.1:0: connect: connection refused"
+TRACE[09-25|18:58:21.497] << FINDNODE/v4                           addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.498] << FINDNODE/v4                           addr=127.0.0.1:32999 err=nil
+TRACE[09-25|18:58:21.499] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.499] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.500] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="already dialing"
+TRACE[09-25|18:58:21.501] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.503] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:39829 err="already dialing"
+DEBUG[09-25|18:58:21.503] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:39829 peers=1
+TRACE[09-25|18:58:21.502] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:58:21.504] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:39829 err="already dialing"
+TRACE[09-25|18:58:21.504] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.504] Starting protocol restartprobe/1         id=c6047f9441ed7d6d conn=dyndial
+TRACE[09-25|18:58:21.504] connection set up                        id=c6047f9441ed7d6d addr=127.0.0.1:39829 conn=dyndial    inbound=false
+TRACE[09-25|18:58:21.504] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="already dialing"
+TRACE[09-25|18:58:21.506] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:58:21.505] Dial task done                           task="dyndial c6047f9441ed7d6d 127.0.0.1:39829"
+TRACE[09-25|18:58:21.507] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="is self"
+TRACE[09-25|18:58:21.506] Rejected peer before protocol handshake  id=f9308a019258c310 addr=127.0.0.1:32999 conn=dyndial    err="already connected"
+TRACE[09-25|18:58:21.506] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="already dialing"
+TRACE[09-25|18:58:21.508] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:58:21.508] Failed proto handshake                   id=c6047f9441ed7d6d addr=127.0.0.1:41254 conn=inbound    err="disconnect requested"
+TRACE[09-25|18:58:21.509] Setting up connection failed             id=c6047f9441ed7d6d err="disconnect requested"
+TRACE[09-25|18:58:21.508] Setting up connection failed             id=f9308a019258c310 err="already connected"
+TRACE[09-25|18:58:21.510] Dial error                               task="dyndial f9308a019258c310 127.0.0.1:32999" err="already connected"
+TRACE[09-25|18:58:21.507] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:39829 err="already connected"
+TRACE[09-25|18:58:21.510] Dial task done                           task="dyndial f9308a019258c310 127.0.0.1:32999"
+TRACE[09-25|18:58:21.511] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="already connected"
+TRACE[09-25|18:58:21.512] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+    network_partition_linux_test.go:225: same fresh client automatically discovered community in 20.451304335s after UDP returned; authenticated message 82 verified without static peer, seed TCP service or restart
+TRACE[09-25|18:58:21.543] P2P networking is spinning down 
+DEBUG[09-25|18:58:21.544] Read error                               err="accept tcp 127.0.0.1:36775: use of closed network connection"
+TRACE[09-25|18:58:21.544] <-delpeer (spindown)                     id=c6047f9441ed7d6d conn=staticdial remainingTasks=0
+DEBUG[09-25|18:58:21.544] Removing p2p peer                        id=e493dbf1c10d80f3 conn=inbound    duration=32.503s peers=1 req=true err="client quitting"
+DEBUG[09-25|18:58:21.545] Read error                               err="accept tcp 127.0.0.1:32999: use of closed network connection"
+TRACE[09-25|18:58:21.545] P2P networking is spinning down 
+TRACE[09-25|18:58:21.546] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:58:21.547] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="socket closed"
+DEBUG[09-25|18:58:21.547] UDP read error                           err="read udp 127.0.0.1:32999: use of closed network connection"
+TRACE[09-25|18:58:21.547] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="already connected"
+TRACE[09-25|18:58:21.547] Findnode failed                          id=c6047f9441ed7d6d failcount=1  err="socket closed"
+TRACE[09-25|18:58:21.549] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:32999->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:21.549] Findnode failed                          id=79be667ef9dcbbac failcount=2  err="socket closed"
+TRACE[09-25|18:58:21.549] >> FINDNODE/v4                           addr=127.0.0.1:39829 err="write udp 127.0.0.1:32999->127.0.0.1:39829: use of closed network connection"
+TRACE[09-25|18:58:21.550] Findnode failed                          id=c6047f9441ed7d6d failcount=2  err="socket closed"
+TRACE[09-25|18:58:21.551] <-delpeer (spindown)                     id=c6047f9441ed7d6d conn=dyndial    remainingTasks=1
+DEBUG[09-25|18:58:21.551] Removing p2p peer                        id=f9308a019258c310 conn=inbound    duration=56.447ms peers=0 req=true err="client quitting"
+DEBUG[09-25|18:58:21.551] Read error                               err="accept tcp 127.0.0.1:39829: use of closed network connection"
+TRACE[09-25|18:58:21.552] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:32999 err="recently dialed"
+TRACE[09-25|18:58:21.552] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:58:21.553] P2P networking is spinning down 
+TRACE[09-25|18:58:21.553] >> FINDNODE/v4                           addr=127.0.0.1:32999 err="write udp 127.0.0.1:39829->127.0.0.1:32999: use of closed network connection"
+DEBUG[09-25|18:58:21.553] UDP read error                           err="read udp 127.0.0.1:39829: use of closed network connection"
+TRACE[09-25|18:58:21.554] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:39829->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:21.555] Findnode failed                          id=79be667ef9dcbbac failcount=11 err="socket closed"
+TRACE[09-25|18:58:21.554] >> FINDNODE/v4                           addr=127.0.0.1:32999 err="write udp 127.0.0.1:39829->127.0.0.1:32999: use of closed network connection"
+TRACE[09-25|18:58:21.555] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=11
+TRACE[09-25|18:58:21.556] Findnode failed                          id=f9308a019258c310 failcount=1  err="socket closed"
+TRACE[09-25|18:58:21.556] >> FINDNODE/v4                           addr=127.0.0.1:32999 err="write udp 127.0.0.1:39829->127.0.0.1:32999: use of closed network connection"
+TRACE[09-25|18:58:21.557] Findnode failed                          id=f9308a019258c310 failcount=2  err="socket closed"
+TRACE[09-25|18:58:21.558] >> FINDNODE/v4                           addr=127.0.0.1:32999 err="write udp 127.0.0.1:39829->127.0.0.1:32999: use of closed network connection"
+TRACE[09-25|18:58:21.558] Findnode failed                          id=f9308a019258c310 failcount=3  err="socket closed"
+DEBUG[09-25|18:58:21.559] UDP read error                           err="read udp4 127.0.0.1:40407: use of closed network connection"
+--- PASS: TestRestartNetworkPartitionRehearsal (32.67s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked (32.67s)
+TRACE[09-25|18:58:21.559] >> PING/v4                               addr=127.0.0.1:32999 err="write udp 127.0.0.1:39829->127.0.0.1:32999: use of closed network connection"
+=== RUN   TestRestartNetworkPartitionRehearsal
+TRACE[09-25|18:58:21.560] >> FINDNODE/v4                           addr=127.0.0.1:32999 err="write udp 127.0.0.1:39829->127.0.0.1:32999: use of closed network connection"
+TRACE[09-25|18:58:21.561] Findnode failed                          id=f9308a019258c310 failcount=1  err="socket closed"
+=== RUN   TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked
+INFO [09-25|18:58:21.564] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40407
+INFO [09-25|18:58:21.565] Starting P2P networking 
+INFO [09-25|18:58:21.570] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37837
+TRACE[09-25|18:58:21.570] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.571] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:21.571] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+INFO [09-25|18:58:21.571] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37837
+TRACE[09-25|18:58:21.571] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:21.572] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:21.574] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:21.572] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.573] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.574] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:21.575] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:21.576] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:21.576] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:21.576] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+    network_partition_linux_test.go:208: kernel packet-loss filter: [match ip protocol 17 0xff match ip dport 40407 0xffff]
+INFO [09-25|18:58:21.627] Starting P2P networking 
+INFO [09-25|18:58:21.631] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:33343
+TRACE[09-25|18:58:21.632] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+INFO [09-25|18:58:21.633] Starting P2P networking 
+TRACE[09-25|18:58:21.633] New dial task                            task="discovery lookup"
+INFO [09-25|18:58:21.633] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:33343
+INFO [09-25|18:58:21.634] RLPx listener up                         self="enode://e493dbf1c10d80f3581e4904930b1404cc6c13900ee0758474fa94abe8c4cd1351ed993ea0d455b75642e2098ea51448d967ae33bfbdfe40cfe97bdc47739922@127.0.0.1:45985?discport=0"
+TRACE[09-25|18:58:21.634] New dial task                            task="staticdial c6047f9441ed7d6d 127.0.0.1:37837"
+TRACE[09-25|18:58:21.635] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:21.636] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:21.637] Accepted connection                      addr=127.0.0.1:41020
+DEBUG[09-25|18:58:21.638] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:37837 peers=1
+DEBUG[09-25|18:58:21.638] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:41020 peers=1
+TRACE[09-25|18:58:21.639] connection set up                        id=e493dbf1c10d80f3 addr=127.0.0.1:41020 conn=inbound    inbound=true
+TRACE[09-25|18:58:21.639] Starting protocol restartprobe/1         id=e493dbf1c10d80f3 conn=inbound
+TRACE[09-25|18:58:21.639] connection set up                        id=c6047f9441ed7d6d addr=127.0.0.1:37837 conn=staticdial inbound=false
+TRACE[09-25|18:58:21.638] Starting protocol restartprobe/1         id=c6047f9441ed7d6d conn=staticdial
+TRACE[09-25|18:58:21.640] Dial task done                           task="staticdial c6047f9441ed7d6d 127.0.0.1:37837"
+TRACE[09-25|18:58:21.641] New dial task                            task="wait for dial hist expire (29.999994141s)"
+TRACE[09-25|18:58:22.072] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:22.076] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+WARN [09-25|18:58:22.132] Bootstrap contact unavailable; retrying  host=partition.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for partition.restart.invalid"
+TRACE[09-25|18:58:22.572] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="RPC timeout"
+TRACE[09-25|18:58:22.573] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:22.576] Findnode failed                          id=79be667ef9dcbbac failcount=2  err="RPC timeout"
+TRACE[09-25|18:58:22.577] Dial task done                           task="discovery lookup (1 results)"
+TRACE[09-25|18:58:22.577] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:58:22.578] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:22.578] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:0" err="dial tcp 127.0.0.1:0: connect: connection refused"
+TRACE[09-25|18:58:22.579] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:58:23.074] Findnode failed                          id=79be667ef9dcbbac failcount=3  err="RPC timeout"
+TRACE[09-25|18:58:23.075] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:23.575] Findnode failed                          id=79be667ef9dcbbac failcount=4  err="RPC timeout"
+TRACE[09-25|18:58:23.576] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:24.076] Findnode failed                          id=79be667ef9dcbbac failcount=5  err="RPC timeout"
+TRACE[09-25|18:58:24.077] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=5
+TRACE[09-25|18:58:24.618] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:24.618] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:24.620] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:24.987] >> PING/v4                               addr=127.0.0.1:39829 err="write udp 127.0.0.1:32999->127.0.0.1:39829: use of closed network connection"
+TRACE[09-25|18:58:24.988] >> FINDNODE/v4                           addr=127.0.0.1:39829 err="write udp 127.0.0.1:32999->127.0.0.1:39829: use of closed network connection"
+TRACE[09-25|18:58:24.988] Findnode failed                          id=c6047f9441ed7d6d failcount=1  err="socket closed"
+TRACE[09-25|18:58:24.987] >> PING/v4                               addr=127.0.0.1:40407 err="write udp 127.0.0.1:32999->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:24.989] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:32999->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:24.989] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="socket closed"
+TRACE[09-25|18:58:25.118] Removed dead node                        b=14 id=c6047f9441ed7d6d ip=127.0.0.1
+TRACE[09-25|18:58:25.574] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:25.635] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:25.635] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:26.075] Findnode failed                          id=79be667ef9dcbbac failcount=6  err="RPC timeout"
+TRACE[09-25|18:58:26.076] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=6
+TRACE[09-25|18:58:26.076] Dial task done                           task="discovery lookup (1 results)"
+TRACE[09-25|18:58:26.077] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:26.077] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:29.578] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:29.635] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:29.636] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:30.078] Findnode failed                          id=79be667ef9dcbbac failcount=7  err="RPC timeout"
+TRACE[09-25|18:58:30.079] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=7
+TRACE[09-25|18:58:30.080] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:30.080] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:32.135] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:33.578] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:33.635] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:33.636] New dial task                            task="discovery lookup"
+    network_partition_linux_test.go:220: DNS answered 4 questions and independent static TCP message 81 arrived, but fresh client stayed peerless while seed UDP was blocked
+    network_partition_linux_test.go:221: healed partition; netem dropped=11; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":4625,"packets":45,"drops":11,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":11,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+TRACE[09-25|18:58:33.941] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:33.941] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:33.942] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:33.942] Revalidated node                         b=14 id=79be667ef9dcbbac
+TRACE[09-25|18:58:33.942] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:34.078] Findnode failed                          id=79be667ef9dcbbac failcount=8  err="RPC timeout"
+TRACE[09-25|18:58:34.079] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=8
+TRACE[09-25|18:58:34.080] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:34.080] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:37.578] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:37.579] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:37.579] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:37.580] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:37.636] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:37.636] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:38.079] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:38.080] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:38.080] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:38.081] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:38.580] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:38.580] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:38.581] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:38.581] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:39.081] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:39.081] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:39.081] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:39.082] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:39.402] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:39.403] Revalidated node                         b=14 id=c6047f9441ed7d6d
+TRACE[09-25|18:58:39.402] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:39.404] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:39.403] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:39.582] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:39.582] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:39.583] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:39.582] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:40.082] Dial task done                           task="discovery lookup (3 results)"
+TRACE[09-25|18:58:40.083] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:40.083] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:40.084] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:40.084] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:40.084] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:40.085] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:41.577] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:41.578] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:41.578] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:41.578] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:41.637] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:41.638] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:41.760] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:41.760] Revalidated node                         b=14 id=79be667ef9dcbbac
+TRACE[09-25|18:58:41.760] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:41.760] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:41.762] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:42.078] Dial task done                           task="discovery lookup (3 results)"
+TRACE[09-25|18:58:42.078] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:42.079] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:42.080] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:42.081] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:42.081] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:42.082] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:44.008] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.008] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.010] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.010] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.011] Revalidated node                         b=0  id=c6047f9441ed7d6d
+TRACE[09-25|18:58:44.011] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.012] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.013] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:44.013] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:45.578] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:45.578] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:45.578] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:45.579] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:45.638] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:45.639] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:45.707] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:45.707] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:45.708] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:45.708] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:45.708] Revalidated node                         b=14 id=79be667ef9dcbbac
+TRACE[09-25|18:58:46.078] Dial task done                           task="discovery lookup (3 results)"
+TRACE[09-25|18:58:46.079] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:46.079] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:46.080] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:46.080] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:46.081] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:46.081] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:48.771] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:48.772] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:48.772] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:48.772] Revalidated node                         b=14 id=c6047f9441ed7d6d
+TRACE[09-25|18:58:48.773] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:49.578] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:49.578] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:49.579] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:49.579] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:49.639] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:49.639] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:50.079] Dial task done                           task="discovery lookup (3 results)"
+TRACE[09-25|18:58:50.080] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:50.080] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:50.081] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:50.081] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:50.082] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:50.083] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:51.079] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:51.080] Revalidated node                         b=14 id=c6047f9441ed7d6d
+TRACE[09-25|18:58:51.080] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:51.081] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:51.080] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:52.769] Dial task done                           task="wait for dial hist expire (29.999994141s)"
+TRACE[09-25|18:58:53.399] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:53.400] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:53.400] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:53.401] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:53.763] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+INFO [09-25|18:58:53.764] Bootstrap contact recovered              host=partition.restart.invalid id=79be667ef9dcbbac
+TRACE[09-25|18:58:53.763] >> PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.763] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.765] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.766] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.767] << PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.766] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.767] >> PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.768] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.768] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.769] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.769] << PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.770] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.771] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:53.770] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:53.772] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.270] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:54.270] >> NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.271] << FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.270] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:54.705] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:54.705] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.706] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.706] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:54.765] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:54.766] >> NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.766] << FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.766] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:54.770] >> PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.771] >> PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.771] << PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.772] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.773] << PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.772] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.774] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.774] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.934] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.935] >> PONG/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:54.935] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:54.935] Revalidated node                         b=16 id=f9308a019258c310
+TRACE[09-25|18:58:54.936] << PING/v4                               addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.206] >> FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.206] >> NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.207] << NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.207] << FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.266] >> FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.266] >> NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.267] << FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.267] << NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.272] >> FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.272] >> NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.273] << FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.272] << NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.381] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.381] >> PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.383] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.383] << PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.384] Revalidated node                         b=0  id=f9308a019258c310
+TRACE[09-25|18:58:55.384] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.385] >> PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.385] << PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.386] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.707] Dial task done                           task="discovery lookup (5 results)"
+TRACE[09-25|18:58:55.708] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.709] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="already dialing"
+TRACE[09-25|18:58:55.709] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="already dialing"
+TRACE[09-25|18:58:55.710] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="already dialing"
+TRACE[09-25|18:58:55.710] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.711] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.712] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:58:55.712] New dial task                            task="dyndial f9308a019258c310 127.0.0.1:33343"
+TRACE[09-25|18:58:55.713] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:55.713] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:40407" err="dial tcp 127.0.0.1:40407: connect: connection refused"
+TRACE[09-25|18:58:55.714] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:58:55.714] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.715] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="already dialing"
+TRACE[09-25|18:58:55.715] Accepted connection                      addr=127.0.0.1:54876
+TRACE[09-25|18:58:55.715] >> PING/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.716] Revalidated node                         b=16 id=f9308a019258c310
+TRACE[09-25|18:58:55.715] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.717] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.715] << PONG/v4                               addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.718] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.721] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="already dialing"
+TRACE[09-25|18:58:55.717] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+DEBUG[09-25|18:58:55.722] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:33343 peers=2
+TRACE[09-25|18:58:55.723] New dial task                            task="dyndial c6047f9441ed7d6d 127.0.0.1:37837"
+TRACE[09-25|18:58:55.723] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.724] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="already dialing"
+TRACE[09-25|18:58:55.723] Starting protocol restartprobe/1         id=f9308a019258c310 conn=dyndial
+TRACE[09-25|18:58:55.723] connection set up                        id=f9308a019258c310 addr=127.0.0.1:33343 conn=dyndial    inbound=false
+TRACE[09-25|18:58:55.724] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+DEBUG[09-25|18:58:55.726] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:54876 peers=1
+TRACE[09-25|18:58:55.725] Accepted connection                      addr=127.0.0.1:39820
+TRACE[09-25|18:58:55.726] Dial task done                           task="dyndial f9308a019258c310 127.0.0.1:33343"
+TRACE[09-25|18:58:55.727] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:40407" err="dial tcp 127.0.0.1:40407: connect: connection refused"
+TRACE[09-25|18:58:55.727] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+TRACE[09-25|18:58:55.727] connection set up                        id=c6047f9441ed7d6d addr=127.0.0.1:54876 conn=inbound    inbound=true
+TRACE[09-25|18:58:55.727] Starting protocol restartprobe/1         id=c6047f9441ed7d6d conn=inbound
+TRACE[09-25|18:58:55.728] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.729] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="already dialing"
+TRACE[09-25|18:58:55.731] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.731] Rejected peer before protocol handshake  id=c6047f9441ed7d6d addr=127.0.0.1:37837 conn=dyndial    err="already connected"
+TRACE[09-25|18:58:55.731] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+TRACE[09-25|18:58:55.734] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="already dialing"
+TRACE[09-25|18:58:55.732] Rejected peer before protocol handshake  id=f9308a019258c310 addr=127.0.0.1:39820 conn=inbound    err="already connected"
+TRACE[09-25|18:58:55.732] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="already connected"
+TRACE[09-25|18:58:55.733] Setting up connection failed             id=c6047f9441ed7d6d err="already connected"
+TRACE[09-25|18:58:55.734] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:58:55.735] Setting up connection failed             id=f9308a019258c310 err="already connected"
+TRACE[09-25|18:58:55.735] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.736] Dial error                               task="dyndial c6047f9441ed7d6d 127.0.0.1:37837" err="already connected"
+TRACE[09-25|18:58:55.738] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.741] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+TRACE[09-25|18:58:55.742] Dial task done                           task="dyndial c6047f9441ed7d6d 127.0.0.1:37837"
+TRACE[09-25|18:58:55.742] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+TRACE[09-25|18:58:55.743] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.743] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="already connected"
+TRACE[09-25|18:58:55.766] Dial task done                           task="discovery lookup (4 results)"
+    network_partition_linux_test.go:225: same fresh client automatically discovered community in 20.95104609s after UDP returned; authenticated message 82 verified without static peer, seed TCP service or restart
+TRACE[09-25|18:58:55.767] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+DEBUG[09-25|18:58:55.768] Read error                               err="accept tcp 127.0.0.1:45985: use of closed network connection"
+TRACE[09-25|18:58:55.768] P2P networking is spinning down 
+TRACE[09-25|18:58:55.768] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+TRACE[09-25|18:58:55.770] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="already connected"
+TRACE[09-25|18:58:55.771] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="is self"
+DEBUG[09-25|18:58:55.770] Removing p2p peer                        id=e493dbf1c10d80f3 conn=inbound    duration=33.005s  peers=1 req=true err="client quitting"
+TRACE[09-25|18:58:55.773] >> FINDNODE/v4                           addr=127.0.0.1:37837 err=nil
+TRACE[09-25|18:58:55.770] <-delpeer (spindown)                     id=c6047f9441ed7d6d conn=staticdial remainingTasks=0
+TRACE[09-25|18:58:55.772] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="already connected"
+TRACE[09-25|18:58:55.773] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.773] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.773] >> NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.777] << FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.774] >> NEIGHBORS/v4                          addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.774] << NEIGHBORS/v4                          addr=127.0.0.1:37837 err=nil
+DEBUG[09-25|18:58:55.774] Read error                               err="accept tcp 127.0.0.1:33343: use of closed network connection"
+TRACE[09-25|18:58:55.775] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.776] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+TRACE[09-25|18:58:55.778] << FINDNODE/v4                           addr=127.0.0.1:33343 err=nil
+TRACE[09-25|18:58:55.778] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.779] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.782] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:55.782] P2P networking is spinning down 
+TRACE[09-25|18:58:55.783] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="socket closed"
+DEBUG[09-25|18:58:55.783] UDP read error                           err="read udp 127.0.0.1:33343: use of closed network connection"
+TRACE[09-25|18:58:55.784] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:33343->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:55.784] Findnode failed                          id=79be667ef9dcbbac failcount=2  err="socket closed"
+TRACE[09-25|18:58:55.784] >> FINDNODE/v4                           addr=127.0.0.1:37837 err="write udp 127.0.0.1:33343->127.0.0.1:37837: use of closed network connection"
+TRACE[09-25|18:58:55.785] Findnode failed                          id=c6047f9441ed7d6d failcount=1  err="socket closed"
+TRACE[09-25|18:58:55.786] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:33343->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:55.787] Findnode failed                          id=79be667ef9dcbbac failcount=3  err="socket closed"
+TRACE[09-25|18:58:55.786] >> FINDNODE/v4                           addr=127.0.0.1:37837 err="write udp 127.0.0.1:33343->127.0.0.1:37837: use of closed network connection"
+TRACE[09-25|18:58:55.788] Findnode failed                          id=c6047f9441ed7d6d failcount=2  err="socket closed"
+TRACE[09-25|18:58:55.789] <-delpeer (spindown)                     id=c6047f9441ed7d6d conn=inbound    remainingTasks=1
+DEBUG[09-25|18:58:55.789] Removing p2p peer                        id=f9308a019258c310 conn=dyndial    duration=67.270ms peers=0 req=true err="client quitting"
+TRACE[09-25|18:58:55.791] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:37837 err="is self"
+DEBUG[09-25|18:58:55.790] Read error                               err="accept tcp 127.0.0.1:37837: use of closed network connection"
+TRACE[09-25|18:58:55.792] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:33343 err="recently dialed"
+TRACE[09-25|18:58:55.793] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="recently dialed"
+TRACE[09-25|18:58:55.793] P2P networking is spinning down 
+DEBUG[09-25|18:58:55.794] UDP read error                           err="read udp 127.0.0.1:37837: use of closed network connection"
+--- PASS: TestRestartNetworkPartitionRehearsal (33.11s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked (33.11s)
+DEBUG[09-25|18:58:55.794] UDP read error                           err="read udp4 127.0.0.1:40407: use of closed network connection"
+=== RUN   TestRestartNetworkPartitionRehearsal
+=== RUN   TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked
+INFO [09-25|18:58:55.801] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40407
+INFO [09-25|18:58:55.803] Starting P2P networking 
+INFO [09-25|18:58:55.804] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:35961
+INFO [09-25|18:58:55.805] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:35961
+TRACE[09-25|18:58:55.806] >> PONG/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.806] >> PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.807] << PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.806] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:55.807] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.808] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.808] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.809] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.805] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.808] >> PONG/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.810] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.811] >> PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.812] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.813] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.812] << PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.814] << PONG/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:55.814] << PONG/v4                               addr=127.0.0.1:35961 err=nil
+    network_partition_linux_test.go:208: kernel packet-loss filter: [match ip protocol 17 0xff match ip dport 40407 0xffff]
+INFO [09-25|18:58:55.861] Starting P2P networking 
+INFO [09-25|18:58:55.863] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:34309
+TRACE[09-25|18:58:55.864] New dial task                            task="discovery lookup"
+INFO [09-25|18:58:55.864] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:34309
+TRACE[09-25|18:58:55.864] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:55.865] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:55.866] New dial task                            task="discovery lookup"
+INFO [09-25|18:58:55.914] Starting P2P networking 
+TRACE[09-25|18:58:55.915] New dial task                            task="staticdial c6047f9441ed7d6d 127.0.0.1:35961"
+INFO [09-25|18:58:55.915] RLPx listener up                         self="enode://e493dbf1c10d80f3581e4904930b1404cc6c13900ee0758474fa94abe8c4cd1351ed993ea0d455b75642e2098ea51448d967ae33bfbdfe40cfe97bdc47739922@127.0.0.1:34953?discport=0"
+TRACE[09-25|18:58:55.916] Accepted connection                      addr=127.0.0.1:33038
+DEBUG[09-25|18:58:55.918] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:35961 peers=1
+DEBUG[09-25|18:58:55.918] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:33038 peers=1
+TRACE[09-25|18:58:55.918] connection set up                        id=c6047f9441ed7d6d addr=127.0.0.1:35961 conn=staticdial inbound=false
+TRACE[09-25|18:58:55.918] Starting protocol restartprobe/1         id=c6047f9441ed7d6d conn=staticdial
+TRACE[09-25|18:58:55.919] connection set up                        id=e493dbf1c10d80f3 addr=127.0.0.1:33038 conn=inbound    inbound=true
+TRACE[09-25|18:58:55.919] Starting protocol restartprobe/1         id=e493dbf1c10d80f3 conn=inbound
+TRACE[09-25|18:58:55.919] Dial task done                           task="staticdial c6047f9441ed7d6d 127.0.0.1:35961"
+TRACE[09-25|18:58:55.921] New dial task                            task="wait for dial hist expire (29.999989206s)"
+TRACE[09-25|18:58:56.311] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:56.311] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+WARN [09-25|18:58:56.365] Bootstrap contact unavailable; retrying  host=partition.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for partition.restart.invalid"
+TRACE[09-25|18:58:56.811] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="RPC timeout"
+TRACE[09-25|18:58:56.812] Findnode failed                          id=79be667ef9dcbbac failcount=2  err="RPC timeout"
+TRACE[09-25|18:58:56.813] Dial task done                           task="discovery lookup (1 results)"
+TRACE[09-25|18:58:56.814] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:58:56.813] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:56.814] New dial task                            task="discovery lookup"
+TRACE[09-25|18:58:56.814] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:0" err="dial tcp 127.0.0.1:0: connect: connection refused"
+TRACE[09-25|18:58:56.815] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:58:57.314] Findnode failed                          id=79be667ef9dcbbac failcount=3  err="RPC timeout"
+TRACE[09-25|18:58:57.322] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:57.822] Findnode failed                          id=79be667ef9dcbbac failcount=4  err="RPC timeout"
+TRACE[09-25|18:58:57.823] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:57.856] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:58.101] >> PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:58:58.101] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:58.102] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:58.324] Findnode failed                          id=79be667ef9dcbbac failcount=5  err="RPC timeout"
+TRACE[09-25|18:58:58.324] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=5
+TRACE[09-25|18:58:58.602] Removed dead node                        b=14 id=c6047f9441ed7d6d ip=127.0.0.1
+TRACE[09-25|18:58:58.706] >> PING/v4                               addr=127.0.0.1:33343 err="write udp 127.0.0.1:37837->127.0.0.1:33343: use of closed network connection"
+TRACE[09-25|18:58:58.706] >> PING/v4                               addr=127.0.0.1:40407 err="write udp 127.0.0.1:37837->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:58.707] >> FINDNODE/v4                           addr=127.0.0.1:33343 err="write udp 127.0.0.1:37837->127.0.0.1:33343: use of closed network connection"
+TRACE[09-25|18:58:58.707] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:37837->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:58.708] Findnode failed                          id=f9308a019258c310 failcount=1  err="socket closed"
+TRACE[09-25|18:58:58.709] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="socket closed"
+TRACE[09-25|18:58:58.766] >> PING/v4                               addr=127.0.0.1:37837 err="write udp 127.0.0.1:33343->127.0.0.1:37837: use of closed network connection"
+TRACE[09-25|18:58:58.766] >> PING/v4                               addr=127.0.0.1:40407 err="write udp 127.0.0.1:33343->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:58.767] >> FINDNODE/v4                           addr=127.0.0.1:37837 err="write udp 127.0.0.1:33343->127.0.0.1:37837: use of closed network connection"
+TRACE[09-25|18:58:58.768] Findnode failed                          id=c6047f9441ed7d6d failcount=1  err="socket closed"
+TRACE[09-25|18:58:58.767] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:33343->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:58:58.769] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="socket closed"
+TRACE[09-25|18:58:59.810] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:58:59.866] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:58:59.866] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:00.310] Findnode failed                          id=79be667ef9dcbbac failcount=6  err="RPC timeout"
+TRACE[09-25|18:59:00.311] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=6
+TRACE[09-25|18:59:00.312] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:00.312] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:03.813] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:03.866] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:03.867] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:04.313] Findnode failed                          id=79be667ef9dcbbac failcount=7  err="RPC timeout"
+TRACE[09-25|18:59:04.314] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=7
+TRACE[09-25|18:59:04.314] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:04.315] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:06.367] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:07.814] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:07.867] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:07.868] New dial task                            task="discovery lookup"
+    network_partition_linux_test.go:220: DNS answered 4 questions and independent static TCP message 81 arrived, but fresh client stayed peerless while seed UDP was blocked
+    network_partition_linux_test.go:221: healed partition; netem dropped=12; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":4433,"packets":43,"drops":12,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":12,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+TRACE[09-25|18:59:08.314] Findnode failed                          id=79be667ef9dcbbac failcount=8  err="RPC timeout"
+TRACE[09-25|18:59:08.315] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=8
+TRACE[09-25|18:59:08.316] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:08.316] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:11.815] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:11.816] >> NEIGHBORS/v4                          addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:11.816] << FINDNODE/v4                           addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:11.816] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:11.868] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:11.868] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:12.316] Findnode failed                          id=79be667ef9dcbbac failcount=9  err="RPC timeout"
+TRACE[09-25|18:59:12.316] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=9
+TRACE[09-25|18:59:12.317] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:12.317] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:15.817] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:15.817] >> NEIGHBORS/v4                          addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:15.818] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:15.818] << FINDNODE/v4                           addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:15.869] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:15.869] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:16.317] Findnode failed                          id=79be667ef9dcbbac failcount=10 err="RPC timeout"
+TRACE[09-25|18:59:16.318] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=10
+TRACE[09-25|18:59:16.319] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:16.320] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:19.817] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:19.817] >> NEIGHBORS/v4                          addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:19.818] << FINDNODE/v4                           addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:19.817] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:19.870] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:19.871] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:20.318] Findnode failed                          id=79be667ef9dcbbac failcount=11 err="RPC timeout"
+TRACE[09-25|18:59:20.318] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=11
+TRACE[09-25|18:59:20.319] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:20.319] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:23.818] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:23.818] >> NEIGHBORS/v4                          addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:23.819] << FINDNODE/v4                           addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:23.818] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:23.870] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:23.871] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:24.319] Findnode failed                          id=79be667ef9dcbbac failcount=12 err="RPC timeout"
+TRACE[09-25|18:59:24.320] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=12
+TRACE[09-25|18:59:24.321] Dial task done                           task="discovery lookup"
+TRACE[09-25|18:59:24.321] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:27.317] Dial task done                           task="wait for dial hist expire (29.999989206s)"
+TRACE[09-25|18:59:28.263] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.263] >> PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.265] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.265] >> PING/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.266] << PING/v4                               addr=127.0.0.1:34309 err=nil
+INFO [09-25|18:59:28.264] Bootstrap contact recovered              host=partition.restart.invalid id=79be667ef9dcbbac
+TRACE[09-25|18:59:28.264] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.267] >> PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.268] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.268] >> PING/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.269] << PING/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.269] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.270] << PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.270] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.271] >> PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.271] << PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.272] << PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.390] >> PING/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.391] Revalidated node                         b=16 id=79be667ef9dcbbac
+TRACE[09-25|18:59:28.390] >> PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.392] << PING/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.390] << PONG/v4                               addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.771] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.771] >> NEIGHBORS/v4                          addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:28.771] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:28.772] << FINDNODE/v4                           addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.213] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.213] >> NEIGHBORS/v4                          addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.214] << FINDNODE/v4                           addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.214] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.266] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.266] >> NEIGHBORS/v4                          addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.266] << FINDNODE/v4                           addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.266] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.271] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.271] >> NEIGHBORS/v4                          addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.272] << FINDNODE/v4                           addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.272] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.714] >> PING/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.714] >> PONG/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.714] << PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.715] >> PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.716] << PING/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.715] >> PONG/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.717] << PING/v4                               addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.716] << PONG/v4                               addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.766] Dial task done                           task="discovery lookup (2 results)"
+TRACE[09-25|18:59:29.766] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+TRACE[09-25|18:59:29.767] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:40407 err="already dialing"
+TRACE[09-25|18:59:29.767] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+TRACE[09-25|18:59:29.768] New dial task                            task="dyndial c6047f9441ed7d6d 127.0.0.1:35961"
+TRACE[09-25|18:59:29.768] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:59:29.769] New dial task                            task="discovery lookup"
+TRACE[09-25|18:59:29.769] Accepted connection                      addr=127.0.0.1:57594
+TRACE[09-25|18:59:29.770] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:40407" err="dial tcp 127.0.0.1:40407: connect: connection refused"
+TRACE[09-25|18:59:29.771] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:40407"
+TRACE[09-25|18:59:29.772] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+TRACE[09-25|18:59:29.773] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:35961 err="already dialing"
+TRACE[09-25|18:59:29.772] >> FINDNODE/v4                           addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.772] >> FINDNODE/v4                           addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.773] >> NEIGHBORS/v4                          addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.773] >> NEIGHBORS/v4                          addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.776] << FINDNODE/v4                           addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.773] Invalid neighbor node received           ip=127.0.0.1 addr=127.0.0.1:35961 err="missing TCP port"
+TRACE[09-25|18:59:29.771] New dial task                            task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:59:29.774] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:35961 err="already dialing"
+TRACE[09-25|18:59:29.775] << FINDNODE/v4                           addr=127.0.0.1:34309 err=nil
+TRACE[09-25|18:59:29.777] << NEIGHBORS/v4                          addr=127.0.0.1:35961 err=nil
+TRACE[09-25|18:59:29.777] New dial task                            task="dyndial f9308a019258c310 127.0.0.1:34309"
+DEBUG[09-25|18:59:29.778] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:57594 peers=2
+TRACE[09-25|18:59:29.779] Accepted connection                      addr=127.0.0.1:43858
+TRACE[09-25|18:59:29.777] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+DEBUG[09-25|18:59:29.780] Adding p2p peer                          name=restart-discovery-re... addr=127.0.0.1:35961 peers=1
+TRACE[09-25|18:59:29.778] << NEIGHBORS/v4                          addr=127.0.0.1:40407 err=nil
+TRACE[09-25|18:59:29.777] Dial error                               task="dyndial 79be667ef9dcbbac 127.0.0.1:0" err="dial tcp 127.0.0.1:0: connect: connection refused"
+TRACE[09-25|18:59:29.780] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="already dialing"
+TRACE[09-25|18:59:29.780] connection set up                        id=f9308a019258c310 addr=127.0.0.1:57594 conn=inbound    inbound=true
+TRACE[09-25|18:59:29.780] Starting protocol restartprobe/1         id=f9308a019258c310 conn=inbound
+TRACE[09-25|18:59:29.781] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:35961 err="already dialing"
+TRACE[09-25|18:59:29.781] Starting protocol restartprobe/1         id=c6047f9441ed7d6d conn=dyndial
+TRACE[09-25|18:59:29.781] connection set up                        id=c6047f9441ed7d6d addr=127.0.0.1:35961 conn=dyndial    inbound=false
+TRACE[09-25|18:59:29.782] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="already dialing"
+TRACE[09-25|18:59:29.783] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+TRACE[09-25|18:59:29.785] Dial task done                           task="dyndial c6047f9441ed7d6d 127.0.0.1:35961"
+TRACE[09-25|18:59:29.785] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+TRACE[09-25|18:59:29.786] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:35961 err="already connected"
+TRACE[09-25|18:59:29.785] Dial task done                           task="dyndial 79be667ef9dcbbac 127.0.0.1:0"
+TRACE[09-25|18:59:29.786] Rejected peer before protocol handshake  id=c6047f9441ed7d6d addr=127.0.0.1:43858 conn=inbound    err="already connected"
+TRACE[09-25|18:59:29.786] Skipping dial candidate                  id=c6047f9441ed7d6d addr=127.0.0.1:35961 err="already connected"
+TRACE[09-25|18:59:29.788] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="is self"
+TRACE[09-25|18:59:29.787] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:59:29.789] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="already dialing"
+TRACE[09-25|18:59:29.788] Setting up connection failed             id=c6047f9441ed7d6d err="already connected"
+TRACE[09-25|18:59:29.789] Rejected peer before protocol handshake  id=f9308a019258c310 addr=127.0.0.1:34309 conn=dyndial    err="already connected"
+TRACE[09-25|18:59:29.789] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="already dialing"
+TRACE[09-25|18:59:29.790] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:59:29.790] Setting up connection failed             id=f9308a019258c310 err="already connected"
+TRACE[09-25|18:59:29.791] Dial error                               task="dyndial f9308a019258c310 127.0.0.1:34309" err="already connected"
+TRACE[09-25|18:59:29.792] Dial task done                           task="dyndial f9308a019258c310 127.0.0.1:34309"
+TRACE[09-25|18:59:29.792] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="already connected"
+TRACE[09-25|18:59:29.793] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+    network_partition_linux_test.go:225: same fresh client automatically discovered community in 20.451285835s after UDP returned; authenticated message 82 verified without static peer, seed TCP service or restart
+DEBUG[09-25|18:59:29.827] Read error                               err="accept tcp 127.0.0.1:34953: use of closed network connection"
+TRACE[09-25|18:59:29.827] P2P networking is spinning down 
+TRACE[09-25|18:59:29.828] <-delpeer (spindown)                     id=c6047f9441ed7d6d conn=staticdial remainingTasks=0
+DEBUG[09-25|18:59:29.828] Removing p2p peer                        id=e493dbf1c10d80f3 conn=inbound    duration=32.515s  peers=1 req=true err="client quitting"
+TRACE[09-25|18:59:29.829] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="already connected"
+TRACE[09-25|18:59:29.829] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+DEBUG[09-25|18:59:29.828] Read error                               err="accept tcp 127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.828] P2P networking is spinning down 
+TRACE[09-25|18:59:29.830] Findnode failed                          id=c6047f9441ed7d6d failcount=1  err="socket closed"
+DEBUG[09-25|18:59:29.830] UDP read error                           err="read udp 127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.830] Findnode failed                          id=79be667ef9dcbbac failcount=1  err="socket closed"
+TRACE[09-25|18:59:29.831] >> FINDNODE/v4                           addr=127.0.0.1:35961 err="write udp 127.0.0.1:34309->127.0.0.1:35961: use of closed network connection"
+TRACE[09-25|18:59:29.832] Findnode failed                          id=c6047f9441ed7d6d failcount=2  err="socket closed"
+TRACE[09-25|18:59:29.831] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:34309->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:59:29.832] Findnode failed                          id=79be667ef9dcbbac failcount=2  err="socket closed"
+TRACE[09-25|18:59:29.833] <-delpeer (spindown)                     id=c6047f9441ed7d6d conn=dyndial    remainingTasks=1
+DEBUG[09-25|18:59:29.833] Removing p2p peer                        id=f9308a019258c310 conn=inbound    duration=54.731ms peers=0 req=true err="client quitting"
+TRACE[09-25|18:59:29.834] Skipping dial candidate                  id=79be667ef9dcbbac addr=127.0.0.1:0     err="recently dialed"
+TRACE[09-25|18:59:29.834] Skipping dial candidate                  id=f9308a019258c310 addr=127.0.0.1:34309 err="recently dialed"
+TRACE[09-25|18:59:29.835] P2P networking is spinning down 
+DEBUG[09-25|18:59:29.833] Read error                               err="accept tcp 127.0.0.1:35961: use of closed network connection"
+DEBUG[09-25|18:59:29.835] UDP read error                           err="read udp 127.0.0.1:35961: use of closed network connection"
+TRACE[09-25|18:59:29.835] >> FINDNODE/v4                           addr=127.0.0.1:34309 err="write udp 127.0.0.1:35961->127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.837] >> FINDNODE/v4                           addr=127.0.0.1:40407 err="write udp 127.0.0.1:35961->127.0.0.1:40407: use of closed network connection"
+TRACE[09-25|18:59:29.837] >> FINDNODE/v4                           addr=127.0.0.1:34309 err="write udp 127.0.0.1:35961->127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.837] Findnode failed                          id=79be667ef9dcbbac failcount=12 err="socket closed"
+TRACE[09-25|18:59:29.838] Too many findnode failures, dropping     id=79be667ef9dcbbac failcount=12
+TRACE[09-25|18:59:29.838] Findnode failed                          id=f9308a019258c310 failcount=1  err="socket closed"
+TRACE[09-25|18:59:29.839] >> FINDNODE/v4                           addr=127.0.0.1:34309 err="write udp 127.0.0.1:35961->127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.840] Findnode failed                          id=f9308a019258c310 failcount=2  err="socket closed"
+TRACE[09-25|18:59:29.840] >> FINDNODE/v4                           addr=127.0.0.1:34309 err="write udp 127.0.0.1:35961->127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.841] Findnode failed                          id=f9308a019258c310 failcount=3  err="socket closed"
+DEBUG[09-25|18:59:29.841] UDP read error                           err="read udp4 127.0.0.1:40407: use of closed network connection"
+--- PASS: TestRestartNetworkPartitionRehearsal (32.65s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked (32.65s)
+TRACE[09-25|18:59:29.841] >> PING/v4                               addr=127.0.0.1:34309 err="write udp 127.0.0.1:35961->127.0.0.1:34309: use of closed network connection"
+PASS
+TRACE[09-25|18:59:29.843] >> FINDNODE/v4                           addr=127.0.0.1:34309 err="write udp 127.0.0.1:35961->127.0.0.1:34309: use of closed network connection"
+TRACE[09-25|18:59:29.843] Findnode failed                          id=f9308a019258c310 failcount=1  err="socket closed"

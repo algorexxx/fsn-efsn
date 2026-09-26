@@ -1,0 +1,63 @@
+=== RUN   TestRestartNetworkPartitionRehearsal
+=== RUN   TestRestartNetworkPartitionRehearsal/short_loss_retains_tcp_connection
+INFO [09-26|19:45:37.206] Starting P2P networking 
+INFO [09-26|19:45:37.210] Starting P2P networking 
+INFO [09-26|19:45:37.213] RLPx listener up                         self="enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:41849?discport=0"
+INFO [09-26|19:45:37.214] RLPx listener up                         self="enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:37165?discport=0"
+    network_partition_linux_test.go:107: kernel packet-loss filter: [match ip dst 127.0.0.0/8]
+    network_partition_linux_test.go:121: healed partition; netem dropped=9; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":0,"packets":0,"drops":9,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":9,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+    network_partition_linux_test.go:134: three-second silent loss: successful local write did not establish delivery; TCP retransmitted message 72 after healing and both original protocol connections survived
+=== RUN   TestRestartNetworkPartitionRehearsal/long_static_partition
+INFO [09-26|19:45:40.424] Starting P2P networking 
+INFO [09-26|19:45:40.425] RLPx listener up                         self="enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.2:40408?discport=0"
+INFO [09-26|19:45:40.425] Starting P2P networking 
+INFO [09-26|19:45:40.426] RLPx listener up                         self="enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40289?discport=0"
+    network_partition_linux_test.go:147: kernel packet-loss filter: [match ip dst 127.0.0.0/8]
+    network_partition_linux_test.go:154: both static peer sessions detected silent loss after 30.000540046s
+    network_partition_linux_test.go:161: healed partition; netem dropped=34; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":0,"packets":0,"drops":34,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":34,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+    network_partition_linux_test.go:169: static peers automatically reconnected in 30.001549477s after 45-second partition; exchanged messages 76/77 without AddPeer, manual disconnect or restart; discovery remained disabled
+=== RUN   TestRestartNetworkPartitionRehearsal/one_way_static_partition
+INFO [09-26|19:46:57.732] Starting P2P networking 
+INFO [09-26|19:46:57.734] Starting P2P networking 
+INFO [09-26|19:46:57.734] RLPx listener up                         self="enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.2:40408?discport=0"
+INFO [09-26|19:46:57.734] RLPx listener up                         self="enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:39401?discport=0"
+    network_partition_linux_test.go:147: kernel packet-loss filter: [match ip dst 127.0.0.2/32]
+    network_partition_linux_test.go:151: reverse-direction authenticated message 75 arrived while packets toward 127.0.0.2 were being dropped
+    network_partition_linux_test.go:154: both static peer sessions detected silent loss after 30.00097335s
+    network_partition_linux_test.go:161: healed partition; netem dropped=30; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":1386,"packets":13,"drops":30,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":30,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+    network_partition_linux_test.go:169: static peers automatically reconnected in 30.00150345s after 45-second partition; exchanged messages 76/77 without AddPeer, manual disconnect or restart; discovery remained disabled
+=== RUN   TestRestartNetworkPartitionRehearsal/dynamic_peers_and_seed_recover
+INFO [09-26|19:48:15.336] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40407
+INFO [09-26|19:48:15.337] Starting P2P networking 
+INFO [09-26|19:48:15.338] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40951
+INFO [09-26|19:48:15.339] Starting P2P networking 
+INFO [09-26|19:48:15.339] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:40951
+INFO [09-26|19:48:15.343] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:35321
+INFO [09-26|19:48:15.344] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:35321
+    network_partition_linux_test.go:179: kernel packet-loss filter: [match ip dst 127.0.0.0/8]
+    network_partition_linux_test.go:182: both dynamically introduced peer sessions detected silent loss after 30.000731844s
+    network_partition_linux_test.go:189: healed partition; netem dropped=76; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":0,"packets":0,"drops":76,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":76,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+    network_partition_linux_test.go:194: dynamic peers automatically reconnected in 8.501551904s with original UDP-only seed still running; messages 79/80 verified; no static peers, seed TCP service, AddPeer, manual disconnect or restart
+=== RUN   TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked
+INFO [09-26|19:49:13.110] UDP listener up                          self=enode://79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8@127.0.0.1:40407
+INFO [09-26|19:49:13.111] Starting P2P networking 
+INFO [09-26|19:49:13.129] UDP listener up                          self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:39857
+INFO [09-26|19:49:13.131] RLPx listener up                         self=enode://c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee51ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a@127.0.0.1:39857
+    network_partition_linux_test.go:206: kernel packet-loss filter: [match ip protocol 17 0xff match ip dport 40407 0xffff]
+INFO [09-26|19:49:15.641] Starting P2P networking 
+INFO [09-26|19:49:15.646] UDP listener up                          self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:34751
+INFO [09-26|19:49:15.647] RLPx listener up                         self=enode://f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672@127.0.0.1:34751
+INFO [09-26|19:49:15.698] Starting P2P networking 
+INFO [09-26|19:49:15.699] RLPx listener up                         self="enode://e493dbf1c10d80f3581e4904930b1404cc6c13900ee0758474fa94abe8c4cd1351ed993ea0d455b75642e2098ea51448d967ae33bfbdfe40cfe97bdc47739922@127.0.0.1:41217?discport=0"
+WARN [09-26|19:49:16.153] Bootstrap contact unavailable; retrying  host=partition.restart.invalid id=79be667ef9dcbbac err="no reachable allowed address for partition.restart.invalid"
+    network_partition_linux_test.go:218: DNS answered 4 questions and independent static TCP message 81 arrived, but fresh client stayed peerless while seed UDP was blocked
+    network_partition_linux_test.go:219: healed partition; netem dropped=9; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":4521,"packets":43,"drops":9,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":9,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+INFO [09-26|19:49:48.032] Bootstrap contact recovered              host=partition.restart.invalid id=79be667ef9dcbbac
+    network_partition_linux_test.go:223: same fresh client automatically discovered community in 24.400263973s after UDP returned; authenticated message 82 verified without static peer, seed TCP service or restart
+--- PASS: TestRestartNetworkPartitionRehearsal (247.51s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/short_loss_retains_tcp_connection (3.22s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/long_static_partition (75.06s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/one_way_static_partition (75.07s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/dynamic_peers_and_seed_recover (55.09s)
+    --- PASS: TestRestartNetworkPartitionRehearsal/fresh_dns_contact_udp_blocked (39.05s)
+PASS
