@@ -472,3 +472,16 @@ existing `db get` command against a stopped synthetic database, exact saved byte
 unchanged database file hashes, a missing record and an open database lock.
 See the [retrieval and small-reserve report](../../docs/restart-small-reserve-and-retrieval.md)
 for retained passes, failures and production-accounting limits.
+
+`TestRestartNodeRehearsal/funded_small_reserve_repair` adds a separate public-key
+sponsor with 6,000 synthetic FSN at genesis to the same small miner reserves.
+It requires a pre-transfer insufficient-balance rejection, one ordinary
+5,000-FSN transfer, then sequential original purchases with bounded waits for
+ordinary ticket returns. Nonce, saved intent and pool preconditions stay fixed
+while waiting. Acceptance includes the exact saved purchase, two automatic
+successors, both cold databases and the sponsor's exact transfer/fee accounting.
+An independent ledger checks future liquid/time-lock/ticket rights on each
+isolated branch, before funding and after repair against ordinary rewards,
+fees, transfers and first-retreat losses. See the
+[funded repair report](../../docs/restart-funded-repair.md) for the retained
+attempts and limits; this does not add an automatic repair or funding mechanism.

@@ -1,0 +1,132 @@
+package restart
+
+import (
+	"encoding/json"
+	"math/big"
+	"testing"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/common/hexutil"
+	"github.com/FusionFoundation/efsn/v5/consensus/datong"
+	"github.com/FusionFoundation/efsn/v5/core/state"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+)
+
+type partitionFunds struct {
+	Block    *types.Block
+	Accounts map[common.Address]state.Account
+	Tickets  map[common.Hash]common.TicketDisplay
+}
+
+func readPartitionFunds(t *testing.T, node *rehearsalNode, owners []common.Address, height uint64) partitionFunds {
+	t.Helper()
+	result := partitionFunds{Block: readRecoveryNodeBlock(t, node, height), Accounts: make(map[common.Address]state.Account)}
+	number := hexutil.EncodeUint64(height)
+	requireNoError(t, node.call(t, &result.Tickets, "fsn_allTickets", number))
+	for _, owner := range owners {
+		var liquid string
+		var locks common.TimeLock
+		requireNoError(t, node.call(t, &liquid, "fsn_getBalance", common.SystemAssetID, owner, number))
+		requireNoError(t, node.call(t, &locks, "fsn_getTimeLockBalance", common.SystemAssetID, owner, number))
+		result.Accounts[owner] = state.Account{BalancesHash: []common.Hash{common.SystemAssetID}, BalancesVal: []*big.Int{decimal(t, liquid)}, TimeLockBalancesHash: []common.Hash{common.SystemAssetID}, TimeLockBalancesVal: []*common.TimeLock{&locks}}
+	}
+	for _, ticket := range result.Tickets {
+		if _, exists := result.Accounts[ticket.Owner]; !exists || ticket.Height == 0 {
+			t.Fatal("partition ledger requires known owners and no remaining genesis tickets")
+		}
+	}
+	if readRecoveryNodeBlock(t, node, height).Hash() != result.Block.Hash() {
+		t.Fatal("partition accounting snapshot changed branches")
+	}
+	return result
+}
+
+func auditPartitionFunds(t *testing.T, node *rehearsalNode, owners []common.Address, first, last uint64, phase string) {
+	t.Helper()
+	before := readPartitionFunds(t, node, owners, first)
+	penalties := make(map[common.Address]int)
+	for number := first + 1; number <= last; number++ {
+		after := readPartitionFunds(t, node, owners, number)
+		if after.Block.ParentHash() != before.Block.Hash() || number >= 4915200 {
+			t.Fatal("partition ledger ancestry or fixed 2.5 FSN reward range differs")
+		}
+		snapshot, err := datong.NewSnapshotFromHeader(after.Block.Header())
+		requireNoError(t, err)
+		selected, exists := before.Tickets[snapshot.Selected]
+		if !exists || selected.Owner != after.Block.Coinbase() {
+			t.Fatal("selected ticket missing or belongs to another producer")
+		}
+		if _, exists := after.Tickets[snapshot.Selected]; exists {
+			t.Fatal("selected ticket not removed")
+		}
+		changes := partitionTransactionDeltas(t, node, owners, after.Block)
+		changes[selected.Owner].Add(changes[selected.Owner], decimal(t, "2500000000000000000"))
+		for i, id := range snapshot.Retreat {
+			ticket, exists := before.Tickets[id]
+			if !exists {
+				t.Fatal("retreated ticket missing from parent")
+			}
+			if _, exists := after.Tickets[id]; exists {
+				t.Fatal("retreated ticket not removed")
+			}
+			if i == 0 {
+				penalties[ticket.Owner]++
+			}
+			t.Logf("partition ledger retreat phase=%s block=%d hash=%s index=%d owner=%s ticket=%s start=%d end=%d value-wei=%s returned=%t", phase, number, after.Block.Hash().Hex(), i, ticket.Owner.Hex(), id.Hex(), ticket.StartTime, ticket.ExpireTime, ticket.Value, i > 0)
+		}
+		points := handoverTimeBoundaries(after.Block.Time(), before.Accounts, after.Accounts, before.Tickets, after.Tickets)
+		for _, owner := range owners {
+			for point := range points {
+				delta := new(big.Int).Sub(handoverValueAt(after.Accounts[owner], after.Tickets, owner, point), handoverValueAt(before.Accounts[owner], before.Tickets, owner, point))
+				expected := new(big.Int).Set(changes[owner])
+				if len(snapshot.Retreat) > 0 {
+					ticket := before.Tickets[snapshot.Retreat[0]]
+					if ticket.Owner == owner && point >= ticket.StartTime && point <= ticket.ExpireTime {
+						expected.Sub(expected, ticket.Value)
+					}
+				}
+				if delta.Cmp(expected) != 0 {
+					t.Fatalf("partition rights mismatch phase=%s block=%d owner=%s time=%d actual=%s expected=%s", phase, number, owner.Hex(), point, delta, expected)
+				}
+			}
+		}
+		t.Logf("partition ledger block phase=%s height=%d hash=%s selected-owner=%s selected=%s returned=true boundaries=%d transactions=%d", phase, number, after.Block.Hash().Hex(), selected.Owner.Hex(), snapshot.Selected.Hex(), len(points), len(after.Block.Transactions()))
+		before = after
+	}
+	for _, owner := range owners {
+		account, err := json.Marshal(before.Accounts[owner])
+		requireNoError(t, err)
+		t.Logf("partition ledger end phase=%s height=%d owner=%s first-retreats=%d account=%s", phase, last, owner.Hex(), penalties[owner], account)
+	}
+	t.Logf("partition ledger verified phase=%s range=%d..%d head=%s; all future interval rights reconcile with rewards, fees, transfers and first-retreat losses", phase, first+1, last, before.Block.Hash().Hex())
+}
+
+func partitionTransactionDeltas(t *testing.T, node *rehearsalNode, owners []common.Address, block *types.Block) map[common.Address]*big.Int {
+	t.Helper()
+	deltas := make(map[common.Address]*big.Int)
+	for _, owner := range owners {
+		deltas[owner] = new(big.Int)
+	}
+	for _, tx := range block.Transactions() {
+		sender, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+		requireNoError(t, err)
+		var receipt *types.Receipt
+		requireNoError(t, node.call(t, &receipt, "eth_getTransactionReceipt", tx.Hash()))
+		if receipt == nil || receipt.BlockHash != block.Hash() || receipt.Status != types.ReceiptStatusSuccessful || tx.Type() != types.LegacyTxType || deltas[sender] == nil || deltas[block.Coinbase()] == nil {
+			t.Fatal("ledger requires canonical successful legacy transactions with known sender and producer")
+		}
+		fee := new(big.Int).Mul(new(big.Int).SetUint64(receipt.GasUsed), tx.GasPrice())
+		deltas[sender].Sub(deltas[sender], fee)
+		deltas[block.Coinbase()].Add(deltas[block.Coinbase()], fee)
+		if tx.IsBuyTicketTx() {
+			requirePeerNativePurchase(t, receipt, block, tx, sender)
+		} else {
+			if tx.To() == nil || deltas[*tx.To()] == nil || len(tx.Data()) != 0 || receipt.GasUsed != 21000 {
+				t.Fatal("ledger encountered a transaction other than a native purchase or simple transfer")
+			}
+			deltas[sender].Sub(deltas[sender], tx.Value())
+			deltas[*tx.To()].Add(deltas[*tx.To()], tx.Value())
+		}
+	}
+	return deltas
+}

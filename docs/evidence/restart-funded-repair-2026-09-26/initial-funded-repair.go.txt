@@ -1,0 +1,93 @@
+package restart
+
+import (
+	"math/big"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/common/hexutil"
+	"github.com/FusionFoundation/efsn/v5/core"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/crypto"
+)
+
+func rehearseFundedSmallReserveRepair(t *testing.T) {
+	requirePartitionNamespace(t)
+	keyBytes := make([]byte, 32)
+	keyBytes[31] = 3
+	key, err := crypto.ToECDSA(keyBytes)
+	requireNoError(t, err)
+	funder := &fixture{key: key, owner: crypto.PubkeyToAddress(key.PublicKey)}
+	allocation := core.GenesisAlloc{funder.owner: {Balance: decimal(t, "6000000000000000000000")}}
+	pair := seedDenseMinerPairWithFunding(t, "12020102000000000000000", 2, allocation)
+	rehearsePartitionRepairWithPair(t, pair, funder)
+}
+
+func fundLivePurchaseRepair(t *testing.T, nodes [2]*rehearsalNode, funder *fixture, purchase *types.Transaction, recipient common.Address) *types.Transaction {
+	t.Helper()
+	if purchase == nil {
+		t.Fatal("original missing purchase is required before funding")
+	}
+	validateLiveRepairPurchase(t, nodes[0], purchase)
+	raw, err := purchase.MarshalBinary()
+	requireNoError(t, err)
+	var hash common.Hash
+	err = nodes[0].call(t, &hash, "eth_sendRawTransaction", hexutil.Bytes(raw))
+	if err == nil || !strings.Contains(err.Error(), "insufficient balance") {
+		t.Fatalf("funding experiment requires the unfunded purchase rejection, got %v", err)
+	}
+	t.Logf("funded repair confirmed original purchase rejection: %v", err)
+	var nonce hexutil.Uint64
+	requireNoError(t, nodes[0].call(t, &nonce, "eth_getTransactionCount", funder.owner, "pending"))
+	if nonce != 0 {
+		t.Fatal("funding wallet already used")
+	}
+	transfer, err := types.SignTx(types.NewTransaction(0, recipient, decimal(t, "5000000000000000000000"), 21000, big.NewInt(1000000000), nil), types.LatestSignerForChainID(purchase.ChainId()), funder.key)
+	requireNoError(t, err)
+	raw, err = transfer.MarshalBinary()
+	requireNoError(t, err)
+	requireNoError(t, nodes[0].call(t, &hash, "eth_sendRawTransaction", hexutil.Bytes(raw)))
+	if hash != transfer.Hash() {
+		t.Fatal("funding transfer identity changed")
+	}
+	deadline := time.Now().Add(60 * time.Second)
+	for time.Now().Before(deadline) {
+		requireContinuousMiners(t, nodes[0], nodes[1])
+		var receipts [2]*types.Receipt
+		for i, node := range nodes {
+			requireNoError(t, node.call(t, &receipts[i], "eth_getTransactionReceipt", hash))
+		}
+		if receipts[0] != nil && receipts[1] != nil && receipts[0].BlockHash == receipts[1].BlockHash {
+			for i, receipt := range receipts {
+				if receipt.Status != types.ReceiptStatusSuccessful || receipt.GasUsed != 21000 || receipt.TxHash != hash || readRecoveryNodeBlock(t, nodes[i], receipt.BlockNumber.Uint64()).Hash() != receipt.BlockHash {
+					t.Fatal("funding transfer was not canonical and successful on both nodes")
+				}
+			}
+			t.Logf("funded repair single transfer sender=%s recipient=%s value-wei=%s hash=%s block=%d %s gas=21000", funder.owner.Hex(), recipient.Hex(), transfer.Value(), hash.Hex(), receipts[0].BlockNumber.Uint64(), receipts[0].BlockHash.Hex())
+			validateLiveRepairPurchase(t, nodes[0], purchase)
+			return transfer
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	t.Fatal("funding transfer did not reach canonical success on both nodes")
+	return nil
+}
+
+func requireColdRepairFunding(t *testing.T, node *rehearsalNode, owner common.Address, transfer *types.Transaction) {
+	t.Helper()
+	var receipt *types.Receipt
+	var balance string
+	var nonce hexutil.Uint64
+	requireNoError(t, node.call(t, &receipt, "eth_getTransactionReceipt", transfer.Hash()))
+	requireNoError(t, node.call(t, &balance, "fsn_getBalance", common.SystemAssetID, owner, "latest"))
+	requireNoError(t, node.call(t, &nonce, "eth_getTransactionCount", owner, "latest"))
+	if receipt == nil || receipt.Status != types.ReceiptStatusSuccessful || receipt.GasUsed != 21000 || receipt.TxHash != transfer.Hash() || nonce != 1 || balance != "999999979000000000000" {
+		t.Fatal("cold funding receipt, single sender nonce or exact 6000 minus 5000 minus fee balance differs")
+	}
+	if readRecoveryNodeBlock(t, node, receipt.BlockNumber.Uint64()).Hash() != receipt.BlockHash {
+		t.Fatal("cold funding receipt is not canonical")
+	}
+	t.Logf("funded repair cold transfer=%s sponsor-nonce=%d sponsor-liquid-wei=%s", transfer.Hash().Hex(), nonce, balance)
+}

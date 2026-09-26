@@ -170,11 +170,14 @@ and purchase funding as well as peers, heads and nonce progression. Keep the
 choice between monitored manual repair and a separately reviewed recovery
 mechanism open; neither automatically restores unavailable funds.
 
-Next investigate the exact retreat/refund ledger and whether a single repair
-funding transfer is sufficient for the demonstrated interval shortfall. Use
-ordinary funded transactions and public test keys. Then relate the resulting
-reserve requirement to complete-state launch accounting. This result does not
-justify a free ticket, refund-rule change, confiscation or new consensus rule.
+The [funded-repair follow-up](restart-funded-repair.md) now reconciles first-retreat
+losses, selected-ticket returns, rewards, fees and transfers across future
+intervals. It tests one ordinary 5,000-FSN transfer and explicitly retains failed
+immediate/60-second repair attempts. Starting ticket inventory and the timing of
+ordinary returns matter; this evidence does not establish a universal reserve.
+Resolve the zero-ticket/two-retreat case and relate reserves to complete-state
+launch accounting. These results do not justify a free ticket, refund-rule
+change, confiscation or new consensus rule.
 
 Raw attempts, source identities and checksums are in
 [`restart-small-reserve-2026-09-26`](evidence/restart-small-reserve-2026-09-26).

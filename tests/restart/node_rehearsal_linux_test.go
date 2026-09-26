@@ -184,6 +184,7 @@ func TestRestartNodeRehearsal(t *testing.T) {
 	t.Run("continuous_partition_miners", rehearseContinuousPartitionMiners)
 	t.Run("continuous_partition_nonce_repair", rehearseContinuousPartitionNonceRepair)
 	t.Run("small_reserve_nonce_repair", rehearseSmallReserveNonceRepair)
+	t.Run("funded_small_reserve_repair", rehearseFundedSmallReserveRepair)
 	t.Run("heavier_stored_fork_peer", rehearseHeavierPeer)
 	t.Run("incompatible_database_startup", rehearseIncompatibleStartup)
 }

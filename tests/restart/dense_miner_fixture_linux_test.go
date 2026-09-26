@@ -31,6 +31,11 @@ func seedDenseMinerPair(t *testing.T) *denseMinerPair {
 
 func seedDenseMinerPairWithReserve(t *testing.T, balance string, ticketLimit uint64) *denseMinerPair {
 	t.Helper()
+	return seedDenseMinerPairWithFunding(t, balance, ticketLimit, nil)
+}
+
+func seedDenseMinerPairWithFunding(t *testing.T, balance string, ticketLimit uint64, funding core.GenesisAlloc) *denseMinerPair {
+	t.Helper()
 	previous := common.UseDevnetRule
 	common.UseDevnetRule = true
 	datong.InitCheckPoints("")
@@ -40,6 +45,9 @@ func seedDenseMinerPairWithReserve(t *testing.T, balance string, ticketLimit uin
 	config.ConstantinopleBlock, config.PetersburgBlock, config.IstanbulBlock = common.Big0, common.Big0, common.Big0
 	config.BerlinBlock, config.LondonBlock, config.EcoBlock = common.Big0, common.Big0, common.Big0
 	pair.genesis = &core.Genesis{Config: &config, GasLimit: 15000000, Difficulty: big.NewInt(1), Timestamp: uint64(time.Now().Unix()) - 3600, Alloc: make(core.GenesisAlloc)}
+	for owner, account := range funding {
+		pair.genesis.Alloc[owner] = account
+	}
 	for i := range pair.miners {
 		keyBytes := make([]byte, 32)
 		keyBytes[31] = byte(i + 1)

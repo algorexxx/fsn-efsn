@@ -110,20 +110,13 @@ func rehearsePartitionRepairWithPair(t *testing.T, pair *denseMinerPair, funder 
 		data, err := tx.MarshalBinary()
 		requireNoError(t, err)
 		var hash common.Hash
-		if funder == nil {
-			requireNoError(t, nodes[gap.index].call(t, &hash, "eth_sendRawTransaction", hexutil.Bytes(data)))
-		} else {
-			hash = submitFundedRepairPurchase(t, nodes, gap, tx, append(owners[:], funder.owner))
-		}
+		requireNoError(t, nodes[gap.index].call(t, &hash, "eth_sendRawTransaction", hexutil.Bytes(data)))
 		if hash != tx.Hash() {
 			t.Fatal("raw resubmission changed the original transaction identity")
 		}
 		block := awaitLiveRepairReceipt(t, nodes, tx, owners[gap.index])
 		logLiveRepairTickets(t, nodes[0], owners, block, "missing-nonce-included")
 		t.Logf("live repair original included node=%d nonce=%d hash=%s block=%d %s", gap.index+1, nonce, tx.Hash().Hex(), block.NumberU64(), block.Hash().Hex())
-		if funder != nil {
-			auditPartitionFunds(t, nodes[0], append(owners[:], funder.owner), 24, block.NumberU64(), "repair-progress")
-		}
 		repaired = append(repaired, tx)
 	}
 	savedBlock := awaitLiveRepairReceipt(t, nodes, gap.saved, owners[gap.index])
