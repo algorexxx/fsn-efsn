@@ -446,3 +446,13 @@ records the failed runs, the passing complete fixture and compatibility check,
 and the difference between re-inclusion and renewed automatic buying. This is
 an opt-in limitation reproducer, not evidence of unattended recovery. Its
 synthetic genesis and twelve-minute child limit do not affect production code.
+
+`TestRestartNodeRehearsal/continuous_partition_nonce_repair` uses the same opt-ins
+and namespace restrictions. After a 90-second outage and a stable future-nonce
+pause, it resubmits preserved original purchases individually through the normal
+RPC while both miners and buyers remain enabled. It requires the exact saved
+intent and at least two fresh automatic successors to execute, samples remaining
+tickets, then checks both cold databases and receipts. This tests explicit repair
+with generous synthetic funding and available original bytes; it does not change
+the failed unattended-replenishment requirement. See the
+[live repair report](../../docs/restart-live-nonce-repair.md).

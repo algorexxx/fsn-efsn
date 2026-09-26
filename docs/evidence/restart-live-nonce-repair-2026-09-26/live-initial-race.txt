@@ -1,0 +1,574 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/continuous_partition_nonce_repair
+    continuous_repair_linux_test.go:34: live repair tickets phase=before-outage block=26 owner=1 stored=14 valid-next-period=14
+    continuous_repair_linux_test.go:34: live repair tickets phase=before-outage block=26 owner=2 stored=11 valid-next-period=11
+    continuous_repair_linux_test.go:35: kernel packet-loss filter: [match ip dst 127.0.0.0/8]
+    continuous_repair_linux_test.go:55: live repair tickets phase=isolated block=32 owner=1 stored=14 valid-next-period=14
+    continuous_repair_linux_test.go:55: live repair tickets phase=isolated block=32 owner=2 stored=12 valid-next-period=12
+    continuous_repair_linux_test.go:55: live repair tickets phase=isolated block=33 owner=1 stored=13 valid-next-period=13
+    continuous_repair_linux_test.go:55: live repair tickets phase=isolated block=33 owner=2 stored=12 valid-next-period=12
+    continuous_repair_linux_test.go:60: live repair outage=1m30.188931716s isolated heads=32/33; original signed purchases preserved before healing
+    continuous_repair_linux_test.go:61: healed partition; netem dropped=44; qdisc statistics=[{"kind":"prio","handle":"1:","root":true,"refcnt":2,"options":{"bands":3,"priomap":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"multiqueue":false},"bytes":0,"packets":0,"drops":44,"overlimits":0,"requeues":0,"backlog":0,"qlen":0},{"kind":"netem","handle":"30:","parent":"1:3","options":{"limit":1000,"loss-random":{"loss":1,"correlation":0},"ecn":false,"gap":0},"bytes":0,"packets":0,"drops":44,"overlimits":0,"requeues":0,"backlog":0,"qlen":0}]
+    continuous_repair_linux_test.go:69: continuous node=1 height=37 hash=0xd12a4be6523c5321ca0a3cbff0bbba4b153de4d5bb4104524dccf2fc4f441a23 nonce=30 saved=0x41eb86272f535dec6b8fa64d306ee283e510910ccb1c9315cef53f23b49f62ef nonce=34 pending=0 queued=0 mining=true autobuy=true
+    continuous_repair_linux_test.go:69: continuous node=2 height=37 hash=0xd12a4be6523c5321ca0a3cbff0bbba4b153de4d5bb4104524dccf2fc4f441a23 nonce=36 saved=0x2ad282c768262c0ff74fc1893a961fbb7ed89723d33ae1e62cc3bcfd69661155 nonce=36 pending=1 queued=0 mining=true autobuy=true
+    continuous_repair_linux_test.go:70: live repair tickets phase=paused-before-repair block=36 owner=1 stored=13 valid-next-period=13
+    continuous_repair_linux_test.go:70: live repair tickets phase=paused-before-repair block=36 owner=2 stored=13 valid-next-period=13
+    continuous_repair_linux_test.go:71: live repair stable gap node=1 canonical=30 saved=34 hash=0x41eb86272f535dec6b8fa64d306ee283e510910ccb1c9315cef53f23b49f62ef common=36 after-heal=1m15.995291557s
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=38 owner=1 stored=14 valid-next-period=14
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=38 owner=2 stored=14 valid-next-period=14
+    continuous_repair_linux_test.go:94: live repair original included node=1 nonce=30 hash=0x12dec87e15104d6e75bcd57e5681ba0d230da62b50ca5368b9d3c73091976a21 block=38 0xdbcfa2eac8066f26ca37b9118c2174804765d89394b4da45be75cf8cae4e498d
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=39 owner=1 stored=15 valid-next-period=15
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=39 owner=2 stored=14 valid-next-period=14
+    continuous_repair_linux_test.go:94: live repair original included node=1 nonce=31 hash=0x4739e3b59ce29c523eb9963bcc7078b3054ab230eb1cbfd08134be30a05f7035 block=39 0x98c9b4e5e0420a7b8a1afb0c585baf987c44a851ee972f6e67e7864cd4946434
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=40 owner=1 stored=15 valid-next-period=15
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=40 owner=2 stored=15 valid-next-period=15
+    continuous_repair_linux_test.go:94: live repair original included node=1 nonce=32 hash=0xb6f3bacaa1dfbab0df8cf6e38bebcbf6176acc5ad594e8e69e0e2204c477181d block=40 0x69e81d080f92b4a194217079d3d67642a40354c387f51b0457a14c61d3641f31
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=41 owner=1 stored=15 valid-next-period=15
+    continuous_repair_linux_test.go:93: live repair tickets phase=missing-nonce-included block=41 owner=2 stored=16 valid-next-period=16
+    continuous_repair_linux_test.go:94: live repair original included node=1 nonce=33 hash=0x25d7e10ac525701c9baf5a251bd8a6f799e565a3d944f56b419b1e8c91785c11 block=41 0xa3a4b4c53efe596d0106cbd2415e2bbc19198db58d330348c0919ddb8230a7d1
+    continuous_repair_linux_test.go:98: live repair exact saved intent included nonce=34 hash=0x41eb86272f535dec6b8fa64d306ee283e510910ccb1c9315cef53f23b49f62ef block=42
+    continuous_repair_linux_test.go:121: live repair tickets phase=automatic-successors block=44 owner=1 stored=17 valid-next-period=17
+    continuous_repair_linux_test.go:121: live repair tickets phase=automatic-successors block=44 owner=2 stored=17 valid-next-period=17
+    continuous_repair_linux_test.go:122: live repair resumed with 2 new automatic successors after exact saved intent; miners and buyers remained enabled
+    continuous_repair_linux_test.go:126: stopped miners reached a common head unchanged for 35s; observed 2 head changes after stop; final 46 0xfc4cef49ec8c215465f367bd2e94c9e691faa2685723f2fc2e006553a032522c
+    continuous_repair_linux_test.go:145: live repair cold node=1 nonce=38 saved-bytes=118 canonical receipts=7
+    continuous_repair_linux_test.go:145: live repair cold node=2 nonce=44 saved-bytes=118 canonical receipts=7
+    continuous_repair_linux_test.go:147: live nonce repair passed: final=46 0xfc4cef49ec8c215465f367bd2e94c9e691faa2685723f2fc2e006553a032522c state=0x996390261382bbdfd621ce613d49692a767d58efb8716d2ce320cf621bc2cba8 tickets=0xdf1b90fdd762ecff0253b1deeb5858e7f123ab3986ae09f83c41ff00b43c39e9 originals=4 automatic-successors=2
+    node_rehearsal_linux_test.go:314: node process /tmp/fsn-dense-miner-696262371/process-52839051.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|21:00:16.977] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:00:17.275] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|21:00:17.275] Allocated cache and file handles         database=/tmp/fsn-dense-miner-696262371/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|21:00:17.303] Persisted trie from memory database      nodes=13 size=1.89KiB time="201.65µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|21:00:17.308]  
+        INFO [09-26|21:00:17.308] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:00:17.309] Chain ID:  55555 (devnet) 
+        INFO [09-26|21:00:17.309] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|21:00:17.309]  
+        INFO [09-26|21:00:17.309] hard forks: 
+        INFO [09-26|21:00:17.309]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|21:00:17.309]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|21:00:17.309]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|21:00:17.309]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:00:17.309]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:00:17.309]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|21:00:17.309]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|21:00:17.309]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|21:00:17.309]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|21:00:17.309]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|21:00:17.309]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|21:00:17.309]  - Fusion Eco:                  0        
+        INFO [09-26|21:00:17.309]  
+        INFO [09-26|21:00:17.309]  
+        INFO [09-26|21:00:17.309] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:00:17.309]  
+        INFO [09-26|21:00:17.309] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-26|21:00:17.325] Loaded most recent local header          number=46 hash="fc4cef…32522c" td=980 age=54s
+        INFO [09-26|21:00:17.325] Loaded most recent local full block      number=46 hash="fc4cef…32522c" td=980 age=54s
+        INFO [09-26|21:00:17.326] Loaded most recent local fast block      number=46 hash="fc4cef…32522c" td=980 age=54s
+        INFO [09-26|21:00:17.326] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|21:00:17.326] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:00:17.326] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|21:00:17.326] Starting P2P networking 
+        INFO [09-26|21:00:17.327] RLPx listener up                         self="enode://71c9a3afec27b8be0af7125eca84c52f5a89baa610767fdfd569fe76367e7cdbd988b65062a2e7ae6b02e889052ebe9901081db37c0a75cd3dc2206ab3b2a9a1@127.0.0.1:36161?discport=0"
+        INFO [09-26|21:00:17.331] IPC endpoint opened                      url=/tmp/fsn-dense-miner-696262371/lab.ipc
+        INFO [09-26|21:00:17.374] IPC endpoint closed                      url=/tmp/fsn-dense-miner-696262371/lab.ipc
+        INFO [09-26|21:00:17.374] Stopping Ethereum protocol 
+        INFO [09-26|21:00:17.374] Ethereum protocol stopped 
+        INFO [09-26|21:00:17.374] Transaction pool stopped 
+        INFO [09-26|21:00:17.374] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.40s)
+        PASS
+    node_rehearsal_linux_test.go:314: node process /tmp/fsn-dense-miner-2046890192/process-1617292918.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|21:00:15.432] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:00:15.721] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|21:00:15.722] Allocated cache and file handles         database=/tmp/fsn-dense-miner-2046890192/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|21:00:15.771] Persisted trie from memory database      nodes=13 size=1.89KiB time="151.294µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|21:00:15.777]  
+        INFO [09-26|21:00:15.777] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:00:15.777] Chain ID:  55555 (devnet) 
+        INFO [09-26|21:00:15.777] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|21:00:15.777]  
+        INFO [09-26|21:00:15.777] hard forks: 
+        INFO [09-26|21:00:15.777]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|21:00:15.777]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|21:00:15.777]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|21:00:15.777]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:00:15.777]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|21:00:15.777]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|21:00:15.777]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|21:00:15.777]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|21:00:15.777]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|21:00:15.777]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|21:00:15.777]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|21:00:15.777]  - Fusion Eco:                  0        
+        INFO [09-26|21:00:15.777]  
+        INFO [09-26|21:00:15.777]  
+        INFO [09-26|21:00:15.777] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|21:00:15.777]  
+        INFO [09-26|21:00:15.778] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-26|21:00:15.786] Loaded most recent local header          number=46 hash="fc4cef…32522c" td=980 age=52s
+        INFO [09-26|21:00:15.787] Loaded most recent local full block      number=46 hash="fc4cef…32522c" td=980 age=52s
+        INFO [09-26|21:00:15.787] Loaded most recent local fast block      number=46 hash="fc4cef…32522c" td=980 age=52s
+        INFO [09-26|21:00:15.789] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|21:00:15.789] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|21:00:15.789] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|21:00:15.789] Starting P2P networking 
+        INFO [09-26|21:00:15.790] RLPx listener up                         self="enode://753fcb3eb3c135555d97fa80064d5a5541974122ed4c678053141fafac1dbafd60d9349fc48cdc956a1725e5f578afdd64d3ad4a935a4d5b1e581ce670256208@127.0.0.1:36365?discport=0"
+        INFO [09-26|21:00:15.796] IPC endpoint opened                      url=/tmp/fsn-dense-miner-2046890192/lab.ipc
+        INFO [09-26|21:00:18.394] IPC endpoint closed                      url=/tmp/fsn-dense-miner-2046890192/lab.ipc
+        INFO [09-26|21:00:18.394] Stopping Ethereum protocol 
+        INFO [09-26|21:00:18.394] Ethereum protocol stopped 
+        INFO [09-26|21:00:18.394] Transaction pool stopped 
+        INFO [09-26|21:00:18.394] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (2.96s)
+        PASS
+    node_rehearsal_linux_test.go:314: node process /tmp/fsn-dense-miner-696262371/process-538923691.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|20:54:27.364] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|20:54:28.305] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|20:54:28.305] Allocated cache and file handles         database=/tmp/fsn-dense-miner-696262371/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|20:54:28.346] Persisted trie from memory database      nodes=13 size=1.89KiB time="146.431µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|20:54:28.347]  
+        INFO [09-26|20:54:28.347] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|20:54:28.350] Chain ID:  55555 (devnet) 
+        INFO [09-26|20:54:28.350] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|20:54:28.350]  
+        INFO [09-26|20:54:28.350] hard forks: 
+        INFO [09-26|20:54:28.350]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|20:54:28.350]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|20:54:28.350]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|20:54:28.350]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|20:54:28.350]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|20:54:28.350]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|20:54:28.350]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|20:54:28.350]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|20:54:28.350]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|20:54:28.350]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|20:54:28.350]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|20:54:28.350]  - Fusion Eco:                  0        
+        INFO [09-26|20:54:28.350]  
+        INFO [09-26|20:54:28.350]  
+        INFO [09-26|20:54:28.350] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|20:54:28.350]  
+        INFO [09-26|20:54:28.350] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|20:54:28.356] Loaded most recent local header          number=24 hash="f20aad…7a5978" td=372 age=12m3s
+        INFO [09-26|20:54:28.356] Loaded most recent local full block      number=24 hash="f20aad…7a5978" td=372 age=12m3s
+        INFO [09-26|20:54:28.356] Loaded most recent local fast block      number=24 hash="f20aad…7a5978" td=372 age=12m3s
+        INFO [09-26|20:54:28.356] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|20:54:28.357] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|20:54:28.357] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|20:54:28.357] Starting P2P networking 
+        INFO [09-26|20:54:28.357] RLPx listener up                         self="enode://71c9a3afec27b8be0af7125eca84c52f5a89baa610767fdfd569fe76367e7cdbd988b65062a2e7ae6b02e889052ebe9901081db37c0a75cd3dc2206ab3b2a9a1@127.0.0.1:40801?discport=0"
+        INFO [09-26|20:54:28.363] IPC endpoint opened                      url=/tmp/fsn-dense-miner-696262371/lab.ipc
+        INFO [09-26|20:54:28.554] Transaction pool price threshold updated price=1
+        INFO [09-26|20:54:28.560] Commit new mining work                   number=25 sealhash="7632b1…374953" uncles=0 txs=0 gas=0 fees=0 elapsed=5.478ms
+        INFO [09-26|20:54:28.562] Successfully sealed new block            number=25 sealhash="7632b1…374953" hash="01b14c…59eca1" difficulty=16 elapsed=1.622ms
+        INFO [09-26|20:54:28.562] 🔨 mined potential block                  number=25 hash="01b14c…59eca1"
+        INFO [09-26|20:54:28.563] Mining too far in the future             wait=7s
+        INFO [09-26|20:54:28.574] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [09-26|20:54:28.575] Submitted transaction                    hash=0x519bf1e42a9247828edc5eb6bb7a735f0e83a2d509dc83464fdc27374eae82e4 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=24 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:54:28.575] Automatic ticket submitted; awaiting inclusion tx="519bf1…ae82e4" nonce=24
+        INFO [09-26|20:54:35.567] Commit new mining work                   number=26 sealhash="3d0245…b2d3b2" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=7.004s
+        INFO [09-26|20:54:36.573] Commit new mining work                   number=26 sealhash="3d0245…b2d3b2" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=5.990ms
+        INFO [09-26|20:54:39.007] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=3.984ms mgasps=0.000 order=0 number=25 hash="119984…73fa16" difficulty=28 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f898b1…f8762e" parentHash="f20aad…7a5978" time=1,790,448,868 cache=0.00B
+        INFO [09-26|20:54:39.011] Commit new mining work                   number=26 sealhash="fa21f3…9dd895" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.187ms
+        INFO [09-26|20:54:39.011] keep mining as order is first            sealHash=0x3d02455258ef91aa35629bd4269c2a9b39f81e888ffe6a064155431b2ab2d3b2 number=26 hash="8f8f17…4ba569"
+        INFO [09-26|20:54:46.002] Successfully sealed new block            number=26 sealhash="3d0245…b2d3b2" hash="06cc84…1cb9e7" difficulty=26 elapsed=10.434s
+        INFO [09-26|20:54:46.002] 🔨 mined potential block                  number=26 hash="06cc84…1cb9e7"
+        INFO [09-26|20:54:46.003] Automatic ticket purchase confirmed      tx="519bf1…ae82e4" block="06cc84…1cb9e7"
+        INFO [09-26|20:54:46.008] Commit new mining work                   number=27 sealhash="09b274…d97777" uncles=0 txs=0 gas=0     fees=0          elapsed=4.452ms
+        INFO [09-26|20:54:46.008] keep mining as order is first            sealHash=0xfa21f36ea578e58fde2c6161f466811a420d682a23b8a37032b6401e299dd895 number=26 hash="48a6a8…d49cff"
+        INFO [09-26|20:54:46.014] Submitted transaction                    hash=0xd58f7075ec4097b60f9a426c5294a25d3c20a42a9096f6031d7dfba3800b9b6c from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=25 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:54:46.014] Automatic ticket submitted; awaiting inclusion tx="d58f70…0b9b6c" nonce=25
+        INFO [09-26|20:54:47.006] Commit new mining work                   number=27 sealhash="a451ea…a56c42" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.968ms
+        INFO [09-26|20:54:50.002] Successfully sealed new block            number=26 sealhash="fa21f3…9dd895" hash="04273d…3c81dd" difficulty=27 elapsed=10.990s
+        INFO [09-26|20:54:50.002] 🔨 mined potential block                  number=26 hash="04273d…3c81dd"
+        INFO [09-26|20:54:50.007] Commit new mining work                   number=27 sealhash="8b8cd8…fb25e2" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=5.099ms
+        INFO [09-26|20:54:57.866] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=6.089ms mgasps=6.970 order=0 number=27 hash="6f01d5…ea1b8d" difficulty=27 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="351ccb…c1917d" parentHash="06cc84…1cb9e7" time=1,790,448,886 cache=0.00B
+        INFO [09-26|20:54:57.867] Automatic ticket purchase confirmed      tx="d58f70…0b9b6c" block="6f01d5…ea1b8d"
+        INFO [09-26|20:54:57.870] Commit new mining work                   number=28 sealhash="284f80…d76add" uncles=0 txs=0 gas=0     fees=0          elapsed=2.757ms
+        INFO [09-26|20:54:57.872] Submitted transaction                    hash=0x1aa31c98267efdc6fefb78f9058684281aa1ad79e90bd3b3dbe8ecf5744ca3b9 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=26 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:54:57.872] Automatic ticket submitted; awaiting inclusion tx="1aa31c…4ca3b9" nonce=26
+        INFO [09-26|20:54:58.871] Commit new mining work                   number=28 sealhash="5cf21c…d8f513" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.325ms
+        INFO [09-26|20:55:08.001] Successfully sealed new block            number=28 sealhash="5cf21c…d8f513" hash="99208f…cc58ae" difficulty=28 elapsed=9.129s
+        INFO [09-26|20:55:08.001] 🔨 mined potential block                  number=28 hash="99208f…cc58ae"
+        INFO [09-26|20:55:08.001] Automatic ticket purchase confirmed      tx="1aa31c…4ca3b9" block="99208f…cc58ae"
+        INFO [09-26|20:55:08.004] Commit new mining work                   number=29 sealhash="89ee9d…e3b830" uncles=0 txs=0 gas=0     fees=0          elapsed=3.132ms
+        INFO [09-26|20:55:08.007] Submitted transaction                    hash=0x658ad11e9c465e1bf8d06d2a49b7149be3f113e06f6cc6afefa74c95a6b095c8 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=27 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:55:08.007] Automatic ticket submitted; awaiting inclusion tx="658ad1…b095c8" nonce=27
+        INFO [09-26|20:55:09.006] Commit new mining work                   number=29 sealhash="cf9694…adb793" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.930ms
+        INFO [09-26|20:55:27.001] Successfully sealed new block            number=29 sealhash="cf9694…adb793" hash="ab8b01…0427ee" difficulty=17 elapsed=17.995s
+        INFO [09-26|20:55:27.002] 🔨 mined potential block                  number=29 hash="ab8b01…0427ee"
+        INFO [09-26|20:55:27.002] Mining too far in the future             wait=7s
+        INFO [09-26|20:55:27.002] Automatic ticket purchase confirmed      tx="658ad1…b095c8" block="ab8b01…0427ee"
+        INFO [09-26|20:55:27.008] Submitted transaction                    hash=0x88f6170bf8b6b4dddeebfad6653897dd6c5128f511316bc782ad8538cd2c6a7a from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=28 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:55:27.008] Automatic ticket submitted; awaiting inclusion tx="88f617…2c6a7a" nonce=28
+        INFO [09-26|20:55:35.598] Commit new mining work                   number=30 sealhash="517374…0f7c70" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=7.003s
+        INFO [09-26|20:55:35.602] Commit new mining work                   number=30 sealhash="517374…0f7c70" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.794ms
+        INFO [09-26|20:55:45.001] Successfully sealed new block            number=30 sealhash="517374…0f7c70" hash="2df568…40005f" difficulty=28 elapsed=9.403s
+        INFO [09-26|20:55:45.002] 🔨 mined potential block                  number=30 hash="2df568…40005f"
+        INFO [09-26|20:55:45.002] Automatic ticket purchase confirmed      tx="88f617…2c6a7a" block="2df568…40005f"
+        INFO [09-26|20:55:45.005] Commit new mining work                   number=31 sealhash="064d96…f7cd89" uncles=0 txs=0 gas=0     fees=0          elapsed=3.101ms
+        INFO [09-26|20:55:45.008] Submitted transaction                    hash=0x66753163f2d973278a46359453cf71568f5fa8338ecf8f0cf0ce4611bc3fcd97 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=29 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:55:45.008] Automatic ticket submitted; awaiting inclusion tx="667531…3fcd97" nonce=29
+        INFO [09-26|20:55:46.005] Commit new mining work                   number=31 sealhash="a01983…6cc0ea" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.997ms
+        INFO [09-26|20:55:56.001] Successfully sealed new block            number=31 sealhash="a01983…6cc0ea" hash="64dcb6…259025" difficulty=28 elapsed=9.996s
+        INFO [09-26|20:55:56.001] 🔨 mined potential block                  number=31 hash="64dcb6…259025"
+        INFO [09-26|20:55:56.002] Automatic ticket purchase confirmed      tx="667531…3fcd97" block="64dcb6…259025"
+        INFO [09-26|20:55:56.005] Commit new mining work                   number=32 sealhash="c1bee2…f018f1" uncles=0 txs=0 gas=0     fees=0          elapsed=3.092ms
+        INFO [09-26|20:55:56.008] Submitted transaction                    hash=0x6b776d55f3ad6a3c77ec690f9981bc6fdac588659c8d78fc4a6b29de803ee207 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=30 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:55:56.009] Automatic ticket submitted; awaiting inclusion tx="6b776d…3ee207" nonce=30
+        INFO [09-26|20:55:57.006] Commit new mining work                   number=32 sealhash="18d115…2ec0d7" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.211ms
+        INFO [09-26|20:56:08.382] Successfully sealed new block            number=32 sealhash="18d115…2ec0d7" hash="6a141a…cf5f38" difficulty=28 elapsed=9.995s
+        INFO [09-26|20:56:08.382] 🔗 block reached canonical chain          number=25 hash="01b14c…59eca1"
+        INFO [09-26|20:56:08.382] 🔨 mined potential block                  number=32 hash="6a141a…cf5f38"
+        INFO [09-26|20:56:08.383] Automatic ticket purchase confirmed      tx="6b776d…3ee207" block="6a141a…cf5f38"
+        INFO [09-26|20:56:08.385] Commit new mining work                   number=33 sealhash="5c1ba5…0f6b27" uncles=0 txs=0 gas=0     fees=0          elapsed=2.997ms
+        INFO [09-26|20:56:08.389] Submitted transaction                    hash=0xc0f547d0688f7359e28c4c1337d6c4c749b00f1a1da4cf67ae598be4c3b36d9e from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=31 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:08.389] Automatic ticket submitted; awaiting inclusion tx="c0f547…b36d9e" nonce=31
+        INFO [09-26|20:56:09.386] Commit new mining work                   number=33 sealhash="569419…ed85b1" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.047ms
+        INFO [09-26|20:56:26.002] Successfully sealed new block            number=33 sealhash="569419…ed85b1" hash="d2153e…f62b91" difficulty=16 elapsed=16.616s
+        INFO [09-26|20:56:26.003] Automatic ticket purchase confirmed      tx="c0f547…b36d9e" block="d2153e…f62b91"
+        INFO [09-26|20:56:26.003] 🔗 block reached canonical chain          number=26 hash="06cc84…1cb9e7"
+        INFO [09-26|20:56:26.003] 😱 block lost                             number=26 hash="04273d…3c81dd" order=0
+        INFO [09-26|20:56:26.003] 🔨 mined potential block                  number=33 hash="d2153e…f62b91"
+        INFO [09-26|20:56:26.003] Mining too far in the future             wait=7s
+        INFO [09-26|20:56:26.008] Submitted transaction                    hash=0xfd1e8b29924c51450ee6a939d541c06ecdf158133290d9462b65d4342f7ae3cd from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=32 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:26.008] Automatic ticket submitted; awaiting inclusion tx="fd1e8b…7ae3cd" nonce=32
+        INFO [09-26|20:56:33.008] Commit new mining work                   number=34 sealhash="2ba1ed…9ae2b8" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=7.004s
+        INFO [09-26|20:56:34.011] Commit new mining work                   number=34 sealhash="2ba1ed…9ae2b8" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=4.169ms
+        INFO [09-26|20:56:57.468] Successfully sealed new block            number=34 sealhash="2ba1ed…9ae2b8" hash="8b9a26…7d7080" difficulty=16 elapsed=22.994s
+        INFO [09-26|20:56:57.468] 🔨 mined potential block                  number=34 hash="8b9a26…7d7080"
+        INFO [09-26|20:56:57.468] Mining too far in the future             wait=6s
+        INFO [09-26|20:56:57.468] Automatic ticket purchase confirmed      tx="fd1e8b…7ae3cd" block="8b9a26…7d7080"
+        INFO [09-26|20:56:57.474] Submitted transaction                    hash=0xb579345e2b11f9a5adc7003f52df0cadb9e357f8752d25959f9496aeed57c45d from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=33 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:57.474] Automatic ticket submitted; awaiting inclusion tx="b57934…57c45d" nonce=33
+        INFO [09-26|20:57:03.472] Commit new mining work                   number=35 sealhash="f211b0…12ca87" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=6.004s
+        INFO [09-26|20:57:04.476] Commit new mining work                   number=35 sealhash="f211b0…12ca87" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=4.175ms
+        INFO [09-26|20:57:15.511] Successfully sealed new block            number=35 sealhash="f211b0…12ca87" hash="512843…67367b" difficulty=26 elapsed=10.543s
+        INFO [09-26|20:57:15.511] 🔗 block reached canonical chain          number=28 hash="99208f…cc58ae"
+        INFO [09-26|20:57:15.511] 🔨 mined potential block                  number=35 hash="512843…67367b"
+        INFO [09-26|20:57:15.512] Automatic ticket purchase confirmed      tx="b57934…57c45d" block="512843…67367b"
+        INFO [09-26|20:57:15.515] Commit new mining work                   number=36 sealhash="821417…249ea3" uncles=0 txs=0 gas=0     fees=0          elapsed=3.530ms
+        INFO [09-26|20:57:15.519] Submitted transaction                    hash=0xfbcbd367d53ca01cc17473a70622ee44238ad2481cb287ae9579efa612acf538 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=34 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:15.519] Automatic ticket submitted; awaiting inclusion tx="fbcbd3…acf538" nonce=34
+        INFO [09-26|20:57:16.516] Commit new mining work                   number=36 sealhash="eecbb9…b58ca3" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.382ms
+        INFO [09-26|20:57:27.962] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=7.099ms mgasps=5.979 order=0 number=36 hash="4d5ba0…b495ea" difficulty=27 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="33526a…60ba93" parentHash="512843…67367b" time=1,790,449,035 cache=0.00B
+        INFO [09-26|20:57:27.963] Automatic ticket purchase confirmed      tx="fbcbd3…acf538" block="4d5ba0…b495ea"
+        INFO [09-26|20:57:27.966] 🔗 block reached canonical chain          number=29 hash="ab8b01…0427ee"
+        INFO [09-26|20:57:27.966] Commit new mining work                   number=37 sealhash="d59989…aea5bb" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.427ms
+        INFO [09-26|20:57:27.970] Submitted transaction                    hash=0xeb4f0f4f03ad0bbf11ba93d4cab2450fd6b182b2b91eb266870ce8a6a8f9f7c8 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=35 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:27.970] Automatic ticket submitted; awaiting inclusion tx="eb4f0f…f9f7c8" nonce=35
+        INFO [09-26|20:57:28.967] Commit new mining work                   number=37 sealhash="8d4df1…ef25b7" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.369ms
+        INFO [09-26|20:57:39.902] Successfully sealed new block            number=37 sealhash="8d4df1…ef25b7" hash="d12a4b…441a23" difficulty=28 elapsed=10.935s
+        INFO [09-26|20:57:39.902] 🔗 block reached canonical chain          number=30 hash="2df568…40005f"
+        INFO [09-26|20:57:39.902] 🔨 mined potential block                  number=37 hash="d12a4b…441a23"
+        INFO [09-26|20:57:39.902] Automatic ticket purchase confirmed      tx="eb4f0f…f9f7c8" block="d12a4b…441a23"
+        INFO [09-26|20:57:39.906] Commit new mining work                   number=38 sealhash="348b92…a6282c" uncles=0 txs=0 gas=0     fees=0          elapsed=4.003ms
+        INFO [09-26|20:57:39.911] Submitted transaction                    hash=0x2ad282c768262c0ff74fc1893a961fbb7ed89723d33ae1e62cc3bcfd69661155 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=36 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:39.911] Automatic ticket submitted; awaiting inclusion tx="2ad282…661155" nonce=36
+        INFO [09-26|20:57:40.906] Commit new mining work                   number=38 sealhash="b8b8cc…260b7e" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.860ms
+        INFO [09-26|20:57:52.439] Commit new mining work                   number=38 sealhash="1a5372…987e12" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=4.952ms
+        INFO [09-26|20:57:52.460] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=9.147ms mgasps=4.640 order=0 number=38 hash="dbcfa2…4e498d" difficulty=29 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2d9ae5…fc7710" parentHash="d12a4b…441a23" time=1,790,449,059 cache=0.00B
+        INFO [09-26|20:57:52.461] Automatic ticket purchase confirmed      tx="2ad282…661155" block="dbcfa2…4e498d"
+        INFO [09-26|20:57:52.471] 🔗 block reached canonical chain          number=31 hash="64dcb6…259025"
+        INFO [09-26|20:57:52.471] Commit new mining work                   number=39 sealhash="38fbc0…c690f8" uncles=0 txs=0 gas=0     fees=0          elapsed=11.243ms
+        INFO [09-26|20:57:52.486] Submitted transaction                    hash=0xdfee524b464560eefa37ffae1fc431577f08ac451556ba730b92f9dd09e98751 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=37 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:52.487] Automatic ticket submitted; awaiting inclusion tx="dfee52…e98751" nonce=37
+        INFO [09-26|20:57:53.464] Commit new mining work                   number=39 sealhash="b71fe4…c24668" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.466ms
+        INFO [09-26|20:58:04.882] Successfully sealed new block            number=39 sealhash="b71fe4…c24668" hash="98c9b4…946434" difficulty=30 elapsed=11.418s
+        INFO [09-26|20:58:04.882] 🔗 block reached canonical chain          number=32 hash="6a141a…cf5f38"
+        INFO [09-26|20:58:04.882] 🔨 mined potential block                  number=39 hash="98c9b4…946434"
+        INFO [09-26|20:58:04.882] Automatic ticket purchase confirmed      tx="dfee52…e98751" block="98c9b4…946434"
+        INFO [09-26|20:58:04.886] Commit new mining work                   number=40 sealhash="2ede46…e732d9" uncles=0 txs=0 gas=0     fees=0          elapsed=3.623ms
+        INFO [09-26|20:58:04.890] Submitted transaction                    hash=0x133dcf6a307e861efa54a419fbd3dac3bf957a5087e5c3da185b631eef0fa478 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=38 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:04.890] Automatic ticket submitted; awaiting inclusion tx="133dcf…0fa478" nonce=38
+        INFO [09-26|20:58:05.885] Commit new mining work                   number=40 sealhash="26efa2…45ba32" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.053ms
+        INFO [09-26|20:58:17.059] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=6.061ms  mgasps=7.003 order=0 number=40 hash="69e81d…641f31" difficulty=31 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="452242…96bb89" parentHash="98c9b4…946434" time=1,790,449,084 cache=0.00B
+        INFO [09-26|20:58:17.059] Automatic ticket purchase confirmed      tx="133dcf…0fa478" block="69e81d…641f31"
+        INFO [09-26|20:58:17.064] 🔗 block reached canonical chain          number=33 hash="d2153e…f62b91"
+        INFO [09-26|20:58:17.064] Commit new mining work                   number=41 sealhash="f82d59…3e44d8" uncles=0 txs=0 gas=0     fees=0          elapsed=4.654ms
+        INFO [09-26|20:58:17.069] Submitted transaction                    hash=0xcf5ff35b5ad77a598af1e597502de86115a3e9c33615cfe1a4bc3403980522db from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=39 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:17.069] Automatic ticket submitted; awaiting inclusion tx="cf5ff3…0522db" nonce=39
+        INFO [09-26|20:58:18.062] Commit new mining work                   number=41 sealhash="2cca47…ddcabb" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.024ms
+        INFO [09-26|20:58:31.564] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.912ms  mgasps=8.641 order=0 number=41 hash="a3a4b4…30a7d1" difficulty=32 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1a0a3a…f8e692" parentHash="69e81d…641f31" time=1,790,449,097 cache=0.00B
+        INFO [09-26|20:58:31.565] Automatic ticket purchase confirmed      tx="cf5ff3…0522db" block="a3a4b4…30a7d1"
+        INFO [09-26|20:58:31.567] 🔗 block reached canonical chain          number=34 hash="8b9a26…7d7080"
+        INFO [09-26|20:58:31.567] Commit new mining work                   number=42 sealhash="481c86…477bdf" uncles=0 txs=0 gas=0     fees=0          elapsed=3.060ms
+        INFO [09-26|20:58:31.573] Submitted transaction                    hash=0xa752b52579fecde7cf3e212d3fa3406724f8d56b196006644fa4f7d832764bf9 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=40 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:31.573] Automatic ticket submitted; awaiting inclusion tx="a752b5…764bf9" nonce=40
+        INFO [09-26|20:58:32.568] Commit new mining work                   number=42 sealhash="afe186…2a86a2" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.954ms
+        INFO [09-26|20:58:43.989] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=5.891ms  mgasps=7.204 order=0 number=42 hash="18ff9c…78a556" difficulty=33 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ac09d8…841aff" parentHash="a3a4b4…30a7d1" time=1,790,449,111 cache=0.00B
+        INFO [09-26|20:58:43.989] Automatic ticket purchase confirmed      tx="a752b5…764bf9" block="18ff9c…78a556"
+        INFO [09-26|20:58:43.993] 🔗 block reached canonical chain          number=35 hash="512843…67367b"
+        INFO [09-26|20:58:43.993] Commit new mining work                   number=43 sealhash="1f7381…c2c2be" uncles=0 txs=0 gas=0     fees=0          elapsed=4.181ms
+        INFO [09-26|20:58:43.998] Submitted transaction                    hash=0x21e44a8f35429298f088b74b6901d8e08609eab392469efed5591a32d1b3be01 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=41 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:43.998] Automatic ticket submitted; awaiting inclusion tx="21e44a…b3be01" nonce=41
+        INFO [09-26|20:58:44.994] Commit new mining work                   number=43 sealhash="6f36cb…d726cc" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=4.469ms
+        INFO [09-26|20:58:57.501] Successfully sealed new block            number=43 sealhash="6f36cb…d726cc" hash="4b7f85…4fb1e3" difficulty=34 elapsed=10.957s
+        INFO [09-26|20:58:57.501] 🔨 mined potential block                  number=43 hash="4b7f85…4fb1e3"
+        INFO [09-26|20:58:57.502] Automatic ticket purchase confirmed      tx="21e44a…b3be01" block="4b7f85…4fb1e3"
+        INFO [09-26|20:58:57.504] Commit new mining work                   number=44 sealhash="ec486e…30d29f" uncles=0 txs=0 gas=0     fees=0          elapsed=3.101ms
+        INFO [09-26|20:58:57.511] Submitted transaction                    hash=0xca99a1abc653060bae0cf87b4aab8715cb90a554fc402db280194a6ae8539858 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=42 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:57.511] Automatic ticket submitted; awaiting inclusion tx="ca99a1…539858" nonce=42
+        INFO [09-26|20:58:58.505] Commit new mining work                   number=44 sealhash="aabbb5…7a6e4a" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.788ms
+        INFO [09-26|20:59:10.131] Successfully sealed new block            number=44 sealhash="aabbb5…7a6e4a" hash="2c0e15…d40956" difficulty=35 elapsed=11.626s
+        INFO [09-26|20:59:10.132] 🔗 block reached canonical chain          number=37 hash="d12a4b…441a23"
+        INFO [09-26|20:59:10.132] 🔨 mined potential block                  number=44 hash="2c0e15…d40956"
+        INFO [09-26|20:59:10.132] Automatic ticket purchase confirmed      tx="ca99a1…539858" block="2c0e15…d40956"
+        INFO [09-26|20:59:10.136] Commit new mining work                   number=45 sealhash="c453f8…1a43e0" uncles=0 txs=0 gas=0     fees=0          elapsed=3.912ms
+        INFO [09-26|20:59:10.141] Submitted transaction                    hash=0xdddef69462704052190b14136f9501578c6b3a1cb9dfc671352a480cfa90dad2 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=43 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:59:10.141] Automatic ticket submitted; awaiting inclusion tx="dddef6…90dad2" nonce=43
+        INFO [09-26|20:59:11.136] Commit new mining work                   number=45 sealhash="75772a…5c7ae2" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.385ms
+        INFO [09-26|20:59:23.299] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=6.808ms  mgasps=6.234 order=0 number=45 hash="bdfb73…14534d" difficulty=36 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8142d2…d2253a" parentHash="2c0e15…d40956" time=1,790,449,150 cache=0.00B
+        INFO [09-26|20:59:23.300] Automatic ticket purchase confirmed      tx="dddef6…90dad2" block="bdfb73…14534d"
+        INFO [09-26|20:59:23.303] Commit new mining work                   number=46 sealhash="06dbd8…6227ce" uncles=0 txs=0 gas=0     fees=0          elapsed=3.578ms
+        INFO [09-26|20:59:23.307] Submitted transaction                    hash=0xbb4f76fbff8666b84c84761d58b3148b8215e9d8ece799f082fe5e249918fee6 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=44 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:59:23.307] Automatic ticket submitted; awaiting inclusion tx="bb4f76…18fee6" nonce=44
+        INFO [09-26|20:59:37.778] Successfully sealed new block            number=46 sealhash="06dbd8…6227ce" hash="fc4cef…32522c" difficulty=37 elapsed=12.927s
+        INFO [09-26|20:59:37.779] 🔗 block reached canonical chain          number=39 hash="98c9b4…946434"
+        INFO [09-26|20:59:37.779] 🔨 mined potential block                  number=46 hash="fc4cef…32522c"
+        INFO [09-26|20:59:41.558] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=8.339ms  mgasps=0.000 order=1 number=46 hash="5c140d…80e379" difficulty=22 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="9616d4…65c76b" parentHash="bdfb73…14534d" time=1,790,449,180 cache=0.00B
+        INFO [09-26|21:00:15.922] IPC endpoint closed                      url=/tmp/fsn-dense-miner-696262371/lab.ipc
+        INFO [09-26|21:00:15.922] Stopping Ethereum protocol 
+        INFO [09-26|21:00:15.922] Ethereum protocol stopped 
+        INFO [09-26|21:00:15.923] Transaction pool stopped 
+        INFO [09-26|21:00:15.923] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (334.05s)
+        PASS
+    node_rehearsal_linux_test.go:314: node process /tmp/fsn-dense-miner-2046890192/process-3664796419.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [09-26|20:54:26.355] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|20:54:27.221] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-26|20:54:27.221] Allocated cache and file handles         database=/tmp/fsn-dense-miner-2046890192/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-26|20:54:27.267] Persisted trie from memory database      nodes=13 size=1.89KiB time="155.393µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-26|20:54:27.269]  
+        INFO [09-26|20:54:27.269] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|20:54:27.269] Chain ID:  55555 (devnet) 
+        INFO [09-26|20:54:27.269] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-26|20:54:27.269]  
+        INFO [09-26|20:54:27.269] hard forks: 
+        INFO [09-26|20:54:27.269]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-26|20:54:27.269]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-26|20:54:27.269]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-26|20:54:27.269]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|20:54:27.269]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-26|20:54:27.269]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-26|20:54:27.269]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-26|20:54:27.269]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-26|20:54:27.269]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-26|20:54:27.269]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-26|20:54:27.269]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-26|20:54:27.269]  - Fusion Eco:                  0        
+        INFO [09-26|20:54:27.269]  
+        INFO [09-26|20:54:27.269]  
+        INFO [09-26|20:54:27.269] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-26|20:54:27.269]  
+        INFO [09-26|20:54:27.270] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [09-26|20:54:27.274] Loaded most recent local header          number=24 hash="f20aad…7a5978" td=372 age=12m2s
+        INFO [09-26|20:54:27.274] Loaded most recent local full block      number=24 hash="f20aad…7a5978" td=372 age=12m2s
+        INFO [09-26|20:54:27.274] Loaded most recent local fast block      number=24 hash="f20aad…7a5978" td=372 age=12m2s
+        INFO [09-26|20:54:27.277] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-26|20:54:27.278] InitCheckPoints finished                 count=0 last=0
+        INFO [09-26|20:54:27.278] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-26|20:54:27.278] Starting P2P networking 
+        INFO [09-26|20:54:27.283] RLPx listener up                         self="enode://753fcb3eb3c135555d97fa80064d5a5541974122ed4c678053141fafac1dbafd60d9349fc48cdc956a1725e5f578afdd64d3ad4a935a4d5b1e581ce670256208@127.0.0.1:44901?discport=0"
+        INFO [09-26|20:54:27.286] IPC endpoint opened                      url=/tmp/fsn-dense-miner-2046890192/lab.ipc
+        INFO [09-26|20:54:28.553] Transaction pool price threshold updated price=1
+        INFO [09-26|20:54:28.558] Commit new mining work                   number=25 sealhash="0ea5f5…a6c7b0" uncles=0 txs=0 gas=0 fees=0 elapsed=5.300ms
+        INFO [09-26|20:54:28.572] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-26|20:54:28.574] Submitted transaction                    hash=0x16cb9f498b6864b28cd5b4a047500672ebcea221fd4aa1808b0c389f3b247dea from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=24 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:54:28.574] Automatic ticket submitted; awaiting inclusion tx="16cb9f…247dea" nonce=24
+        INFO [09-26|20:54:28.574] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=5.693ms mgasps=0.000 order=1 number=25 hash="01b14c…59eca1" difficulty=16 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="3bf6d5…fcfbf3" parentHash="f20aad…7a5978" time=1,790,448,868 cache=0.00B
+        INFO [09-26|20:54:28.574] Mining too far in the future             wait=7s
+        INFO [09-26|20:54:35.579] Commit new mining work                   number=26 sealhash="e46023…115782" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=7.005s
+        INFO [09-26|20:54:35.579] keep mining as order is first            sealHash=0x0ea5f5192f72b97e48aa94de97170c5521ab4c84d6e7633ac2276dbe80a6c7b0 number=25 hash="701718…6808e2"
+        INFO [09-26|20:54:36.584] Commit new mining work                   number=26 sealhash="e46023…115782" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.382ms
+        INFO [09-26|20:54:39.002] Successfully sealed new block            number=25 sealhash="0ea5f5…a6c7b0" hash="119984…73fa16" difficulty=28 elapsed=10.443s
+        INFO [09-26|20:54:39.002] 🔨 mined potential block                  number=25 hash="119984…73fa16"
+        INFO [09-26|20:54:39.007] Commit new mining work                   number=26 sealhash="8fbd8b…81a634" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=4.004ms
+        INFO [09-26|20:54:46.010] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=5.304ms mgasps=8.002 order=0 number=26 hash="06cc84…1cb9e7" difficulty=26 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="a7a089…9bf5a8" parentHash="01b14c…59eca1" time=1,790,448,875 cache=0.00B
+        INFO [09-26|20:54:46.010] Automatic ticket purchase confirmed      tx="16cb9f…247dea" block="06cc84…1cb9e7"
+        INFO [09-26|20:54:46.016] Commit new mining work                   number=27 sealhash="ac660b…eab8dd" uncles=0 txs=0 gas=0     fees=0          elapsed=5.989ms
+        INFO [09-26|20:54:46.022] Submitted transaction                    hash=0x0a2c6beb6897097e02219caf32db01507262c936b2c2188a0fcfe011da1e639b from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=25 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:54:46.022] Automatic ticket submitted; awaiting inclusion tx="0a2c6b…1e639b" nonce=25
+        INFO [09-26|20:54:47.014] Commit new mining work                   number=27 sealhash="dc42ae…725da4" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.385ms
+        INFO [09-26|20:54:50.010] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=6.493ms mgasps=6.537 order=0 number=26 hash="04273d…3c81dd" difficulty=27 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="2e1d9a…13dd1d" parentHash="119984…73fa16" time=1,790,448,879 cache=0.00B
+        INFO [09-26|20:54:50.016] Commit new mining work                   number=27 sealhash="986a10…5bedc1" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=5.454ms
+        INFO [09-26|20:54:50.016] keep mining as order is first            sealHash=0xdc42ae0f1614e27c44148915acbfb15ad1537137b2a768e825873f3ba2725da4 number=27 hash="fb57f2…a6dfff"
+        INFO [09-26|20:54:57.859] Successfully sealed new block            number=27 sealhash="dc42ae…725da4" hash="6f01d5…ea1b8d" difficulty=27 elapsed=9.987s
+        INFO [09-26|20:54:57.859] 🔨 mined potential block                  number=27 hash="6f01d5…ea1b8d"
+        INFO [09-26|20:54:57.860] Automatic ticket purchase confirmed      tx="0a2c6b…1e639b" block="6f01d5…ea1b8d"
+        INFO [09-26|20:54:57.863] Commit new mining work                   number=28 sealhash="81eed9…9ec689" uncles=0 txs=0 gas=0     fees=0          elapsed=4.262ms
+        INFO [09-26|20:54:57.863] keep mining as order is first            sealHash=0x986a102daf5829ed631c96cf786534aaf05375d2c92095372072d7be855bedc1 number=27 hash="197c5c…179c81"
+        INFO [09-26|20:54:57.866] Submitted transaction                    hash=0x91053a86eac21d73a67e5c88beb863c21d8be981e19f4eab0d4b123334dae1f2 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=26 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:54:57.866] Automatic ticket submitted; awaiting inclusion tx="91053a…dae1f2" nonce=26
+        INFO [09-26|20:54:58.862] Commit new mining work                   number=28 sealhash="24d713…3beefb" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.174ms
+        INFO [09-26|20:55:01.858] Successfully sealed new block            number=27 sealhash="986a10…5bedc1" hash="535e82…1adf47" difficulty=28 elapsed=10.985s
+        INFO [09-26|20:55:01.859] 🔨 mined potential block                  number=27 hash="535e82…1adf47"
+        INFO [09-26|20:55:01.862] Commit new mining work                   number=28 sealhash="cefbcf…c5b0bf" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.256ms
+        INFO [09-26|20:55:20.001] Successfully sealed new block            number=28 sealhash="cefbcf…c5b0bf" hash="0762a9…aeb6a3" difficulty=17 elapsed=18.138s
+        INFO [09-26|20:55:20.001] 🔨 mined potential block                  number=28 hash="0762a9…aeb6a3"
+        INFO [09-26|20:55:20.002] Mining too far in the future             wait=7s
+        INFO [09-26|20:55:20.002] Automatic ticket purchase confirmed      tx="91053a…dae1f2" block="0762a9…aeb6a3"
+        INFO [09-26|20:55:20.007] Submitted transaction                    hash=0x3e782dff435cc252c4887bca7105e35d3118f5ac5656f706d9288985248ce9f6 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=27 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:55:20.007] Automatic ticket submitted; awaiting inclusion tx="3e782d…8ce9f6" nonce=27
+        INFO [09-26|20:55:27.007] Commit new mining work                   number=29 sealhash="da4c8b…c1fe97" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=7.005s
+        INFO [09-26|20:55:28.009] Commit new mining work                   number=29 sealhash="da4c8b…c1fe97" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.231ms
+        INFO [09-26|20:55:51.594] Successfully sealed new block            number=29 sealhash="da4c8b…c1fe97" hash="eca11c…bb38ae" difficulty=17 elapsed=22.994s
+        INFO [09-26|20:55:51.595] 🔨 mined potential block                  number=29 hash="eca11c…bb38ae"
+        INFO [09-26|20:55:51.595] Mining too far in the future             wait=6s
+        INFO [09-26|20:55:51.595] Automatic ticket purchase confirmed      tx="3e782d…8ce9f6" block="eca11c…bb38ae"
+        INFO [09-26|20:55:51.601] Submitted transaction                    hash=0x7eb80fec96cd8a65c46a9ed75c84fbebb803d616b729d26cb578998f8f984fe1 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=28 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:55:51.601] Automatic ticket submitted; awaiting inclusion tx="7eb80f…984fe1" nonce=28
+        INFO [09-26|20:55:57.599] Commit new mining work                   number=30 sealhash="42c34e…82289b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=6.003s
+        INFO [09-26|20:55:57.602] Commit new mining work                   number=30 sealhash="42c34e…82289b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.830ms
+        INFO [09-26|20:56:09.383] Successfully sealed new block            number=30 sealhash="42c34e…82289b" hash="1faee6…a51313" difficulty=28 elapsed=10.402s
+        INFO [09-26|20:56:09.383] 🔨 mined potential block                  number=30 hash="1faee6…a51313"
+        INFO [09-26|20:56:09.383] Automatic ticket purchase confirmed      tx="7eb80f…984fe1" block="1faee6…a51313"
+        INFO [09-26|20:56:09.387] Commit new mining work                   number=31 sealhash="785d36…56e9bf" uncles=0 txs=0 gas=0     fees=0          elapsed=3.779ms
+        INFO [09-26|20:56:09.391] Submitted transaction                    hash=0x86b7316c553c92f71e3b92aa65f79d0b2ca7d1ac138c007b4756afc2f15a2080 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=29 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:09.391] Automatic ticket submitted; awaiting inclusion tx="86b731…5a2080" nonce=29
+        INFO [09-26|20:56:10.387] Commit new mining work                   number=31 sealhash="3b6785…e4f580" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.208ms
+        INFO [09-26|20:56:20.001] Successfully sealed new block            number=31 sealhash="3b6785…e4f580" hash="8f965e…5010e1" difficulty=28 elapsed=9.614s
+        INFO [09-26|20:56:20.001] 🔨 mined potential block                  number=31 hash="8f965e…5010e1"
+        INFO [09-26|20:56:20.002] Automatic ticket purchase confirmed      tx="86b731…5a2080" block="8f965e…5010e1"
+        INFO [09-26|20:56:20.004] Commit new mining work                   number=32 sealhash="5439f0…2b2700" uncles=0 txs=0 gas=0     fees=0          elapsed=2.741ms
+        INFO [09-26|20:56:20.007] Submitted transaction                    hash=0x12dec87e15104d6e75bcd57e5681ba0d230da62b50ca5368b9d3c73091976a21 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=30 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:20.007] Automatic ticket submitted; awaiting inclusion tx="12dec8…976a21" nonce=30
+        INFO [09-26|20:56:21.005] Commit new mining work                   number=32 sealhash="62ba5e…1e259c" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.101ms
+        INFO [09-26|20:56:31.017] Successfully sealed new block            number=32 sealhash="62ba5e…1e259c" hash="964c20…547d0d" difficulty=28 elapsed=10.012s
+        INFO [09-26|20:56:31.018] 🔗 block reached canonical chain          number=25 hash="119984…73fa16"
+        INFO [09-26|20:56:31.018] 🔨 mined potential block                  number=32 hash="964c20…547d0d"
+        INFO [09-26|20:56:31.018] Automatic ticket purchase confirmed      tx="12dec8…976a21" block="964c20…547d0d"
+        INFO [09-26|20:56:31.022] Commit new mining work                   number=33 sealhash="50c06c…d26483" uncles=0 txs=0 gas=0     fees=0          elapsed=3.624ms
+        INFO [09-26|20:56:31.028] Submitted transaction                    hash=0x4739e3b59ce29c523eb9963bcc7078b3054ab230eb1cbfd08134be30a05f7035 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=31 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:31.028] Automatic ticket submitted; awaiting inclusion tx="4739e3…5f7035" nonce=31
+        INFO [09-26|20:56:32.024] Commit new mining work                   number=33 sealhash="7911e3…f07b6b" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=5.433ms
+        INFO [09-26|20:56:51.467] Successfully sealed new block            number=33 sealhash="7911e3…f07b6b" hash="f1af89…fe0884" difficulty=16 elapsed=17.977s
+        INFO [09-26|20:56:51.467] 🔨 mined potential block                  number=33 hash="f1af89…fe0884"
+        INFO [09-26|20:56:51.467] Mining too far in the future             wait=6s
+        INFO [09-26|20:56:51.467] Automatic ticket purchase confirmed      tx="4739e3…5f7035" block="f1af89…fe0884"
+        INFO [09-26|20:56:51.473] Submitted transaction                    hash=0xb6f3bacaa1dfbab0df8cf6e38bebcbf6176acc5ad594e8e69e0e2204c477181d from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=32 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:56:51.473] Automatic ticket submitted; awaiting inclusion tx="b6f3ba…77181d" nonce=32
+        INFO [09-26|20:56:57.471] Commit new mining work                   number=34 sealhash="b587fa…9d40e2" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=6.004s
+        INFO [09-26|20:56:58.475] Commit new mining work                   number=34 sealhash="b587fa…9d40e2" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.709ms
+        INFO [09-26|20:57:02.584] Block synchronisation started 
+        INFO [09-26|20:57:02.584] Mining aborted due to sync 
+        INFO [09-26|20:57:02.592] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=173.14B throttle=8192
+        INFO [09-26|20:57:02.609] Imported new chain segment               blocks=2 txs=3 mgas=0.064 elapsed=9.066ms mgasps=7.023 order=1 number=29 hash="ab8b01…0427ee" difficulty=17 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="e09aa0…01117f" parentHash="99208f…cc58ae" time=1,790,448,927 age=1m35s cache=0.00B
+        INFO [09-26|20:57:02.609] notify first order chain head event      number=28 hash="99208f…cc58ae"
+        INFO [09-26|20:57:02.633] Imported new chain segment               blocks=5 txs=5 mgas=0.106 elapsed=23.748ms mgasps=4.469 order=1 number=34 hash="8b9a26…7d7080" difficulty=16 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="473481…52efa2" parentHash="d2153e…f62b91" time=1,790,449,016 cache=0.00B
+        INFO [09-26|20:57:02.633] notify first order chain head event      number=32 hash="6a141a…cf5f38"
+        INFO [09-26|20:57:02.638] 🔗 block reached canonical chain          number=27 hash="6f01d5…ea1b8d"
+        INFO [09-26|20:57:02.638] 😱 block lost                             number=27 hash="535e82…1adf47" order=0
+        INFO [09-26|20:57:02.638] keep mining as order is first            sealHash=0xb587fada9437babcf390a45eeb2a2b50676e31186b26cba3d4a23bd8db9d40e2 number=34 hash="9ce024…c4863e"
+        INFO [09-26|20:57:02.638] Commit new mining work                   number=35 sealhash="31de29…d86aa2" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.731ms
+        WARN [09-26|20:57:07.585] Automatic ticket purchase needs attention; retrying err="another ticket purchase >x-\xffC\\\xc2RĈ{\xcaq\x05\xe3]1\x18\xf5\xacVV\xf7\x06\xd9(\x89\x85$\x8c\xe9\xf6 is pending; awaiting nonce resolution"
+        INFO [09-26|20:57:08.003] Successfully sealed new block            number=34 sealhash="b587fa…9d40e2" hash="c119dc…06b70b" difficulty=27 elapsed=10.531s
+        INFO [09-26|20:57:08.003] 🔨 mined potential block                  number=34 hash="c119dc…06b70b"
+        INFO [09-26|20:57:08.004] Automatic ticket purchase confirmed      tx="b6f3ba…77181d" block="c119dc…06b70b"
+        INFO [09-26|20:57:08.010] Commit new mining work                   number=35 sealhash="90c4b9…94fa9f" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=4.586ms
+        INFO [09-26|20:57:08.014] Submitted transaction                    hash=0x25d7e10ac525701c9baf5a251bd8a6f799e565a3d944f56b419b1e8c91785c11 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=33 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:08.014] Automatic ticket submitted; awaiting inclusion tx="25d7e1…785c11" nonce=33
+        INFO [09-26|20:57:09.008] Commit new mining work                   number=35 sealhash="6e9156…749512" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.609ms
+        INFO [09-26|20:57:15.519] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=6.317ms  mgasps=6.719 order=0 number=35 hash="512843…67367b" difficulty=26 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="3af067…c10173" parentHash="8b9a26…7d7080" time=1,790,449,023 cache=0.00B
+        INFO [09-26|20:57:15.522] 😱 block lost                             number=28 hash="0762a9…aeb6a3" order=0
+        INFO [09-26|20:57:15.522] keep mining as order is first            sealHash=0x6e9156fa938a4a9ff4c958593436e015055ae02e0762eb851af2770951749512 number=35 hash="2c6c88…119af9"
+        INFO [09-26|20:57:15.522] Commit new mining work                   number=36 sealhash="8668c6…b98050" uncles=0 txs=0 gas=0     fees=0          elapsed=3.091ms
+        INFO [09-26|20:57:16.524] Commit new mining work                   number=36 sealhash="ab1f4e…4bdc94" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.577ms
+        INFO [09-26|20:57:20.498] Successfully sealed new block            number=35 sealhash="6e9156…749512" hash="45901e…28fd0e" difficulty=27 elapsed=9.994s
+        INFO [09-26|20:57:20.512] Automatic ticket purchase confirmed      tx="25d7e1…785c11" block="45901e…28fd0e"
+        INFO [09-26|20:57:20.512] 🔨 mined potential block                  number=35 hash="45901e…28fd0e"
+        INFO [09-26|20:57:20.518] Commit new mining work                   number=36 sealhash="f98c4c…5f948f" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=5.879ms
+        INFO [09-26|20:57:20.518] keep mining as order is first            sealHash=0xab1f4ea60615c3c0f70f17dc6ca1e4a2f8a8343b271cdb722c1deaa9934bdc94 number=36 hash="8a5dfa…de44f5"
+        INFO [09-26|20:57:20.522] Submitted transaction                    hash=0x41eb86272f535dec6b8fa64d306ee283e510910ccb1c9315cef53f23b49f62ef from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=34 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:20.522] Automatic ticket submitted; awaiting inclusion tx="41eb86…9f62ef" nonce=34
+        INFO [09-26|20:57:21.517] Commit new mining work                   number=36 sealhash="8f2129…d8c213" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.472ms
+        INFO [09-26|20:57:27.953] Successfully sealed new block            number=36 sealhash="ab1f4e…4bdc94" hash="4d5ba0…b495ea" difficulty=27 elapsed=11.429s
+        INFO [09-26|20:57:27.953] 😱 block lost                             number=29 hash="eca11c…bb38ae" order=1
+        INFO [09-26|20:57:27.953] 🔨 mined potential block                  number=36 hash="4d5ba0…b495ea"
+        INFO [09-26|20:57:27.957] Commit new mining work                   number=37 sealhash="09b249…c280a6" uncles=0 txs=0 gas=0     fees=0          elapsed=3.187ms
+        INFO [09-26|20:57:28.958] Commit new mining work                   number=37 sealhash="dc21f9…5c7c4e" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.445ms
+        WARN [09-26|20:57:34.081] Automatic ticket purchase needs attention; retrying err="another ticket purchase \x86\xb71lU<\x92\xf7\x1e;\x92\xaae\xf7\x9d\v,\xa7Ѭ\x13\x8c\x00{GV\xaf\xc2\xf1Z \x80 is pending; awaiting nonce resolution"
+        INFO [09-26|20:57:39.909] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=5.590ms  mgasps=7.593 order=0 number=37 hash="d12a4b…441a23" difficulty=28 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="087163…33f51c" parentHash="4d5ba0…b495ea" time=1,790,449,047 cache=0.00B
+        WARN [09-26|20:57:39.909] Automatic ticket purchase needs attention; retrying err="automatic ticket A\xeb\x86'/S]\xeck\x8f\xa6M0n\xe2\x83\xe5\x10\x91\f\xcb\x1c\x93\x15\xce\xf5?#\xb4\x9fb\xef needs nonce 34, current nonce is 30"
+        INFO [09-26|20:57:39.912] 😱 block lost                             number=30 hash="1faee6…a51313" order=0
+        INFO [09-26|20:57:39.912] Commit new mining work                   number=38 sealhash="4cff40…426120" uncles=0 txs=0 gas=0     fees=0          elapsed=3.083ms
+        INFO [09-26|20:57:40.912] Commit new mining work                   number=38 sealhash="6f1c19…01c4c4" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=3.127ms
+        INFO [09-26|20:57:51.723] Submitted transaction                    hash=0x12dec87e15104d6e75bcd57e5681ba0d230da62b50ca5368b9d3c73091976a21 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=30 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:52.447] Commit new mining work                   number=38 sealhash="374da0…6b6a0c" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=6.089ms
+        INFO [09-26|20:57:52.449] Successfully sealed new block            number=38 sealhash="374da0…6b6a0c" hash="dbcfa2…4e498d" difficulty=29 elapsed=1.868ms
+        INFO [09-26|20:57:52.449] 😱 block lost                             number=31 hash="8f965e…5010e1" order=0
+        INFO [09-26|20:57:52.449] 🔨 mined potential block                  number=38 hash="dbcfa2…4e498d"
+        WARN [09-26|20:57:52.449] Automatic ticket purchase needs attention; retrying err="automatic ticket A\xeb\x86'/S]\xeck\x8f\xa6M0n\xe2\x83\xe5\x10\x91\f\xcb\x1c\x93\x15\xce\xf5?#\xb4\x9fb\xef needs nonce 34, current nonce is 31"
+        INFO [09-26|20:57:52.453] Commit new mining work                   number=39 sealhash="0248f1…1867a3" uncles=0 txs=0 gas=0     fees=0          elapsed=3.982ms
+        INFO [09-26|20:57:52.501] Submitted transaction                    hash=0x4739e3b59ce29c523eb9963bcc7078b3054ab230eb1cbfd08134be30a05f7035 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=31 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:57:53.454] Commit new mining work                   number=39 sealhash="1bc7ed…ce057a" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.864ms
+        WARN [09-26|20:58:00.606] Automatic ticket purchase needs attention; retrying err="another ticket purchase G9㵜\xe2\x9cR>\xb9\x96;\xccpx\xb3\x05J\xb20\xeb\x1c\xbfЁ4\xbe0\xa0_p5 is pending; awaiting nonce resolution"
+        INFO [09-26|20:58:04.888] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=5.352ms  mgasps=7.931 order=0 number=39 hash="98c9b4…946434" difficulty=30 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="07321a…8e804d" parentHash="dbcfa2…4e498d" time=1,790,449,072 cache=0.00B
+        WARN [09-26|20:58:04.889] Automatic ticket purchase needs attention; retrying err="automatic ticket A\xeb\x86'/S]\xeck\x8f\xa6M0n\xe2\x83\xe5\x10\x91\f\xcb\x1c\x93\x15\xce\xf5?#\xb4\x9fb\xef needs nonce 34, current nonce is 32"
+        INFO [09-26|20:58:04.892] 😱 block lost                             number=32 hash="964c20…547d0d" order=0
+        INFO [09-26|20:58:04.892] Commit new mining work                   number=40 sealhash="59ef0f…016cf1" uncles=0 txs=0 gas=0     fees=0          elapsed=2.919ms
+        INFO [09-26|20:58:05.141] Submitted transaction                    hash=0xb6f3bacaa1dfbab0df8cf6e38bebcbf6176acc5ad594e8e69e0e2204c477181d from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=32 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:05.894] Commit new mining work                   number=40 sealhash="726f22…d2d4b1" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.837ms
+        WARN [09-26|20:58:10.606] Automatic ticket purchase needs attention; retrying err="another ticket purchase \xb6\xf3\xbaʡߺ\xb0ߌ\xf6\xe3\x8b\xeb\xcb\xf6\x17j\xccZՔ\xe8\xe6\x9e\x0e\"\x04\xc4w\x18\x1d is pending; awaiting nonce resolution"
+        INFO [09-26|20:58:17.051] Successfully sealed new block            number=40 sealhash="726f22…d2d4b1" hash="69e81d…641f31" difficulty=31 elapsed=11.157s
+        INFO [09-26|20:58:17.051] 😱 block lost                             number=33 hash="f1af89…fe0884" order=1
+        INFO [09-26|20:58:17.051] 🔨 mined potential block                  number=40 hash="69e81d…641f31"
+        WARN [09-26|20:58:17.051] Automatic ticket purchase needs attention; retrying err="automatic ticket A\xeb\x86'/S]\xeck\x8f\xa6M0n\xe2\x83\xe5\x10\x91\f\xcb\x1c\x93\x15\xce\xf5?#\xb4\x9fb\xef needs nonce 34, current nonce is 33"
+        INFO [09-26|20:58:17.055] Commit new mining work                   number=41 sealhash="d3bf6d…46cbbe" uncles=0 txs=0 gas=0     fees=0          elapsed=3.157ms
+        INFO [09-26|20:58:17.274] Submitted transaction                    hash=0x25d7e10ac525701c9baf5a251bd8a6f799e565a3d944f56b419b1e8c91785c11 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=33 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:18.055] Commit new mining work                   number=41 sealhash="70fff5…6449d3" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.276ms
+        WARN [09-26|20:58:27.161] Automatic ticket purchase needs attention; retrying err="another ticket purchase %\xd7\xe1\n\xc5%p\x1c\x9b\xafZ%\x1bئ\xf7\x99\xe5e\xa3\xd9D\xf5kA\x9b\x1e\x8c\x91x\\\x11 is pending; awaiting nonce resolution"
+        INFO [09-26|20:58:31.556] Successfully sealed new block            number=41 sealhash="70fff5…6449d3" hash="a3a4b4…30a7d1" difficulty=32 elapsed=11.946s
+        INFO [09-26|20:58:31.558] 😱 block lost                             number=34 hash="c119dc…06b70b" order=1
+        INFO [09-26|20:58:31.558] 🔨 mined potential block                  number=41 hash="a3a4b4…30a7d1"
+        INFO [09-26|20:58:31.560] Submitted transaction                    hash=0x41eb86272f535dec6b8fa64d306ee283e510910ccb1c9315cef53f23b49f62ef from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=34 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:31.560] Automatic ticket submitted; awaiting inclusion tx="41eb86…9f62ef" nonce=34
+        INFO [09-26|20:58:31.564] Commit new mining work                   number=42 sealhash="09f9ff…d70a9f" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=5.383ms
+        INFO [09-26|20:58:32.563] Commit new mining work                   number=42 sealhash="f2178c…47cc2b" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.447ms
+        INFO [09-26|20:58:43.981] Successfully sealed new block            number=42 sealhash="f2178c…47cc2b" hash="18ff9c…78a556" difficulty=33 elapsed=11.418s
+        INFO [09-26|20:58:43.981] 😱 block lost                             number=35 hash="45901e…28fd0e" order=0
+        INFO [09-26|20:58:43.981] 🔨 mined potential block                  number=42 hash="18ff9c…78a556"
+        INFO [09-26|20:58:43.982] Automatic ticket purchase confirmed      tx="41eb86…9f62ef" block="18ff9c…78a556"
+        INFO [09-26|20:58:43.989] Commit new mining work                   number=43 sealhash="06b7ef…7d1a22" uncles=0 txs=0 gas=0     fees=0          elapsed=6.480ms
+        INFO [09-26|20:58:43.994] Submitted transaction                    hash=0xf9c7cb6fa99efeb2fb97d528fa84b17054d33b57676dcc71e97efc8d453ddc44 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=35 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:43.994] Automatic ticket submitted; awaiting inclusion tx="f9c7cb…3ddc44" nonce=35
+        INFO [09-26|20:58:44.987] Commit new mining work                   number=43 sealhash="f36d05…3e7be7" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=4.128ms
+        INFO [09-26|20:58:57.510] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=5.347ms  mgasps=7.939 order=0 number=43 hash="4b7f85…4fb1e3" difficulty=34 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="c7d12d…0b6607" parentHash="18ff9c…78a556" time=1,790,449,123 cache=0.00B
+        INFO [09-26|20:58:57.511] Automatic ticket purchase confirmed      tx="f9c7cb…3ddc44" block="4b7f85…4fb1e3"
+        INFO [09-26|20:58:57.514] 🔗 block reached canonical chain          number=36 hash="4d5ba0…b495ea"
+        INFO [09-26|20:58:57.514] Commit new mining work                   number=44 sealhash="a7ffb0…d7feb0" uncles=0 txs=0 gas=0     fees=0          elapsed=4.037ms
+        INFO [09-26|20:58:57.518] Submitted transaction                    hash=0x2d54729ec9ad84ad8adbc710010d0b501e9f1997389abd0bee6bb4b54ed4351c from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=36 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:58:57.518] Automatic ticket submitted; awaiting inclusion tx="2d5472…d4351c" nonce=36
+        INFO [09-26|20:58:58.515] Commit new mining work                   number=44 sealhash="4c3a50…4d5f1f" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=4.603ms
+        INFO [09-26|20:59:10.139] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=5.443ms  mgasps=7.798 order=0 number=44 hash="2c0e15…d40956" difficulty=35 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="e4046d…0c07e5" parentHash="4b7f85…4fb1e3" time=1,790,449,137 cache=0.00B
+        INFO [09-26|20:59:10.140] Automatic ticket purchase confirmed      tx="2d5472…d4351c" block="2c0e15…d40956"
+        INFO [09-26|20:59:10.143] Commit new mining work                   number=45 sealhash="5cf549…2e3ad9" uncles=0 txs=0 gas=0     fees=0          elapsed=3.454ms
+        INFO [09-26|20:59:10.148] Submitted transaction                    hash=0xf5148d693534db473c18c49cc7f7bdfb3f7fd10991d3b237b1aa2a18ca061dd7 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=37 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:59:10.149] Automatic ticket submitted; awaiting inclusion tx="f5148d…061dd7" nonce=37
+        INFO [09-26|20:59:11.143] Commit new mining work                   number=45 sealhash="70b122…e1cbb3" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.674ms
+        INFO [09-26|20:59:23.291] Successfully sealed new block            number=45 sealhash="70b122…e1cbb3" hash="bdfb73…14534d" difficulty=36 elapsed=12.148s
+        INFO [09-26|20:59:23.291] 🔗 block reached canonical chain          number=38 hash="dbcfa2…4e498d"
+        INFO [09-26|20:59:23.291] 🔨 mined potential block                  number=45 hash="bdfb73…14534d"
+        INFO [09-26|20:59:23.292] Automatic ticket purchase confirmed      tx="f5148d…061dd7" block="bdfb73…14534d"
+        INFO [09-26|20:59:23.297] Commit new mining work                   number=46 sealhash="f62df8…39873e" uncles=0 txs=0 gas=0     fees=0          elapsed=5.461ms
+        INFO [09-26|20:59:23.304] Submitted transaction                    hash=0x03941dfb0bf50c488fe66712f4ee5dcd81bd3221bdbbd8b5494c3c62cc214736 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=38 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-26|20:59:23.304] Automatic ticket submitted; awaiting inclusion tx="03941d…214736" nonce=38
+        INFO [09-26|20:59:37.784] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=3.942ms  mgasps=0.000 order=0 number=46 hash="fc4cef…32522c" difficulty=37 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="996390…c2cba8" parentHash="bdfb73…14534d" time=1,790,449,163 cache=0.00B
+        INFO [09-26|20:59:41.548] Successfully sealed new block            number=46 sealhash="f62df8…39873e" hash="5c140d…80e379" difficulty=22 elapsed=16.704s
+        INFO [09-26|20:59:41.548] 🔨 mined potential block                  number=46 hash="5c140d…80e379"
+        INFO [09-26|21:00:14.374] IPC endpoint closed                      url=/tmp/fsn-dense-miner-2046890192/lab.ipc
+        INFO [09-26|21:00:14.374] Stopping Ethereum protocol 
+        INFO [09-26|21:00:14.374] Ethereum protocol stopped 
+        INFO [09-26|21:00:14.375] Transaction pool stopped 
+        INFO [09-26|21:00:14.375] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (333.51s)
+        PASS
+--- PASS: TestRestartNodeRehearsal (339.07s)
+    --- PASS: TestRestartNodeRehearsal/continuous_partition_nonce_repair (339.07s)
+PASS

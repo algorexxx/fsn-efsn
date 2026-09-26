@@ -107,17 +107,21 @@ recovery mechanism. For the minimal runtime scope, the tested manual procedure
 in the [nonce rollback report](restart-purchase-nonce-rollback.md) is the starting
 point: preserve original signed transactions, verify current validity and funding,
 resubmit the missing nonces individually, and require canonical native success.
-That procedure has not yet been repeated under this continuous multi-block
-partition workload.
+The subsequent [live nonce-repair experiment](restart-live-nonce-repair.md) now
+passes a bounded version of this workload: four original purchases are submitted
+individually while both miners remain enabled, the unchanged saved intent then
+executes, and two fresh automatic successors follow. Both cold databases retain
+the repaired receipts and state. This requires preserved original bytes and
+surviving eligible miners; it does not change the unattended failures above.
 
 The opt-in `TestRestartNodeRehearsal/continuous_partition_miners` deliberately
 retains the strict requirement and currently exits unsuccessfully on this
 limitation. Use `check-strict.sh build`, then `check-strict.sh continuous` with a
 new evidence label in the documented WSL environment to reproduce it. Do not
 weaken it to peer count, block progress or a single displaced transaction's
-re-inclusion. The next bounded investigation is explicit nonce repair while
-these miners remain live, including surviving ticket availability and renewed
-successor purchases after repair.
+re-inclusion. The live repair follow-up samples surviving tickets and checks
+renewed successors; operator access to original bytes and the real wallet's
+ticket runway remain separate work.
 
 Monitoring must detect buyer warnings and stalled purchase/nonce progression in
 addition to process state, peer count, head progression and enabled flags. This

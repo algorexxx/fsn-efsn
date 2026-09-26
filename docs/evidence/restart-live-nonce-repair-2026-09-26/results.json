@@ -1,0 +1,189 @@
+{
+  "result": "PASS: explicit sequential nonce repair during uninterrupted mining",
+  "test_seconds": 339.07,
+  "kernel_drops": 44,
+  "gap": {
+    "node": 1,
+    "canonical_nonce": 30,
+    "saved_nonce": 34,
+    "saved_hash": "0x41eb86272f535dec6b8fa64d306ee283e510910ccb1c9315cef53f23b49f62ef",
+    "common_block": 36,
+    "after_heal": "1m15.995291557s"
+  },
+  "originals": [
+    {
+      "nonce": 30,
+      "hash": "0x12dec87e15104d6e75bcd57e5681ba0d230da62b50ca5368b9d3c73091976a21",
+      "block": 38,
+      "block_hash": "0xdbcfa2eac8066f26ca37b9118c2174804765d89394b4da45be75cf8cae4e498d"
+    },
+    {
+      "nonce": 31,
+      "hash": "0x4739e3b59ce29c523eb9963bcc7078b3054ab230eb1cbfd08134be30a05f7035",
+      "block": 39,
+      "block_hash": "0x98c9b4e5e0420a7b8a1afb0c585baf987c44a851ee972f6e67e7864cd4946434"
+    },
+    {
+      "nonce": 32,
+      "hash": "0xb6f3bacaa1dfbab0df8cf6e38bebcbf6176acc5ad594e8e69e0e2204c477181d",
+      "block": 40,
+      "block_hash": "0x69e81d080f92b4a194217079d3d67642a40354c387f51b0457a14c61d3641f31"
+    },
+    {
+      "nonce": 33,
+      "hash": "0x25d7e10ac525701c9baf5a251bd8a6f799e565a3d944f56b419b1e8c91785c11",
+      "block": 41,
+      "block_hash": "0xa3a4b4c53efe596d0106cbd2415e2bbc19198db58d330348c0919ddb8230a7d1"
+    }
+  ],
+  "automatic_successors": 2,
+  "ticket_samples": [
+    {
+      "phase": "before-outage",
+      "block": 26,
+      "owner": 1,
+      "stored": 14,
+      "valid_next_period": 14
+    },
+    {
+      "phase": "before-outage",
+      "block": 26,
+      "owner": 2,
+      "stored": 11,
+      "valid_next_period": 11
+    },
+    {
+      "phase": "isolated",
+      "block": 32,
+      "owner": 1,
+      "stored": 14,
+      "valid_next_period": 14
+    },
+    {
+      "phase": "isolated",
+      "block": 32,
+      "owner": 2,
+      "stored": 12,
+      "valid_next_period": 12
+    },
+    {
+      "phase": "isolated",
+      "block": 33,
+      "owner": 1,
+      "stored": 13,
+      "valid_next_period": 13
+    },
+    {
+      "phase": "isolated",
+      "block": 33,
+      "owner": 2,
+      "stored": 12,
+      "valid_next_period": 12
+    },
+    {
+      "phase": "paused-before-repair",
+      "block": 36,
+      "owner": 1,
+      "stored": 13,
+      "valid_next_period": 13
+    },
+    {
+      "phase": "paused-before-repair",
+      "block": 36,
+      "owner": 2,
+      "stored": 13,
+      "valid_next_period": 13
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 38,
+      "owner": 1,
+      "stored": 14,
+      "valid_next_period": 14
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 38,
+      "owner": 2,
+      "stored": 14,
+      "valid_next_period": 14
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 39,
+      "owner": 1,
+      "stored": 15,
+      "valid_next_period": 15
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 39,
+      "owner": 2,
+      "stored": 14,
+      "valid_next_period": 14
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 40,
+      "owner": 1,
+      "stored": 15,
+      "valid_next_period": 15
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 40,
+      "owner": 2,
+      "stored": 15,
+      "valid_next_period": 15
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 41,
+      "owner": 1,
+      "stored": 15,
+      "valid_next_period": 15
+    },
+    {
+      "phase": "missing-nonce-included",
+      "block": 41,
+      "owner": 2,
+      "stored": 16,
+      "valid_next_period": 16
+    },
+    {
+      "phase": "automatic-successors",
+      "block": 44,
+      "owner": 1,
+      "stored": 17,
+      "valid_next_period": 17
+    },
+    {
+      "phase": "automatic-successors",
+      "block": 44,
+      "owner": 2,
+      "stored": 17,
+      "valid_next_period": 17
+    }
+  ],
+  "cold_observations": [
+    {
+      "node": 1,
+      "nonce": 38,
+      "saved_bytes": 118,
+      "canonical_receipts": 7
+    },
+    {
+      "node": 2,
+      "nonce": 44,
+      "saved_bytes": 118,
+      "canonical_receipts": 7
+    }
+  ],
+  "final": {
+    "number": 46,
+    "hash": "0xfc4cef49ec8c215465f367bd2e94c9e691faa2685723f2fc2e006553a032522c",
+    "state_root": "0x996390261382bbdfd621ce613d49692a767d58efb8716d2ce320cf621bc2cba8",
+    "ticket_root": "0xdf1b90fdd762ecff0253b1deeb5858e7f123ab3986ae09f83c41ff00b43c39e9"
+  },
+  "limits": "One 90-second isolated synthetic devnet outage, generous funding/tickets, preserved original bytes. No automatic repair, production runway, orphan-RPC retrieval, public-network or power-loss claim. Earlier unattended-replenishment tests remain failed."
+}

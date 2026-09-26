@@ -151,5 +151,12 @@ purchase and a saved nonce ahead of canonical state. This strengthens the need
 to settle the monitored-repair policy; it does not extend the earlier manual
 repair pass to arbitrary live multi-block reorganizations.
 
+The subsequent [live repair experiment](restart-live-nonce-repair.md) passes one
+90-second partition with four missing nonces repaired through ordinary raw
+resubmission while both miners remain enabled. The exact saved intent, two fresh
+automatic successors and cold receipts are verified. This is a bounded extension
+using preserved bytes and many synthetic tickets, not an unattended-recovery or
+production ticket-runway result.
+
 Raw logs, scripts and identities are in
 [`restart-purchase-rollback-2026-09-25`](evidence/restart-purchase-rollback-2026-09-25).

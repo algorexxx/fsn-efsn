@@ -1,0 +1,291 @@
+package restart
+
+import (
+	"bytes"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/common/hexutil"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/rlp"
+)
+
+type livePurchaseGap struct {
+	index int
+	nonce uint64
+	saved *types.Transaction
+	head  *types.Block
+}
+
+func rehearseContinuousPartitionNonceRepair(t *testing.T) {
+	requirePartitionNamespace(t)
+	pair := seedDenseMinerPair(t)
+	owners := [2]common.Address{pair.miners[0].owner, pair.miners[1].owner}
+	closeDenseMinerPair(t, pair)
+	nodes := [2]*rehearsalNode{startRehearsalNodeWithTimeout(t, pair.paths[0], 12*time.Minute), startRehearsalNodeWithTimeout(t, pair.paths[1], 12*time.Minute)}
+	originals := [2]map[uint64]*types.Transaction{make(map[uint64]*types.Transaction), make(map[uint64]*types.Transaction)}
+	connectRehearsalPeer(t, nodes[0], nodes[1])
+	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
+	for _, node := range nodes {
+		startCompetingMiner(t, node)
+	}
+	warm := awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, [2]uint64{24, 24}, 24, 90*time.Second)
+	logLiveRepairTickets(t, nodes[0], owners, warm, "before-outage")
+	heal := dropRehearsalPackets(t, "match", "ip", "dst", "127.0.0.0/8")
+	cut := time.Now()
+	for time.Since(cut) < 90*time.Second {
+		requireContinuousMiners(t, nodes[0], nodes[1])
+		for i, node := range nodes {
+			captureLivePurchases(t, node, owners[i], originals[i])
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 0, 5*time.Second)
+	heads := [2]nodeRehearsalStatus{nodes[0].status(t), nodes[1].status(t)}
+	for i, node := range nodes {
+		if heads[i].Number <= warm.NumberU64()+2 {
+			t.Fatal("isolated miner did not produce multiple descendants")
+		}
+		for number := uint64(25); number <= heads[i].Number; number++ {
+			for _, tx := range readRecoveryNodeBlock(t, node, number).Transactions() {
+				retainLivePurchase(t, owners[i], originals[i], tx)
+			}
+		}
+		logLiveRepairTickets(t, node, owners, readRecoveryNodeBlock(t, node, heads[i].Number), "isolated")
+	}
+	if readRecoveryNodeBlock(t, nodes[0], warm.NumberU64()+2).Hash() == readRecoveryNodeBlock(t, nodes[1], warm.NumberU64()+2).Hash() {
+		t.Fatal("isolated miners did not establish competing branches")
+	}
+	t.Logf("live repair outage=%s isolated heads=%d/%d; original signed purchases preserved before healing", time.Since(cut), heads[0].Number, heads[1].Number)
+	heal()
+	healed := time.Now()
+	floor := heads[0].Number
+	if heads[1].Number > floor {
+		floor = heads[1].Number
+	}
+	gap := awaitLivePurchaseGap(t, nodes, owners, originals, floor)
+	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
+	logContinuousPurchaseState(t, nodes[0], nodes[1])
+	logLiveRepairTickets(t, nodes[0], owners, gap.head, "paused-before-repair")
+	t.Logf("live repair stable gap node=%d canonical=%d saved=%d hash=%s common=%d after-heal=%s", gap.index+1, gap.nonce, gap.saved.Nonce(), gap.saved.Hash().Hex(), gap.head.NumberU64(), time.Since(healed))
+	repaired := make([]*types.Transaction, 0)
+	for nonce := gap.nonce; nonce < gap.saved.Nonce(); nonce++ {
+		tx := originals[gap.index][nonce]
+		if tx == nil {
+			t.Fatalf("missing original signed bytes for nonce %d; repair cannot proceed", nonce)
+		}
+		state := readPeerPurchase(t, nodes[gap.index])
+		encoded, err := gap.saved.MarshalBinary()
+		requireNoError(t, err)
+		if state.Nonce != nonce || !bytes.Equal(state.Saved, encoded) || len(state.Pending)+len(state.Queued) != 0 {
+			t.Fatal("repair preconditions changed; refusing to submit against a different nonce or intent")
+		}
+		validateLiveRepairPurchase(t, nodes[gap.index], tx)
+		data, err := tx.MarshalBinary()
+		requireNoError(t, err)
+		var hash common.Hash
+		requireNoError(t, nodes[gap.index].call(t, &hash, "eth_sendRawTransaction", hexutil.Bytes(data)))
+		if hash != tx.Hash() {
+			t.Fatal("raw resubmission changed the original transaction identity")
+		}
+		block := awaitLiveRepairReceipt(t, nodes, tx, owners[gap.index])
+		logLiveRepairTickets(t, nodes[0], owners, block, "missing-nonce-included")
+		t.Logf("live repair original included node=%d nonce=%d hash=%s block=%d %s", gap.index+1, nonce, tx.Hash().Hex(), block.NumberU64(), block.Hash().Hex())
+		repaired = append(repaired, tx)
+	}
+	savedBlock := awaitLiveRepairReceipt(t, nodes, gap.saved, owners[gap.index])
+	t.Logf("live repair exact saved intent included nonce=%d hash=%s block=%d", gap.saved.Nonce(), gap.saved.Hash().Hex(), savedBlock.NumberU64())
+	repaired = append(repaired, gap.saved)
+	required := [2]uint64{readPeerPurchase(t, nodes[0]).Nonce, readPeerPurchase(t, nodes[1]).Nonce}
+	required[gap.index] = gap.saved.Nonce() + 2
+	resumed := awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, required, savedBlock.NumberU64(), 120*time.Second)
+	var successors int
+	for number := savedBlock.NumberU64() + 1; number <= resumed.NumberU64(); number++ {
+		for _, tx := range readRecoveryNodeBlock(t, nodes[0], number).Transactions() {
+			if !tx.IsBuyTicketTx() || tx.Nonce() <= gap.saved.Nonce() {
+				continue
+			}
+			owner, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+			requireNoError(t, err)
+			if owner == owners[gap.index] {
+				awaitLiveRepairReceipt(t, nodes, tx, owner)
+				successors++
+				repaired = append(repaired, tx)
+			}
+		}
+	}
+	if successors < 2 {
+		t.Fatal("repair did not produce two new automatic successor purchases")
+	}
+	logLiveRepairTickets(t, nodes[0], owners, resumed, "automatic-successors")
+	t.Logf("live repair resumed with %d new automatic successors after exact saved intent; miners and buyers remained enabled", successors)
+	for _, node := range nodes {
+		stopPeerAutoMiner(t, node)
+	}
+	final := awaitStoppedPartitionHead(t, nodes[0], nodes[1])
+	for i, node := range nodes {
+		before := readPeerPurchase(t, node)
+		requireRehearsalHead(t, node.status(t), final)
+		node.stop(t, false)
+		cold := startRehearsalNode(t, node.path)
+		requireRehearsalHead(t, cold.status(t), final)
+		after := readPeerPurchase(t, cold)
+		if before.Nonce != after.Nonce || !bytes.Equal(before.Saved, after.Saved) || len(after.Pending)+len(after.Queued) != 0 {
+			t.Fatal("cold repair result changed canonical nonce or saved intent")
+		}
+		for _, tx := range repaired {
+			var receipt *types.Receipt
+			requireNoError(t, cold.call(t, &receipt, "eth_getTransactionReceipt", tx.Hash()))
+			if receipt == nil {
+				t.Fatal("cold node lost a repaired or successor receipt")
+			}
+			requirePeerNativePurchase(t, receipt, readRecoveryNodeBlock(t, cold, receipt.BlockNumber.Uint64()), tx, owners[gap.index])
+		}
+		t.Logf("live repair cold node=%d nonce=%d saved-bytes=%d canonical receipts=%d", i+1, after.Nonce, len(after.Saved), len(repaired))
+	}
+	t.Logf("live nonce repair passed: final=%d %s state=%s tickets=%s originals=%d automatic-successors=%d", final.NumberU64(), final.Hash().Hex(), final.Root().Hex(), final.MixDigest().Hex(), gap.saved.Nonce()-gap.nonce, successors)
+}
+
+func captureLivePurchases(t *testing.T, node *rehearsalNode, owner common.Address, originals map[uint64]*types.Transaction) peerPurchaseState {
+	t.Helper()
+	state := readPeerPurchase(t, node)
+	if len(state.Saved) > 0 {
+		var tx types.Transaction
+		requireNoError(t, tx.UnmarshalBinary(state.Saved))
+		retainLivePurchase(t, owner, originals, &tx)
+	}
+	for _, tx := range append(state.Pending, state.Queued...) {
+		retainLivePurchase(t, owner, originals, tx)
+	}
+	return state
+}
+
+func retainLivePurchase(t *testing.T, owner common.Address, originals map[uint64]*types.Transaction, tx *types.Transaction) {
+	t.Helper()
+	if !tx.IsBuyTicketTx() {
+		return
+	}
+	sender, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+	requireNoError(t, err)
+	if sender != owner {
+		return
+	}
+	if previous := originals[tx.Nonce()]; previous != nil && previous.Hash() != tx.Hash() {
+		t.Fatal("conflicting signed purchases require a separate nonce-resolution review")
+	}
+	originals[tx.Nonce()] = tx
+}
+
+func awaitLivePurchaseGap(t *testing.T, nodes [2]*rehearsalNode, owners [2]common.Address, originals [2]map[uint64]*types.Transaction, floor uint64) livePurchaseGap {
+	t.Helper()
+	var candidate livePurchaseGap
+	var since time.Time
+	deadline := time.Now().Add(150 * time.Second)
+	for time.Now().Before(deadline) {
+		requireContinuousMiners(t, nodes[0], nodes[1])
+		states := [2]peerPurchaseState{}
+		for i, node := range nodes {
+			states[i] = captureLivePurchases(t, node, owners[i], originals[i])
+		}
+		height := nodes[0].status(t).Number
+		if other := nodes[1].status(t).Number; other < height {
+			height = other
+		}
+		found := false
+		if height > floor+2 {
+			left := readRecoveryNodeBlock(t, nodes[0], height-1)
+			if left.Hash() == readRecoveryNodeBlock(t, nodes[1], height-1).Hash() {
+				for i, state := range states {
+					if len(state.Saved) == 0 || len(state.Pending)+len(state.Queued) != 0 {
+						continue
+					}
+					var saved types.Transaction
+					requireNoError(t, saved.UnmarshalBinary(state.Saved))
+					if saved.Nonce() <= state.Nonce {
+						continue
+					}
+					found = true
+					if candidate.saved == nil || candidate.index != i || candidate.nonce != state.Nonce || candidate.saved.Hash() != saved.Hash() {
+						candidate = livePurchaseGap{index: i, nonce: state.Nonce, saved: &saved}
+						since = time.Now()
+					}
+					candidate.head = left
+					if time.Since(since) >= 10*time.Second {
+						return candidate
+					}
+					break
+				}
+			}
+		}
+		if !found {
+			candidate = livePurchaseGap{}
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	logContinuousPurchaseState(t, nodes[0], nodes[1])
+	t.Fatal("did not reproduce a stable nonce gap on a common advancing chain")
+	return livePurchaseGap{}
+}
+
+func validateLiveRepairPurchase(t *testing.T, node *rehearsalNode, tx *types.Transaction) {
+	t.Helper()
+	var call common.FSNCallParam
+	requireNoError(t, rlp.DecodeBytes(tx.Data(), &call))
+	if call.Func != common.BuyTicketFunc {
+		t.Fatal("repair transaction is not a native ticket purchase")
+	}
+	var purchase common.BuyTicketParam
+	requireNoError(t, rlp.DecodeBytes(call.Data, &purchase))
+	head := readRecoveryNodeBlock(t, node, node.status(t).Number)
+	requireNoError(t, purchase.Check(head.Number(), head.Time()))
+	if tx.GasPrice().Cmp(head.BaseFee()) < 0 {
+		t.Fatal("original purchase is below the current base fee")
+	}
+}
+
+func awaitLiveRepairReceipt(t *testing.T, nodes [2]*rehearsalNode, tx *types.Transaction, owner common.Address) *types.Block {
+	t.Helper()
+	deadline := time.Now().Add(60 * time.Second)
+	for time.Now().Before(deadline) {
+		requireContinuousMiners(t, nodes[0], nodes[1])
+		var receipts [2]*types.Receipt
+		for i, node := range nodes {
+			requireNoError(t, node.call(t, &receipts[i], "eth_getTransactionReceipt", tx.Hash()))
+		}
+		if receipts[0] != nil && receipts[1] != nil && receipts[0].BlockHash == receipts[1].BlockHash {
+			block := readRecoveryNodeBlock(t, nodes[0], receipts[0].BlockNumber.Uint64())
+			if block.Hash() == receipts[0].BlockHash && readRecoveryNodeBlock(t, nodes[1], block.NumberU64()).Hash() == block.Hash() {
+				for _, receipt := range receipts {
+					requirePeerNativePurchase(t, receipt, block, tx, owner)
+				}
+				return block
+			}
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	logContinuousPurchaseState(t, nodes[0], nodes[1])
+	t.Fatalf("original or automatic purchase nonce=%d hash=%s did not reach canonical native success on both peers", tx.Nonce(), tx.Hash().Hex())
+	return nil
+}
+
+func logLiveRepairTickets(t *testing.T, node *rehearsalNode, owners [2]common.Address, block *types.Block, phase string) {
+	t.Helper()
+	for i, owner := range owners {
+		var tickets map[common.Hash]common.TicketDisplay
+		requireNoError(t, node.call(t, &tickets, "fsn_allTicketsByAddress", owner, hexutil.EncodeUint64(block.NumberU64())))
+		valid := 0
+		for _, ticket := range tickets {
+			if ticket.Owner == owner && ticket.Height <= block.NumberU64() && ticket.ExpireTime > ticket.StartTime && ticket.ExpireTime >= ticket.StartTime+30*24*3600 && ticket.ExpireTime >= block.Time()+15 {
+				valid++
+			}
+		}
+		if readRecoveryNodeBlock(t, node, block.NumberU64()).Hash() != block.Hash() {
+			t.Fatal("ticket inventory changed branches while reading")
+		}
+		if valid == 0 {
+			t.Fatal("fixture owner exhausted height/lifetime-valid tickets during repair")
+		}
+		t.Logf("live repair tickets phase=%s block=%d owner=%d stored=%d valid-next-period=%d", phase, block.NumberU64(), i+1, len(tickets), valid)
+	}
+}
