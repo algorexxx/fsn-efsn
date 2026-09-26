@@ -14,6 +14,16 @@ import (
 )
 
 func TestRestartNetworkPartitionRehearsal(t *testing.T) {
+	requirePartitionNamespace(t)
+	t.Run("short_loss_retains_tcp_connection", rehearseShortPacketLoss)
+	t.Run("long_static_partition", func(t *testing.T) { rehearseLongStaticPartition(t, false) })
+	t.Run("one_way_static_partition", func(t *testing.T) { rehearseLongStaticPartition(t, true) })
+	t.Run("dynamic_peers_and_seed_recover", rehearseDynamicPartition)
+	t.Run("fresh_dns_contact_udp_blocked", rehearseDiscoveryUDPPartition)
+}
+
+func requirePartitionNamespace(t *testing.T) {
+	t.Helper()
 	if os.Getenv("FUSION_RESTART_NETWORK_PARTITION") != "1" {
 		t.Skip("requires root inside a disposable loopback-only network namespace")
 	}
@@ -29,11 +39,6 @@ func TestRestartNetworkPartitionRehearsal(t *testing.T) {
 	if current == initial {
 		t.Fatal("refusing to change the initial network namespace")
 	}
-	t.Run("short_loss_retains_tcp_connection", rehearseShortPacketLoss)
-	t.Run("long_static_partition", func(t *testing.T) { rehearseLongStaticPartition(t, false) })
-	t.Run("one_way_static_partition", func(t *testing.T) { rehearseLongStaticPartition(t, true) })
-	t.Run("dynamic_peers_and_seed_recover", rehearseDynamicPartition)
-	t.Run("fresh_dns_contact_udp_blocked", rehearseDiscoveryUDPPartition)
 }
 
 func runPartitionTC(t *testing.T, args ...string) []byte {

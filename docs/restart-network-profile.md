@@ -152,8 +152,10 @@ no real router, Foundation service, chain data or production wallet is used.
 The later [partition rehearsal](restart-network-partitions.md) records kernel
 packet-loss behavior and the inbound-only limitation separately. Public IPv4/IPv6
 routing, firewall and NAT translation, DNS from another network and the actual
-release deployment remain unverified. Mining and chain convergence during a
-partition also require separate coverage.
+release deployment remain unverified. The separate
+[miner partition follow-up](restart-miner-partitions.md) exercises bounded
+production, automatic reconnect/full sync and cold purchase recovery with public
+test keys. Uninterrupted mining through healing and deeper forks remain open.
 Once hosts and a domain are selected, use a disposable fresh public client to
 verify signed UDP discovery and a real peer handshake against the published enode,
 then repeat after a seed IP move and after the temporary backup node is stopped.

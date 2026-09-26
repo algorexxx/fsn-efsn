@@ -174,6 +174,16 @@ The real-node rehearsal must cover shutdown/drain, restart with purchases
 disabled, existing signed transactions and canonical reconciliation. Do not
 claim the handover is complete from the RPC return value alone.
 
+The [miner packet-loss follow-up](restart-miner-partitions.md) also reproduces
+an already-signed block being published after `miner_stop` reports
+`Mining:false`. That RPC clears the worker's running flag; it is not proof that
+all outstanding sealing work has finished. Cleanly shut down the old signer
+process and confirm its exit before another process uses the same key. Review
+the persisted head and continuing peer's view after shutdown, as well as pending
+signed purchases. A signature already circulated cannot be revoked by stopping
+the node. The guarded one-block recovery command's quota remains separate from
+ordinary miner operation.
+
 The [saved-backup inventory and signing-journal follow-up](restart-signing-journal.md)
 found an empty transaction journal and no automatic-purchase record for either
 wallet at the preserved head. The backup nonce remains 233427 and the donation

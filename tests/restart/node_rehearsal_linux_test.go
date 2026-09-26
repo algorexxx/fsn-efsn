@@ -178,6 +178,7 @@ func TestRestartNodeRehearsal(t *testing.T) {
 	t.Run("purchase_peer_replacement", func(t *testing.T) { rehearsePurchasePeer(t, true) })
 	t.Run("purchase_peer_nonce_rollback", rehearsePurchaseNonceRollback)
 	t.Run("competing_purchase_miners", rehearseCompetingPurchaseMiners)
+	t.Run("partition_purchase_miners", rehearsePartitionPurchaseMiners)
 	t.Run("heavier_stored_fork_peer", rehearseHeavierPeer)
 	t.Run("incompatible_database_startup", rehearseIncompatibleStartup)
 }
@@ -280,7 +281,7 @@ func startRehearsalNode(t *testing.T, path string) *rehearsalNode {
 	t.Helper()
 	output, err := os.CreateTemp(path, "process-*.log")
 	requireNoError(t, err)
-	cmd := exec.Command(os.Args[0], "-test.run=^TestRestartNodeRehearsal$", "-test.v", "-test.timeout=3m")
+	cmd := exec.Command(os.Args[0], "-test.run=^TestRestartNodeRehearsal$", "-test.v", "-test.timeout=6m")
 	cmd.Env = append(os.Environ(), "FUSION_RESTART_LAB_NODE="+path)
 	cmd.Stdout, cmd.Stderr = output, output
 	requireNoError(t, cmd.Start())

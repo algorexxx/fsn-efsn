@@ -1,0 +1,45 @@
+{
+  "result": "Two bounded kernel-loss miner rehearsals pass with Linux race detection",
+  "runs": {
+    "drained": {
+      "test_seconds": 189.35,
+      "outage_duration": "45.014821567s",
+      "dropped_packets": 39,
+      "heal_to_convergence": "33.849612403s",
+      "joined_height": 15130097,
+      "joined_hash": "0xf0cbc0726f0df05107676025159f534c22c17e85af0448d944d6f34212d9a35f",
+      "final_height": 15130101,
+      "final_hash": "0x257ec735403c774a67a01ace01c3c51a4abdace88a885b634deec31565f096c4",
+      "state_root": "0xe1b6f2cc71c22be40d7091bafb4a4d6a672dc8287d1467759aaf6c56badeb6fe",
+      "ticket_root": "0x2903cc878b18d8320cb7cef084418b5242f45ea254b8f110cb4c0d7471830838",
+      "native_purchases": [
+        3,
+        5
+      ],
+      "head_changes_observed_after_stop": 4
+    },
+    "repeat": {
+      "test_seconds": 189.63,
+      "outage_duration": "45.014726966s",
+      "dropped_packets": 39,
+      "heal_to_convergence": "33.849240958s",
+      "joined_height": 15130097,
+      "joined_hash": "0xf0cbc0726f0df05107676025159f534c22c17e85af0448d944d6f34212d9a35f",
+      "final_height": 15130101,
+      "final_hash": "0xa49df41038c86bc64120ec4017a016f5a5bfc15b4982457ad7331c4558608a3d",
+      "state_root": "0x37135192a33291fc253f134c4fc84bd513c534cdd47ceb04c3fd62e08406fbc2",
+      "ticket_root": "0xdfd7a8a55917096a557a0e20396a435a017e97a0bb50695e45507a11ce704d0a",
+      "native_purchases": [
+        4,
+        5
+      ],
+      "head_changes_observed_after_stop": 4
+    }
+  },
+  "initial_failure": "Fixture assumed the first block contained the purchase; ordinary worker mined an empty block first.",
+  "second_failure": "miner_stop reported false before an already-signed block published, invalidating the final snapshot. Observe both stopped heads agreeing without change for 35 seconds before inspecting this two-owner fixture; this is not a universal production drain timeout.",
+  "third_failure": "A delayed empty third isolated block exceeded the two-block bound. Inspect after the fault interval and allow one to three blocks while retaining exactly one purchase per isolated owner.",
+  "runtime_changes": 0,
+  "permanent_patch_inventory": "P1-P15",
+  "limits": "Static IPv4 peers in loopback-only namespaces; stop miners after one isolated purchase before healing, then resume. No uninterrupted mining through reorg, deep fork or multi-purchase nonce-gap proof, public networking, real keys, large backup, Windows packet-loss run or full candidate historical replay."
+}

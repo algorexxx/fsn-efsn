@@ -177,12 +177,13 @@ remain separate evidence. A fixed restart anchor rejects incompatible recovery
 history; it does not prevent ordinary reorganizations between compatible
 post-anchor branches. This work adds no ongoing finality design.
 
-Next combine controlled loss and healing with the synthetic two-miner fixture:
-preserve each side's blocks, purchases and nonces, then check convergence,
-receipts, saved purchase intent and the documented missing-nonce repair path.
-That should use public test keys, since conflicting production signatures can
-have multiple-mining-report consequences. It does not require another large
-backup copy.
+The [miner follow-up](restart-miner-partitions.md) combines controlled loss and
+healing with the synthetic two-miner fixture, checking ordinary reconnection and
+sync, native receipts, continued purchases and cold saved-intent recovery.
+It bounds each isolated wallet to one purchase; the multi-purchase missing-nonce
+repair case remains separate. It also records delayed block publication after
+`miner_stop`, which matters for signer handover. All keys are public test keys;
+conflicting production signatures can have multiple-mining-report consequences.
 
 Public IPv4/IPv6 routing, actual firewall/NAT behavior, endpoint changes during a
 partition, long or repeated outages, probabilistic loss, delay/reordering, and
