@@ -149,3 +149,11 @@ choose a reserve amount, resolve the automatic buyer's nonce-gap pause, handle
 expired signed transactions or prove recovery if every producer is unavailable.
 The earlier failed live experiments remain evidence. No production behavior,
 consensus rule, key custody or real chain state changes in this investigation.
+
+The [complete-state funding follow-up](restart-handover-runway.md) now audits
+both retained handover sequences: bridge tickets are selected at blocks 2 and
+3, ordinary 30-day purchases follow, and each replacement has funding before
+the selection refund. This closes the recorded handover's coverage question,
+not the live complete-state outage/repair case or real funding availability.
+A [manual operator procedure](restart-operator-recovery.md) is now drafted;
+adopting it as the supported release policy and deploying monitoring remain open.

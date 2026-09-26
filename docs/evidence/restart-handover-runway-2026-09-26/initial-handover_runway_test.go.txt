@@ -1,0 +1,184 @@
+package restart
+
+import (
+	"bytes"
+	"fmt"
+	"math/big"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/consensus/datong"
+	"github.com/FusionFoundation/efsn/v5/core/state"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+	"github.com/FusionFoundation/efsn/v5/crypto"
+	"github.com/FusionFoundation/efsn/v5/rlp"
+)
+
+func TestPreservedHandoverFundingCoverage(t *testing.T) {
+	evidence := filepath.Join("..", "..", "docs", "evidence", "restart-full-state-handover-2026-09-24")
+	for _, platform := range []string{"windows", "linux"} {
+		t.Run(platform, func(t *testing.T) {
+			directory := t.TempDir()
+			for _, name := range []string{"fixture.json", "handover.json"} {
+				data, err := os.ReadFile(filepath.Join(evidence, platform+"-"+name))
+				requireNoError(t, err)
+				requireNoError(t, os.WriteFile(filepath.Join(directory, name), data, 0600))
+			}
+			blocks := filepath.Join(evidence, platform+"-blocks")
+			auditFullStateHandover(t, directory, blocks, 10)
+			var funding fullStateHandoverFunding
+			readHandoverJSON(t, filepath.Join(directory, "handover.json"), &funding)
+			auditHandoverFundingCoverage(t, funding, blocks)
+		})
+	}
+}
+
+func auditHandoverFundingCoverage(t *testing.T, funding fullStateHandoverFunding, blocks string) {
+	t.Helper()
+	owner := funding.Successor
+	key := crypto.Keccak256Hash(owner.Bytes())
+	var account state.Account
+	for _, difference := range funding.Differences {
+		if difference.AccountKey == key {
+			requireNoError(t, rlp.DecodeBytes(difference.After, &account))
+		}
+	}
+	if handoverValueAt(account, nil, owner, 0).String() != "12020102000000000000000" || account.Nonce != 0 {
+		t.Fatal("runway must begin with the audited preserved donation funding")
+	}
+	previous := funding.Parent
+	var previousTickets map[common.Hash]common.TicketDisplay
+	var bridge common.Hash
+	for i := 1; i <= 10; i++ {
+		var entry fullStateBlockLedger
+		readHandoverJSON(t, filepath.Join(blocks, fmt.Sprintf("block-%02d.json", i)), &entry)
+		data, err := os.ReadFile(filepath.Join(blocks, fmt.Sprintf("block-%02d.rlp", i)))
+		requireNoError(t, err)
+		var block *types.Block
+		requireNoError(t, rlp.DecodeBytes(data, &block))
+		tx := block.Transactions()[0]
+		var envelope common.FSNCallParam
+		var purchase common.BuyTicketParam
+		requireNoError(t, rlp.DecodeBytes(tx.Data(), &envelope))
+		requireNoError(t, rlp.DecodeBytes(envelope.Data, &purchase))
+		if purchase.Start != previous.Time || (i >= 3 && purchase.End != purchase.Start+30*24*3600) {
+			t.Fatal("unexpected bridge-to-ordinary purchase interval schedule")
+		}
+		if i <= 2 && purchase.End != ticketEnd {
+			t.Fatal("historical bridge purchase endpoint changed")
+		}
+		feeBudget := new(big.Int).Mul(new(big.Int).SetUint64(tx.Gas()), tx.GasPrice())
+		coverage := handoverFundingCoverage(t, account, owner, purchase.Start, purchase.End)
+		requireHandoverPurchaseCapacity(t, account, coverage, feeBudget)
+		encoded, err := rlp.EncodeToBytes(account)
+		requireNoError(t, err)
+		found := false
+		for _, difference := range entry.Differences {
+			if difference.AccountKey == key {
+				if !bytes.Equal(encoded, difference.Before) || found {
+					t.Fatal("successor account evidence is not a continuous exact RLP history")
+				}
+				requireNoError(t, rlp.DecodeBytes(difference.After, &account))
+				found = true
+			}
+		}
+		if !found || account.Nonce != uint64(i) {
+			t.Fatal("missing successor account or canonical nonce transition")
+		}
+		snapshot, err := datong.NewSnapshotFromHeader(entry.Header)
+		requireNoError(t, err)
+		if len(snapshot.Retreat) != 0 {
+			t.Fatal("handover coverage assumes the recorded no-retreat sequence")
+		}
+		if i > 1 {
+			selected, exists := previousTickets[snapshot.Selected]
+			if !exists || selected.Owner != owner {
+				t.Fatal("replacement funding incorrectly credited another owner's selected ticket")
+			}
+		}
+		if i == 1 {
+			for id, ticket := range entry.Tickets {
+				if ticket.Owner == owner {
+					bridge = id
+				}
+			}
+			if bridge == (common.Hash{}) {
+				t.Fatal("first long-lived bridge ticket missing")
+			}
+		} else if i == 2 && snapshot.Selected != bridge {
+			t.Fatal("first long-lived ticket was not selected in the jump block")
+		}
+		if i >= 3 && len(entry.Tickets) != 1 {
+			t.Fatal("post-cleanup sequence must retain exactly one successor ticket")
+		}
+		after := handoverFundingCoverage(t, account, owner, entry.Header.Time, entry.Header.Time+30*24*3600)
+		requireHandoverPurchaseCapacity(t, account, after, feeBudget)
+		t.Logf("handover coverage block=%d hash=%s nonce=%d purchase-start=%d purchase-end=%d before-lock-min-wei=%s gas-budget-wei=%s after-liquid-wei=%s next-30-day-lock-min-wei=%s selected=%s retreats=0", i, block.Hash().Hex(), account.Nonce, purchase.Start, purchase.End, coverage, feeBudget, handoverLiquid(account), after, snapshot.Selected.Hex())
+		previous, previousTickets = entry.Header, entry.Tickets
+	}
+	for _, days := range []uint64{0, 1, 7, 29, 30, 31} {
+		start := previous.Time + days*24*3600
+		coverage := handoverFundingCoverage(t, account, owner, start, start+30*24*3600)
+		live := 0
+		for _, ticket := range previousTickets {
+			if ticket.Owner == owner && ticket.StartTime <= start && ticket.ExpireTime >= start {
+				live++
+			}
+		}
+		if coverage.Cmp(decimal(t, "5000000000000000000000")) < 0 || (days >= 30 && live != 0) {
+			t.Fatal("unexpected frozen-state future coverage or ticket expiry")
+		}
+		t.Logf("handover frozen-state projection days=%d start=%d end=%d liquid-wei=%s lock-min-wei=%s interval-live-tickets=%d; no blocks executed and no liveness claim", days, start, start+30*24*3600, handoverLiquid(account), coverage, live)
+	}
+	t.Logf("handover runway verified: ten linked complete-state ledgers, first bridge selected at block 2, purchases 3..10 have 30-day intervals; parent=%s final=%s; no database opened", funding.Parent.Hash().Hex(), previous.Hash().Hex())
+}
+
+func handoverFundingCoverage(t *testing.T, account state.Account, owner common.Address, start, end uint64) *big.Int {
+	t.Helper()
+	locks := account
+	locks.BalancesHash, locks.BalancesVal = nil, nil
+	points := handoverTimeBoundaries(start, map[common.Address]state.Account{owner: locks}, nil, nil, nil)
+	points[end] = true
+	minimum := handoverValueAt(locks, nil, owner, start)
+	for point := range points {
+		if point <= end {
+			value := handoverValueAt(locks, nil, owner, point)
+			if value.Cmp(minimum) < 0 {
+				minimum = value
+			}
+		}
+	}
+	available := new(common.TimeLock)
+	for i, asset := range account.TimeLockBalancesHash {
+		if asset == common.SystemAssetID {
+			available = account.TimeLockBalancesVal[i]
+		}
+	}
+	if available.GetSpendableValue(start, end).Cmp(minimum) != 0 {
+		t.Fatal("native spendable lock calculation differs from independent boundary accounting")
+	}
+	return minimum
+}
+
+func requireHandoverPurchaseCapacity(t *testing.T, account state.Account, lockMinimum, gasBudget *big.Int) {
+	t.Helper()
+	liquidRequired := new(big.Int).Set(gasBudget)
+	price := decimal(t, "5000000000000000000000")
+	if lockMinimum.Cmp(price) < 0 {
+		liquidRequired.Add(liquidRequired, price)
+	}
+	if handoverLiquid(account).Cmp(liquidRequired) < 0 {
+		t.Fatal("purchase depends on a future selected-ticket refund or lacks liquid gas funding")
+	}
+}
+
+func handoverLiquid(account state.Account) *big.Int {
+	for i, asset := range account.BalancesHash {
+		if asset == common.SystemAssetID {
+			return new(big.Int).Set(account.BalancesVal[i])
+		}
+	}
+	return new(big.Int)
+}

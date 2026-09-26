@@ -501,3 +501,13 @@ automatic intent. It needs the node-rehearsal opt-in and isolated loopback
 namespace, but not the packet-loss opt-in. See the
 [controlled reserve report](../../docs/restart-controlled-reserves.md) for the
 observed waits, repeat-loss boundary and preserved-wallet accounting limits.
+
+`TestPreservedHandoverFundingCoverage` reads both committed ten-block complete-state
+handover evidence sets and reuses the independent conservation/receipt audit.
+It verifies exact account-RLP continuity, the selected bridge ticket, subsequent
+30-day intervals, no successor retreats, and funding before selection refunds.
+Independent interval-boundary minima are compared with native spendable-lock
+calculations. Six frozen-state future samples per platform separate free funds
+from tickets whose intervals remain live. No backup, chain database, node service
+or network access is used. See the [funding coverage report](../../docs/restart-handover-runway.md)
+for the initial incorrect no-retreat assertion, the final pass and limits.

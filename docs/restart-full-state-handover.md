@@ -181,3 +181,13 @@ Remaining launch work includes:
   replay beyond 2,700,000 or prove power-loss recovery.
 
 Evidence: [restart-full-state-handover-2026-09-24](evidence/restart-full-state-handover-2026-09-24).
+
+The [funding coverage follow-up](restart-handover-runway.md) now rechecks both
+retained ten-block ledgers without reopening a database. It verifies each
+replacement's pre-refund funding, consumption of the two long-lived bridge
+tickets at blocks 2 and 3, and the transition to ordinary 30-day purchases.
+At both final states the successor has 2,022.914457552 liquid FSN, one ordinary
+ticket and covering locks for another purchase. Frozen-state expiry projections
+are accounting only; a live outage/repair rehearsal remains separate. The
+[operator recovery draft](restart-operator-recovery.md) collects the existing
+retrieval, funding, nonce and canonical native-success checks for release review.

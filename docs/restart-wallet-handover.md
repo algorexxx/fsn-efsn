@@ -61,6 +61,15 @@ recoverability. Complete-state reserve checks must include the long-lived bridge
 ticket, later purchase intervals and a real funding source if external repair
 funding is part of the operator policy.
 
+The [complete-state funding audit](restart-handover-runway.md) now verifies
+the retained Windows and Linux handovers: both long-lived bridge tickets are
+selected by cleanup, each later recorded purchase uses a 30-day interval, and
+replacement capacity exists before each refund. The final recorded liquid is
+2,022.914457552 FSN alongside one ticket and free covering locks. This adds no
+external transfer requirement to the selected launch. Actual later-loss reserves
+and adoption of the [manual recovery procedure](restart-operator-recovery.md)
+remain release decisions.
+
 ## Selected one-block startup
 
 1. Prepare two nodes with separately writable, verified copies of the accepted
