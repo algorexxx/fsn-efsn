@@ -43,6 +43,7 @@ type nodeRehearsalConfig struct {
 	Anchor         *params.RestartAnchor
 	GasLimit       uint64
 	MainnetGenesis bool
+	DenseGenesis   *core.Genesis
 	TestKey        byte
 	AutoBuy        bool
 	ListenAddr     string
@@ -179,6 +180,8 @@ func TestRestartNodeRehearsal(t *testing.T) {
 	t.Run("purchase_peer_nonce_rollback", rehearsePurchaseNonceRollback)
 	t.Run("competing_purchase_miners", rehearseCompetingPurchaseMiners)
 	t.Run("partition_purchase_miners", rehearsePartitionPurchaseMiners)
+	t.Run("dense_miner_fixture", rehearseDenseMinerFixture)
+	t.Run("continuous_partition_miners", rehearseContinuousPartitionMiners)
 	t.Run("heavier_stored_fork_peer", rehearseHeavierPeer)
 	t.Run("incompatible_database_startup", rehearseIncompatibleStartup)
 }
@@ -189,6 +192,10 @@ func runRehearsalNode(t *testing.T, path string) {
 	requireNoError(t, err)
 	var lab nodeRehearsalConfig
 	requireNoError(t, json.Unmarshal(data, &lab))
+	if lab.DenseGenesis != nil {
+		common.UseDevnetRule = true
+		datong.InitCheckPoints("")
+	}
 	if lab.TestKey == 0 {
 		lab.TestKey = 1
 	}
@@ -224,6 +231,12 @@ func runRehearsalNode(t *testing.T, path string) {
 	config.Genesis = &core.Genesis{Config: &chainConfig, GasLimit: lab.GasLimit, Difficulty: big.NewInt(1)}
 	if lab.MainnetGenesis {
 		config.Genesis = core.DefaultGenesisBlock()
+		config.Genesis.Config = &chainConfig
+	}
+	if lab.DenseGenesis != nil {
+		chainConfig = *lab.DenseGenesis.Config
+		chainConfig.RestartAnchor = lab.Anchor
+		config.Genesis = lab.DenseGenesis
 		config.Genesis.Config = &chainConfig
 	}
 	config.NetworkId = 99032659
@@ -279,9 +292,14 @@ func closeRehearsalSeed(t *testing.T, path string, f *fixture, anchor *types.Blo
 
 func startRehearsalNode(t *testing.T, path string) *rehearsalNode {
 	t.Helper()
+	return startRehearsalNodeWithTimeout(t, path, 6*time.Minute)
+}
+
+func startRehearsalNodeWithTimeout(t *testing.T, path string, timeout time.Duration) *rehearsalNode {
+	t.Helper()
 	output, err := os.CreateTemp(path, "process-*.log")
 	requireNoError(t, err)
-	cmd := exec.Command(os.Args[0], "-test.run=^TestRestartNodeRehearsal$", "-test.v", "-test.timeout=6m")
+	cmd := exec.Command(os.Args[0], "-test.run=^TestRestartNodeRehearsal$", "-test.v", "-test.timeout="+timeout.String())
 	cmd.Env = append(os.Environ(), "FUSION_RESTART_LAB_NODE="+path)
 	cmd.Stdout, cmd.Stderr = output, output
 	requireNoError(t, cmd.Start())

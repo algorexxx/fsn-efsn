@@ -143,5 +143,13 @@ partitions, prolonged packet loss, all pool reinjection orders, unavailable
 missing transactions, power loss, or independent operator deployment. The
 production anchor is still unset and independent review remains required.
 
+The [continuous-miner partition follow-up](restart-continuous-partitions.md)
+now reproduces a persistent gap during actual packet loss and ordinary
+reconnection using complete small synthetic history. Both nodes can share an
+advancing head and report mining/auto-buy enabled while one buyer has no pending
+purchase and a saved nonce ahead of canonical state. This strengthens the need
+to settle the monitored-repair policy; it does not extend the earlier manual
+repair pass to arbitrary live multi-block reorganizations.
+
 Raw logs, scripts and identities are in
 [`restart-purchase-rollback-2026-09-25`](evidence/restart-purchase-rollback-2026-09-25).

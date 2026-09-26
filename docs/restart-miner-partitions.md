@@ -112,6 +112,12 @@ still demonstrates a different case requiring manual repair. A one-purchase
 partition passing here does not remove that limitation or settle the release's
 monitored-repair policy.
 
+The subsequent [continuous-miner follow-up](restart-continuous-partitions.md)
+uses complete small synthetic history and leaves both miners running through
+reconnection. Its repeated-outage probe reaches a common advancing chain while
+the losing buyer remains paused on a nonce gap. The bounded passes above do not
+imply unattended recovery from those multi-purchase rollbacks.
+
 This uses the existing sparse two-owner fixture: one million synthetic FSN per
 owner and fourteen normally executed setup blocks. It does not validate the
 donation wallet's real funding, unavailable deep ancestry, full historical sync,

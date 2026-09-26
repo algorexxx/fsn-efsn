@@ -433,3 +433,16 @@ with complete stored data, incremental-header and invalid-header rejection, and
 full import followed by another cold reopen. These cases also run with a pre-P9
 source overlay. See the [cold-header report](../../docs/restart-cold-header-validation.md);
 passing rejection cases do not establish fast/light sync support.
+
+`TestRestartNodeRehearsal/dense_miner_fixture` verifies a complete synthetic
+devnet genesis-to-24 history in two independent databases and cold services.
+The new `continuous_partition_miners` case requires both node-rehearsal and
+network-partition opt-ins, root, and a disposable loopback-only namespace.
+It leaves both normal miners and buyers enabled during real packet loss and
+healing. Its strict unattended-replenishment requirement currently **fails**:
+the nodes can agree on an advancing chain while a buyer's retained future nonce
+has missing predecessors. The [continuous partition report](../../docs/restart-continuous-partitions.md)
+records the failed runs, the passing complete fixture and compatibility check,
+and the difference between re-inclusion and renewed automatic buying. This is
+an opt-in limitation reproducer, not evidence of unattended recovery. Its
+synthetic genesis and twelve-minute child limit do not affect production code.

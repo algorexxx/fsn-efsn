@@ -1,0 +1,88 @@
+{
+  "result": "Complete fixture passes; uninterrupted miners reconnect and advance, but unattended automatic replenishment fails with a nonce gap",
+  "runs": {
+    "live-initial": {
+      "result": "FAIL: unattended replenishment requirement",
+      "test_seconds": 400.71,
+      "kernel_drops": [
+        44,
+        34
+      ],
+      "shared_advancing_block": {
+        "number": 51,
+        "hash": "0x0ba52ff425276e2cdfa38bd9fb30d551c0ca0f98bf339cf0f19a8e9e877424c8"
+      },
+      "purchase_floor": 40,
+      "final_observations": [
+        {
+          "node": 1,
+          "height": 53,
+          "hash": "0xa6dc3fb7e50d77757979b56a9ed20f9574ebe9ecdea4896518216e5a7ca3d314",
+          "canonical_nonce": 28,
+          "saved_hash": "0x9c5aa48cad6c03a1ca84356dd8445ef7679607adc9fef21c05e6344042500768",
+          "saved_nonce": 32,
+          "pending": 0,
+          "queued": 0,
+          "mining": true,
+          "autobuy": true
+        },
+        {
+          "node": 2,
+          "height": 53,
+          "hash": "0xa6dc3fb7e50d77757979b56a9ed20f9574ebe9ecdea4896518216e5a7ca3d314",
+          "canonical_nonce": 52,
+          "saved_hash": "0xac4d85cf680fb232a10046b27233df1054095d61941026a107feb256828ac237",
+          "saved_nonce": 52,
+          "pending": 1,
+          "queued": 0,
+          "mining": true,
+          "autobuy": true
+        }
+      ]
+    },
+    "live-strict": {
+      "result": "FAIL: unattended replenishment requirement",
+      "test_seconds": 303.05,
+      "kernel_drops": [
+        44
+      ],
+      "shared_advancing_block": {
+        "number": 46,
+        "hash": "0xb2b2e65c80357535744767eb9c0dfbdfd73abdde2b41bb6b546774d01249b75b"
+      },
+      "purchase_floor": 32,
+      "final_observations": [
+        {
+          "node": 1,
+          "height": 47,
+          "hash": "0x0c3c1bc899b6acb1bc02fd2dd649283850f3bb07ae53fc8a27a7b060da216f5d",
+          "canonical_nonce": 28,
+          "saved_hash": "0xae495a4426e5f74f4a47bf1d2f314920ac4af0057d9d4fa896b803aa2f70b38d",
+          "saved_nonce": 30,
+          "pending": 0,
+          "queued": 0,
+          "mining": true,
+          "autobuy": true
+        },
+        {
+          "node": 2,
+          "height": 47,
+          "hash": "0x0c3c1bc899b6acb1bc02fd2dd649283850f3bb07ae53fc8a27a7b060da216f5d",
+          "canonical_nonce": 46,
+          "saved_hash": "0x40440b7eb3ae0dcedaffd11f3f16423bf1082f82f56eaff55ca98141eef2686e",
+          "saved_nonce": 46,
+          "pending": 1,
+          "queued": 0,
+          "mining": true,
+          "autobuy": true
+        }
+      ]
+    }
+  },
+  "strict_second_outage_reached": false,
+  "live_cold_acceptance_reached": false,
+  "probe_oracle_limit": "Initial first-cycle marker only checked a purchase's inclusion and could count reinclusion of an old transaction. It does not establish restored auto-buy. Final oracle requires a purchase at or beyond each wallet's pre-heal canonical nonce.",
+  "runtime_changes": 0,
+  "patch_inventory": "P1-P15",
+  "limits": "Complete small synthetic devnet with forks active at genesis; real mainnet rewards/funding/history, public networking and live manual repair are separate. No production keys or large backup used. Both live attempts are retained as failures, not passes."
+}

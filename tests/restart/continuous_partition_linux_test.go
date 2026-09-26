@@ -1,0 +1,159 @@
+package restart
+
+import (
+	"strconv"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+)
+
+func rehearseContinuousPartitionMiners(t *testing.T) {
+	requirePartitionNamespace(t)
+	pair := seedDenseMinerPair(t)
+	owners := [2]common.Address{pair.miners[0].owner, pair.miners[1].owner}
+	anchor := pair.miners[0].chain.CurrentBlock()
+	closeDenseMinerPair(t, pair)
+	first := startRehearsalNodeWithTimeout(t, pair.paths[0], 12*time.Minute)
+	second := startRehearsalNodeWithTimeout(t, pair.paths[1], 12*time.Minute)
+	connectRehearsalPeer(t, first, second)
+	awaitMinerPartitionPeers(t, first, second, 1, 5*time.Second)
+	startCompetingMiner(t, first)
+	startCompetingMiner(t, second)
+	commonHead := awaitContinuousMinerProgress(t, first, second, owners, [2]uint64{24, 24}, anchor.NumberU64(), 90*time.Second)
+	for cycle, duration := range []time.Duration{90 * time.Second, 60 * time.Second} {
+		start := commonHead.NumberU64()
+		heal := dropRehearsalPackets(t, "match", "ip", "dst", "127.0.0.0/8")
+		cut := time.Now()
+		for time.Since(cut) < duration {
+			requireContinuousMiners(t, first, second)
+			time.Sleep(500 * time.Millisecond)
+		}
+		awaitMinerPartitionPeers(t, first, second, 0, 5*time.Second)
+		heads := [2]nodeRehearsalStatus{first.status(t), second.status(t)}
+		requiredNonces := [2]uint64{readPeerPurchase(t, first).Nonce, readPeerPurchase(t, second).Nonce}
+		if heads[0].Number <= start+2 || heads[1].Number <= start+2 {
+			t.Fatal("both isolated workers must produce multiple descendants")
+		}
+		end := heads[0].Number
+		if heads[1].Number < end {
+			end = heads[1].Number
+		}
+		fork := uint64(0)
+		for number := start + 1; number <= end; number++ {
+			if readRecoveryNodeBlock(t, first, number).Hash() != readRecoveryNodeBlock(t, second, number).Hash() {
+				fork = number
+				break
+			}
+		}
+		if fork == 0 {
+			t.Fatal("packet loss did not create competing live miner branches")
+		}
+		t.Logf("continuous cycle=%d outage=%s fork=%d isolated heads=%d/%d hashes=%s/%s", cycle+1, time.Since(cut), fork, heads[0].Number, heads[1].Number, heads[0].Hash.Hex(), heads[1].Hash.Hex())
+		logContinuousPurchaseState(t, first, second)
+		heal()
+		healed := time.Now()
+		awaitMinerPartitionPeers(t, first, second, 1, 90*time.Second)
+		purchaseFloor := heads[0].Number
+		if heads[1].Number > purchaseFloor {
+			purchaseFloor = heads[1].Number
+		}
+		commonHead = awaitContinuousMinerProgress(t, first, second, owners, requiredNonces, purchaseFloor, 150*time.Second)
+		t.Logf("continuous cycle=%d recovered without stopping miners or buyers in %s; common block=%d %s", cycle+1, time.Since(healed), commonHead.NumberU64(), commonHead.Hash().Hex())
+	}
+	stopPeerAutoMiner(t, first)
+	stopPeerAutoMiner(t, second)
+	final := awaitStoppedPartitionHead(t, first, second)
+	for _, node := range []*rehearsalNode{first, second} {
+		requireRehearsalHead(t, node.status(t), final)
+		node.stop(t, false)
+		cold := startRehearsalNode(t, node.path)
+		requireRehearsalHead(t, cold.status(t), final)
+	}
+	t.Logf("continuous repeated partition passed: two live healings; final=%d %s state=%s tickets=%s; both cold heads agree", final.NumberU64(), final.Hash().Hex(), final.Root().Hex(), final.MixDigest().Hex())
+}
+
+func requireContinuousMiners(t *testing.T, first, second *rehearsalNode) {
+	t.Helper()
+	for _, node := range []*rehearsalNode{first, second} {
+		status := node.status(t)
+		if !status.Mining || !status.AutoBuy {
+			t.Fatal("ordinary miner and automatic buyer must remain enabled through the outage and recovery")
+		}
+	}
+}
+
+func awaitContinuousMinerProgress(t *testing.T, first, second *rehearsalNode, owners [2]common.Address, requiredNonces [2]uint64, floor uint64, timeout time.Duration) *types.Block {
+	t.Helper()
+	deadline := time.Now().Add(timeout)
+	var matched *types.Block
+	for time.Now().Before(deadline) {
+		requireContinuousMiners(t, first, second)
+		left, right := first.status(t), second.status(t)
+		height := left.Number
+		if right.Number < height {
+			height = right.Number
+		}
+		if height >= floor+3 {
+			leftBlock := readRecoveryNodeBlock(t, first, height-1)
+			rightBlock := readRecoveryNodeBlock(t, second, height-1)
+			if leftBlock.Hash() == rightBlock.Hash() {
+				matched = leftBlock
+				purchases := make(map[common.Address]bool)
+				receiptsMatch := true
+				for number := floor + 1; number <= matched.NumberU64(); number++ {
+					block := readRecoveryNodeBlock(t, first, number)
+					for _, tx := range block.Transactions() {
+						if !tx.IsBuyTicketTx() {
+							continue
+						}
+						owner, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+						requireNoError(t, err)
+						for _, node := range []*rehearsalNode{first, second} {
+							var receipt *types.Receipt
+							requireNoError(t, node.call(t, &receipt, "eth_getTransactionReceipt", tx.Hash()))
+							if receipt == nil || receipt.BlockHash != block.Hash() {
+								receiptsMatch = false
+								continue
+							}
+							requirePeerNativePurchase(t, receipt, block, tx, owner)
+						}
+						for i, address := range owners {
+							if owner == address && tx.Nonce() >= requiredNonces[i] {
+								purchases[owner] = true
+							}
+						}
+					}
+				}
+				if receiptsMatch && purchases[owners[0]] && purchases[owners[1]] &&
+					readRecoveryNodeBlock(t, first, matched.NumberU64()).Hash() == matched.Hash() &&
+					readRecoveryNodeBlock(t, second, matched.NumberU64()).Hash() == matched.Hash() {
+					return matched
+				}
+			}
+		}
+		time.Sleep(250 * time.Millisecond)
+	}
+	logContinuousPurchaseState(t, first, second)
+	if matched != nil {
+		t.Fatalf("continuous miners share block %d %s but both owners did not replenish above %d at nonces >= %v within %s", matched.NumberU64(), matched.Hash().Hex(), floor, requiredNonces, timeout)
+	}
+	t.Fatalf("continuous miners did not establish a shared advancing branch above %d within %s", floor, timeout)
+	return nil
+}
+
+func logContinuousPurchaseState(t *testing.T, nodes ...*rehearsalNode) {
+	t.Helper()
+	for i, node := range nodes {
+		status := node.status(t)
+		purchase := readPeerPurchase(t, node)
+		saved := "none"
+		if len(purchase.Saved) > 0 {
+			var tx types.Transaction
+			requireNoError(t, tx.UnmarshalBinary(purchase.Saved))
+			saved = tx.Hash().Hex() + " nonce=" + strconv.FormatUint(tx.Nonce(), 10)
+		}
+		t.Logf("continuous node=%d height=%d hash=%s nonce=%d saved=%s pending=%d queued=%d mining=%t autobuy=%t", i+1, status.Number, status.Hash.Hex(), purchase.Nonce, saved, len(purchase.Pending), len(purchase.Queued), status.Mining, status.AutoBuy)
+	}
+}
