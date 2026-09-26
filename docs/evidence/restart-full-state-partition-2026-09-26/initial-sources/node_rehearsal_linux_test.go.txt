@@ -191,11 +191,7 @@ func TestRestartNodeRehearsal(t *testing.T) {
 }
 
 func runRehearsalNode(t *testing.T, path string) {
-	level := log.LvlInfo
-	if os.Getenv("FUSION_RESTART_NODE_DEBUG") == "1" {
-		level = log.LvlDebug
-	}
-	log.Root().SetHandler(log.LvlFilterHandler(level, log.StreamHandler(os.Stderr, log.TerminalFormat(false))))
+	log.Root().SetHandler(log.LvlFilterHandler(log.LvlInfo, log.StreamHandler(os.Stderr, log.TerminalFormat(false))))
 	data, err := os.ReadFile(filepath.Join(path, "lab.json"))
 	requireNoError(t, err)
 	var lab nodeRehearsalConfig

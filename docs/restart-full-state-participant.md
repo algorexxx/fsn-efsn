@@ -108,8 +108,13 @@ the corrected attempt; none is presented as a passing live run.
 ## Limits and next work
 
 This entry rehearsal does not inject a network partition, establish a multi-nonce
-rollback or run manual repair. Those remain the next complete-state exercise,
-using this auditable source of ordinary tickets. Its result cannot establish a
+rollback or run manual repair. The subsequent
+[complete-state partition attempt](restart-full-state-partition.md) failed before
+the repair gate: the branches kept advancing separately. Both cold account
+ledgers passed; a separate stopped-node diagnostic found equal total difficulty
+and unavailable historical ancestry in the compact fixture. Extend genuine
+history and record live peer/TD behavior before repeating the recovery exercise.
+The entry result cannot establish a
 universal reserve balance, indefinite unattended operation or funds available
 from the real backup owner.
 

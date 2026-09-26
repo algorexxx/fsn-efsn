@@ -140,5 +140,10 @@ now passes a 90-second network loss, process kill with a pending intent, exact
 cold record recovery, automatic successors, ordinary peer catch-up and matching
 cold ledgers. It requires the normal miner-start action after process restart
 and does not create a nonce rollback. A complete-state competing-producer/manual
-repair exercise remains open. This procedure stops at unsupported conditions
+repair exercise remains open. The [first complete-state partition attempt](restart-full-state-partition.md)
+did not converge within its observation window, so no repair was submitted.
+Both cold branch ledgers passed. A separate diagnostic confirmed connected,
+equal-weight stopped peers and a downloader failure on missing historical
+ancestry in the compact fixture. A peer count alone does not establish a shared
+canonical branch; repair remains gated on that evidence. This procedure stops at unsupported conditions
 instead of treating a successful short rehearsal as an automatic recovery guarantee.

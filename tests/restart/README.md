@@ -536,3 +536,20 @@ interval accounting. The shared node harness permits only public test keys
 to use the real backup owner's funds. No partition or manual repair is exercised.
 See the [participant entry report](../../docs/restart-full-state-participant.md)
 for the two preserved setup failures and corrected passing run.
+
+`TestFullStatePartitionRepair` uses fresh complete-state copies under
+`FUSION_RESTART_FULL_STATE_PARTITION`, plus the node and network-partition opt-ins.
+After the same funding prefix it isolates both active miners for 90 seconds,
+then requires ordinary convergence and a stable nonce gap before retrieving and
+resubmitting original purchases. Successful repair requires the exact saved
+intent, two new automatic purchases and cold interval accounting. The initial
+run failed before convergence; later repair assertions remain unexercised here.
+
+`TestFullStatePartitionColdDiagnosis` takes those stopped disposable copies via
+`FUSION_RESTART_PARTITION_DIAGNOSIS`. It preserves and audits each cold branch
+before reconnecting fresh services with mining/buying disabled. It records
+heads, advertised peer difficulty and a separate explicit downloader diagnostic
+if ordinary sync fails. `FUSION_RESTART_NODE_DEBUG=1` enables debug output only
+in test child services. The diagnostic must not be run against a live database
+or an original backup. See the [partition report](../../docs/restart-full-state-partition.md)
+for the equal-weight observation, missing-history failure and required follow-up.
