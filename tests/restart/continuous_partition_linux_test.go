@@ -86,9 +86,17 @@ func requireContinuousMiners(t *testing.T, first, second *rehearsalNode) {
 
 func awaitContinuousMinerProgress(t *testing.T, first, second *rehearsalNode, owners [2]common.Address, requiredNonces [2]uint64, floor uint64, timeout time.Duration) *types.Block {
 	t.Helper()
+	return awaitContinuousMinerProgressObserved(t, first, second, owners, requiredNonces, floor, timeout, nil)
+}
+
+func awaitContinuousMinerProgressObserved(t *testing.T, first, second *rehearsalNode, owners [2]common.Address, requiredNonces [2]uint64, floor uint64, timeout time.Duration, observe func()) *types.Block {
+	t.Helper()
 	deadline := time.Now().Add(timeout)
 	var matched *types.Block
 	for time.Now().Before(deadline) {
+		if observe != nil {
+			observe()
+		}
 		requireContinuousMiners(t, first, second)
 		left, right := first.status(t), second.status(t)
 		height := left.Number

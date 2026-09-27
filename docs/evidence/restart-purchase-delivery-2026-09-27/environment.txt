@@ -1,0 +1,12 @@
+Baseline: 7f7697ba0c1ce769eb5862c24b17815b4746041a
+Branch: codex/restart-investigation-wip
+Observed: Sun Sep 27 06:25:44 UTC 2026
+WSL distribution: FusionRehearsal
+Linux DESKTOP-QAGMH5D 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+Toolchain: go version go1.21.3 linux/amd64
+Build: rehearsal user, -race -p=2 -mod=readonly, GOPROXY=off, GOMAXPROCS=2
+Execution: root only to create unshare --net namespace; public synthetic keys 1, 2, 3; loopback is the only enabled network interface.
+Storage: C: via /mnt/c, 9p drvfs, symlinkroot=/mnt/, cache=0x5, access=client, msize=65536
+WSL df at observation: 999032877056 total bytes, 942448021504 used, 56584855552 available.
+Windows capacity and checked copy size are in copy-capacity.json. Capacity is sampled at different times; no additional original-backup copy was made.
+The first launcher omitted -u root and exited before build: runuser may not be used by non-root users. Its output is retained separately.

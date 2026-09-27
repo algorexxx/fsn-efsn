@@ -610,3 +610,19 @@ accounting pass exposed a legitimate additional mature-lock conversion log.
 database and passes after validating that conversion independently. The old
 one-log assertion failure is retained. The evidence does not establish the exact
 remote delivery/admission failure; that needs live recipient-pool observations.
+
+`TestFullStateDeliveryHistoricalAdmission` and `TestFullStatePurchaseDirectDelivery`
+use `FUSION_RESTART_PURCHASE_DELIVERY` for a fresh verified copy of the stopped
+31-block result, plus the existing isolated-node and network-namespace opt-ins.
+The first test uses the real remote pool against retained historical states:
+the exact nonce-8 purchase is rejected at height 15,130,098 by the three-hour
+start-time rule, then accepted at 15,130,099 and 15,130,111. It does not rewind
+the database. The live test records both pools, submits the unchanged saved
+bytes directly to the entrant, enables both workers before the buyers, and
+requires native canonical receipts for the original purchases and automatic
+successors at nonces 9/27 or later. Both tests pass with race detection. Both
+cold ledgers and saved records reconcile through forty suffix blocks, with the
+prior thirty-one unchanged. Failed expectation/output-path attempts are retained.
+This proves explicit delivery recovery without new funds, not the original
+wire rejection or automatic retry. See the
+[purchase-delivery report](../../docs/restart-purchase-delivery.md).

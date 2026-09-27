@@ -2,7 +2,7 @@
 
 Status: investigation and implementation plan; not a launch authorization or a completed security audit.
 
-Last reviewed: 26 September 2026. Source baseline: local `master` / `develop` at `c5f0174` (5.0.3); recovery branch at `6981b00`; documentation branch at `c1806fc`. Narrow client corrections exist on the investigation branch; the complete restart implementation is still pending.
+Last reviewed: 27 September 2026. Source baseline: local `master` / `develop` at `c5f0174` (5.0.3); recovery branch at `6981b00`; documentation branch at `c1806fc`. Narrow client corrections exist on the investigation branch; the complete restart implementation is still pending.
 
 The [permanent node patch review list](restart-node-patch-review.md) separates
 fifteen candidate fixes/rules from the recovery-only tool, optional bootstrap-list
@@ -521,17 +521,28 @@ refuses to consume the last ticket without a replacement. Source inspection
 identifies the initial peer-transaction acceptance gate as a plausible cause.
 Starting both mining services before either buyer restores thirteen blocks of
 production, but the stronger test still fails: the donation's correct-nonce
-purchase remains pending while only the entrant replenishes. Next retain the
-recipient's pool/admission evidence and test exact-byte delivery to the surviving
-producer. Do not misclassify a pending-delivery issue as a nonce gap or assume
-that changing startup order established complete recovery.
+purchase remains pending while only the entrant replenishes. Do not misclassify
+a pending-delivery issue as a nonce gap or assume that changing startup order
+established complete recovery.
 Both cold pools accept the two saved purchases at their correct canonical
 nonces, and both complete databases plus the corrected interval audit agree
 across 31 blocks. The accounting correction handles a legitimate automatic
 mature-lock conversion log; its initial one-log assertion failure is preserved.
-No new retreat occurred in the thirteen live blocks. The next experiment should
-measure remote admission and inclusion of the unchanged pending purchase before
-introducing another partition or more funding.
+No new retreat occurred in the thirteen live blocks.
+
+The [exact delivery follow-up](restart-purchase-delivery.md) now passes remote
+pool admission checks against retained historical states: the same bytes are
+rejected before the first live block because their start time exceeds the
+recipient head by more than three hours, and accepted afterward. Direct submission
+of the unchanged saved purchase to the surviving producer then passes actual
+two-service replenishment for both owners without more funding or a replacement
+signature. Both cold databases and independent interval accounting agree across
+forty blocks; the earlier thirty-one are unchanged. This establishes explicit
+delivery recovery, not automatic recovery of the original peer connection.
+Next capture a deterministic transaction-before-block exchange through the peer
+handler and test bounded same-byte retry or reconnection. The original wire
+rejection remains unobserved. Production P1–P15 remains unchanged; no consensus
+or transaction-validity relaxation follows from this result.
 Keep pool admission, native purchase success and continued live production as
 separate acceptance gates. Complete-state live nonce rollback/repair and explicit
 reserves for another partition remain open; do not infer them from this funding

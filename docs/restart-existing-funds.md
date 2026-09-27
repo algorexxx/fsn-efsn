@@ -3,6 +3,12 @@
 27 September 2026, baseline `26b416c`. Tests and evidence only; production
 candidates remain P1–P15.
 
+Later follow-up: [exact pending-purchase delivery](restart-purchase-delivery.md)
+reproduces a pre-import timestamp rejection and passes direct delivery of the
+unchanged saved purchase, both-owner live replenishment and a forty-block cold
+audit without more funding. The original failures below remain retained; their
+exact wire-level cause was not captured.
+
 The [genuine-history experiment](restart-partition-history.md) ended with a
 correct-nonce funding failure on its heavier canonical branch. The donation
 test account had no tickets, 2,021.665544264 liquid FSN and no free time locks

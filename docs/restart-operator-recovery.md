@@ -175,3 +175,16 @@ The final cold checks accept the donation's unchanged nonce-8 purchase on both
 nodes and reconcile all 31 blocks. Treat this as a delivery/inclusion diagnosis
 with its exact live cause still unobserved, rather than assuming another funding
 transfer or missing-nonce repair is required.
+
+The [exact delivery follow-up](restart-purchase-delivery.md) now executes that
+unchanged saved purchase through direct submission to the surviving producer,
+then passes automatic replenishment for both accounts and the forty-block cold
+audit without extra funding. Historical remote pool checks reproduce rejection
+before the preceding block is imported: the purchase start is more than three
+hours ahead of the recipient's head. After that import the same bytes pass.
+For a correct-nonce pending purchase, check the producer's canonical head and
+pool before considering direct submission of the reviewed original bytes to an
+authorized endpoint. Verify canonical native success and continued purchasing;
+do not clear the saved intent, guess a replacement nonce or treat local pending
+status as successful delivery. This is a rehearsed manual delivery option,
+not yet an automatic retry policy or proof of the original wire failure.
