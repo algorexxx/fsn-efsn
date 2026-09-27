@@ -115,10 +115,14 @@ replace expired/underpriced signed intent, or establish power-loss durability.
 The protocol samples do not retrospectively expose the earlier live receiver's
 exact admission errors.
 
-Next use this candidate in a complete-state live partition/rollback rehearsal,
-with explicit funding and monitored nonce-gap repair. Keep peer delivery,
-funding, native execution and post-reorganization nonce resolution as distinct
-gates. The one-backup-block launch sequence and fifteen-item review inventory
+The [complete-state partition follow-up](restart-retry-partition.md) now observes
+automatic reconnection and heavier-branch convergence with this candidate.
+The displaced entrant retains a seven-purchase nonce gap and, after two ordinary
+first retreats, cannot fund its first missing purchase. All originals remain
+retrievable; cold canonical and competing-branch accounting pass. The live
+repair test retains a harness-capture failure, and successful funded repair is
+still open. Keep peer delivery, funding, native execution and nonce resolution
+as distinct gates. The one-backup-block launch and fifteen-item review inventory
 remain unchanged. Independent review and the other launch gates remain open.
 
 Evidence: [scripts, logs and retained results](evidence/restart-autobuy-rebroadcast-2026-09-27/).

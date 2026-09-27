@@ -39,6 +39,11 @@ func TestFullStatePartitionRepair(t *testing.T) {
 	cleanup := prepareFullStateOutage(t, root)
 	installFullStateHistory(t, root)
 	anchor := prepareFullStateParticipant(t, root, cleanup)
+	rehearseFullStatePartitionRepair(t, root, cleanup, anchor)
+}
+
+func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor *types.Block) {
+	t.Helper()
 	paths := [2]string{seedFullStateRecoveryNode(t, filepath.Join(root, "producer"), cleanup, 2), seedFullStateRecoveryNode(t, filepath.Join(root, "verifier"), cleanup, 3)}
 	nodes := [2]*rehearsalNode{startRehearsalNodeWithTimeout(t, paths[0], 12*time.Minute), startRehearsalNodeWithTimeout(t, paths[1], 12*time.Minute)}
 	owners := [2]common.Address{common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
@@ -50,6 +55,7 @@ func TestFullStatePartitionRepair(t *testing.T) {
 	}
 	warm := awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, initial, anchor.NumberU64(), 120*time.Second)
 	logLiveRepairTickets(t, nodes[0], owners, warm, "full-state-before-outage")
+	requireFullStatePartitionReserve(t, root, nodes, owners, warm)
 	originals := [2]map[uint64]*types.Transaction{make(map[uint64]*types.Transaction), make(map[uint64]*types.Transaction)}
 	heal := dropRehearsalPackets(t, "match", "ip", "dst", "127.0.0.0/8")
 	cut := time.Now()
@@ -90,6 +96,12 @@ func TestFullStatePartitionRepair(t *testing.T) {
 		t.Fatal("partition did not create competing descendants of the shared funded prefix")
 	}
 	t.Logf("full-state partition isolated duration=%s fork=%d heads=%d/%d hashes=%s/%s", time.Since(cut), fork, base+uint64(len(isolated[0])), base+uint64(len(isolated[1])), isolated[0][len(isolated[0])-1].Hash().Hex(), isolated[1][len(isolated[1])-1].Hash().Hex())
+	for i, role := range []string{"producer", "verifier"} {
+		path := filepath.Join(root, "isolated-"+role+".rlp")
+		encoded, err := rlp.EncodeToBytes(isolated[i])
+		requireNoError(t, err)
+		requireNoError(t, os.WriteFile(path, encoded, 0600))
+	}
 	heal()
 	gap := awaitLivePurchaseGap(t, nodes, owners, originals, floor)
 	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)

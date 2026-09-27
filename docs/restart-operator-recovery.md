@@ -39,6 +39,10 @@ An advancing common chain and enabled flags do not prove this wallet is buying
 or mining. Monitor its nonce, successful purchases, usable tickets, free interval
 coverage and errors as well as peer count and head movement. Preserve old head
 and block hashes so displaced transactions can later be located.
+Continue retaining them while connections and synchronization recover: the
+[complete-state partition](restart-retry-partition.md) mined three more displaced
+purchases after packet flow resumed, beyond the harness's initial capture.
+Their bodies remained in the node and existing block-hash RPC recovered them.
 
 ## Classify before changing anything
 
@@ -145,8 +149,15 @@ did not converge within its observation window, so no repair was submitted.
 Both cold branch ledgers passed. A separate diagnostic confirmed connected,
 equal-weight stopped peers and a downloader failure on missing historical
 ancestry in the compact fixture. A peer count alone does not establish a shared
-canonical branch; repair remains gated on that evidence. This procedure stops at unsupported conditions
-instead of treating a successful short rehearsal as an automatic recovery guarantee.
+canonical branch; repair remains gated on that evidence. The later
+[complete-state P4 partition](restart-retry-partition.md) does converge and
+reproduces canonical nonce 7 with saved nonce 14. Both cold canonical ledgers and
+competing branches reconcile, and all seven originals are retrievable. However,
+two first retreats leave zero entrant tickets, 2,021.664457552 liquid FSN and
+only future-starting locks; the actual first repair submission is rejected for
+funding on a separate diagnostic copy. Successful complete-state funded repair
+and automatic successors remain open. This procedure stops at unsupported
+conditions instead of treating a short rehearsal as an automatic recovery guarantee.
 
 The [genuine-history follow-up](restart-partition-history.md) now removes the
 exact compact-history ancestor failure. A separate stopped heavier-peer case

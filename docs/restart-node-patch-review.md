@@ -30,6 +30,12 @@ per owner and a matching 52-block cold ledger. Review its five production-file
 hunks as part of P4. It changes guarded local delivery, with no consensus or
 transaction-validity relaxation and no sixteenth patch category.
 
+The [subsequent complete-state partition](restart-retry-partition.md) adds no
+production changes. It demonstrates automatic heavier-branch convergence but
+leaves a seven-purchase nonce gap and insufficient funds after ordinary ticket
+retreats. Existing RPC retrieves every original; canonical and competing-branch
+accounting pass. Successful complete-state funded repair remains unproved.
+
 ## Permanent node candidates
 
 | ID | Exact change | Why include it / necessity | Lasting effect and evidence |
