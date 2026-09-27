@@ -725,3 +725,17 @@ intents and requiring that neither copy knows the opposite tip. Both runners
 use a separate cold ledger audit even if live convergence fails. See the
 [equal-weight investigation](../../docs/restart-equal-weight.md) for the retained
 state's earlier downloader history and the distinction from purchase recovery.
+
+`TestFullStateEqualWeightCoordinatedPause` uses fresh copies of the retained
+first-contact failure, with expected initial heads derived from its stopped
+result and checked against its cold audit. It reproduces at least two further
+equal-weight divergent blocks before disabling only the donation miner and
+buyer through existing RPC. Both services stay connected; the entrant keeps
+mining and buying. The test requires ordinary adoption of the entrant branch
+and three additional common descendants within 150 seconds, followed by a
+35-second stable shared head after stopping. It retains both pre-pause branches,
+all observed branch bodies, per-second head/peer/purchase records and exact
+stopped intents. The separate cold audit checks both canonical ledgers and both
+pre-pause ledgers even if live convergence fails. This tests assisted branch
+convergence, not unattended convergence or recovery of the paused buyer. See
+the [coordinated-pause investigation](../../docs/restart-equal-weight-pause.md).

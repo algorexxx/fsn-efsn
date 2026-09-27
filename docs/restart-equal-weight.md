@@ -159,15 +159,15 @@ schedule. The combination of a passing known-branch case and failing fresh
 first-contact case makes missing branch delivery a concrete release concern;
 it is no longer only a possible consequence of the earlier sparse fixture.
 
-Next use fresh copies of this failure to test a **coordinated pause of one
-synthetic producer**, allowing the other to gain enough weight for ordinary
-peer synchronization. Keep that assisted case separate from unattended
-two-producer convergence, retain both branches, and audit any resulting nonce
-gap or interval loss. Do not use a rewind, anchor change or automatic head
-override as the recovery mechanism. No production workaround or consensus
-tie-break is added by this investigation. The selected single-producer launch
-arrangement is unchanged; an operational response for later competing
-producers remains open.
+The subsequent [coordinated-pause experiment](restart-equal-weight-pause.md)
+uses fresh copies of this failure and passes ordinary heavier-peer convergence
+without a rewind, anchor change or explicit downloader call. Both canonical
+and pre-pause ledgers pass. Its paused donation wallet retains a 31-purchase
+nonce gap and lacks currently usable stake funding. This is assisted branch
+convergence, not unattended recovery or purchase recovery. No production
+workaround or consensus tie-break is added. The selected single-producer launch
+arrangement is unchanged; production monitoring and response responsibility
+remain open.
 
 Both experiments are stopped and preserved. D: has about **145.7 GB** free;
 its WSL filesystem has about **64.0 GB** available. No W: workload was needed.

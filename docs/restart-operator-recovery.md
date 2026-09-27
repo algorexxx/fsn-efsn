@@ -64,6 +64,7 @@ Their bodies remained in the node and existing block-hash RPC recovered them.
 | Zero tickets, insufficient liquid and insufficient covering locks | Waiting for the absent ticket's selection cannot help; inspect future expiry rights and actual funding options |
 | Conflicting nonce, missing/corrupt record, missing bytes, expired interval or inadequate fee | Stop this procedure and review the specific case; no generic replacement or record deletion is established |
 | No available eligible producer | Normal transfer/resubmission cannot itself create the block needed to execute it; this runbook does not establish a repair |
+| Compatible-anchor producers advancing different hashes at equal cumulative difficulty | Preserve both branches, agree on a continuation, and assess the rehearsed coordinated-pause option below; local purchase success does not prove convergence |
 | Incompatible branch/anchor or unexplained accounting | Preserve evidence and resolve branch/configuration identity before submitting anything |
 
 Interval expiry counts alone are not a complete consensus eligibility check.
@@ -286,5 +287,21 @@ distinct condition to monitor: compare **head hashes and cumulative difficulty**
 across producers, not only height, peer count, mining flags or local purchase
 success. A correct saved nonce does not rule out a network split. The passing
 case with previously fetched fork data does not remove the fresh first-contact
-failure. A coordinated producer-pause experiment is next; it is not yet a
-rehearsed recovery step or an instruction to alter production heads.
+failure. The [coordinated-pause follow-up](restart-equal-weight-pause.md) now
+passes on fresh copies of that failure. Pausing only one miner and buyer through
+existing RPC, with both services connected, permits ordinary synchronization
+and continued production. This option requires agreement on the continuation
+and a funded eligible surviving producer; it is not automatic branch selection.
+Preserve both histories and signed purchases before acting. Observe actual head
+movement after stop calls, which can leave delayed seals.
+
+The paused wallet ends at canonical/saved nonces 8/39 with zero tickets and
+about 2,021.98 liquid FSN. Its adopted history already contains two first-retreat
+losses. Both final canonical ledgers and both pre-pause ledgers reconcile, but
+convergence does not clear the nonce gap or supply usable funds. Keep that
+wallet paused while reviewing the exact originals, intervals, fees and funding.
+Actual post-resume admission and original-byte retrieval from this deeper
+rollback are the next bounded checks. Do not clear its saved intent, override
+heads, or count the paused wallet as a functioning producer merely because its
+node has synchronized. The entrant's continued buying does not prove recovery
+of the paused account.
