@@ -714,3 +714,14 @@ repair helper. The saved automatic intent receives no direct intervention.
 The stimulus is test-only and is not an operator procedure. The ordinary case
 retains its original behavior. See the
 [injected-rejection report](../../docs/restart-injected-manual-delivery.md).
+
+`TestFullStateEqualWeightRejoin` resumes the original equal-weight full-state
+branches after validating their genuine ancestry. It records a connected idle
+control, then starts both ordinary miners/buyers and requires convergence plus
+three additional common descendants without explicit downloader calls or new
+funding. `TestFullStateFreshEqualWeightRejoin` first reconstructs the same signed
+branches from the preserved state, restoring their original synthetic saved
+intents and requiring that neither copy knows the opposite tip. Both runners
+use a separate cold ledger audit even if live convergence fails. See the
+[equal-weight investigation](../../docs/restart-equal-weight.md) for the retained
+state's earlier downloader history and the distinction from purchase recovery.

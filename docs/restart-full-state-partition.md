@@ -119,6 +119,15 @@ No new consensus correction, finality mechanism or production candidate follows
 from these results. The selected day-one producer/verifier arrangement and its
 passing single-producer outage evidence are unchanged.
 
+The later [equal-weight comparison](restart-equal-weight.md) now reconstructs
+these exact signed branches from the preserved state with genuine history and
+no opposite tip stored. Both connected miners continue for 150 seconds without
+converging; both separate 39-block cold ledgers pass. Resuming the earlier
+diagnostic state, where one opposite branch is already stored, instead passes
+convergence. This separates the missing-branch delivery problem from the old
+missing historical-header failure. Coordinated producer-pause recovery remains
+the next distinct test, with no consensus redesign implied.
+
 ## Limits
 
 This is one bounded two-producer case. It does not establish a universal reserve

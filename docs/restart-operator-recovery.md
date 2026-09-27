@@ -278,3 +278,13 @@ isolated test stimulus, not an operator recovery step. Use the existing
 readiness, funding, original-byte and canonical native-success checks above.
 Real funding availability, response responsibility and equal-weight convergence
 remain open.
+
+The [equal-weight follow-up](restart-equal-weight.md) now reproduces connected
+producers advancing separate branches at identical weight with genuine history
+present. Both ledgers and local ticket purchasing remain valid. This is a third
+distinct condition to monitor: compare **head hashes and cumulative difficulty**
+across producers, not only height, peer count, mining flags or local purchase
+success. A correct saved nonce does not rule out a network split. The passing
+case with previously fetched fork data does not remove the fresh first-contact
+failure. A coordinated producer-pause experiment is next; it is not yet a
+rehearsed recovery step or an instruction to alter production heads.
