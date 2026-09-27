@@ -152,7 +152,9 @@ producer and one verifier, including reads deliberately spanning natural head
 advancement, bounded catch-up, cold rechecks and test-only native inventory
 reconstruction. It changes no observer or node runtime source. Live competing
 reorganizations and representative backlog, storage and receipt-index availability
-remain to validate. Review the [P16 parser correction](restart-snapshot-framing.md) and add the
-derived native timeline with explicit starting inventory and accounting coverage
-before asserting complete wallet progress. Delivery, operational timings,
+remain to validate. The [offline wallet ticket timeline](restart-observer-tickets.md)
+now derives scoped events using the saved anchor inventory, with separate
+accounting coverage and explicit gaps. Acquiring that baseline when monitoring
+starts later and complete financial accounting remain open; review the
+[P16 parser correction](restart-snapshot-framing.md) separately. Delivery, operational timings,
 lost-monitor checks and release review remain open in the [main plan](restart-plan.md).

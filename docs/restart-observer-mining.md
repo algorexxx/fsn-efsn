@@ -113,9 +113,13 @@ reconciled their own actual sequence, without fixing an expected winning schedul
    production accounting status. Block coverage and accounting coverage must
    remain separate claims.
 
-Review the [P16 parser correction and narrowed validation scope](restart-snapshot-framing.md),
-then implement the smallest external derived timeline
-with the inventory and coverage rules above. Collection during a live competing
+The subsequent [offline wallet ticket timeline](restart-observer-tickets.md)
+implements a scoped derivation from this retained anchor inventory and block
+evidence, with explicit baseline/unsupported gaps and rewind/replacement tests.
+It changes only the external observer. Historical baseline acquisition for a
+monitor first started after the anchor remains open. Review the
+[P16 parser correction and narrowed validation scope](restart-snapshot-framing.md)
+separately. Collection during a live competing
 reorganization, representative backlog/storage/receipt-index availability,
 deployment scheduling and notification delivery remain open. The
 [main plan](restart-plan.md) and [monitoring policy](restart-monitoring-response.md)

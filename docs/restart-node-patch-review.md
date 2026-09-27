@@ -181,3 +181,10 @@ test-only native inventory audit pass without any observer or node runtime edit.
 Its source review led to the [P16 local parser correction](restart-snapshot-framing.md).
 The narrowed investigation confirms truncated-input panics and adds a minimum-size
 guard; it does not demonstrate a hostile-peer crash or approve the patch for release.
+
+The [offline wallet ticket timeline](restart-observer-tickets.md) extends only
+the external observer command/package. It derives inventory and events from
+retained anchor snapshots and the retained canonical branch, with explicit gaps
+and no new persisted accounting state. Review native outcomes, return labels,
+baseline provenance and unsupported intervals independently of node consensus.
+It adds no P17, RPC method or change to the normal node binary.

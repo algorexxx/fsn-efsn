@@ -85,6 +85,13 @@ func TestCommandHistoryLifecycle(t *testing.T) {
 	invoke("--history", historyPath, "--history-action", "acknowledge", "--incident", id, "--at-sequence", "1", "--reason", "Synthetic operator acknowledged loss of coverage.")
 	invoke("--history", historyPath, "--history-action", "resolve", "--incident", id, "--at-sequence", "2", "--reason", "Synthetic review only; a further failed read must reopen this.")
 	export := invoke("--history", historyPath, "--history-export")
+	var timeline observe.TicketTimeline
+	if err := json.Unmarshal(invoke("--history", historyPath, "--ticket-timeline", "producer", "--ticket-blocks", "8"), &timeline); err != nil || timeline.Status != "missing_baseline" || timeline.Sequence != 3 {
+		t.Fatal("offline ticket gap was not reported", err, timeline)
+	}
+	if !bytes.Equal(export, invoke("--history", historyPath, "--history-export")) {
+		t.Fatal("ticket query changed history")
+	}
 	if requests.Load() != count || bytes.Contains(export, []byte("secret")) || bytes.Contains(export, []byte("Endpoint")) {
 		t.Fatal("offline history command contacted node or leaked endpoint credentials")
 	}
@@ -97,6 +104,12 @@ func TestCommandHistoryLifecycle(t *testing.T) {
 		t.Fatal("persistent observation did not reopen reviewed incident")
 	}
 	for _, args := range [][]string{
+		{"--history", historyPath, "--ticket-blocks", "1"},
+		{"--history", historyPath, "--ticket-timeline", "producer"},
+		{"--history", historyPath, "--ticket-timeline", "producer", "--ticket-blocks", "129"},
+		{"--history", historyPath, "--ticket-timeline", "missing", "--ticket-blocks", "1"},
+		{"--history", historyPath, "--ticket-timeline", "producer", "--ticket-blocks", "1", "--timeout", "1s"},
+		{"--history", historyPath, "--ticket-timeline", "producer", "--ticket-blocks", "1", "--history-export"},
 		{"--config", configPath, "--timeout", "1s", "--backfill-node", "producer", "--backfill-blocks", "1"},
 		{"--history", historyPath, "--history-status", "--backfill-node", "producer", "--backfill-blocks", "1"},
 		{"--config", configPath, "--timeout", "1s", "--history", historyPath, "--backfill-blocks", "1"},

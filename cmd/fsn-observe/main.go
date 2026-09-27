@@ -38,6 +38,9 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	reason := flags.String("reason", "", "explicit operator review reason; not a notification")
 	backfillNode := flags.String("backfill-node", "", "collect complete block/receipt evidence for this configured node into --history")
 	backfillBlocks := flags.Uint64("backfill-blocks", 0, "required backfill batch bound, from 1 through 128; requires --backfill-node")
+	ticketNode := flags.String("ticket-timeline", "", "derive an offline ticket timeline for this history node's wallet")
+	ticketFrom := flags.Uint64("ticket-from", 0, "first timeline event height; defaults to anchor plus one; earlier inventory is replayed")
+	ticketBlocks := flags.Uint64("ticket-blocks", 0, "required timeline range bound, 1 through 128 blocks")
 	if err := flags.Parse(args); err != nil {
 		if err == flag.ErrHelp {
 			return nil
@@ -45,13 +48,16 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 		return err
 	}
 	operations := 0
-	for _, selected := range []bool{*initialize, *statusOnly, *export, *action != ""} {
+	for _, selected := range []bool{*initialize, *statusOnly, *export, *action != "", *ticketNode != ""} {
 		if selected {
 			operations++
 		}
 	}
 	if flags.NArg() != 0 || *budget != 0 && !*initialize || (*incident != "" || *sequence != 0 || *reason != "") && *action == "" {
 		return fmt.Errorf("invalid observer/history argument combination")
+	}
+	if (*ticketFrom != 0 || *ticketBlocks != 0) && *ticketNode == "" || *ticketNode != "" && (*ticketBlocks == 0 || *ticketBlocks > 128) {
+		return fmt.Errorf("ticket timeline requires --ticket-timeline and --ticket-blocks from 1 through 128")
 	}
 	if (*backfillNode != "" || *backfillBlocks != 0) && (operations != 0 || *historyPath == "" || *backfillNode == "" || *backfillBlocks == 0 || *backfillBlocks > 128) {
 		return fmt.Errorf("backfill requires --history, --backfill-node and --backfill-blocks from 1 through 128; offline history operations are separate")
@@ -77,6 +83,13 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 		defer history.Close()
 		if *export {
 			return history.Export(output)
+		}
+		if *ticketNode != "" {
+			timeline, err := history.TicketTimeline(*ticketNode, *ticketFrom, *ticketBlocks)
+			if err != nil {
+				return err
+			}
+			return writeJSON(output, timeline)
 		}
 		var state observe.HistoryStatus
 		if *action != "" {

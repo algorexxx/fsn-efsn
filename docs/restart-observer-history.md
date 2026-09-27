@@ -154,8 +154,11 @@ reads; offline operations issue no node RPCs and exports omit endpoint secrets.
 The [backfill extension](restart-observer-backfill.md) now passes bounded range,
 fork/reopen and actual-service checks. The [ordinary-mining follow-up](restart-observer-mining.md)
 now passes moving-head collection, catch-up, cold rechecks and test-only ticket
-inventory reconstruction. Live competing reorganizations, representative
-storage/load and production native event accounting remain to validate.
+inventory reconstruction. The [offline wallet ticket timeline](restart-observer-tickets.md)
+now derives native events without adding stored inventory or changing history
+format. Live competing reorganizations, representative storage/load, baseline
+acquisition when monitoring starts after the anchor and complete financial
+accounting remain to validate.
 Notification routing, timing, acknowledgements in
 the delivery system and a separately checked lost-monitor heartbeat remain
 undeployed. The [main plan](restart-plan.md) retains those release gates.
