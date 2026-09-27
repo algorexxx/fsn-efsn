@@ -1,0 +1,114 @@
+package restart
+
+import (
+	"bytes"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/common/hexutil"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+)
+
+func TestFullStateManualPredecessorDelivery(t *testing.T) {
+	root := requireDeliveryRoot(t)
+	if filepath.Base(root) != "manual-purchase-live-2026-09-27" {
+		t.Fatal("explicit disposable copy of the retained manual-predecessor failure required")
+	}
+	var cleanup, retained fullStateBlockLedger
+	readHandoverJSON(t, filepath.Join(root, "retained-blocks", "block-03.json"), &cleanup)
+	readHandoverJSON(t, filepath.Join(root, "retained-blocks", "block-45.json"), &retained)
+	if retained.Header.Hash() != common.HexToHash("0x93ccd33c56bcdff1a572b381887f99eb0ca349af63b63ecffa63858b7cffef77") {
+		t.Fatal("expected failed live run at block 15130125")
+	}
+	original, err := os.ReadFile(filepath.Join(root, "repair", "original-16.rlp"))
+	requireNoError(t, err)
+	var manual types.Transaction
+	requireNoError(t, manual.UnmarshalBinary(original))
+	if manual.Nonce() != 16 || manual.Hash() != common.HexToHash("0xb48486a5a0d79ba11ed9c67107e7e83aa886c3309fbb9785fc7cbe21fd9b0e61") {
+		t.Fatal("unexpected retained manual predecessor")
+	}
+	owners := [2]common.Address{common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
+	var nodes [2]*rehearsalNode
+	var initial [2]peerPurchaseState
+	var saved [2]*types.Transaction
+	for i, role := range []string{"producer", "verifier"} {
+		path := seedFullStateRecoveryNode(t, filepath.Join(root, role), types.NewBlockWithHeader(cleanup.Header), byte(i+2))
+		nodes[i] = startRehearsalNodeWithTimeout(t, path, 5*time.Minute)
+		requireRehearsalHead(t, nodes[i].status(t), types.NewBlockWithHeader(retained.Header))
+		initial[i] = readPeerPurchase(t, nodes[i])
+		saved[i] = new(types.Transaction)
+		requireNoError(t, saved[i].UnmarshalBinary(initial[i].Saved))
+		if initial[i].Nonce != [2]uint64{16, 32}[i] || saved[i].Hash() != [2]common.Hash{common.HexToHash("0xe8d24daf9dabf9ee5bb2e3ee11b54165c2aa84fd11f3ee6a0fea499379e627ff"), common.HexToHash("0x08929f212fa4687cb00e9b1c6678a5f139bfe0f0b3bc487309ff1f3f4b463ef4")}[i] || len(initial[i].Pending)+len(initial[i].Queued) != 0 {
+			t.Fatal("cold nonce, saved intent or pool differs from retained failure")
+		}
+	}
+	requireNoError(t, writeStateExportJSON(filepath.Join(root, "delivery-initial.json"), initial))
+	observe := observeDeliveryPools(t, root, nodes)
+	observe()
+	validateLiveRepairPurchase(t, nodes[0], &manual)
+	var submitted common.Hash
+	requireNoError(t, nodes[1].call(t, &submitted, "eth_sendRawTransaction", hexutil.Bytes(original)))
+	if submitted != manual.Hash() {
+		t.Fatal("direct recipient changed transaction identity")
+	}
+	var recipient deliveryPoolState
+	requireNoError(t, nodes[1].call(t, &recipient, "lab_deliveryPool"))
+	if len(recipient.Pending[owners[0]]) != 1 || recipient.Pending[owners[0]][0].Hash() != manual.Hash() || len(recipient.Queued[owners[0]]) != 0 || !bytes.Equal(recipient.Own.Saved, initial[1].Saved) {
+		t.Fatal("recipient did not retain the exact manual predecessor pending")
+	}
+	origin := readPeerPurchase(t, nodes[0])
+	if origin.Nonce != 16 || !bytes.Equal(origin.Saved, initial[0].Saved) || len(origin.Pending)+len(origin.Queued) != 0 {
+		t.Fatal("direct delivery changed the originating saved intent or pool")
+	}
+	requireNoError(t, writeStateExportJSON(filepath.Join(root, "direct-recipient.json"), recipient))
+	connectRehearsalPeer(t, nodes[0], nodes[1])
+	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
+	for _, node := range nodes {
+		requireNoError(t, node.call(t, nil, "miner_start", 1))
+		awaitRehearsal(t, 20*time.Second, func() bool { return node.status(t).Mining })
+	}
+	for _, node := range []*rehearsalNode{nodes[1], nodes[0]} {
+		requireNoError(t, node.call(t, nil, "miner_startAutoBuyTicket"))
+	}
+	progress := awaitContinuousMinerProgressObserved(t, nodes[0], nodes[1], owners, [2]uint64{19, 34}, 15130125, 150*time.Second, observe)
+	var inclusions []map[string]interface{}
+	for i, tx := range []*types.Transaction{&manual, saved[0], saved[1]} {
+		owner := owners[0]
+		if i == 2 {
+			owner = owners[1]
+		}
+		block := awaitLiveRepairReceipt(t, nodes, tx, owner)
+		inclusions = append(inclusions, map[string]interface{}{"Transaction": tx, "Block": block.Header()})
+	}
+	var successors [2]types.Transactions
+	for height := uint64(15130126); height <= progress.NumberU64(); height++ {
+		for _, tx := range readRecoveryNodeBlock(t, nodes[0], height).Transactions() {
+			owner, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+			requireNoError(t, err)
+			for i, address := range owners {
+				if owner == address && tx.IsBuyTicketTx() && tx.Nonce() > saved[i].Nonce() {
+					successors[i] = append(successors[i], tx)
+				}
+			}
+		}
+	}
+	if len(successors[0]) < 2 || len(successors[1]) < 2 {
+		t.Fatal("both owners must make at least two new automatic successor purchases")
+	}
+	for _, node := range nodes {
+		stopPeerAutoMiner(t, node)
+	}
+	final := awaitStoppedPartitionHead(t, nodes[0], nodes[1])
+	observe()
+	var stopped [2]peerPurchaseState
+	for i, node := range nodes {
+		stopped[i] = readPeerPurchase(t, node)
+		node.stop(t, false)
+	}
+	requireNoError(t, writeStateExportJSON(filepath.Join(root, "delivery-stopped-purchases.json"), stopped))
+	requireNoError(t, writeStateExportJSON(filepath.Join(root, "delivery-result.json"), map[string]interface{}{"Before": retained.Header, "Progress": progress.Header(), "Final": final.Header(), "DirectSubmission": submitted, "ExactInclusions": inclusions, "AutomaticSuccessors": successors, "NewFunding": false, "RestartedFromFailure": true}))
+	t.Logf("unchanged manual nonce 16 and both exact saved purchases included; donation/entrant fresh automatic purchases=%d/%d; final=%d %s", len(successors[0]), len(successors[1]), final.NumberU64(), final.Hash().Hex())
+}

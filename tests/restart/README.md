@@ -665,5 +665,23 @@ Its retained run fails at the seventh manual original after six successful
 repairs. `TestFullStateManualGapHistoricalAdmission` uses a fresh copy through
 `FUSION_RESTART_PURCHASE_DELIVERY` and the existing historical-pool harness to
 check those same bytes before and after stake return and at the final head.
-Rejection before return and acceptance afterward pass; the live delivery cause
-and completion of that manual repair remain open.
+Rejection before return and acceptance afterward pass; the original live wire
+sequence remains unrecorded.
+
+`eth/TestRestartManualPurchasePeerRetry` uses `FUSION_RESTART_MANUAL_RETRY` with
+the exact prepared diagnostic copy and a loopback-only namespace. With the
+original nonce-16 purchase and selection block 15,130,121, it records real remote
+balance rejection, known-peer broadcast suppression after block import, then
+successful explicit resend or ready-peer pending replay. Both cases and the
+four earlier nonce-8 cases pass under race detection.
+
+`TestFullStateManualPredecessorDelivery` uses `FUSION_RESTART_PURCHASE_DELIVERY`
+on fresh copies of the failed live run at 15,130,125. It submits the original
+nonce-16 bytes directly to the entrant through production RPC, checks both saved
+intents remain unchanged, and requires native success plus two fresh automatic
+purchases from each owner. The 150-second attempt fails waiting for ordinary
+ticket selection after one fresh donation purchase; the fresh 300-second-window
+attempt passes. Both cold ledgers are checked separately by the existing
+`TestFullStateUninterruptedPartitionColdAudit`. These are restarted continuations,
+not a passing uninterrupted partition rehearsal. See the
+[manual delivery report](../../docs/restart-manual-purchase-delivery.md).

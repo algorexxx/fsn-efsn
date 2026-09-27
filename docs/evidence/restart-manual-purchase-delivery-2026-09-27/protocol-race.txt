@@ -1,0 +1,49 @@
+=== RUN   TestRestartManualPurchasePeerRetry
+INFO [09-27|12:15:31.268] InitCheckPoints finished                 count=8 last=2,680,000
+INFO [09-27|12:15:31.274] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/manual-purchase-protocol-2026-09-27-attempt-02/verifier/chaindata cache=128.00MiB handles=64
+INFO [09-27|12:15:31.330] Loaded most recent local header          number=15,130,125 hash="93ccd3…ffef77" td=63,370,514,802 age=18m3s
+INFO [09-27|12:15:31.331] Loaded most recent local full block      number=15,130,125 hash="93ccd3…ffef77" td=63,370,514,802 age=18m3s
+INFO [09-27|12:15:31.332] Loaded most recent local fast block      number=15,130,125 hash="93ccd3…ffef77" td=63,370,514,802 age=18m3s
+=== RUN   TestRestartManualPurchasePeerRetry/same-peer-resend
+WARN [09-27|12:15:31.338] Rewinding blockchain                     target=15,130,120
+INFO [09-27|12:15:31.344] Loaded most recent local header          number=15,130,120 hash="11c3b7…5b6300" td=63,370,514,789 age=19m8s
+INFO [09-27|12:15:31.344] Loaded most recent local full block      number=15,130,120 hash="11c3b7…5b6300" td=63,370,514,789 age=19m8s
+INFO [09-27|12:15:31.345] Loaded most recent local fast block      number=15,130,120 hash="11c3b7…5b6300" td=63,370,514,789 age=19m8s
+DEBUG[09-27|12:15:31.346] Reinjecting stale transactions           count=0
+DEBUG[09-27|12:15:31.348] Reinjecting stale transactions           count=0
+INFO [09-27|12:15:31.351] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+DEBUG[09-27|12:15:31.355] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+DEBUG[09-27|12:15:31.362] Queued propagated block                  peer=0100000000000000 number=15,130,121 hash="f17476…9a1947" queued=1
+DEBUG[09-27|12:15:31.363] Importing propagated block               peer=0100000000000000 number=15,130,121 hash="f17476…9a1947"
+DEBUG[09-27|12:15:31.390] Persisted trie from memory database      nodes=19 size=7.62KiB time=1.159432ms gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+DEBUG[09-27|12:15:31.391] Inserted new block                       number=15,130,121 hash="f17476…9a1947" uncles=0 txs=1 gas=21224 elapsed=24.347ms
+INFO [09-27|12:15:31.391] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=24.843ms mgasps=0.854 order=0 number=15,130,121 hash="f17476…9a1947" difficulty=4 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="c28b4c…4bf6d2" parentHash="11c3b7…5b6300" time=1,790,502,996 age=18m55s cache=0.00B
+DEBUG[09-27|12:15:31.392] Reinjecting stale transactions           count=0
+DEBUG[09-27|12:15:31.392] Reinjecting stale transactions           count=0
+    restart_manual_purchase_retry_test.go:77: mode=same-peer-resend exact transaction 0xb48486a5a0d79ba11ed9c67107e7e83aa886c3309fbb9785fc7cbe21fd9b0e61 rejected twice before original block, ordinary rebroadcast suppressed, then admitted remotely without replacement; receiver canonical nonce=16 pending nonce=17
+INFO [09-27|12:15:31.407] Transaction pool stopped 
+INFO [09-27|12:15:31.407] Transaction pool stopped 
+=== RUN   TestRestartManualPurchasePeerRetry/ready-reconnect
+WARN [09-27|12:15:31.408] Rewinding blockchain                     target=15,130,120
+INFO [09-27|12:15:31.410] Loaded most recent local header          number=15,130,120 hash="11c3b7…5b6300" td=63,370,514,789 age=19m8s
+INFO [09-27|12:15:31.410] Loaded most recent local full block      number=15,130,120 hash="11c3b7…5b6300" td=63,370,514,789 age=19m8s
+INFO [09-27|12:15:31.411] Loaded most recent local fast block      number=15,130,120 hash="11c3b7…5b6300" td=63,370,514,789 age=19m8s
+DEBUG[09-27|12:15:31.411] Reinjecting stale transactions           count=0
+DEBUG[09-27|12:15:31.412] Reinjecting stale transactions           count=0
+INFO [09-27|12:15:31.412] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+DEBUG[09-27|12:15:31.413] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+DEBUG[09-27|12:15:31.419] Queued propagated block                  peer=0100000000000000 number=15,130,121 hash="f17476…9a1947" queued=1
+DEBUG[09-27|12:15:31.419] Importing propagated block               peer=0100000000000000 number=15,130,121 hash="f17476…9a1947"
+DEBUG[09-27|12:15:31.426] Persisted trie from memory database      nodes=19 size=7.62KiB time=1.049073ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+DEBUG[09-27|12:15:31.427] Inserted new block                       number=15,130,121 hash="f17476…9a1947" uncles=0 txs=1 gas=21224 elapsed=6.918ms
+INFO [09-27|12:15:31.428] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=7.415ms  mgasps=2.862 order=0 number=15,130,121 hash="f17476…9a1947" difficulty=4 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="c28b4c…4bf6d2" parentHash="11c3b7…5b6300" time=1,790,502,996 age=18m55s cache=0.00B
+DEBUG[09-27|12:15:31.428] Reinjecting stale transactions           count=0
+DEBUG[09-27|12:15:31.428] Reinjecting stale transactions           count=0
+    restart_manual_purchase_retry_test.go:77: mode=ready-reconnect exact transaction 0xb48486a5a0d79ba11ed9c67107e7e83aa886c3309fbb9785fc7cbe21fd9b0e61 rejected twice before original block, ordinary rebroadcast suppressed, then admitted remotely without replacement; receiver canonical nonce=16 pending nonce=17
+INFO [09-27|12:15:31.444] Transaction pool stopped 
+INFO [09-27|12:15:31.444] Transaction pool stopped 
+INFO [09-27|12:15:31.445] Blockchain manager stopped 
+--- PASS: TestRestartManualPurchasePeerRetry (0.19s)
+    --- PASS: TestRestartManualPurchasePeerRetry/same-peer-resend (0.07s)
+    --- PASS: TestRestartManualPurchasePeerRetry/ready-reconnect (0.04s)
+PASS

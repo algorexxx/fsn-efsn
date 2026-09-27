@@ -86,7 +86,8 @@ during funding and repair.
 
 ## Remaining manual transaction stalls
 
-Donation's ticket is selected at **15,130,121**. At 11:56:51 UTC its node admits
+Donation's ticket is selected at **15,130,121**. At 11:56:51 local log time
+(09:56:51 UTC) its node admits
 the unchanged nonce-16 purchase
 `0xb48486a5a0d79ba11ed9c67107e7e83aa886c3309fbb9785fc7cbe21fd9b0e61`.
 The purchase remains pending locally while the entrant advances the common
@@ -166,9 +167,11 @@ separate gates. The possible [surviving node](restart-surviving-node.md) remains
 unverified while its enode is pending. No real keys or public network are used by
 this rehearsal, and no additional production patch is introduced.
 
-Next capture the receiving pool and transaction propagation decisions, and
-rehearse delivery of this exact pending predecessor before the saved intent and
-fresh successors. Evaluate explicit delivery or ready-peer replay as bounded
-operator actions. Only propose an additional runtime correction after the
-delivery failure and intended behavior are reproduced. Keep this failed live
-case separate from the passing restarted repair and pool diagnostic.
+The [manual-predecessor follow-up](restart-manual-purchase-delivery.md) now
+captures remote rejection, known-peer suppression and successful exact-byte
+retry/reconnect in controlled protocol cases. Direct delivery on fresh restarted
+copies also recovers this predecessor, both saved intents and fresh automatic
+successors without new funding. Its first shorter-window attempt remains a
+failure. Keep these results separate from this failed uninterrupted run; its
+exact wire-level sequence was not recorded. No additional runtime patch follows
+from the controlled reproduction or restarted recovery.

@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -205,7 +206,7 @@ func TestRestartPeerPurchaseRetry(t *testing.T) {
 				t.Fatal("disposable rewind did not reach the specified parent")
 			}
 			retryRequire(t, chain.CheckRestartReady())
-			rehearseRetryMessages(t, root, mode, chain, db, engine, block, &tx, saved.Saved)
+			rehearseRetryMessages(t, root, mode, chain, db, engine, retryPurchaseCase{block, &tx, saved.Saved, 14, "BuyTicket start must be lower than latest block time + 3 hour"})
 		}) {
 			t.Fatal("peer retry case failed; retaining its state")
 		}
@@ -232,8 +233,17 @@ func retryReadJSON(t *testing.T, path string, target interface{}) {
 	retryRequire(t, json.Unmarshal(data, target))
 }
 
-func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockChain, db ethdb.Database, engine *datong.DaTong, block *types.Block, tx *types.Transaction, saved []byte) {
+type retryPurchaseCase struct {
+	block        *types.Block
+	tx           *types.Transaction
+	encoded      []byte
+	entrantNonce uint64
+	rejection    string
+}
+
+func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockChain, db ethdb.Database, engine *datong.DaTong, fixture retryPurchaseCase) {
 	t.Helper()
+	block, tx, saved := fixture.block, fixture.tx, fixture.encoded
 	config := core.DefaultTxPoolConfig
 	config.Journal = ""
 	recipient := &retryPoolRecorder{TxPool: core.NewTxPool(config, chain.Config(), chain), chain: chain}
@@ -268,7 +278,7 @@ func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockCha
 	}
 	observe("before-send")
 	deliverRetryMessage(t, receiver, connection, func() error { sender.BroadcastTxs(types.Transactions{tx}); return nil })
-	requireRetryRejections(t, recipient, tx, saved, 1)
+	requireRetryRejections(t, recipient, fixture, 1)
 	observe("rejected-before-block")
 	if err := origin.AddLocal(tx); err != core.ErrAlreadyKnown {
 		t.Fatalf("duplicate local submission: got %v, want already known", err)
@@ -282,13 +292,15 @@ func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockCha
 		return connection.sender.SendTransactions([]*types.Transaction{tx})
 	}
 	deliverRetryMessage(t, receiver, connection, resend)
-	requireRetryRejections(t, recipient, tx, saved, 2)
+	requireRetryRejections(t, recipient, fixture, 2)
 	observe("explicit-retry-still-rejected-before-block")
 	parent := chain.CurrentBlock()
 	td := new(big.Int).Add(chain.GetTd(parent.Hash(), parent.NumberU64()), block.Difficulty())
 	deliverRetryMessage(t, receiver, connection, func() error { return connection.sender.SendNewBlock(block, td) })
 	entrant := common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")
-	retryAwait(t, func() bool { return chain.CurrentBlock().Hash() == block.Hash() && recipient.Nonce(entrant) == 14 })
+	retryAwait(t, func() bool {
+		return chain.CurrentBlock().Hash() == block.Hash() && recipient.Nonce(entrant) == fixture.entrantNonce
+	})
 	if recipient.Get(tx.Hash()) != nil || len(recipient.observations()) != 2 {
 		t.Fatal("block import unexpectedly retained or readmitted a rejected purchase")
 	}
@@ -326,21 +338,21 @@ func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockCha
 	retryRequire(t, err)
 	state, err := chain.State()
 	retryRequire(t, err)
-	if state.GetNonce(owner) != 8 || recipient.Nonce(owner) != 9 {
+	if state.GetNonce(owner) != tx.Nonce() || recipient.Nonce(owner) != tx.Nonce()+1 {
 		t.Fatal("canonical or pending nonce differs after readmission")
 	}
 	observe("exact-purchase-admitted-after-readiness")
-	t.Logf("mode=%s exact transaction %s rejected twice before original block, ordinary rebroadcast suppressed, then admitted remotely without replacement; receiver canonical nonce=8 pending nonce=9", mode, tx.Hash().Hex())
+	t.Logf("mode=%s exact transaction %s rejected twice before original block, ordinary rebroadcast suppressed, then admitted remotely without replacement; receiver canonical nonce=%d pending nonce=%d", mode, tx.Hash().Hex(), tx.Nonce(), tx.Nonce()+1)
 }
 
-func requireRetryRejections(t *testing.T, pool *retryPoolRecorder, tx *types.Transaction, saved []byte, count int) {
+func requireRetryRejections(t *testing.T, pool *retryPoolRecorder, fixture retryPurchaseCase, count int) {
 	t.Helper()
 	records := pool.observations()
-	if len(records) != count || pool.Get(tx.Hash()) != nil {
+	if len(records) != count || pool.Get(fixture.tx.Hash()) != nil {
 		t.Fatal("expected rejected purchase absent from the remote pool")
 	}
 	for _, record := range records {
-		if record.Height != 15130098 || record.Error != "BuyTicket start must be lower than latest block time + 3 hour" || !record.PeerKnown || record.Hash != tx.Hash() || !bytes.Equal(record.Bytes, saved) {
+		if record.Height != fixture.block.NumberU64()-1 || !strings.HasPrefix(record.Error, fixture.rejection) || !record.PeerKnown || record.Hash != fixture.tx.Hash() || !bytes.Equal(record.Bytes, fixture.encoded) {
 			t.Fatal(fmt.Sprintf("unexpected remote admission: %+v", record))
 		}
 	}

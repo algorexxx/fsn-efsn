@@ -118,6 +118,16 @@ saved-record reader is established.
    acceptance is not purchase success. Wait for a receipt, verify its block hash
    is canonical, inspect the native BuyTicket result for an `Error` field, and
    match the created ticket's ID/owner/interval/value to the signed payload.
+   If the transaction stays pending only at its origin, compare the producer's
+   canonical head and pool using its local IPC connection. Once the producer
+   has the accepted branch and the purchase is admissible, the same reviewed
+   bytes can be submitted directly to that producer through the existing RPC.
+   Record the identical returned hash and verify canonical native success on
+   both nodes. Do not clear the later saved intent or sign a replacement merely
+   because local resubmission says `already known`. A controlled peer test also
+   verifies pending replay after a ready-peer reconnect, but that admission
+   result alone does not prove sustained purchasing. See the
+   [manual-predecessor delivery evidence](restart-manual-purchase-delivery.md).
 5. Recheck canonical nonce, pool, original later intent, tickets, free locks,
    liquid and surviving producer. Advance to the next missing nonce only after
    successful canonical inclusion. A changed branch, conflict, new loss or
@@ -228,6 +238,12 @@ demonstrates another boundary: six sequential manual predecessors succeed, but
 the seventh remains locally pending while the saved automatic intent is still
 one nonce ahead. Both cold ledgers pass and the exact predecessor is admissible
 in the receiving pool after its stake returns. P4 does not retry this manual
-predecessor while the later automatic intent is paused. Recipient admission and
-propagation require a separate diagnostic; do not interpret local admission,
-`already known`, or the passing restarted repair as end-to-end delivery proof.
+predecessor while the later automatic intent is paused. The
+[manual-predecessor follow-up](restart-manual-purchase-delivery.md) now reproduces
+rejection/known-peer suppression and exact-byte retry with the real handler.
+Direct delivery on restarted full-state copies recovers the original, saved
+intents and fresh successors without new funding. A shorter-window case stops
+after one fresh donation purchase while waiting for its live ticket's selection;
+empty free funding at that point is different from a locally pending transaction.
+The original live connection's precise message ordering remains unrecorded.
+Do not interpret local admission or `already known` as end-to-end delivery proof.

@@ -161,22 +161,7 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, mode string) {
 			t.Fatal("reopened failure differs from retained saved intent and nonce")
 		}
 	}
-	trace, err := os.OpenFile(filepath.Join(root, "delivery-pools.jsonl"), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
-	requireNoError(t, err)
-	defer trace.Close()
-	var previous []byte
-	observe := func() {
-		var pools [2]deliveryPoolState
-		for i, node := range nodes {
-			requireNoError(t, node.call(t, &pools[i], "lab_deliveryPool"))
-		}
-		encoded, err := json.Marshal(pools)
-		requireNoError(t, err)
-		if !bytes.Equal(previous, encoded) {
-			requireNoError(t, json.NewEncoder(trace).Encode(map[string]interface{}{"ObservedUTC": time.Now().UTC(), "Nodes": pools}))
-			previous = encoded
-		}
-	}
+	observe := observeDeliveryPools(t, root, nodes)
 	observe()
 	var submitted common.Hash
 	target := nodes[1]
@@ -316,4 +301,24 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, mode string) {
 	}
 	requireNoError(t, writeStateExportJSON(filepath.Join(root, "delivery-result.json"), map[string]interface{}{"Before": retained[0].Header, "Progress": progress.Header(), "Final": final.Header(), "Blocks": count, "ExactSavedPurchases": saved, "RequiredFreshNonces": requiredNonces, "DirectSubmission": direct, "PeerReconnect": reconnect, "AutomaticRebroadcast": mode == "automatic", "NewFunding": false, "NonceGapExercised": false}))
 	t.Logf("exact saved purchase delivery and both-owner replenishment passed; mode=%s cold suffix=%d final=%d %s", mode, count, final.NumberU64(), final.Hash().Hex())
+}
+
+func observeDeliveryPools(t *testing.T, root string, nodes [2]*rehearsalNode) func() {
+	t.Helper()
+	trace, err := os.OpenFile(filepath.Join(root, "delivery-pools.jsonl"), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	requireNoError(t, err)
+	t.Cleanup(func() { requireNoError(t, trace.Close()) })
+	var previous []byte
+	return func() {
+		var pools [2]deliveryPoolState
+		for i, node := range nodes {
+			requireNoError(t, node.call(t, &pools[i], "lab_deliveryPool"))
+		}
+		encoded, err := json.Marshal(pools)
+		requireNoError(t, err)
+		if !bytes.Equal(previous, encoded) {
+			requireNoError(t, json.NewEncoder(trace).Encode(map[string]interface{}{"ObservedUTC": time.Now().UTC(), "Nodes": pools}))
+			previous = encoded
+		}
+	}
 }
