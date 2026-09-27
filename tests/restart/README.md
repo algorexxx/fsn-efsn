@@ -739,3 +739,17 @@ stopped intents. The separate cold audit checks both canonical ledgers and both
 pre-pause ledgers even if live convergence fails. This tests assisted branch
 convergence, not unattended convergence or recovery of the paused buyer. See
 the [coordinated-pause investigation](../../docs/restart-equal-weight-pause.md).
+
+`TestFullStatePausedPurchaseDiagnosis` uses fresh copies of that paused result
+and scans retained noncanonical bodies for all missing donation purchases at
+nonces 8–38. It compares them with the saved pre-pause branch, retrieves their
+exact bytes through existing block-hash RPC before and after restart, and
+submits each original plus the saved nonce-39 intent to both local pools.
+All 64 submissions must fail for funding; the entrant's unchanged funded intent
+must be admitted on both nodes as a positive control. Mining and automatic
+buying stay disabled, and the services are not peered. The native purchase
+parameter check is also exercised at each `end - 29 days` boundary and one
+second beyond it. The separate cold audit must preserve both canonical ledgers
+and both saved intents exactly. This is a diagnosis at a fixed head and
+recorded wall time, not a sequential repair, future-block execution or automatic
+resumption test. See the [paused-purchase report](../../docs/restart-paused-purchases.md).

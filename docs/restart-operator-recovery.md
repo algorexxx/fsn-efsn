@@ -114,7 +114,16 @@ saved-record reader is established.
    a candidate with the wrong sender, chain ID, native destination/function,
    nonce, value, interval or gas parameters. Check interval validity against the
    head and current time; builder, pool and execution use different timestamp
-   contexts. Old signatures can become unsuitable while waiting.
+   contexts. Old signatures can become unsuitable while waiting. Under the
+   applicable fork rules, pool parameter validation requires the encoded ticket
+   end to be at least 29 days beyond the latest block timestamp. Record the
+   earliest `end - 29 days` among all predecessors, not just the saved intent,
+   and recheck it before each submission. The [paused-wallet diagnosis](restart-paused-purchases.md)
+   verifies acceptance at that boundary and rejection one second beyond it.
+   This is a head-timestamp limit, not an interchangeable wall-clock deadline.
+   If a predecessor no longer passes validation, stop ordinary resubmission;
+   adding funds does not repair its payload, and no generic replacement has
+   yet been established here.
 2. For the requested interval, require either time locks covering the full
    5,000-FSN amount at every boundary or a full 5,000 FSN liquid payment. The
    purchase path does not combine partial locks with a partial liquid remainder.
@@ -300,8 +309,15 @@ about 2,021.98 liquid FSN. Its adopted history already contains two first-retrea
 losses. Both final canonical ledgers and both pre-pause ledgers reconcile, but
 convergence does not clear the nonce gap or supply usable funds. Keep that
 wallet paused while reviewing the exact originals, intervals, fees and funding.
-Actual post-resume admission and original-byte retrieval from this deeper
-rollback are the next bounded checks. Do not clear its saved intent, override
-heads, or count the paused wallet as a functioning producer merely because its
-node has synchronized. The entrant's continued buying does not prove recovery
-of the paused account.
+The [paused-wallet follow-up](restart-paused-purchases.md) now recovers all 31
+originals exactly through existing RPC before and after restart. Independent
+local pool checks reject every original and the saved intent for funding on
+both nodes; the entrant's funded purchase is admitted. All canonical ledger
+artifacts and saved intents remain unchanged. This diagnostic keeps mining and
+buying disabled, so it is not a post-resume or sequential-repair pass. The
+first original's native parameter window closes well before the newest saved
+intent's window. Assess every original's validity as well as funding before
+starting repair; expired-original replacement remains an explicit unresolved
+procedure. Do not clear its saved intent, override heads, or count the paused
+wallet as a functioning producer merely because its node has synchronized.
+The entrant's continued buying does not prove recovery of the paused account.

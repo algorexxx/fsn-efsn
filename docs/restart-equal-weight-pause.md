@@ -137,12 +137,17 @@ Keep the paused wallet disabled until its distinct purchase/funding condition
 has been assessed. Do not replace these checks with a head override or by
 retaining the real backup owner's key beyond the agreed handover.
 
-Next use fresh copies of this result to check the paused owner's original-byte
-retrieval and current purchase admission, and document the exact prerequisites
-for resuming it. Keep funding diagnosis separate from any funded repair run.
-Production monitoring thresholds, response responsibility and real funding
-availability still require release decisions. Repeating this passing pause
-schedule without a new question would add little evidence.
+The subsequent [paused-wallet diagnosis](restart-paused-purchases.md) retrieves
+all 31 missing originals exactly before and after restart on fresh copies.
+Every original and the saved intent fail actual funding admission on both
+nodes; the entrant's funded control passes. Both canonical ledgers and intents
+remain unchanged. It also establishes the native parameter check's limited
+admission window for each original, making expiry a distinct condition from
+funding. The next question is an explicit recovery procedure once an original
+becomes inadmissible; no automatic replacement is established. Production
+monitoring thresholds, response responsibility and real funding availability
+still require release decisions. Repeating this passing pause schedule without
+a new question would add little evidence.
 
 Both services are stopped and all rehearsal processes are absent. D: has about
 **144.5 GB** free and the WSL filesystem about **64.0 GB**. No W: workload was
