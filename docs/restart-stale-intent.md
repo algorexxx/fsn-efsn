@@ -151,8 +151,11 @@ Donation's next nonce-43 purchase is saved and pending at shutdown. Its last
 ticket has been selected, leaving free time locks sufficient for the pending
 interval. Its zero ticket count at this deliberately stopped point does not
 erase the observed fresh purchases and canonical mining, or establish an
-unattended funding failure. Continued operation after restarting this particular
-saved successor remains the next bounded lifecycle check.
+unattended funding failure. The [normal-restart follow-up](restart-recovered-buyer-restart.md)
+now restores that exact nonce-43 purchase from an empty pool, executes it and
+two fresh successors, and resumes actual production without new funding or
+manual submission. Both cold 72-block ledgers pass. A later rollback of the
+abandonment remains a separate recovery case.
 
 The inherited `AdditionalFunding` audit map contains 34 allowlisted ordinary
 transactions: 31 prior self-transfers, two funding transfers and the new

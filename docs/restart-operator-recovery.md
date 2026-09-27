@@ -226,9 +226,12 @@ and makes no manual record edits during recovery.
 
 Keep this an owner-authorized transaction decision. The test's 3,000-FSN funding
 comes from existing synthetic balances, and the prior no-funding barrier and
-funding-order failure remain relevant. Reorganization of the abandonment and
-continued operation after restart of the newly saved successor are separate
-checks. Funding, nonce resolution and payload validity remain distinct gates.
+funding-order failure remain relevant. The [normal-restart continuation](restart-recovered-buyer-restart.md)
+now restores the exact saved successor from an empty pool, executes it and two
+fresh successors, and resumes actual production without new funding or manual
+submission. Both cold 72-block ledgers pass. A compatible reorganization of the
+abandonment remains a separate case. Funding, nonce resolution and payload
+validity remain distinct gates.
 
 ## Acceptance and retained record
 
@@ -238,6 +241,14 @@ saved intent identity and fresh successor evidence. When a verification restart
 is planned, perform a clean restart with the expected configuration and confirm
 persisted heads, receipts and continued purchasing. Coordinate downtime with
 the available producer; do not cycle every service merely to satisfy a checklist.
+
+The passing restart used the usual miner/buyer start actions with existing
+funding and a surviving eligible peer. It did not require a database edit,
+re-signing the saved purchase or manually submitting its bytes. Require
+canonical native success and fresh automatic successors before declaring buyer
+recovery; an enabled mining flag or a restored pending transaction is not enough.
+If the accepted branch changes, return to nonce/receipt/funding diagnosis rather
+than assuming this clean-restart result covers the new history.
 
 Release review still needs a chosen monitored/manual policy, alert delivery and
 response responsibility, validated real-address interval schedules and funding

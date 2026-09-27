@@ -138,8 +138,10 @@ fix its interval, then passes explicit self-transfer abandonment and three
 fresh automatic purchases with actual donation mining. Both 60-block cold
 ledgers pass. Its retained failed attempt also demonstrates why a surviving
 producer's funding transfer must follow its next pending purchase. The fixture
-record injection is test setup; recovery makes no manual record edits. Continue
-with restart of the newly saved successor. Funded original replay, unattended
+record injection is test setup; recovery makes no manual record edits. The
+[normal-restart continuation](restart-recovered-buyer-restart.md) also passes
+exact saved-byte recovery, two fresh successors and actual mining without new
+funding, with matching 72-block cold ledgers. Funded original replay, unattended
 equal-weight convergence, real funding and owner-approved response policy
 remain distinct questions.
 

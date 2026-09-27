@@ -784,3 +784,17 @@ makes no direct database edits and uses no held signing worker. The separate
 the two funding transfers and the new self-transfer in its exact allowlist.
 The joint evidence verifier checks both the retained failure and passing case.
 See the [saved-intent report](../../docs/restart-stale-intent.md).
+
+`TestFullStateRecoveredBuyerRestart` opens fresh copies of that stopped result
+with initially empty pools. The donation buyer must restore the exact saved
+nonce-43 bytes, keep them stable across a retry interval at the unchanged head,
+and execute them after the eligible entrant starts. Ordinary peer propagation
+and automatic buying must then produce two fresh donation successors, entrant
+purchases and actual block production by both owners. There is no new funding,
+manual transaction submission, record injection or held-signature worker. The
+retired stale purchase must still have no canonical receipt. The separate
+`TestFullStateRecoveredBuyerRestartColdAudit` reconciles both histories and
+requires all 34 ordinary transfers to remain in the original prefix. Evidence
+verification checks exact saved-byte inclusion, sequential native purchases,
+matching cold intents and the unchanged 60-block prefix. See the
+[normal-restart report](../../docs/restart-recovered-buyer-restart.md).
