@@ -17,6 +17,7 @@
 package eth
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -759,6 +760,21 @@ func (pm *ProtocolManager) BroadcastTxs(txs types.Transactions) {
 	for peer, txs := range txset {
 		peer.AsyncSendTransactions(txs)
 	}
+}
+
+func (pm *ProtocolManager) rebroadcastTx(ctx context.Context, tx *types.Transaction) error {
+	pm.peers.lock.RLock()
+	defer pm.peers.lock.RUnlock()
+	if pm.peers.closed {
+		return ctx.Err()
+	}
+	for _, peer := range pm.peers.peers {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		peer.AsyncSendTransactions(types.Transactions{tx})
+	}
+	return ctx.Err()
 }
 
 // Mined broadcast loop

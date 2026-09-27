@@ -23,6 +23,12 @@ restart anchor or construct the historical recovery bridge.
   only with a successful receipt and the native purchase log containing the
   expected owner and ticket ID derived from the actual inclusion parent.
   A consumed nonce without that evidence is reported separately.
+- The [bounded delivery extension](restart-autobuy-rebroadcast.md) resends an
+  unchanged, current-nonce pending purchase through the existing peer queues,
+  including peers that already saw it. Eligible retry attempts are limited to
+  one per five seconds independently of head changes. Queued/gapped/conflicting
+  purchases remain paused; remote validation is unchanged. Correct-nonce live
+  recovery and both-owner successors now pass on the retained complete state.
 - Recheck the head before saving a newly signed purchase or retiring a resolved
   one. A confirmation describes current canonical inclusion, not finality.
 - If a different transaction occupies the saved nonce, wait for resolution.

@@ -46,12 +46,17 @@ func (buyer *TicketBuyer) Stop() error {
 }
 
 func AutoBuyTicket(ctx context.Context, enable bool) {
-	api := fusionTransactionAPI
-	common.SetAutoBuyTicketEnabled(enable)
 	ticker := time.NewTicker(autoBuyRetryInterval)
 	defer ticker.Stop()
+	runAutoBuyTicket(ctx, enable, time.Now, ticker.C)
+}
+
+func runAutoBuyTicket(ctx context.Context, enable bool, now func() time.Time, ticks <-chan time.Time) {
+	api := fusionTransactionAPI
+	common.SetAutoBuyTicketEnabled(enable)
 	var lastHead common.Hash
 	var lastAttempt time.Time
+	var lastRebroadcast time.Time
 	var lastError string
 	wasEnabled := false
 	for {
@@ -60,11 +65,16 @@ func AutoBuyTicket(ctx context.Context, enable bool) {
 			return
 		}
 		if enabled {
+			instant := now()
 			head := api.b.CurrentHeader().Hash()
-			if !wasEnabled || head != lastHead || time.Since(lastAttempt) >= autoBuyRetryInterval {
-				lastHead, lastAttempt = head, time.Now()
+			if !wasEnabled || head != lastHead || instant.Sub(lastAttempt) >= autoBuyRetryInterval {
+				lastHead, lastAttempt = head, instant
 				attempt, cancel := context.WithTimeout(ctx, autoBuyRetryInterval)
-				err := api.reconcileTicketPurchase(attempt)
+				rebroadcast := instant.Sub(lastRebroadcast) >= autoBuyRetryInterval
+				if rebroadcast {
+					lastRebroadcast = instant
+				}
+				err := api.reconcileTicketPurchase(attempt, rebroadcast)
 				cancel()
 				if err != nil && err.Error() != lastError && ctx.Err() == nil {
 					log.Warn("Automatic ticket purchase needs attention; retrying", "err", err)
@@ -78,13 +88,13 @@ func AutoBuyTicket(ctx context.Context, enable bool) {
 		select {
 		case <-ctx.Done():
 			return
-		case <-ticker.C:
+		case <-ticks:
 		case <-common.AutoBuyTicketChan:
 		}
 	}
 }
 
-func (s *FusionTransactionAPI) reconcileTicketPurchase(ctx context.Context) error {
+func (s *FusionTransactionAPI) reconcileTicketPurchase(ctx context.Context, rebroadcast bool) error {
 	owner, err := s.b.Coinbase()
 	if err != nil {
 		return err
@@ -134,13 +144,30 @@ func (s *FusionTransactionAPI) reconcileTicketPurchase(ctx context.Context) erro
 		}
 	}
 	if tx != nil {
-		for _, candidate := range pool {
+		if tx.Nonce() != nonce {
+			return fmt.Errorf("automatic ticket %s needs nonce %d, current nonce is %d", tx.Hash(), tx.Nonce(), nonce)
+		}
+		for _, candidate := range pending[owner] {
+			if candidate.Hash() == tx.Hash() {
+				if !rebroadcast {
+					return nil
+				}
+				if err := ctx.Err(); err != nil {
+					return err
+				}
+				if !common.IsAutoBuyTicketEnabled() || !s.b.IsMining() {
+					return nil
+				}
+				if s.b.CurrentHeader().Hash() != header.Hash() {
+					return fmt.Errorf("head changed while checking pending ticket purchase")
+				}
+				return s.b.RebroadcastTx(ctx, tx)
+			}
+		}
+		for _, candidate := range queued[owner] {
 			if candidate.Hash() == tx.Hash() {
 				return nil
 			}
-		}
-		if tx.Nonce() != nonce {
-			return fmt.Errorf("automatic ticket %s needs nonce %d, current nonce is %d", tx.Hash(), tx.Nonce(), nonce)
 		}
 		return s.submitAutomaticTicket(ctx, tx)
 	}

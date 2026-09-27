@@ -2,6 +2,7 @@ package eth
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -197,7 +198,7 @@ func TestRestartPeerPurchaseRetry(t *testing.T) {
 	if chain.CurrentBlock().Hash() != saved.Header.Hash() || block.NumberU64() != 15130099 {
 		t.Fatal("copy or retained block differs from the failed run")
 	}
-	for _, mode := range []string{"same-peer-resend", "ready-reconnect", "early-reconnect"} {
+	for _, mode := range []string{"same-peer-resend", "ready-reconnect", "early-reconnect", "automatic-rebroadcast"} {
 		if !t.Run(mode, func(t *testing.T) {
 			retryRequire(t, chain.SetHead(block.NumberU64()-1))
 			if chain.CurrentBlock().Hash() != block.ParentHash() {
@@ -214,7 +215,7 @@ func TestRestartPeerPurchaseRetry(t *testing.T) {
 	if !bytes.Equal(actual, encoded) {
 		t.Fatal("peer-imported block differs from the retained original")
 	}
-	t.Logf("three ordered peer cases passed with original purchase %s and original block %d %s; no signing or funding", tx.Hash().Hex(), block.NumberU64(), block.Hash().Hex())
+	t.Logf("four ordered peer cases passed with original purchase %s and original block %d %s; no signing or funding", tx.Hash().Hex(), block.NumberU64(), block.Hash().Hex())
 }
 
 func retryRequire(t *testing.T, err error) {
@@ -241,6 +242,7 @@ func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockCha
 	t.Cleanup(origin.Stop)
 	retryRequire(t, origin.AddLocal(tx))
 	sender := &ProtocolManager{txpool: origin, peers: newPeerSet(), txsyncCh: make(chan *txsync), quitSync: make(chan struct{})}
+	api := &EthAPIBackend{eth: &Ethereum{blockchain: chain, txPool: origin, protocolManager: sender}}
 	syncDone := make(chan struct{})
 	go func() { sender.txsyncLoop(); close(syncDone) }()
 	t.Cleanup(func() {
@@ -273,7 +275,13 @@ func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockCha
 	}
 	requireRetrySuppressed(t, sender, connection, tx)
 	observe("local-resubmit-and-ordinary-broadcast-suppressed")
-	deliverRetryMessage(t, receiver, connection, func() error { return connection.sender.SendTransactions([]*types.Transaction{tx}) })
+	resend := func() error {
+		if mode == "automatic-rebroadcast" {
+			return api.RebroadcastTx(context.Background(), tx)
+		}
+		return connection.sender.SendTransactions([]*types.Transaction{tx})
+	}
+	deliverRetryMessage(t, receiver, connection, resend)
 	requireRetryRejections(t, recipient, tx, saved, 2)
 	observe("explicit-retry-still-rejected-before-block")
 	parent := chain.CurrentBlock()
@@ -286,8 +294,8 @@ func rehearseRetryMessages(t *testing.T, root, mode string, chain *core.BlockCha
 	}
 	requireRetrySuppressed(t, sender, connection, tx)
 	observe("block-imported-ordinary-broadcast-still-suppressed")
-	if mode == "same-peer-resend" {
-		deliverRetryMessage(t, receiver, connection, func() error { return connection.sender.SendTransactions([]*types.Transaction{tx}) })
+	if mode == "same-peer-resend" || mode == "automatic-rebroadcast" {
+		deliverRetryMessage(t, receiver, connection, resend)
 	} else {
 		connection.close(t, sender)
 		connection = openRetryConnection(t, sender, recipient)

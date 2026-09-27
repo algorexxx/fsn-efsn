@@ -549,14 +549,20 @@ donation purchase stays local. Both cold databases and independent accounting
 agree across forty-four blocks. A separate check reproduces insufficient funding
 for the newer purchase immediately before its ticket refund, followed by acceptance
 of the same bytes afterward. The original live admission errors remain unobserved.
-Next prototype bounded same-byte pending-purchase delivery retry within P4,
-preserving nonce/confirmation/disable guards and remote validation. The captured
-failed continuation is its regression target. Production P1–P15 remains unchanged;
-no consensus or transaction-validity relaxation follows from these results.
+The [bounded P4 rebroadcast candidate](restart-autobuy-rebroadcast.md) now passes
+that failed continuation on fresh D: copies: unchanged saved purchases execute,
+both owners make at least two fresh purchases, and both stopped databases pass
+the complete fifty-two-block ledger audit. The original forty-four blocks and
+all source files remain unchanged; there is no additional funding or retreat.
+The candidate adds guarded periodic resend through existing peer queues, with
+passing fixed-time, queue, protocol and purchase-regression checks. It changes
+local delivery behavior, without relaxing consensus or transaction validation.
+Next exercise complete-state live partition/rollback with this P4 candidate.
 Keep pool admission, native purchase success and continued live production as
 separate acceptance gates. Complete-state live nonce rollback/repair and explicit
 reserves for another partition remain open; do not infer them from this funding
-experiment. The selected one-backup-block launch sequence and P1–P15 are unchanged.
+experiment. The selected one-backup-block launch sequence and fifteen-item patch
+inventory are unchanged; the resend is an extension to P4 for review.
 
 ### Phase 0 — preserve evidence and accepted decisions
 

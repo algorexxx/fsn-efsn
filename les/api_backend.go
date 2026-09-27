@@ -164,6 +164,10 @@ func (b *LesApiBackend) SendTx(ctx context.Context, signedTx *types.Transaction)
 	return b.eth.txPool.Add(ctx, signedTx)
 }
 
+func (b *LesApiBackend) RebroadcastTx(ctx context.Context, signedTx *types.Transaction) error {
+	return errors.New("automatic ticket rebroadcast requires a full node")
+}
+
 func (b *LesApiBackend) RemoveTx(txHash common.Hash) {
 	b.eth.txPool.RemoveTx(txHash)
 }

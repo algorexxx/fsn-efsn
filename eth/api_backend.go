@@ -222,6 +222,19 @@ func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction)
 	return b.eth.txPool.AddLocal(signedTx)
 }
 
+func (b *EthAPIBackend) RebroadcastTx(ctx context.Context, signedTx *types.Transaction) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if err := b.eth.blockchain.CheckRestartReady(); err != nil {
+		return err
+	}
+	if b.eth.txPool.Status([]common.Hash{signedTx.Hash()})[0] != core.TxStatusPending {
+		return nil
+	}
+	return b.eth.protocolManager.rebroadcastTx(ctx, signedTx)
+}
+
 func (b *EthAPIBackend) GetPoolTransactions() (types.Transactions, error) {
 	pending := b.eth.txPool.Pending(false)
 	var txs types.Transactions

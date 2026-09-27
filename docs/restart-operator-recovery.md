@@ -196,6 +196,12 @@ early can lose that replay as well. The actual two-node test recovers the origin
 purchase but fails continued replenishment when its automatic successor is
 missing from the producer's pool. Treat reconnect or direct delivery as recovery
 of a specific transaction, then continue monitoring fresh purchases. Repeated
-local submission returning `already known` is not delivery evidence. Bounded
-automatic same-byte retry remains unresolved within P4; do not cycle peers or
-enable extra historical launch signers as an unattended workaround.
+local submission returning `already known` is not delivery evidence.
+The [bounded P4 resend candidate](restart-autobuy-rebroadcast.md) now recovers the
+retained correct-nonce failure automatically, followed by two fresh purchases
+for each owner and a passing 52-block cold audit. It resends only the unchanged
+current-nonce pending intent while mining/buying remain enabled; remote validation
+still applies. Queue admission alone is not proof of receipt or inclusion.
+Keep monitoring funding and nonce gaps, which this candidate does not repair.
+Do not cycle peers or enable extra historical launch signers as an unattended
+workaround.

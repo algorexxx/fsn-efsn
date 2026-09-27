@@ -1,6 +1,6 @@
 # Proposed permanent node patches
 
-26 September 2026. Review baseline: original local `master` at
+27 September 2026. Review baseline: original local `master` at
 `c5f0174d88ab2b9c3086c6a9cc9ccf38a072992f`; candidate implementation at
 `04a676c42015dfe7f86aed47e598fb2920ed1e69` for P1–P8. P9 is an additional
 candidate from baseline `bcbd1ce`, pinned by source blobs in its evidence.
@@ -22,13 +22,13 @@ ticket economics and ordinary fork choice. Each row below is a separate review
 decision. Some rows share files or implementation commits; cherry-picking a whole
 investigation commit is not a substitute for selecting its intended changes.
 
-27 September P4 review finding: the [peer retry investigation](restart-peer-purchase-retry.md)
-reproduces a pending purchase that is rejected by a lagging receiver and then
-suppressed by known-peer tracking after catch-up. A ready reconnect recovers it,
-but the live automatic successor can become stranded again. P4's current local
-pending check does not establish delivery or unattended replenishment. A bounded
-same-byte retry candidate and its passing continuation tests remain outstanding;
-this finding adds no production patch or consensus change to the inventory.
+27 September P4 extension: the [peer retry investigation](restart-peer-purchase-retry.md)
+reproduced recurring suppression of a pending purchase after early rejection.
+The [bounded same-byte resend candidate](restart-autobuy-rebroadcast.md), from
+baseline `ce7f971`, now passes the retained live failure with two further purchases
+per owner and a matching 52-block cold ledger. Review its five production-file
+hunks as part of P4. It changes guarded local delivery, with no consensus or
+transaction-validity relaxation and no sixteenth patch category.
 
 ## Permanent node candidates
 
@@ -37,7 +37,7 @@ this finding adds no production patch or consensus change to the inventory.
 | P1 | Fixed restart ancestry; checks on startup, block/header/receipt imports, reorganization, pivot and mining/transaction readiness; refuse unsupported light mode. | Required for the agreed protection against an old isolated chain replacing the accepted recovery prefix. | Restricts eligible history permanently once configured. Compatible descendants retain ordinary fork choice and can reorganize. **Mainnet height/hash is still unset.** Review [anchor implementation](restart-anchor-implementation.md), [reset/pivot coverage](restart-reset-pivot-rehearsal.md) and missing end-to-end sync coverage. |
 | P2 | Reconstruct expired tickets using the parent timestamp already used by execution; return an error for a missing reconstruction ancestor. | Required for demonstrated recovery/expiry-boundary reconstruction to agree with directly executed state. | Validation-sensitive bug correction. Existing ticket-commitment verification remains mandatory. No ticket price, lifetime or reward change. Review [original failures and corrections](restart-corrections.md), including synthetic boundaries and 128 real historical cases; full historical replay is incomplete. |
 | P3 | Copy receipt logs, topics and data before handing them to another mining task. | Required to remove the reproduced miner data race exercised by normal ticket buying. | Memory ownership correction during mining. Review [race reproduction and passing checks](restart-corrections.md); this does not establish that every miner race is fixed. |
-| P4 | Replace automatic ticket-buy orchestration with startup/periodic retry, canonical confirmation and retention of exact signed purchases; use actual pool contents for purchase conflicts. | Required for the chosen unattended producer to recover from the demonstrated purchase failures. Manual buying is an operational alternative, not the selected launch workflow. | Remains active when auto-buy and mining are enabled; manual purchase conflict handling also changes. Local saved transactions are not consensus state. Review [purchase controller](restart-purchase-controller.md), [full-state handover](restart-full-state-handover.md) and [sixteen process-interruption cases](restart-purchase-crash-rehearsal.md). The [storage/peer follow-up](restart-purchase-storage-and-peers.md) covers eight database-interface failures and two compatible peer forks with a held block signer. The [nonce rollback/live-miner follow-up](restart-purchase-nonce-rollback.md) demonstrates manual repair after a two-purchase rollback and continued buying by competing miners after convergence. Monitored nonce-gap repair is an explicit release decision; power loss and wider fork/stress coverage remain open. |
+| P4 | Replace automatic ticket-buy orchestration with startup/periodic retry, canonical confirmation and retention of exact signed purchases; use actual pool contents for purchase conflicts; periodically resend the current-nonce pending purchase to known peers through bounded queues. | Required for the chosen unattended producer to recover from the demonstrated purchase failures. Manual buying is an operational alternative, not the selected launch workflow. | Remains active when auto-buy and mining are enabled; manual purchase conflict handling also changes. Local saved transactions are not consensus state. Review [purchase controller](restart-purchase-controller.md), [full-state handover](restart-full-state-handover.md), [sixteen interruption cases](restart-purchase-crash-rehearsal.md), [storage/peer failures](restart-purchase-storage-and-peers.md), [nonce rollback](restart-purchase-nonce-rollback.md) and [bounded resend/52-block cold continuation](restart-autobuy-rebroadcast.md). Sending does not establish inclusion or remote acceptance. Monitored nonce-gap repair is an explicit release decision; power loss and wider fork/stress coverage remain open. |
 | P5 | Commit a reorganization's canonical indexes, transaction lookups and head markers in one database batch; propagate existing checkpoint errors before publishing. | Required to remove the reproduced partial fork-switch and ignored-checkpoint-error failures. A first block could be mined without this, but the known persistence defect would remain. | Affects ordinary permitted reorganizations. Does not change difficulty weighting or add checkpoint heights. Review [interrupted reorganization evidence](restart-crash-rehearsal.md), including ten original failing cuts. |
 | P6 | Commit explicit rewind deletions and final heads together; guard state repair against missing ancestors or unavailable genesis state. | Required to make the supported rewind/repair path survive the demonstrated interruption and nil-pointer failures. | Affects local rewind/startup repair. No new balance or fork-weight policy. Review [rewind evidence](restart-rewind-rehearsal.md), including 30 original failing cuts, and [reset follow-up](restart-reset-pivot-rehearsal.md). |
 | P7 | Skip ancient-store truncation only when the database explicitly lacks a freezer; repair header/fast head advancement when reimporting a known block after rollback. | Required for the demonstrated rollback/reimport path on Fusion's existing LevelDB-without-freezer layout. | Persistence and availability correction. Genuine storage errors remain errors. Review [rollback defects](restart-anchor-implementation.md) and [interruption controls](restart-crash-rehearsal.md). |
@@ -61,7 +61,7 @@ the recovery-only section. Tests and evidence must accompany any extracted patch
 | P1 | `core/restart_anchor.go`, `params/restart_anchor.go`, `params/config.go`, `core/genesis.go`; anchor hooks in `core/blockchain.go`, `core/headerchain.go`, `eth/api_backend.go`, `eth/backend.go`, `eth/handler.go`, `eth/sync.go`, `light/lightchain.go`, `miner/worker.go`. |
 | P2 | `consensus/datong/consensus.go`: `getAllTickets` parent lookup and expiry cleanup only. |
 | P3 | `miner/worker.go`: `copyReceipts` only. |
-| P4 | `cmd/efsn/main.go`, `common/autobuy.go`, `common/fsntypes.go`, `internal/ethapi/autobuy.go`, `internal/ethapi/api_fsn.go`, `eth/api.go`; automatic-purchase notifications in `core/blockchain.go`. |
+| P4 | `cmd/efsn/main.go`, `common/autobuy.go`, `common/fsntypes.go`, `internal/ethapi/autobuy.go`, `internal/ethapi/api_fsn.go`, `eth/api.go`; automatic-purchase notifications in `core/blockchain.go`; `RebroadcastTx` in `internal/ethapi/backend.go`, `eth/api_backend.go`, `les/api_backend.go`, and `rebroadcastTx` in `eth/handler.go`. |
 | P5 | `core/blockchain.go`: reorganization batch and head-write/publication helpers. |
 | P6 | `core/blockchain.go`: `SetHead`, `repair`; `core/headerchain.go`: `SetHead` / private `setHead` callback and batch. |
 | P7 | `core/blockchain.go`: `truncateAncient` and known-block head advancement in `writeHeadBlock`; `core/rawdb/database.go`, `core/rawdb/freezer_table.go`: exported unsupported-operation sentinel. |

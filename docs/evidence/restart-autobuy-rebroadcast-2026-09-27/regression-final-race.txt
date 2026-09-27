@@ -1,0 +1,715 @@
+=== RUN   TestAutoBuyRuntime
+    autobuy_test.go:34: isolated auto-buy runtime:
+        === RUN   TestAutoBuyRuntime
+        INFO [09-27|10:13:33.537] Persisted trie from memory database      nodes=8 size=996.00B time="449.283µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:13:33.562] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:13:33.562] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:13:33.562] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:13:33.582] Persisted trie from memory database      nodes=8 size=996.00B time="78.874µs"  gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:13:33.600] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:13:33.600] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:13:33.600] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:13:33.636] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=16.710ms mgasps=0.000 order=6 number=15,130,081 hash="adebad…85f1ec" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="bb47d6…548d93" parentHash="97b674…8c9f6c" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:13:33.651] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.642ms mgasps=0.000 order=6 number=15,130,081 hash="adebad…85f1ec" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="bb47d6…548d93" parentHash="97b674…8c9f6c" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:13:33.681] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.524ms mgasps=1.466 order=4 number=15,130,082 hash="d2f34a…eef21a" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6717f7…679555" parentHash="adebad…85f1ec" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:13:33.695] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.206ms mgasps=1.498 order=4 number=15,130,082 hash="d2f34a…eef21a" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6717f7…679555" parentHash="adebad…85f1ec" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:13:33.726] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.755ms mgasps=1.443 order=5 number=15,130,083 hash="933df6…77e0f3" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b94570…b300ed" parentHash="d2f34a…eef21a" time=1,790,493,213 age=1h       cache=0.00B
+        INFO [09-27|10:13:33.743] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.677ms mgasps=1.276 order=5 number=15,130,083 hash="933df6…77e0f3" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b94570…b300ed" parentHash="d2f34a…eef21a" time=1,790,493,213 age=1h       cache=0.00B
+        INFO [09-27|10:13:33.754] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.952ms  mgasps=3.576 order=4 number=15,130,084 hash="fcbacf…738a93" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="58548c…66614e" parentHash="933df6…77e0f3" time=1,790,493,333 age=58m      cache=0.00B
+        INFO [09-27|10:13:33.761] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=6.706ms  mgasps=3.174 order=4 number=15,130,084 hash="fcbacf…738a93" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="58548c…66614e" parentHash="933df6…77e0f3" time=1,790,493,333 age=58m      cache=0.00B
+        INFO [09-27|10:13:33.767] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.547ms  mgasps=8.356 order=0 number=15,130,085 hash="78c4f2…9c0673" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1e2811…3b8ba7" parentHash="fcbacf…738a93" time=1,790,493,453 age=56m      cache=0.00B
+        INFO [09-27|10:13:33.772] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.564ms  mgasps=4.664 order=0 number=15,130,085 hash="78c4f2…9c0673" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1e2811…3b8ba7" parentHash="fcbacf…738a93" time=1,790,493,453 age=56m      cache=0.00B
+        INFO [09-27|10:13:33.780] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.660ms  mgasps=5.815 order=0 number=15,130,086 hash="9cbba7…09d923" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="73b01e…af7f17" parentHash="78c4f2…9c0673" time=1,790,493,573 age=54m      cache=0.00B
+        INFO [09-27|10:13:33.782] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.545ms  mgasps=8.362 order=0 number=15,130,086 hash="9cbba7…09d923" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="73b01e…af7f17" parentHash="78c4f2…9c0673" time=1,790,493,573 age=54m      cache=0.00B
+        INFO [09-27|10:13:33.788] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.886ms  mgasps=7.376 order=0 number=15,130,087 hash="9c553c…a40dda" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="03a4fd…decaae" parentHash="9cbba7…09d923" time=1,790,493,693 age=52m      cache=0.00B
+        INFO [09-27|10:13:33.791] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.330ms  mgasps=6.393 order=0 number=15,130,087 hash="9c553c…a40dda" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="03a4fd…decaae" parentHash="9cbba7…09d923" time=1,790,493,693 age=52m      cache=0.00B
+        INFO [09-27|10:13:33.799] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.461ms  mgasps=6.150 order=0 number=15,130,088 hash="430c77…0f904d" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="99a39f…4d4a3e" parentHash="9c553c…a40dda" time=1,790,493,813 age=50m      cache=0.00B
+        INFO [09-27|10:13:33.802] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.149ms  mgasps=6.760 order=0 number=15,130,088 hash="430c77…0f904d" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="99a39f…4d4a3e" parentHash="9c553c…a40dda" time=1,790,493,813 age=50m      cache=0.00B
+        INFO [09-27|10:13:33.808] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.143ms  mgasps=6.771 order=0 number=15,130,089 hash="859520…a6ecf4" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="40ac4d…2ef873" parentHash="430c77…0f904d" time=1,790,493,933 age=48m      cache=0.00B
+        INFO [09-27|10:13:33.811] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.837ms  mgasps=7.503 order=0 number=15,130,089 hash="859520…a6ecf4" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="40ac4d…2ef873" parentHash="430c77…0f904d" time=1,790,493,933 age=48m      cache=0.00B
+        INFO [09-27|10:13:33.819] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.011ms  mgasps=5.306 order=0 number=15,130,090 hash="9ed420…d80a17" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dd4f6f…d8b4f4" parentHash="859520…a6ecf4" time=1,790,494,053 age=46m      cache=0.00B
+        INFO [09-27|10:13:33.822] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.630ms  mgasps=8.092 order=0 number=15,130,090 hash="9ed420…d80a17" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dd4f6f…d8b4f4" parentHash="859520…a6ecf4" time=1,790,494,053 age=46m      cache=0.00B
+        INFO [09-27|10:13:33.827] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.471ms  mgasps=8.612 order=0 number=15,130,091 hash="632f7f…873bef" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="74a8c5…82a587" parentHash="9ed420…d80a17" time=1,790,494,173 age=44m      cache=0.00B
+        INFO [09-27|10:13:33.830] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.067ms  mgasps=6.940 order=0 number=15,130,091 hash="632f7f…873bef" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="74a8c5…82a587" parentHash="9ed420…d80a17" time=1,790,494,173 age=44m      cache=0.00B
+        INFO [09-27|10:13:33.836] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.136ms  mgasps=6.786 order=0 number=15,130,092 hash="83ce90…7f920e" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ee68ec…2912f0" parentHash="632f7f…873bef" time=1,790,494,293 age=42m      cache=0.00B
+        INFO [09-27|10:13:33.840] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.382ms  mgasps=6.294 order=0 number=15,130,092 hash="83ce90…7f920e" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ee68ec…2912f0" parentHash="632f7f…873bef" time=1,790,494,293 age=42m      cache=0.00B
+        INFO [09-27|10:13:33.846] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=2.767ms  mgasps=7.692 order=0 number=15,130,093 hash="8463c9…fb0e0c" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8f1a76…7ae7e6" parentHash="83ce90…7f920e" time=1,790,494,413 age=40m      cache=0.00B
+        INFO [09-27|10:13:33.849] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.299ms  mgasps=6.452 order=0 number=15,130,093 hash="8463c9…fb0e0c" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8f1a76…7ae7e6" parentHash="83ce90…7f920e" time=1,790,494,413 age=40m      cache=0.00B
+        INFO [09-27|10:13:33.855] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.484ms  mgasps=6.109 order=0 number=15,130,094 hash="51a503…51bffd" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="efe9aa…63bc80" parentHash="8463c9…fb0e0c" time=1,790,494,533 age=38m      cache=0.00B
+        INFO [09-27|10:13:33.859] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.451ms  mgasps=6.169 order=0 number=15,130,094 hash="51a503…51bffd" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="efe9aa…63bc80" parentHash="8463c9…fb0e0c" time=1,790,494,533 age=38m      cache=0.00B
+        WARN [09-27|10:13:34.759] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-27|10:13:34.759] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        WARN [09-27|10:13:34.759] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-27|10:13:34.759] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        WARN [09-27|10:13:34.760] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:13:34.765] Automatic ticket purchase needs attention; retrying err="injected temporary submission failure"
+        INFO [09-27|10:13:39.760] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:13:39.761] Submitted transaction                    hash=0xd3ee2dac4454d345dc74b775518921178b395b7b9d7220913f43d7173510af3e from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:13:39.761] Automatic ticket submitted; awaiting inclusion tx="d3ee2d…10af3e" nonce=13
+        INFO [09-27|10:13:39.764] Commit new mining work                   number=15,130,095 sealhash="d0718a…4f0407" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.253ms
+        INFO [09-27|10:13:45.000] Successfully sealed new block            number=15,130,095 sealhash="d0718a…4f0407" hash="0fb981…8f8394" difficulty=2  elapsed=5.236s
+        INFO [09-27|10:13:45.000] 🔨 mined potential block                  number=15,130,095 hash="0fb981…8f8394"
+        INFO [09-27|10:13:45.001] Automatic ticket purchase confirmed      tx="d3ee2d…10af3e" block="0fb981…8f8394"
+        WARN [09-27|10:13:45.001] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:13:45.004] Submitted transaction                    hash=0x8171023a236728f031d8c346637c38b34b63d3a428aee1fcf98d72287b7ce983 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:13:45.004] Automatic ticket submitted; awaiting inclusion tx="817102…7ce983" nonce=14
+            autobuy_test.go:91: startup and automatic retry: identical tx=0xd3ee2dac4454d345dc74b775518921178b395b7b9d7220913f43d7173510af3e mined at height=15130095
+        INFO [09-27|10:13:45.007] Commit new mining work                   number=15,130,096 sealhash="e1f1f2…755ff1" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.292ms
+        INFO [09-27|10:13:46.003] Commit new mining work                   number=15,130,096 sealhash="e1f1f2…755ff1" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.456ms
+        INFO [09-27|10:13:56.001] Successfully sealed new block            number=15,130,096 sealhash="e1f1f2…755ff1" hash="00a5f4…86918a" difficulty=2  elapsed=10.994s
+        INFO [09-27|10:13:56.001] 🔨 mined potential block                  number=15,130,096 hash="00a5f4…86918a"
+        WARN [09-27|10:13:56.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [09-27|10:13:56.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [09-27|10:13:56.007] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=4.332ms  mgasps=4.899 order=0 number=15,130,095 hash="0fb981…8f8394" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="71d799…3d62ce" parentHash="51a503…51bffd" time=1,790,496,814 cache=0.00B
+        INFO [09-27|10:13:56.010] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=3.425ms  mgasps=6.196 order=0 number=15,130,096 hash="00a5f4…86918a" difficulty=2  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="788978…40550b" parentHash="0fb981…8f8394" time=1,790,496,825 cache=0.00B
+            autobuy_test.go:100: canonical-head notification: next automatic purchase mined at height=15130096; both independent imports passed after stopping the producer
+        INFO [09-27|10:13:56.010] Transaction pool stopped 
+        INFO [09-27|10:13:56.011] Blockchain manager stopped 
+        INFO [09-27|10:13:56.011] Blockchain manager stopped 
+        --- PASS: TestAutoBuyRuntime (22.50s)
+        PASS
+--- PASS: TestAutoBuyRuntime (23.53s)
+=== RUN   TestAutomaticPurchaseRecovery
+=== RUN   TestAutomaticPurchaseRecovery/gates
+    purchase_recovery_test.go:38: isolated recovery gates:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:13:57.036] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery2454822954/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:13:57.081] Persisted trie from memory database      nodes=8 size=996.00B time="266.296µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:13:57.099] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:13:57.099] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:13:57.099] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:13:57.128] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.611ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:13:57.158] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.684ms mgasps=1.450 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:13:57.186] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.901ms mgasps=1.429 order=5 number=15,130,083 hash="e6657b…3db410" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,237 age=1h       cache=0.00B
+        INFO [09-27|10:13:57.214] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.091ms mgasps=1.511 order=4 number=15,130,084 hash="f87065…90d275" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1b1388…0f89c1" parentHash="e6657b…3db410" time=1,790,493,357 age=58m      cache=0.00B
+        INFO [09-27|10:13:57.240] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.175ms mgasps=1.616 order=4 number=15,130,085 hash="2f05dc…c49194" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1be48f…d8e528" parentHash="f87065…90d275" time=1,790,493,477 age=56m      cache=0.00B
+        INFO [09-27|10:13:57.266] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.907ms mgasps=1.428 order=4 number=15,130,086 hash="01b706…ae66aa" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="91c125…739373" parentHash="2f05dc…c49194" time=1,790,493,597 age=54m      cache=0.00B
+        INFO [09-27|10:13:57.291] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.912ms mgasps=1.649 order=4 number=15,130,087 hash="f6317e…18612c" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2e0864…c9cd9a" parentHash="01b706…ae66aa" time=1,790,493,717 age=52m      cache=0.00B
+        INFO [09-27|10:13:57.317] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.908ms mgasps=1.788 order=2 number=15,130,088 hash="561e2e…b08adc" difficulty=181 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="440445…de6b64" parentHash="f6317e…18612c" time=1,790,493,837 age=50m      cache=0.00B
+        INFO [09-27|10:13:57.342] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.350ms mgasps=1.724 order=4 number=15,130,089 hash="8e4e96…b71156" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b2b909…76a2ca" parentHash="561e2e…b08adc" time=1,790,493,957 age=48m      cache=0.00B
+        INFO [09-27|10:13:57.367] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.996ms mgasps=1.775 order=4 number=15,130,090 hash="ad7f6b…c1e125" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f1ca04…2fcda7" parentHash="8e4e96…b71156" time=1,790,494,077 age=46m      cache=0.00B
+        INFO [09-27|10:13:57.392] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.671ms mgasps=1.680 order=4 number=15,130,091 hash="365035…3a0145" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2ff114…59a2ef" parentHash="ad7f6b…c1e125" time=1,790,494,197 age=44m      cache=0.00B
+        INFO [09-27|10:13:57.416] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.015ms mgasps=1.772 order=3 number=15,130,092 hash="60b09f…cb331f" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8f54dc…181dda" parentHash="365035…3a0145" time=1,790,494,317 age=42m      cache=0.00B
+        INFO [09-27|10:13:57.440] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.302ms mgasps=1.730 order=4 number=15,130,093 hash="e19375…559be1" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="cd5496…8366e4" parentHash="60b09f…cb331f" time=1,790,494,437 age=40m      cache=0.00B
+        INFO [09-27|10:13:57.466] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.589ms mgasps=1.691 order=4 number=15,130,094 hash="2c0fa4…fc0be5" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8aedf3…972813" parentHash="e19375…559be1" time=1,790,494,557 age=38m      cache=0.00B
+        INFO [09-27|10:13:58.288] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:13.814] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:14:13.819] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:13.819] Submitted transaction                    hash=0xefdac50989627061ff0bcc17e199d6b015f43c7a85e1ffa0196ba72bbc89435b from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:13.819] Automatic ticket submitted; awaiting inclusion tx="efdac5…89435b" nonce=13
+            purchase_recovery_test.go:82: disabled auto-buy, disabled mining, startup, and cancellation respected without a head change
+        INFO [09-27|10:14:19.820] Transaction pool stopped 
+        INFO [09-27|10:14:19.820] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (22.26s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/wallet
+    purchase_recovery_test.go:38: isolated recovery wallet:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:14:20.842] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery860612682/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:20.887] Persisted trie from memory database      nodes=8 size=996.00B time="201.594µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:14:20.904] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:20.904] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:20.904] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:20.933] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.974ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:20.960] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.141ms mgasps=1.620 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:20.986] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.970ms mgasps=1.641 order=5 number=15,130,083 hash="d6638c…936950" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,260 age=1h       cache=0.00B
+        INFO [09-27|10:14:21.012] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.757ms mgasps=1.669 order=4 number=15,130,084 hash="b5fcbb…109b4e" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="fdcad4…66e7ba" parentHash="d6638c…936950" time=1,790,493,380 age=58m1s    cache=0.00B
+        INFO [09-27|10:14:21.037] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.397ms mgasps=1.717 order=4 number=15,130,085 hash="1eea93…195f29" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b47ad1…aad7b0" parentHash="b5fcbb…109b4e" time=1,790,493,500 age=56m1s    cache=0.00B
+        INFO [09-27|10:14:21.063] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.956ms mgasps=1.643 order=3 number=15,130,086 hash="33c710…5c5913" difficulty=115 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="81e14d…e9875c" parentHash="1eea93…195f29" time=1,790,493,620 age=54m1s    cache=0.00B
+        INFO [09-27|10:14:21.088] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.179ms mgasps=1.748 order=4 number=15,130,087 hash="2e5846…e983af" difficulty=71  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b46a13…cb2dd7" parentHash="33c710…5c5913" time=1,790,493,740 age=52m1s    cache=0.00B
+        INFO [09-27|10:14:21.112] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.884ms mgasps=1.791 order=4 number=15,130,088 hash="cc9660…2d1fe6" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8d57b6…d7ef75" parentHash="2e5846…e983af" time=1,790,493,860 age=50m1s    cache=0.00B
+        INFO [09-27|10:14:21.136] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.089ms mgasps=1.626 order=4 number=15,130,089 hash="42f33a…84616c" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="651494…185b12" parentHash="cc9660…2d1fe6" time=1,790,493,980 age=48m1s    cache=0.00B
+        INFO [09-27|10:14:21.161] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.178ms mgasps=1.748 order=4 number=15,130,090 hash="9f8829…2d8a91" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="67a3f1…f1e2df" parentHash="42f33a…84616c" time=1,790,494,100 age=46m1s    cache=0.00B
+        INFO [09-27|10:14:21.185] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.358ms mgasps=1.723 order=4 number=15,130,091 hash="803eca…e75807" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="38fa47…67ba81" parentHash="9f8829…2d8a91" time=1,790,494,220 age=44m1s    cache=0.00B
+        INFO [09-27|10:14:21.212] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.908ms mgasps=1.428 order=3 number=15,130,092 hash="d350c2…d285dd" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="4f9730…393bc6" parentHash="803eca…e75807" time=1,790,494,340 age=42m1s    cache=0.00B
+        INFO [09-27|10:14:21.235] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.381ms mgasps=1.719 order=4 number=15,130,093 hash="73bde1…48cf28" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7485d7…d038e2" parentHash="d350c2…d285dd" time=1,790,494,460 age=40m1s    cache=0.00B
+        INFO [09-27|10:14:21.259] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.582ms mgasps=1.838 order=3 number=15,130,094 hash="7127fd…d96bad" difficulty=107 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="592259…430664" parentHash="73bde1…48cf28" time=1,790,494,580 age=38m1s    cache=0.00B
+        INFO [09-27|10:14:22.084] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:22.084] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:14:22.088] Automatic ticket purchase needs attention; retrying err="authentication needed: password or unlock"
+        WARN [09-27|10:14:27.085] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:14:27.089] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:27.089] Submitted transaction                    hash=0xad5ea71400c447fa3df9b6f4fb18689a964c5db6ea3eadff2f4a0b8a32b15f4f from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:27.089] Automatic ticket submitted; awaiting inclusion tx="ad5ea7…b15f4f" nonce=13
+            purchase_recovery_test.go:101: wallet failure recovered automatically without a head change
+        INFO [09-27|10:14:27.090] Transaction pool stopped 
+        INFO [09-27|10:14:27.090] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (6.25s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/estimate
+    purchase_recovery_test.go:38: isolated recovery estimate:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:14:28.113] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery2540493935/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:28.145] Persisted trie from memory database      nodes=8 size=996.00B time="212.205µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:14:28.163] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:28.163] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:28.163] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:28.194] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.536ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:28.226] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.349ms mgasps=1.302 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:28.254] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.676ms mgasps=1.451 order=5 number=15,130,083 hash="6b1dbc…5914e6" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,268 age=1h       cache=0.00B
+        INFO [09-27|10:14:28.281] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.541ms mgasps=1.464 order=4 number=15,130,084 hash="4f3a6b…b26d5e" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="76b45e…3207b5" parentHash="6b1dbc…5914e6" time=1,790,493,388 age=58m      cache=0.00B
+        INFO [09-27|10:14:28.311] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.681ms mgasps=1.358 order=4 number=15,130,085 hash="726a1e…d2bd78" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5b48c9…fbf113" parentHash="4f3a6b…b26d5e" time=1,790,493,508 age=56m      cache=0.00B
+        INFO [09-27|10:14:28.338] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.121ms mgasps=1.622 order=4 number=15,130,086 hash="011af3…d729d6" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="09f180…18e172" parentHash="726a1e…d2bd78" time=1,790,493,628 age=54m      cache=0.00B
+        INFO [09-27|10:14:28.364] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.640ms mgasps=1.561 order=4 number=15,130,087 hash="15d4f9…ce0bc1" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="99a854…3697bc" parentHash="011af3…d729d6" time=1,790,493,748 age=52m      cache=0.00B
+        INFO [09-27|10:14:28.392] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.739ms mgasps=1.353 order=4 number=15,130,088 hash="5a4b94…baaa25" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3160b4…121b0d" parentHash="15d4f9…ce0bc1" time=1,790,493,868 age=50m      cache=0.00B
+        INFO [09-27|10:14:28.418] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.274ms mgasps=1.604 order=3 number=15,130,089 hash="d76e6e…6d4a3f" difficulty=112 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7ead4f…b59fd3" parentHash="5a4b94…baaa25" time=1,790,493,988 age=48m      cache=0.00B
+        INFO [09-27|10:14:28.445] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.035ms mgasps=1.633 order=4 number=15,130,090 hash="e42f02…792511" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="d7d1fc…9d9723" parentHash="d76e6e…6d4a3f" time=1,790,494,108 age=46m      cache=0.00B
+        INFO [09-27|10:14:28.471] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.610ms mgasps=1.564 order=4 number=15,130,091 hash="1c696f…09c084" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="9f6e2d…29e221" parentHash="e42f02…792511" time=1,790,494,228 age=44m      cache=0.00B
+        INFO [09-27|10:14:28.497] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.475ms mgasps=1.471 order=4 number=15,130,092 hash="81970d…97a2fb" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2c65c5…e9f9da" parentHash="1c696f…09c084" time=1,790,494,348 age=42m      cache=0.00B
+        INFO [09-27|10:14:28.523] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.609ms mgasps=1.688 order=4 number=15,130,093 hash="afafd8…19474b" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0442ef…df2c64" parentHash="81970d…97a2fb" time=1,790,494,468 age=40m      cache=0.00B
+        INFO [09-27|10:14:28.547] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.811ms mgasps=1.802 order=3 number=15,130,094 hash="9ebd82…041812" difficulty=107 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="512db3…af869a" parentHash="afafd8…19474b" time=1,790,494,588 age=38m      cache=0.00B
+        INFO [09-27|10:14:29.389] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:29.390] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:14:29.390] Automatic ticket purchase needs attention; retrying err="injected gas estimation failure"
+        WARN [09-27|10:14:34.391] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:14:34.394] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:34.395] Submitted transaction                    hash=0x1ad2964041acdf1acd778b1c0a60cd950ba5c19d47b9e4023f611867f4529166 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:34.395] Automatic ticket submitted; awaiting inclusion tx="1ad296…529166" nonce=13
+            purchase_recovery_test.go:101: estimate failure recovered automatically without a head change
+        INFO [09-27|10:14:34.397] Transaction pool stopped 
+        INFO [09-27|10:14:34.397] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (6.29s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/funding
+    purchase_recovery_test.go:38: isolated recovery funding:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:14:35.422] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery1740509894/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:35.471] Persisted trie from memory database      nodes=8 size=996.00B time="227.829µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:14:35.487] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:35.488] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:35.488] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:35.517] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.733ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:35.544] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.150ms mgasps=1.619 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:35.572] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.207ms mgasps=1.498 order=5 number=15,130,083 hash="afb938…417848" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,275 age=1h       cache=0.00B
+        INFO [09-27|10:14:35.599] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.928ms mgasps=1.528 order=4 number=15,130,084 hash="1701b9…9c2bdf" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="da2736…295c7e" parentHash="afb938…417848" time=1,790,493,395 age=58m      cache=0.00B
+        INFO [09-27|10:14:35.625] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.048ms mgasps=1.631 order=4 number=15,130,085 hash="8ad8e4…dc53f1" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6a60e4…6f105f" parentHash="1701b9…9c2bdf" time=1,790,493,515 age=56m      cache=0.00B
+        INFO [09-27|10:14:35.653] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.089ms mgasps=1.511 order=4 number=15,130,086 hash="5bdffa…1ff28d" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3d4bb7…66af11" parentHash="8ad8e4…dc53f1" time=1,790,493,635 age=54m      cache=0.00B
+        INFO [09-27|10:14:35.681] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.613ms mgasps=1.457 order=4 number=15,130,087 hash="be064c…352585" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="32d6db…6559fb" parentHash="5bdffa…1ff28d" time=1,790,493,755 age=52m      cache=0.00B
+        INFO [09-27|10:14:35.707] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.888ms mgasps=1.533 order=3 number=15,130,088 hash="dda657…f7275b" difficulty=113 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2d1c34…2aefe2" parentHash="be064c…352585" time=1,790,493,875 age=50m      cache=0.00B
+        INFO [09-27|10:14:35.731] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.169ms mgasps=1.617 order=4 number=15,130,089 hash="6981e6…12225f" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ae8fb1…39c5c0" parentHash="dda657…f7275b" time=1,790,493,995 age=48m      cache=0.00B
+        INFO [09-27|10:14:35.757] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.432ms mgasps=1.585 order=2 number=15,130,090 hash="cdb762…dc3028" difficulty=178 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ff08ef…a073ff" parentHash="6981e6…12225f" time=1,790,494,115 age=46m      cache=0.00B
+        INFO [09-27|10:14:35.782] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.927ms mgasps=1.647 order=4 number=15,130,091 hash="e4c735…840038" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="17d6bd…451f1e" parentHash="cdb762…dc3028" time=1,790,494,235 age=44m      cache=0.00B
+        INFO [09-27|10:14:35.807] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.362ms mgasps=1.722 order=4 number=15,130,092 hash="773f0f…184e47" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6adde7…368680" parentHash="e4c735…840038" time=1,790,494,355 age=42m      cache=0.00B
+        INFO [09-27|10:14:35.831] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.232ms mgasps=1.740 order=4 number=15,130,093 hash="3db0a2…9455c2" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="d4cb81…18be94" parentHash="773f0f…184e47" time=1,790,494,475 age=40m      cache=0.00B
+        INFO [09-27|10:14:35.856] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.158ms mgasps=1.751 order=4 number=15,130,094 hash="53e9be…a39c1b" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="005114…a47afd" parentHash="3db0a2…9455c2" time=1,790,494,595 age=38m      cache=0.00B
+        INFO [09-27|10:14:36.692] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:36.693] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        WARN [09-27|10:14:42.279] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:14:42.283] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:42.283] Submitted transaction                    hash=0x558efca1d9526a7b0aaea61c6b99886019a74a137ea32f0719ebf0255b99d1bc from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:42.283] Automatic ticket submitted; awaiting inclusion tx="558efc…99d1bc" nonce=13
+            purchase_recovery_test.go:101: funding failure recovered automatically without a head change
+        INFO [09-27|10:14:42.284] Transaction pool stopped 
+        INFO [09-27|10:14:42.284] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (6.28s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/restart_failed
+    purchase_recovery_test.go:38: isolated recovery restart_failed:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:14:43.309] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery4195594899/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:43.358] Persisted trie from memory database      nodes=8 size=996.00B time="258.793µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:14:43.376] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:43.376] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:43.376] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:43.403] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.427ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:43.432] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.170ms mgasps=1.502 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:43.458] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.138ms mgasps=1.620 order=5 number=15,130,083 hash="49dbe5…4fb272" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,283 age=1h       cache=0.00B
+        INFO [09-27|10:14:43.485] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.271ms mgasps=1.604 order=4 number=15,130,084 hash="614441…a95b77" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="21de13…fc5c82" parentHash="49dbe5…4fb272" time=1,790,493,403 age=58m      cache=0.00B
+        INFO [09-27|10:14:43.510] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.853ms mgasps=1.656 order=4 number=15,130,085 hash="b84e66…99825f" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="88d84b…a6a6fa" parentHash="614441…a95b77" time=1,790,493,523 age=56m      cache=0.00B
+        INFO [09-27|10:14:43.537] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.082ms mgasps=1.627 order=3 number=15,130,086 hash="f61b7e…c3ed49" difficulty=115 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="23442c…10910c" parentHash="b84e66…99825f" time=1,790,493,643 age=54m      cache=0.00B
+        INFO [09-27|10:14:43.563] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.641ms mgasps=1.561 order=4 number=15,130,087 hash="4e08e5…7d3b4c" difficulty=71  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="469e6f…868675" parentHash="f61b7e…c3ed49" time=1,790,493,763 age=52m      cache=0.00B
+        INFO [09-27|10:14:43.589] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.337ms mgasps=1.596 order=4 number=15,130,088 hash="fa7e36…8375d6" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="732eb7…153a5e" parentHash="4e08e5…7d3b4c" time=1,790,493,883 age=50m      cache=0.00B
+        INFO [09-27|10:14:43.615] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.627ms mgasps=1.562 order=4 number=15,130,089 hash="4dce9f…ea7a2e" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="c02cc6…460568" parentHash="fa7e36…8375d6" time=1,790,494,003 age=48m      cache=0.00B
+        INFO [09-27|10:14:43.642] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.010ms mgasps=1.519 order=4 number=15,130,090 hash="462649…3bf522" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="84a3d9…b6028e" parentHash="4dce9f…ea7a2e" time=1,790,494,123 age=46m      cache=0.00B
+        INFO [09-27|10:14:43.667] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.239ms mgasps=1.608 order=4 number=15,130,091 hash="601694…e6495f" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="547ff5…77f68f" parentHash="462649…3bf522" time=1,790,494,243 age=44m      cache=0.00B
+        INFO [09-27|10:14:43.692] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.821ms mgasps=1.660 order=4 number=15,130,092 hash="6c64f3…953a06" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dc4f05…c3e7a3" parentHash="601694…e6495f" time=1,790,494,363 age=42m      cache=0.00B
+        INFO [09-27|10:14:43.717] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.715ms mgasps=1.552 order=3 number=15,130,093 hash="bbef9f…d935a1" difficulty=108 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="04d104…739b81" parentHash="6c64f3…953a06" time=1,790,494,483 age=40m      cache=0.00B
+        INFO [09-27|10:14:43.740] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.884ms mgasps=1.791 order=4 number=15,130,094 hash="6f9b20…f61394" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e97d3e…94976e" parentHash="bbef9f…d935a1" time=1,790,494,603 age=38m      cache=0.00B
+        INFO [09-27|10:14:44.561] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:44.561] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:14:44.565] Automatic ticket purchase needs attention; retrying err="injected temporary submission failure"
+        INFO [09-27|10:14:44.565] Transaction pool stopped 
+        INFO [09-27|10:14:44.565] Blockchain manager stopped 
+        INFO [09-27|10:14:44.565] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery4195594899/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:44.602] Loaded most recent local header          number=15,130,094 hash="6f9b20…f61394" td=1001 age=38m1s
+        INFO [09-27|10:14:44.602] Loaded most recent local full block      number=15,130,094 hash="6f9b20…f61394" td=1001 age=38m1s
+        INFO [09-27|10:14:44.602] Loaded most recent local fast block      number=15,130,094 hash="6f9b20…f61394" td=1001 age=38m1s
+        INFO [09-27|10:14:44.602] Loaded local transaction journal         transactions=0 dropped=0
+        INFO [09-27|10:14:44.602] Regenerated local transaction journal    transactions=0 accounts=0
+        INFO [09-27|10:14:44.603] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:44.603] Submitted transaction                    hash=0xbc977de78af31045b27d0096905f5d53e0f50bef17f481508b0c9efde031e5f3 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:44.603] Automatic ticket submitted; awaiting inclusion tx="bc977d…31e5f3" nonce=13
+            purchase_recovery_test.go:137: restart_failed: reopened LevelDB and pool with locked wallet; exact saved transaction retained
+        INFO [09-27|10:14:44.603] Transaction pool stopped 
+        INFO [09-27|10:14:44.603] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (1.29s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/restart_journal
+    purchase_recovery_test.go:38: isolated recovery restart_journal:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:14:45.632] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery176265436/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:45.666] Persisted trie from memory database      nodes=8 size=996.00B time="223.742µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:14:45.686] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:45.686] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:45.686] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:45.714] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.758ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:45.745] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.856ms mgasps=1.433 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:45.777] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.280ms mgasps=1.393 order=5 number=15,130,083 hash="8f6b50…9f44ca" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,285 age=1h       cache=0.00B
+        INFO [09-27|10:14:45.804] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.646ms mgasps=1.560 order=4 number=15,130,084 hash="711c60…f437fe" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2e9fd8…e5a9ab" parentHash="8f6b50…9f44ca" time=1,790,493,405 age=58m      cache=0.00B
+        INFO [09-27|10:14:45.832] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.772ms mgasps=1.441 order=4 number=15,130,085 hash="69cf4b…fc399c" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8b3f77…468f17" parentHash="711c60…f437fe" time=1,790,493,525 age=56m      cache=0.00B
+        INFO [09-27|10:14:45.859] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.734ms mgasps=1.550 order=4 number=15,130,086 hash="f7df01…988ba0" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="9561a4…095e3d" parentHash="69cf4b…fc399c" time=1,790,493,645 age=54m      cache=0.00B
+        INFO [09-27|10:14:45.886] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.819ms mgasps=1.661 order=1 number=15,130,087 hash="306d38…c8be63" difficulty=292 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="a533f5…fab8ad" parentHash="f7df01…988ba0" time=1,790,493,765 age=52m      cache=0.00B
+        INFO [09-27|10:14:45.912] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.932ms mgasps=1.528 order=4 number=15,130,088 hash="7fd7ff…c171e7" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="86ebf7…4da467" parentHash="306d38…c8be63" time=1,790,493,885 age=50m      cache=0.00B
+        INFO [09-27|10:14:45.939] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.149ms mgasps=1.619 order=4 number=15,130,089 hash="bf27a2…8faf49" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="c811fe…b7d39b" parentHash="7fd7ff…c171e7" time=1,790,494,005 age=48m      cache=0.00B
+        INFO [09-27|10:14:45.967] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.967ms mgasps=1.524 order=4 number=15,130,090 hash="ae9838…f482f9" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8d4245…e5c917" parentHash="bf27a2…8faf49" time=1,790,494,125 age=46m      cache=0.00B
+        INFO [09-27|10:14:45.992] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.889ms mgasps=1.533 order=4 number=15,130,091 hash="398816…b78253" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f08eea…6ada81" parentHash="ae9838…f482f9" time=1,790,494,245 age=44m      cache=0.00B
+        INFO [09-27|10:14:46.018] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.107ms mgasps=1.624 order=4 number=15,130,092 hash="f77908…7a8ec1" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="026ce4…c75dea" parentHash="398816…b78253" time=1,790,494,365 age=42m1s    cache=0.00B
+        INFO [09-27|10:14:46.046] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.716ms mgasps=1.674 order=4 number=15,130,093 hash="1a29f8…f7ca9f" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="4c1b73…3d5f66" parentHash="f77908…7a8ec1" time=1,790,494,485 age=40m1s    cache=0.00B
+        INFO [09-27|10:14:46.072] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.456ms mgasps=1.582 order=3 number=15,130,094 hash="e2c07c…5b3fdc" difficulty=108 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f58e3c…0cc5df" parentHash="1a29f8…f7ca9f" time=1,790,494,605 age=38m1s    cache=0.00B
+        INFO [09-27|10:14:46.895] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:46.896] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:14:46.900] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:46.900] Submitted transaction                    hash=0x052e8dc89733373b3b969dfa59fb6074ef50f77a7a046d8a1c0e04832071d273 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:46.901] Automatic ticket submitted; awaiting inclusion tx="052e8d…71d273" nonce=13
+        INFO [09-27|10:14:46.901] Transaction pool stopped 
+        INFO [09-27|10:14:46.901] Blockchain manager stopped 
+        INFO [09-27|10:14:46.901] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery176265436/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:46.937] Loaded most recent local header          number=15,130,094 hash="e2c07c…5b3fdc" td=1180 age=38m1s
+        INFO [09-27|10:14:46.937] Loaded most recent local full block      number=15,130,094 hash="e2c07c…5b3fdc" td=1180 age=38m1s
+        INFO [09-27|10:14:46.938] Loaded most recent local fast block      number=15,130,094 hash="e2c07c…5b3fdc" td=1180 age=38m1s
+        INFO [09-27|10:14:46.938] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:46.938] Loaded local transaction journal         transactions=1 dropped=0
+        INFO [09-27|10:14:46.938] Regenerated local transaction journal    transactions=1 accounts=1
+            purchase_recovery_test.go:137: restart_journal: reopened LevelDB and pool with locked wallet; exact saved transaction retained
+        INFO [09-27|10:14:52.939] Transaction pool stopped 
+        INFO [09-27|10:14:52.939] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (7.31s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/replacement_reorg
+    purchase_recovery_test.go:38: isolated recovery replacement_reorg:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:14:53.964] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery2538731562/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:14:54.010] Persisted trie from memory database      nodes=8 size=996.00B time="313.723µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:14:54.027] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:54.027] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:54.027] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:14:54.056] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.246ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:54.083] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.664ms mgasps=1.558 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:14:54.109] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.257ms mgasps=1.606 order=5 number=15,130,083 hash="d0f231…c5c977" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,294 age=1h       cache=0.00B
+        INFO [09-27|10:14:54.138] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.981ms mgasps=1.523 order=4 number=15,130,084 hash="4d214a…eef4cb" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ae69cb…a42643" parentHash="d0f231…c5c977" time=1,790,493,414 age=58m      cache=0.00B
+        INFO [09-27|10:14:54.164] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.883ms mgasps=1.652 order=4 number=15,130,085 hash="160964…3e9919" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b8fb27…915fa3" parentHash="4d214a…eef4cb" time=1,790,493,534 age=56m      cache=0.00B
+        INFO [09-27|10:14:54.191] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.192ms mgasps=1.500 order=4 number=15,130,086 hash="183616…2f3aef" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e5ece6…bf99c9" parentHash="160964…3e9919" time=1,790,493,654 age=54m      cache=0.00B
+        INFO [09-27|10:14:54.220] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.616ms mgasps=1.456 order=4 number=15,130,087 hash="d2d831…c73d6a" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="add320…422e67" parentHash="183616…2f3aef" time=1,790,493,774 age=52m      cache=0.00B
+        INFO [09-27|10:14:54.245] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.813ms mgasps=1.661 order=4 number=15,130,088 hash="db5b4e…b15fda" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="310952…400096" parentHash="d2d831…c73d6a" time=1,790,493,894 age=50m      cache=0.00B
+        INFO [09-27|10:14:54.271] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.078ms mgasps=1.628 order=4 number=15,130,089 hash="d6f9b7…fa78ce" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="69b48e…244611" parentHash="db5b4e…b15fda" time=1,790,494,014 age=48m      cache=0.00B
+        INFO [09-27|10:14:54.297] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.947ms mgasps=1.644 order=4 number=15,130,090 hash="83fcd4…532ca7" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="cfc0be…b629fe" parentHash="d6f9b7…fa78ce" time=1,790,494,134 age=46m      cache=0.00B
+        INFO [09-27|10:14:54.323] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.801ms mgasps=1.663 order=3 number=15,130,091 hash="4327ee…34a844" difficulty=110 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e5f180…502742" parentHash="83fcd4…532ca7" time=1,790,494,254 age=44m      cache=0.00B
+        INFO [09-27|10:14:54.348] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.782ms mgasps=1.665 order=4 number=15,130,092 hash="d0ea1c…14df6b" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="c3fad8…130b7e" parentHash="4327ee…34a844" time=1,790,494,374 age=42m      cache=0.00B
+        INFO [09-27|10:14:54.375] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.262ms mgasps=1.605 order=4 number=15,130,093 hash="e56d20…50a634" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="861f07…d4f2d3" parentHash="d0ea1c…14df6b" time=1,790,494,494 age=40m      cache=0.00B
+        INFO [09-27|10:14:54.400] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.310ms mgasps=1.729 order=3 number=15,130,094 hash="dffcce…609c0c" difficulty=107 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="4a167b…366410" parentHash="e56d20…50a634" time=1,790,494,614 age=38m      cache=0.00B
+        INFO [09-27|10:14:55.251] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:14:55.252] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:14:55.255] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:14:55.256] Submitted transaction                    hash=0x5a810a6e30ec58445a65492d95b72ace31f5a19b3e92c046467b5d70110366ee from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:14:55.256] Automatic ticket submitted; awaiting inclusion tx="5a810a…0366ee" nonce=13
+        WARN [09-27|10:14:55.256] Automatic ticket purchase needs attention; retrying err="automatic ticket Z\x81\nn0\xecXDZeI-\x95\xb7*\xce1\xf5\xa1\x9b>\x92\xc0FF{]p\x11\x03f\xee was replaced at nonce 13 by \x93\x98\x87c5~\xae,\xb0\xfe\xf0\xe2\x1eA\t%成\xdbi\xf09\xbc\xa2&\x9e\x13}\u008c3; awaiting nonce resolution"
+        INFO [09-27|10:15:01.287] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.815ms mgasps=1.520 order=2 number=15,130,095 hash="98a071…6f0397" difficulty=171 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f66168…d4c8be" parentHash="dffcce…609c0c" time=1,790,494,734 age=36m7s    cache=0.00B
+        WARN [09-27|10:15:01.288] Automatic ticket nonce consumed without a confirmed purchase tx="5a810a…0366ee" nonce=13
+        WARN [09-27|10:15:01.288] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:15:01.291] Submitted transaction                    hash=0x3b3c5b9767fef938b7186aec688a465e2a6b12c9414d46f1fc2ad32417486aae from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:15:01.291] Automatic ticket submitted; awaiting inclusion tx="3b3c5b…486aae" nonce=14
+        INFO [09-27|10:15:01.291] Transaction pool stopped 
+        WARN [09-27|10:15:01.291] Rewinding blockchain                     target=15,130,094
+        INFO [09-27|10:15:01.292] Loaded most recent local header          number=15,130,094 hash="dffcce…609c0c" td=998 age=38m7s
+        INFO [09-27|10:15:01.292] Loaded most recent local full block      number=15,130,094 hash="dffcce…609c0c" td=998 age=38m7s
+        INFO [09-27|10:15:01.292] Loaded most recent local fast block      number=15,130,094 hash="dffcce…609c0c" td=998 age=38m7s
+        WARN [09-27|10:15:01.292] Automatic ticket purchase needs attention; retrying err="automatic ticket ;<[\x97g\xfe\xf98\xb7\x18j\xech\x8aF^*k\x12\xc9AMF\xf1\xfc*\xd3$\x17Hj\xae needs nonce 14, current nonce is 13"
+        INFO [09-27|10:15:07.317] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.629ms mgasps=1.681 order=2 number=15,130,095 hash="855023…fb98ab" difficulty=171 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="bb7524…40faa0" parentHash="dffcce…609c0c" time=1,790,494,735 age=36m12s   cache=0.00B
+        INFO [09-27|10:15:07.318] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:15:07.318] Submitted transaction                    hash=0x3b3c5b9767fef938b7186aec688a465e2a6b12c9414d46f1fc2ad32417486aae from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:15:07.318] Automatic ticket submitted; awaiting inclusion tx="3b3c5b…486aae" nonce=14
+        INFO [09-27|10:15:07.342] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.016ms mgasps=1.631 order=3 number=15,130,096 hash="c9c52e…d2a909" difficulty=106 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="d73675…1ba587" parentHash="855023…fb98ab" time=1,790,494,855 age=34m12s   cache=0.00B
+            purchase_recovery_test.go:261: automatic buying paused for a conflicting transfer and a rewind nonce gap, resumed after inclusion, and recovered the exact next purchase after a same-height canonical replacement and pool loss
+        INFO [09-27|10:15:07.343] Transaction pool stopped 
+        INFO [09-27|10:15:07.343] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (13.38s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/later_ticket
+    purchase_recovery_test.go:38: isolated recovery later_ticket:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:15:08.372] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery2345528887/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:15:08.405] Persisted trie from memory database      nodes=8 size=996.00B time="222.651µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:15:08.423] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:08.423] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:08.423] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:08.454] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.943ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:08.485] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.229ms mgasps=1.398 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:08.514] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.444ms mgasps=1.474 order=5 number=15,130,083 hash="705835…62c531" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,308 age=1h       cache=0.00B
+        INFO [09-27|10:15:08.543] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.988ms mgasps=1.522 order=4 number=15,130,084 hash="d74971…acf308" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f9d5a6…651c4c" parentHash="705835…62c531" time=1,790,493,428 age=58m      cache=0.00B
+        INFO [09-27|10:15:08.572] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.326ms mgasps=1.486 order=4 number=15,130,085 hash="682c57…41eea4" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2ee672…ac9817" parentHash="d74971…acf308" time=1,790,493,548 age=56m      cache=0.00B
+        INFO [09-27|10:15:08.601] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.824ms mgasps=1.540 order=4 number=15,130,086 hash="e84d27…088492" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1d7628…2d52f4" parentHash="682c57…41eea4" time=1,790,493,668 age=54m      cache=0.00B
+        INFO [09-27|10:15:08.634] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.988ms mgasps=1.420 order=4 number=15,130,087 hash="021231…fc02ed" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="520f75…c0ed17" parentHash="e84d27…088492" time=1,790,493,788 age=52m      cache=0.00B
+        INFO [09-27|10:15:08.659] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.918ms mgasps=1.648 order=4 number=15,130,088 hash="b62e62…e9adc6" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5972a3…78b608" parentHash="021231…fc02ed" time=1,790,493,908 age=50m      cache=0.00B
+        INFO [09-27|10:15:08.689] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.164ms mgasps=1.503 order=4 number=15,130,089 hash="7879eb…92cf29" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8a8e05…cacc17" parentHash="b62e62…e9adc6" time=1,790,494,028 age=48m      cache=0.00B
+        INFO [09-27|10:15:08.716] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.439ms mgasps=1.584 order=4 number=15,130,090 hash="75fc42…07cafa" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="157cd9…6a2a94" parentHash="7879eb…92cf29" time=1,790,494,148 age=46m      cache=0.00B
+        INFO [09-27|10:15:08.742] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.173ms mgasps=1.616 order=4 number=15,130,091 hash="8e03c5…492c16" difficulty=68 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0eff29…0dcae2" parentHash="75fc42…07cafa" time=1,790,494,268 age=44m      cache=0.00B
+        INFO [09-27|10:15:08.769] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.429ms mgasps=1.475 order=4 number=15,130,092 hash="3c150b…cc6a77" difficulty=67 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="18e0fc…e62be5" parentHash="8e03c5…492c16" time=1,790,494,388 age=42m      cache=0.00B
+        INFO [09-27|10:15:08.796] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.450ms mgasps=1.473 order=3 number=15,130,093 hash="14744f…99af53" difficulty=108 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="cd9094…dbc4f5" parentHash="3c150b…cc6a77" time=1,790,494,508 age=40m      cache=0.00B
+        INFO [09-27|10:15:08.825] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.752ms mgasps=1.351 order=3 number=15,130,094 hash="81f79e…a0ee2e" difficulty=107 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="95f9c6…1d6c2f" parentHash="14744f…99af53" time=1,790,494,628 age=38m      cache=0.00B
+        INFO [09-27|10:15:09.707] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:15:09.708] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:15:09.711] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:15:09.712] Submitted transaction                    hash=0x5291e226dd6b27029dea4df83ce140d29c94c1ebf583b1ea49ec5b0536538375 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:15:09.712] Automatic ticket submitted; awaiting inclusion tx="5291e2…538375" nonce=13
+        WARN [09-27|10:15:09.713] Automatic ticket purchase needs attention; retrying err="another ticket purchase \xdf\xe6O\xe6\ap,\x1ei\xa3\xd5\xef\xba\xc0\xa7g\xfa\nF\n\x88\xbfK\xc8\v\xe71\x93\xc1*\x02\xc2 is pending; awaiting nonce resolution"
+            purchase_recovery_test.go:159: later-nonce ticket was preserved despite the pool's one-ticket-per-owner rule
+        INFO [09-27|10:15:16.117] Transaction pool stopped 
+        INFO [09-27|10:15:16.117] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (7.34s)
+        PASS
+=== RUN   TestAutomaticPurchaseRecovery/corrupt_saved
+    purchase_recovery_test.go:38: isolated recovery corrupt_saved:
+        === RUN   TestAutomaticPurchaseRecovery
+        INFO [09-27|10:15:17.140] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseRecovery1437443245/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:15:17.174] Persisted trie from memory database      nodes=8 size=996.00B time="221.741µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:15:17.191] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:17.191] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:17.192] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:17.220] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.559ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:17.247] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.929ms mgasps=1.647 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:17.274] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.025ms mgasps=1.634 order=5 number=15,130,083 hash="18fd86…8303ed" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,317 age=1h       cache=0.00B
+        INFO [09-27|10:15:17.301] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.601ms mgasps=1.458 order=4 number=15,130,084 hash="7ead92…166396" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7bb027…78dc27" parentHash="18fd86…8303ed" time=1,790,493,437 age=58m      cache=0.00B
+        INFO [09-27|10:15:17.327] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.090ms mgasps=1.626 order=4 number=15,130,085 hash="9bb347…e40544" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dfb39b…b8ffce" parentHash="7ead92…166396" time=1,790,493,557 age=56m      cache=0.00B
+        INFO [09-27|10:15:17.352] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.288ms mgasps=1.602 order=4 number=15,130,086 hash="1d43ba…98a165" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="88f822…e4d7aa" parentHash="9bb347…e40544" time=1,790,493,677 age=54m      cache=0.00B
+        INFO [09-27|10:15:17.379] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.019ms mgasps=1.518 order=4 number=15,130,087 hash="2a7438…b610d1" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="45096b…eca6ab" parentHash="1d43ba…98a165" time=1,790,493,797 age=52m      cache=0.00B
+        INFO [09-27|10:15:17.405] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.497ms mgasps=1.703 order=4 number=15,130,088 hash="05b1ba…bc2b39" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0b00c0…d76d4f" parentHash="2a7438…b610d1" time=1,790,493,917 age=50m      cache=0.00B
+        INFO [09-27|10:15:17.431] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.856ms mgasps=1.656 order=4 number=15,130,089 hash="98c8d5…573ab1" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2139eb…8f3805" parentHash="05b1ba…bc2b39" time=1,790,494,037 age=48m      cache=0.00B
+        INFO [09-27|10:15:17.456] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.385ms mgasps=1.719 order=4 number=15,130,090 hash="5503a8…4f483f" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f51df…157462" parentHash="98c8d5…573ab1" time=1,790,494,157 age=46m      cache=0.00B
+        INFO [09-27|10:15:17.483] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.431ms mgasps=1.379 order=4 number=15,130,091 hash="838385…037e36" difficulty=68 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="26cb8b…0e2cff" parentHash="5503a8…4f483f" time=1,790,494,277 age=44m      cache=0.00B
+        INFO [09-27|10:15:17.507] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.243ms mgasps=1.739 order=3 number=15,130,092 hash="c7d195…9678bc" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="63604a…51e0cc" parentHash="838385…037e36" time=1,790,494,397 age=42m      cache=0.00B
+        INFO [09-27|10:15:17.533] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.788ms mgasps=1.665 order=4 number=15,130,093 hash="a252f8…b09073" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="cb1233…dd6962" parentHash="c7d195…9678bc" time=1,790,494,517 age=40m      cache=0.00B
+        INFO [09-27|10:15:17.558] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.748ms mgasps=1.670 order=4 number=15,130,094 hash="8186ff…0f417c" difficulty=66  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="bca4e2…b25fcc" parentHash="a252f8…b09073" time=1,790,494,637 age=38m      cache=0.00B
+        INFO [09-27|10:15:18.387] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:15:18.387] Automatic ticket purchase needs attention; retrying err="invalid saved automatic ticket: transaction type not supported"
+            purchase_recovery_test.go:166: corrupt saved transaction stopped new automatic signing
+        INFO [09-27|10:15:24.388] Transaction pool stopped 
+        INFO [09-27|10:15:24.388] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseRecovery (7.25s)
+        PASS
+--- PASS: TestAutomaticPurchaseRecovery (86.86s)
+    --- PASS: TestAutomaticPurchaseRecovery/gates (23.28s)
+    --- PASS: TestAutomaticPurchaseRecovery/wallet (7.27s)
+    --- PASS: TestAutomaticPurchaseRecovery/estimate (7.31s)
+    --- PASS: TestAutomaticPurchaseRecovery/funding (7.30s)
+    --- PASS: TestAutomaticPurchaseRecovery/restart_failed (2.32s)
+    --- PASS: TestAutomaticPurchaseRecovery/restart_journal (8.33s)
+    --- PASS: TestAutomaticPurchaseRecovery/replacement_reorg (14.40s)
+    --- PASS: TestAutomaticPurchaseRecovery/later_ticket (8.37s)
+    --- PASS: TestAutomaticPurchaseRecovery/corrupt_saved (8.27s)
+=== RUN   TestSubmittedTicketReplacementAllowsExplicitRetry
+    purchase_replacement_test.go:29: isolated replacement scenario:
+        === RUN   TestSubmittedTicketReplacementAllowsExplicitRetry
+        INFO [09-27|10:15:25.429] Persisted trie from memory database      nodes=8 size=996.00B time="137.905µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:15:25.446] Loaded most recent local header          number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:15:25.446] Loaded most recent local full block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:15:25.446] Loaded most recent local fast block      number=15,130,080 hash="97b674…8c9f6c" td=1 age=11mo3w3d
+        INFO [09-27|10:15:25.474] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.627ms mgasps=0.000 order=6 number=15,130,081 hash="adebad…85f1ec" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="bb47d6…548d93" parentHash="97b674…8c9f6c" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        WARN [09-27|10:15:26.306] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:15:26.313] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:15:26.313] Submitted transaction                    hash=0x779c850ea7ca7e1f7ec0460c1a13854aa1537e386c9da8de91fb70406cdf3e94 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=0 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        WARN [09-27|10:15:26.314] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:15:26.321] Submitted transaction                    hash=0x99342e8bd5eedb8aedf72ddf50ccafc1658d13c44c9b5a9082782b51fd81b0df from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=1 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+            purchase_replacement_test.go:72: explicit retry used the next available nonce after the pool replacement; no stale submitted cache
+        INFO [09-27|10:15:26.321] Transaction pool stopped 
+        INFO [09-27|10:15:26.322] Blockchain manager stopped 
+        --- PASS: TestSubmittedTicketReplacementAllowsExplicitRetry (0.91s)
+        PASS
+--- PASS: TestSubmittedTicketReplacementAllowsExplicitRetry (1.93s)
+=== RUN   TestAutomaticPurchaseStorageErrors
+=== RUN   TestAutomaticPurchaseStorageErrors/put_before
+    purchase_storage_test.go:87: storage fault put_before:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:15:27.349] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors37120502/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:15:27.385] Persisted trie from memory database      nodes=8 size=996.00B time="218.365µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:15:27.402] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:27.402] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:27.402] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:27.431] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.359ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:27.461] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.776ms mgasps=1.441 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:27.488] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.935ms mgasps=1.528 order=5 number=15,130,083 hash="984cc8…72d2c6" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,327 age=1h       cache=0.00B
+        INFO [09-27|10:15:27.516] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.363ms mgasps=1.593 order=4 number=15,130,084 hash="2d48fb…2bb6e0" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="58b293…ff10d2" parentHash="984cc8…72d2c6" time=1,790,493,447 age=58m      cache=0.00B
+        INFO [09-27|10:15:27.542] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.549ms mgasps=1.571 order=3 number=15,130,085 hash="3cba54…6efa55" difficulty=116 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7c0b9c…6a4a19" parentHash="2d48fb…2bb6e0" time=1,790,493,567 age=56m      cache=0.00B
+        INFO [09-27|10:15:27.568] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.238ms mgasps=1.608 order=3 number=15,130,086 hash="076fb3…14be59" difficulty=115 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="9fd398…a037e6" parentHash="3cba54…6efa55" time=1,790,493,687 age=54m      cache=0.00B
+        INFO [09-27|10:15:27.597] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.708ms mgasps=1.355 order=4 number=15,130,087 hash="3d50a5…618ae6" difficulty=71  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="a30067…d2e528" parentHash="076fb3…14be59" time=1,790,493,807 age=52m      cache=0.00B
+        INFO [09-27|10:15:27.622] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.867ms mgasps=1.654 order=4 number=15,130,088 hash="b0f428…6550a7" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="03b7fd…e8769b" parentHash="3d50a5…618ae6" time=1,790,493,927 age=50m      cache=0.00B
+        INFO [09-27|10:15:27.646] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.372ms mgasps=1.721 order=4 number=15,130,089 hash="faa1e3…b0118d" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0e603f…88f00b" parentHash="b0f428…6550a7" time=1,790,494,047 age=48m      cache=0.00B
+        INFO [09-27|10:15:27.670] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.878ms mgasps=1.653 order=4 number=15,130,090 hash="bf3aaf…034685" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="54baad…b767d7" parentHash="faa1e3…b0118d" time=1,790,494,167 age=46m      cache=0.00B
+        INFO [09-27|10:15:27.695] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.270ms mgasps=1.604 order=4 number=15,130,091 hash="0cc47a…80293d" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f9f239…6881ea" parentHash="bf3aaf…034685" time=1,790,494,287 age=44m      cache=0.00B
+        INFO [09-27|10:15:27.719] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.633ms mgasps=1.685 order=3 number=15,130,092 hash="9221f4…16fd2e" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6a1ed2…04dc04" parentHash="0cc47a…80293d" time=1,790,494,407 age=42m      cache=0.00B
+        INFO [09-27|10:15:27.743] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.868ms mgasps=1.794 order=4 number=15,130,093 hash="d3ae7c…c37d36" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0d67b4…1fc718" parentHash="9221f4…16fd2e" time=1,790,494,527 age=40m      cache=0.00B
+        INFO [09-27|10:15:27.767] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.201ms mgasps=1.900 order=3 number=15,130,094 hash="90963c…d9a670" difficulty=108 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="51c6f2…5db5f4" parentHash="d3ae7c…c37d36" time=1,790,494,647 age=38m      cache=0.00B
+        INFO [09-27|10:15:28.596] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:15:28.596] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:15:28.600] Automatic ticket purchase needs attention; retrying err="injected automatic record put failure"
+        WARN [09-27|10:15:28.601] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:15:28.605] Automatic ticket purchase needs attention; retrying err="injected automatic record put failure"
+        WARN [09-27|10:15:33.601] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:15:34.602] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:15:34.607] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:15:34.608] Submitted transaction                    hash=0xdc611fdda460d12673ff933ba85704458af08cf6ace18f48b4f80fddc2e08cd3 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:15:34.608] Automatic ticket submitted; awaiting inclusion tx="dc611f…e08cd3" nonce=13
+            purchase_storage_test.go:203: storage_put_before: failure paused submission; recovery retained one purchase at canonical nonce 13, hash 0xdc611fdda460d12673ff933ba85704458af08cf6ace18f48b4f80fddc2e08cd3; confirmations=0
+        INFO [09-27|10:15:40.609] Transaction pool stopped 
+        INFO [09-27|10:15:40.609] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (13.27s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/put_after
+    purchase_storage_test.go:87: storage fault put_after:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:15:41.633] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors999313391/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:15:41.664] Persisted trie from memory database      nodes=8 size=996.00B time="211.449µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:15:41.681] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:41.681] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:41.681] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:41.711] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.316ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:41.739] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.318ms mgasps=1.598 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:41.767] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.035ms mgasps=1.517 order=5 number=15,130,083 hash="fa1eb1…1776db" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,341 age=1h       cache=0.00B
+        INFO [09-27|10:15:41.792] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.462ms mgasps=1.708 order=4 number=15,130,084 hash="370f2b…b8fc09" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2ba8be…a1b550" parentHash="fa1eb1…1776db" time=1,790,493,461 age=58m      cache=0.00B
+        INFO [09-27|10:15:41.820] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.106ms mgasps=1.409 order=4 number=15,130,085 hash="10098f…e4c7e0" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5d8778…1be78a" parentHash="370f2b…b8fc09" time=1,790,493,581 age=56m      cache=0.00B
+        INFO [09-27|10:15:41.846] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.121ms mgasps=1.507 order=4 number=15,130,086 hash="ce6434…5933cf" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="aa4379…0ce504" parentHash="10098f…e4c7e0" time=1,790,493,701 age=54m      cache=0.00B
+        INFO [09-27|10:15:41.872] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.726ms mgasps=1.551 order=4 number=15,130,087 hash="2048ac…b754d5" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ed8340…97c2d3" parentHash="ce6434…5933cf" time=1,790,493,821 age=52m      cache=0.00B
+        INFO [09-27|10:15:41.898] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.380ms mgasps=1.591 order=4 number=15,130,088 hash="995beb…6974a8" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7e2809…77dddb" parentHash="2048ac…b754d5" time=1,790,493,941 age=50m      cache=0.00B
+        INFO [09-27|10:15:41.923] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.894ms mgasps=1.651 order=4 number=15,130,089 hash="d5856d…bb0641" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1f3585…ea1de4" parentHash="995beb…6974a8" time=1,790,494,061 age=48m      cache=0.00B
+        INFO [09-27|10:15:41.947] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.379ms mgasps=1.720 order=4 number=15,130,090 hash="861716…c8f786" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="13294a…94c35d" parentHash="d5856d…bb0641" time=1,790,494,181 age=46m      cache=0.00B
+        INFO [09-27|10:15:41.973] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.287ms mgasps=1.602 order=3 number=15,130,091 hash="8e7fa0…b6ffe4" difficulty=110 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f319cf…5207ef" parentHash="861716…c8f786" time=1,790,494,301 age=44m      cache=0.00B
+        INFO [09-27|10:15:41.998] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.903ms mgasps=1.650 order=3 number=15,130,092 hash="19480c…13a913" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="add7e8…95704d" parentHash="8e7fa0…b6ffe4" time=1,790,494,421 age=42m      cache=0.00B
+        INFO [09-27|10:15:42.023] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.666ms mgasps=1.558 order=4 number=15,130,093 hash="a537f4…d70c88" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="30e4fb…8bad56" parentHash="19480c…13a913" time=1,790,494,541 age=40m1s    cache=0.00B
+        INFO [09-27|10:15:42.048] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.607ms mgasps=1.689 order=4 number=15,130,094 hash="e726f0…c501ca" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="57da34…0b3f61" parentHash="a537f4…d70c88" time=1,790,494,661 age=38m1s    cache=0.00B
+        INFO [09-27|10:15:43.417] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:15:43.417] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:15:43.421] Automatic ticket purchase needs attention; retrying err="injected automatic record put failure"
+        INFO [09-27|10:15:43.421] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:15:43.422] Submitted transaction                    hash=0x3dec9579eaa5869f9e904cadb3da557866693ca89d5c1cc35245251b09479fe1 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:15:43.422] Automatic ticket submitted; awaiting inclusion tx="3dec95…479fe1" nonce=13
+            purchase_storage_test.go:203: storage_put_after: failure paused submission; recovery retained one purchase at canonical nonce 13, hash 0x3dec9579eaa5869f9e904cadb3da557866693ca89d5c1cc35245251b09479fe1; confirmations=0
+        INFO [09-27|10:15:49.422] Transaction pool stopped 
+        INFO [09-27|10:15:49.422] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (7.25s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/adopt_before
+    purchase_storage_test.go:87: storage fault adopt_before:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:15:50.451] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors3288968895/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:15:50.488] Persisted trie from memory database      nodes=8 size=996.00B time="208.649µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:15:50.508] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:50.508] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:50.508] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:15:50.542] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=15.722ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:50.571] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.653ms mgasps=1.559 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:15:50.598] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.650ms mgasps=1.560 order=5 number=15,130,083 hash="12faf7…fdf364" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,350 age=1h       cache=0.00B
+        INFO [09-27|10:15:50.627] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.872ms mgasps=1.341 order=4 number=15,130,084 hash="94080e…aee18e" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="845f14…894b52" parentHash="12faf7…fdf364" time=1,790,493,470 age=58m      cache=0.00B
+        INFO [09-27|10:15:50.656] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.662ms mgasps=1.278 order=4 number=15,130,085 hash="88fb37…3bec4e" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1991e1…5cab17" parentHash="94080e…aee18e" time=1,790,493,590 age=56m      cache=0.00B
+        INFO [09-27|10:15:50.683] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.338ms mgasps=1.596 order=4 number=15,130,086 hash="5e99ad…233ef1" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="98fcc4…b5ae20" parentHash="88fb37…3bec4e" time=1,790,493,710 age=54m      cache=0.00B
+        INFO [09-27|10:15:50.716] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.329ms mgasps=1.228 order=4 number=15,130,087 hash="da44ac…bd40be" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0ec5d3…a77ca5" parentHash="5e99ad…233ef1" time=1,790,493,830 age=52m      cache=0.00B
+        INFO [09-27|10:15:50.745] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.048ms mgasps=1.415 order=3 number=15,130,088 hash="edc6b9…f46296" difficulty=113 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="038a23…f1402a" parentHash="da44ac…bd40be" time=1,790,493,950 age=50m      cache=0.00B
+        INFO [09-27|10:15:50.777] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.921ms mgasps=1.427 order=4 number=15,130,089 hash="919d49…ca63d0" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3383d1…6302b1" parentHash="edc6b9…f46296" time=1,790,494,070 age=48m      cache=0.00B
+        INFO [09-27|10:15:50.804] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.986ms mgasps=1.522 order=4 number=15,130,090 hash="6607c9…812b23" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="056bd4…d2efde" parentHash="919d49…ca63d0" time=1,790,494,190 age=46m      cache=0.00B
+        INFO [09-27|10:15:50.831] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.306ms mgasps=1.488 order=4 number=15,130,091 hash="335a71…57b87a" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="a4fb68…884004" parentHash="6607c9…812b23" time=1,790,494,310 age=44m      cache=0.00B
+        INFO [09-27|10:15:50.858] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.133ms mgasps=1.621 order=4 number=15,130,092 hash="4e5f5e…c8be79" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8fc8e5…b772ec" parentHash="335a71…57b87a" time=1,790,494,430 age=42m      cache=0.00B
+        INFO [09-27|10:15:50.887] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.332ms mgasps=1.303 order=3 number=15,130,093 hash="443822…deadb1" difficulty=108 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3f80bc…76998b" parentHash="4e5f5e…c8be79" time=1,790,494,550 age=40m      cache=0.00B
+        INFO [09-27|10:15:50.913] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.503ms mgasps=1.468 order=3 number=15,130,094 hash="02b451…a35c2d" difficulty=107 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="064a15…f8c104" parentHash="443822…deadb1" time=1,790,494,670 age=38m      cache=0.00B
+        INFO [09-27|10:15:51.867] Regenerated local transaction journal    transactions=0 accounts=0
+        INFO [09-27|10:15:51.868] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        WARN [09-27|10:15:51.868] Automatic ticket purchase needs attention; retrying err="injected automatic record put failure"
+        WARN [09-27|10:15:51.869] Automatic ticket purchase needs attention; retrying err="injected automatic record put failure"
+            purchase_storage_test.go:203: storage_adopt_before: failure paused submission; recovery retained one purchase at canonical nonce 13, hash 0xfaf81d884f1604e10922145ad35ccfb31ec575c59e084d05c577b146e4de9f9d; confirmations=0
+        INFO [09-27|10:16:03.892] Transaction pool stopped 
+        INFO [09-27|10:16:03.892] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (13.44s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/adopt_after
+    purchase_storage_test.go:87: storage fault adopt_after:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:16:04.916] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors3729505492/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:16:04.946] Persisted trie from memory database      nodes=8 size=996.00B time="204.789µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:16:04.963] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:04.963] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:04.963] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:04.992] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.015ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:05.020] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.719ms mgasps=1.552 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:05.049] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.319ms mgasps=1.487 order=5 number=15,130,083 hash="cb16fb…664cc9" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,364 age=1h1s     cache=0.00B
+        INFO [09-27|10:16:05.081] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.101ms mgasps=1.322 order=4 number=15,130,084 hash="3218db…8f003a" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8409a1…bfd23c" parentHash="cb16fb…664cc9" time=1,790,493,484 age=58m1s    cache=0.00B
+        INFO [09-27|10:16:05.114] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.351ms mgasps=1.302 order=4 number=15,130,085 hash="93e7dc…5cea62" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="55b791…86f379" parentHash="3218db…8f003a" time=1,790,493,604 age=56m1s    cache=0.00B
+        INFO [09-27|10:16:05.141] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.036ms mgasps=1.517 order=4 number=15,130,086 hash="d01c4d…adc70b" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="eef7b5…9b7a67" parentHash="93e7dc…5cea62" time=1,790,493,724 age=54m1s    cache=0.00B
+        INFO [09-27|10:16:05.168] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.944ms mgasps=1.424 order=4 number=15,130,087 hash="254624…a0e732" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7bcf76…a078e4" parentHash="d01c4d…adc70b" time=1,790,493,844 age=52m1s    cache=0.00B
+        INFO [09-27|10:16:05.197] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.750ms mgasps=1.352 order=4 number=15,130,088 hash="fd4ac2…b744fa" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b55396…f1f222" parentHash="254624…a0e732" time=1,790,493,964 age=50m1s    cache=0.00B
+        INFO [09-27|10:16:05.222] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.950ms mgasps=1.644 order=4 number=15,130,089 hash="a77832…2fa0bd" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ffa551…4bb4b4" parentHash="fd4ac2…b744fa" time=1,790,494,084 age=48m1s    cache=0.00B
+        INFO [09-27|10:16:05.248] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.617ms mgasps=1.563 order=4 number=15,130,090 hash="fdbd97…a2b9bb" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="00abb6…5b16ce" parentHash="a77832…2fa0bd" time=1,790,494,204 age=46m1s    cache=0.00B
+        INFO [09-27|10:16:05.273] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.193ms mgasps=1.613 order=4 number=15,130,091 hash="c276f4…a20e74" difficulty=68 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1260ea…82f542" parentHash="fdbd97…a2b9bb" time=1,790,494,324 age=44m1s    cache=0.00B
+        INFO [09-27|10:16:05.298] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.239ms mgasps=1.739 order=3 number=15,130,092 hash="20b84e…27f205" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="a4f38c…ecf990" parentHash="c276f4…a20e74" time=1,790,494,444 age=42m1s    cache=0.00B
+        INFO [09-27|10:16:05.325] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.246ms mgasps=1.494 order=3 number=15,130,093 hash="d1d544…d5a6f1" difficulty=108 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="7d8df2…613f25" parentHash="20b84e…27f205" time=1,790,494,564 age=40m1s    cache=0.00B
+        INFO [09-27|10:16:05.354] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.070ms mgasps=1.513 order=4 number=15,130,094 hash="76e25a…d03746" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e66a0a…2f45e3" parentHash="d1d544…d5a6f1" time=1,790,494,684 age=38m1s    cache=0.00B
+        INFO [09-27|10:16:06.195] Regenerated local transaction journal    transactions=0 accounts=0
+        INFO [09-27|10:16:06.195] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        WARN [09-27|10:16:06.196] Automatic ticket purchase needs attention; retrying err="injected automatic record put failure"
+            purchase_storage_test.go:203: storage_adopt_after: failure paused submission; recovery retained one purchase at canonical nonce 13, hash 0x87585411efc4ef73717c7a627e0edc4921185f5a6a29bc7e20495ac86267e8ed; confirmations=0
+        INFO [09-27|10:16:12.207] Transaction pool stopped 
+        INFO [09-27|10:16:12.208] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (7.29s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/delete_before
+    purchase_storage_test.go:87: storage fault delete_before:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:16:13.233] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors2537146384/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:16:13.269] Persisted trie from memory database      nodes=8 size=996.00B time="247.45µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:16:13.287] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:13.287] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:13.287] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:13.318] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=15.131ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:13.346] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.498ms mgasps=1.577 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:13.376] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.371ms mgasps=1.481 order=5 number=15,130,083 hash="32930a…9f713a" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,373 age=1h       cache=0.00B
+        INFO [09-27|10:16:13.404] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.217ms mgasps=1.497 order=4 number=15,130,084 hash="0b8009…befabd" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2eed62…78704c" parentHash="32930a…9f713a" time=1,790,493,493 age=58m      cache=0.00B
+        INFO [09-27|10:16:13.432] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.840ms mgasps=1.434 order=4 number=15,130,085 hash="5dbc85…d3ff95" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="127e84…a2366c" parentHash="0b8009…befabd" time=1,790,493,613 age=56m      cache=0.00B
+        INFO [09-27|10:16:13.461] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.046ms mgasps=1.327 order=4 number=15,130,086 hash="363f25…5ff28f" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b8bbb3…c832ca" parentHash="5dbc85…d3ff95" time=1,790,493,733 age=54m      cache=0.00B
+        INFO [09-27|10:16:13.490] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.200ms mgasps=1.499 order=4 number=15,130,087 hash="d58608…6dd458" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="100e55…09e284" parentHash="363f25…5ff28f" time=1,790,493,853 age=52m      cache=0.00B
+        INFO [09-27|10:16:13.521] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.352ms mgasps=1.302 order=3 number=15,130,088 hash="588fdb…63132c" difficulty=113 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3ca188…0e94b3" parentHash="d58608…6dd458" time=1,790,493,973 age=50m      cache=0.00B
+        INFO [09-27|10:16:13.548] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.114ms mgasps=1.623 order=3 number=15,130,089 hash="5b5520…b25742" difficulty=112 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ff0c3a…20773f" parentHash="588fdb…63132c" time=1,790,494,093 age=48m      cache=0.00B
+        INFO [09-27|10:16:13.574] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.438ms mgasps=1.584 order=4 number=15,130,090 hash="7c8b23…f27ffe" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5a8f7d…f0b175" parentHash="5b5520…b25742" time=1,790,494,213 age=46m      cache=0.00B
+        INFO [09-27|10:16:13.600] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.569ms mgasps=1.694 order=4 number=15,130,091 hash="21a9f6…e5e303" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5400aa…24e41c" parentHash="7c8b23…f27ffe" time=1,790,494,333 age=44m      cache=0.00B
+        INFO [09-27|10:16:13.627] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.209ms mgasps=1.498 order=4 number=15,130,092 hash="2883ee…4a5fc2" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e740c6…b01228" parentHash="21a9f6…e5e303" time=1,790,494,453 age=42m      cache=0.00B
+        INFO [09-27|10:16:13.655] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.941ms mgasps=1.425 order=4 number=15,130,093 hash="e9961a…16d44d" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="94540f…d99d26" parentHash="2883ee…4a5fc2" time=1,790,494,573 age=40m      cache=0.00B
+        INFO [09-27|10:16:13.681] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.240ms mgasps=1.739 order=4 number=15,130,094 hash="fa8e96…9a6ac6" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="12005a…72b6bf" parentHash="e9961a…16d44d" time=1,790,494,693 age=38m      cache=0.00B
+        INFO [09-27|10:16:14.534] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:16:14.534] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:16:14.538] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:16:14.538] Submitted transaction                    hash=0xe8b2770db58e0f45de2cbb3dc4f9be68c6a4496fed96316376d42e2f4846cca4 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:16:14.538] Automatic ticket submitted; awaiting inclusion tx="e8b277…46cca4" nonce=13
+        INFO [09-27|10:16:14.567] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.861ms mgasps=1.428 order=4 number=15,130,095 hash="7377e0…7c9d72" difficulty=66  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ce0265…a73717" parentHash="fa8e96…9a6ac6" time=1,790,494,813 age=36m1s    cache=0.00B
+        WARN [09-27|10:16:14.569] Automatic ticket purchase needs attention; retrying err="injected automatic record delete failure"
+        WARN [09-27|10:16:14.570] Automatic ticket purchase needs attention; retrying err="injected automatic record delete failure"
+        INFO [09-27|10:16:21.101] Automatic ticket purchase confirmed      tx="e8b277…46cca4" block="7377e0…7c9d72"
+        WARN [09-27|10:16:21.101] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:16:21.106] Submitted transaction                    hash=0x2c90b97fbab7fe3ae6a61967da3e6066e5cd4f3678a8afe57ddfc2689b92a64e from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:16:21.106] Automatic ticket submitted; awaiting inclusion tx="2c90b9…92a64e" nonce=14
+            purchase_storage_test.go:203: storage_delete_before: failure paused submission; recovery retained one purchase at canonical nonce 14, hash 0x2c90b97fbab7fe3ae6a61967da3e6066e5cd4f3678a8afe57ddfc2689b92a64e; confirmations=1
+        INFO [09-27|10:16:27.107] Transaction pool stopped 
+        INFO [09-27|10:16:27.107] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (13.34s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/delete_after
+    purchase_storage_test.go:87: storage fault delete_after:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:16:28.131] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors3375371040/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:16:28.179] Persisted trie from memory database      nodes=8 size=996.00B time="214.817µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:16:28.197] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:28.197] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:28.197] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:28.227] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=13.817ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:28.256] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.115ms mgasps=1.508 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:28.284] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.499ms mgasps=1.468 order=5 number=15,130,083 hash="d28422…0d8f1f" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,388 age=1h       cache=0.00B
+        INFO [09-27|10:16:28.310] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.431ms mgasps=1.585 order=4 number=15,130,084 hash="d2eecc…c7a81a" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="eb2f58…dd55c4" parentHash="d28422…0d8f1f" time=1,790,493,508 age=58m      cache=0.00B
+        INFO [09-27|10:16:28.337] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.359ms mgasps=1.483 order=4 number=15,130,085 hash="77d3fd…390dec" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="86b0dc…d069db" parentHash="d2eecc…c7a81a" time=1,790,493,628 age=56m      cache=0.00B
+        INFO [09-27|10:16:28.364] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.866ms mgasps=1.655 order=3 number=15,130,086 hash="600d50…0e6860" difficulty=115 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3f597a…b93023" parentHash="77d3fd…390dec" time=1,790,493,748 age=54m      cache=0.00B
+        INFO [09-27|10:16:28.390] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.922ms mgasps=1.647 order=4 number=15,130,087 hash="609a2b…1e91bf" difficulty=71  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="73a75d…22adae" parentHash="600d50…0e6860" time=1,790,493,868 age=52m      cache=0.00B
+        INFO [09-27|10:16:28.417] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.778ms mgasps=1.545 order=4 number=15,130,088 hash="6ddb30…aa7469" difficulty=70  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="d88758…bbea8b" parentHash="609a2b…1e91bf" time=1,790,493,988 age=50m      cache=0.00B
+        INFO [09-27|10:16:28.444] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.199ms mgasps=1.613 order=4 number=15,130,089 hash="0c6bfd…79165a" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ddf541…f1e36e" parentHash="6ddb30…aa7469" time=1,790,494,108 age=48m      cache=0.00B
+        INFO [09-27|10:16:28.469] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.279ms mgasps=1.603 order=4 number=15,130,090 hash="d456b4…4d8cac" difficulty=69  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5043b7…bb332f" parentHash="0c6bfd…79165a" time=1,790,494,228 age=46m      cache=0.00B
+        INFO [09-27|10:16:28.496] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.809ms mgasps=1.662 order=4 number=15,130,091 hash="ea69c2…b8747b" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ee0c2d…50e9e8" parentHash="d456b4…4d8cac" time=1,790,494,348 age=44m      cache=0.00B
+        INFO [09-27|10:16:28.521] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.530ms mgasps=1.573 order=4 number=15,130,092 hash="fa1ab5…e49ef9" difficulty=68  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="c9721a…fe3d6b" parentHash="ea69c2…b8747b" time=1,790,494,468 age=42m      cache=0.00B
+        INFO [09-27|10:16:28.546] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.173ms mgasps=1.616 order=4 number=15,130,093 hash="4870a2…f96286" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="97fec7…75fdbe" parentHash="fa1ab5…e49ef9" time=1,790,494,588 age=40m      cache=0.00B
+        INFO [09-27|10:16:28.571] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.099ms mgasps=1.625 order=3 number=15,130,094 hash="c7076f…2088d1" difficulty=107 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b96515…191b9f" parentHash="4870a2…f96286" time=1,790,494,708 age=38m      cache=0.00B
+        INFO [09-27|10:16:29.421] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:16:29.422] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:16:29.425] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:16:29.425] Submitted transaction                    hash=0xdbd9931ad8b73ea1b2f2298bc1802563ae0635abdb98633bbbfee89e12fb4ff1 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:16:29.426] Automatic ticket submitted; awaiting inclusion tx="dbd993…fb4ff1" nonce=13
+        INFO [09-27|10:16:29.452] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.884ms mgasps=1.529 order=4 number=15,130,095 hash="3a48bb…5fcbfb" difficulty=66  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e0549f…f63bbb" parentHash="c7076f…2088d1" time=1,790,494,828 age=36m1s    cache=0.00B
+        WARN [09-27|10:16:29.453] Automatic ticket purchase needs attention; retrying err="injected automatic record delete failure"
+        WARN [09-27|10:16:29.454] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        INFO [09-27|10:16:29.457] Submitted transaction                    hash=0xf93ee0f3bf8a7172e2883bbb863696618c62558db023d44e3319e47a140bc8d6 from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=14 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:16:29.458] Automatic ticket submitted; awaiting inclusion tx="f93ee0…0bc8d6" nonce=14
+            purchase_storage_test.go:203: storage_delete_after: failure paused submission; recovery retained one purchase at canonical nonce 14, hash 0xf93ee0f3bf8a7172e2883bbb863696618c62558db023d44e3319e47a140bc8d6; confirmations=0
+        INFO [09-27|10:16:35.458] Transaction pool stopped 
+        INFO [09-27|10:16:35.458] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (7.33s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/has
+    purchase_storage_test.go:87: storage fault has:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:16:36.483] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors2935859434/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:16:36.531] Persisted trie from memory database      nodes=8 size=996.00B time="251.57µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:16:36.549] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:36.549] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:36.549] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:36.578] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=14.269ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:36.606] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.573ms mgasps=1.568 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:36.634] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.191ms mgasps=1.500 order=5 number=15,130,083 hash="322f04…e0ad9e" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,396 age=1h       cache=0.00B
+        INFO [09-27|10:16:36.666] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.531ms mgasps=1.288 order=4 number=15,130,084 hash="a0e4ae…144ad7" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="60f70e…5ab631" parentHash="322f04…e0ad9e" time=1,790,493,516 age=58m      cache=0.00B
+        INFO [09-27|10:16:36.695] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.935ms mgasps=1.336 order=4 number=15,130,085 hash="49997e…15ce28" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="2fbcb1…bcac8f" parentHash="a0e4ae…144ad7" time=1,790,493,636 age=56m      cache=0.00B
+        INFO [09-27|10:16:36.721] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.385ms mgasps=1.590 order=4 number=15,130,086 hash="ba4e67…70310c" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e45fe5…54e44e" parentHash="49997e…15ce28" time=1,790,493,756 age=54m      cache=0.00B
+        INFO [09-27|10:16:36.749] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.189ms mgasps=1.401 order=4 number=15,130,087 hash="b6e51f…285bba" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1d4636…d163fa" parentHash="ba4e67…70310c" time=1,790,493,876 age=52m      cache=0.00B
+        INFO [09-27|10:16:36.775] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.149ms mgasps=1.619 order=4 number=15,130,088 hash="7dfd20…9d7e8c" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="34ee0e…b454e1" parentHash="b6e51f…285bba" time=1,790,493,996 age=50m      cache=0.00B
+        INFO [09-27|10:16:36.807] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.595ms mgasps=1.365 order=4 number=15,130,089 hash="7a092e…50d703" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0cb42c…9567f9" parentHash="7dfd20…9d7e8c" time=1,790,494,116 age=48m      cache=0.00B
+        INFO [09-27|10:16:36.833] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.618ms mgasps=1.563 order=3 number=15,130,090 hash="761772…ec990c" difficulty=111 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="cb9a50…829b4b" parentHash="7a092e…50d703" time=1,790,494,236 age=46m      cache=0.00B
+        INFO [09-27|10:16:36.859] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=13.605ms mgasps=1.565 order=3 number=15,130,091 hash="a1efda…ee5551" difficulty=110 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="b8ddd2…64ef12" parentHash="761772…ec990c" time=1,790,494,356 age=44m      cache=0.00B
+        INFO [09-27|10:16:36.885] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.786ms mgasps=1.665 order=3 number=15,130,092 hash="73c4d4…5c7067" difficulty=109 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="1cce7a…7dfe2d" parentHash="a1efda…ee5551" time=1,790,494,476 age=42m      cache=0.00B
+        INFO [09-27|10:16:36.909] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=12.897ms mgasps=1.651 order=4 number=15,130,093 hash="cdc0ae…243d06" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="786aba…05dd12" parentHash="73c4d4…5c7067" time=1,790,494,596 age=40m      cache=0.00B
+        INFO [09-27|10:16:36.937] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.362ms mgasps=1.386 order=4 number=15,130,094 hash="6cce58…e2cb03" difficulty=67  miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="5b20ce…329a91" parentHash="cdc0ae…243d06" time=1,790,494,716 age=38m      cache=0.00B
+        INFO [09-27|10:16:37.788] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:16:37.788] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:16:37.792] Automatic ticket purchase needs attention; retrying err="injected temporary submission failure"
+        WARN [09-27|10:16:37.792] Automatic ticket purchase needs attention; retrying err="injected automatic record has failure"
+        WARN [09-27|10:16:37.792] Automatic ticket purchase needs attention; retrying err="injected automatic record has failure"
+        INFO [09-27|10:16:43.793] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:16:43.794] Submitted transaction                    hash=0xb0677963e9834bdd847f7d6f81c5e07f90b1898d7e6dc34cdcc4b9ec976728ce from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:16:43.794] Automatic ticket submitted; awaiting inclusion tx="b06779…6728ce" nonce=13
+            purchase_storage_test.go:203: storage_has: failure paused submission; recovery retained one purchase at canonical nonce 13, hash 0xb0677963e9834bdd847f7d6f81c5e07f90b1898d7e6dc34cdcc4b9ec976728ce; confirmations=0
+        INFO [09-27|10:16:50.321] Transaction pool stopped 
+        INFO [09-27|10:16:50.321] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (13.33s)
+        PASS
+=== RUN   TestAutomaticPurchaseStorageErrors/get
+    purchase_storage_test.go:87: storage fault get:
+        === RUN   TestAutomaticPurchaseStorageErrors
+        INFO [09-27|10:16:51.366] Allocated cache and file handles         database=/tmp/TestAutomaticPurchaseStorageErrors963877275/001/chaindata cache=16.00MiB handles=16
+        INFO [09-27|10:16:51.418] Persisted trie from memory database      nodes=8 size=996.00B time="233.131µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|10:16:51.441] Loaded most recent local header          number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:51.441] Loaded most recent local full block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:51.441] Loaded most recent local fast block      number=15,130,080 hash="96b58b…6be208" td=1 age=11mo3w3d
+        INFO [09-27|10:16:51.476] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=16.731ms mgasps=0.000 order=6 number=15,130,081 hash="183d1d…dc7610" difficulty=30 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="6f28ea…a3e502" parentHash="96b58b…6be208" time=1,759,826,750 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:51.519] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.344ms mgasps=1.227 order=4 number=15,130,082 hash="574c0e…288ba9" difficulty=75 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbd6d5…93a230" parentHash="183d1d…dc7610" time=1,759,826,870 age=11mo3w3d cache=0.00B
+        INFO [09-27|10:16:51.551] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.821ms mgasps=1.345 order=5 number=15,130,083 hash="90312e…06e4c3" difficulty=46 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="ea00b1…170489" parentHash="574c0e…288ba9" time=1,790,493,411 age=1h       cache=0.00B
+        INFO [09-27|10:16:51.586] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.598ms mgasps=1.283 order=4 number=15,130,084 hash="f4a108…a387c3" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="8b9ea3…5010c0" parentHash="90312e…06e4c3" time=1,790,493,531 age=58m      cache=0.00B
+        INFO [09-27|10:16:51.624] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=22.824ms mgasps=0.933 order=4 number=15,130,085 hash="badd80…bd292b" difficulty=72 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="3f6573…c29564" parentHash="f4a108…a387c3" time=1,790,493,651 age=56m      cache=0.00B
+        INFO [09-27|10:16:51.657] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=16.765ms mgasps=1.270 order=4 number=15,130,086 hash="38f8e2…0ecbdb" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="e71289…ac026d" parentHash="badd80…bd292b" time=1,790,493,771 age=54m      cache=0.00B
+        INFO [09-27|10:16:51.692] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.486ms mgasps=1.217 order=4 number=15,130,087 hash="d45c5c…cb201e" difficulty=71 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="f9347e…ebd533" parentHash="38f8e2…0ecbdb" time=1,790,493,891 age=52m      cache=0.00B
+        INFO [09-27|10:16:51.725] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.943ms mgasps=1.186 order=4 number=15,130,088 hash="79a1c4…197d5b" difficulty=70 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="413561…6680e5" parentHash="d45c5c…cb201e" time=1,790,494,011 age=50m      cache=0.00B
+        INFO [09-27|10:16:51.761] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=17.218ms mgasps=1.236 order=4 number=15,130,089 hash="1e2ea5…505cb8" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="0a342c…5e270a" parentHash="79a1c4…197d5b" time=1,790,494,131 age=48m      cache=0.00B
+        INFO [09-27|10:16:51.793] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.591ms mgasps=1.365 order=4 number=15,130,090 hash="3e5b2e…ca8f1e" difficulty=69 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="567a7a…9eb95e" parentHash="1e2ea5…505cb8" time=1,790,494,251 age=46m      cache=0.00B
+        INFO [09-27|10:16:51.822] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.602ms mgasps=1.458 order=4 number=15,130,091 hash="8dbc3b…c24510" difficulty=68 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="4ac6ae…59711b" parentHash="3e5b2e…ca8f1e" time=1,790,494,371 age=44m      cache=0.00B
+        INFO [09-27|10:16:51.850] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.448ms mgasps=1.473 order=4 number=15,130,092 hash="4fe51c…8d9c52" difficulty=67 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="dbc2c9…3cebff" parentHash="8dbc3b…c24510" time=1,790,494,491 age=42m      cache=0.00B
+        INFO [09-27|10:16:51.877] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=14.134ms mgasps=1.506 order=4 number=15,130,093 hash="722232…43528e" difficulty=67 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="aece69…4b8d3b" parentHash="4fe51c…8d9c52" time=1,790,494,611 age=40m      cache=0.00B
+        INFO [09-27|10:16:51.905] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=15.351ms mgasps=1.387 order=2 number=15,130,094 hash="248c11…d482c2" difficulty=171 miner=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf root="681288…a1222e" parentHash="722232…43528e" time=1,790,494,731 age=38m      cache=0.00B
+        INFO [09-27|10:16:52.779] Regenerated local transaction journal    transactions=0 accounts=0
+        WARN [09-27|10:16:52.780] Caller gas above allowance, capping      requested=30,000,000 cap=100,000
+        WARN [09-27|10:16:52.784] Automatic ticket purchase needs attention; retrying err="injected temporary submission failure"
+        WARN [09-27|10:16:52.784] Automatic ticket purchase needs attention; retrying err="injected automatic record get failure"
+        WARN [09-27|10:16:52.784] Automatic ticket purchase needs attention; retrying err="injected automatic record get failure"
+        INFO [09-27|10:16:58.785] Setting new local account                address=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
+        INFO [09-27|10:16:58.786] Submitted transaction                    hash=0xdf03cc868052440c665d6ffe810c3501cd83a18b91b7de72868ea05d1738650f from=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf nonce=13 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|10:16:58.786] Automatic ticket submitted; awaiting inclusion tx="df03cc…38650f" nonce=13
+            purchase_storage_test.go:203: storage_get: failure paused submission; recovery retained one purchase at canonical nonce 13, hash 0xdf03cc868052440c665d6ffe810c3501cd83a18b91b7de72868ea05d1738650f; confirmations=0
+        INFO [09-27|10:17:04.787] Transaction pool stopped 
+        INFO [09-27|10:17:04.787] Blockchain manager stopped 
+        --- PASS: TestAutomaticPurchaseStorageErrors (13.42s)
+        PASS
+--- PASS: TestAutomaticPurchaseStorageErrors (96.88s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/put_before (14.29s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/put_after (8.28s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/adopt_before (14.47s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/adopt_after (8.31s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/delete_before (14.37s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/delete_after (8.35s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/has (14.35s)
+    --- PASS: TestAutomaticPurchaseStorageErrors/get (14.45s)
+PASS

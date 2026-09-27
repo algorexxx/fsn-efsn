@@ -116,16 +116,26 @@ func requireDeliveryRoot(t *testing.T) string {
 }
 
 func TestFullStatePurchaseDirectDelivery(t *testing.T) {
-	rehearseFullStatePurchaseDelivery(t, false)
+	rehearseFullStatePurchaseDelivery(t, "direct")
 }
 
 func TestFullStatePurchasePeerReconnect(t *testing.T) {
-	rehearseFullStatePurchaseDelivery(t, true)
+	rehearseFullStatePurchaseDelivery(t, "reconnect")
 }
 
-func rehearseFullStatePurchaseDelivery(t *testing.T, reconnect bool) {
+func TestFullStatePurchaseAutomaticRebroadcast(t *testing.T) {
+	rehearseFullStatePurchaseDelivery(t, "automatic")
+}
+
+func rehearseFullStatePurchaseDelivery(t *testing.T, mode string) {
 	t.Helper()
 	root := requireDeliveryRoot(t)
+	reconnect := mode == "reconnect"
+	originSubmission := mode != "direct"
+	initialNonces, requiredNonces := [2]uint64{8, 26}, [2]uint64{9, 27}
+	if mode == "automatic" {
+		initialNonces, requiredNonces = [2]uint64{9, 38}, [2]uint64{11, 40}
+	}
 	var retained [2]struct {
 		Header *types.Header
 		Saved  hexutil.Bytes
@@ -138,13 +148,16 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, reconnect bool) {
 	owners := [2]common.Address{common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
 	for i, role := range []string{"producer", "verifier"} {
 		readHandoverJSON(t, filepath.Join(root, "diagnostic-saved-"+role+".json"), &retained[i])
+		if mode == "automatic" && retained[i].Header.Hash() != common.HexToHash("0xd94c46f9d7993ebbd0ac7e6d984e36b280724b30028edd04166e0b7d59f5a8f8") {
+			t.Fatal("automatic retry requires the retained recurring failure at block 15130124")
+		}
 		saved[i] = new(types.Transaction)
 		requireNoError(t, saved[i].UnmarshalBinary(retained[i].Saved))
 		path := seedFullStateRecoveryNode(t, filepath.Join(root, role), anchor, byte(i+2))
 		nodes[i] = startRehearsalNodeWithTimeout(t, path, 5*time.Minute)
 		requireRehearsalHead(t, nodes[i].status(t), types.NewBlockWithHeader(retained[0].Header))
 		state := readPeerPurchase(t, nodes[i])
-		if !bytes.Equal(state.Saved, retained[i].Saved) || state.Nonce != []uint64{8, 26}[i] || len(state.Pending)+len(state.Queued) != 0 {
+		if !bytes.Equal(state.Saved, retained[i].Saved) || state.Nonce != initialNonces[i] || saved[i].Nonce() != initialNonces[i] || len(state.Pending)+len(state.Queued) != 0 {
 			t.Fatal("reopened failure differs from retained saved intent and nonce")
 		}
 	}
@@ -167,7 +180,7 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, reconnect bool) {
 	observe()
 	var submitted common.Hash
 	target := nodes[1]
-	if reconnect {
+	if originSubmission {
 		connectRehearsalPeer(t, nodes[0], nodes[1])
 		awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
 		target = nodes[0]
@@ -178,7 +191,7 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, reconnect bool) {
 	}
 	var recipient deliveryPoolState
 	requireNoError(t, nodes[1].call(t, &recipient, "lab_deliveryPool"))
-	if reconnect {
+	if originSubmission {
 		time.Sleep(time.Second)
 		requireNoError(t, nodes[1].call(t, &recipient, "lab_deliveryPool"))
 		sender := readPeerPurchase(t, nodes[0])
@@ -235,7 +248,7 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, reconnect bool) {
 	for _, node := range []*rehearsalNode{nodes[1], nodes[0]} {
 		requireNoError(t, node.call(t, nil, "miner_startAutoBuyTicket"))
 	}
-	progress := awaitContinuousMinerProgressObserved(t, nodes[0], nodes[1], owners, [2]uint64{9, 27}, retained[0].Header.Number.Uint64(), 150*time.Second, observe)
+	progress := awaitContinuousMinerProgressObserved(t, nodes[0], nodes[1], owners, requiredNonces, retained[0].Header.Number.Uint64(), 150*time.Second, observe)
 	for i, tx := range saved {
 		for _, node := range nodes {
 			var receipt *types.Receipt
@@ -298,9 +311,9 @@ func rehearseFullStatePurchaseDelivery(t *testing.T, reconnect bool) {
 		}
 	}
 	direct := submitted
-	if reconnect {
+	if originSubmission {
 		direct = common.Hash{}
 	}
-	requireNoError(t, writeStateExportJSON(filepath.Join(root, "delivery-result.json"), map[string]interface{}{"Before": retained[0].Header, "Progress": progress.Header(), "Final": final.Header(), "Blocks": count, "ExactSavedPurchases": saved, "RequiredFreshNonces": []uint64{9, 27}, "DirectSubmission": direct, "PeerReconnect": reconnect, "NewFunding": false, "NonceGapExercised": false}))
-	t.Logf("exact saved purchase delivery and both-owner replenishment passed; peer-reconnect=%t cold suffix=%d final=%d %s", reconnect, count, final.NumberU64(), final.Hash().Hex())
+	requireNoError(t, writeStateExportJSON(filepath.Join(root, "delivery-result.json"), map[string]interface{}{"Before": retained[0].Header, "Progress": progress.Header(), "Final": final.Header(), "Blocks": count, "ExactSavedPurchases": saved, "RequiredFreshNonces": requiredNonces, "DirectSubmission": direct, "PeerReconnect": reconnect, "AutomaticRebroadcast": mode == "automatic", "NewFunding": false, "NonceGapExercised": false}))
+	t.Logf("exact saved purchase delivery and both-owner replenishment passed; mode=%s cold suffix=%d final=%d %s", mode, count, final.NumberU64(), final.Hash().Hex())
 }

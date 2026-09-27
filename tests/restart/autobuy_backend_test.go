@@ -134,3 +134,7 @@ func (b *autoBuyBackend) SendTx(_ context.Context, tx *types.Transaction) error 
 	b.submissions <- purchaseSubmission{tx: tx, err: err}
 	return err
 }
+
+func (b *autoBuyBackend) RebroadcastTx(ctx context.Context, tx *types.Transaction) error {
+	return ctx.Err()
+}
