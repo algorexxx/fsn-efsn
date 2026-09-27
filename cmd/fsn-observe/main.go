@@ -36,6 +36,8 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	incident := flags.String("incident", "", "incident ID to review")
 	sequence := flags.Uint64("at-sequence", 0, "expected current history sequence for review")
 	reason := flags.String("reason", "", "explicit operator review reason; not a notification")
+	backfillNode := flags.String("backfill-node", "", "collect complete block/receipt evidence for this configured node into --history")
+	backfillBlocks := flags.Uint64("backfill-blocks", 0, "required backfill batch bound, from 1 through 128; requires --backfill-node")
 	if err := flags.Parse(args); err != nil {
 		if err == flag.ErrHelp {
 			return nil
@@ -50,6 +52,9 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	}
 	if flags.NArg() != 0 || *budget != 0 && !*initialize || (*incident != "" || *sequence != 0 || *reason != "") && *action == "" {
 		return fmt.Errorf("invalid observer/history argument combination")
+	}
+	if (*backfillNode != "" || *backfillBlocks != 0) && (operations != 0 || *historyPath == "" || *backfillNode == "" || *backfillBlocks == 0 || *backfillBlocks > 128) {
+		return fmt.Errorf("backfill requires --history, --backfill-node and --backfill-blocks from 1 through 128; offline history operations are separate")
 	}
 	if operations > 0 {
 		if operations != 1 || *historyPath == "" || *timeout != 0 || !*initialize && *path != "" {
@@ -104,6 +109,13 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 		if err := history.CheckConfig(config); err != nil {
 			return err
 		}
+	}
+	if *backfillNode != "" {
+		state, err := history.Backfill(ctx, config, *backfillNode, *backfillBlocks, *timeout, time.Now)
+		if err != nil {
+			return err
+		}
+		return writeJSON(output, state)
 	}
 	report, err := observe.Collect(ctx, config, *timeout, time.Now)
 	if err != nil {

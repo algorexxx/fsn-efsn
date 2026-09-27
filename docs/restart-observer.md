@@ -4,10 +4,11 @@
 observation for one or two explicitly configured nodes. It supports the
 [monitoring proposal](restart-monitoring-response.md) and
 [operator recovery procedure](restart-operator-recovery.md). It does not yet
-implement a continuous monitor, block backfill or alert delivery. Optional
+implement a continuous scheduler or alert delivery. Optional
 [durable snapshot history and incident review](restart-observer-history.md) now
 retain observations and operator decisions across restarts. A report is evidence
-for diagnosis, not a launch approval.
+for diagnosis, not a launch approval. [Bounded block backfill](restart-observer-backfill.md)
+now retains complete supported block/receipt ranges and displaced branches.
 
 The implementation is confined to [cmd/fsn-observe](../cmd/fsn-observe/main.go)
 and [internal/observe](../internal/observe/collect.go). The ordinary node does
@@ -172,9 +173,11 @@ runtime changes. Both services and their temporary data are cleaned up.
 
 [Durable snapshot history and incident review](restart-observer-history.md) now
 pass retained-report transition, storage-failure and abrupt-exit checks on Windows
-and on Linux with race detection. This is opt-in local storage and does not perform
-complete block backfill or automatic resolution. Next implement bounded canonical
-block coverage and validate history mode during ordinary mining/reorganization.
+and on Linux with race detection. This is opt-in local storage with no automatic
+resolution. [Bounded canonical block/receipt backfill](restart-observer-backfill.md)
+now passes retained-fork and real-service IPC/HTTP tests, preserving displaced
+evidence and exposing gaps. Next validate history mode during ordinary mining
+and derive native purchase/selection/retreat accounting from retained blocks.
 Select operational
 timings, retention and notification destinations before deployment; demonstrate
 actual delivery, acknowledgement, loss of the collector, and receipt rollback

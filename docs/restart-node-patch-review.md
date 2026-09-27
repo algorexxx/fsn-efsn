@@ -163,3 +163,10 @@ separate database marker/scope, synchronous append, exclusive access, budget,
 strict replay, operator-review boundary and missing-data behavior. Derived
 incident state is reconstructed, not maintained as a second mutable cache.
 It adds no node runtime patch, automatic recovery or notification delivery.
+
+The subsequent [block backfill extension](restart-observer-backfill.md) also
+changes only the external command/package and tests. Review the anchor-bound
+ancestor search, original/replacement evidence retention, body/receipt commitment
+checks, explicit incomplete states and synchronous progress write. It reuses the
+existing RPC allowlist. Empty uncle bodies are an observer support limit, not an
+added consensus rule; Fusion's header uncle field carries a PoS commitment.

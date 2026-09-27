@@ -97,6 +97,11 @@ func TestCommandHistoryLifecycle(t *testing.T) {
 		t.Fatal("persistent observation did not reopen reviewed incident")
 	}
 	for _, args := range [][]string{
+		{"--config", configPath, "--timeout", "1s", "--backfill-node", "producer", "--backfill-blocks", "1"},
+		{"--history", historyPath, "--history-status", "--backfill-node", "producer", "--backfill-blocks", "1"},
+		{"--config", configPath, "--timeout", "1s", "--history", historyPath, "--backfill-blocks", "1"},
+		{"--config", configPath, "--timeout", "1s", "--history", historyPath, "--backfill-node", "producer", "--backfill-blocks", "129"},
+		{"--config", configPath, "--timeout", "1s", "--history", historyPath, "--backfill-node", "missing", "--backfill-blocks", "1"},
 		{"--history", historyPath, "--history-status", "--history-export"},
 		{"--history", historyPath, "--history-status", "--timeout", "1s"},
 		{"--history", historyPath, "--history-budget", "1024"},
@@ -106,6 +111,11 @@ func TestCommandHistoryLifecycle(t *testing.T) {
 		if err := run(context.Background(), args, &bytes.Buffer{}, &bytes.Buffer{}); err == nil {
 			t.Fatal("unsafe flag combination accepted", fmt.Sprint(args))
 		}
+	}
+	backfill := invoke("--config", configPath, "--timeout", "1s", "--history", historyPath, "--backfill-node", "producer", "--backfill-blocks", "1")
+	var coverage observe.HistoryStatus
+	if json.Unmarshal(backfill, &coverage) != nil || coverage.Sequence != 5 || len(coverage.Blocks) != 1 || coverage.Blocks[0].Status != "unavailable" || coverage.Blocks[0].StoredThrough.Number != 1 {
+		t.Fatal("failed backfill was not durably reported", string(backfill))
 	}
 }
 

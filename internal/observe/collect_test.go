@@ -48,6 +48,8 @@ type retainedRPC struct {
 	wrongRaw         bool
 	wrongReceiptHash bool
 	delay            time.Duration
+	chainID          string
+	networkID        string
 }
 
 func loadRetained(t *testing.T, directory string) *retainedRPC {
@@ -167,8 +169,14 @@ func (f *retainedRPC) reply(method string, params []json.RawMessage) interface{}
 	case "web3_clientVersion":
 		return "retained-RPC-fixture"
 	case "eth_chainId":
+		if f.chainID != "" {
+			return f.chainID
+		}
 		return "0x7f93"
 	case "net_version":
+		if f.networkID != "" {
+			return f.networkID
+		}
 		return "32659"
 	case "eth_syncing", "fsn_isAutoBuyTicket":
 		return method == "fsn_isAutoBuyTicket"

@@ -23,6 +23,7 @@ type HistoryStatus struct {
 	Coverage      string
 	Incidents     []Incident
 	Limitations   []string
+	Blocks        []BlockCoverage `json:",omitempty"`
 }
 
 type Incident struct {
@@ -59,6 +60,8 @@ type incidentHistory struct {
 	HistoryStatus
 	incidents map[string]*Incident
 	receipts  map[string]receiptLocation
+	paths     map[string][]common.Hash
+	coverage  map[string]BlockCoverage
 }
 
 func newIncidentHistory(meta historyMetadata) *incidentHistory {
@@ -67,11 +70,17 @@ func newIncidentHistory(meta historyMetadata) *incidentHistory {
 		"operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
 		"missing data or untracked transactions leave prior incidents unknown rather than clearing them",
 		"reports are retained snapshots; blocks between observations and complete mining/selection history are not backfilled",
-	}}, incidents: make(map[string]*Incident), receipts: make(map[string]receiptLocation)}
+	}}, incidents: make(map[string]*Incident), receipts: make(map[string]receiptLocation), paths: make(map[string][]common.Hash), coverage: make(map[string]BlockCoverage)}
 }
 
 func (state *incidentHistory) apply(event historyEvent) error {
-	if event.Sequence != state.Sequence+1 || event.TimeUTC.IsZero() || event.TimeUTC.Before(state.LastEventUTC) || (event.Report == nil) == (event.Review == nil) {
+	kinds := 0
+	for _, present := range []bool{event.Report != nil, event.Review != nil, event.Backfill != nil} {
+		if present {
+			kinds++
+		}
+	}
+	if event.Sequence != state.Sequence+1 || event.TimeUTC.IsZero() || event.TimeUTC.Before(state.LastEventUTC) || kinds != 1 {
 		return fmt.Errorf("invalid history event sequence, time or kind")
 	}
 	if event.Report != nil {
@@ -82,7 +91,15 @@ func (state *incidentHistory) apply(event historyEvent) error {
 			return fmt.Errorf("observation precedes previous event; inspect clock/order")
 		}
 		state.observe(event.Report, event.Sequence)
+		state.invalidateBlockCoverage(event.Report)
 		state.LastReportUTC = event.Report.FinishedUTC
+	} else if event.Backfill != nil {
+		if !event.TimeUTC.Equal(event.Backfill.FinishedUTC) || event.Backfill.StartedUTC.Before(state.LastEventUTC) {
+			return fmt.Errorf("backfill precedes previous event; inspect clock/order")
+		}
+		if err := state.applyBackfill(event.Backfill, event.Sequence); err != nil {
+			return err
+		}
 	} else {
 		review := event.Review
 		incident := state.incidents[review.Incident]
@@ -178,12 +195,16 @@ func (state *incidentHistory) observe(report *Report, sequence uint64) {
 			state.observeReceipt(node.Name, tx, trusted, sequence)
 		}
 	}
+	state.dateIncidents(sequence, report.FinishedUTC)
+}
+
+func (state *incidentHistory) dateIncidents(sequence uint64, when time.Time) {
 	for _, incident := range state.incidents {
 		if incident.FirstSequence == sequence {
-			incident.FirstUTC = report.FinishedUTC
+			incident.FirstUTC = when
 		}
 		if incident.LastSequence == sequence {
-			incident.LastSeenUTC = report.FinishedUTC
+			incident.LastSeenUTC = when
 		}
 	}
 }
@@ -277,5 +298,13 @@ func (state *incidentHistory) status() HistoryStatus {
 		result.Incidents = append(result.Incidents, *incident)
 	}
 	sort.Slice(result.Incidents, func(i, j int) bool { return result.Incidents[i].ID < result.Incidents[j].ID })
+	for _, coverage := range state.coverage {
+		if coverage.ObservedHead != nil {
+			head := *coverage.ObservedHead
+			coverage.ObservedHead = &head
+		}
+		result.Blocks = append(result.Blocks, coverage)
+	}
+	sort.Slice(result.Blocks, func(i, j int) bool { return result.Blocks[i].Node < result.Blocks[j].Node })
 	return result
 }

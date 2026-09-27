@@ -91,6 +91,13 @@ func TestObserverNodeServices(t *testing.T) {
 	}
 	nodes := [2]*rehearsalNode{startRehearsalNode(t, pair.paths[0]), startRehearsalNode(t, pair.paths[1])}
 	initial := runServiceObserver(t, binary, output, "ipc-divergence", config, nodes)
+	historyPath := ""
+	if os.Getenv("FUSION_RESTART_OBSERVER_BACKFILL") == "1" {
+		historyPath = filepath.Join(t.TempDir(), "observer-history")
+		runServiceHistory(t, binary, output, "history-init", nodes, "--config", filepath.Join(output, "ipc-divergence-config.json"), "--history", historyPath, "--init-history", "--history-budget", "16777216")
+		runServiceHistory(t, binary, output, "history-initial-snapshot", nodes, "--config", filepath.Join(output, "ipc-divergence-config.json"), "--history", historyPath, "--timeout", "5s")
+		requireServiceBackfill(t, binary, output, "backfill-local", "ipc-divergence", historyPath, nodes, "node-1", local, "complete_at_observation")
+	}
 	requireObserverTruth(t, initial, truth)
 	if initial.Comparison.Status != "divergent_at_common_height" || initial.Comparison.Height != 25 {
 		t.Fatal("real fork not detected", initial.Comparison)
@@ -128,12 +135,29 @@ func TestObserverNodeServices(t *testing.T) {
 			t.Fatal("HTTP and IPC disagree on transaction observations")
 		}
 	}
+	if historyPath != "" {
+		requireServiceBackfill(t, binary, output, "backfill-http-partial", "http-divergence", historyPath, nodes, "node-2", remote, "batch_limit")
+		requireServiceBackfill(t, binary, output, "backfill-http-complete", "http-divergence", historyPath, nodes, "node-2", final, "complete_at_observation")
+	}
 	syncRecoveryNode(t, nodes[0], nodes[1], final)
 	truth[0] = truth[1]
 	converged := runServiceObserver(t, binary, output, "ipc-converged", config, nodes)
 	requireObserverTruth(t, converged, truth)
 	if converged.Comparison.Status != "same_at_common_height" || converged.Nodes[0].Tracked[1].Inclusion != "absent" || converged.Nodes[0].Tracked[2].Inclusion != "canonical_ordinary_success" {
 		t.Fatal("observer failed to invalidate the displaced purchase after synchronization")
+	}
+	if historyPath != "" {
+		runServiceHistory(t, binary, output, "history-converged-snapshot", nodes, "--config", filepath.Join(output, "ipc-converged-config.json"), "--history", historyPath, "--timeout", "5s")
+		requireServiceBackfill(t, binary, output, "backfill-reorg-partial", "ipc-converged", historyPath, nodes, "node-1", remote, "batch_limit")
+		requireServiceBackfill(t, binary, output, "backfill-reorg-complete", "ipc-converged", historyPath, nodes, "node-1", final, "complete_at_observation")
+		raw := runServiceHistory(t, binary, output, "history-export", nodes, "--history", historyPath, "--history-export")
+		for _, block := range []*types.Block{local, remote, final} {
+			encoded, err := rlp.EncodeToBytes(block)
+			requireNoError(t, err)
+			if !bytes.Contains(raw, []byte(fmt.Sprintf("0x%x", encoded))) {
+				t.Fatal("service backfill lost original or replacement block bytes")
+			}
+		}
 	}
 	var submitted common.Hash
 	requireNoError(t, nodes[0].call(t, &submitted, "eth_sendRawTransaction", config.Tracked[3]))
@@ -161,6 +185,9 @@ func TestObserverNodeServices(t *testing.T) {
 	}
 	config.NetworkID = "99032659"
 	nodes[1].stop(t, false)
+	if historyPath != "" {
+		requireServiceBackfill(t, binary, output, "backfill-endpoint-lost", "ipc-converged", historyPath, nodes, "node-2", final, "unavailable")
+	}
 	lost := runServiceObserver(t, binary, output, "ipc-endpoint-lost", config, nodes)
 	if lost.Comparison.Status != "unavailable" || lost.Nodes[1].Head != nil || len(lost.Nodes[1].Issues) == 0 {
 		t.Fatal("lost service treated as agreement or zero state")
@@ -173,6 +200,44 @@ func TestObserverNodeServices(t *testing.T) {
 	nodes[0].stop(t, false)
 	requireNoError(t, writeStateExportJSON(filepath.Join(output, "result.json"), map[string]interface{}{"Passed": true, "Samples": 8, "Anchor": anchor.Hash(), "Final": final.Hash(), "PublicTestKeys": []int{1, 2}, "ObserverMutations": false, "ControlledDownloader": true, "OrdinaryMining": false, "LargeBackupRead": false}))
 	t.Log("external observer matched independently executed state over real IPC/HTTP, detected divergence and displaced purchase, classified a real queued nonce gap, disabled producer, wrong identity, lost/retired service; every invocation preserved observed node state")
+}
+
+func requireServiceBackfill(t *testing.T, binary, output, name, configName, history string, nodes [2]*rehearsalNode, nodeName string, through *types.Block, status string) {
+	t.Helper()
+	raw := runServiceHistory(t, binary, output, name, nodes, "--config", filepath.Join(output, configName+"-config.json"), "--history", history, "--timeout", "5s", "--backfill-node", nodeName, "--backfill-blocks", "1")
+	var result observe.HistoryStatus
+	requireNoError(t, json.Unmarshal(raw, &result))
+	for _, coverage := range result.Blocks {
+		if coverage.Node == nodeName {
+			if coverage.Status != status || coverage.StoredThrough.Number != through.NumberU64() || coverage.StoredThrough.Hash != through.Hash() {
+				t.Fatalf("unexpected service block coverage: %+v", coverage)
+			}
+			return
+		}
+	}
+	t.Fatal("missing service block coverage")
+}
+
+func runServiceHistory(t *testing.T, binary, output, name string, nodes [2]*rehearsalNode, args ...string) []byte {
+	t.Helper()
+	before := captureObserverServices(t, nodes)
+	ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, binary, args...)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout, cmd.Stderr = &stdout, &stderr
+	err := cmd.Run()
+	requireNoError(t, os.WriteFile(filepath.Join(output, name+".json"), stdout.Bytes(), 0600))
+	requireNoError(t, os.WriteFile(filepath.Join(output, name+"-stderr.txt"), stderr.Bytes(), 0600))
+	if err != nil || stderr.Len() != 0 {
+		t.Fatalf("history command exit=%v stderr=%s", err, stderr.Bytes())
+	}
+	after := captureObserverServices(t, nodes)
+	requireNoError(t, writeStateExportJSON(filepath.Join(output, name+"-state.json"), map[string]json.RawMessage{"Before": before, "After": after}))
+	if !bytes.Equal(before, after) {
+		t.Fatal("history command changed node state")
+	}
+	return stdout.Bytes()
 }
 
 func captureObserverTruth(t *testing.T, f *fixture, owner common.Address) observerServiceTruth {

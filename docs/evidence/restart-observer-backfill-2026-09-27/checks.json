@@ -1,0 +1,36 @@
+{
+  "baseline": "4edd015",
+  "inputs_verified": 713,
+  "tests": {
+    "windows": {
+      "passes_including_subtests": 78,
+      "race_detection": false,
+      "log_sha256": "5a1d7effdad275d865ee2a13cbdb2c3297d7727e29619178264b119eb0384754"
+    },
+    "linux": {
+      "passes_including_subtests": 78,
+      "race_detection": true,
+      "log_sha256": "bc4a488d4ba9d4ee8e489e8aeeb93103fd11801553be055bcb7737723ad0ac0f"
+    }
+  },
+  "identical_fixture_exports": {
+    "fork-history.jsonl": "cb8bd95b8aa65efb2363384213ac76286f55ed628bbe6f4f90c325663b93626c",
+    "fork-status.json": "94ea799e411726471a902d7dd5668726e1e7e38181734bcd2bb79f41595ea376"
+  },
+  "service_test": "passed with race detection; loopback only",
+  "service_log_sha256": "1ceb18e4b5cc61e0a6fd765be0daff759ae619328e3909cc50f7ea0992a9d76e",
+  "commands_preserving_node_state": 18,
+  "service_backfill_results_verified": 6,
+  "service_export_events": 7,
+  "both_branches_retained": true,
+  "built_binaries_present": {
+    "tmp/restart-observer-backfill/services-tests": "5c58feab7a44328b5aa047ddbcb043def44aae3f81f125162a78a2092edcc040",
+    "tmp/restart-observer-backfill/fsn-observe": "ad5591915b94944188863dd9d0acacb0c04cbd164bd87a37925cd7d73433d04c",
+    "tmp/restart-observer-backfill/fsn-observe.exe": "c558922c7d0d90b9467fbbbd84c3951d0524bf492bd78395154bfb23ab582c42"
+  },
+  "limitations": [
+    "No ordinary live mining or production workload.",
+    "RPC commitments and continuity, not state execution or consensus/finality validation.",
+    "Native purchase/selection/retreat accounting and notification delivery remain separate."
+  ]
+}

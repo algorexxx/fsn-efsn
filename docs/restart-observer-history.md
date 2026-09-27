@@ -6,9 +6,11 @@ reviews are retained; status is reconstructed from those records each time.
 The chain RPC allowlist, node runtime and P1–P15 are unchanged. No notification,
 scheduler, recovery action or automatic incident resolution is introduced.
 
-This implements **durable snapshot history**, not complete block history. Reports
-and status explicitly say `snapshots_only_no_block_backfill`. The command cannot
-prove that it has seen every intervening purchase, selection, retreat or fork.
+Snapshot-only operation implements **durable snapshot history** and reports
+`snapshots_only_no_block_backfill`. The subsequent [bounded block backfill](restart-observer-backfill.md)
+adds an explicit separate operation for complete supported block/receipt ranges,
+per-node coverage and retained displaced branches. Neither operation proves it
+has seen every temporary fork or establishes complete wallet accounting.
 
 ## Operator commands
 
@@ -63,6 +65,8 @@ the directory/export access controlled and do not put secrets in review reasons.
 | `branch_divergence` | Differing canonical hashes at a stable common height; no branch selection |
 | `purchase_attention` | Supplied purchase bytes with an observed nonce gap, conflicting pool nonce, invalid/currently unusable payload, insufficient free-backing estimate, failed/unverified native outcome, or consumed nonce without confirmed purchase |
 | `receipt_change` | A previously observed canonical success later missing/noncanonical/failed, or found at a different canonical location |
+| `block_coverage` | Incomplete or unavailable bounded block backfill; see the backfill guide |
+| `canonical_history_change` | Backfill replaces or rewinds an already retained branch |
 
 These are observed conditions needing review, not timed severity alerts. In
 particular, a supplied purchase ahead of the canonical nonce does not prove it
@@ -98,7 +102,7 @@ LevelDB dependency in a separate marked directory. Initialization only accepts
 a new leaf directory. Opening requires the observer format marker and existing
 metadata; it does not initialize an unmarked directory or invoke database
 repair. OS-backed database locking prevents concurrent opens, while in-process
-operations are serialized. Samples and reviews each use one synchronous event
+operations are serialized. Samples, reviews and backfill batches each use one synchronous event
 write. There is no separate mutable incident/status cache to become inconsistent
 with the original evidence.
 
@@ -147,8 +151,9 @@ after a sync-acknowledged write. CLI tests exercise initialization, collection,
 status, export, acknowledgement, resolution and reopening with failed local HTTP
 reads; offline operations issue no node RPCs and exports omit endpoint secrets.
 
-Next implement bounded canonical block backfill and coverage accounting, then
-test this history mode during actual ordinary mining/reorganization and validate
-representative storage/load. Notification routing, timing, acknowledgements in
+The [backfill extension](restart-observer-backfill.md) now passes bounded range,
+fork/reopen and actual-service checks. Next test history mode during ordinary
+mining and validate representative storage/load and native event accounting.
+Notification routing, timing, acknowledgements in
 the delivery system and a separately checked lost-monitor heartbeat remain
 undeployed. The [main plan](restart-plan.md) retains those release gates.
