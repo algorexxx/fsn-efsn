@@ -27,29 +27,112 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	flags.SetOutput(diagnostics)
 	path := flags.String("config", "", "JSON with explicit identities, node roles/endpoints and optional signed transactions")
 	timeout := flags.Duration("timeout", 0, "required positive deadline per node and comparison, e.g. 10s; not an alert threshold")
+	historyPath := flags.String("history", "", "absolute initialized observer history directory; never a node datadir")
+	initialize := flags.Bool("init-history", false, "create a new history directory from --config without contacting nodes")
+	budget := flags.Int64("history-budget", 0, "required logical byte budget for --init-history; no automatic pruning")
+	statusOnly := flags.Bool("history-status", false, "reconstruct history status without contacting nodes")
+	export := flags.Bool("history-export", false, "export metadata and original events as JSON Lines without contacting nodes")
+	action := flags.String("history-action", "", "record an operator review: acknowledge or resolve")
+	incident := flags.String("incident", "", "incident ID to review")
+	sequence := flags.Uint64("at-sequence", 0, "expected current history sequence for review")
+	reason := flags.String("reason", "", "explicit operator review reason; not a notification")
 	if err := flags.Parse(args); err != nil {
 		if err == flag.ErrHelp {
 			return nil
 		}
 		return err
 	}
-	if *path == "" || *timeout <= 0 || flags.NArg() != 0 {
+	operations := 0
+	for _, selected := range []bool{*initialize, *statusOnly, *export, *action != ""} {
+		if selected {
+			operations++
+		}
+	}
+	if flags.NArg() != 0 || *budget != 0 && !*initialize || (*incident != "" || *sequence != 0 || *reason != "") && *action == "" {
+		return fmt.Errorf("invalid observer/history argument combination")
+	}
+	if operations > 0 {
+		if operations != 1 || *historyPath == "" || *timeout != 0 || !*initialize && *path != "" {
+			return fmt.Errorf("select one history operation with --history; collection flags are separate")
+		}
+		var history *observe.History
+		var err error
+		if *initialize {
+			config, readErr := readConfig(*path)
+			if readErr != nil {
+				return readErr
+			}
+			history, err = observe.CreateHistory(*historyPath, config, *budget)
+		} else {
+			history, err = observe.OpenHistory(*historyPath)
+		}
+		if err != nil {
+			return err
+		}
+		defer history.Close()
+		if *export {
+			return history.Export(output)
+		}
+		var state observe.HistoryStatus
+		if *action != "" {
+			if *sequence == 0 {
+				return fmt.Errorf("review requires an explicit positive --at-sequence")
+			}
+			state, err = history.Review(observe.Review{Action: *action, Incident: *incident, Reason: *reason}, *sequence, time.Now())
+		} else {
+			state, err = history.Status()
+		}
+		if err != nil {
+			return err
+		}
+		return writeJSON(output, state)
+	}
+	if *path == "" || *timeout <= 0 {
 		return fmt.Errorf("--config and positive --timeout are required; no positional arguments")
 	}
-	file, err := os.Open(*path)
-	if err != nil {
-		return fmt.Errorf("cannot open observer config")
-	}
-	defer file.Close()
-	config, err := observe.ReadConfig(file)
+	config, err := readConfig(*path)
 	if err != nil {
 		return err
+	}
+	var history *observe.History
+	if *historyPath != "" {
+		history, err = observe.OpenHistory(*historyPath)
+		if err != nil {
+			return err
+		}
+		defer history.Close()
+		if err := history.CheckConfig(config); err != nil {
+			return err
+		}
 	}
 	report, err := observe.Collect(ctx, config, *timeout, time.Now)
 	if err != nil {
 		return err
 	}
+	if history != nil {
+		state, err := history.Record(config, report)
+		if err != nil {
+			return err
+		}
+		return writeJSON(output, struct {
+			observe.Report
+			History observe.HistoryStatus
+		}{report, state})
+	}
+	return writeJSON(output, report)
+}
+
+func readConfig(path string) (observe.Config, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return observe.Config{}, fmt.Errorf("cannot open observer config")
+	}
+	defer file.Close()
+	return observe.ReadConfig(file)
+}
+
+func writeJSON(output io.Writer, value interface{}) error {
 	encoder := json.NewEncoder(output)
 	encoder.SetIndent("", "  ")
-	return encoder.Encode(report)
+	return encoder.Encode(value)
 }

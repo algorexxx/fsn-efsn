@@ -155,3 +155,11 @@ The [actual-service observer checks](restart-observer-services.md) add only a
 Linux integration test and optional loopback HTTP to the test harness. Eight
 CLI observations pass against real IPC/HTTP with race detection, including a
 controlled reorganization, without changing observer or node runtime code.
+
+The subsequent [history/incident extension](restart-observer-history.md) changes
+only the external observer: `cmd/fsn-observe/main.go` and
+`internal/observe/{history,incidents}.go`, with tests and evidence. Review its
+separate database marker/scope, synchronous append, exclusive access, budget,
+strict replay, operator-review boundary and missing-data behavior. Derived
+incident state is reconstructed, not maintained as a second mutable cache.
+It adds no node runtime patch, automatic recovery or notification delivery.

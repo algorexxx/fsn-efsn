@@ -6,8 +6,10 @@ recovery paths into an operating proposal. It does not deploy a monitor, select
 alert destinations or approve production thresholds. P1–P15 are unchanged.
 
 The [external snapshot collector](restart-observer.md) now implements bounded
-read-only RPC observations and retained-case classification tests. Continuous
-history coverage, incident tracking and notifications remain unimplemented;
+read-only RPC observations and retained-case classification tests. Optional
+[durable snapshot history and incident review](restart-observer-history.md) now
+retain incidents across restarts and reopen them on observed recurrence.
+Complete block-history coverage and notifications remain unimplemented;
 the policy below describes the complete intended monitoring behavior, not a
 claim that the snapshot command implements it all.
 The [actual-service follow-up](restart-observer-services.md) now validates eight
@@ -185,9 +187,10 @@ working nodes solely to satisfy an optional cold audit during a live incident.
 | --- | --- | --- |
 | Manual recovery behavior | Demonstrated for the linked synthetic cases; unsupported conditions remain | Review and accept the scope and limitations in the operator runbook |
 | Observation collector | [External snapshot command implemented](restart-observer.md); retained-case tests and [compact actual-service IPC/HTTP checks](restart-observer-services.md) pass | Extend to collection during ordinary mining and representative deployed workload; select deployment limits |
-| Continuous coverage and incident state | Not implemented/deployed | Add durable block backfill, observation history, incident transitions and receipt rollback handling |
+| Snapshot history and incident state | [Append-only local history and review](restart-observer-history.md) implemented; cross-platform replay, reopening and abrupt-exit checks pass | Validate during ordinary live mining/reorganization and representative workload; approve storage/retention procedure |
+| Complete block coverage | No canonical block backfill implemented | Fetch and retain bounded complete intervening history; expose unresolved coverage gaps |
 | Routing and operator coverage | Peter is the initial operator; destinations/times unset | Select destinations and timings, then demonstrate notification, acknowledgement and a lost-monitor heartbeat |
-| Detection correctness | Retained snapshots, fault cases and controlled actual-service reorganization/lifecycle observations pass; continuous alerts have not been exercised | Extend to durable time sequences and isolated public-test-key delivery drills for the cases below |
+| Detection correctness | Retained snapshots, fault cases, actual-service observations and durable replay/review/recurrence transitions pass; continuous alerts have not been exercised | Extend history mode to live mining/reorganization and isolated public-test-key delivery drills for the cases below |
 | Real funding and custody | Synthetic contributions are not authorized real reserves | Recheck real-address intervals, gas runway and any explicitly agreed funding source; complete backup-key return |
 | Release review | P1–P15 and recovery tool still require independent review | Include observability limits and accepted manual policy in the review record; keep formatting/telemetry findings explicitly dispositioned |
 

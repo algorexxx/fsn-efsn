@@ -4,8 +4,10 @@
 observation for one or two explicitly configured nodes. It supports the
 [monitoring proposal](restart-monitoring-response.md) and
 [operator recovery procedure](restart-operator-recovery.md). It does not yet
-implement a continuous monitor, history backfill, incident lifecycle or alert
-delivery. A report is evidence for diagnosis, not a launch approval.
+implement a continuous monitor, block backfill or alert delivery. Optional
+[durable snapshot history and incident review](restart-observer-history.md) now
+retain observations and operator decisions across restarts. A report is evidence
+for diagnosis, not a launch approval.
 
 The implementation is confined to [cmd/fsn-observe](../cmd/fsn-observe/main.go)
 and [internal/observe](../internal/observe/collect.go). The ordinary node does
@@ -168,7 +170,11 @@ It uses compact complete synthetic history, not the recovered full database.
 Before/after state checks and Linux race detection pass without observer or node
 runtime changes. Both services and their temporary data are cleaned up.
 
-Next implement durable observation/history coverage and incident transitions.
+[Durable snapshot history and incident review](restart-observer-history.md) now
+pass retained-report transition, storage-failure and abrupt-exit checks on Windows
+and on Linux with race detection. This is opt-in local storage and does not perform
+complete block backfill or automatic resolution. Next implement bounded canonical
+block coverage and validate history mode during ordinary mining/reorganization.
 Select operational
 timings, retention and notification destinations before deployment; demonstrate
 actual delivery, acknowledgement, loss of the collector, and receipt rollback

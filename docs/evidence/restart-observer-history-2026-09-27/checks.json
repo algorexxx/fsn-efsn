@@ -1,0 +1,57 @@
+{
+  "baseline": "b13c92c",
+  "inputs_verified": 590,
+  "tests": {
+    "windows": {
+      "packages_passed": [
+        "internal/observe",
+        "cmd/fsn-observe"
+      ],
+      "test_and_subtest_passes": 52,
+      "race_detection": false,
+      "log_sha256": "ca6c569d681cc247ac6577dd93723c8d68397d64f40a5868d096276cae2914d5"
+    },
+    "linux": {
+      "packages_passed": [
+        "internal/observe",
+        "cmd/fsn-observe"
+      ],
+      "test_and_subtest_passes": 52,
+      "race_detection": true,
+      "log_sha256": "ef2710d5e1d3bd1d8b157eda0603c10215638f0828c64052f79b03ddfaabe660"
+    }
+  },
+  "exports_identical": {
+    "timeline.jsonl": "e1fafdd4b96114f046cd612f17ff26c36a441741f86ff1acef96e6e804cd45c5",
+    "timeline-status.json": "c3aced2c06d11bd5329d7e392e07690b69a4fe54e1b0422f39d871683aa729a6"
+  },
+  "events": 9,
+  "reports": 7,
+  "reviews": [
+    [
+      3,
+      "acknowledge"
+    ],
+    [
+      6,
+      "resolve"
+    ]
+  ],
+  "reopened_receipt_incident": "982a4ebf72e8652add9e54014ab3fea3c7d4c3d7036bd483339db796e594dfd2",
+  "linux_network": "loopback_only",
+  "binaries_present": {
+    "fsn-observe.exe": {
+      "sha256": "9f1e17fccbe62d352956f7b1819f33c9ccf4cbee34c7ca7d0ae6870e3457a48f",
+      "bytes": 11317248
+    },
+    "fsn-observe-linux": {
+      "sha256": "c11ea266c3686d909bd7457a6d5cc939635761a5b15fd99bf8c1cd1447d22aad",
+      "bytes": 10075392
+    }
+  },
+  "limitations": [
+    "Retained actual-service reports with synthetic times and recurrence variants; no new live node services.",
+    "Abrupt process exit after a synchronous write, not power loss or interrupted-write fault injection.",
+    "Snapshot history only; complete block coverage and production storage/load remain unvalidated."
+  ]
+}
