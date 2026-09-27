@@ -129,9 +129,12 @@ It verifies canonical nonce 39, unchanged saved nonce 43, exact displaced-byte
 retrieval and an explicit nonce-gap pause after an empty-pool restart. Both
 68-block cold ledgers agree. This is a pause/data-preservation result with a
 held signer and explicit downloader request, not another mining-continuation
-pass. Next test sequential recovery of the same self-transfer and purchases,
-followed by automatic successors and actual production. Crash/power-loss
-boundaries and real operator response responsibility remain separate concerns.
+pass. The subsequent [exact-transaction repair](restart-abandonment-repair.md)
+now passes that sequential recovery on restarted copies, including unchanged
+saved-intent execution, automatic successors, actual production and both
+86-block cold ledgers. No new funds or direct delivery are needed. Combining
+the rollback and repair in one uninterrupted live session, crash/power-loss
+boundaries and operator response responsibility remain separate concerns.
 
 All rehearsal processes are stopped. D: has about **138.5 GB** free and the WSL
 filesystem about **63.9 GB**. No W: workload was needed. Native logs use UTC+02;

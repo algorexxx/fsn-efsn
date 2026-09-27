@@ -140,11 +140,14 @@ an additional abandonment just because the wallet is behind. The live pool may
 already contain the original self-transfer; an empty-pool restart may contain
 neither it nor the displaced purchases.
 
-The next distinct rehearsal is to recover from a fresh copy of this paused
-result: validate and resubmit the **same** nonce-39 self-transfer, require its
-new canonical receipt, then recover purchases 40–42 in order, the saved 43 and
-fresh automatic successors with actual production. Recheck funding and interval
-admission at each stage; this test does not prove that continuation or a universal
-reserve. Keep unattended equal-weight convergence, crash/power-loss boundaries
-and operator monitoring responsibilities separate. Production P1–P15 and
-consensus rules are unchanged; this batch adds tests and investigation evidence.
+The [exact-transaction recovery](restart-abandonment-repair.md) now passes on
+fresh copies of this paused result. It replays the same nonce-39 self-transfer
+and purchases 40–42, executes saved 43 automatically and produces two fresh
+successors and actual blocks. No new funding, re-signing, record edits or direct
+delivery is needed. Both 86-block cold ledgers agree; the existing 68-block
+prefix remains unchanged. Purchases 41 and 42 wait for normal ticket returns.
+
+That restarted continuation does not combine rollback and repair in one live
+session, establish a universal reserve or fix unattended equal-weight
+convergence. Crash/power-loss boundaries and operator monitoring remain
+separate. Production P1–P15 and consensus rules are unchanged.

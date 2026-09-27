@@ -814,5 +814,21 @@ The old and competing histories receive complete ledger audits, followed by
 `TestFullStateAbandonmentReorgColdAudit` on both stopped databases. The evidence
 verifier compares all histories, native receipts, restored funds, saved bytes
 and source hashes. This characterizes safe pausing and data retention; manual
-recovery and actual production after this rollback remain separate. See the
+recovery and actual production after this rollback are tested separately. See the
 [abandonment rollback report](../../docs/restart-abandonment-reorg.md).
+
+`TestFullStateAbandonmentRepair` opens fresh copies of that rollback result at
+15,130,148. It verifies both cold inventories and retrieves the original
+self-transfer 39 and purchases 40–42 through existing block-hash RPC before
+starting normal miners and buyers. The same self-transfer must execute on both
+nodes without a native ticket log, leaving saved 43 unchanged at current nonce
+40. Existing manual-repair helpers then validate and replay purchases 40–42
+sequentially, allow ordinary ticket-return waits and record any necessary
+direct predecessor delivery. Saved 43 receives no manual submission. Acceptance
+requires its native success, two fresh automatic successors, sequential
+purchases and actual production by both owners. No new funding, re-signing,
+head/state/record edit, forced sync or held signer is used. A separate
+`TestFullStateAbandonmentRepairColdAudit` reconciles both complete ledgers.
+Evidence verification also checks the unchanged 68-block prefix, the four
+original transaction identities at new canonical locations, native purchase
+receipts and stopped records. See the [rollback repair report](../../docs/restart-abandonment-repair.md).

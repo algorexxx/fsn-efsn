@@ -243,11 +243,25 @@ agree, and the four displaced transactions remain retrievable by old block hash.
 After a branch change, recheck receipts, account nonce and the pool before
 authorizing another transaction. Retain and inspect the original self-transfer
 as well as the displaced purchases. Do not issue a second abandonment, clear
-the saved record or assume an enabled buyer fills the gap. Sequential replay of
-the original self-transfer and purchases, followed by saved-intent execution
-and resumed production, is the next separate rehearsal. The pause result uses
+the saved record or assume an enabled buyer fills the gap. The pause result uses
 a held signer and explicit downloader request; it does not prove automatic
 repair, unattended convergence or continued mining.
+
+The [subsequent recovery](restart-abandonment-repair.md) now passes with fresh
+services and real miners: replay the unchanged self-transfer at nonce 39,
+require its new canonical no-ticket receipt, then recover original purchases
+40–42 sequentially. Purchases 41 and 42 wait for ordinary ticket selection to
+return usable rights. The unchanged saved 43 executes automatically, followed
+by two fresh successors and actual production by both owners. Both 86-block
+cold ledgers pass, with no new funding, re-signing, record edits or direct
+delivery. All four manual transactions are sent to the originating pool.
+
+This is a conditional recovery after restart. Check actual ticket ownership,
+return eligibility, remaining interval coverage and pool admission before
+waiting on selection; earlier first-retreat losses can prevent the same route.
+Combining the rollback and this repair without stopping services remains a
+separate integration case. Do not infer automatic nonce-gap repair from this
+operator-assisted pass.
 
 ## Acceptance and retained record
 
