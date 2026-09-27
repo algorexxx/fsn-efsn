@@ -4,6 +4,9 @@ Draft for release review, 27 September 2026. This collects the demonstrated
 manual recovery path. It does not enable an automatic repair mechanism or mean
 that every failure below has a supported repair. Production adoption, response
 times, named operator coverage and a real funding source remain release decisions.
+The [monitoring and response guide](restart-monitoring-response.md) is the
+incident entry point: it defines observations, diagnosis order, ownership and
+implementation gaps. This document supplies the transaction recovery steps.
 
 The normal launch remains one backup-wallet block including the donation wallet's
 first funded purchase, followed by donation production. The backup wallet's
@@ -59,7 +62,7 @@ Their bodies remained in the node and existing block-hash RPC recovered them.
 | Observation | Response supported by current evidence |
 | --- | --- |
 | Normal synchronization pause | Allow sync to finish and check automatic resumption; investigate a persistent pause |
-| Retained purchase nonce exceeds canonical nonce, no conflicting pool entries | Retrieve and validate every missing original transaction before sequential repair |
+| Retained purchase nonce exceeds canonical nonce, no conflicting pool entries | Check current receipts and pool reinjection first; retrieve and validate only the originals still missing before sequential repair |
 | Temporary lack of free stake, with a live ticket and another producer | Wait for observed ordinary selection/return, then recheck the exact interval and nonce |
 | Zero tickets, insufficient liquid and insufficient covering locks | Waiting for the absent ticket's selection cannot help; inspect future expiry rights and actual funding options |
 | Conflicting nonce, missing/corrupt record, missing bytes, expired interval or inadequate fee | Stop this procedure and review the specific case; no generic replacement or record deletion is established |
@@ -287,164 +290,35 @@ recovery; an enabled mining flag or a restored pending transaction is not enough
 If the accepted branch changes, return to nonce/receipt/funding diagnosis rather
 than assuming this clean-restart result covers the new history.
 
-Release review still needs a chosen monitored/manual policy, alert delivery and
-response responsibility, validated real-address interval schedules and funding
-availability. The [single-producer complete-state outage](restart-full-state-outage.md)
-now passes a 90-second network loss, process kill with a pending intent, exact
-cold record recovery, automatic successors, ordinary peer catch-up and matching
-cold ledgers. It requires the normal miner-start action after process restart
-and does not create a nonce rollback. A complete-state competing-producer/manual
-repair exercise remains open. The [first complete-state partition attempt](restart-full-state-partition.md)
-did not converge within its observation window, so no repair was submitted.
-Both cold branch ledgers passed. A separate diagnostic confirmed connected,
-equal-weight stopped peers and a downloader failure on missing historical
-ancestry in the compact fixture. A peer count alone does not establish a shared
-canonical branch; repair remains gated on that evidence. The later
-[complete-state P4 partition](restart-retry-partition.md) does converge and
-reproduces canonical nonce 7 with saved nonce 14. Both cold canonical ledgers and
-competing branches reconcile, and all seven originals are retrievable. However,
-two first retreats leave zero entrant tickets, 2,021.664457552 liquid FSN and
-only future-starting locks; the actual first repair submission is rejected for
-funding on a separate diagnostic copy. The
-[funded continuation](restart-funded-gap.md) now passes on restarted copies:
-3,000 FSN of specified ordinary synthetic transfers fund sequential originals
-7–13, exact saved nonce 14 and two fresh automatic successors. Six funding waits
-depend on actual ticket selection/return, and both 58-block cold ledgers pass.
-The contribution is not an authorized real funding source or a universal
-reserve. A fresh uninterrupted partition-to-repair run and production response
-policy remain open. This procedure stops at unsupported conditions instead of
-treating a short rehearsal as an automatic recovery guarantee.
+Release review still needs adoption of the proposed monitored/manual policy,
+verified alert delivery and response coverage, and real-address funding/interval
+checks. The [monitoring guide](restart-monitoring-response.md) records these open
+gates without treating completed synthetic tests as deployed monitoring.
 
-The [genuine-history follow-up](restart-partition-history.md) now removes the
-exact compact-history ancestor failure. A separate stopped heavier-peer case
-converges normally and passes both cold ledgers. It also demonstrates a different
-stall: the donation owner's saved and canonical nonces are both 7, but it has
-zero tickets, 2,021.665544264 liquid FSN and no free lock coverage for the saved
-interval. The real pool rejects its 5,000.000042448-FSN liquid requirement.
-Do not apply missing-nonce repair to this state. Recheck authorized usable funds
-and intervals; waiting for an absent ticket or clearing a record cannot supply
-them. Future rights outside the purchase interval are not available coverage.
+## Evidence and boundaries
 
-The [existing-funds experiment](restart-existing-funds.md) demonstrates why
-funding and startup readiness are separate checks. Its 3,000-FSN hypothetical
-contribution admits and executes the unchanged saved purchase. The first live
-continuation nevertheless stalls: the replacement is sent before the sole
-producer starts mining, and finalization refuses to consume the last ticket
-without another ticket. Source inspection identifies the acceptance gate as a
-plausible cause; the receiver's live rejection was not sampled. Starting both
-miners before buyers restores production but still leaves the donation's
-correct-nonce purchase pending locally while only the entrant replenishes. Check
-that the actual block producer has the replacement transaction; another node's
-pending-pool response alone is insufficient. This is a separate recovery
-scenario, not an instruction to enable extra signers during the controlled
-historical launch. No real backup contribution is assumed.
-The final cold checks accept the donation's unchanged nonce-8 purchase on both
-nodes and reconcile all 31 blocks. Treat this as a delivery/inclusion diagnosis
-with its exact live cause still unobserved, rather than assuming another funding
-transfer or missing-nonce repair is required.
+These reports retain the experiments, including failed attempts. They support
+specific recovery steps; they do not establish a universal reserve, unattended
+repair or permission to choose another operator's branch or spend their funds.
 
-The [exact delivery follow-up](restart-purchase-delivery.md) now executes that
-unchanged saved purchase through direct submission to the surviving producer,
-then passes automatic replenishment for both accounts and the forty-block cold
-audit without extra funding. Historical remote pool checks reproduce rejection
-before the preceding block is imported: the purchase start is more than three
-hours ahead of the recipient's head. After that import the same bytes pass.
-For a correct-nonce pending purchase, check the producer's canonical head and
-pool before considering direct submission of the reviewed original bytes to an
-authorized endpoint. Verify canonical native success and continued purchasing;
-do not clear the saved intent, guess a replacement nonce or treat local pending
-status as successful delivery. This is a rehearsed manual delivery option,
-not yet an automatic retry policy or proof of the original wire failure.
+| Case | Evidence and operational consequence |
+| --- | --- |
+| Single producer, process restart | [Complete-state outage](restart-full-state-outage.md) passes packet loss, SIGKILL, exact saved-intent recovery, fresh purchases and cold ledgers. Normal miner start after service restart is required. It does not create a nonce rollback. |
+| Competing producers and missing history | [Initial partition](restart-full-state-partition.md) retains non-convergence and missing fixture ancestry. [Genuine-history follow-up](restart-partition-history.md) resolves the missing-history request and passes heavier-peer sync, but leaves the wallet unfunded. A correct saved nonce does not imply usable stake. |
+| Rollback plus exhausted backing | [P4 partition](restart-retry-partition.md) converges but leaves seven missing purchases and insufficient current funding after two first retreats. [Controlled reserves](restart-controlled-reserves.md) show conditional recovery and renewed exhaustion after another loss. Waiting cannot refund an absent ticket. |
+| Explicit funded continuation | [Funded gap](restart-funded-gap.md) passes seven originals, saved intent, fresh successors and both cold ledgers with specified synthetic funding. [Full interval audit](restart-handover-runway.md) checks both launch handovers before refunds. Neither establishes available real funds. |
+| Producer readiness and transaction delivery | [Existing-funds investigation](restart-existing-funds.md) separates funded admission from startup/inclusion. [Exact delivery](restart-purchase-delivery.md) recovers the unchanged purchase. [Peer retry](restart-peer-purchase-retry.md) recovers one transaction but fails replenishment; [bounded P4 resend](restart-autobuy-rebroadcast.md) passes later automatic purchases. Current pending intent and missing predecessors need different responses. |
+| Manual predecessor delivery | [Live funded partition](restart-live-funded-partition.md) retains a local-only pending predecessor. [Manual delivery](restart-manual-purchase-delivery.md) verifies rejection/known-peer suppression and exact-byte recovery. [Uninterrupted repair](restart-uninterrupted-delivery.md) passes with ordinary propagation; [injected rejection](restart-injected-manual-delivery.md) separately exercises direct delivery. Temporary receiver price manipulation is a test stimulus, not an operator step. |
+| Equal-weight live split | [Fresh first-contact comparison](restart-equal-weight.md) fails convergence while both nodes purchase and produce. [Coordinated pause](restart-equal-weight-pause.md) passes ordinary synchronization after operator-selected pausing. Preserve both branches, obtain agreement, verify a funded continuing producer and observe delayed seals after stop calls. The paused wallet still needs its own funding/nonce diagnosis. |
+| Retrieving and diagnosing original bytes | [Small-reserve/retrieval](restart-small-reserve-and-retrieval.md) verifies existing RPC and offline record extraction. [Paused-wallet diagnosis](restart-paused-purchases.md) retrieves all 31 originals but rejects them for funding; it also establishes each payload's admission window. These diagnostic passes are not resumed production. |
+| Deliberate abandonment | [Missing nonces](restart-expired-nonce-neutralization.md) can be consumed by owner-signed self-transfers while preserving the later saved intent, but the wallet remains unfunded. [Stale saved intent](restart-stale-intent.md) additionally tests explicit retirement, correct funding order and fresh production. Funding alone does not fix an invalid payload. |
+| Ordinary restart after recovery | [Restart continuation](restart-recovered-buyer-restart.md) restores the exact saved intent, executes fresh successors and produces with no new funding or manual submission. Empty-pool restart does not make a separate nonce gap disappear. |
+| Abandonment rolled back again | [Compatible rollback](restart-abandonment-reorg.md) preserves the newer saved intent and displaced bytes. [Restarted repair](restart-abandonment-repair.md) passes exact resubmission. [Live integration](restart-live-abandonment-repair.md) automatically reincludes 39–40, manually repairs only 41–42 and passes saved 43, successors, production and both 90-block cold ledgers. Recheck current receipts before acting. |
 
-The [peer retry investigation](restart-peer-purchase-retry.md) confirms a second
-option: after verifying compatible heads and transaction readiness, a deliberate
-reconnect can replay the sender's unchanged pending purchase. Reconnecting too
-early can lose that replay as well. The actual two-node test recovers the original
-purchase but fails continued replenishment when its automatic successor is
-missing from the producer's pool. Treat reconnect or direct delivery as recovery
-of a specific transaction, then continue monitoring fresh purchases. Repeated
-local submission returning `already known` is not delivery evidence.
-The [bounded P4 resend candidate](restart-autobuy-rebroadcast.md) now recovers the
-retained correct-nonce failure automatically, followed by two fresh purchases
-for each owner and a passing 52-block cold audit. It resends only the unchanged
-current-nonce pending intent while mining/buying remain enabled; remote validation
-still applies. Queue admission alone is not proof of receipt or inclusion.
-Keep monitoring funding and nonce gaps, which this candidate does not repair.
-Do not cycle peers or enable extra historical launch signers as an unattended
-workaround.
-
-The [uninterrupted funded partition](restart-live-funded-partition.md) now
-demonstrates another boundary: six sequential manual predecessors succeed, but
-the seventh remains locally pending while the saved automatic intent is still
-one nonce ahead. Both cold ledgers pass and the exact predecessor is admissible
-in the receiving pool after its stake returns. P4 does not retry this manual
-predecessor while the later automatic intent is paused. The
-[manual-predecessor follow-up](restart-manual-purchase-delivery.md) now reproduces
-rejection/known-peer suppression and exact-byte retry with the real handler.
-Direct delivery on restarted full-state copies recovers the original, saved
-intents and fresh successors without new funding. A shorter-window case stops
-after one fresh donation purchase while waiting for its live ticket's selection;
-empty free funding at that point is different from a locally pending transaction.
-The original live connection's precise message ordering remains unrecorded.
-Do not interpret local admission or `already known` as end-to-end delivery proof.
-
-The [uninterrupted follow-up](restart-uninterrupted-delivery.md) now passes
-funding, six sequential originals, unchanged saved intent and two fresh
-automatic purchases while both services remain running. Both 59-block cold
-ledgers and the isolated branches reconcile. All manual originals propagate
-normally in that run; it does not exercise direct recipient submission during
-the uninterrupted sequence. Conditional synthetic funding, an observed normal
-ticket return and a bounded pass do not establish a real reserve or unattended
-recovery policy.
-
-The [injected-rejection follow-up](restart-injected-manual-delivery.md) now also
-passes the uninterrupted sequence with actual direct delivery. A temporary
-test-only receiver price setting causes a native rejection of the first
-original. After normal price restoration and a measured local-only pending
-interval, exact-byte direct submission recovers it. Seven originals, the
-unchanged saved intent, two fresh automatic purchases and both 54-block cold
-ledgers pass; two originals need direct delivery. The price manipulation is an
-isolated test stimulus, not an operator recovery step. Use the existing
-readiness, funding, original-byte and canonical native-success checks above.
-Real funding availability, response responsibility and equal-weight convergence
-remain open.
-
-The [equal-weight follow-up](restart-equal-weight.md) now reproduces connected
-producers advancing separate branches at identical weight with genuine history
-present. Both ledgers and local ticket purchasing remain valid. This is a third
-distinct condition to monitor: compare **head hashes and cumulative difficulty**
-across producers, not only height, peer count, mining flags or local purchase
-success. A correct saved nonce does not rule out a network split. The passing
-case with previously fetched fork data does not remove the fresh first-contact
-failure. The [coordinated-pause follow-up](restart-equal-weight-pause.md) now
-passes on fresh copies of that failure. Pausing only one miner and buyer through
-existing RPC, with both services connected, permits ordinary synchronization
-and continued production. This option requires agreement on the continuation
-and a funded eligible surviving producer; it is not automatic branch selection.
-Preserve both histories and signed purchases before acting. Observe actual head
-movement after stop calls, which can leave delayed seals.
-
-The paused wallet ends at canonical/saved nonces 8/39 with zero tickets and
-about 2,021.98 liquid FSN. Its adopted history already contains two first-retreat
-losses. Both final canonical ledgers and both pre-pause ledgers reconcile, but
-convergence does not clear the nonce gap or supply usable funds. Keep that
-wallet paused while reviewing the exact originals, intervals, fees and funding.
-The [paused-wallet follow-up](restart-paused-purchases.md) now recovers all 31
-originals exactly through existing RPC before and after restart. Independent
-local pool checks reject every original and the saved intent for funding on
-both nodes; the entrant's funded purchase is admitted. All canonical ledger
-artifacts and saved intents remain unchanged. This diagnostic keeps mining and
-buying disabled, so it is not a post-resume or sequential-repair pass. The
-first original's native parameter window closes well before the newest saved
-intent's window. Assess every original's validity as well as funding before
-starting repair. The [explicit-abandonment follow-up](restart-expired-nonce-neutralization.md)
-now consumes the 31 missing nonces with owner-signed zero-value self-transfers
-for 0.001302 FSN gas, preserving the saved nonce-39 intent and all donation
-interval rights. Both 50-block cold ledgers pass. This removes a nonce gap but
-leaves the buyer unfunded. The [saved-intent follow-up](restart-stale-intent.md)
-now separately passes explicit abandonment of a seeded stale intent, correctly
-ordered synthetic funding and fresh automatic purchases/mining, with both cold
-60-block ledgers reconciled. Its failed funding-order attempt is also retained.
-Do not clear its saved intent, override heads, or count the paused
-wallet as a functioning producer merely because its node has synchronized.
-The entrant's continued buying does not prove recovery of the paused account.
+Across these cases, keep branch convergence, transaction delivery, payload
+validity, nonce continuity and actual funding separate. Resume a paused owner
+only after its own conditions have been checked; another owner's continued
+buying is not evidence that it recovered. No controller record deletion, head
+override, extra historical signer or consensus relaxation is part of this
+procedure. Any unsupported condition remains an explicit investigation or release
+decision in the [main plan](restart-plan.md).

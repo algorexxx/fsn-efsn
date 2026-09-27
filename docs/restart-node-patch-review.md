@@ -135,3 +135,12 @@ approval/journal/key boundaries. Existing passing tests are evidence for their
 specific scenarios, not a completed independent security audit. The
 [restart plan](restart-plan.md) retains the wider data, timing, custody, networking
 and release gates.
+
+The [monitoring/response consolidation](restart-monitoring-response.md) adds no
+runtime patch. Review P4's deduplicated warnings, lack of a live saved-intent
+status API and raw-byte hash formatting in several error strings as operational
+limits. The current proposal uses authoritative RPC/retained bytes and explicit
+unknown states; it does not depend on parsing those error strings as transaction
+IDs. The legacy ethstats sync/uptime signals also need separate dashboard review.
+Record fixes or accepted limitations explicitly; these observations do not
+silently extend the candidate node patch set or deploy automatic recovery.
