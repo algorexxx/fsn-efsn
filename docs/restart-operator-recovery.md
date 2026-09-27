@@ -157,3 +157,21 @@ interval. The real pool rejects its 5,000.000042448-FSN liquid requirement.
 Do not apply missing-nonce repair to this state. Recheck authorized usable funds
 and intervals; waiting for an absent ticket or clearing a record cannot supply
 them. Future rights outside the purchase interval are not available coverage.
+
+The [existing-funds experiment](restart-existing-funds.md) demonstrates why
+funding and startup readiness are separate checks. Its 3,000-FSN hypothetical
+contribution admits and executes the unchanged saved purchase. The first live
+continuation nevertheless stalls: the replacement is sent before the sole
+producer starts mining, and finalization refuses to consume the last ticket
+without another ticket. Source inspection identifies the acceptance gate as a
+plausible cause; the receiver's live rejection was not sampled. Starting both
+miners before buyers restores production but still leaves the donation's
+correct-nonce purchase pending locally while only the entrant replenishes. Check
+that the actual block producer has the replacement transaction; another node's
+pending-pool response alone is insufficient. This is a separate recovery
+scenario, not an instruction to enable extra signers during the controlled
+historical launch. No real backup contribution is assumed.
+The final cold checks accept the donation's unchanged nonce-8 purchase on both
+nodes and reconcile all 31 blocks. Treat this as a delivery/inclusion diagnosis
+with its exact live cause still unobserved, rather than assuming another funding
+transfer or missing-nonce repair is required.

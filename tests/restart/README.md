@@ -580,3 +580,33 @@ requires its original equal-weight heads, and repeats the previously failed
 explicit downloader request with signing/buying disabled. Storing the remote
 branch is its acceptance condition; it does not require equal-weight heads to
 converge or alter fork choice.
+
+`TestFullStateFundingRecovery` requires `FUSION_RESTART_FUNDING_RECOVERY` to name
+verified disposable copies of the retained stopped funding-failure state. It
+tests the same saved purchases before and after 1,200/1,800-FSN contributions
+from the existing backup/entrant test accounts. The entrant's saved nonce 11
+executes before its contribution at nonce 12. No funds or tickets are injected.
+Both cold databases and every account interval must reconcile; additional
+transfers are constrained by exact signed hash and height. Original failed
+databases are copied and rehashed, never opened by this experiment.
+
+`TestFullStateFundingLiveContinuation` opens that controlled result through
+`FUSION_RESTART_FUNDING_LIVE`. Its original entrant-first startup failed before
+producing a block. `TestFullStateFundingStartOrder` explicitly resumes that
+stopped failure with its observed saved-record state, enables both miners before
+either buyer, and requires the same automatic nonce-13 bytes. Acceptance still
+requires two fresh purchases per owner, canonical native receipts, matching cold
+account ledgers and saved intents. All three tests require the existing private
+network namespace and node opt-ins; none exercises a partition or nonce gap.
+See the [existing-funds report](../../docs/restart-existing-funds.md).
+
+The original and reordered live funding tests both fail full replenishment:
+the reordered run advances thirteen blocks but leaves the donation purchase
+pending. `TestFullStateFundingColdDiagnosis` uses
+`FUSION_RESTART_FUNDING_DIAGNOSIS` on those stopped copies to compare saved
+nonces, real pool admission and both complete canonical ledgers. Its first
+accounting pass exposed a legitimate additional mature-lock conversion log.
+`TestFullStateFundingLedger` rechecks the retained artifacts without opening a
+database and passes after validating that conversion independently. The old
+one-log assertion failure is retained. The evidence does not establish the exact
+remote delivery/admission failure; that needs live recipient-pool observations.

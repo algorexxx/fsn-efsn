@@ -2,7 +2,6 @@ package restart
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"math/big"
 	"os"
@@ -68,15 +67,6 @@ func auditFullStateParticipantTransfers(t *testing.T, artifacts string, count in
 				}
 				purchaseEntry := entry
 				purchaseEntry.Receipts = entry.Receipts[index : index+1]
-				if len(receipt.Logs) == 2 {
-					if len(block.Transactions()) != 1 {
-						t.Fatal("mature-lock audit requires an isolated purchase")
-					}
-					requireParticipantMatureLog(t, receipt.Logs[1], entry, sender, previous.Header.Time)
-					isolatedReceipt := *receipt
-					isolatedReceipt.Logs = receipt.Logs[:1]
-					purchaseEntry.Receipts = types.Receipts{&isolatedReceipt}
-				}
 				verifyHandoverPurchaseReceipt(t, tx, purchaseEntry, sender)
 				created++
 			} else if tx.To() != nil && *tx.To() == common.FSNCallAddress {
@@ -176,38 +166,6 @@ func auditFullStateParticipantTransfers(t *testing.T, artifacts string, count in
 		t.Fatal("participant ledger did not cover funding and purchases")
 	}
 	t.Logf("participant ledger passed: blocks=%d ordinary-conversions=%d ordinary-transfers=%d successful-purchases=%d; initial entrant funding=12020.102 FSN, additional specified transfers=%d, native conversion fee=0.001 FSN plus gas; all future rights reconcile", count-3, conversions, transfers, created, len(additional))
-}
-
-func requireParticipantMatureLog(t *testing.T, log *types.Log, entry fullStateBlockLedger, owner common.Address, parentTime uint64) {
-	t.Helper()
-	if log.Address != common.FSNCallAddress || len(log.Topics) != 1 || log.Topics[0] != common.BytesToHash([]byte{common.TimeLockFunc}) {
-		t.Fatal("unexpected auxiliary purchase log")
-	}
-	var payload struct {
-		common.TimeLockParam
-		LockType string
-	}
-	var fields map[string]json.RawMessage
-	requireNoError(t, json.Unmarshal(log.Data, &payload))
-	requireNoError(t, json.Unmarshal(log.Data, &fields))
-	if len(fields) != 7 || payload.Type != common.TimeLockToAsset || payload.LockType != "TimeLockToAsset" || payload.AssetID != common.SystemAssetID || payload.To != owner || payload.StartTime != parentTime || payload.EndTime != common.TimeLockForever || payload.Value == nil || payload.Value.Sign() <= 0 {
-		t.Fatal("unexpected mature-lock conversion fields")
-	}
-	for _, difference := range entry.Differences {
-		if difference.AccountKey != crypto.Keccak256Hash(owner.Bytes()) {
-			continue
-		}
-		var before state.Account
-		requireNoError(t, rlp.DecodeBytes(difference.Before, &before))
-		mature := handoverFundingCoverage(t, before, owner, parentTime, common.TimeLockForever)
-		mature.Sub(mature, decimal(t, "5000000000000000000000"))
-		if mature.Sign() <= 0 || mature.Cmp(payload.Value) != 0 {
-			t.Fatal("mature conversion differs from independently measured remaining full-lifetime rights")
-		}
-		t.Logf("participant mature conversion block=%d owner=%s value-wei=%s start=%d; complete pre-purchase interval coverage minus funded ticket verified", entry.Header.Number.Uint64(), owner.Hex(), mature, parentTime)
-		return
-	}
-	t.Fatal("mature conversion has no sender account difference")
 }
 
 func requireParticipantConversion(t *testing.T, tx *types.Transaction, receipt *types.Receipt, source, target, sender common.Address, parentTime uint64) {

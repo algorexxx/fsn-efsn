@@ -186,8 +186,11 @@ func verifyFullStateOutageCold(t *testing.T, root string, final *types.Block) {
 }
 
 func captureFullStateColdSuffix(t *testing.T, root string, final *types.Block) int {
+	return captureFullStateColdSuffixAt(t, root, final, filepath.Join(root, "blocks"))
+}
+
+func captureFullStateColdSuffixAt(t *testing.T, root string, final *types.Block, artifacts string) int {
 	t.Helper()
-	artifacts := filepath.Join(root, "blocks")
 	requireNoError(t, os.Mkdir(artifacts, 0700))
 	count := 0
 	for _, role := range []string{"producer", "verifier"} {

@@ -152,5 +152,10 @@ live nonce repair remain separate from the stopped heavier-peer recovery here.
 Monitoring must distinguish zero-ticket/insufficient-funds stalls from nonce gaps.
 No funding transfer, automatic-repair feature or consensus change is implemented.
 
+The [existing-funds follow-up](restart-existing-funds.md) uses fresh copies of
+this stopped failure to test a bounded 3,000-FSN contribution from the existing
+test accounts. It preserves this failure and separates funding-only recovery
+from a missing-nonce repair or an assured operating reserve.
+
 Logs, copy proofs, history identities and source/executable hashes belong in
 [the evidence directory](evidence/restart-partition-history-2026-09-26).

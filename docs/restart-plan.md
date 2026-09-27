@@ -508,6 +508,35 @@ If the artifact becomes stale before launch, stop and revise it through the same
 
 ## 7. Work phases and completion gates
 
+### Existing-funds recovery follow-up — 27 September 2026
+
+The [existing-funds investigation](restart-existing-funds.md) preserves the prior
+funding failure and tests its exact saved purchase after ordinary contributions
+of 1,200 FSN from the backup test account and 1,800 FSN from the entrant. The
+controlled execution and both cold complete-state ledgers pass. These are
+hypothetical contributions, not authorized real funding or a launch requirement.
+The first live continuation stalls at the same head: the entrant's replacement
+is broadcast before the sole eligible producer starts mining, and finalization
+refuses to consume the last ticket without a replacement. Source inspection
+identifies the initial peer-transaction acceptance gate as a plausible cause.
+Starting both mining services before either buyer restores thirteen blocks of
+production, but the stronger test still fails: the donation's correct-nonce
+purchase remains pending while only the entrant replenishes. Next retain the
+recipient's pool/admission evidence and test exact-byte delivery to the surviving
+producer. Do not misclassify a pending-delivery issue as a nonce gap or assume
+that changing startup order established complete recovery.
+Both cold pools accept the two saved purchases at their correct canonical
+nonces, and both complete databases plus the corrected interval audit agree
+across 31 blocks. The accounting correction handles a legitimate automatic
+mature-lock conversion log; its initial one-log assertion failure is preserved.
+No new retreat occurred in the thirteen live blocks. The next experiment should
+measure remote admission and inclusion of the unchanged pending purchase before
+introducing another partition or more funding.
+Keep pool admission, native purchase success and continued live production as
+separate acceptance gates. Complete-state live nonce rollback/repair and explicit
+reserves for another partition remain open; do not infer them from this funding
+experiment. The selected one-backup-block launch sequence and P1–P15 are unchanged.
+
 ### Phase 0 — preserve evidence and accepted decisions
 
 Completed: initial source mapping, branch comparison, read-only RPC inventory, raw evidence capture, scope agreement, and this plan.
