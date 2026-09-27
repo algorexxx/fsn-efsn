@@ -147,8 +147,12 @@ and after. Its nodes use compact complete synthetic history and public test keys
 1 and 2; controlled synchronization is performed by the test harness. This does
 not exercise ordinary live mining, deeper arbitrary forks or production load.
 
-Next validate history collection while ordinary mining continues, including
-representative backlog, storage and receipt-index availability. Add the derived
-native purchase/selection/retreat timeline and its owner accounting before using
-this evidence to assert complete wallet progress. Delivery, operational timings,
+The [ordinary-mining follow-up](restart-observer-mining.md) now passes with one
+producer and one verifier, including reads deliberately spanning natural head
+advancement, bounded catch-up, cold rechecks and test-only native inventory
+reconstruction. It changes no observer or node runtime source. Live competing
+reorganizations and representative backlog, storage and receipt-index availability
+remain to validate. Triage the documented snapshot decoder concern and add the
+derived native timeline with explicit starting inventory and accounting coverage
+before asserting complete wallet progress. Delivery, operational timings,
 lost-monitor checks and release review remain open in the [main plan](restart-plan.md).

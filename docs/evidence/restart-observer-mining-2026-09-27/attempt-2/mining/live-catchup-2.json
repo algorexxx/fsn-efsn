@@ -1,0 +1,74 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0x7f3b9d0e0b565d7eae5ff1bd2e7f5c3c02a449fe24eb67a3fdc98d0f583e7fb8",
+    "AnchorNumber": 24,
+    "AnchorHash": "0x8927a7791fbf31f4e39e503e1d62d357a4cb5e31efdb3b78444f4bf1ccd33a90",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf"
+    }
+  },
+  "Sequence": 6,
+  "LastEventUTC": "2026-09-27T16:33:00.445554753Z",
+  "LastReportUTC": "2026-09-27T16:32:28.081709381Z",
+  "LogicalBytes": 89546,
+  "MaxBytes": 16777216,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [
+    {
+      "ID": "404dc6ae32aa41bafb55e561186a9d2dc6a228747fd5c8f8dc81f94280fa2abc",
+      "Node": "node-2",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "block_coverage",
+      "Status": "open",
+      "Observation": "not_observed",
+      "Details": [
+        "batch_limit"
+      ],
+      "FirstSequence": 2,
+      "LastSequence": 4,
+      "FirstUTC": "2026-09-27T16:31:58.106668594Z",
+      "LastSeenUTC": "2026-09-27T16:32:57.086148577Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    }
+  ],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 29,
+        "Hash": "0x18eb2e0df8e06f569b152e8bfa86d20cce74940195f1f8f87094fabe69dc1c66"
+      },
+      "ObservedHead": {
+        "Number": 29,
+        "Hash": "0x18eb2e0df8e06f569b152e8bfa86d20cce74940195f1f8f87094fabe69dc1c66"
+      },
+      "CheckedUTC": "2026-09-27T16:32:58.248721585Z",
+      "Status": "complete_at_observation"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 29,
+        "Hash": "0x18eb2e0df8e06f569b152e8bfa86d20cce74940195f1f8f87094fabe69dc1c66"
+      },
+      "ObservedHead": {
+        "Number": 29,
+        "Hash": "0x18eb2e0df8e06f569b152e8bfa86d20cce74940195f1f8f87094fabe69dc1c66"
+      },
+      "CheckedUTC": "2026-09-27T16:33:00.445554753Z",
+      "Status": "complete_at_observation"
+    }
+  ]
+}

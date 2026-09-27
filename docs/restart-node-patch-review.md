@@ -170,3 +170,11 @@ ancestor search, original/replacement evidence retention, body/receipt commitmen
 checks, explicit incomplete states and synchronous progress write. It reuses the
 existing RPC allowlist. Empty uncle bodies are an observer support limit, not an
 added consensus rule; Fusion's header uncle field carries a PoS commitment.
+
+The [ordinary-mining observer follow-up](restart-observer-mining.md) adds only
+three Linux integration-test files and evidence. Moving-head collection and a
+test-only native inventory audit pass without any observer or node runtime edit.
+Its source review records a snapshot length-check concern requiring focused
+reproduction and node call-path review. That unresolved finding is not an
+approved new patch or a demonstrated hostile-peer crash; triage it before
+reusing the decoder for the proposed external native timeline.

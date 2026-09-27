@@ -1,0 +1,45 @@
+{
+  "baseline": "c1536fb5785a7a1a65a0b457edeb117d3c24ee27",
+  "attempt": "attempt-3",
+  "sources_verified": 135,
+  "observer_source_files_unchanged_from_baseline": 15,
+  "test": "TestObserverOrdinaryMining passed with race detection; four clean service exits; loopback only",
+  "log_sha256": "9cb6944d8e6f221fced5a9f23f4677031249fcba5417487ad188de1592f33796",
+  "observer_commands": 13,
+  "natural_head_advances": {
+    "snapshot": {
+      "pinned": 27,
+      "advanced": 28
+    },
+    "backfill": {
+      "pinned": 28,
+      "advanced": 29
+    }
+  },
+  "range": [
+    25,
+    29
+  ],
+  "final_hash": "0x7ac9a79e964f18731c9182fd1a40565d540fe4b40f897dae5d975da8bb79598d",
+  "native_counts": {
+    "anchor_tickets": 26,
+    "blocks": 5,
+    "expired": 0,
+    "final_tickets": 23,
+    "purchases": 4,
+    "retreats": 2,
+    "selections": 5
+  },
+  "export_events_before_cold_recheck": 8,
+  "export_events_after_cold_recheck": 10,
+  "both_nodes_and_replayed_inventory_agree": true,
+  "built_binaries_present": {
+    "tmp/restart-observer-mining/services-tests": "bbbf1baf1730cf648a2ab5030fc4b0dbd14979035459cc4a59a205ff9c7e9d33",
+    "tmp/restart-observer-mining/fsn-observe": "285fb55fcff1d192ea37be529bd69f8d3813d4d4971402ba1d5fde18d43fc8ca"
+  },
+  "limitations": [
+    "One ordinary producer and one verifier on compact synthetic history, not live reorganization or representative workload.",
+    "Native reconstruction is test-only, with a known two-owner anchor inventory and successful purchase-only transactions.",
+    "No real funding, keys, backup access, notification delivery or production deployment."
+  ]
+}

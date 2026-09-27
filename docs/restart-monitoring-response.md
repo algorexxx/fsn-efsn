@@ -17,6 +17,9 @@ claim that the snapshot command implements it all.
 The [actual-service follow-up](restart-observer-services.md) now validates eight
 external IPC/HTTP observations against two compact synthetic nodes, including a
 controlled reorganization and endpoint loss. No runtime correction was needed.
+The [ordinary-mining follow-up](restart-observer-mining.md) also passes collection
+across naturally advancing heads, catch-up and cold rechecks. Its native inventory
+reconstruction is test-only; production accounting remains an open gate.
 
 The proposed minimal policy is **automatic observation and notification, with
 manual recovery** through the [operator procedure](restart-operator-recovery.md).
@@ -188,11 +191,11 @@ working nodes solely to satisfy an optional cold audit during a live incident.
 | Gate | Current state | Concrete remaining work |
 | --- | --- | --- |
 | Manual recovery behavior | Demonstrated for the linked synthetic cases; unsupported conditions remain | Review and accept the scope and limitations in the operator runbook |
-| Observation collector | [External snapshot command implemented](restart-observer.md); retained-case tests and [compact actual-service IPC/HTTP checks](restart-observer-services.md) pass | Extend to collection during ordinary mining and representative deployed workload; select deployment limits |
-| Snapshot history and incident state | [Append-only local history and review](restart-observer-history.md) implemented; cross-platform replay, reopening and abrupt-exit checks pass | Validate during ordinary live mining/reorganization and representative workload; approve storage/retention procedure |
-| Block coverage | [Bounded canonical block/receipt backfill](restart-observer-backfill.md) and explicit gaps implemented; retained-fork and actual-service IPC/HTTP checks pass | Validate during ordinary mining and representative backlog; derive native purchase/selection/retreat accounting; deploy collection cadence |
+| Observation collector | [External snapshot command implemented](restart-observer.md); retained-case, actual-service and [ordinary-mining checks](restart-observer-mining.md) pass | Validate collection during live competing reorganization and representative deployed workload; select deployment limits |
+| Snapshot history and incident state | [Append-only local history and review](restart-observer-history.md) implemented; cross-platform replay, reopening, abrupt-exit and ordinary-mining checks pass | Validate live competing reorganization and representative workload; approve storage/retention procedure |
+| Block coverage | [Bounded canonical block/receipt backfill](restart-observer-backfill.md) and explicit gaps implemented; retained-fork, IPC/HTTP and ordinary-mining checks pass | Validate representative backlog; triage snapshot parsing and derive native accounting with an explicit anchor inventory and report-deletion support; deploy collection cadence |
 | Routing and operator coverage | Peter is the initial operator; destinations/times unset | Select destinations and timings, then demonstrate notification, acknowledgement and a lost-monitor heartbeat |
-| Detection correctness | Retained snapshots, fault cases, actual-service observations and durable replay/review/recurrence transitions pass; continuous alerts have not been exercised | Extend history mode to live mining/reorganization and isolated public-test-key delivery drills for the cases below |
+| Detection correctness | Retained snapshots, fault cases, actual-service observations, ordinary-mining collection and durable replay/review/recurrence transitions pass; continuous alerts have not been exercised | Extend history mode to live competing reorganization and isolated public-test-key delivery drills for the cases below |
 | Real funding and custody | Synthetic contributions are not authorized real reserves | Recheck real-address intervals, gas runway and any explicitly agreed funding source; complete backup-key return |
 | Release review | P1–P15 and recovery tool still require independent review | Include observability limits and accepted manual policy in the review record; keep formatting/telemetry findings explicitly dispositioned |
 

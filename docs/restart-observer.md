@@ -176,8 +176,10 @@ pass retained-report transition, storage-failure and abrupt-exit checks on Windo
 and on Linux with race detection. This is opt-in local storage with no automatic
 resolution. [Bounded canonical block/receipt backfill](restart-observer-backfill.md)
 now passes retained-fork and real-service IPC/HTTP tests, preserving displaced
-evidence and exposing gaps. Next validate history mode during ordinary mining
-and derive native purchase/selection/retreat accounting from retained blocks.
+evidence and exposing gaps. [Ordinary-mining history collection](restart-observer-mining.md)
+now passes natural head advancement, catch-up, cold rechecks and test-only native
+inventory reconstruction. Live competing reorganizations, representative workload
+and production native accounting with explicit anchor inventory remain open.
 Select operational
 timings, retention and notification destinations before deployment; demonstrate
 actual delivery, acknowledgement, loss of the collector, and receipt rollback
