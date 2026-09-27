@@ -92,7 +92,8 @@ func auditFullStateParticipantTransfers(t *testing.T, artifacts string, count in
 			} else {
 				ordinary := i == 5 && transfers == 0 && sender == owners[0] && tx.To() != nil && *tx.To() == owners[2] && tx.Value().String() == "2020102000000000000000"
 				expected := additional[tx.Hash()] == block.NumberU64() && !seenTransfers[tx.Hash()]
-				if (!ordinary && !expected) || tx.To() == nil || deltas[*tx.To()] == nil || tx.Value().Sign() <= 0 || len(tx.Data()) != 0 || receipt.GasUsed != 21000 || len(receipt.Logs) != 0 {
+				neutralization := expected && tx.To() != nil && *tx.To() == sender && tx.Value().Sign() == 0
+				if (!ordinary && !expected) || tx.To() == nil || deltas[*tx.To()] == nil || (tx.Value().Sign() <= 0 && !neutralization) || len(tx.Data()) != 0 || receipt.GasUsed != 21000 || len(receipt.Logs) != 0 {
 					t.Fatal("unexpected participant funding transfer")
 				}
 				deltas[sender].Sub(deltas[sender], tx.Value())

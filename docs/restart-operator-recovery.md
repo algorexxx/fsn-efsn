@@ -122,8 +122,8 @@ saved-record reader is established.
    verifies acceptance at that boundary and rejection one second beyond it.
    This is a head-timestamp limit, not an interchangeable wall-clock deadline.
    If a predecessor no longer passes validation, stop ordinary resubmission;
-   adding funds does not repair its payload, and no generic replacement has
-   yet been established here.
+   adding funds does not repair its payload. Assess explicit abandonment below
+   as a separate owner decision; it does not recover the missing ticket.
 2. For the requested interval, require either time locks covering the full
    5,000-FSN amount at every boundary or a full 5,000 FSN liquid payment. The
    purchase path does not combine partial locks with a partial liquid remainder.
@@ -157,6 +157,41 @@ saved-record reader is established.
    intent and fresh automatic successor purchases without a new manual start
    command. The passing live rehearsals require at least two fresh successors;
    that is an acceptance check, not proof of indefinite unattended operation.
+
+## Explicitly abandon an unusable predecessor
+
+The [nonce-abandonment rehearsal](restart-expired-nonce-neutralization.md)
+demonstrates consuming missing nonces through existing ordinary transaction
+RPCs. It deliberately abandons the corresponding purchases. It is not an
+automatic replacement policy or a way to restore stake funding.
+
+1. Preserve the original bytes and locations, inspect the saved intent, and
+   verify the accepted branch and a functioning surviving producer as above.
+   Obtain the owner's decision to abandon each specified purchase, recording
+   that its ticket will not be created by this action. Check the saved intent's
+   validity separately; this rehearsal leaves its nonce unconsumed.
+2. With the affected buyer paused and no conflicting pool transaction, prepare
+   an ordinary transaction from the owner to the same owner: explicit current
+   nonce, zero value and empty data. For the plain accounts tested here, gas is
+   21,000. Review the actual account, network identity and gas price instead of
+   copying fixture values. Use the existing signing flow, such as local
+   `eth_signTransaction`, and retain the decoded fields, raw bytes and hash.
+3. Submit those reviewed bytes through `eth_sendRawTransaction`. Require a
+   successful receipt in the accepted canonical block, matching transaction
+   identity, gas and nonce movement. This transaction has no BuyTicket result;
+   record it as abandonment rather than purchase success. Recheck branch, pool,
+   balance and saved intent before the next nonce. The controlled 31-transaction
+   batch is evidence of execution, not a reason to bypass these checks.
+4. Stop before consuming the saved intent's nonce. Once canonical nonce matches
+   it, check its original validity and funding, then follow normal buyer recovery
+   and acceptance criteria. In the rehearsal it remains byte-identical but
+   unfunded, with zero tickets; that wallet is still not a producer.
+
+An expired probe is rejected by real pool RPC in this experiment, but the 31
+historical predecessors had not yet crossed their validity boundaries. No
+conflicting pool-price replacement, unusable saved-intent resolution, loss of
+the surviving producer, or protection against a later reorganization is proved.
+Do not delete the durable intent or relax purchase validation to force progress.
 
 ## Acceptance and retained record
 
@@ -317,7 +352,11 @@ artifacts and saved intents remain unchanged. This diagnostic keeps mining and
 buying disabled, so it is not a post-resume or sequential-repair pass. The
 first original's native parameter window closes well before the newest saved
 intent's window. Assess every original's validity as well as funding before
-starting repair; expired-original replacement remains an explicit unresolved
-procedure. Do not clear its saved intent, override heads, or count the paused
+starting repair. The [explicit-abandonment follow-up](restart-expired-nonce-neutralization.md)
+now consumes the 31 missing nonces with owner-signed zero-value self-transfers
+for 0.001302 FSN gas, preserving the saved nonce-39 intent and all donation
+interval rights. Both 50-block cold ledgers pass. This removes a nonce gap but
+leaves the buyer unfunded; an unsuitable saved intent remains a separate case.
+Do not clear its saved intent, override heads, or count the paused
 wallet as a functioning producer merely because its node has synchronized.
 The entrant's continued buying does not prove recovery of the paused account.

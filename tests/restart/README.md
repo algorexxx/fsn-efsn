@@ -753,3 +753,18 @@ second beyond it. The separate cold audit must preserve both canonical ledgers
 and both saved intents exactly. This is a diagnosis at a fixed head and
 recorded wall time, not a sequential repair, future-block execution or automatic
 resumption test. See the [paused-purchase report](../../docs/restart-paused-purchases.md).
+
+`TestFullStateExplicitNonceNeutralization` starts fresh copies of the paused
+result, signs a separately labelled already-unsuitable BuyTicket probe through
+existing RPC and requires native pool rejection. It then signs 31 zero-value
+self-transfers for missing nonces 8–38 through `eth_signTransaction`, submits
+the exact bytes to the entrant, and requires matching canonical receipts on
+both nodes. The entrant mines and buys normally. The donation buyer runs for
+12 seconds with the test-only held signing worker; it must preserve saved
+nonce 39 and remain unfunded. This is deliberate purchase abandonment, not
+historical-original expiry, donation block production or automatic replacement.
+`TestFullStateNonceNeutralizationColdAudit` checks both full ledgers, with only
+the explicitly listed transaction hashes allowed as zero-value self-transfers.
+The evidence verifier independently checks all 31 inclusions, gas accounting,
+saved bytes and unchanged donation time locks. See the
+[nonce-abandonment report](../../docs/restart-expired-nonce-neutralization.md).

@@ -135,13 +135,16 @@ confirms the funding rejection. It does not resume the donation producer.
 Keep nonce-gap recovery, current funding and original-payload validity as
 separate conditions in the [operator procedure](restart-operator-recovery.md).
 
-The next distinct question is recovery once the earliest original has become
-inadmissible. Review the existing transaction/RPC rules and test any explicit
-replacement procedure on disposable synthetic state, preserving the saved
-intent and recording nonce, fee and interval decisions. Do not silently change
-stored bytes, relax consensus validation or add automatic replacement logic.
-A funded replay of these still-valid originals is a separate scenario and
-must state its source of synthetic funds and time assumptions.
+The [explicit-abandonment follow-up](restart-expired-nonce-neutralization.md)
+now rejects an already unsuitable synthetic probe through actual pool RPC and
+consumes the 31 missing nonces using existing zero-value self-transfers. Their
+total gas is 0.001302 FSN; both 50-block cold ledgers pass. The historical
+originals had not yet expired, and the action deliberately abandons them. The
+saved nonce-39 intent stays exact and the buyer remains unfunded. This does not
+prove fresh purchasing after resolution of an unsuitable saved intent, which
+is the next distinct case. A funded replay of still-valid originals remains a
+separate scenario with explicit funding and timing assumptions. No production
+validation or automatic replacement behavior changes.
 
 All diagnostic services are stopped. D: has about **143.3 GB** free and the WSL
 filesystem about **64.0 GB**. No W: workload was needed. Native logs use UTC+02;
