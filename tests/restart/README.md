@@ -647,3 +647,23 @@ before the donation's selection/refund block, accepted afterward. Both tests use
 `FUSION_RESTART_PURCHASE_DELIVERY` on their corresponding disposable state. See
 the [peer retry report](../../docs/restart-peer-purchase-retry.md); a successful
 one-time replay is not described as sustained recovery.
+
+`TestFullStateRetainedPartitionFundedRepair` uses fresh verified copies of the
+retained participant checkpoint through `FUSION_RESTART_RETRY_PARTITION`, the
+genuine history input and the existing isolated-network opt-ins. It keeps both
+miners and automatic buyers enabled through packet loss, reconnection and a
+manual nonce repair. Observed branch hashes/bodies are retained through healing;
+all missing signed purchases must be retrieved before funding or resubmission.
+The specified 1,200/1,800-FSN transfers use only existing balances and public
+synthetic keys. The active donor's transfer follows its exact pending purchase;
+a changed nonce/intent stops the attempt instead of replacing a transaction.
+The cold audit, `TestFullStateUninterruptedPartitionColdAudit`, runs separately
+even after a live failure and accounts for any planned transfers actually mined.
+These experiments do not authorize use of the real backup wallet's funds.
+See the [uninterrupted funding report](../../docs/restart-live-funded-partition.md).
+Its retained run fails at the seventh manual original after six successful
+repairs. `TestFullStateManualGapHistoricalAdmission` uses a fresh copy through
+`FUSION_RESTART_PURCHASE_DELIVERY` and the existing historical-pool harness to
+check those same bytes before and after stake return and at the final head.
+Rejection before return and acceptance afterward pass; the live delivery cause
+and completion of that manual repair remain open.

@@ -29,6 +29,15 @@ func requireRetainedPartitionRoot(t *testing.T) string {
 }
 
 func TestFullStateRetainedPartitionRepair(t *testing.T) {
+	rehearseRetainedPartition(t, false)
+}
+
+func TestFullStateRetainedPartitionFundedRepair(t *testing.T) {
+	rehearseRetainedPartition(t, true)
+}
+
+func rehearseRetainedPartition(t *testing.T, funded bool) {
+	t.Helper()
 	root := requireRetainedPartitionRoot(t)
 	var cleanup, retained fullStateBlockLedger
 	readHandoverJSON(t, filepath.Join(root, "retained-blocks", "block-03.json"), &cleanup)
@@ -73,7 +82,7 @@ func TestFullStateRetainedPartitionRepair(t *testing.T) {
 		}
 	}
 	installFullStateHistory(t, root)
-	rehearseFullStatePartitionRepair(t, root, types.NewBlockWithHeader(cleanup.Header), types.NewBlockWithHeader(retained.Header))
+	rehearseFullStatePartitionRepair(t, root, types.NewBlockWithHeader(cleanup.Header), types.NewBlockWithHeader(retained.Header), funded)
 }
 
 func requireFullStatePartitionReserve(t *testing.T, root string, nodes [2]*rehearsalNode, owners [2]common.Address, head *types.Block) {

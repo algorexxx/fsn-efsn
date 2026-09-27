@@ -222,3 +222,12 @@ still applies. Queue admission alone is not proof of receipt or inclusion.
 Keep monitoring funding and nonce gaps, which this candidate does not repair.
 Do not cycle peers or enable extra historical launch signers as an unattended
 workaround.
+
+The [uninterrupted funded partition](restart-live-funded-partition.md) now
+demonstrates another boundary: six sequential manual predecessors succeed, but
+the seventh remains locally pending while the saved automatic intent is still
+one nonce ahead. Both cold ledgers pass and the exact predecessor is admissible
+in the receiving pool after its stake returns. P4 does not retry this manual
+predecessor while the later automatic intent is paused. Recipient admission and
+propagation require a separate diagnostic; do not interpret local admission,
+`already known`, or the passing restarted repair as end-to-end delivery proof.

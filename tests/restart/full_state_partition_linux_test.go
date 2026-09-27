@@ -24,6 +24,7 @@ type fullStateRepairResult struct {
 	OriginalsIncluded int
 	Successors        int
 	FundingFailure    string
+	Funding           map[common.Hash]uint64
 	Final             common.Hash
 }
 
@@ -39,13 +40,17 @@ func TestFullStatePartitionRepair(t *testing.T) {
 	cleanup := prepareFullStateOutage(t, root)
 	installFullStateHistory(t, root)
 	anchor := prepareFullStateParticipant(t, root, cleanup)
-	rehearseFullStatePartitionRepair(t, root, cleanup, anchor)
+	rehearseFullStatePartitionRepair(t, root, cleanup, anchor, false)
 }
 
-func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor *types.Block) {
+func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor *types.Block, funded bool) {
 	t.Helper()
 	paths := [2]string{seedFullStateRecoveryNode(t, filepath.Join(root, "producer"), cleanup, 2), seedFullStateRecoveryNode(t, filepath.Join(root, "verifier"), cleanup, 3)}
-	nodes := [2]*rehearsalNode{startRehearsalNodeWithTimeout(t, paths[0], 12*time.Minute), startRehearsalNodeWithTimeout(t, paths[1], 12*time.Minute)}
+	timeout := 12 * time.Minute
+	if funded {
+		timeout = 16 * time.Minute
+	}
+	nodes := [2]*rehearsalNode{startRehearsalNodeWithTimeout(t, paths[0], timeout), startRehearsalNodeWithTimeout(t, paths[1], timeout)}
 	owners := [2]common.Address{common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
 	connectRehearsalPeer(t, nodes[0], nodes[1])
 	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
@@ -130,7 +135,7 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 	logLiveRepairTickets(t, nodes[0], owners, gap.head, "full-state-before-repair")
 	t.Logf("full-state partition stable gap node=%d owner=%s canonical=%d saved=%d hash=%s common=%d %s", gap.index+1, owners[gap.index].Hex(), gap.nonce, gap.saved.Nonce(), gap.saved.Hash().Hex(), gap.head.NumberU64(), gap.head.Hash().Hex())
 	branch := retainObservedBlocks(t, filepath.Join(root, "repair-branch.rlp"), retained[gap.index])
-	result := repairFullStateGap(t, root, nodes, owners, gap, originals[gap.index], branch)
+	result := repairFullStateGap(t, root, nodes, owners, gap, originals[gap.index], branch, funded)
 	for _, node := range nodes {
 		stopPeerAutoMiner(t, node)
 	}
@@ -144,7 +149,7 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 	requireNoError(t, writeStateExportJSON(filepath.Join(root, "stopped-purchases.json"), stopped))
 	count := captureFullStateColdSuffix(t, root, final)
 	auditFullStateHandover(t, filepath.Join(root, "producer"), filepath.Join(root, "blocks"), 3)
-	auditFullStateParticipant(t, filepath.Join(root, "blocks"), count)
+	auditFullStateParticipantTransfers(t, filepath.Join(root, "blocks"), count, result.Funding)
 	for i, role := range []string{"producer", "verifier"} {
 		if !t.Run("isolated-ledger-"+role, func(t *testing.T) {
 			f, _, _ := openFullStateHandover(t, filepath.Join(root, role))
@@ -183,7 +188,7 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 	}
 }
 
-func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owners [2]common.Address, gap livePurchaseGap, originals map[uint64]*types.Transaction, branch types.Blocks) fullStateRepairResult {
+func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owners [2]common.Address, gap livePurchaseGap, originals map[uint64]*types.Transaction, branch types.Blocks, funded bool) fullStateRepairResult {
 	t.Helper()
 	result := fullStateRepairResult{Owner: owners[gap.index], CanonicalNonce: gap.nonce, SavedNonce: gap.saved.Nonce(), SavedHash: gap.saved.Hash()}
 	path := filepath.Join(root, "repair")
@@ -216,6 +221,9 @@ func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owne
 		retrieved = append(retrieved, tx)
 	}
 	t.Logf("full-state repair retrieved all %d missing original purchases before submission", len(retrieved))
+	if funded {
+		result.Funding = fundUninterruptedFullStateGap(t, root, nodes, owners, gap, retrieved[0])
+	}
 	for _, tx := range retrieved {
 		nonce := tx.Nonce()
 		state := readPeerPurchase(t, nodes[gap.index])

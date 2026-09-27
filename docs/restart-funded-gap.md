@@ -144,3 +144,10 @@ the agreed minimal launch or authorizes retention of the borrowed real key.
 
 Both services are stopped. Preserve the D: result and earlier failures; any
 continuation must use fresh copies.
+
+The [subsequent uninterrupted partition](restart-live-funded-partition.md)
+exercises that observer and live funding with the donation fixture losing the
+fork. It retrieves all seven originals and executes six, then fails when the
+last remains locally pending without a receipt. Both cold ledgers and a separate
+remote-pool admission diagnostic pass. The uninterrupted end-to-end acceptance
+remains open; this earlier restarted pass is unchanged.

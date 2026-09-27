@@ -122,7 +122,7 @@ func TestFullStateFundedGapRepair(t *testing.T) {
 		awaitLiveFundingTransfer(t, nodes, tx)
 	}
 	gap := livePurchaseGap{index: 1, nonce: 7, saved: saved[1], head: head}
-	result := repairFullStateGap(t, root, nodes, owners, gap, originals, branch)
+	result := repairFullStateGap(t, root, nodes, owners, gap, originals, branch, false)
 	for _, node := range nodes {
 		stopPeerAutoMiner(t, node)
 	}
