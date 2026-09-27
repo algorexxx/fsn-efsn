@@ -155,9 +155,15 @@ reproduces canonical nonce 7 with saved nonce 14. Both cold canonical ledgers an
 competing branches reconcile, and all seven originals are retrievable. However,
 two first retreats leave zero entrant tickets, 2,021.664457552 liquid FSN and
 only future-starting locks; the actual first repair submission is rejected for
-funding on a separate diagnostic copy. Successful complete-state funded repair
-and automatic successors remain open. This procedure stops at unsupported
-conditions instead of treating a short rehearsal as an automatic recovery guarantee.
+funding on a separate diagnostic copy. The
+[funded continuation](restart-funded-gap.md) now passes on restarted copies:
+3,000 FSN of specified ordinary synthetic transfers fund sequential originals
+7–13, exact saved nonce 14 and two fresh automatic successors. Six funding waits
+depend on actual ticket selection/return, and both 58-block cold ledgers pass.
+The contribution is not an authorized real funding source or a universal
+reserve. A fresh uninterrupted partition-to-repair run and production response
+policy remain open. This procedure stops at unsupported conditions instead of
+treating a short rehearsal as an automatic recovery guarantee.
 
 The [genuine-history follow-up](restart-partition-history.md) now removes the
 exact compact-history ancestor failure. A separate stopped heavier-peer case

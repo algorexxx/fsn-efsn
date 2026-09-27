@@ -219,12 +219,20 @@ func retainLivePurchase(t *testing.T, owner common.Address, originals map[uint64
 
 func awaitLivePurchaseGap(t *testing.T, nodes [2]*rehearsalNode, owners [2]common.Address, originals [2]map[uint64]*types.Transaction, floor uint64) livePurchaseGap {
 	t.Helper()
+	return awaitLivePurchaseGapObserved(t, nodes, owners, originals, floor, nil)
+}
+
+func awaitLivePurchaseGapObserved(t *testing.T, nodes [2]*rehearsalNode, owners [2]common.Address, originals [2]map[uint64]*types.Transaction, floor uint64, observe func()) livePurchaseGap {
+	t.Helper()
 	var candidate livePurchaseGap
 	var since time.Time
 	var paused [2]time.Time
 	var observed time.Time
 	deadline := time.Now().Add(150 * time.Second)
 	for time.Now().Before(deadline) {
+		if observe != nil {
+			observe()
+		}
 		if time.Since(observed) >= 10*time.Second {
 			for i, node := range nodes {
 				var peers []*p2p.PeerInfo

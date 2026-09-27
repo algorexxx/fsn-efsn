@@ -102,13 +102,35 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 		requireNoError(t, err)
 		requireNoError(t, os.WriteFile(path, encoded, 0600))
 	}
+	retained := [2]map[common.Hash]*types.Block{make(map[common.Hash]*types.Block), make(map[common.Hash]*types.Block)}
+	for i := range isolated {
+		for _, block := range isolated[i] {
+			retained[i][block.Hash()] = block
+		}
+	}
+	observe := func() {
+		for i, node := range nodes {
+			previous := len(retained[i])
+			captureObservedBranch(t, node, node.status(t).Hash, base, retained[i])
+			if len(retained[i]) != previous {
+				blocks := retainObservedBlocks(t, filepath.Join(root, fmt.Sprintf("observed-%d.rlp", i)), retained[i])
+				for _, block := range blocks {
+					for _, tx := range block.Transactions() {
+						retainLivePurchase(t, owners[i], originals[i], tx)
+					}
+				}
+			}
+		}
+	}
+	observe()
 	heal()
-	gap := awaitLivePurchaseGap(t, nodes, owners, originals, floor)
+	gap := awaitLivePurchaseGapObserved(t, nodes, owners, originals, floor, observe)
 	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
 	logContinuousPurchaseState(t, nodes[0], nodes[1])
 	logLiveRepairTickets(t, nodes[0], owners, gap.head, "full-state-before-repair")
 	t.Logf("full-state partition stable gap node=%d owner=%s canonical=%d saved=%d hash=%s common=%d %s", gap.index+1, owners[gap.index].Hex(), gap.nonce, gap.saved.Nonce(), gap.saved.Hash().Hex(), gap.head.NumberU64(), gap.head.Hash().Hex())
-	result := repairFullStateGap(t, root, nodes, owners, gap, originals[gap.index], isolated[gap.index])
+	branch := retainObservedBlocks(t, filepath.Join(root, "repair-branch.rlp"), retained[gap.index])
+	result := repairFullStateGap(t, root, nodes, owners, gap, originals[gap.index], branch)
 	for _, node := range nodes {
 		stopPeerAutoMiner(t, node)
 	}

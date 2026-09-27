@@ -124,20 +124,35 @@ func requireFullStatePartitionReserve(t *testing.T, root string, nodes [2]*rehea
 
 func TestFullStateRetainedPartitionColdAudit(t *testing.T) {
 	root := requireRetainedPartitionRoot(t)
+	auditRetainedPartitionCold(t, root, nil)
+}
+
+func auditRetainedPartitionCold(t *testing.T, root string, transfers types.Transactions) {
+	t.Helper()
 	var heads [2]*types.Header
+	var funding [2]map[common.Hash]uint64
 	for i, role := range []string{"producer", "verifier"} {
 		if !t.Run(role, func(t *testing.T) {
-			f, _, funding := openFullStateHandover(t, filepath.Join(root, role))
+			f, _, fixtureFunding := openFullStateHandover(t, filepath.Join(root, role))
 			head := f.chain.CurrentBlock()
 			heads[i] = head.Header()
-			base := funding.Parent.Number.Uint64()
+			base := fixtureFunding.Parent.Number.Uint64()
+			funding[i] = make(map[common.Hash]uint64)
 			artifacts := filepath.Join(root, "audit-"+role)
 			requireNoError(t, os.Mkdir(artifacts, 0700))
 			for height := base + 1; height <= head.NumberU64(); height++ {
-				recordFullStateHandoverBlock(t, f, artifacts, base, f.chain.GetBlockByNumber(height))
+				block := f.chain.GetBlockByNumber(height)
+				recordFullStateHandoverBlock(t, f, artifacts, base, block)
+				for _, tx := range block.Transactions() {
+					for _, transfer := range transfers {
+						if tx.Hash() == transfer.Hash() {
+							funding[i][tx.Hash()] = height
+						}
+					}
+				}
 			}
 			auditFullStateHandover(t, filepath.Join(root, role), artifacts, 3)
-			auditFullStateParticipant(t, artifacts, int(head.NumberU64()-base))
+			auditFullStateParticipantTransfers(t, artifacts, int(head.NumberU64()-base), funding[i])
 			owners := []common.Address{f.owner, common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
 			var saved [2]*types.Transaction
 			var intents []map[string]interface{}
@@ -191,5 +206,5 @@ func TestFullStateRetainedPartitionColdAudit(t *testing.T) {
 			}
 		}
 	}
-	requireNoError(t, writeStateExportJSON(filepath.Join(root, "cold-audit.json"), map[string]interface{}{"Heads": heads, "CommonHead": matched, "LedgerPassed": true}))
+	requireNoError(t, writeStateExportJSON(filepath.Join(root, "cold-audit.json"), map[string]interface{}{"Heads": heads, "CommonHead": matched, "LedgerPassed": true, "AdditionalFunding": funding}))
 }

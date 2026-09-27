@@ -158,6 +158,14 @@ func (a *nodeRehearsalAPI) Block(number uint64) (hexutil.Bytes, error) {
 	return rlp.EncodeToBytes(block)
 }
 
+func (a *nodeRehearsalAPI) BlockByHash(hash common.Hash) (hexutil.Bytes, error) {
+	block := a.service.BlockChain().GetBlockByHash(hash)
+	if block == nil {
+		return nil, fmt.Errorf("missing block %s", hash)
+	}
+	return rlp.EncodeToBytes(block)
+}
+
 func TestRestartNodeRehearsal(t *testing.T) {
 	if os.Getenv("FUSION_RESTART_NODE_REHEARSAL") != "1" {
 		t.Skip("opt-in Linux service rehearsal requires an isolated loopback-only network namespace")

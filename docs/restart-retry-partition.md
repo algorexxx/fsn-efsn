@@ -172,3 +172,9 @@ D:\FusionRehearsal\retry-partition-2026-09-27-displaced
 
 No process from these experiments remains running. Preserve these directories
 and use new copies for any continuation.
+
+The [subsequent funded continuation](restart-funded-gap.md) passes on new copies:
+ordinary transfers of existing synthetic funds permit seven sequential repairs,
+the unchanged saved intent and fresh automatic purchases, with both cold ledgers
+matching. The no-funding and capture failures above remain preserved. That result
+does not retrospectively turn this live attempt into a pass.

@@ -120,9 +120,12 @@ automatic reconnection and heavier-branch convergence with this candidate.
 The displaced entrant retains a seven-purchase nonce gap and, after two ordinary
 first retreats, cannot fund its first missing purchase. All originals remain
 retrievable; cold canonical and competing-branch accounting pass. The live
-repair test retains a harness-capture failure, and successful funded repair is
-still open. Keep peer delivery, funding, native execution and nonce resolution
-as distinct gates. The one-backup-block launch and fifteen-item review inventory
+repair test retains a harness-capture failure. The later
+[funded continuation](restart-funded-gap.md) passes on restarted copies, including
+seven manual predecessor repairs, the unchanged saved intent, two automatic
+successors and matching 58-block cold ledgers. This does not add automatic nonce
+repair. Keep peer delivery, funding, native execution and nonce resolution as
+distinct gates. The one-backup-block launch and fifteen-item review inventory
 remain unchanged. Independent review and the other launch gates remain open.
 
 Evidence: [scripts, logs and retained results](evidence/restart-autobuy-rebroadcast-2026-09-27/).

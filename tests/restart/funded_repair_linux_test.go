@@ -53,6 +53,14 @@ func fundLivePurchaseRepair(t *testing.T, nodes [2]*rehearsalNode, funder *fixtu
 	if hash != transfer.Hash() {
 		t.Fatal("funding transfer identity changed")
 	}
+	awaitLiveFundingTransfer(t, nodes, transfer)
+	validateLiveRepairPurchase(t, nodes[0], purchase)
+	return transfer
+}
+
+func awaitLiveFundingTransfer(t *testing.T, nodes [2]*rehearsalNode, transfer *types.Transaction) *types.Receipt {
+	t.Helper()
+	hash := transfer.Hash()
 	deadline := time.Now().Add(60 * time.Second)
 	for time.Now().Before(deadline) {
 		requireContinuousMiners(t, nodes[0], nodes[1])
@@ -66,9 +74,8 @@ func fundLivePurchaseRepair(t *testing.T, nodes [2]*rehearsalNode, funder *fixtu
 					t.Fatal("funding transfer was not canonical and successful on both nodes")
 				}
 			}
-			t.Logf("funded repair single transfer sender=%s recipient=%s value-wei=%s hash=%s block=%d %s gas=21000", funder.owner.Hex(), recipient.Hex(), transfer.Value(), hash.Hex(), receipts[0].BlockNumber.Uint64(), receipts[0].BlockHash.Hex())
-			validateLiveRepairPurchase(t, nodes[0], purchase)
-			return transfer
+			t.Logf("funded repair transfer value-wei=%s hash=%s block=%d %s gas=21000", transfer.Value(), hash.Hex(), receipts[0].BlockNumber.Uint64(), receipts[0].BlockHash.Hex())
+			return receipts[0]
 		}
 		time.Sleep(250 * time.Millisecond)
 	}

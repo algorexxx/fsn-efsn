@@ -34,7 +34,11 @@ The [subsequent complete-state partition](restart-retry-partition.md) adds no
 production changes. It demonstrates automatic heavier-branch convergence but
 leaves a seven-purchase nonce gap and insufficient funds after ordinary ticket
 retreats. Existing RPC retrieves every original; canonical and competing-branch
-accounting pass. Successful complete-state funded repair remains unproved.
+accounting pass. The [funded continuation](restart-funded-gap.md) subsequently
+passes sequential repair of all seven originals, the exact saved intent and two
+automatic successors on restarted copies, with matching 58-block cold ledgers.
+It adds only tests and does not establish unattended nonce repair, a real funding
+source or a universal reserve.
 
 ## Permanent node candidates
 
