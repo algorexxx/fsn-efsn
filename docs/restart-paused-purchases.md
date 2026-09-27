@@ -141,8 +141,10 @@ consumes the 31 missing nonces using existing zero-value self-transfers. Their
 total gas is 0.001302 FSN; both 50-block cold ledgers pass. The historical
 originals had not yet expired, and the action deliberately abandons them. The
 saved nonce-39 intent stays exact and the buyer remains unfunded. This does not
-prove fresh purchasing after resolution of an unsuitable saved intent, which
-is the next distinct case. A funded replay of still-valid originals remains a
+prove fresh purchasing after resolution of an unsuitable saved intent. The
+[separate saved-intent rehearsal](restart-stale-intent.md) now passes that case
+using a clearly labelled stale fixture record and ordered synthetic funding,
+with no manual record edits during recovery. A funded replay of still-valid originals remains a
 separate scenario with explicit funding and timing assumptions. No production
 validation or automatic replacement behavior changes.
 

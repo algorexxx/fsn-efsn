@@ -134,6 +134,14 @@ saved-record reader is established.
    ordinary transfer is chosen, document its authorized sender and amount, then
    require canonical success before resuming. The synthetic 5,000/10,000-FSN
    transfers are observations, not universal repair amounts or available funds.
+   When a surviving producer supplies funds, sequence its transfer after its
+   reviewed saved/pending purchase rather than occupying that purchase's nonce.
+   The [stale-intent rehearsal](restart-stale-intent.md) reproduces a stall when
+   the sole eligible producer's transfer blocks automatic buying and its last
+   ticket cannot seal a block leaving no tickets. On a fresh copy, waiting for
+   the next automatic purchase and placing the transfer at the following nonce
+   permits both to execute. Recheck the donor's actual nonce, pool and funding;
+   this sequencing requirement does not establish a generally safe transfer amount.
 4. Submit the reviewed original bytes using `eth_sendRawTransaction`. Submission
    acceptance is not purchase success. Wait for a receipt, verify its block hash
    is canonical, inspect the native BuyTicket result for an `Error` field, and
@@ -189,9 +197,38 @@ automatic replacement policy or a way to restore stake funding.
 
 An expired probe is rejected by real pool RPC in this experiment, but the 31
 historical predecessors had not yet crossed their validity boundaries. No
-conflicting pool-price replacement, unusable saved-intent resolution, loss of
+conflicting pool-price replacement, loss of
 the surviving producer, or protection against a later reorganization is proved.
 Do not delete the durable intent or relax purchase validation to force progress.
+
+## Explicitly abandon an unsuitable saved intent
+
+The [saved-intent follow-up](restart-stale-intent.md) now demonstrates this
+separate case on complete synthetic state. It seeds a stale record before
+startup; **that fixture database write is not an operator step**. Existing RPC
+rejects the exact transaction before and after funding. The recovery itself
+uses one ordinary self-transfer and lets the controller manage its record.
+
+After confirming there is no earlier nonce gap, assess the saved purchase's
+exact payload, current admission failure, funding and any conflicting pool
+transaction. If the owner explicitly chooses to abandon it, preserve its bytes
+and sign a reviewed zero-value self-transfer at that same canonical nonce using
+the checks above. Require canonical success before treating the nonce as
+consumed. A pending replacement alone is insufficient.
+
+The existing buyer then retires the saved intent with a warning that its nonce
+was consumed **without a confirmed purchase**. Do not count that message or the
+self-transfer receipt as ticket creation. Require fresh ordinary purchases with
+canonical native success and actual block production. The passing test verifies
+the first fresh purchase, two automatic successors, three donation-produced
+blocks and both cold 60-block ledgers. It adds no automatic replacement behavior
+and makes no manual record edits during recovery.
+
+Keep this an owner-authorized transaction decision. The test's 3,000-FSN funding
+comes from existing synthetic balances, and the prior no-funding barrier and
+funding-order failure remain relevant. Reorganization of the abandonment and
+continued operation after restart of the newly saved successor are separate
+checks. Funding, nonce resolution and payload validity remain distinct gates.
 
 ## Acceptance and retained record
 
@@ -356,7 +393,10 @@ starting repair. The [explicit-abandonment follow-up](restart-expired-nonce-neut
 now consumes the 31 missing nonces with owner-signed zero-value self-transfers
 for 0.001302 FSN gas, preserving the saved nonce-39 intent and all donation
 interval rights. Both 50-block cold ledgers pass. This removes a nonce gap but
-leaves the buyer unfunded; an unsuitable saved intent remains a separate case.
+leaves the buyer unfunded. The [saved-intent follow-up](restart-stale-intent.md)
+now separately passes explicit abandonment of a seeded stale intent, correctly
+ordered synthetic funding and fresh automatic purchases/mining, with both cold
+60-block ledgers reconciled. Its failed funding-order attempt is also retained.
 Do not clear its saved intent, override heads, or count the paused
 wallet as a functioning producer merely because its node has synchronized.
 The entrant's continued buying does not prove recovery of the paused account.

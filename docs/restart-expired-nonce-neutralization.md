@@ -132,11 +132,16 @@ it. Existing controller code distinguishes a consumed nonce from a confirmed
 purchase, but complete-state recovery through that case still needs its own
 explicit test. Do not delete or rewrite the durable record as a shortcut.
 
-The next bounded case is explicit resolution of an unsuitable saved intent,
-with accounted synthetic funding if testing fresh automatic purchasing. Keep
-that separate from funded replay of still-valid originals and from the existing
-unattended equal-weight convergence failure. The release monitoring policy,
-real funding and owner approval for transaction abandonment remain decisions.
+The [saved-intent follow-up](restart-stale-intent.md) now separately seeds an
+unsuitable nonce-39 record on fresh copies, verifies that actual funding cannot
+fix its interval, then passes explicit self-transfer abandonment and three
+fresh automatic purchases with actual donation mining. Both 60-block cold
+ledgers pass. Its retained failed attempt also demonstrates why a surviving
+producer's funding transfer must follow its next pending purchase. The fixture
+record injection is test setup; recovery makes no manual record edits. Continue
+with restart of the newly saved successor. Funded original replay, unattended
+equal-weight convergence, real funding and owner-approved response policy
+remain distinct questions.
 
 All rehearsal processes are stopped. D: has about **142.1 GB** free and the WSL
 filesystem about **64.0 GB**. No W: workload was needed. Native logs use UTC+02;

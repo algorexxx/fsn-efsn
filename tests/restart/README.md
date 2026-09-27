@@ -768,3 +768,19 @@ the explicitly listed transaction hashes allowed as zero-value self-transfers.
 The evidence verifier independently checks all 31 inclusions, gas accounting,
 saved bytes and unchanged donation time locks. See the
 [nonce-abandonment report](../../docs/restart-expired-nonce-neutralization.md).
+
+`TestFullStateStaleIntentRecovery` starts fresh copies of the nonce-abandonment
+result and explicitly seeds a separately signed, already-unsuitable nonce-39
+record before service startup. It retains the original bytes and changes no
+canonical state. Real miner/buyer operation must preserve that stale record
+and reject it through pool RPC before and after 3,000 FSN of ordinary synthetic
+funding. Entrant funding follows its saved/pending nonce-44 purchase at nonce 45;
+the retained initial attempt at nonce 44 stalls buying and finalization without
+advancing either chain. An explicit RPC-signed nonce-39 self-transfer must then
+retire the stale record without a purchase receipt, followed by three fresh
+automatic donation purchases and actual donation block production. Recovery
+makes no direct database edits and uses no held signing worker. The separate
+`TestFullStateStaleIntentColdAudit` includes the previous 31 self-transfers,
+the two funding transfers and the new self-transfer in its exact allowlist.
+The joint evidence verifier checks both the retained failure and passing case.
+See the [saved-intent report](../../docs/restart-stale-intent.md).
