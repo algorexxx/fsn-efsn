@@ -184,12 +184,16 @@ public-network behavior or production monitoring coverage. Those gates remain
 separate from this narrow operator-delivery exercise.
 
 The uninterrupted funded manual-repair sequence now has a passing case. Its
-recipient-delivery fallback did not need to intervene, so an uninterrupted
-reproduction of the stranded-predecessor condition remains a distinct test.
-Next retain this result, exercise that condition deliberately on a fresh copy
-if it remains a release requirement, and define the actual monitored funding
-and response policy. Equal-weight convergence and broader outage coverage
-remain open. The one-backup-block launch and production P1–P15 are unchanged.
+recipient-delivery fallback did not need to intervene. The subsequent
+[injected-rejection case](restart-injected-manual-delivery.md) uses a fresh copy
+and requires a native remote rejection, restored normal price, sustained
+local-only pending status and successful direct delivery of that exact original.
+It passes seven originals, the unchanged saved intent, two fresh automatic
+purchases and both 54-block cold ledgers. This controlled policy fault is
+distinct from the historical insufficient-balance ordering. Next define the
+actual monitored funding and response policy and address equal-weight
+convergence and broader outage coverage. The one-backup-block launch and
+production P1–P15 are unchanged.
 
 `verify-evidence.py` verifies the current source identities, interval analyses,
 recorded purchase receipts, stopped/cold saved records and top-level SHA256

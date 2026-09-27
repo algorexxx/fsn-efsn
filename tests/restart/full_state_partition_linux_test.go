@@ -251,11 +251,16 @@ func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owne
 			t.Fatal("repair nonce, saved intent or empty pool changed")
 		}
 		validateLiveRepairPurchase(t, nodes[gap.index], tx)
+		afterSubmission := func() {}
+		if deliver && os.Getenv("FUSION_RESTART_REJECT_MANUAL_ONCE") == "1" && nonce == gap.nonce {
+			afterSubmission = rejectFirstManualBroadcast(t, path, nodes, owners, gap, tx)
+		}
 		failure := submitFullStateRepair(t, path, nodes, owners, gap, tx)
 		if failure != "" {
 			result.FundingFailure = failure
 			return result
 		}
+		afterSubmission()
 		block := awaitReceipt(tx)
 		result.OriginalsIncluded++
 		t.Logf("full-state manual original included nonce=%d hash=%s block=%d %s", nonce, tx.Hash().Hex(), block.NumberU64(), block.Hash().Hex())

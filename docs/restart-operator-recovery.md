@@ -266,3 +266,15 @@ normally in that run; it does not exercise direct recipient submission during
 the uninterrupted sequence. Conditional synthetic funding, an observed normal
 ticket return and a bounded pass do not establish a real reserve or unattended
 recovery policy.
+
+The [injected-rejection follow-up](restart-injected-manual-delivery.md) now also
+passes the uninterrupted sequence with actual direct delivery. A temporary
+test-only receiver price setting causes a native rejection of the first
+original. After normal price restoration and a measured local-only pending
+interval, exact-byte direct submission recovers it. Seven originals, the
+unchanged saved intent, two fresh automatic purchases and both 54-block cold
+ledgers pass; two originals need direct delivery. The price manipulation is an
+isolated test stimulus, not an operator recovery step. Use the existing
+readiness, funding, original-byte and canonical native-success checks above.
+Real funding availability, response responsibility and equal-weight convergence
+remain open.

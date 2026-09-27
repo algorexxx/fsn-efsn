@@ -200,10 +200,14 @@ func TestRestartNodeRehearsal(t *testing.T) {
 
 func runRehearsalNode(t *testing.T, path string) {
 	level := log.LvlInfo
+	format := log.TerminalFormat(false)
 	if os.Getenv("FUSION_RESTART_NODE_DEBUG") == "1" {
 		level = log.LvlDebug
 	}
-	log.Root().SetHandler(log.LvlFilterHandler(level, log.StreamHandler(os.Stderr, log.TerminalFormat(false))))
+	if os.Getenv("FUSION_RESTART_NODE_DEBUG") == "trace-json" {
+		level, format = log.LvlTrace, log.JSONFormat()
+	}
+	log.Root().SetHandler(log.LvlFilterHandler(level, log.StreamHandler(os.Stderr, format)))
 	data, err := os.ReadFile(filepath.Join(path, "lab.json"))
 	requireNoError(t, err)
 	var lab nodeRehearsalConfig

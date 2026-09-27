@@ -703,3 +703,14 @@ now allows 60 seconds for IPC readiness after a recorded 15-second startup
 timeout on a disposable full-state database. These are test limits, not new
 production settings. See the [uninterrupted delivery investigation](../../docs/restart-uninterrupted-delivery.md)
 for the individually retained attempts and their acceptance results.
+
+`TestFullStateRetainedPartitionRejectedRepair` runs the same uninterrupted
+sequence and deliberately rejects its first manual original at the receiving
+pool with a temporary minimum-price setting through existing RPC. It requires
+the receiver's JSON trace to identify the exact rejected transaction, restores
+the original price, observes local-only pending status for 15 seconds, and then
+requires successful direct delivery of that specific original by the existing
+repair helper. The saved automatic intent receives no direct intervention.
+The stimulus is test-only and is not an operator procedure. The ordinary case
+retains its original behavior. See the
+[injected-rejection report](../../docs/restart-injected-manual-delivery.md).
