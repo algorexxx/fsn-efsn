@@ -14,6 +14,8 @@ P14 corrects discovery address reservations, replacement promotion and stale
 probe results, from baseline `a5a6bea`.
 P15 excludes the node's own identity from discovery admission, from baseline
 `27b1186`, with deterministic and signed-UDP before/after evidence.
+P16 rejects truncated snapshot counts before slicing, from baseline `96ff3b4`,
+with local parser regression evidence and valid-header compatibility checks.
 This is the review inventory, not
 an approved release. Later test/document changes do not approve these patches.
 
@@ -59,6 +61,7 @@ source or a universal reserve.
 | P13 | Reconstruct routing hashes for decoded seed records; do not replace an existing table entry with an older cached endpoint. | Prevents duplicate identities in different discovery buckets and stale cache interference with a newly resolved address. Review with P12. | Local seed-cache insertion correction, with unchanged record format and age limits. The targeted duplicate-address regression fails before and passes after correction; see [cache interaction](restart-bootstrap-dns.md). |
 | P14 | Transfer discovery subnet reservations when endpoints change, reuse replacement reservations on promotion, start promotion maturity, and ignore probe/deletion results for superseded entries. | Corrects reproduced quota bypass/leaks, stale-endpoint overwrite/eviction and premature replacement persistence. Review with P11–P13. | Local discovery behavior after startup and recovery; no consensus, economic, wire-format or limit-policy change. One runtime file, 63 added/23 removed lines. See [address-move evidence](restart-peer-addresses.md), including deterministic before/after cases and a signed UDP move in an isolated namespace. |
 | P15 | Reject the local node ID at the common discovery-table admission entry point. | Prevents self-contacts from occupying active/replacement entries and address reservations, and from suppressing empty-table refresh after real contacts disappear. | Three added runtime lines in `Table.add`. No timer, record format, wire protocol, ticket, fork-choice or consensus change. See [partition/self-contact evidence](restart-network-partitions.md), including four deterministic failures and a real signed-UDP admission failure before correction. |
+| P16 | Reject a snapshot payload shorter than four count bytes plus its checksum before slicing. | Fixes eight locally reproduced slice-bounds panics for truncated input. | Three added runtime lines in `snapshot.SetBytes`; inputs of at least five bytes use the unchanged decoder. No valid encoding, ticket-economics or fork-choice change. See [framing correction and validation scope](restart-snapshot-framing.md). Network-level exploitability and process effects have not been tested. |
 
 ## Source boundaries
 
@@ -84,6 +87,7 @@ Tests and evidence must accompany any extracted patch.
 | P13 | `p2p/discover/database.go`: `nextNode` reconstructs the private routing hash; `p2p/discover/table.go`: `loadSeedNodes` preserves an existing entry when loading cached contacts. |
 | P14 | `p2p/discover/table.go`: `findnode`, `doRevalidate`, `updateIP`, `addReplacement`, `replace`, `bumpOrAdd`, `deleteInBucket`, shared `findNode`; extend `loadSeedNodes` preservation to replacements. |
 | P15 | `p2p/discover/table.go`: three-line local-ID check at the start of `Table.add`, before locking or changing address reservations. |
+| P16 | `consensus/datong/snapshot.go`: three-line minimum-size guard after the existing empty-input check in `snapshot.SetBytes`. |
 | O1 | `cmd/utils/flags.go`: trim/filter explicit bootstrap lists. Inherited gateway usability fix; optional for the restart protocol. Does not create DNS discovery. Review independently if retained. |
 
 P1, P5, P6, P7 and P9 overlap in chain/header code. Extract and test them in a defined
@@ -114,7 +118,7 @@ not claim those are implemented or that the candidate node is ready to launch.
 The [operator network-profile follow-up](restart-network-profile.md) adds no
 runtime patch. It records tested configuration workarounds for inherited NAT,
 diagnostic dump, discovery-flag and restored-peer-list behavior, plus the remaining
-release endpoint/image changes. The current inventory is P1–P15.
+release endpoint/image changes. The current inventory is P1–P16.
 
 The [packet-loss follow-up](restart-network-partitions.md) adds P15 after
 reproducing self-contact admission and suppressed refresh. It exercises timeout,
@@ -174,7 +178,6 @@ added consensus rule; Fusion's header uncle field carries a PoS commitment.
 The [ordinary-mining observer follow-up](restart-observer-mining.md) adds only
 three Linux integration-test files and evidence. Moving-head collection and a
 test-only native inventory audit pass without any observer or node runtime edit.
-Its source review records a snapshot length-check concern requiring focused
-reproduction and node call-path review. That unresolved finding is not an
-approved new patch or a demonstrated hostile-peer crash; triage it before
-reusing the decoder for the proposed external native timeline.
+Its source review led to the [P16 local parser correction](restart-snapshot-framing.md).
+The narrowed investigation confirms truncated-input panics and adds a minimum-size
+guard; it does not demonstrate a hostile-peer crash or approve the patch for release.

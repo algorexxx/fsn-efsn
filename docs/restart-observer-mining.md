@@ -100,9 +100,11 @@ reconciled their own actual sequence, without fixing an expected winning schedul
    only for nonempty input before later slicing four count bytes after checksum
    validation. Short, checksum-matching input needs a focused reproduction and
    call-path review before reusing that parser with untrusted observer data.
-   This is an unresolved source-level concern, not a demonstrated hostile-peer
-   crash or an approved additional node patch. The test audit guards minimum
-   framing and operates only on the fixture's accepted blocks.
+   The subsequent [local parser investigation](restart-snapshot-framing.md)
+   confirms the panic and adds the three-line P16 candidate guard. No
+   hostile-peer crash has been demonstrated or additional patch approved for
+   release. The test audit guards minimum framing and operates only on the
+   fixture's accepted blocks.
 5. **Reorganization-aware derivation.** Rebuild inventory and native outcomes
    from the retained canonical branch, retaining displaced evidence and marking
    unknown intervals. Do not persist a second mutable cursor or inventory cache
@@ -111,9 +113,8 @@ reconciled their own actual sequence, without fixing an expected winning schedul
    production accounting status. Block coverage and accounting coverage must
    remain separate claims.
 
-First triage the snapshot length concern with a bounded local reproduction and
-review its reachable node call paths; keep any resulting node correction explicit
-in the patch inventory. Then implement the smallest external derived timeline
+Review the [P16 parser correction and narrowed validation scope](restart-snapshot-framing.md),
+then implement the smallest external derived timeline
 with the inventory and coverage rules above. Collection during a live competing
 reorganization, representative backlog/storage/receipt-index availability,
 deployment scheduling and notification delivery remain open. The

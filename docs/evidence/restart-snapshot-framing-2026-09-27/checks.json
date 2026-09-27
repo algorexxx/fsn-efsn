@@ -1,0 +1,29 @@
+{
+  "baseline": "96ff3b487085d4e1d4cdb4c48d91fb08d4bbd920",
+  "runtime_change": "Three-line minimum-size guard in snapshot.SetBytes; original decoder otherwise byte-identical after newline normalization.",
+  "original_local_panic_cases": 8,
+  "shared_inputs_verified": 123,
+  "passing_logs": {
+    "after-windows/parser.txt": {
+      "passes_including_subtests_and_child_output": 24,
+      "sha256": "e661bad3388eb0bc34a3c5dcacd739965774a5db5e1a831289671ea679622ebc"
+    },
+    "after-linux/parser-race.txt": {
+      "passes_including_subtests_and_child_output": 24,
+      "sha256": "8abc3de8e9578e506bfd556d1520ff671bdc90a21d451fd3ca4f9637c55d592e"
+    },
+    "after-linux/compatibility-race.txt": {
+      "passes_including_subtests_and_child_output": 20,
+      "sha256": "fefb8219c61ec089ea8603bf6adf9e71f1dbb97c679b7b6d3c88c4fb909df9f8"
+    }
+  },
+  "windows_header_compatibility": "not run: offline dependency cache incomplete; setup failure retained",
+  "linux_race_checks": "parser, existing header/import compatibility and bounded in-memory fuzz passed",
+  "fuzz_executions": 5151,
+  "fuzz_requested_seconds": 10,
+  "limitations": [
+    "No signed malformed-header, process-crash or peer-network test was run.",
+    "Local parser behavior is reproduced; remote exploitability and process-level impact remain unverified.",
+    "P16 is a candidate requiring independent release review."
+  ]
+}
