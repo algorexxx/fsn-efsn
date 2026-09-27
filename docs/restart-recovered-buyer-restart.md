@@ -123,13 +123,15 @@ It does not establish indefinite unattended operation or a universal reserve.
 The earlier funding-order failure and equal-weight first-contact failure remain
 preserved and relevant.
 
-The next distinct recovery case is a compatible reorganization that removes
-the nonce-abandonment transaction after fresh purchases have been saved or
-confirmed. Keep it separate from this pass: preserving a later intent does not
-automatically repair a newly created nonce gap. Any such test must use another
-disposable copy, retain both histories and verify exact intent, receipt and
-interval accounting. Crash/power-loss boundaries and real operator response
-responsibility remain separate release concerns.
+The separate [abandonment rollback](restart-abandonment-reorg.md) now removes
+the self-transfer and purchases 40–42 on fresh copies of this run's input.
+It verifies canonical nonce 39, unchanged saved nonce 43, exact displaced-byte
+retrieval and an explicit nonce-gap pause after an empty-pool restart. Both
+68-block cold ledgers agree. This is a pause/data-preservation result with a
+held signer and explicit downloader request, not another mining-continuation
+pass. Next test sequential recovery of the same self-transfer and purchases,
+followed by automatic successors and actual production. Crash/power-loss
+boundaries and real operator response responsibility remain separate concerns.
 
 All rehearsal processes are stopped. D: has about **138.5 GB** free and the WSL
 filesystem about **63.9 GB**. No W: workload was needed. Native logs use UTC+02;

@@ -798,3 +798,21 @@ requires all 34 ordinary transfers to remain in the original prefix. Evidence
 verification checks exact saved-byte inclusion, sequential native purchases,
 matching cold intents and the unchanged 60-block prefix. See the
 [normal-restart report](../../docs/restart-recovered-buyer-restart.md).
+
+`TestFullStateAbandonmentReorg` starts the recovered donation copy at 15,130,140
+with confirmed purchases 40–42 and saved 43. A second, older copy imports the
+exact funding prefix through 15,130,132 and constructs an ordinary heavier
+entrant-only suffix. No head, account state or purchase record is edited.
+An explicit downloader request over real peers must remove the abandonment
+and three purchases, restore canonical nonce 39 and preserve saved 43. The
+test-only held signer prevents production during observation. The live pool
+must retain the original self-transfer and purchase 40; after a restart with
+the harness's disabled pool journal, the buyer must retain its nonce gap with
+an empty pool. Exact old-block RPC retrieval and absent canonical receipts
+are checked for all four displaced transactions before and after restart.
+The old and competing histories receive complete ledger audits, followed by
+`TestFullStateAbandonmentReorgColdAudit` on both stopped databases. The evidence
+verifier compares all histories, native receipts, restored funds, saved bytes
+and source hashes. This characterizes safe pausing and data retention; manual
+recovery and actual production after this rollback remain separate. See the
+[abandonment rollback report](../../docs/restart-abandonment-reorg.md).

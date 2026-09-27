@@ -229,9 +229,25 @@ comes from existing synthetic balances, and the prior no-funding barrier and
 funding-order failure remain relevant. The [normal-restart continuation](restart-recovered-buyer-restart.md)
 now restores the exact saved successor from an empty pool, executes it and two
 fresh successors, and resumes actual production without new funding or manual
-submission. Both cold 72-block ledgers pass. A compatible reorganization of the
-abandonment remains a separate case. Funding, nonce resolution and payload
-validity remain distinct gates.
+submission. Both cold 72-block ledgers pass. Funding, nonce resolution and
+payload validity remain distinct gates.
+
+The [compatible-abandonment rollback](restart-abandonment-reorg.md) now verifies
+that the self-transfer and later purchases can lose canonical inclusion while
+the newest saved intent survives. In the complete-state rehearsal, canonical
+nonce 43 becomes 39 and saved 43 stays unchanged. The live pool retains the
+original self-transfer 39 and purchase 40; after a restart with no pool journal,
+the buyer reports the nonce gap with an empty pool. Both cold 68-block ledgers
+agree, and the four displaced transactions remain retrievable by old block hash.
+
+After a branch change, recheck receipts, account nonce and the pool before
+authorizing another transaction. Retain and inspect the original self-transfer
+as well as the displaced purchases. Do not issue a second abandonment, clear
+the saved record or assume an enabled buyer fills the gap. Sequential replay of
+the original self-transfer and purchases, followed by saved-intent execution
+and resumed production, is the next separate rehearsal. The pause result uses
+a held signer and explicit downloader request; it does not prove automatic
+repair, unattended convergence or continued mining.
 
 ## Acceptance and retained record
 

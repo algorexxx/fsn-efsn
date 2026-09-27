@@ -154,8 +154,12 @@ erase the observed fresh purchases and canonical mining, or establish an
 unattended funding failure. The [normal-restart follow-up](restart-recovered-buyer-restart.md)
 now restores that exact nonce-43 purchase from an empty pool, executes it and
 two fresh successors, and resumes actual production without new funding or
-manual submission. Both cold 72-block ledgers pass. A later rollback of the
-abandonment remains a separate recovery case.
+manual submission. Both cold 72-block ledgers pass. The separate
+[abandonment rollback](restart-abandonment-reorg.md) now verifies removal of
+the self-transfer and purchases 40–42, retention of saved 43 at canonical
+nonce 39, displaced-byte retrieval and an explicit pause after restart. Both
+68-block cold ledgers pass; sequential recovery and resumed production after
+that rollback remain the next test.
 
 The inherited `AdditionalFunding` audit map contains 34 allowlisted ordinary
 transactions: 31 prior self-transfers, two funding transfers and the new
