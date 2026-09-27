@@ -1,0 +1,22 @@
+# github.com/FusionFoundation/efsn/v5/eth [github.com/FusionFoundation/efsn/v5/eth.test]
+eth/helper_test.go:53:165: undefined: ethdb.MemDatabase
+eth/helper_test.go:82:183: undefined: ethdb.MemDatabase
+eth/api_test.go:34:39: not enough arguments in call to state.New
+	have ("github.com/FusionFoundation/efsn/v5/common".Hash, state.Database)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash, state.Database)
+eth/api_test.go:34:63: undefined: ethdb.NewMemDatabase
+eth/handler_test.go:370:19: undefined: ethdb.NewMemDatabase
+eth/handler_test.go:376:66: not enough arguments in call to state.New
+	have ("github.com/FusionFoundation/efsn/v5/common".Hash, state.Database)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash, state.Database)
+eth/handler_test.go:380:27: not enough arguments in call to state.GetBalance
+	have ("github.com/FusionFoundation/efsn/v5/common".Address)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address)
+eth/handler_test.go:381:26: not enough arguments in call to trie.GetBalance
+	have ("github.com/FusionFoundation/efsn/v5/common".Address)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address)
+eth/handler_test.go:465:63: undefined: daoChallengeTimeout
+eth/handler_test.go:466:3: undefined: daoChallengeTimeout
+eth/handler_test.go:466:3: too many errors
+FAIL	github.com/FusionFoundation/efsn/v5/eth [build failed]
+FAIL

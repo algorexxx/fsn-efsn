@@ -1,0 +1,13 @@
+Baseline: cf70290f03b3be509602107bbfbdba73315be201
+Branch: codex/restart-investigation-wip
+Host: Windows, WSL distribution FusionRehearsal
+Observed toolchain: go version go1.21.3 linux/amd64
+Build user: rehearsal; namespace launcher: root
+Build options: -race -p=2 -mod=readonly, GOMAXPROCS=2, GOPROXY=off, GOTOOLCHAIN=local
+Protocol test: private network namespace, message pipes only, no peer sockets or signing.
+Live test: private network namespace, loopback only; public synthetic signing keys 2 and 3.
+Cold test: private namespace, no enabled network interfaces, no signing.
+Admission test: historical states from the already audited live-failure copy, unchanged canonical head, no signing.
+Source and disposable-copy paths, sizes and hashes: source-copy.json, source-copies-SHA256.json, copy-capacity.json.
+After the failed live test, its original diagnostic-saved-*.json inputs were preserved as initial-diagnostic-saved-*.json before the cold diagnostic wrote the current saved intents.
+At 2026-09-27 06:53:57 UTC, fuser reported no open locks on the protocol receiver and live producer/verifier databases; ps found no protocol-tests or live-tests processes. The later admission test also completed and closed its database.

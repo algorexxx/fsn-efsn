@@ -626,3 +626,24 @@ prior thirty-one unchanged. Failed expectation/output-path attempts are retained
 This proves explicit delivery recovery without new funds, not the original
 wire rejection or automatic retry. See the
 [purchase-delivery report](../../docs/restart-purchase-delivery.md).
+
+`eth/TestRestartPeerPurchaseRetry` requires `FUSION_RESTART_PEER_RETRY` to name the
+fresh prepared protocol copy. It uses the actual handler, real pools and block
+importer over controlled message pipes. Three race-detected cases pass: explicit
+same-peer retry, ready pending replay, and discarded replay before readiness
+followed by a successful ready replay. The unchanged legacy `eth` package tests
+do not compile; the evidence runner builds the platform production file list plus
+this focused test and retains the package failure separately.
+
+`TestFullStatePurchasePeerReconnect` shares the delivery harness but submits the
+saved purchase only to its originating node. It reconnects the real services
+after mining readiness, then requires the same canonical native purchases and
+cold accounting as direct delivery. The retained attempt recovers the original
+purchase but fails on the next donation purchase, which remains absent from the
+recipient pool. The existing cold diagnostic passes all forty-four suffix blocks
+and both saved-purchase admissions. `TestFullStateReconnectHistoricalAdmission`
+then passes real remote pool checks on the new nonce-9 bytes: insufficient balance
+before the donation's selection/refund block, accepted afterward. Both tests use
+`FUSION_RESTART_PURCHASE_DELIVERY` on their corresponding disposable state. See
+the [peer retry report](../../docs/restart-peer-purchase-retry.md); a successful
+one-time replay is not described as sustained recovery.

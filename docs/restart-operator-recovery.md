@@ -188,3 +188,14 @@ authorized endpoint. Verify canonical native success and continued purchasing;
 do not clear the saved intent, guess a replacement nonce or treat local pending
 status as successful delivery. This is a rehearsed manual delivery option,
 not yet an automatic retry policy or proof of the original wire failure.
+
+The [peer retry investigation](restart-peer-purchase-retry.md) confirms a second
+option: after verifying compatible heads and transaction readiness, a deliberate
+reconnect can replay the sender's unchanged pending purchase. Reconnecting too
+early can lose that replay as well. The actual two-node test recovers the original
+purchase but fails continued replenishment when its automatic successor is
+missing from the producer's pool. Treat reconnect or direct delivery as recovery
+of a specific transaction, then continue monitoring fresh purchases. Repeated
+local submission returning `already known` is not delivery evidence. Bounded
+automatic same-byte retry remains unresolved within P4; do not cycle peers or
+enable extra historical launch signers as an unattended workaround.

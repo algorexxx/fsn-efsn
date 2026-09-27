@@ -22,6 +22,14 @@ ticket economics and ordinary fork choice. Each row below is a separate review
 decision. Some rows share files or implementation commits; cherry-picking a whole
 investigation commit is not a substitute for selecting its intended changes.
 
+27 September P4 review finding: the [peer retry investigation](restart-peer-purchase-retry.md)
+reproduces a pending purchase that is rejected by a lagging receiver and then
+suppressed by known-peer tracking after catch-up. A ready reconnect recovers it,
+but the live automatic successor can become stranded again. P4's current local
+pending check does not establish delivery or unattended replenishment. A bounded
+same-byte retry candidate and its passing continuation tests remain outstanding;
+this finding adds no production patch or consensus change to the inventory.
+
 ## Permanent node candidates
 
 | ID | Exact change | Why include it / necessity | Lasting effect and evidence |

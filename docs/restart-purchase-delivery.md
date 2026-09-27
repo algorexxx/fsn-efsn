@@ -3,6 +3,12 @@
 27 September 2026, baseline `7f7697b`. Tests and evidence only; production
 candidates remain P1–P15 and the selected launch sequence is unchanged.
 
+Later follow-up: the [peer retry investigation](restart-peer-purchase-retry.md)
+captures known-peer suppression and successful same-byte retransmission through
+the actual handler. A two-process reconnect recovers the original purchase but
+fails again on its automatic successor; the complete forty-four-block cold
+audit passes. The new failure narrows the remaining P4 delivery work.
+
 The [existing-funds experiment](restart-existing-funds.md) ended at block
 15,130,111 with the donation's correctly numbered purchase pending locally.
 This follow-up demonstrates recovery by submitting its **unchanged signed

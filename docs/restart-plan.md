@@ -539,10 +539,20 @@ two-service replenishment for both owners without more funding or a replacement
 signature. Both cold databases and independent interval accounting agree across
 forty blocks; the earlier thirty-one are unchanged. This establishes explicit
 delivery recovery, not automatic recovery of the original peer connection.
-Next capture a deterministic transaction-before-block exchange through the peer
-handler and test bounded same-byte retry or reconnection. The original wire
-rejection remains unobserved. Production P1–P15 remains unchanged; no consensus
-or transaction-validity relaxation follows from this result.
+The [peer retry follow-up](restart-peer-purchase-retry.md) now captures that
+transaction-before-block sequence through the actual handler, pool and importer.
+Rejected transactions remain known to the connection; ordinary rebroadcast is
+suppressed after catch-up. Explicit same-byte transmission and ready pending
+replay pass; replay before readiness fails again. An actual two-process reconnect
+recovers the original purchase but fails both-owner replenishment when the next
+donation purchase stays local. Both cold databases and independent accounting
+agree across forty-four blocks. A separate check reproduces insufficient funding
+for the newer purchase immediately before its ticket refund, followed by acceptance
+of the same bytes afterward. The original live admission errors remain unobserved.
+Next prototype bounded same-byte pending-purchase delivery retry within P4,
+preserving nonce/confirmation/disable guards and remote validation. The captured
+failed continuation is its regression target. Production P1–P15 remains unchanged;
+no consensus or transaction-validity relaxation follows from these results.
 Keep pool admission, native purchase success and continued live production as
 separate acceptance gates. Complete-state live nonce rollback/repair and explicit
 reserves for another partition remain open; do not infer them from this funding

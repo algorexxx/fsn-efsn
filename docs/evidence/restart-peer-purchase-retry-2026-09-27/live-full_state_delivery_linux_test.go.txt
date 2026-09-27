@@ -40,15 +40,6 @@ type deliveryHistoricalChain struct {
 func (c deliveryHistoricalChain) CurrentBlock() *types.Block { return c.head }
 
 func TestFullStateDeliveryHistoricalAdmission(t *testing.T) {
-	rehearseHistoricalPurchaseAdmission(t, 15130098, 15130099, 8, common.HexToHash("0xdfea27eab0a6b3cd87782ff072176c2daa98222c9e764fdcf30c0fc75f30737f"), "BuyTicket start must be lower than latest block time + 3 hour")
-}
-
-func TestFullStateReconnectHistoricalAdmission(t *testing.T) {
-	rehearseHistoricalPurchaseAdmission(t, 15130112, 15130113, 9, common.HexToHash("0xa13b447eb428b69640202b0257a0d61b7a43e53d03c5c5e4c6c5a531ab92db46"), "insufficient balance")
-}
-
-func rehearseHistoricalPurchaseAdmission(t *testing.T, before, after, nonce uint64, hash common.Hash, rejection string) {
-	t.Helper()
 	root := requireDeliveryRoot(t)
 	requireFullStateCopy(t, filepath.Join(root, "verifier"))
 	f, _, _ := openFullStateHandover(t, filepath.Join(root, "verifier"))
@@ -59,7 +50,7 @@ func rehearseHistoricalPurchaseAdmission(t *testing.T, before, after, nonce uint
 	readHandoverJSON(t, filepath.Join(root, "diagnostic-saved-producer.json"), &retained)
 	var tx types.Transaction
 	requireNoError(t, tx.UnmarshalBinary(retained.Saved))
-	if f.chain.CurrentBlock().Hash() != retained.Header.Hash() || tx.Nonce() != nonce || tx.Hash() != hash {
+	if f.chain.CurrentBlock().Hash() != retained.Header.Hash() || tx.Nonce() != 8 || tx.Hash() != common.HexToHash("0xdfea27eab0a6b3cd87782ff072176c2daa98222c9e764fdcf30c0fc75f30737f") {
 		t.Fatal("historical admission input differs from retained failure")
 	}
 	owner, err := types.Sender(types.LatestSigner(f.chain.Config()), &tx)
@@ -69,7 +60,7 @@ func rehearseHistoricalPurchaseAdmission(t *testing.T, before, after, nonce uint
 	requireNoError(t, rlp.DecodeBytes(tx.Data(), &envelope))
 	requireNoError(t, rlp.DecodeBytes(envelope.Data, &purchase))
 	var records []map[string]interface{}
-	for _, height := range []uint64{before, after, retained.Header.Number.Uint64()} {
+	for _, height := range []uint64{15130098, 15130099, 15130111} {
 		head := f.chain.GetBlockByNumber(height)
 		if head == nil {
 			t.Fatal("missing retained historical block")
@@ -89,8 +80,11 @@ func rehearseHistoricalPurchaseAdmission(t *testing.T, before, after, nonce uint
 		records = append(records, map[string]interface{}{"Header": head.Header(), "Transaction": tx.Hash(), "Saved": retained.Saved, "Purchase": purchase, "CanonicalNonce": state.GetNonce(owner), "LiquidWei": state.GetBalance(common.SystemAssetID, owner).String(), "TimeLocks": state.GetTimeLockBalance(common.SystemAssetID, owner), "RemoteAdmissionError": message, "PoolStatus": pool.Status([]common.Hash{tx.Hash()})[0], "ObservedUnix": time.Now().Unix()})
 		pool.Stop()
 		requireNoError(t, writeStateExportJSON(filepath.Join(root, fmt.Sprintf("historical-admission-%d.json", height)), records[len(records)-1]))
-		if height == before {
-			requireErrorContains(t, admission, rejection)
+		if height == 15130098 {
+			if purchase.Start <= head.Time()+3*60*60 {
+				t.Fatal("retained purchase does not cross the documented three-hour limit")
+			}
+			requireErrorContains(t, admission, "BuyTicket start must be lower than latest block time + 3 hour")
 		} else {
 			requireNoError(t, admission)
 		}
