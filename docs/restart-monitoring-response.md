@@ -5,6 +5,12 @@ Draft for release review, 27 September 2026. Source examined at
 recovery paths into an operating proposal. It does not deploy a monitor, select
 alert destinations or approve production thresholds. P1–P15 are unchanged.
 
+The [external snapshot collector](restart-observer.md) now implements bounded
+read-only RPC observations and retained-case classification tests. Continuous
+history coverage, incident tracking and notifications remain unimplemented;
+the policy below describes the complete intended monitoring behavior, not a
+claim that the snapshot command implements it all.
+
 The proposed minimal policy is **automatic observation and notification, with
 manual recovery** through the [operator procedure](restart-operator-recovery.md).
 The existing purchase controller continues its ordinary retries. A monitor does
@@ -175,9 +181,10 @@ working nodes solely to satisfy an optional cold audit during a live incident.
 | Gate | Current state | Concrete remaining work |
 | --- | --- | --- |
 | Manual recovery behavior | Demonstrated for the linked synthetic cases; unsupported conditions remain | Review and accept the scope and limitations in the operator runbook |
-| Observation collector and incident state | Not implemented/deployed by this consolidation | Build a small external collector using the read interfaces above; represent unknown data explicitly and enforce a read-method allowlist |
+| Observation collector | [External snapshot command implemented](restart-observer.md), with explicit unknown states and a read-method allowlist | Validate against actual isolated node services; select deployment limits |
+| Continuous coverage and incident state | Not implemented/deployed | Add durable block backfill, observation history, incident transitions and receipt rollback handling |
 | Routing and operator coverage | Peter is the initial operator; destinations/times unset | Select destinations and timings, then demonstrate notification, acknowledgement and a lost-monitor heartbeat |
-| Detection correctness | Node behavior has retained evidence; an alert implementation has not been exercised | Replay retained failure/recovery sequences and perform isolated public-test-key drills for the cases below |
+| Detection correctness | Retained snapshots and controlled fault cases exercise collector classification; continuous alerts have not been exercised | Extend to time sequences and isolated public-test-key service/delivery drills for the cases below |
 | Real funding and custody | Synthetic contributions are not authorized real reserves | Recheck real-address intervals, gas runway and any explicitly agreed funding source; complete backup-key return |
 | Release review | P1–P15 and recovery tool still require independent review | Include observability limits and accepted manual policy in the review record; keep formatting/telemetry findings explicitly dispositioned |
 

@@ -63,8 +63,9 @@ source or a universal reserve.
 ## Source boundaries
 
 Paths identify review locations; where shared, select the stated functions/hunks.
-All non-test Go changes versus the pinned master are accounted for below or in
-the recovery-only section. Tests and evidence must accompany any extracted patch.
+All non-test Go changes versus the pinned master are accounted for below, in
+the recovery-only section, or in the separate external observer described below.
+Tests and evidence must accompany any extracted patch.
 
 | ID | Source files / boundaries |
 | --- | --- |
@@ -144,3 +145,9 @@ unknown states; it does not depend on parsing those error strings as transaction
 IDs. The legacy ethstats sync/uptime signals also need separate dashboard review.
 Record fixes or accepted limitations explicitly; these observations do not
 silently extend the candidate node patch set or deploy automatic recovery.
+
+The [external snapshot observer](restart-observer.md) adds `cmd/fsn-observe` and
+`internal/observe`. It is a separately built read-only executable, not imported
+by the normal node, and adds no P16. Review its RPC allowlist, unknown/consistency
+handling, receipt/ticket binding, funding estimates and limits separately from
+P1–P15. It does not implement the continuous monitor or notification service.
