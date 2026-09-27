@@ -151,3 +151,7 @@ The [external snapshot observer](restart-observer.md) adds `cmd/fsn-observe` and
 by the normal node, and adds no P16. Review its RPC allowlist, unknown/consistency
 handling, receipt/ticket binding, funding estimates and limits separately from
 P1–P15. It does not implement the continuous monitor or notification service.
+The [actual-service observer checks](restart-observer-services.md) add only a
+Linux integration test and optional loopback HTTP to the test harness. Eight
+CLI observations pass against real IPC/HTTP with race detection, including a
+controlled reorganization, without changing observer or node runtime code.

@@ -161,8 +161,15 @@ reads, malformed time locks, absent receipt status, deadlines, retired roles,
 zero peers and endpoint credential omission. It checks classification of snapshots,
 not elapsed incident behavior or notification delivery.
 
-Next run this executable against actual isolated node services, then implement
-durable observation/history coverage and incident transitions. Select operational
+The [actual-service follow-up](restart-observer-services.md) now passes eight
+external CLI observations over real IPC/HTTP, including controlled branch
+synchronization, receipt displacement, a queued nonce gap and endpoint lifecycle.
+It uses compact complete synthetic history, not the recovered full database.
+Before/after state checks and Linux race detection pass without observer or node
+runtime changes. Both services and their temporary data are cleaned up.
+
+Next implement durable observation/history coverage and incident transitions.
+Select operational
 timings, retention and notification destinations before deployment; demonstrate
 actual delivery, acknowledgement, loss of the collector, and receipt rollback
 reopening an incident. Continuous block backfill, saved-intent visibility, real

@@ -47,6 +47,7 @@ type nodeRehearsalConfig struct {
 	TestKey        byte
 	AutoBuy        bool
 	ListenAddr     string
+	HTTP           bool
 }
 
 type nodeRehearsalStatus struct {
@@ -227,10 +228,15 @@ func runRehearsalNode(t *testing.T, path string) {
 	}
 	restrict, err := netutil.ParseNetlist("127.0.0.0/8")
 	requireNoError(t, err)
-	stack, err := node.New(&node.Config{
+	stackConfig := &node.Config{
 		Name: "anchor-lab", DataDir: path, IPCPath: "lab.ipc", UseLightweightKDF: true,
 		P2P: p2p.Config{MaxPeers: 4, NoDiscovery: true, ListenAddr: lab.ListenAddr, NetRestrict: restrict},
-	})
+	}
+	if lab.HTTP {
+		stackConfig.HTTPHost = "127.0.0.1"
+		stackConfig.HTTPModules = []string{"eth", "fsn", "net", "web3", "txpool"}
+	}
+	stack, err := node.New(stackConfig)
 	requireNoError(t, err)
 	t.Cleanup(func() { stack.Close() })
 	keys := keystore.NewKeyStore(filepath.Join(path, "keystore"), keystore.LightScryptN, keystore.LightScryptP)
@@ -274,6 +280,9 @@ func runRehearsalNode(t *testing.T, path string) {
 	stack.RegisterLifecycle(ethapi.NewTicketBuyer(lab.AutoBuy))
 	datong.InitCheckPoints("")
 	requireNoError(t, stack.Start())
+	if lab.HTTP {
+		requireNoError(t, os.WriteFile(filepath.Join(path, "http.endpoint"), []byte(stack.HTTPEndpoint()), 0600))
+	}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM)
 	defer signal.Stop(stop)

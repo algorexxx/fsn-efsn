@@ -10,6 +10,9 @@ read-only RPC observations and retained-case classification tests. Continuous
 history coverage, incident tracking and notifications remain unimplemented;
 the policy below describes the complete intended monitoring behavior, not a
 claim that the snapshot command implements it all.
+The [actual-service follow-up](restart-observer-services.md) now validates eight
+external IPC/HTTP observations against two compact synthetic nodes, including a
+controlled reorganization and endpoint loss. No runtime correction was needed.
 
 The proposed minimal policy is **automatic observation and notification, with
 manual recovery** through the [operator procedure](restart-operator-recovery.md).
@@ -181,10 +184,10 @@ working nodes solely to satisfy an optional cold audit during a live incident.
 | Gate | Current state | Concrete remaining work |
 | --- | --- | --- |
 | Manual recovery behavior | Demonstrated for the linked synthetic cases; unsupported conditions remain | Review and accept the scope and limitations in the operator runbook |
-| Observation collector | [External snapshot command implemented](restart-observer.md), with explicit unknown states and a read-method allowlist | Validate against actual isolated node services; select deployment limits |
+| Observation collector | [External snapshot command implemented](restart-observer.md); retained-case tests and [compact actual-service IPC/HTTP checks](restart-observer-services.md) pass | Extend to collection during ordinary mining and representative deployed workload; select deployment limits |
 | Continuous coverage and incident state | Not implemented/deployed | Add durable block backfill, observation history, incident transitions and receipt rollback handling |
 | Routing and operator coverage | Peter is the initial operator; destinations/times unset | Select destinations and timings, then demonstrate notification, acknowledgement and a lost-monitor heartbeat |
-| Detection correctness | Retained snapshots and controlled fault cases exercise collector classification; continuous alerts have not been exercised | Extend to time sequences and isolated public-test-key service/delivery drills for the cases below |
+| Detection correctness | Retained snapshots, fault cases and controlled actual-service reorganization/lifecycle observations pass; continuous alerts have not been exercised | Extend to durable time sequences and isolated public-test-key delivery drills for the cases below |
 | Real funding and custody | Synthetic contributions are not authorized real reserves | Recheck real-address intervals, gas runway and any explicitly agreed funding source; complete backup-key return |
 | Release review | P1–P15 and recovery tool still require independent review | Include observability limits and accepted manual policy in the review record; keep formatting/telemetry findings explicitly dispositioned |
 
