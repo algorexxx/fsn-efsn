@@ -685,3 +685,21 @@ attempt passes. Both cold ledgers are checked separately by the existing
 `TestFullStateUninterruptedPartitionColdAudit`. These are restarted continuations,
 not a passing uninterrupted partition rehearsal. See the
 [manual delivery report](../../docs/restart-manual-purchase-delivery.md).
+
+`TestFullStateRetainedPartitionDeliveredRepair` adds recipient delivery to the
+uninterrupted funded partition through the existing `FUSION_RESTART_RETRY_PARTITION`
+guard. It retains pool observations, allows ordinary propagation first, and may
+submit the same reviewed manual predecessor to the other producer only after
+checking matching heads, an unchanged saved intent and absence from that pool.
+The saved automatic purchase must execute without direct intervention. The
+reserve formula is unchanged; this case waits up to 120 seconds for ordinary
+production to satisfy it before injecting packet loss. Funding arithmetic uses
+`fsn_getRawTimeLockBalance` and validates normalized intervals. The display-form
+RPC can contain overlapping intervals and must not be fed directly into
+`TimeLock.Add`, `Cmp` or `GetSpendableValue`; doing so caused the retained false
+reserve failures. Original purchase and
+automatic-successor receipt windows are 300 seconds. The shared node harness
+now allows 60 seconds for IPC readiness after a recorded 15-second startup
+timeout on a disposable full-state database. These are test limits, not new
+production settings. See the [uninterrupted delivery investigation](../../docs/restart-uninterrupted-delivery.md)
+for the individually retained attempts and their acceptance results.

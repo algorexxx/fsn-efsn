@@ -29,14 +29,18 @@ func requireRetainedPartitionRoot(t *testing.T) string {
 }
 
 func TestFullStateRetainedPartitionRepair(t *testing.T) {
-	rehearseRetainedPartition(t, false)
+	rehearseRetainedPartition(t, false, false)
 }
 
 func TestFullStateRetainedPartitionFundedRepair(t *testing.T) {
-	rehearseRetainedPartition(t, true)
+	rehearseRetainedPartition(t, true, false)
 }
 
-func rehearseRetainedPartition(t *testing.T, funded bool) {
+func TestFullStateRetainedPartitionDeliveredRepair(t *testing.T) {
+	rehearseRetainedPartition(t, true, true)
+}
+
+func rehearseRetainedPartition(t *testing.T, funded, deliver bool) {
 	t.Helper()
 	root := requireRetainedPartitionRoot(t)
 	var cleanup, retained fullStateBlockLedger
@@ -82,10 +86,17 @@ func rehearseRetainedPartition(t *testing.T, funded bool) {
 		}
 	}
 	installFullStateHistory(t, root)
-	rehearseFullStatePartitionRepair(t, root, types.NewBlockWithHeader(cleanup.Header), types.NewBlockWithHeader(retained.Header), funded)
+	rehearseFullStatePartitionRepair(t, root, types.NewBlockWithHeader(cleanup.Header), types.NewBlockWithHeader(retained.Header), funded, deliver)
 }
 
 func requireFullStatePartitionReserve(t *testing.T, root string, nodes [2]*rehearsalNode, owners [2]common.Address, head *types.Block) {
+	t.Helper()
+	if !recordFullStatePartitionReserve(t, filepath.Join(root, "before-outage.json"), nodes, owners, head) {
+		t.Fatal("outage not injected: both owners need an eligible ticket plus either a funded purchase or a second ticket backed across the interval, with no saved nonce gap")
+	}
+}
+
+func recordFullStatePartitionReserve(t *testing.T, path string, nodes [2]*rehearsalNode, owners [2]common.Address, head *types.Block) bool {
 	t.Helper()
 	funds := readPartitionFunds(t, nodes[0], owners[:], head.NumberU64())
 	if funds.Block.Hash() != head.Hash() || readRecoveryNodeBlock(t, nodes[1], head.NumberU64()).Hash() != head.Hash() {
@@ -124,11 +135,11 @@ func requireFullStatePartitionReserve(t *testing.T, root string, nodes [2]*rehea
 		records = append(records, map[string]interface{}{"Owner": owner, "EligibleTickets": eligible, "LiquidWei": liquid.String(), "TimeLocks": account.TimeLockBalancesVal[0], "CoverageWei": coverage.String(), "WindowStart": start, "WindowEnd": end, "GasBudgetWei": gas.String(), "FundedNextPurchase": funded, "BackingAfterNormalSelectionWei": backing.String(), "TwoCommittedTickets": committed, "NonceGap": gap, "Purchase": purchase})
 		ready = ready && eligible > 0 && !gap && (funded || committed)
 	}
-	requireNoError(t, writeStateExportJSON(filepath.Join(root, "before-outage.json"), map[string]interface{}{"Header": head.Header(), "Owners": records, "Ready": ready, "NewFunding": false}))
-	if !ready {
-		t.Fatal("outage not injected: both owners need an eligible ticket plus either a funded purchase or a second ticket backed across the interval, with no saved nonce gap")
+	requireNoError(t, writeStateExportJSON(path, map[string]interface{}{"Header": head.Header(), "Owners": records, "Ready": ready, "NewFunding": false}))
+	if ready {
+		t.Logf("both producers have an eligible ticket plus spendable or already committed second-ticket backing at %d; normal-selection backing is not a guarantee against retreat losses; no new funding", head.NumberU64())
 	}
-	t.Logf("both producers have an eligible ticket plus spendable or already committed second-ticket backing at %d; normal-selection backing is not a guarantee against retreat losses; no new funding", head.NumberU64())
+	return ready
 }
 
 func TestFullStateRetainedPartitionColdAudit(t *testing.T) {

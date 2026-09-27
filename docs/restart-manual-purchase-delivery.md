@@ -135,10 +135,13 @@ indefinite operation or a universal recovery reserve. First-retreat losses,
 equal-weight branches, monitoring and actual authorized funding remain separate
 release concerns. No new runtime patch is proposed by this investigation.
 
-Next apply the demonstrated recipient-delivery check within a fresh uninterrupted
-partition/funding/manual-repair rehearsal, retaining pool observations and all
-displaced originals through healing. Require the saved intent, fresh automatic
-successors and both cold ledgers again. That complete uninterrupted acceptance
-gate remains open.
+The [fresh uninterrupted follow-up](restart-uninterrupted-delivery.md) now passes
+the funded sequence with six originals, the exact saved intent, two automatic
+successors and both 59-block cold ledgers. It includes the recipient-delivery
+check, but ordinary propagation succeeds for every original in that run, so no
+direct submission is needed. An uninterrupted reproduction requiring that
+intervention remains separate from this pass and the restarted-copy evidence
+above. The follow-up also fixes test-only interval arithmetic by using existing
+raw time-lock RPC; the production inventory is unchanged.
 
 Evidence: [scripts, raw logs, pool traces and block ledgers](evidence/restart-manual-purchase-delivery-2026-09-27/).

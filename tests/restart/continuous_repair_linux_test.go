@@ -330,7 +330,8 @@ func validateLiveRepairPurchase(t *testing.T, node *rehearsalNode, tx *types.Tra
 	var locks common.TimeLock
 	number := hexutil.EncodeUint64(head.NumberU64())
 	requireNoError(t, node.call(t, &liquid, "fsn_getBalance", common.SystemAssetID, owner, number))
-	requireNoError(t, node.call(t, &locks, "fsn_getTimeLockBalance", common.SystemAssetID, owner, number))
+	requireNoError(t, node.call(t, &locks, "fsn_getRawTimeLockBalance", common.SystemAssetID, owner, number))
+	requireNoError(t, locks.IsValid())
 	need := common.NewTimeLock(&common.TimeLockItem{StartTime: common.MaxUint64(purchase.Start, uint64(time.Now().Unix())), EndTime: purchase.End, Value: common.TicketPrice(head.Number())})
 	if readRecoveryNodeBlock(t, node, head.NumberU64()).Hash() != head.Hash() {
 		t.Fatal("funding snapshot changed branches during repair")
@@ -343,24 +344,33 @@ func awaitLiveRepairReceipt(t *testing.T, nodes [2]*rehearsalNode, tx *types.Tra
 	deadline := time.Now().Add(60 * time.Second)
 	for time.Now().Before(deadline) {
 		requireContinuousMiners(t, nodes[0], nodes[1])
-		var receipts [2]*types.Receipt
-		for i, node := range nodes {
-			requireNoError(t, node.call(t, &receipts[i], "eth_getTransactionReceipt", tx.Hash()))
-		}
-		if receipts[0] != nil && receipts[1] != nil && receipts[0].BlockHash == receipts[1].BlockHash {
-			block := readRecoveryNodeBlock(t, nodes[0], receipts[0].BlockNumber.Uint64())
-			if block.Hash() == receipts[0].BlockHash && readRecoveryNodeBlock(t, nodes[1], block.NumberU64()).Hash() == block.Hash() {
-				for _, receipt := range receipts {
-					requirePeerNativePurchase(t, receipt, block, tx, owner)
-				}
-				return block
-			}
+		if block := readCanonicalRepairReceipt(t, nodes, tx, owner); block != nil {
+			return block
 		}
 		time.Sleep(250 * time.Millisecond)
 	}
 	logContinuousPurchaseState(t, nodes[0], nodes[1])
 	t.Fatalf("original or automatic purchase nonce=%d hash=%s did not reach canonical native success on both peers", tx.Nonce(), tx.Hash().Hex())
 	return nil
+}
+
+func readCanonicalRepairReceipt(t *testing.T, nodes [2]*rehearsalNode, tx *types.Transaction, owner common.Address) *types.Block {
+	t.Helper()
+	var receipts [2]*types.Receipt
+	for i, node := range nodes {
+		requireNoError(t, node.call(t, &receipts[i], "eth_getTransactionReceipt", tx.Hash()))
+	}
+	if receipts[0] == nil || receipts[1] == nil || receipts[0].BlockHash != receipts[1].BlockHash {
+		return nil
+	}
+	block := readRecoveryNodeBlock(t, nodes[0], receipts[0].BlockNumber.Uint64())
+	if block.Hash() != receipts[0].BlockHash || readRecoveryNodeBlock(t, nodes[1], block.NumberU64()).Hash() != block.Hash() {
+		return nil
+	}
+	for _, receipt := range receipts {
+		requirePeerNativePurchase(t, receipt, block, tx, owner)
+	}
+	return block
 }
 
 func logLiveRepairTickets(t *testing.T, node *rehearsalNode, owners [2]common.Address, block *types.Block, phase string) {

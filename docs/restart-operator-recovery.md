@@ -1,6 +1,6 @@
 # Operator purchase recovery procedure
 
-Draft for release review, 26 September 2026. This collects the demonstrated
+Draft for release review, 27 September 2026. This collects the demonstrated
 manual recovery path. It does not enable an automatic repair mechanism or mean
 that every failure below has a supported repair. Production adoption, response
 times, named operator coverage and a real funding source remain release decisions.
@@ -29,11 +29,21 @@ does not need a ticket or an unlocked key.
 | Canonical block | `eth_getBlockByNumber` | Height, hash, timestamp, roots and base fee |
 | Canonical wallet nonce | `eth_getTransactionCount(address, blockNumber)` | Use canonical state, separately inspect pending state |
 | Liquid FSN | `fsn_getBalance(assetID, address, blockNumber)` | System asset is `0x` followed by 64 `f` characters; amounts are wei |
-| Time locks | `fsn_getTimeLockBalance(assetID, address, blockNumber)` | Every start, end and value, not just a displayed total |
+| Time locks for arithmetic | `fsn_getRawTimeLockBalance(assetID, address, blockNumber)` | Normalized start, end and value segments |
+| Free interval coverage | `fsn_getTimeLockValueByInterval(assetID, address, startTime, endTime, blockNumber)` | Amount in wei across the requested interval; start is clamped to the block time, end zero means forever |
 | Tickets | `fsn_allTickets(blockNumber)` / `fsn_allTicketsByAddress(address, blockNumber)` | Owners, IDs, heights and interval endpoints |
 | Pending/queued transactions | `txpool_content` | Owner, nonce, hash and any conflicting replacement |
 | Mining/buyer state | `eth_mining`, `fsn_isAutoBuyTicket`, service logs | Flags, sync state and actual repeated purchase results |
 | Purchase result | `eth_getTransactionReceipt` plus canonical block | Receipt status and native result log; verify the ticket was created |
+
+`fsn_getTimeLockBalance` is a display view: its intervals may overlap and are
+sorted for presentation. Do not pass that result directly to `TimeLock.Add`,
+`Cmp` or `GetSpendableValue`, which require normalized segments. Use raw intervals
+for calculations, including any hypothetical ticket returns. The
+[uninterrupted-delivery investigation](restart-uninterrupted-delivery.md)
+reproduced and corrected this mistake in the rehearsal harness; it understated
+backing by 5,000 FSN per wallet in the retained snapshots. Returned backing is
+conditional on normal selection and is not a guarantee against retreat losses.
 
 An advancing common chain and enabled flags do not prove this wallet is buying
 or mining. Monitor its nonce, successful purchases, usable tickets, free interval
@@ -247,3 +257,12 @@ after one fresh donation purchase while waiting for its live ticket's selection;
 empty free funding at that point is different from a locally pending transaction.
 The original live connection's precise message ordering remains unrecorded.
 Do not interpret local admission or `already known` as end-to-end delivery proof.
+
+The [uninterrupted follow-up](restart-uninterrupted-delivery.md) now passes
+funding, six sequential originals, unchanged saved intent and two fresh
+automatic purchases while both services remain running. Both 59-block cold
+ledgers and the isolated branches reconcile. All manual originals propagate
+normally in that run; it does not exercise direct recipient submission during
+the uninterrupted sequence. Conditional synthetic funding, an observed normal
+ticket return and a bounded pass do not establish a real reserve or unattended
+recovery policy.

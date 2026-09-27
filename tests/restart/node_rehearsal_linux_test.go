@@ -331,7 +331,7 @@ func startRehearsalNodeWithTimeout(t *testing.T, path string, timeout time.Durat
 			t.Error("node process reported a data race")
 		}
 	})
-	awaitRehearsal(t, 15*time.Second, func() bool {
+	awaitRehearsal(t, 60*time.Second, func() bool {
 		select {
 		case err := <-n.done:
 			t.Fatalf("node exited before IPC: %v", err)

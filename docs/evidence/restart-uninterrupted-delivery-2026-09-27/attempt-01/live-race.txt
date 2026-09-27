@@ -1,0 +1,1235 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/preflight-producer
+INFO [09-27|12:37:38.523] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27/producer/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:37:38.602] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m18s
+INFO [09-27|12:37:38.603] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m18s
+INFO [09-27|12:37:38.604] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m18s
+INFO [09-27|12:37:38.652] Transaction pool stopped 
+INFO [09-27|12:37:38.652] Blockchain manager stopped 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/preflight-verifier
+INFO [09-27|12:37:38.674] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:37:38.744] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m18s
+INFO [09-27|12:37:38.744] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m18s
+INFO [09-27|12:37:38.745] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m18s
+INFO [09-27|12:37:38.779] Transaction pool stopped 
+INFO [09-27|12:37:38.780] Blockchain manager stopped 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/history-producer
+INFO [09-27|12:37:56.401] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27/producer/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:37:56.690] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m36s
+INFO [09-27|12:37:56.690] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m36s
+INFO [09-27|12:37:56.691] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h31m36s
+    full_state_history_linux_test.go:246: genuine ancestry installed role=producer blocks=90000 from=15040080 through=15130079 bytes=70098887 sha256=99185867e8dd894c27bf8bf304193d3247c8ef76bbc86cd4387d48342265c73d; audited parent and all heads unchanged
+INFO [09-27|12:38:38.256] Blockchain manager stopped 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/history-verifier
+INFO [09-27|12:38:38.318] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:38:38.565] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h32m18s
+INFO [09-27|12:38:38.566] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h32m18s
+INFO [09-27|12:38:38.569] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h32m18s
+    full_state_history_linux_test.go:246: genuine ancestry installed role=verifier blocks=90000 from=15040080 through=15130079 bytes=70098887 sha256=99185867e8dd894c27bf8bf304193d3247c8ef76bbc86cd4387d48342265c73d; audited parent and all heads unchanged
+INFO [09-27|12:39:26.448] Blockchain manager stopped 
+=== NAME  TestFullStateRetainedPartitionDeliveredRepair
+    full_state_retry_partition_linux_test.go:40: live repair tickets phase=full-state-before-outage block=15130092 owner=1 stored=1 valid-next-period=1
+    full_state_retry_partition_linux_test.go:40: live repair tickets phase=full-state-before-outage block=15130092 owner=2 stored=2 valid-next-period=2
+    full_state_retry_partition_linux_test.go:40: outage not injected: both owners need an eligible ticket plus either a funded purchase or a second ticket backed across the interval, with no saved nonce gap
+    node_rehearsal_linux_test.go:329: node process /tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/002/process-315690669.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-27|12:39:33.157] FS scan times                            list="252.694µs" set="2.529µs" diff="2.184µs"
+        DEBUG[09-27|12:39:33.158] FS scan times                            list="121.542µs" set="3.328µs" diff="1.777µs"
+        DEBUG[09-27|12:39:34.016] FS scan times                            list="128.565µs" set="13.472µs" diff="6.199µs"
+        INFO [09-27|12:39:34.172] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-27|12:39:34.172] Allocated cache and file handles         database=/tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/002/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-27|12:39:38.808] Persisted trie from memory database      nodes=24 size=3.95KiB time="351.593µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-27|12:39:38.811]  
+        INFO [09-27|12:39:38.811] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|12:39:38.821] Chain ID:  32659 (mainnet) 
+        INFO [09-27|12:39:38.821] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-27|12:39:38.821]  
+        INFO [09-27|12:39:38.821] hard forks: 
+        INFO [09-27|12:39:38.821]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-27|12:39:38.821]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-27|12:39:38.821]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-27|12:39:38.821]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|12:39:38.821]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|12:39:38.821]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-27|12:39:38.821]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-27|12:39:38.821]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-27|12:39:38.821]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-27|12:39:38.821]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-27|12:39:38.821]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-27|12:39:38.821]  - Fusion Eco:                  8250000  
+        INFO [09-27|12:39:38.821]  
+        INFO [09-27|12:39:38.821]  
+        INFO [09-27|12:39:38.821] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|12:39:38.821]  
+        INFO [09-27|12:39:38.835] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-27|12:39:38.846] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h33m18s
+        INFO [09-27|12:39:38.846] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h33m18s
+        INFO [09-27|12:39:38.846] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h33m18s
+        DEBUG[09-27|12:39:38.851] Reinjecting stale transactions           count=0
+        INFO [09-27|12:39:38.851] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-27|12:39:38.861] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:38.861] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-27|12:39:38.864] Gasprice oracle is ignoring threshold set threshold=2
+        DEBUG[09-27|12:39:38.864] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        INFO [09-27|12:39:38.865] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-27|12:39:38.865] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-27|12:39:38.865] Starting P2P networking 
+        INFO [09-27|12:39:38.865] RLPx listener up                         self="enode://558071bcd67f33288f891168d86030f216716c5fa62f18ddb3dff537c67c4b3232590544f35b16a78bf372aadc366a845387efc1234d96f17016c3457d164c3b@127.0.0.1:44479?discport=0"
+        DEBUG[09-27|12:39:38.873] IPCs registered                          namespaces=admin,debug,web3,eth,txpool,personal,fsn,fsntx,fsnbt,miner,net,lab
+        INFO [09-27|12:39:38.873] IPC endpoint opened                      url=/tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/002/lab.ipc
+        DEBUG[09-27|12:39:39.012] Served admin_nodeInfo                    reqid=1 duration=4.740144ms
+        DEBUG[09-27|12:39:39.077] Adding p2p peer                          name=anchor-lab/linux-amd... addr=127.0.0.1:44538 peers=1
+        DEBUG[09-27|12:39:39.079] Ethereum peer connected                  id=98d558173016b66a conn=inbound name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-27|12:39:39.136] Served net_peerCount                     reqid=2 duration="83.61µs"
+        DEBUG[09-27|12:39:39.149] Served lab_purchaseState                 reqid=3 duration=2.41016ms
+        INFO [09-27|12:39:39.156] Transaction pool price threshold updated price=1
+        DEBUG[09-27|12:39:39.156] Served miner_start                       reqid=4 duration="141.544µs"
+        DEBUG[09-27|12:39:39.156] Served lab_status                        reqid=5 duration="500.238µs"
+        DEBUG[09-27|12:39:39.157] Served miner_startAutoBuyTicket          reqid=6 duration="39.995µs"
+        INFO [09-27|12:39:39.176] Automatic ticket purchase confirmed      tx="cbe348…38caa3" block="71fda3…ff8674"
+        DEBUG[09-27|12:39:39.183] Served lab_deliveryPool                  reqid=7 duration="533.664µs"
+        INFO [09-27|12:39:39.186] Commit new mining work                   number=15,130,091 sealhash="50daff…c53b5a" uncles=0 txs=0 gas=0 fees=0 elapsed=30.148ms
+        DEBUG[09-27|12:39:39.201] Persisted trie from memory database      nodes=13 size=5.08KiB time=2.77558ms   gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        INFO [09-27|12:39:39.202] Successfully sealed new block            number=15,130,091 sealhash="50daff…c53b5a" hash="4f47b6…6c776d" difficulty=2 elapsed=16.318ms
+        INFO [09-27|12:39:39.205] 🔨 mined potential block                  number=15,130,091 hash="4f47b6…6c776d"
+        INFO [09-27|12:39:39.206] Mining too far in the future             wait=7s
+        ERROR[09-27|12:39:39.214] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:39.214] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|12:39:39.236] Reinjecting stale transactions           count=0
+        DEBUG[09-27|12:39:39.243] Served lab_status                        reqid=8 duration="870.408µs"
+        DEBUG[09-27|12:39:39.247] Served lab_status                        reqid=9 duration="115.661µs"
+        DEBUG[09-27|12:39:39.293] Executing EVM call finished              runtime=48.52301ms
+        DEBUG[09-27|12:39:39.294] Executing EVM call finished              runtime="915.717µs"
+        DEBUG[09-27|12:39:39.295] Executing EVM call finished              runtime="677.495µs"
+        DEBUG[09-27|12:39:39.296] Executing EVM call finished              runtime="428.206µs"
+        DEBUG[09-27|12:39:39.296] Executing EVM call finished              runtime="456.346µs"
+        DEBUG[09-27|12:39:39.297] Executing EVM call finished              runtime="493.808µs"
+        DEBUG[09-27|12:39:39.297] Executing EVM call finished              runtime="635.461µs"
+        DEBUG[09-27|12:39:39.299] Executing EVM call finished              runtime=1.104665ms
+        DEBUG[09-27|12:39:39.299] Executing EVM call finished              runtime="365.245µs"
+        DEBUG[09-27|12:39:39.299] Executing EVM call finished              runtime="298.145µs"
+        DEBUG[09-27|12:39:39.300] Executing EVM call finished              runtime="262.096µs"
+        DEBUG[09-27|12:39:39.300] Executing EVM call finished              runtime="332.321µs"
+        DEBUG[09-27|12:39:39.300] Executing EVM call finished              runtime="263.424µs"
+        DEBUG[09-27|12:39:39.300] Executing EVM call finished              runtime="244.543µs"
+        DEBUG[09-27|12:39:39.301] Executing EVM call finished              runtime="385.508µs"
+        DEBUG[09-27|12:39:39.301] Executing EVM call finished              runtime="343.954µs"
+        DEBUG[09-27|12:39:39.305] Executing EVM call finished              runtime=4.165996ms
+        DEBUG[09-27|12:39:39.306] Executing EVM call finished              runtime="174.868µs"
+        DEBUG[09-27|12:39:39.306] Executing EVM call finished              runtime="168.663µs"
+        DEBUG[09-27|12:39:39.306] Executing EVM call finished              runtime="213.321µs"
+        DEBUG[09-27|12:39:39.306] Executing EVM call finished              runtime="147.253µs"
+        DEBUG[09-27|12:39:39.306] Executing EVM call finished              runtime="144.866µs"
+        DEBUG[09-27|12:39:39.307] Executing EVM call finished              runtime="109.183µs"
+        DEBUG[09-27|12:39:39.307] Executing EVM call finished              runtime="394.113µs"
+        DEBUG[09-27|12:39:39.310] Executing EVM call finished              runtime=3.300667ms
+        WARN [09-27|12:39:39.312] Automatic ticket purchase needs attention; retrying err="head changed while constructing ticket purchase; retrying against new state"
+        DEBUG[09-27|12:39:39.315] Executing EVM call finished              runtime="570.168µs"
+        DEBUG[09-27|12:39:39.315] Executing EVM call finished              runtime="283.99µs"
+        DEBUG[09-27|12:39:39.315] Executing EVM call finished              runtime="356.12µs"
+        DEBUG[09-27|12:39:39.316] Executing EVM call finished              runtime="278.761µs"
+        DEBUG[09-27|12:39:39.316] Executing EVM call finished              runtime="223.007µs"
+        DEBUG[09-27|12:39:39.316] Executing EVM call finished              runtime="193.301µs"
+        DEBUG[09-27|12:39:39.316] Executing EVM call finished              runtime="199.701µs"
+        DEBUG[09-27|12:39:39.317] Executing EVM call finished              runtime="230.661µs"
+        DEBUG[09-27|12:39:39.317] Executing EVM call finished              runtime="283.333µs"
+        DEBUG[09-27|12:39:39.317] Executing EVM call finished              runtime="253.821µs"
+        DEBUG[09-27|12:39:39.318] Executing EVM call finished              runtime="353.655µs"
+        DEBUG[09-27|12:39:39.318] Executing EVM call finished              runtime="321.862µs"
+        DEBUG[09-27|12:39:39.319] Executing EVM call finished              runtime="413.779µs"
+        DEBUG[09-27|12:39:39.319] Executing EVM call finished              runtime="246.141µs"
+        DEBUG[09-27|12:39:39.319] Executing EVM call finished              runtime="357.715µs"
+        DEBUG[09-27|12:39:39.320] Executing EVM call finished              runtime="634.413µs"
+        DEBUG[09-27|12:39:39.320] Executing EVM call finished              runtime="414.529µs"
+        DEBUG[09-27|12:39:39.321] Executing EVM call finished              runtime="142.896µs"
+        DEBUG[09-27|12:39:39.321] Executing EVM call finished              runtime="93.149µs"
+        DEBUG[09-27|12:39:39.321] Executing EVM call finished              runtime="86.461µs"
+        DEBUG[09-27|12:39:39.321] Executing EVM call finished              runtime="262.123µs"
+        DEBUG[09-27|12:39:39.321] Executing EVM call finished              runtime="135.154µs"
+        DEBUG[09-27|12:39:39.321] Executing EVM call finished              runtime="102.331µs"
+        DEBUG[09-27|12:39:39.322] Executing EVM call finished              runtime="291.533µs"
+        DEBUG[09-27|12:39:39.322] Executing EVM call finished              runtime="295.408µs"
+        INFO [09-27|12:39:39.326] Setting new local account                address=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69
+        INFO [09-27|12:39:39.329] Submitted transaction                    hash=0x841906a4b6bd90138183dd32dd530d7cc69e94076dcd817ce78f3e1520a36992 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=4 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|12:39:39.329] Automatic ticket submitted; awaiting inclusion tx="841906…a36992" nonce=4
+        DEBUG[09-27|12:39:39.504] Served lab_deliveryPool                  reqid=10 duration="953.026µs"
+        DEBUG[09-27|12:39:39.509] Served lab_status                        reqid=11 duration="92.647µs"
+        DEBUG[09-27|12:39:39.510] Served lab_status                        reqid=12 duration="83.672µs"
+        DEBUG[09-27|12:39:39.764] Served lab_deliveryPool                  reqid=13 duration="713.463µs"
+        DEBUG[09-27|12:39:39.767] Served lab_status                        reqid=14 duration="87.741µs"
+        DEBUG[09-27|12:39:39.768] Served lab_status                        reqid=15 duration="125.396µs"
+        DEBUG[09-27|12:39:40.021] Served lab_deliveryPool                  reqid=16 duration="765.34µs"
+        DEBUG[09-27|12:39:40.025] Served lab_status                        reqid=17 duration="163.616µs"
+        DEBUG[09-27|12:39:40.026] Served lab_status                        reqid=18 duration="146.34µs"
+        DEBUG[09-27|12:39:40.279] Served lab_deliveryPool                  reqid=19 duration="427.306µs"
+        DEBUG[09-27|12:39:40.283] Served lab_status                        reqid=20 duration="91.432µs"
+        DEBUG[09-27|12:39:40.285] Served lab_status                        reqid=21 duration="105.634µs"
+        DEBUG[09-27|12:39:40.538] Served lab_deliveryPool                  reqid=22 duration="434.069µs"
+        DEBUG[09-27|12:39:40.541] Served lab_status                        reqid=23 duration="94.758µs"
+        DEBUG[09-27|12:39:40.542] Served lab_status                        reqid=24 duration="91.746µs"
+        DEBUG[09-27|12:39:40.795] Served lab_deliveryPool                  reqid=25 duration="425.486µs"
+        DEBUG[09-27|12:39:40.798] Served lab_status                        reqid=26 duration="94.083µs"
+        DEBUG[09-27|12:39:40.799] Served lab_status                        reqid=27 duration="90.895µs"
+        DEBUG[09-27|12:39:41.052] Served lab_deliveryPool                  reqid=28 duration="817.09µs"
+        DEBUG[09-27|12:39:41.055] Served lab_status                        reqid=29 duration="91.038µs"
+        DEBUG[09-27|12:39:41.057] Served lab_status                        reqid=30 duration="134.384µs"
+        DEBUG[09-27|12:39:41.310] Served lab_deliveryPool                  reqid=31 duration="701.891µs"
+        DEBUG[09-27|12:39:41.314] Served lab_status                        reqid=32 duration="91.2µs"
+        DEBUG[09-27|12:39:41.315] Served lab_status                        reqid=33 duration="117.023µs"
+        DEBUG[09-27|12:39:41.569] Served lab_deliveryPool                  reqid=34 duration="425.017µs"
+        DEBUG[09-27|12:39:41.572] Served lab_status                        reqid=35 duration="158.014µs"
+        DEBUG[09-27|12:39:41.573] Served lab_status                        reqid=36 duration="77.583µs"
+        DEBUG[09-27|12:39:41.826] Served lab_deliveryPool                  reqid=37 duration="445.876µs"
+        DEBUG[09-27|12:39:41.828] Served lab_status                        reqid=38 duration="96.379µs"
+        DEBUG[09-27|12:39:41.830] Served lab_status                        reqid=39 duration="211.403µs"
+        DEBUG[09-27|12:39:42.083] Served lab_deliveryPool                  reqid=40 duration="457.256µs"
+        DEBUG[09-27|12:39:42.086] Served lab_status                        reqid=41 duration="94.373µs"
+        DEBUG[09-27|12:39:42.087] Served lab_status                        reqid=42 duration="77.119µs"
+        DEBUG[09-27|12:39:42.340] Served lab_deliveryPool                  reqid=43 duration="482.972µs"
+        DEBUG[09-27|12:39:42.342] Served lab_status                        reqid=44 duration="94.211µs"
+        DEBUG[09-27|12:39:42.344] Served lab_status                        reqid=45 duration="95.788µs"
+        DEBUG[09-27|12:39:42.597] Served lab_deliveryPool                  reqid=46 duration="620.675µs"
+        DEBUG[09-27|12:39:42.600] Served lab_status                        reqid=47 duration="95.311µs"
+        DEBUG[09-27|12:39:42.601] Served lab_status                        reqid=48 duration="108.769µs"
+        DEBUG[09-27|12:39:42.854] Served lab_deliveryPool                  reqid=49 duration=1.050516ms
+        DEBUG[09-27|12:39:42.858] Served lab_status                        reqid=50 duration="155.566µs"
+        DEBUG[09-27|12:39:42.859] Served lab_status                        reqid=51 duration="91.649µs"
+        DEBUG[09-27|12:39:43.112] Served lab_deliveryPool                  reqid=52 duration="419.975µs"
+        DEBUG[09-27|12:39:43.115] Served lab_status                        reqid=53 duration="92.976µs"
+        DEBUG[09-27|12:39:43.116] Served lab_status                        reqid=54 duration="97.166µs"
+        DEBUG[09-27|12:39:43.369] Served lab_deliveryPool                  reqid=55 duration="549.535µs"
+        DEBUG[09-27|12:39:43.372] Served lab_status                        reqid=56 duration="99.362µs"
+        DEBUG[09-27|12:39:43.373] Served lab_status                        reqid=57 duration="87.378µs"
+        DEBUG[09-27|12:39:43.626] Served lab_deliveryPool                  reqid=58 duration="687.425µs"
+        DEBUG[09-27|12:39:43.629] Served lab_status                        reqid=59 duration="92.674µs"
+        DEBUG[09-27|12:39:43.630] Served lab_status                        reqid=60 duration="81.455µs"
+        DEBUG[09-27|12:39:43.883] Served lab_deliveryPool                  reqid=61 duration="423.621µs"
+        DEBUG[09-27|12:39:43.886] Served lab_status                        reqid=62 duration="105.986µs"
+        DEBUG[09-27|12:39:43.887] Served lab_status                        reqid=63 duration="87.436µs"
+        DEBUG[09-27|12:39:44.140] Served lab_deliveryPool                  reqid=64 duration="444.044µs"
+        DEBUG[09-27|12:39:44.143] Served lab_status                        reqid=65 duration="112.4µs"
+        DEBUG[09-27|12:39:44.144] Served lab_status                        reqid=66 duration="125.696µs"
+        DEBUG[09-27|12:39:44.398] Served lab_deliveryPool                  reqid=67 duration="648.289µs"
+        DEBUG[09-27|12:39:44.400] Served lab_status                        reqid=68 duration="84.671µs"
+        DEBUG[09-27|12:39:44.401] Served lab_status                        reqid=69 duration="76.655µs"
+        DEBUG[09-27|12:39:44.656] Served lab_deliveryPool                  reqid=70 duration=1.013974ms
+        DEBUG[09-27|12:39:44.660] Served lab_status                        reqid=71 duration="186.055µs"
+        DEBUG[09-27|12:39:44.661] Served lab_status                        reqid=72 duration="113.177µs"
+        DEBUG[09-27|12:39:44.915] Served lab_deliveryPool                  reqid=73 duration="454.037µs"
+        DEBUG[09-27|12:39:44.918] Served lab_status                        reqid=74 duration="275.979µs"
+        DEBUG[09-27|12:39:44.920] Served lab_status                        reqid=75 duration="147.6µs"
+        DEBUG[09-27|12:39:45.174] Served lab_deliveryPool                  reqid=76 duration="821.848µs"
+        DEBUG[09-27|12:39:45.177] Served lab_status                        reqid=77 duration="93.237µs"
+        DEBUG[09-27|12:39:45.179] Served lab_status                        reqid=78 duration="143.746µs"
+        DEBUG[09-27|12:39:45.433] Served lab_deliveryPool                  reqid=79 duration="652.7µs"
+        DEBUG[09-27|12:39:45.436] Served lab_status                        reqid=80 duration="128.976µs"
+        DEBUG[09-27|12:39:45.438] Served lab_status                        reqid=81 duration="138.065µs"
+        DEBUG[09-27|12:39:45.691] Served lab_deliveryPool                  reqid=82 duration="579.053µs"
+        DEBUG[09-27|12:39:45.694] Served lab_status                        reqid=83 duration="79.536µs"
+        DEBUG[09-27|12:39:45.695] Served lab_status                        reqid=84 duration="122.597µs"
+        DEBUG[09-27|12:39:45.948] Served lab_deliveryPool                  reqid=85 duration="664.265µs"
+        DEBUG[09-27|12:39:45.950] Served lab_status                        reqid=86 duration="91.094µs"
+        DEBUG[09-27|12:39:45.951] Served lab_status                        reqid=87 duration="114.01µs"
+        DEBUG[09-27|12:39:46.205] Served lab_deliveryPool                  reqid=88 duration="769.416µs"
+        DEBUG[09-27|12:39:46.207] Served lab_status                        reqid=89 duration="90.384µs"
+        DEBUG[09-27|12:39:46.208] Served lab_status                        reqid=90 duration="85.884µs"
+        DEBUG[09-27|12:39:46.461] Served lab_deliveryPool                  reqid=91 duration="413.103µs"
+        DEBUG[09-27|12:39:46.466] Served lab_status                        reqid=92 duration="351.258µs"
+        DEBUG[09-27|12:39:46.467] Served lab_status                        reqid=93 duration="128.731µs"
+        DEBUG[09-27|12:39:46.720] Served lab_deliveryPool                  reqid=94 duration="683.904µs"
+        DEBUG[09-27|12:39:46.723] Served lab_status                        reqid=95 duration="88.642µs"
+        DEBUG[09-27|12:39:46.724] Served lab_status                        reqid=96 duration="92.937µs"
+        DEBUG[09-27|12:39:46.852] Transaction pool status report           executable=1 queued=0 stales=0
+        DEBUG[09-27|12:39:46.977] Served lab_deliveryPool                  reqid=97 duration="452.29µs"
+        DEBUG[09-27|12:39:46.979] Served lab_status                        reqid=98 duration="97.499µs"
+        DEBUG[09-27|12:39:46.980] Served lab_status                        reqid=99 duration="95.803µs"
+        DEBUG[09-27|12:39:47.233] Served lab_deliveryPool                  reqid=100 duration="598.387µs"
+        DEBUG[09-27|12:39:47.236] Served lab_status                        reqid=101 duration="93.752µs"
+        DEBUG[09-27|12:39:47.237] Served lab_status                        reqid=102 duration="91.02µs"
+        DEBUG[09-27|12:39:47.490] Served lab_deliveryPool                  reqid=103 duration="777.066µs"
+        DEBUG[09-27|12:39:47.493] Served lab_status                        reqid=104 duration="167.101µs"
+        DEBUG[09-27|12:39:47.494] Served lab_status                        reqid=105 duration="124.419µs"
+        DEBUG[09-27|12:39:47.747] Served lab_deliveryPool                  reqid=106 duration="412.989µs"
+        DEBUG[09-27|12:39:47.750] Served lab_status                        reqid=107 duration="88.479µs"
+        DEBUG[09-27|12:39:47.751] Served lab_status                        reqid=108 duration="89.938µs"
+        DEBUG[09-27|12:39:48.003] Served lab_deliveryPool                  reqid=109 duration="525.557µs"
+        DEBUG[09-27|12:39:48.006] Served lab_status                        reqid=110 duration="95.517µs"
+        DEBUG[09-27|12:39:48.007] Served lab_status                        reqid=111 duration="130.482µs"
+        DEBUG[09-27|12:39:48.260] Served lab_deliveryPool                  reqid=112 duration="551.695µs"
+        DEBUG[09-27|12:39:48.262] Served lab_status                        reqid=113 duration="82.751µs"
+        DEBUG[09-27|12:39:48.263] Served lab_status                        reqid=114 duration="74.607µs"
+        DEBUG[09-27|12:39:48.516] Served lab_deliveryPool                  reqid=115 duration="418.262µs"
+        DEBUG[09-27|12:39:48.518] Served lab_status                        reqid=116 duration="85.863µs"
+        DEBUG[09-27|12:39:48.519] Served lab_status                        reqid=117 duration="81.495µs"
+        DEBUG[09-27|12:39:48.772] Served lab_deliveryPool                  reqid=118 duration="547.538µs"
+        DEBUG[09-27|12:39:48.774] Served lab_status                        reqid=119 duration="85.497µs"
+        DEBUG[09-27|12:39:48.776] Served lab_status                        reqid=120 duration="93.945µs"
+        DEBUG[09-27|12:39:49.029] Served lab_deliveryPool                  reqid=121 duration="417.626µs"
+        DEBUG[09-27|12:39:49.032] Served lab_status                        reqid=122 duration="99.559µs"
+        DEBUG[09-27|12:39:49.033] Served lab_status                        reqid=123 duration="170.395µs"
+        DEBUG[09-27|12:39:49.286] Served lab_deliveryPool                  reqid=124 duration="439.325µs"
+        DEBUG[09-27|12:39:49.289] Served lab_status                        reqid=125 duration="94.545µs"
+        DEBUG[09-27|12:39:49.290] Served lab_status                        reqid=126 duration="85.017µs"
+        DEBUG[09-27|12:39:49.543] Served lab_deliveryPool                  reqid=127 duration="459.65µs"
+        DEBUG[09-27|12:39:49.546] Served lab_status                        reqid=128 duration="107.29µs"
+        DEBUG[09-27|12:39:49.548] Served lab_status                        reqid=129 duration="90.522µs"
+        DEBUG[09-27|12:39:49.802] Served lab_deliveryPool                  reqid=130 duration="574.265µs"
+        DEBUG[09-27|12:39:49.805] Served lab_status                        reqid=131 duration="149.82µs"
+        DEBUG[09-27|12:39:49.806] Served lab_status                        reqid=132 duration="83.448µs"
+        DEBUG[09-27|12:39:50.021] Queued propagated block                  peer=98d558173016b66a number=15,130,091 hash="3a2596…f4465a" queued=1
+        DEBUG[09-27|12:39:50.026] Importing propagated block               peer=98d558173016b66a number=15,130,091 hash="3a2596…f4465a"
+        DEBUG[09-27|12:39:50.040] Persisted trie from memory database      nodes=13 size=5.36KiB time=4.709378ms  gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        DEBUG[09-27|12:39:50.041] Chain split detected                     number=15,130,090 hash="71fda3…ff8674" drop=1 dropfrom="4f47b6…6c776d" droporder=1 add=1 addfrom="3a2596…f4465a" addorder=0
+        DEBUG[09-27|12:39:50.042] Inserted new block                       number=15,130,091 hash="3a2596…f4465a" uncles=0 txs=0 gas=0 elapsed=15.741ms
+        INFO [09-27|12:39:50.042] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=15.878ms mgasps=0.000 order=0 number=15,130,091 hash="3a2596…f4465a" difficulty=5 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ff6ad0…0571af" parentHash="71fda3…ff8674" time=1,790,505,579 cache=0.00B
+        DEBUG[09-27|12:39:50.043] Reinjecting stale transactions           count=0
+        INFO [09-27|12:39:50.043] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-27|12:39:50.044] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:50.044] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-27|12:39:50.047] Commit new mining work                   number=15,130,092 sealhash="25d5c7…1076ce" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=4.239ms
+        DEBUG[09-27|12:39:50.059] Served lab_deliveryPool                  reqid=133 duration="462.757µs"
+        DEBUG[09-27|12:39:50.064] Served lab_status                        reqid=134 duration="151.168µs"
+        DEBUG[09-27|12:39:50.065] Served lab_status                        reqid=135 duration="79.036µs"
+        DEBUG[09-27|12:39:50.318] Served lab_deliveryPool                  reqid=136 duration="534.138µs"
+        DEBUG[09-27|12:39:50.321] Served lab_status                        reqid=137 duration="107.737µs"
+        DEBUG[09-27|12:39:50.322] Served lab_status                        reqid=138 duration="113.194µs"
+        DEBUG[09-27|12:39:50.575] Served lab_deliveryPool                  reqid=139 duration="491.343µs"
+        DEBUG[09-27|12:39:50.579] Served lab_status                        reqid=140 duration="95.365µs"
+        DEBUG[09-27|12:39:50.580] Served lab_status                        reqid=141 duration="85.125µs"
+        DEBUG[09-27|12:39:50.833] Served lab_deliveryPool                  reqid=142 duration="532.222µs"
+        DEBUG[09-27|12:39:50.836] Served lab_status                        reqid=143 duration="99.39µs"
+        DEBUG[09-27|12:39:50.837] Served lab_status                        reqid=144 duration="84.022µs"
+        INFO [09-27|12:39:51.049] Commit new mining work                   number=15,130,092 sealhash="c09b46…c58ec3" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=5.136ms
+        DEBUG[09-27|12:39:51.090] Served lab_deliveryPool                  reqid=145 duration="657.243µs"
+        DEBUG[09-27|12:39:51.093] Served lab_status                        reqid=146 duration="99.787µs"
+        DEBUG[09-27|12:39:51.094] Served lab_status                        reqid=147 duration="283.564µs"
+        DEBUG[09-27|12:39:51.348] Served lab_deliveryPool                  reqid=148 duration="493.166µs"
+        DEBUG[09-27|12:39:51.350] Served lab_status                        reqid=149 duration="96.249µs"
+        DEBUG[09-27|12:39:51.351] Served lab_status                        reqid=150 duration="89.926µs"
+        DEBUG[09-27|12:39:51.604] Served lab_deliveryPool                  reqid=151 duration="438.636µs"
+        DEBUG[09-27|12:39:51.607] Served lab_status                        reqid=152 duration="182.852µs"
+        DEBUG[09-27|12:39:51.608] Served lab_status                        reqid=153 duration="78.437µs"
+        DEBUG[09-27|12:39:51.861] Served lab_deliveryPool                  reqid=154 duration="461.915µs"
+        DEBUG[09-27|12:39:51.863] Served lab_status                        reqid=155 duration="101.094µs"
+        DEBUG[09-27|12:39:51.864] Served lab_status                        reqid=156 duration="87.823µs"
+        DEBUG[09-27|12:39:52.118] Served lab_deliveryPool                  reqid=157 duration="867.797µs"
+        DEBUG[09-27|12:39:52.122] Served lab_status                        reqid=158 duration="102.819µs"
+        DEBUG[09-27|12:39:52.123] Served lab_status                        reqid=159 duration="87.664µs"
+        DEBUG[09-27|12:39:52.377] Served lab_deliveryPool                  reqid=160 duration="576.979µs"
+        DEBUG[09-27|12:39:52.379] Served lab_status                        reqid=161 duration="169.928µs"
+        DEBUG[09-27|12:39:52.381] Served lab_status                        reqid=162 duration="77.785µs"
+        DEBUG[09-27|12:39:52.634] Served lab_deliveryPool                  reqid=163 duration="479.623µs"
+        DEBUG[09-27|12:39:52.637] Served lab_status                        reqid=164 duration="113.947µs"
+        DEBUG[09-27|12:39:52.638] Served lab_status                        reqid=165 duration="94.435µs"
+        DEBUG[09-27|12:39:52.892] Served lab_deliveryPool                  reqid=166 duration="518.914µs"
+        DEBUG[09-27|12:39:52.895] Served lab_status                        reqid=167 duration="101.284µs"
+        DEBUG[09-27|12:39:52.896] Served lab_status                        reqid=168 duration="106.395µs"
+        DEBUG[09-27|12:39:53.150] Served lab_deliveryPool                  reqid=169 duration=1.00632ms
+        DEBUG[09-27|12:39:53.153] Served lab_status                        reqid=170 duration="102.717µs"
+        DEBUG[09-27|12:39:53.154] Served lab_status                        reqid=171 duration="116.801µs"
+        DEBUG[09-27|12:39:53.407] Served lab_deliveryPool                  reqid=172 duration="522.952µs"
+        DEBUG[09-27|12:39:53.412] Served lab_status                        reqid=173 duration="213.668µs"
+        DEBUG[09-27|12:39:53.413] Served lab_status                        reqid=174 duration="154.241µs"
+        DEBUG[09-27|12:39:53.667] Served lab_deliveryPool                  reqid=175 duration="456.941µs"
+        DEBUG[09-27|12:39:53.669] Served lab_status                        reqid=176 duration="88.233µs"
+        DEBUG[09-27|12:39:53.671] Served lab_status                        reqid=177 duration="94.161µs"
+        DEBUG[09-27|12:39:53.924] Served lab_deliveryPool                  reqid=178 duration="540.498µs"
+        DEBUG[09-27|12:39:53.928] Served lab_status                        reqid=179 duration="98.379µs"
+        DEBUG[09-27|12:39:53.929] Served lab_status                        reqid=180 duration="86.618µs"
+        DEBUG[09-27|12:39:54.182] Served lab_deliveryPool                  reqid=181 duration="487.328µs"
+        DEBUG[09-27|12:39:54.185] Served lab_status                        reqid=182 duration="96.86µs"
+        DEBUG[09-27|12:39:54.186] Served lab_status                        reqid=183 duration="86.858µs"
+        DEBUG[09-27|12:39:54.439] Served lab_deliveryPool                  reqid=184 duration="452.487µs"
+        DEBUG[09-27|12:39:54.442] Served lab_status                        reqid=185 duration="115.739µs"
+        DEBUG[09-27|12:39:54.443] Served lab_status                        reqid=186 duration="99.116µs"
+        DEBUG[09-27|12:39:54.696] Served lab_deliveryPool                  reqid=187 duration="445.59µs"
+        DEBUG[09-27|12:39:54.699] Served lab_status                        reqid=188 duration="90.578µs"
+        DEBUG[09-27|12:39:54.700] Served lab_status                        reqid=189 duration="125.351µs"
+        DEBUG[09-27|12:39:54.851] Transaction pool status report           executable=2 queued=0 stales=0
+        DEBUG[09-27|12:39:54.954] Served lab_deliveryPool                  reqid=190 duration="595.525µs"
+        DEBUG[09-27|12:39:54.957] Served lab_status                        reqid=191 duration="199.023µs"
+        DEBUG[09-27|12:39:54.959] Served lab_status                        reqid=192 duration="136.881µs"
+        DEBUG[09-27|12:39:55.212] Served lab_deliveryPool                  reqid=193 duration="470.773µs"
+        DEBUG[09-27|12:39:55.214] Served lab_status                        reqid=194 duration="85.991µs"
+        DEBUG[09-27|12:39:55.215] Served lab_status                        reqid=195 duration="81.536µs"
+        DEBUG[09-27|12:39:55.468] Served lab_deliveryPool                  reqid=196 duration="436.803µs"
+        DEBUG[09-27|12:39:55.471] Served lab_status                        reqid=197 duration="87.373µs"
+        DEBUG[09-27|12:39:55.472] Served lab_status                        reqid=198 duration="90.627µs"
+        DEBUG[09-27|12:39:55.724] Served lab_deliveryPool                  reqid=199 duration="460.812µs"
+        DEBUG[09-27|12:39:55.727] Served lab_status                        reqid=200 duration="189.672µs"
+        DEBUG[09-27|12:39:55.728] Served lab_status                        reqid=201 duration="146.107µs"
+        DEBUG[09-27|12:39:55.981] Served lab_deliveryPool                  reqid=202 duration="696.356µs"
+        DEBUG[09-27|12:39:55.984] Served lab_status                        reqid=203 duration="274.469µs"
+        DEBUG[09-27|12:39:55.986] Served lab_status                        reqid=204 duration="94.123µs"
+        DEBUG[09-27|12:39:56.239] Served lab_deliveryPool                  reqid=205 duration="420.838µs"
+        DEBUG[09-27|12:39:56.242] Served lab_status                        reqid=206 duration="134.271µs"
+        DEBUG[09-27|12:39:56.243] Served lab_status                        reqid=207 duration="58.799µs"
+        DEBUG[09-27|12:39:56.495] Served lab_deliveryPool                  reqid=208 duration="429.247µs"
+        DEBUG[09-27|12:39:56.498] Served lab_status                        reqid=209 duration="81.377µs"
+        DEBUG[09-27|12:39:56.499] Served lab_status                        reqid=210 duration="96.302µs"
+        DEBUG[09-27|12:39:56.751] Served lab_deliveryPool                  reqid=211 duration="437.076µs"
+        DEBUG[09-27|12:39:56.756] Served lab_status                        reqid=212 duration="105.213µs"
+        DEBUG[09-27|12:39:56.757] Served lab_status                        reqid=213 duration="78.563µs"
+        DEBUG[09-27|12:39:57.006] Queued propagated block                  peer=98d558173016b66a number=15,130,092 hash="899c3f…ef5dac" queued=1
+        DEBUG[09-27|12:39:57.007] Importing propagated block               peer=98d558173016b66a number=15,130,092 hash="899c3f…ef5dac"
+        DEBUG[09-27|12:39:57.011] Served lab_deliveryPool                  reqid=214 duration="427.44µs"
+        DEBUG[09-27|12:39:57.013] Persisted trie from memory database      nodes=19 size=7.53KiB time=1.334517ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-246.00B
+        DEBUG[09-27|12:39:57.013] Inserted forked block                    number=15,130,092 hash="899c3f…ef5dac" diff=2         elapsed=5.549ms  txs=1 gas=21224 uncles=0
+        INFO [09-27|12:39:57.013] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=5.654ms  mgasps=3.753 order=0 number=15,130,092 hash="899c3f…ef5dac" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="da7f2f…d1684b" parentHash="4f47b6…6c776d" time=1,790,505,586 cache=0.00B
+        INFO [09-27|12:39:57.013] notify first order chain head event      number=15,130,092 hash="899c3f…ef5dac"
+        DEBUG[09-27|12:39:57.013] Reinjecting stale transactions           count=0
+        DEBUG[09-27|12:39:57.016] Served lab_status                        reqid=215 duration="112.061µs"
+        INFO [09-27|12:39:57.017] Commit new mining work                   number=15,130,092 sealhash="b308b2…ac0765" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.719ms
+        ERROR[09-27|12:39:57.017] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:57.017] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|12:39:57.017] Served lab_status                        reqid=216 duration="79.457µs"
+        DEBUG[09-27|12:39:57.270] Served lab_deliveryPool                  reqid=217 duration="359.646µs"
+        DEBUG[09-27|12:39:57.273] Served lab_status                        reqid=218 duration="84.952µs"
+        DEBUG[09-27|12:39:57.274] Served lab_status                        reqid=219 duration="89.778µs"
+        DEBUG[09-27|12:39:57.527] Served lab_deliveryPool                  reqid=220 duration="357.632µs"
+        DEBUG[09-27|12:39:57.529] Served lab_status                        reqid=221 duration="82.461µs"
+        DEBUG[09-27|12:39:57.530] Served lab_status                        reqid=222 duration="75.817µs"
+        DEBUG[09-27|12:39:57.782] Served lab_deliveryPool                  reqid=223 duration="324.999µs"
+        DEBUG[09-27|12:39:57.784] Served lab_status                        reqid=224 duration="84.891µs"
+        DEBUG[09-27|12:39:57.785] Served lab_status                        reqid=225 duration="76.549µs"
+        DEBUG[09-27|12:39:58.038] Served lab_deliveryPool                  reqid=226 duration="367.341µs"
+        DEBUG[09-27|12:39:58.041] Served lab_status                        reqid=227 duration="141.797µs"
+        DEBUG[09-27|12:39:58.042] Served lab_status                        reqid=228 duration="102.25µs"
+        DEBUG[09-27|12:39:58.296] Served lab_deliveryPool                  reqid=229 duration="856.566µs"
+        DEBUG[09-27|12:39:58.298] Served lab_status                        reqid=230 duration="282.044µs"
+        DEBUG[09-27|12:39:58.300] Served lab_status                        reqid=231 duration="81.437µs"
+        DEBUG[09-27|12:39:58.552] Served lab_deliveryPool                  reqid=232 duration="354.931µs"
+        DEBUG[09-27|12:39:58.555] Served lab_status                        reqid=233 duration="94.729µs"
+        DEBUG[09-27|12:39:58.556] Served lab_status                        reqid=234 duration="78.051µs"
+        DEBUG[09-27|12:39:58.809] Served lab_deliveryPool                  reqid=235 duration="346.409µs"
+        DEBUG[09-27|12:39:58.811] Served lab_status                        reqid=236 duration="90.646µs"
+        DEBUG[09-27|12:39:58.812] Served lab_status                        reqid=237 duration="86.678µs"
+        DEBUG[09-27|12:39:58.865] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        WARN [09-27|12:39:58.875] Automatic ticket purchase needs attention; retrying err="nonce too low"
+        DEBUG[09-27|12:39:59.065] Served lab_deliveryPool                  reqid=238 duration="454.651µs"
+        DEBUG[09-27|12:39:59.070] Served lab_status                        reqid=239 duration="108.26µs"
+        DEBUG[09-27|12:39:59.071] Served lab_status                        reqid=240 duration="94.394µs"
+        DEBUG[09-27|12:39:59.324] Served lab_deliveryPool                  reqid=241 duration="387.87µs"
+        DEBUG[09-27|12:39:59.326] Served lab_status                        reqid=242 duration="86.669µs"
+        DEBUG[09-27|12:39:59.327] Served lab_status                        reqid=243 duration="156.045µs"
+        DEBUG[09-27|12:39:59.580] Served lab_deliveryPool                  reqid=244 duration="414.293µs"
+        DEBUG[09-27|12:39:59.583] Served lab_status                        reqid=245 duration="101.433µs"
+        DEBUG[09-27|12:39:59.584] Served lab_status                        reqid=246 duration="89.395µs"
+        DEBUG[09-27|12:39:59.837] Served lab_deliveryPool                  reqid=247 duration="379.199µs"
+        DEBUG[09-27|12:39:59.839] Served lab_status                        reqid=248 duration="96.24µs"
+        DEBUG[09-27|12:39:59.840] Served lab_status                        reqid=249 duration="135.325µs"
+        DEBUG[09-27|12:40:00.095] Served lab_deliveryPool                  reqid=250 duration="746.951µs"
+        DEBUG[09-27|12:40:00.098] Served lab_status                        reqid=251 duration="128.256µs"
+        DEBUG[09-27|12:40:00.100] Served lab_status                        reqid=252 duration="212.045µs"
+        DEBUG[09-27|12:40:00.353] Served lab_deliveryPool                  reqid=253 duration="409.085µs"
+        DEBUG[09-27|12:40:00.356] Served lab_status                        reqid=254 duration="98.235µs"
+        DEBUG[09-27|12:40:00.357] Served lab_status                        reqid=255 duration="138.14µs"
+        DEBUG[09-27|12:40:00.611] Served lab_deliveryPool                  reqid=256 duration="472.94µs"
+        DEBUG[09-27|12:40:00.613] Served lab_status                        reqid=257 duration="89.679µs"
+        DEBUG[09-27|12:40:00.614] Served lab_status                        reqid=258 duration="87.667µs"
+        DEBUG[09-27|12:40:00.867] Served lab_deliveryPool                  reqid=259 duration="371.935µs"
+        DEBUG[09-27|12:40:00.870] Served lab_status                        reqid=260 duration="105.797µs"
+        DEBUG[09-27|12:40:00.871] Served lab_status                        reqid=261 duration="89.051µs"
+        DEBUG[09-27|12:40:01.009] Queued propagated block                  peer=98d558173016b66a number=15,130,092 hash="31db38…e3bb42" queued=1
+        DEBUG[09-27|12:40:01.009] Importing propagated block               peer=98d558173016b66a number=15,130,092 hash="31db38…e3bb42"
+        DEBUG[09-27|12:40:01.017] Persisted trie from memory database      nodes=19 size=7.67KiB time=2.085076ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-328.00B
+        DEBUG[09-27|12:40:01.018] Inserted new block                       number=15,130,092 hash="31db38…e3bb42" uncles=0 txs=2 gas=42448 elapsed=8.276ms
+        INFO [09-27|12:40:01.018] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=8.372ms  mgasps=5.070 order=0 number=15,130,092 hash="31db38…e3bb42" difficulty=4 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="ecc89a…43ef20" parentHash="3a2596…f4465a" time=1,790,505,590 cache=0.00B
+        DEBUG[09-27|12:40:01.018] Reinjecting stale transactions           count=0
+        INFO [09-27|12:40:01.019] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-27|12:40:01.020] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:40:01.020] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-27|12:40:01.021] Commit new mining work                   number=15,130,093 sealhash="11adef…a2d34f" uncles=0 txs=0 gas=0     fees=0          elapsed=2.779ms
+        INFO [09-27|12:40:01.021] Automatic ticket purchase confirmed      tx="841906…a36992" block="31db38…e3bb42"
+        WARN [09-27|12:40:01.021] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        DEBUG[09-27|12:40:01.124] Served lab_deliveryPool                  reqid=262 duration="471.862µs"
+        DEBUG[09-27|12:40:01.127] Served lab_status                        reqid=263 duration="135.554µs"
+        DEBUG[09-27|12:40:01.129] Served lab_status                        reqid=264 duration="165.232µs"
+        DEBUG[09-27|12:40:01.382] Served lab_deliveryPool                  reqid=265 duration="551.851µs"
+        DEBUG[09-27|12:40:01.384] Served lab_status                        reqid=266 duration="111.496µs"
+        DEBUG[09-27|12:40:01.386] Served lab_status                        reqid=267 duration="167.506µs"
+        DEBUG[09-27|12:40:01.639] Served lab_deliveryPool                  reqid=268 duration="382.073µs"
+        DEBUG[09-27|12:40:01.641] Served lab_status                        reqid=269 duration="118.719µs"
+        DEBUG[09-27|12:40:01.642] Served lab_status                        reqid=270 duration="92.132µs"
+        DEBUG[09-27|12:40:01.895] Served lab_deliveryPool                  reqid=271 duration="465.893µs"
+        DEBUG[09-27|12:40:01.898] Served lab_status                        reqid=272 duration="145.417µs"
+        DEBUG[09-27|12:40:01.899] Served lab_status                        reqid=273 duration="134.131µs"
+        INFO [09-27|12:40:02.022] Commit new mining work                   number=15,130,093 sealhash="3bd077…830274" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=3.191ms
+        DEBUG[09-27|12:40:02.152] Served lab_deliveryPool                  reqid=274 duration="381.298µs"
+        DEBUG[09-27|12:40:02.154] Served lab_status                        reqid=275 duration="86.832µs"
+        DEBUG[09-27|12:40:02.155] Served lab_status                        reqid=276 duration="87.563µs"
+        DEBUG[09-27|12:40:02.408] Served lab_deliveryPool                  reqid=277 duration="398.597µs"
+        DEBUG[09-27|12:40:02.410] Served lab_status                        reqid=278 duration="90.458µs"
+        DEBUG[09-27|12:40:02.412] Served lab_status                        reqid=279 duration="97.116µs"
+        DEBUG[09-27|12:40:02.664] Served lab_deliveryPool                  reqid=280 duration="353.327µs"
+        DEBUG[09-27|12:40:02.666] Served lab_status                        reqid=281 duration="91.932µs"
+        DEBUG[09-27|12:40:02.668] Served lab_status                        reqid=282 duration="91.558µs"
+        DEBUG[09-27|12:40:02.851] Transaction pool status report           executable=1 queued=0 stales=0
+        DEBUG[09-27|12:40:02.921] Served lab_deliveryPool                  reqid=283 duration="436.554µs"
+        DEBUG[09-27|12:40:02.923] Served lab_status                        reqid=284 duration="91.668µs"
+        DEBUG[09-27|12:40:02.924] Served lab_status                        reqid=285 duration="110.526µs"
+        DEBUG[09-27|12:40:03.176] Served lab_deliveryPool                  reqid=286 duration="552.734µs"
+        DEBUG[09-27|12:40:03.178] Served lab_status                        reqid=287 duration="121.118µs"
+        DEBUG[09-27|12:40:03.180] Served lab_status                        reqid=288 duration="284.408µs"
+        DEBUG[09-27|12:40:03.433] Served lab_deliveryPool                  reqid=289 duration="567.86µs"
+        DEBUG[09-27|12:40:03.435] Served lab_status                        reqid=290 duration="98.183µs"
+        DEBUG[09-27|12:40:03.436] Served lab_status                        reqid=291 duration="194.057µs"
+        DEBUG[09-27|12:40:03.690] Served lab_deliveryPool                  reqid=292 duration="486.248µs"
+        DEBUG[09-27|12:40:03.693] Served lab_status                        reqid=293 duration="185.806µs"
+        DEBUG[09-27|12:40:03.695] Served lab_status                        reqid=294 duration="137.056µs"
+        DEBUG[09-27|12:40:03.948] Served lab_deliveryPool                  reqid=295 duration="596.862µs"
+        DEBUG[09-27|12:40:03.950] Served lab_status                        reqid=296 duration="92.643µs"
+        DEBUG[09-27|12:40:03.951] Served lab_status                        reqid=297 duration="87.774µs"
+        DEBUG[09-27|12:40:04.204] Served lab_deliveryPool                  reqid=298 duration="532.324µs"
+        DEBUG[09-27|12:40:04.206] Served lab_status                        reqid=299 duration="165.015µs"
+        DEBUG[09-27|12:40:04.208] Served lab_status                        reqid=300 duration="90.022µs"
+        DEBUG[09-27|12:40:04.461] Served lab_deliveryPool                  reqid=301 duration="771.742µs"
+        DEBUG[09-27|12:40:04.463] Served lab_status                        reqid=302 duration="100.337µs"
+        DEBUG[09-27|12:40:04.466] Served lab_status                        reqid=303 duration="94.631µs"
+        DEBUG[09-27|12:40:04.720] Served lab_deliveryPool                  reqid=304 duration="401.424µs"
+        DEBUG[09-27|12:40:04.722] Served lab_status                        reqid=305 duration="91.624µs"
+        DEBUG[09-27|12:40:04.723] Served lab_status                        reqid=306 duration="108.862µs"
+        DEBUG[09-27|12:40:04.976] Served lab_deliveryPool                  reqid=307 duration="395.151µs"
+        DEBUG[09-27|12:40:04.979] Served lab_status                        reqid=308 duration="90.997µs"
+        DEBUG[09-27|12:40:04.980] Served lab_status                        reqid=309 duration="83.589µs"
+        DEBUG[09-27|12:40:06.037] Served lab_deliveryPool                  reqid=310 duration="379.631µs"
+        DEBUG[09-27|12:40:06.040] Served lab_status                        reqid=311 duration="151.437µs"
+        DEBUG[09-27|12:40:06.041] Served lab_status                        reqid=312 duration="138.664µs"
+        DEBUG[09-27|12:40:06.295] Served lab_deliveryPool                  reqid=313 duration="645.525µs"
+        DEBUG[09-27|12:40:06.297] Served lab_status                        reqid=314 duration="94.975µs"
+        DEBUG[09-27|12:40:06.298] Served lab_status                        reqid=315 duration="81.546µs"
+        DEBUG[09-27|12:40:06.550] Served lab_deliveryPool                  reqid=316 duration="371.137µs"
+        DEBUG[09-27|12:40:06.554] Served lab_status                        reqid=317 duration="99.047µs"
+        DEBUG[09-27|12:40:06.555] Served lab_status                        reqid=318 duration="130.065µs"
+        DEBUG[09-27|12:40:06.808] Served lab_deliveryPool                  reqid=319 duration="609.947µs"
+        DEBUG[09-27|12:40:06.810] Served lab_status                        reqid=320 duration="101.15µs"
+        DEBUG[09-27|12:40:06.811] Served lab_status                        reqid=321 duration="74.683µs"
+        DEBUG[09-27|12:40:07.063] Served lab_deliveryPool                  reqid=322 duration="366.516µs"
+        DEBUG[09-27|12:40:07.065] Served lab_status                        reqid=323 duration="88.435µs"
+        DEBUG[09-27|12:40:07.066] Served lab_status                        reqid=324 duration="87.957µs"
+        DEBUG[09-27|12:40:07.319] Served lab_deliveryPool                  reqid=325 duration="386.753µs"
+        DEBUG[09-27|12:40:07.322] Served lab_status                        reqid=326 duration="94.85µs"
+        DEBUG[09-27|12:40:07.323] Served lab_status                        reqid=327 duration="88.189µs"
+        DEBUG[09-27|12:40:07.576] Served lab_deliveryPool                  reqid=328 duration="589.868µs"
+        DEBUG[09-27|12:40:07.578] Served lab_status                        reqid=329 duration="140.62µs"
+        DEBUG[09-27|12:40:07.579] Served lab_status                        reqid=330 duration="99.403µs"
+        DEBUG[09-27|12:40:07.832] Served lab_deliveryPool                  reqid=331 duration="373.771µs"
+        DEBUG[09-27|12:40:07.834] Served lab_status                        reqid=332 duration="110.936µs"
+        DEBUG[09-27|12:40:07.835] Served lab_status                        reqid=333 duration="90.53µs"
+        DEBUG[09-27|12:40:08.088] Served lab_deliveryPool                  reqid=334 duration="395.098µs"
+        DEBUG[09-27|12:40:08.090] Served lab_status                        reqid=335 duration="91.677µs"
+        DEBUG[09-27|12:40:08.091] Served lab_status                        reqid=336 duration="105.146µs"
+        DEBUG[09-27|12:40:08.344] Served lab_deliveryPool                  reqid=337 duration="357.535µs"
+        DEBUG[09-27|12:40:08.346] Served lab_status                        reqid=338 duration="94.364µs"
+        DEBUG[09-27|12:40:08.347] Served lab_status                        reqid=339 duration="107.851µs"
+        DEBUG[09-27|12:40:08.601] Served lab_deliveryPool                  reqid=340 duration="577.912µs"
+        DEBUG[09-27|12:40:08.603] Served lab_status                        reqid=341 duration="95.439µs"
+        DEBUG[09-27|12:40:08.604] Served lab_status                        reqid=342 duration="85.681µs"
+        DEBUG[09-27|12:40:08.858] Served lab_deliveryPool                  reqid=343 duration="623.506µs"
+        DEBUG[09-27|12:40:08.861] Served lab_status                        reqid=344 duration="91.225µs"
+        DEBUG[09-27|12:40:08.862] Served lab_status                        reqid=345 duration="84.384µs"
+        DEBUG[09-27|12:40:09.116] Served lab_deliveryPool                  reqid=346 duration="628.482µs"
+        DEBUG[09-27|12:40:09.119] Served lab_status                        reqid=347 duration="229.574µs"
+        DEBUG[09-27|12:40:09.121] Served lab_status                        reqid=348 duration="86.651µs"
+        DEBUG[09-27|12:40:09.374] Served lab_deliveryPool                  reqid=349 duration="362.898µs"
+        DEBUG[09-27|12:40:09.376] Served lab_status                        reqid=350 duration="163.065µs"
+        DEBUG[09-27|12:40:09.377] Served lab_status                        reqid=351 duration="144.674µs"
+        DEBUG[09-27|12:40:09.630] Served lab_deliveryPool                  reqid=352 duration="471.726µs"
+        DEBUG[09-27|12:40:09.632] Served lab_status                        reqid=353 duration="95.223µs"
+        DEBUG[09-27|12:40:09.633] Served lab_status                        reqid=354 duration="80.986µs"
+        DEBUG[09-27|12:40:09.886] Served lab_deliveryPool                  reqid=355 duration="450.343µs"
+        DEBUG[09-27|12:40:09.888] Served lab_status                        reqid=356 duration="118.563µs"
+        DEBUG[09-27|12:40:09.890] Served lab_status                        reqid=357 duration="106.257µs"
+        DEBUG[09-27|12:40:10.143] Served lab_deliveryPool                  reqid=358 duration="622.999µs"
+        DEBUG[09-27|12:40:10.146] Served lab_status                        reqid=359 duration="101.389µs"
+        DEBUG[09-27|12:40:10.146] Served lab_status                        reqid=360 duration="92.387µs"
+        DEBUG[09-27|12:40:10.399] Served lab_deliveryPool                  reqid=361 duration="388.07µs"
+        DEBUG[09-27|12:40:10.401] Served lab_status                        reqid=362 duration="130.587µs"
+        DEBUG[09-27|12:40:10.402] Served lab_status                        reqid=363 duration="87.683µs"
+        DEBUG[09-27|12:40:10.655] Served lab_deliveryPool                  reqid=364 duration="366.205µs"
+        DEBUG[09-27|12:40:10.657] Served lab_status                        reqid=365 duration="100.68µs"
+        DEBUG[09-27|12:40:10.658] Served lab_status                        reqid=366 duration="99.81µs"
+        DEBUG[09-27|12:40:10.911] Served lab_deliveryPool                  reqid=367 duration="671.003µs"
+        DEBUG[09-27|12:40:10.914] Served lab_status                        reqid=368 duration="96.302µs"
+        DEBUG[09-27|12:40:10.916] Served lab_status                        reqid=369 duration="96.237µs"
+        DEBUG[09-27|12:40:11.169] Served lab_deliveryPool                  reqid=370 duration="578.661µs"
+        DEBUG[09-27|12:40:11.172] Served lab_status                        reqid=371 duration="97.862µs"
+        DEBUG[09-27|12:40:11.174] Served lab_status                        reqid=372 duration="162.178µs"
+        DEBUG[09-27|12:40:11.427] Served lab_deliveryPool                  reqid=373 duration="395.927µs"
+        DEBUG[09-27|12:40:11.430] Served lab_status                        reqid=374 duration="167.426µs"
+        DEBUG[09-27|12:40:11.431] Served lab_status                        reqid=375 duration="80.812µs"
+        DEBUG[09-27|12:40:11.685] Served lab_deliveryPool                  reqid=376 duration="601.789µs"
+        DEBUG[09-27|12:40:11.687] Served lab_status                        reqid=377 duration="128.046µs"
+        DEBUG[09-27|12:40:11.688] Served lab_status                        reqid=378 duration="120.185µs"
+        DEBUG[09-27|12:40:11.941] Served lab_deliveryPool                  reqid=379 duration="487.895µs"
+        DEBUG[09-27|12:40:11.943] Served lab_status                        reqid=380 duration="96.492µs"
+        DEBUG[09-27|12:40:11.943] Served lab_status                        reqid=381 duration="94.191µs"
+        DEBUG[09-27|12:40:12.197] Served lab_deliveryPool                  reqid=382 duration="371.527µs"
+        DEBUG[09-27|12:40:12.199] Served lab_status                        reqid=383 duration="120.976µs"
+        DEBUG[09-27|12:40:12.200] Served lab_status                        reqid=384 duration="120.484µs"
+        DEBUG[09-27|12:40:12.453] Served lab_deliveryPool                  reqid=385 duration="408.258µs"
+        DEBUG[09-27|12:40:12.455] Served lab_status                        reqid=386 duration="94.863µs"
+        DEBUG[09-27|12:40:12.457] Served lab_status                        reqid=387 duration="125.367µs"
+        DEBUG[09-27|12:40:12.710] Served lab_deliveryPool                  reqid=388 duration="617.068µs"
+        DEBUG[09-27|12:40:12.713] Served lab_status                        reqid=389 duration="201.466µs"
+        DEBUG[09-27|12:40:12.715] Served lab_status                        reqid=390 duration="111.717µs"
+        DEBUG[09-27|12:40:12.813] Persisted trie from memory database      nodes=19 size=7.67KiB time=1.143136ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-410.00B
+        INFO [09-27|12:40:12.817] Successfully sealed new block            number=15,130,093 sealhash="3bd077…830274" hash="f72473…0e6a10" difficulty=5 elapsed=9.990s
+        INFO [09-27|12:40:12.818] 🔨 mined potential block                  number=15,130,093 hash="f72473…0e6a10"
+        INFO [09-27|12:40:12.819] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-27|12:40:12.820] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:40:12.820] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|12:40:12.820] Transaction failed, account skipped      hash="88ddcc…484df3" err="nonce too low: address 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, tx: 9 state: 10"
+        INFO [09-27|12:40:12.823] Commit new mining work                   number=15,130,094 sealhash="d0a208…18fcae" uncles=0 txs=0 gas=0     fees=0          elapsed=5.499ms
+        DEBUG[09-27|12:40:12.825] Reinjecting stale transactions           count=0
+        DEBUG[09-27|12:40:12.827] Executing EVM call finished              runtime="417.533µs"
+        DEBUG[09-27|12:40:12.828] Executing EVM call finished              runtime="481.742µs"
+        DEBUG[09-27|12:40:12.828] Executing EVM call finished              runtime="265.839µs"
+        DEBUG[09-27|12:40:12.828] Executing EVM call finished              runtime="237.293µs"
+        DEBUG[09-27|12:40:12.829] Executing EVM call finished              runtime="416.053µs"
+        DEBUG[09-27|12:40:12.829] Executing EVM call finished              runtime="313.694µs"
+        DEBUG[09-27|12:40:12.830] Executing EVM call finished              runtime="579.881µs"
+        DEBUG[09-27|12:40:12.830] Executing EVM call finished              runtime="451.641µs"
+        DEBUG[09-27|12:40:12.831] Executing EVM call finished              runtime="512.327µs"
+        DEBUG[09-27|12:40:12.831] Executing EVM call finished              runtime="399.085µs"
+        DEBUG[09-27|12:40:12.832] Executing EVM call finished              runtime="387.398µs"
+        DEBUG[09-27|12:40:12.832] Executing EVM call finished              runtime="333.316µs"
+        DEBUG[09-27|12:40:12.832] Executing EVM call finished              runtime="287.541µs"
+        DEBUG[09-27|12:40:12.833] Executing EVM call finished              runtime="323.817µs"
+        DEBUG[09-27|12:40:12.833] Executing EVM call finished              runtime="303.558µs"
+        DEBUG[09-27|12:40:12.834] Executing EVM call finished              runtime="443.673µs"
+        DEBUG[09-27|12:40:12.834] Executing EVM call finished              runtime="538.303µs"
+        DEBUG[09-27|12:40:12.834] Executing EVM call finished              runtime="180.915µs"
+        DEBUG[09-27|12:40:12.835] Executing EVM call finished              runtime="204.858µs"
+        DEBUG[09-27|12:40:12.835] Executing EVM call finished              runtime="162.58µs"
+        DEBUG[09-27|12:40:12.835] Executing EVM call finished              runtime="149.842µs"
+        DEBUG[09-27|12:40:12.835] Executing EVM call finished              runtime="255.671µs"
+        DEBUG[09-27|12:40:12.836] Executing EVM call finished              runtime="195.367µs"
+        DEBUG[09-27|12:40:12.836] Executing EVM call finished              runtime="277.281µs"
+        DEBUG[09-27|12:40:12.836] Executing EVM call finished              runtime="283.17µs"
+        INFO [09-27|12:40:12.837] Submitted transaction                    hash=0xc49f85e8f4e1f9078344dc1f688e8ff13d0db19a131a4539d171542638a84771 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=5 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|12:40:12.838] Automatic ticket submitted; awaiting inclusion tx="c49f85…a84771" nonce=5
+        DEBUG[09-27|12:40:12.968] Served lab_deliveryPool                  reqid=391 duration="784.683µs"
+        DEBUG[09-27|12:40:12.974] Served lab_status                        reqid=392 duration="139.459µs"
+        DEBUG[09-27|12:40:12.975] Served lab_status                        reqid=393 duration="197.475µs"
+        DEBUG[09-27|12:40:12.978] Served lab_block                         reqid=394 duration="256.339µs"
+        DEBUG[09-27|12:40:13.000] Served eth_getTransactionReceipt         reqid=395 duration="998.728µs"
+        DEBUG[09-27|12:40:13.019] Served eth_getTransactionReceipt         reqid=396 duration="513.637µs"
+        DEBUG[09-27|12:40:13.022] Served lab_block                         reqid=397 duration="156.582µs"
+        DEBUG[09-27|12:40:13.038] Served lab_block                         reqid=398 duration="196.403µs"
+        DEBUG[09-27|12:40:13.040] Served lab_purchaseState                 reqid=399 duration="232.466µs"
+        DEBUG[09-27|12:40:13.045] RPC connection read error                err=EOF
+        DEBUG[09-27|12:40:13.046] RPC server shutting down 
+        INFO [09-27|12:40:13.046] IPC endpoint closed                      url=/tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/002/lab.ipc
+        DEBUG[09-27|12:40:13.046] RPC server shutting down 
+        INFO [09-27|12:40:13.046] Stopping Ethereum protocol 
+        DEBUG[09-27|12:40:13.047] Ethereum message handling failed         id=98d558173016b66a conn=inbound err=EOF
+        DEBUG[09-27|12:40:13.047] Removing Ethereum peer                   peer=98d558173016b66a
+        INFO [09-27|12:40:13.048] Ethereum protocol stopped 
+        DEBUG[09-27|12:40:13.048] Removing p2p peer                        id=98d558173016b66a conn=inbound duration=33.166s     peers=0 req=false err="client quitting"
+        INFO [09-27|12:40:13.048] Transaction pool stopped 
+        INFO [09-27|12:40:13.049] Blockchain manager stopped 
+        DEBUG[09-27|12:40:13.052] Adding p2p peer                          name=anchor-lab/linux-amd...         addr=127.0.0.1:43108 peers=1
+        DEBUG[09-27|12:40:13.052] Removing p2p peer                        id=98d558173016b66a conn=inbound duration="375.245µs" peers=0 req=false err="client quitting"
+        DEBUG[09-27|12:40:13.292] Read error                               err="accept tcp 127.0.0.1:44479: use of closed network connection"
+        --- PASS: TestRestartNodeRehearsal (39.33s)
+        PASS
+    node_rehearsal_linux_test.go:329: node process /tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/001/process-544351759.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-27|12:39:26.632] FS scan times                            list="123.216µs" set="1.786µs" diff="35.475µs"
+        DEBUG[09-27|12:39:27.443] FS scan times                            list="697.267µs" set="60.937µs" diff="8.627µs"
+        INFO [09-27|12:39:27.634] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-27|12:39:27.636] Allocated cache and file handles         database=/tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/001/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [09-27|12:39:32.947] Persisted trie from memory database      nodes=24 size=3.95KiB time="532.103µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [09-27|12:39:32.952]  
+        INFO [09-27|12:39:32.952] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|12:39:32.952] Chain ID:  32659 (mainnet) 
+        INFO [09-27|12:39:32.952] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [09-27|12:39:32.952]  
+        INFO [09-27|12:39:32.952] hard forks: 
+        INFO [09-27|12:39:32.952]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [09-27|12:39:32.952]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [09-27|12:39:32.952]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [09-27|12:39:32.952]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|12:39:32.952]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [09-27|12:39:32.952]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [09-27|12:39:32.952]  - Constantinople:              5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [09-27|12:39:32.952]  - Petersburg:                  5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [09-27|12:39:32.952]  - Istanbul:                    5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [09-27|12:39:32.952]  - Berlin:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [09-27|12:39:32.952]  - London:                      5800000  (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [09-27|12:39:32.952]  - Fusion Eco:                  8250000  
+        INFO [09-27|12:39:32.952]  
+        INFO [09-27|12:39:32.952]  
+        INFO [09-27|12:39:32.952] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [09-27|12:39:32.952]  
+        INFO [09-27|12:39:32.959] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [09-27|12:39:32.971] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h33m12s
+        INFO [09-27|12:39:32.971] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h33m12s
+        INFO [09-27|12:39:32.971] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h33m12s
+        INFO [09-27|12:39:32.977] Upgrading chain index                    type=bloombits percentage=0
+        DEBUG[09-27|12:39:32.977] Reinjecting stale transactions           count=0
+        ERROR[09-27|12:39:32.986] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:32.986] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|12:39:32.993] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        INFO [09-27|12:39:32.996] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [09-27|12:39:33.006] InitCheckPoints finished                 count=8 last=2,680,000
+        INFO [09-27|12:39:33.007] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [09-27|12:39:33.008] Starting P2P networking 
+        INFO [09-27|12:39:33.018] RLPx listener up                         self="enode://98d558173016b66a95e6859e83f9e05fa96a5d0127f906cff982aac35c9b692b9742501c9c18faefe082d0298b29c3c0b23f9f56e68e904448ac20c873b9209f@127.0.0.1:46295?discport=0"
+        DEBUG[09-27|12:39:33.024] IPCs registered                          namespaces=admin,debug,web3,eth,txpool,personal,fsn,fsntx,fsnbt,miner,net,lab
+        INFO [09-27|12:39:33.025] IPC endpoint opened                      url=/tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/001/lab.ipc
+        DEBUG[09-27|12:39:39.024] Served admin_addPeer                     reqid=1 duration=7.991534ms
+        DEBUG[09-27|12:39:39.026] Served admin_peers                       reqid=2 duration="359.556µs"
+        DEBUG[09-27|12:39:39.077] Adding p2p peer                          name=anchor-lab/linux-amd... addr=127.0.0.1:44479 peers=1
+        DEBUG[09-27|12:39:39.078] Ethereum peer connected                  id=558071bcd67f3328 conn=staticdial name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-27|12:39:39.130] Served admin_peers                       reqid=3 duration=2.857561ms
+        DEBUG[09-27|12:39:39.135] Served net_peerCount                     reqid=4 duration="641.335µs"
+        DEBUG[09-27|12:39:39.146] Served lab_purchaseState                 reqid=5 duration=7.823655ms
+        INFO [09-27|12:39:39.150] Transaction pool price threshold updated price=1
+        DEBUG[09-27|12:39:39.151] Served miner_start                       reqid=6 duration=1.280476ms
+        DEBUG[09-27|12:39:39.153] Served lab_status                        reqid=7 duration=1.674417ms
+        DEBUG[09-27|12:39:39.154] Served miner_startAutoBuyTicket          reqid=8 duration="104.572µs"
+        WARN [09-27|12:39:39.156] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        DEBUG[09-27|12:39:39.161] Served lab_deliveryPool                  reqid=9 duration=3.748518ms
+        INFO [09-27|12:39:39.178] Commit new mining work                   number=15,130,091 sealhash="63fe95…8e3bca" uncles=0 txs=0 gas=0 fees=0 elapsed=26.838ms
+        DEBUG[09-27|12:39:39.189] Served lab_status                        reqid=10 duration="468.585µs"
+        DEBUG[09-27|12:39:39.243] Queued propagated block                  peer=558071bcd67f3328 number=15,130,091 hash="4f47b6…6c776d" queued=1
+        DEBUG[09-27|12:39:39.246] Served lab_status                        reqid=11 duration="412.186µs"
+        DEBUG[09-27|12:39:39.247] Importing propagated block               peer=558071bcd67f3328 number=15,130,091 hash="4f47b6…6c776d"
+        DEBUG[09-27|12:39:39.263] Persisted trie from memory database      nodes=13 size=5.08KiB time="801.201µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-82.00B
+        DEBUG[09-27|12:39:39.264] Inserted new block                       number=15,130,091 hash="4f47b6…6c776d" uncles=0 txs=0 gas=0 elapsed=16.004ms
+        INFO [09-27|12:39:39.265] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=16.799ms mgasps=0.000 order=1 number=15,130,091 hash="4f47b6…6c776d" difficulty=2 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="09a03b…234cde" parentHash="71fda3…ff8674" time=1,790,505,579 cache=0.00B
+        INFO [09-27|12:39:39.265] Mining too far in the future             wait=7s
+        DEBUG[09-27|12:39:39.265] Reinjecting stale transactions           count=0
+        ERROR[09-27|12:39:39.266] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:39.266] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|12:39:39.502] Served lab_deliveryPool                  reqid=12 duration=4.041037ms
+        DEBUG[09-27|12:39:39.508] Served lab_status                        reqid=13 duration="155.804µs"
+        DEBUG[09-27|12:39:39.509] Served lab_status                        reqid=14 duration="89.63µs"
+        DEBUG[09-27|12:39:39.761] Served lab_deliveryPool                  reqid=15 duration="630.646µs"
+        DEBUG[09-27|12:39:39.766] Served lab_status                        reqid=16 duration="190.177µs"
+        DEBUG[09-27|12:39:39.767] Served lab_status                        reqid=17 duration="111.507µs"
+        DEBUG[09-27|12:39:40.019] Served lab_deliveryPool                  reqid=18 duration="526.191µs"
+        DEBUG[09-27|12:39:40.023] Served lab_status                        reqid=19 duration="170.56µs"
+        DEBUG[09-27|12:39:40.025] Served lab_status                        reqid=20 duration="101.469µs"
+        DEBUG[09-27|12:39:40.277] Served lab_deliveryPool                  reqid=21 duration="527.522µs"
+        DEBUG[09-27|12:39:40.282] Served lab_status                        reqid=22 duration="105.805µs"
+        DEBUG[09-27|12:39:40.284] Served lab_status                        reqid=23 duration="161.253µs"
+        DEBUG[09-27|12:39:40.536] Served lab_deliveryPool                  reqid=24 duration="518.799µs"
+        DEBUG[09-27|12:39:40.540] Served lab_status                        reqid=25 duration="105.781µs"
+        DEBUG[09-27|12:39:40.542] Served lab_status                        reqid=26 duration="175.648µs"
+        DEBUG[09-27|12:39:40.794] Served lab_deliveryPool                  reqid=27 duration="657.289µs"
+        DEBUG[09-27|12:39:40.797] Served lab_status                        reqid=28 duration="91.774µs"
+        DEBUG[09-27|12:39:40.798] Served lab_status                        reqid=29 duration="95.102µs"
+        DEBUG[09-27|12:39:40.985] Transaction pool status report           executable=1 queued=0 stales=0
+        DEBUG[09-27|12:39:41.050] Served lab_deliveryPool                  reqid=30 duration="840.582µs"
+        DEBUG[09-27|12:39:41.055] Served lab_status                        reqid=31 duration="120.075µs"
+        DEBUG[09-27|12:39:41.056] Served lab_status                        reqid=32 duration="89.399µs"
+        DEBUG[09-27|12:39:41.308] Served lab_deliveryPool                  reqid=33 duration="623.379µs"
+        DEBUG[09-27|12:39:41.313] Served lab_status                        reqid=34 duration="101.584µs"
+        DEBUG[09-27|12:39:41.315] Served lab_status                        reqid=35 duration="130.891µs"
+        DEBUG[09-27|12:39:41.567] Served lab_deliveryPool                  reqid=36 duration="752.001µs"
+        DEBUG[09-27|12:39:41.571] Served lab_status                        reqid=37 duration="133.357µs"
+        DEBUG[09-27|12:39:41.572] Served lab_status                        reqid=38 duration="91.305µs"
+        DEBUG[09-27|12:39:41.825] Served lab_deliveryPool                  reqid=39 duration="602.381µs"
+        DEBUG[09-27|12:39:41.828] Served lab_status                        reqid=40 duration="105.847µs"
+        DEBUG[09-27|12:39:41.829] Served lab_status                        reqid=41 duration="85.371µs"
+        DEBUG[09-27|12:39:42.081] Served lab_deliveryPool                  reqid=42 duration="512.402µs"
+        DEBUG[09-27|12:39:42.085] Served lab_status                        reqid=43 duration="145.035µs"
+        DEBUG[09-27|12:39:42.086] Served lab_status                        reqid=44 duration="95.607µs"
+        DEBUG[09-27|12:39:42.338] Served lab_deliveryPool                  reqid=45 duration="609.922µs"
+        DEBUG[09-27|12:39:42.342] Served lab_status                        reqid=46 duration="99.488µs"
+        DEBUG[09-27|12:39:42.343] Served lab_status                        reqid=47 duration="113.076µs"
+        DEBUG[09-27|12:39:42.595] Served lab_deliveryPool                  reqid=48 duration="540.676µs"
+        DEBUG[09-27|12:39:42.599] Served lab_status                        reqid=49 duration="104.337µs"
+        DEBUG[09-27|12:39:42.600] Served lab_status                        reqid=50 duration="83.388µs"
+        DEBUG[09-27|12:39:42.852] Served lab_deliveryPool                  reqid=51 duration="653.591µs"
+        DEBUG[09-27|12:39:42.857] Served lab_status                        reqid=52 duration="96.398µs"
+        DEBUG[09-27|12:39:42.858] Served lab_status                        reqid=53 duration="100.012µs"
+        DEBUG[09-27|12:39:43.111] Served lab_deliveryPool                  reqid=54 duration="519.142µs"
+        DEBUG[09-27|12:39:43.114] Served lab_status                        reqid=55 duration="146.002µs"
+        DEBUG[09-27|12:39:43.116] Served lab_status                        reqid=56 duration="77.909µs"
+        DEBUG[09-27|12:39:43.368] Served lab_deliveryPool                  reqid=57 duration="706.628µs"
+        DEBUG[09-27|12:39:43.371] Served lab_status                        reqid=58 duration="97.912µs"
+        DEBUG[09-27|12:39:43.372] Served lab_status                        reqid=59 duration="97.404µs"
+        DEBUG[09-27|12:39:43.624] Served lab_deliveryPool                  reqid=60 duration="542.243µs"
+        DEBUG[09-27|12:39:43.628] Served lab_status                        reqid=61 duration="100.857µs"
+        DEBUG[09-27|12:39:43.629] Served lab_status                        reqid=62 duration="127.708µs"
+        DEBUG[09-27|12:39:43.881] Served lab_deliveryPool                  reqid=63 duration="613.52µs"
+        DEBUG[09-27|12:39:43.885] Served lab_status                        reqid=64 duration="157.571µs"
+        DEBUG[09-27|12:39:43.886] Served lab_status                        reqid=65 duration="123.34µs"
+        DEBUG[09-27|12:39:44.138] Served lab_deliveryPool                  reqid=66 duration="492.721µs"
+        DEBUG[09-27|12:39:44.142] Served lab_status                        reqid=67 duration="158.988µs"
+        DEBUG[09-27|12:39:44.143] Served lab_status                        reqid=68 duration="74.768µs"
+        DEBUG[09-27|12:39:44.396] Served lab_deliveryPool                  reqid=69 duration="908.911µs"
+        DEBUG[09-27|12:39:44.400] Served lab_status                        reqid=70 duration="115.827µs"
+        DEBUG[09-27|12:39:44.401] Served lab_status                        reqid=71 duration="97.834µs"
+        DEBUG[09-27|12:39:44.653] Served lab_deliveryPool                  reqid=72 duration="737.577µs"
+        DEBUG[09-27|12:39:44.658] Served lab_status                        reqid=73 duration="193.935µs"
+        DEBUG[09-27|12:39:44.660] Served lab_status                        reqid=74 duration="155.299µs"
+        DEBUG[09-27|12:39:44.913] Served lab_deliveryPool                  reqid=75 duration="964.967µs"
+        DEBUG[09-27|12:39:44.917] Served lab_status                        reqid=76 duration="148.293µs"
+        DEBUG[09-27|12:39:44.919] Served lab_status                        reqid=77 duration="167.616µs"
+        DEBUG[09-27|12:39:45.171] Served lab_deliveryPool                  reqid=78 duration="519.816µs"
+        DEBUG[09-27|12:39:45.177] Served lab_status                        reqid=79 duration="115.861µs"
+        DEBUG[09-27|12:39:45.178] Served lab_status                        reqid=80 duration="95.323µs"
+        DEBUG[09-27|12:39:45.430] Served lab_deliveryPool                  reqid=81 duration="698.534µs"
+        DEBUG[09-27|12:39:45.435] Served lab_status                        reqid=82 duration="184.876µs"
+        DEBUG[09-27|12:39:45.437] Served lab_status                        reqid=83 duration="166.038µs"
+        DEBUG[09-27|12:39:45.690] Served lab_deliveryPool                  reqid=84 duration="609.652µs"
+        DEBUG[09-27|12:39:45.693] Served lab_status                        reqid=85 duration="93.211µs"
+        DEBUG[09-27|12:39:45.694] Served lab_status                        reqid=86 duration="87.461µs"
+        DEBUG[09-27|12:39:45.946] Served lab_deliveryPool                  reqid=87 duration="531.275µs"
+        DEBUG[09-27|12:39:45.950] Served lab_status                        reqid=88 duration="96.49µs"
+        DEBUG[09-27|12:39:45.951] Served lab_status                        reqid=89 duration="87.674µs"
+        DEBUG[09-27|12:39:46.203] Served lab_deliveryPool                  reqid=90 duration="561.446µs"
+        DEBUG[09-27|12:39:46.206] Served lab_status                        reqid=91 duration="134.552µs"
+        DEBUG[09-27|12:39:46.207] Served lab_status                        reqid=92 duration="83.874µs"
+        INFO [09-27|12:39:46.287] Commit new mining work                   number=15,130,092 sealhash="813ea2…a583aa" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=7.021s
+        INFO [09-27|12:39:46.287] keep mining as order is first            sealHash=0x63fe95ed438ab6100f1b47f0b67b919975bef9f3a89b9828f9e90699b98e3bca number=15,130,091 hash="8a2fea…2502ec"
+        DEBUG[09-27|12:39:46.459] Served lab_deliveryPool                  reqid=93 duration="483.709µs"
+        DEBUG[09-27|12:39:46.465] Served lab_status                        reqid=94 duration="110.288µs"
+        DEBUG[09-27|12:39:46.467] Served lab_status                        reqid=95 duration="200.094µs"
+        DEBUG[09-27|12:39:46.719] Served lab_deliveryPool                  reqid=96 duration="474.274µs"
+        DEBUG[09-27|12:39:46.722] Served lab_status                        reqid=97 duration="95.838µs"
+        DEBUG[09-27|12:39:46.723] Served lab_status                        reqid=98 duration="83.875µs"
+        DEBUG[09-27|12:39:46.976] Served lab_deliveryPool                  reqid=99 duration="537.53µs"
+        DEBUG[09-27|12:39:46.979] Served lab_status                        reqid=100 duration="104.669µs"
+        DEBUG[09-27|12:39:46.980] Served lab_status                        reqid=101 duration="85.077µs"
+        DEBUG[09-27|12:39:47.232] Served lab_deliveryPool                  reqid=102 duration="529.227µs"
+        DEBUG[09-27|12:39:47.235] Served lab_status                        reqid=103 duration="96.013µs"
+        DEBUG[09-27|12:39:47.236] Served lab_status                        reqid=104 duration="96.735µs"
+        INFO [09-27|12:39:47.272] Commit new mining work                   number=15,130,092 sealhash="813ea2…a583aa" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.788ms
+        DEBUG[09-27|12:39:47.489] Served lab_deliveryPool                  reqid=105 duration="799.773µs"
+        DEBUG[09-27|12:39:47.492] Served lab_status                        reqid=106 duration="94.805µs"
+        DEBUG[09-27|12:39:47.493] Served lab_status                        reqid=107 duration="94.328µs"
+        DEBUG[09-27|12:39:47.746] Served lab_deliveryPool                  reqid=108 duration="535.733µs"
+        DEBUG[09-27|12:39:47.749] Served lab_status                        reqid=109 duration="93.662µs"
+        DEBUG[09-27|12:39:47.750] Served lab_status                        reqid=110 duration="87.561µs"
+        DEBUG[09-27|12:39:48.002] Served lab_deliveryPool                  reqid=111 duration="522.168µs"
+        DEBUG[09-27|12:39:48.005] Served lab_status                        reqid=112 duration="91.311µs"
+        DEBUG[09-27|12:39:48.006] Served lab_status                        reqid=113 duration="161.8µs"
+        DEBUG[09-27|12:39:48.258] Served lab_deliveryPool                  reqid=114 duration="553.985µs"
+        DEBUG[09-27|12:39:48.261] Served lab_status                        reqid=115 duration="95.767µs"
+        DEBUG[09-27|12:39:48.262] Served lab_status                        reqid=116 duration="78.834µs"
+        DEBUG[09-27|12:39:48.514] Served lab_deliveryPool                  reqid=117 duration="773.125µs"
+        DEBUG[09-27|12:39:48.518] Served lab_status                        reqid=118 duration="87.048µs"
+        DEBUG[09-27|12:39:48.519] Served lab_status                        reqid=119 duration="194.78µs"
+        DEBUG[09-27|12:39:48.771] Served lab_deliveryPool                  reqid=120 duration="498.563µs"
+        DEBUG[09-27|12:39:48.774] Served lab_status                        reqid=121 duration="92.845µs"
+        DEBUG[09-27|12:39:48.775] Served lab_status                        reqid=122 duration="81.448µs"
+        DEBUG[09-27|12:39:49.027] Served lab_deliveryPool                  reqid=123 duration="624.255µs"
+        DEBUG[09-27|12:39:49.031] Served lab_status                        reqid=124 duration="237µs"
+        DEBUG[09-27|12:39:49.033] Served lab_status                        reqid=125 duration="76.87µs"
+        DEBUG[09-27|12:39:49.285] Served lab_deliveryPool                  reqid=126 duration="523.975µs"
+        DEBUG[09-27|12:39:49.288] Served lab_status                        reqid=127 duration="157.09µs"
+        DEBUG[09-27|12:39:49.289] Served lab_status                        reqid=128 duration="70.412µs"
+        DEBUG[09-27|12:39:49.541] Served lab_deliveryPool                  reqid=129 duration="563.303µs"
+        DEBUG[09-27|12:39:49.545] Served lab_status                        reqid=130 duration="264.626µs"
+        DEBUG[09-27|12:39:49.547] Served lab_status                        reqid=131 duration="105.985µs"
+        DEBUG[09-27|12:39:49.800] Served lab_deliveryPool                  reqid=132 duration="929.838µs"
+        DEBUG[09-27|12:39:49.804] Served lab_status                        reqid=133 duration="117.088µs"
+        DEBUG[09-27|12:39:49.805] Served lab_status                        reqid=134 duration="158.595µs"
+        DEBUG[09-27|12:39:50.016] Persisted trie from memory database      nodes=13 size=5.36KiB time=1.011801ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        DEBUG[09-27|12:39:50.016] Chain split detected                     number=15,130,090 hash="71fda3…ff8674" drop=1 dropfrom="4f47b6…6c776d" droporder=1 add=1 addfrom="3a2596…f4465a" addorder=0
+        INFO [09-27|12:39:50.019] Successfully sealed new block            number=15,130,091 sealhash="63fe95…8e3bca" hash="3a2596…f4465a" difficulty=5 elapsed=10.841s
+        INFO [09-27|12:39:50.019] 🔨 mined potential block                  number=15,130,091 hash="3a2596…f4465a"
+        INFO [09-27|12:39:50.021] Upgrading chain index                    type=bloombits percentage=0
+        DEBUG[09-27|12:39:50.023] Reinjecting stale transactions           count=0
+        INFO [09-27|12:39:50.027] Commit new mining work                   number=15,130,092 sealhash="9d2a8a…c11812" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=7.504ms
+        ERROR[09-27|12:39:50.028] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:39:50.028] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-27|12:39:50.028] keep mining as order is first            sealHash=0x813ea209c645cd103236be2f489f27d41552dbdfe94b394f293b8085efa583aa number=15,130,092 hash="f4a703…2feb0f"
+        DEBUG[09-27|12:39:50.034] Executing EVM call finished              runtime="410.732µs"
+        DEBUG[09-27|12:39:50.034] Executing EVM call finished              runtime="297.245µs"
+        DEBUG[09-27|12:39:50.034] Executing EVM call finished              runtime="339.843µs"
+        DEBUG[09-27|12:39:50.035] Executing EVM call finished              runtime="315.958µs"
+        DEBUG[09-27|12:39:50.035] Executing EVM call finished              runtime="261.563µs"
+        DEBUG[09-27|12:39:50.035] Executing EVM call finished              runtime="241.552µs"
+        DEBUG[09-27|12:39:50.035] Executing EVM call finished              runtime="240.696µs"
+        DEBUG[09-27|12:39:50.036] Executing EVM call finished              runtime="490.292µs"
+        DEBUG[09-27|12:39:50.037] Executing EVM call finished              runtime="411.813µs"
+        DEBUG[09-27|12:39:50.037] Executing EVM call finished              runtime="437.105µs"
+        DEBUG[09-27|12:39:50.038] Executing EVM call finished              runtime="385.269µs"
+        DEBUG[09-27|12:39:50.038] Executing EVM call finished              runtime="338.467µs"
+        DEBUG[09-27|12:39:50.038] Executing EVM call finished              runtime="246.98µs"
+        DEBUG[09-27|12:39:50.039] Executing EVM call finished              runtime="285.981µs"
+        DEBUG[09-27|12:39:50.039] Executing EVM call finished              runtime="245.596µs"
+        DEBUG[09-27|12:39:50.039] Executing EVM call finished              runtime="251.167µs"
+        DEBUG[09-27|12:39:50.040] Executing EVM call finished              runtime="357.134µs"
+        DEBUG[09-27|12:39:50.040] Executing EVM call finished              runtime="147.986µs"
+        DEBUG[09-27|12:39:50.040] Executing EVM call finished              runtime="204.399µs"
+        DEBUG[09-27|12:39:50.040] Executing EVM call finished              runtime="134.093µs"
+        DEBUG[09-27|12:39:50.040] Executing EVM call finished              runtime="110.067µs"
+        DEBUG[09-27|12:39:50.041] Executing EVM call finished              runtime="86.967µs"
+        DEBUG[09-27|12:39:50.041] Executing EVM call finished              runtime="91.615µs"
+        DEBUG[09-27|12:39:50.041] Executing EVM call finished              runtime="268.676µs"
+        DEBUG[09-27|12:39:50.041] Executing EVM call finished              runtime="375.085µs"
+        INFO [09-27|12:39:50.042] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [09-27|12:39:50.042] Submitted transaction                    hash=0x22a86a57f220ebe4d67321c93e535f12452f01454c7c57661d34241027c6a52e from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=8 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|12:39:50.043] Automatic ticket submitted; awaiting inclusion tx="22a86a…c6a52e" nonce=8
+        DEBUG[09-27|12:39:50.058] Served lab_deliveryPool                  reqid=135 duration="767.861µs"
+        DEBUG[09-27|12:39:50.063] Served lab_status                        reqid=136 duration="134.806µs"
+        DEBUG[09-27|12:39:50.064] Served lab_status                        reqid=137 duration="130.742µs"
+        DEBUG[09-27|12:39:50.316] Served lab_deliveryPool                  reqid=138 duration="623.282µs"
+        DEBUG[09-27|12:39:50.321] Served lab_status                        reqid=139 duration="130.57µs"
+        DEBUG[09-27|12:39:50.322] Served lab_status                        reqid=140 duration="96.043µs"
+        DEBUG[09-27|12:39:50.574] Served lab_deliveryPool                  reqid=141 duration="558.042µs"
+        DEBUG[09-27|12:39:50.578] Served lab_status                        reqid=142 duration="104.581µs"
+        DEBUG[09-27|12:39:50.579] Served lab_status                        reqid=143 duration="90.561µs"
+        DEBUG[09-27|12:39:50.831] Served lab_deliveryPool                  reqid=144 duration="611.801µs"
+        DEBUG[09-27|12:39:50.836] Served lab_status                        reqid=145 duration="123.579µs"
+        DEBUG[09-27|12:39:50.837] Served lab_status                        reqid=146 duration="84.596µs"
+        INFO [09-27|12:39:51.024] Commit new mining work                   number=15,130,092 sealhash="80a62e…de6062" uncles=0 txs=2 gas=42448 fees=4.2448e-14 elapsed=3.733ms
+        DEBUG[09-27|12:39:51.089] Served lab_deliveryPool                  reqid=147 duration="693.995µs"
+        DEBUG[09-27|12:39:51.093] Served lab_status                        reqid=148 duration="99.511µs"
+        DEBUG[09-27|12:39:51.094] Served lab_status                        reqid=149 duration="106.047µs"
+        DEBUG[09-27|12:39:51.346] Served lab_deliveryPool                  reqid=150 duration="482.891µs"
+        DEBUG[09-27|12:39:51.349] Served lab_status                        reqid=151 duration="102.804µs"
+        DEBUG[09-27|12:39:51.351] Served lab_status                        reqid=152 duration="109.605µs"
+        DEBUG[09-27|12:39:51.602] Served lab_deliveryPool                  reqid=153 duration="491.199µs"
+        DEBUG[09-27|12:39:51.606] Served lab_status                        reqid=154 duration="113.408µs"
+        DEBUG[09-27|12:39:51.607] Served lab_status                        reqid=155 duration="90.123µs"
+        DEBUG[09-27|12:39:51.859] Served lab_deliveryPool                  reqid=156 duration="525.655µs"
+        DEBUG[09-27|12:39:51.863] Served lab_status                        reqid=157 duration="124.459µs"
+        DEBUG[09-27|12:39:51.864] Served lab_status                        reqid=158 duration="86.093µs"
+        DEBUG[09-27|12:39:52.116] Served lab_deliveryPool                  reqid=159 duration="519.544µs"
+        DEBUG[09-27|12:39:52.121] Served lab_status                        reqid=160 duration="111.15µs"
+        DEBUG[09-27|12:39:52.123] Served lab_status                        reqid=161 duration="99.49µs"
+        DEBUG[09-27|12:39:52.375] Served lab_deliveryPool                  reqid=162 duration="792.603µs"
+        DEBUG[09-27|12:39:52.379] Served lab_status                        reqid=163 duration="252.136µs"
+        DEBUG[09-27|12:39:52.380] Served lab_status                        reqid=164 duration="99.495µs"
+        DEBUG[09-27|12:39:52.632] Served lab_deliveryPool                  reqid=165 duration="492.394µs"
+        DEBUG[09-27|12:39:52.636] Served lab_status                        reqid=166 duration="102.891µs"
+        DEBUG[09-27|12:39:52.638] Served lab_status                        reqid=167 duration="150.881µs"
+        DEBUG[09-27|12:39:52.890] Served lab_deliveryPool                  reqid=168 duration="725.367µs"
+        DEBUG[09-27|12:39:52.895] Served lab_status                        reqid=169 duration="105.513µs"
+        DEBUG[09-27|12:39:52.896] Served lab_status                        reqid=170 duration="91.55µs"
+        DEBUG[09-27|12:39:52.995] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        DEBUG[09-27|12:39:53.148] Served lab_deliveryPool                  reqid=171 duration="494.673µs"
+        DEBUG[09-27|12:39:53.152] Served lab_status                        reqid=172 duration="119.959µs"
+        DEBUG[09-27|12:39:53.154] Served lab_status                        reqid=173 duration="96.317µs"
+        DEBUG[09-27|12:39:53.406] Served lab_deliveryPool                  reqid=174 duration="517.779µs"
+        DEBUG[09-27|12:39:53.411] Served lab_status                        reqid=175 duration="274.764µs"
+        DEBUG[09-27|12:39:53.412] Served lab_status                        reqid=176 duration="152.322µs"
+        DEBUG[09-27|12:39:53.665] Served lab_deliveryPool                  reqid=177 duration="704.025µs"
+        DEBUG[09-27|12:39:53.669] Served lab_status                        reqid=178 duration="105.496µs"
+        DEBUG[09-27|12:39:53.670] Served lab_status                        reqid=179 duration="92.784µs"
+        DEBUG[09-27|12:39:53.922] Served lab_deliveryPool                  reqid=180 duration="498.999µs"
+        DEBUG[09-27|12:39:53.927] Served lab_status                        reqid=181 duration="183.641µs"
+        DEBUG[09-27|12:39:53.928] Served lab_status                        reqid=182 duration="144.562µs"
+        DEBUG[09-27|12:39:54.180] Served lab_deliveryPool                  reqid=183 duration="509.161µs"
+        DEBUG[09-27|12:39:54.185] Served lab_status                        reqid=184 duration="105.076µs"
+        DEBUG[09-27|12:39:54.186] Served lab_status                        reqid=185 duration="84.941µs"
+        DEBUG[09-27|12:39:54.437] Served lab_deliveryPool                  reqid=186 duration="491.947µs"
+        DEBUG[09-27|12:39:54.441] Served lab_status                        reqid=187 duration="114.94µs"
+        DEBUG[09-27|12:39:54.442] Served lab_status                        reqid=188 duration="237.593µs"
+        DEBUG[09-27|12:39:54.694] Served lab_deliveryPool                  reqid=189 duration="600.981µs"
+        DEBUG[09-27|12:39:54.698] Served lab_status                        reqid=190 duration="209.306µs"
+        DEBUG[09-27|12:39:54.699] Served lab_status                        reqid=191 duration="77.771µs"
+        DEBUG[09-27|12:39:54.952] Served lab_deliveryPool                  reqid=192 duration="571.112µs"
+        DEBUG[09-27|12:39:54.956] Served lab_status                        reqid=193 duration="106.473µs"
+        DEBUG[09-27|12:39:54.958] Served lab_status                        reqid=194 duration="151.164µs"
+        DEBUG[09-27|12:39:55.210] Served lab_deliveryPool                  reqid=195 duration="464.667µs"
+        DEBUG[09-27|12:39:55.214] Served lab_status                        reqid=196 duration="102.917µs"
+        DEBUG[09-27|12:39:55.215] Served lab_status                        reqid=197 duration="80.364µs"
+        DEBUG[09-27|12:39:55.466] Served lab_deliveryPool                  reqid=198 duration="466.2µs"
+        DEBUG[09-27|12:39:55.470] Served lab_status                        reqid=199 duration="105.189µs"
+        DEBUG[09-27|12:39:55.471] Served lab_status                        reqid=200 duration="86.904µs"
+        DEBUG[09-27|12:39:55.723] Served lab_deliveryPool                  reqid=201 duration="429.847µs"
+        DEBUG[09-27|12:39:55.726] Served lab_status                        reqid=202 duration="95.812µs"
+        DEBUG[09-27|12:39:55.727] Served lab_status                        reqid=203 duration="85.566µs"
+        DEBUG[09-27|12:39:55.980] Served lab_deliveryPool                  reqid=204 duration="463.25µs"
+        DEBUG[09-27|12:39:55.984] Served lab_status                        reqid=205 duration="122.44µs"
+        DEBUG[09-27|12:39:55.985] Served lab_status                        reqid=206 duration="138.433µs"
+        DEBUG[09-27|12:39:56.237] Served lab_deliveryPool                  reqid=207 duration="569.292µs"
+        DEBUG[09-27|12:39:56.241] Served lab_status                        reqid=208 duration="93.515µs"
+        DEBUG[09-27|12:39:56.242] Served lab_status                        reqid=209 duration="96.949µs"
+        DEBUG[09-27|12:39:56.494] Served lab_deliveryPool                  reqid=210 duration="440.394µs"
+        DEBUG[09-27|12:39:56.497] Served lab_status                        reqid=211 duration="89.083µs"
+        DEBUG[09-27|12:39:56.498] Served lab_status                        reqid=212 duration="75.107µs"
+        DEBUG[09-27|12:39:56.750] Served lab_deliveryPool                  reqid=213 duration="439.368µs"
+        DEBUG[09-27|12:39:56.756] Served lab_status                        reqid=214 duration="152.834µs"
+        DEBUG[09-27|12:39:56.757] Served lab_status                        reqid=215 duration="78.389µs"
+        DEBUG[09-27|12:39:56.984] Transaction pool status report           executable=2 queued=0 stales=0
+        DEBUG[09-27|12:39:57.005] Persisted trie from memory database      nodes=19 size=7.53KiB time=1.110859ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-246.00B
+        INFO [09-27|12:39:57.005] Successfully sealed new block            number=15,130,092 sealhash="813ea2…a583aa" hash="899c3f…ef5dac" difficulty=2 elapsed=10.717s
+        INFO [09-27|12:39:57.005] 🔨 mined potential block                  number=15,130,092 hash="899c3f…ef5dac"
+        DEBUG[09-27|12:39:57.009] Served lab_deliveryPool                  reqid=216 duration="784.745µs"
+        DEBUG[09-27|12:39:57.014] Served lab_status                        reqid=217 duration="94.554µs"
+        DEBUG[09-27|12:39:57.017] Served lab_status                        reqid=218 duration="103.528µs"
+        DEBUG[09-27|12:39:57.268] Served lab_deliveryPool                  reqid=219 duration="441.842µs"
+        DEBUG[09-27|12:39:57.273] Served lab_status                        reqid=220 duration="93.573µs"
+        DEBUG[09-27|12:39:57.274] Served lab_status                        reqid=221 duration="77.474µs"
+        DEBUG[09-27|12:39:57.525] Served lab_deliveryPool                  reqid=222 duration="525.697µs"
+        DEBUG[09-27|12:39:57.528] Served lab_status                        reqid=223 duration="90.354µs"
+        DEBUG[09-27|12:39:57.529] Served lab_status                        reqid=224 duration="111.019µs"
+        DEBUG[09-27|12:39:57.781] Served lab_deliveryPool                  reqid=225 duration="501.096µs"
+        DEBUG[09-27|12:39:57.784] Served lab_status                        reqid=226 duration="89.834µs"
+        DEBUG[09-27|12:39:57.785] Served lab_status                        reqid=227 duration="73.847µs"
+        DEBUG[09-27|12:39:58.037] Served lab_deliveryPool                  reqid=228 duration="835.988µs"
+        DEBUG[09-27|12:39:58.040] Served lab_status                        reqid=229 duration="275.867µs"
+        DEBUG[09-27|12:39:58.042] Served lab_status                        reqid=230 duration="127.547µs"
+        DEBUG[09-27|12:39:58.294] Served lab_deliveryPool                  reqid=231 duration="444.708µs"
+        DEBUG[09-27|12:39:58.298] Served lab_status                        reqid=232 duration="88.555µs"
+        DEBUG[09-27|12:39:58.299] Served lab_status                        reqid=233 duration="93.192µs"
+        DEBUG[09-27|12:39:58.551] Served lab_deliveryPool                  reqid=234 duration="500.118µs"
+        DEBUG[09-27|12:39:58.554] Served lab_status                        reqid=235 duration="102.799µs"
+        DEBUG[09-27|12:39:58.556] Served lab_status                        reqid=236 duration="85.463µs"
+        DEBUG[09-27|12:39:58.807] Served lab_deliveryPool                  reqid=237 duration="469.851µs"
+        DEBUG[09-27|12:39:58.810] Served lab_status                        reqid=238 duration="102.203µs"
+        DEBUG[09-27|12:39:58.811] Served lab_status                        reqid=239 duration="98.385µs"
+        DEBUG[09-27|12:39:59.063] Served lab_deliveryPool                  reqid=240 duration="473.559µs"
+        DEBUG[09-27|12:39:59.068] Served lab_status                        reqid=241 duration="110.051µs"
+        DEBUG[09-27|12:39:59.071] Served lab_status                        reqid=242 duration="96.079µs"
+        DEBUG[09-27|12:39:59.322] Served lab_deliveryPool                  reqid=243 duration="543.298µs"
+        DEBUG[09-27|12:39:59.325] Served lab_status                        reqid=244 duration="94.128µs"
+        DEBUG[09-27|12:39:59.326] Served lab_status                        reqid=245 duration="83.85µs"
+        DEBUG[09-27|12:39:59.579] Served lab_deliveryPool                  reqid=246 duration="643.833µs"
+        DEBUG[09-27|12:39:59.582] Served lab_status                        reqid=247 duration="165.256µs"
+        DEBUG[09-27|12:39:59.584] Served lab_status                        reqid=248 duration="81.882µs"
+        DEBUG[09-27|12:39:59.836] Served lab_deliveryPool                  reqid=249 duration="583.215µs"
+        DEBUG[09-27|12:39:59.839] Served lab_status                        reqid=250 duration="96.517µs"
+        DEBUG[09-27|12:39:59.840] Served lab_status                        reqid=251 duration="96.629µs"
+        DEBUG[09-27|12:40:00.092] Served lab_deliveryPool                  reqid=252 duration="787.167µs"
+        DEBUG[09-27|12:40:00.097] Served lab_status                        reqid=253 duration="177.728µs"
+        DEBUG[09-27|12:40:00.099] Served lab_status                        reqid=254 duration="188.524µs"
+        DEBUG[09-27|12:40:00.352] Served lab_deliveryPool                  reqid=255 duration="646.228µs"
+        DEBUG[09-27|12:40:00.355] Served lab_status                        reqid=256 duration="97.677µs"
+        DEBUG[09-27|12:40:00.357] Served lab_status                        reqid=257 duration="188.319µs"
+        DEBUG[09-27|12:40:00.609] Served lab_deliveryPool                  reqid=258 duration="560.445µs"
+        DEBUG[09-27|12:40:00.613] Served lab_status                        reqid=259 duration="95.132µs"
+        DEBUG[09-27|12:40:00.614] Served lab_status                        reqid=260 duration="110.335µs"
+        DEBUG[09-27|12:40:00.866] Served lab_deliveryPool                  reqid=261 duration="482.084µs"
+        DEBUG[09-27|12:40:00.869] Served lab_status                        reqid=262 duration="106.802µs"
+        DEBUG[09-27|12:40:00.870] Served lab_status                        reqid=263 duration="89.561µs"
+        DEBUG[09-27|12:40:01.003] Persisted trie from memory database      nodes=19 size=7.67KiB time=1.470326ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-328.00B
+        INFO [09-27|12:40:01.004] Successfully sealed new block            number=15,130,092 sealhash="80a62e…de6062" hash="31db38…e3bb42" difficulty=4 elapsed=9.980s
+        INFO [09-27|12:40:01.005] 🔨 mined potential block                  number=15,130,092 hash="31db38…e3bb42"
+        INFO [09-27|12:40:01.006] Automatic ticket purchase confirmed      tx="22a86a…c6a52e" block="31db38…e3bb42"
+        INFO [09-27|12:40:01.006] Upgrading chain index                    type=bloombits percentage=0
+        ERROR[09-27|12:40:01.007] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:40:01.007] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        DEBUG[09-27|12:40:01.009] Transaction failed, account skipped      hash="22a86a…c6a52e" err="nonce too low: address 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF, tx: 8 state: 9"
+        DEBUG[09-27|12:40:01.009] Transaction failed, account skipped      hash="841906…a36992" err="nonce too low: address 0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69, tx: 4 state: 5"
+        INFO [09-27|12:40:01.012] Commit new mining work                   number=15,130,093 sealhash="680a1c…a9b1d7" uncles=0 txs=0 gas=0     fees=0          elapsed=5.342ms
+        DEBUG[09-27|12:40:01.012] Reinjecting stale transactions           count=0
+        DEBUG[09-27|12:40:01.013] Executing EVM call finished              runtime="309.568µs"
+        DEBUG[09-27|12:40:01.014] Executing EVM call finished              runtime="242.091µs"
+        DEBUG[09-27|12:40:01.014] Executing EVM call finished              runtime="222.866µs"
+        DEBUG[09-27|12:40:01.014] Executing EVM call finished              runtime="253.333µs"
+        DEBUG[09-27|12:40:01.015] Executing EVM call finished              runtime="377.333µs"
+        DEBUG[09-27|12:40:01.015] Executing EVM call finished              runtime="257.428µs"
+        DEBUG[09-27|12:40:01.015] Executing EVM call finished              runtime="228.243µs"
+        DEBUG[09-27|12:40:01.015] Executing EVM call finished              runtime="225.015µs"
+        DEBUG[09-27|12:40:01.016] Executing EVM call finished              runtime="249.839µs"
+        DEBUG[09-27|12:40:01.016] Executing EVM call finished              runtime="230.121µs"
+        DEBUG[09-27|12:40:01.016] Executing EVM call finished              runtime="228.224µs"
+        DEBUG[09-27|12:40:01.016] Executing EVM call finished              runtime="207.835µs"
+        DEBUG[09-27|12:40:01.017] Executing EVM call finished              runtime="310.391µs"
+        DEBUG[09-27|12:40:01.017] Executing EVM call finished              runtime="263.15µs"
+        DEBUG[09-27|12:40:01.017] Executing EVM call finished              runtime="263.315µs"
+        DEBUG[09-27|12:40:01.018] Executing EVM call finished              runtime="224.012µs"
+        DEBUG[09-27|12:40:01.018] Executing EVM call finished              runtime="236.712µs"
+        DEBUG[09-27|12:40:01.018] Executing EVM call finished              runtime="139.479µs"
+        DEBUG[09-27|12:40:01.018] Executing EVM call finished              runtime="94.201µs"
+        DEBUG[09-27|12:40:01.018] Executing EVM call finished              runtime="84.405µs"
+        DEBUG[09-27|12:40:01.019] Executing EVM call finished              runtime="377.445µs"
+        DEBUG[09-27|12:40:01.019] Executing EVM call finished              runtime="114.88µs"
+        DEBUG[09-27|12:40:01.019] Executing EVM call finished              runtime="127.815µs"
+        DEBUG[09-27|12:40:01.019] Executing EVM call finished              runtime="437.148µs"
+        DEBUG[09-27|12:40:01.020] Executing EVM call finished              runtime="515.711µs"
+        INFO [09-27|12:40:01.022] Submitted transaction                    hash=0x88ddcca9f1100cb3e026c67a0b6a3b9db924fe47c742c8e9e05281e811484df3 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=9 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [09-27|12:40:01.022] Automatic ticket submitted; awaiting inclusion tx="88ddcc…484df3" nonce=9
+        DEBUG[09-27|12:40:01.122] Served lab_deliveryPool                  reqid=264 duration="590.352µs"
+        DEBUG[09-27|12:40:01.127] Served lab_status                        reqid=265 duration="217.987µs"
+        DEBUG[09-27|12:40:01.128] Served lab_status                        reqid=266 duration="146.997µs"
+        DEBUG[09-27|12:40:01.380] Served lab_deliveryPool                  reqid=267 duration="555.364µs"
+        DEBUG[09-27|12:40:01.384] Served lab_status                        reqid=268 duration="156.649µs"
+        DEBUG[09-27|12:40:01.385] Served lab_status                        reqid=269 duration="119.246µs"
+        DEBUG[09-27|12:40:01.637] Served lab_deliveryPool                  reqid=270 duration="456.334µs"
+        DEBUG[09-27|12:40:01.640] Served lab_status                        reqid=271 duration="119.441µs"
+        DEBUG[09-27|12:40:01.641] Served lab_status                        reqid=272 duration="88.608µs"
+        DEBUG[09-27|12:40:01.893] Served lab_deliveryPool                  reqid=273 duration="476.056µs"
+        DEBUG[09-27|12:40:01.897] Served lab_status                        reqid=274 duration="159.968µs"
+        DEBUG[09-27|12:40:01.898] Served lab_status                        reqid=275 duration="103.555µs"
+        INFO [09-27|12:40:02.009] Commit new mining work                   number=15,130,093 sealhash="1d7b1c…ba801b" uncles=0 txs=1 gas=21224 fees=2.1224e-14 elapsed=2.948ms
+        DEBUG[09-27|12:40:02.151] Served lab_deliveryPool                  reqid=276 duration="422.806µs"
+        DEBUG[09-27|12:40:02.154] Served lab_status                        reqid=277 duration="102.322µs"
+        DEBUG[09-27|12:40:02.155] Served lab_status                        reqid=278 duration="81.009µs"
+        DEBUG[09-27|12:40:02.407] Served lab_deliveryPool                  reqid=279 duration="434.543µs"
+        DEBUG[09-27|12:40:02.410] Served lab_status                        reqid=280 duration="103.232µs"
+        DEBUG[09-27|12:40:02.411] Served lab_status                        reqid=281 duration="89.226µs"
+        DEBUG[09-27|12:40:02.663] Served lab_deliveryPool                  reqid=282 duration="419.542µs"
+        DEBUG[09-27|12:40:02.666] Served lab_status                        reqid=283 duration="102.776µs"
+        DEBUG[09-27|12:40:02.667] Served lab_status                        reqid=284 duration="184.043µs"
+        DEBUG[09-27|12:40:02.919] Served lab_deliveryPool                  reqid=285 duration="416.7µs"
+        DEBUG[09-27|12:40:02.922] Served lab_status                        reqid=286 duration="133.38µs"
+        DEBUG[09-27|12:40:02.923] Served lab_status                        reqid=287 duration="81.855µs"
+        DEBUG[09-27|12:40:03.175] Served lab_deliveryPool                  reqid=288 duration="444.353µs"
+        DEBUG[09-27|12:40:03.178] Served lab_status                        reqid=289 duration="107.365µs"
+        DEBUG[09-27|12:40:03.179] Served lab_status                        reqid=290 duration="86.063µs"
+        DEBUG[09-27|12:40:03.431] Served lab_deliveryPool                  reqid=291 duration="526.17µs"
+        DEBUG[09-27|12:40:03.434] Served lab_status                        reqid=292 duration="124.173µs"
+        DEBUG[09-27|12:40:03.436] Served lab_status                        reqid=293 duration="113.846µs"
+        DEBUG[09-27|12:40:03.688] Served lab_deliveryPool                  reqid=294 duration="675.617µs"
+        DEBUG[09-27|12:40:03.692] Served lab_status                        reqid=295 duration="188.744µs"
+        DEBUG[09-27|12:40:03.694] Served lab_status                        reqid=296 duration="166.012µs"
+        DEBUG[09-27|12:40:03.946] Served lab_deliveryPool                  reqid=297 duration="520.608µs"
+        DEBUG[09-27|12:40:03.950] Served lab_status                        reqid=298 duration="98.509µs"
+        DEBUG[09-27|12:40:03.950] Served lab_status                        reqid=299 duration="97.111µs"
+        DEBUG[09-27|12:40:04.202] Served lab_deliveryPool                  reqid=300 duration="417.045µs"
+        DEBUG[09-27|12:40:04.206] Served lab_status                        reqid=301 duration="100.056µs"
+        DEBUG[09-27|12:40:04.207] Served lab_status                        reqid=302 duration="80.874µs"
+        DEBUG[09-27|12:40:04.459] Served lab_deliveryPool                  reqid=303 duration="448.214µs"
+        DEBUG[09-27|12:40:04.463] Served lab_status                        reqid=304 duration="95.647µs"
+        DEBUG[09-27|12:40:04.466] Served lab_status                        reqid=305 duration=1.990689ms
+        DEBUG[09-27|12:40:04.718] Served lab_deliveryPool                  reqid=306 duration="453.212µs"
+        DEBUG[09-27|12:40:04.722] Served lab_status                        reqid=307 duration="118.074µs"
+        DEBUG[09-27|12:40:04.723] Served lab_status                        reqid=308 duration="90.516µs"
+        DEBUG[09-27|12:40:04.975] Served lab_deliveryPool                  reqid=309 duration="591.976µs"
+        DEBUG[09-27|12:40:04.978] Served lab_status                        reqid=310 duration="103.967µs"
+        DEBUG[09-27|12:40:04.979] Served lab_status                        reqid=311 duration="98.059µs"
+        DEBUG[09-27|12:40:04.984] Transaction pool status report           executable=1 queued=0 stales=0
+        DEBUG[09-27|12:40:06.036] Served lab_deliveryPool                  reqid=312 duration="547.815µs"
+        DEBUG[09-27|12:40:06.039] Served lab_status                        reqid=313 duration="119.095µs"
+        DEBUG[09-27|12:40:06.041] Served lab_status                        reqid=314 duration="88.84µs"
+        DEBUG[09-27|12:40:06.293] Served lab_deliveryPool                  reqid=315 duration="434.129µs"
+        DEBUG[09-27|12:40:06.296] Served lab_status                        reqid=316 duration="103.747µs"
+        DEBUG[09-27|12:40:06.297] Served lab_status                        reqid=317 duration="92.088µs"
+        DEBUG[09-27|12:40:06.549] Served lab_deliveryPool                  reqid=318 duration="490.977µs"
+        DEBUG[09-27|12:40:06.553] Served lab_status                        reqid=319 duration="743.246µs"
+        DEBUG[09-27|12:40:06.554] Served lab_status                        reqid=320 duration="126.96µs"
+        DEBUG[09-27|12:40:06.806] Served lab_deliveryPool                  reqid=321 duration="425.781µs"
+        DEBUG[09-27|12:40:06.809] Served lab_status                        reqid=322 duration="93.322µs"
+        DEBUG[09-27|12:40:06.810] Served lab_status                        reqid=323 duration="94.217µs"
+        DEBUG[09-27|12:40:07.062] Served lab_deliveryPool                  reqid=324 duration="452.152µs"
+        DEBUG[09-27|12:40:07.065] Served lab_status                        reqid=325 duration="97.147µs"
+        DEBUG[09-27|12:40:07.066] Served lab_status                        reqid=326 duration="96.005µs"
+        DEBUG[09-27|12:40:07.318] Served lab_deliveryPool                  reqid=327 duration="669.995µs"
+        DEBUG[09-27|12:40:07.321] Served lab_status                        reqid=328 duration="159.476µs"
+        DEBUG[09-27|12:40:07.322] Served lab_status                        reqid=329 duration="77.289µs"
+        DEBUG[09-27|12:40:07.574] Served lab_deliveryPool                  reqid=330 duration="423.966µs"
+        DEBUG[09-27|12:40:07.577] Served lab_status                        reqid=331 duration="105.871µs"
+        DEBUG[09-27|12:40:07.579] Served lab_status                        reqid=332 duration="154.761µs"
+        DEBUG[09-27|12:40:07.830] Served lab_deliveryPool                  reqid=333 duration="442.488µs"
+        DEBUG[09-27|12:40:07.833] Served lab_status                        reqid=334 duration="98.425µs"
+        DEBUG[09-27|12:40:07.835] Served lab_status                        reqid=335 duration="86.845µs"
+        DEBUG[09-27|12:40:08.086] Served lab_deliveryPool                  reqid=336 duration="467.661µs"
+        DEBUG[09-27|12:40:08.089] Served lab_status                        reqid=337 duration="108.481µs"
+        DEBUG[09-27|12:40:08.091] Served lab_status                        reqid=338 duration="94.05µs"
+        DEBUG[09-27|12:40:08.343] Served lab_deliveryPool                  reqid=339 duration="455.339µs"
+        DEBUG[09-27|12:40:08.345] Served lab_status                        reqid=340 duration="113.669µs"
+        DEBUG[09-27|12:40:08.347] Served lab_status                        reqid=341 duration="111.768µs"
+        DEBUG[09-27|12:40:08.599] Served lab_deliveryPool                  reqid=342 duration="716.237µs"
+        DEBUG[09-27|12:40:08.602] Served lab_status                        reqid=343 duration="102.471µs"
+        DEBUG[09-27|12:40:08.603] Served lab_status                        reqid=344 duration="88.02µs"
+        DEBUG[09-27|12:40:08.856] Served lab_deliveryPool                  reqid=345 duration="776.757µs"
+        DEBUG[09-27|12:40:08.860] Served lab_status                        reqid=346 duration="102.64µs"
+        DEBUG[09-27|12:40:08.862] Served lab_status                        reqid=347 duration="108.459µs"
+        DEBUG[09-27|12:40:09.114] Served lab_deliveryPool                  reqid=348 duration="658.699µs"
+        DEBUG[09-27|12:40:09.118] Served lab_status                        reqid=349 duration="167.3µs"
+        DEBUG[09-27|12:40:09.120] Served lab_status                        reqid=350 duration="99.639µs"
+        DEBUG[09-27|12:40:09.372] Served lab_deliveryPool                  reqid=351 duration="622.354µs"
+        DEBUG[09-27|12:40:09.375] Served lab_status                        reqid=352 duration="91.92µs"
+        DEBUG[09-27|12:40:09.376] Served lab_status                        reqid=353 duration="151.398µs"
+        DEBUG[09-27|12:40:09.629] Served lab_deliveryPool                  reqid=354 duration="577.991µs"
+        DEBUG[09-27|12:40:09.631] Served lab_status                        reqid=355 duration="100.006µs"
+        DEBUG[09-27|12:40:09.632] Served lab_status                        reqid=356 duration="90.241µs"
+        DEBUG[09-27|12:40:09.884] Served lab_deliveryPool                  reqid=357 duration="606.45µs"
+        DEBUG[09-27|12:40:09.888] Served lab_status                        reqid=358 duration="96.827µs"
+        DEBUG[09-27|12:40:09.889] Served lab_status                        reqid=359 duration="95.123µs"
+        DEBUG[09-27|12:40:10.141] Served lab_deliveryPool                  reqid=360 duration="500.441µs"
+        DEBUG[09-27|12:40:10.145] Served lab_status                        reqid=361 duration="115.396µs"
+        DEBUG[09-27|12:40:10.146] Served lab_status                        reqid=362 duration="91.701µs"
+        DEBUG[09-27|12:40:10.398] Served lab_deliveryPool                  reqid=363 duration="452.945µs"
+        DEBUG[09-27|12:40:10.401] Served lab_status                        reqid=364 duration="102.335µs"
+        DEBUG[09-27|12:40:10.402] Served lab_status                        reqid=365 duration="92.817µs"
+        DEBUG[09-27|12:40:10.654] Served lab_deliveryPool                  reqid=366 duration="453.179µs"
+        DEBUG[09-27|12:40:10.657] Served lab_status                        reqid=367 duration="154.105µs"
+        DEBUG[09-27|12:40:10.658] Served lab_status                        reqid=368 duration="105.434µs"
+        DEBUG[09-27|12:40:10.910] Served lab_deliveryPool                  reqid=369 duration="464.289µs"
+        DEBUG[09-27|12:40:10.914] Served lab_status                        reqid=370 duration="184.275µs"
+        DEBUG[09-27|12:40:10.915] Served lab_status                        reqid=371 duration="143.405µs"
+        DEBUG[09-27|12:40:11.167] Served lab_deliveryPool                  reqid=372 duration="741.773µs"
+        DEBUG[09-27|12:40:11.171] Served lab_status                        reqid=373 duration="132.352µs"
+        DEBUG[09-27|12:40:11.173] Served lab_status                        reqid=374 duration="174.234µs"
+        DEBUG[09-27|12:40:11.426] Served lab_deliveryPool                  reqid=375 duration="808.827µs"
+        DEBUG[09-27|12:40:11.429] Served lab_status                        reqid=376 duration="176.853µs"
+        DEBUG[09-27|12:40:11.431] Served lab_status                        reqid=377 duration="122.415µs"
+        DEBUG[09-27|12:40:11.683] Served lab_deliveryPool                  reqid=378 duration="672.099µs"
+        DEBUG[09-27|12:40:11.686] Served lab_status                        reqid=379 duration="107.745µs"
+        DEBUG[09-27|12:40:11.687] Served lab_status                        reqid=380 duration="101.986µs"
+        DEBUG[09-27|12:40:11.939] Served lab_deliveryPool                  reqid=381 duration="450.343µs"
+        DEBUG[09-27|12:40:11.942] Served lab_status                        reqid=382 duration="96.526µs"
+        DEBUG[09-27|12:40:11.943] Served lab_status                        reqid=383 duration="107.224µs"
+        DEBUG[09-27|12:40:12.195] Served lab_deliveryPool                  reqid=384 duration="588.978µs"
+        DEBUG[09-27|12:40:12.198] Served lab_status                        reqid=385 duration="101.369µs"
+        DEBUG[09-27|12:40:12.199] Served lab_status                        reqid=386 duration="106.373µs"
+        DEBUG[09-27|12:40:12.451] Served lab_deliveryPool                  reqid=387 duration="453.414µs"
+        DEBUG[09-27|12:40:12.455] Served lab_status                        reqid=388 duration="94.609µs"
+        DEBUG[09-27|12:40:12.456] Served lab_status                        reqid=389 duration="90.713µs"
+        DEBUG[09-27|12:40:12.708] Served lab_deliveryPool                  reqid=390 duration="549.942µs"
+        DEBUG[09-27|12:40:12.712] Served lab_status                        reqid=391 duration="295.63µs"
+        DEBUG[09-27|12:40:12.714] Served lab_status                        reqid=392 duration="110.426µs"
+        DEBUG[09-27|12:40:12.819] Queued propagated block                  peer=558071bcd67f3328 number=15,130,093 hash="f72473…0e6a10" queued=1
+        DEBUG[09-27|12:40:12.826] Importing propagated block               peer=558071bcd67f3328 number=15,130,093 hash="f72473…0e6a10"
+        DEBUG[09-27|12:40:12.838] Persisted trie from memory database      nodes=19 size=7.67KiB time=1.500927ms    gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-410.00B
+        DEBUG[09-27|12:40:12.839] Inserted new block                       number=15,130,093 hash="f72473…0e6a10" uncles=0 txs=1 gas=21224 elapsed=11.840ms
+        INFO [09-27|12:40:12.839] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=11.986ms mgasps=1.771 order=0 number=15,130,093 hash="f72473…0e6a10" difficulty=5 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="01e3a1…8f744d" parentHash="31db38…e3bb42" time=1,790,505,601 cache=0.00B
+        INFO [09-27|12:40:12.839] Upgrading chain index                    type=bloombits percentage=0
+        DEBUG[09-27|12:40:12.840] Reinjecting stale transactions           count=0
+        ERROR[09-27|12:40:12.840] Section processing failed                type=bloombits error="canonical block #1 unknown"
+        DEBUG[09-27|12:40:12.840] Chain index processing failed            type=bloombits section=0 err="canonical block #1 unknown"
+        INFO [09-27|12:40:12.840] Automatic ticket purchase confirmed      tx="88ddcc…484df3" block="f72473…0e6a10"
+        WARN [09-27|12:40:12.841] Automatic ticket purchase needs attention; retrying err="not enough time lock or asset balance"
+        INFO [09-27|12:40:12.843] Commit new mining work                   number=15,130,094 sealhash="166b97…617dea" uncles=0 txs=0 gas=0     fees=0          elapsed=4.332ms
+        DEBUG[09-27|12:40:12.966] Served lab_deliveryPool                  reqid=393 duration="504.792µs"
+        DEBUG[09-27|12:40:12.973] Served lab_status                        reqid=394 duration="281.2µs"
+        DEBUG[09-27|12:40:12.975] Served lab_status                        reqid=395 duration="156.168µs"
+        DEBUG[09-27|12:40:12.977] Served lab_block                         reqid=396 duration="318.555µs"
+        DEBUG[09-27|12:40:12.979] Served lab_block                         reqid=397 duration="262.288µs"
+        DEBUG[09-27|12:40:12.981] Served lab_block                         reqid=398 duration="311.285µs"
+        DEBUG[09-27|12:40:12.998] Served eth_getTransactionReceipt         reqid=399 duration=1.318266ms
+        DEBUG[09-27|12:40:13.017] Served eth_getTransactionReceipt         reqid=400 duration="595.355µs"
+        DEBUG[09-27|12:40:13.021] Served lab_block                         reqid=401 duration="295.353µs"
+        DEBUG[09-27|12:40:13.024] Served fsn_allTicketsByAddress           reqid=402 duration="847.893µs"
+        DEBUG[09-27|12:40:13.025] Served lab_block                         reqid=403 duration="288.162µs"
+        DEBUG[09-27|12:40:13.028] Served fsn_allTicketsByAddress           reqid=404 duration="293.515µs"
+        DEBUG[09-27|12:40:13.029] Served lab_block                         reqid=405 duration="266.469µs"
+        DEBUG[09-27|12:40:13.032] Served lab_block                         reqid=406 duration="192.26µs"
+        DEBUG[09-27|12:40:13.033] Served fsn_allTickets                    reqid=407 duration="163.007µs"
+        DEBUG[09-27|12:40:13.034] Served fsn_getBalance                    reqid=408 duration="249.035µs"
+        DEBUG[09-27|12:40:13.035] Served fsn_getTimeLockBalance            reqid=409 duration="307.558µs"
+        DEBUG[09-27|12:40:13.035] Served fsn_getBalance                    reqid=410 duration="150.193µs"
+        DEBUG[09-27|12:40:13.036] Served fsn_getTimeLockBalance            reqid=411 duration="453.541µs"
+        DEBUG[09-27|12:40:13.037] Served lab_block                         reqid=412 duration="164.963µs"
+        DEBUG[09-27|12:40:13.039] Served lab_purchaseState                 reqid=413 duration="181.577µs"
+        DEBUG[09-27|12:40:13.048] Ethereum message handling failed         id=558071bcd67f3328 conn=staticdial err=EOF
+        DEBUG[09-27|12:40:13.048] Removing Ethereum peer                   peer=558071bcd67f3328
+        DEBUG[09-27|12:40:13.048] Removing p2p peer                        id=558071bcd67f3328 conn=staticdial duration=33.166s     peers=0 req=true err="client quitting"
+        DEBUG[09-27|12:40:13.052] Adding p2p peer                          name=anchor-lab/linux-amd...         addr=127.0.0.1:44479 peers=1
+        DEBUG[09-27|12:40:13.052] Ethereum peer connected                  id=558071bcd67f3328 conn=staticdial name=anchor-lab/linux-amd64/go1.21.3
+        DEBUG[09-27|12:40:13.053] Ethereum handshake failed                id=558071bcd67f3328 conn=staticdial err=EOF
+        DEBUG[09-27|12:40:13.053] Removing p2p peer                        id=558071bcd67f3328 conn=staticdial duration=1.402ms     peers=0 req=true err="client quitting"
+        DEBUG[09-27|12:40:13.789] Transaction pool status report           executable=0 queued=0 stales=0
+        DEBUG[09-27|12:40:13.801] Recalculated downloader QoS values       rtt=20s confidence=1.000 ttl=1m0s
+        DEBUG[09-27|12:40:14.322] RPC connection read error                err=EOF
+        DEBUG[09-27|12:40:14.323] RPC server shutting down 
+        INFO [09-27|12:40:14.323] IPC endpoint closed                      url=/tmp/TestFullStateRetainedPartitionDeliveredRepair4052998671/001/lab.ipc
+        DEBUG[09-27|12:40:14.323] RPC server shutting down 
+        INFO [09-27|12:40:14.323] Stopping Ethereum protocol 
+        INFO [09-27|12:40:14.323] Ethereum protocol stopped 
+        INFO [09-27|12:40:14.323] Transaction pool stopped 
+        INFO [09-27|12:40:14.323] Blockchain manager stopped 
+        DEBUG[09-27|12:40:15.525] Read error                               err="accept tcp 127.0.0.1:46295: use of closed network connection"
+        --- PASS: TestRestartNodeRehearsal (47.62s)
+        PASS
+--- FAIL: TestFullStateRetainedPartitionDeliveredRepair (154.87s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/preflight-producer (0.15s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/preflight-verifier (0.12s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/history-producer (41.49s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/history-verifier (47.34s)
+FAIL

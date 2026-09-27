@@ -1,0 +1,45 @@
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/preflight-producer
+INFO [09-27|12:44:07.978] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27-attempt-02/producer/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:44:08.055] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h37m48s
+INFO [09-27|12:44:08.056] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h37m48s
+INFO [09-27|12:44:08.057] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h37m48s
+INFO [09-27|12:44:08.106] Transaction pool stopped 
+INFO [09-27|12:44:08.107] Blockchain manager stopped 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/preflight-verifier
+INFO [09-27|12:44:08.126] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27-attempt-02/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:44:08.203] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h37m48s
+INFO [09-27|12:44:08.204] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h37m48s
+INFO [09-27|12:44:08.205] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h37m48s
+INFO [09-27|12:44:08.241] Transaction pool stopped 
+INFO [09-27|12:44:08.242] Blockchain manager stopped 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/history-producer
+INFO [09-27|12:44:24.198] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27-attempt-02/producer/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:44:24.322] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h38m4s
+INFO [09-27|12:44:24.323] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h38m4s
+INFO [09-27|12:44:24.323] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h38m4s
+    full_state_history_linux_test.go:246: genuine ancestry installed role=producer blocks=90000 from=15040080 through=15130079 bytes=70098887 sha256=99185867e8dd894c27bf8bf304193d3247c8ef76bbc86cd4387d48342265c73d; audited parent and all heads unchanged
+INFO [09-27|12:44:57.210] Blockchain manager stopped 
+=== RUN   TestFullStateRetainedPartitionDeliveredRepair/history-verifier
+INFO [09-27|12:44:58.006] Allocated cache and file handles         database=/mnt/d/FusionRehearsal/delivered-partition-2026-09-27-attempt-02/verifier/chaindata cache=256.00MiB handles=128
+INFO [09-27|12:44:58.091] Loaded most recent local header          number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h38m38s
+INFO [09-27|12:44:58.092] Loaded most recent local full block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h38m38s
+INFO [09-27|12:44:58.092] Loaded most recent local fast block      number=15,130,090 hash="71fda3…ff8674" td=63,370,514,689 age=13h38m38s
+    full_state_history_linux_test.go:246: genuine ancestry installed role=verifier blocks=90000 from=15040080 through=15130079 bytes=70098887 sha256=99185867e8dd894c27bf8bf304193d3247c8ef76bbc86cd4387d48342265c73d; audited parent and all heads unchanged
+INFO [09-27|12:45:29.734] Blockchain manager stopped 
+=== NAME  TestFullStateRetainedPartitionDeliveredRepair
+    full_state_retry_partition_linux_test.go:40: node rehearsal condition timed out
+    node_rehearsal_linux_test.go:325: node shutdown: signal: terminated
+    node_rehearsal_linux_test.go:329: node process /tmp/TestFullStateRetainedPartitionDeliveredRepair197926572/001/process-1331143281.log:
+        === RUN   TestRestartNodeRehearsal
+        DEBUG[09-27|12:45:30.112] FS scan times                            list="48.086µs" set="1.084µs" diff="1.758µs"
+        DEBUG[09-27|12:45:30.906] FS scan times                            list="249.116µs" set="13.068µs" diff="3.329µs"
+        INFO [09-27|12:45:30.994] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [09-27|12:45:30.994] Allocated cache and file handles         database=/tmp/TestFullStateRetainedPartitionDeliveredRepair197926572/001/anchor-lab/chaindata cache=16.00MiB handles=16
+--- FAIL: TestFullStateRetainedPartitionDeliveredRepair (96.55s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/preflight-producer (0.15s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/preflight-verifier (0.13s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/history-producer (33.81s)
+    --- PASS: TestFullStateRetainedPartitionDeliveredRepair/history-verifier (31.41s)
+FAIL

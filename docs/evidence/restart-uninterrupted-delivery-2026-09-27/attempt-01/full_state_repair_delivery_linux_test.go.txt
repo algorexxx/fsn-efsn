@@ -1,0 +1,96 @@
+package restart
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/FusionFoundation/efsn/v5/common"
+	"github.com/FusionFoundation/efsn/v5/common/hexutil"
+	"github.com/FusionFoundation/efsn/v5/core/types"
+)
+
+func awaitDeliveredFullStateRepair(t *testing.T, path string, nodes [2]*rehearsalNode, gap livePurchaseGap, tx *types.Transaction) *types.Block {
+	t.Helper()
+	raw, err := tx.MarshalBinary()
+	requireNoError(t, err)
+	saved, err := gap.saved.MarshalBinary()
+	requireNoError(t, err)
+	owner, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+	requireNoError(t, err)
+	trace, err := os.OpenFile(filepath.Join(path, fmt.Sprintf("delivery-%d.jsonl", tx.Nonce())), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	requireNoError(t, err)
+	defer trace.Close()
+	write := func(record map[string]interface{}) {
+		record["ObservedUTC"] = time.Now().UTC()
+		record["Transaction"] = tx.Hash()
+		requireNoError(t, json.NewEncoder(trace).Encode(record))
+	}
+	started := time.Now()
+	lastAttempt := started
+	delivered := false
+	var previous []byte
+	for time.Since(started) < 300*time.Second {
+		requireContinuousMiners(t, nodes[0], nodes[1])
+		if block := readCanonicalRepairReceipt(t, nodes, tx, owner); block != nil {
+			write(map[string]interface{}{"Stage": "canonical-native-success", "Block": block.Header(), "DirectDelivery": delivered})
+			return block
+		}
+		var pools [2]deliveryPoolState
+		for i, node := range nodes {
+			requireNoError(t, node.call(t, &pools[i], "lab_deliveryPool"))
+		}
+		encoded, err := json.Marshal(pools)
+		requireNoError(t, err)
+		if !bytes.Equal(encoded, previous) {
+			write(map[string]interface{}{"Stage": "pool-observation", "Nodes": pools})
+			previous = encoded
+		}
+		origin, recipient := pools[gap.index], pools[1-gap.index]
+		manual := tx.Nonce() < gap.saved.Nonce()
+		ready := manual && !delivered && time.Since(lastAttempt) >= 15*time.Second && origin.Header.Hash() == recipient.Header.Hash() && origin.Own.Nonce == tx.Nonce()
+		if ready && len(origin.Pending[owner]) == 1 && origin.Pending[owner][0].Hash() == tx.Hash() && len(recipient.Pending[owner])+len(recipient.Queued[owner]) == 0 {
+			if !bytes.Equal(origin.Own.Saved, saved) {
+				t.Fatal("later saved intent changed before direct predecessor delivery")
+			}
+			for _, node := range nodes {
+				if readRecoveryNodeBlock(t, node, gap.head.NumberU64()).Hash() != gap.head.Hash() {
+					t.Fatal("accepted repair branch changed before direct delivery")
+				}
+			}
+			var originRaw hexutil.Bytes
+			requireNoError(t, nodes[gap.index].call(t, &originRaw, "eth_getRawTransactionByHash", tx.Hash()))
+			if !bytes.Equal(originRaw, raw) {
+				t.Fatal("production raw-transaction RPC differs from reviewed original bytes")
+			}
+			validateLiveRepairPurchase(t, nodes[1-gap.index], tx)
+			write(map[string]interface{}{"Stage": "before-direct-delivery", "Nodes": pools, "Bytes": hexutil.Bytes(raw), "Target": 1 - gap.index})
+			lastAttempt = time.Now()
+			var submitted common.Hash
+			err := nodes[1-gap.index].call(t, &submitted, "eth_sendRawTransaction", hexutil.Bytes(raw))
+			message := ""
+			if err != nil {
+				message = err.Error()
+			}
+			write(map[string]interface{}{"Stage": "direct-delivery-result", "Submitted": submitted, "RPCError": message})
+			if err == nil {
+				if submitted != tx.Hash() {
+					t.Fatal("direct delivery changed signed identity")
+				}
+				delivered = true
+				t.Logf("manual predecessor delivered unchanged to peer=%d nonce=%d hash=%s after %s pending locally", 2-gap.index, tx.Nonce(), tx.Hash().Hex(), time.Since(started))
+			} else if !strings.Contains(message, "already known") && !strings.Contains(message, "nonce too low") && !strings.Contains(message, "insufficient balance") {
+				t.Fatalf("unexpected direct-delivery rejection: %v", err)
+			}
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+	logContinuousPurchaseState(t, nodes[0], nodes[1])
+	t.Fatalf("exact repair purchase nonce=%d hash=%s did not reach canonical native success within 300 seconds", tx.Nonce(), tx.Hash().Hex())
+	return nil
+}

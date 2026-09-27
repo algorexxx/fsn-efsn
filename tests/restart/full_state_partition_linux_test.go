@@ -40,17 +40,24 @@ func TestFullStatePartitionRepair(t *testing.T) {
 	cleanup := prepareFullStateOutage(t, root)
 	installFullStateHistory(t, root)
 	anchor := prepareFullStateParticipant(t, root, cleanup)
-	rehearseFullStatePartitionRepair(t, root, cleanup, anchor, false)
+	rehearseFullStatePartitionRepair(t, root, cleanup, anchor, false, false)
 }
 
-func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor *types.Block, funded bool) {
+func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor *types.Block, funded, deliver bool) {
 	t.Helper()
 	paths := [2]string{seedFullStateRecoveryNode(t, filepath.Join(root, "producer"), cleanup, 2), seedFullStateRecoveryNode(t, filepath.Join(root, "verifier"), cleanup, 3)}
 	timeout := 12 * time.Minute
 	if funded {
 		timeout = 16 * time.Minute
 	}
+	if deliver {
+		timeout = 20 * time.Minute
+	}
 	nodes := [2]*rehearsalNode{startRehearsalNodeWithTimeout(t, paths[0], timeout), startRehearsalNodeWithTimeout(t, paths[1], timeout)}
+	observePools := func() {}
+	if deliver {
+		observePools = observeDeliveryPools(t, root, nodes)
+	}
 	owners := [2]common.Address{common.HexToAddress("0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"), common.HexToAddress("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69")}
 	connectRehearsalPeer(t, nodes[0], nodes[1])
 	awaitMinerPartitionPeers(t, nodes[0], nodes[1], 1, 5*time.Second)
@@ -58,14 +65,19 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 	for _, node := range nodes {
 		startCompetingMiner(t, node)
 	}
-	warm := awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, initial, anchor.NumberU64(), 120*time.Second)
+	warm := awaitContinuousMinerProgressObserved(t, nodes[0], nodes[1], owners, initial, anchor.NumberU64(), 120*time.Second, observePools)
+	if deliver {
+		warm = awaitFullStatePartitionReserve(t, root, nodes, owners, observePools)
+	} else {
+		requireFullStatePartitionReserve(t, root, nodes, owners, warm)
+	}
 	logLiveRepairTickets(t, nodes[0], owners, warm, "full-state-before-outage")
-	requireFullStatePartitionReserve(t, root, nodes, owners, warm)
 	originals := [2]map[uint64]*types.Transaction{make(map[uint64]*types.Transaction), make(map[uint64]*types.Transaction)}
 	heal := dropRehearsalPackets(t, "match", "ip", "dst", "127.0.0.0/8")
 	cut := time.Now()
 	for time.Since(cut) < 90*time.Second {
 		requireContinuousMiners(t, nodes[0], nodes[1])
+		observePools()
 		for i, node := range nodes {
 			captureLivePurchases(t, node, owners[i], originals[i])
 		}
@@ -114,6 +126,7 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 		}
 	}
 	observe := func() {
+		observePools()
 		for i, node := range nodes {
 			previous := len(retained[i])
 			captureObservedBranch(t, node, node.status(t).Hash, base, retained[i])
@@ -135,11 +148,12 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 	logLiveRepairTickets(t, nodes[0], owners, gap.head, "full-state-before-repair")
 	t.Logf("full-state partition stable gap node=%d owner=%s canonical=%d saved=%d hash=%s common=%d %s", gap.index+1, owners[gap.index].Hex(), gap.nonce, gap.saved.Nonce(), gap.saved.Hash().Hex(), gap.head.NumberU64(), gap.head.Hash().Hex())
 	branch := retainObservedBlocks(t, filepath.Join(root, "repair-branch.rlp"), retained[gap.index])
-	result := repairFullStateGap(t, root, nodes, owners, gap, originals[gap.index], branch, funded)
+	result := repairFullStateGap(t, root, nodes, owners, gap, originals[gap.index], branch, funded, deliver)
 	for _, node := range nodes {
 		stopPeerAutoMiner(t, node)
 	}
 	final := awaitStoppedPartitionHead(t, nodes[0], nodes[1])
+	observePools()
 	var stopped [2]peerPurchaseState
 	for i, node := range nodes {
 		stopped[i] = readPeerPurchase(t, node)
@@ -188,7 +202,7 @@ func rehearseFullStatePartitionRepair(t *testing.T, root string, cleanup, anchor
 	}
 }
 
-func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owners [2]common.Address, gap livePurchaseGap, originals map[uint64]*types.Transaction, branch types.Blocks, funded bool) fullStateRepairResult {
+func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owners [2]common.Address, gap livePurchaseGap, originals map[uint64]*types.Transaction, branch types.Blocks, funded, deliver bool) fullStateRepairResult {
 	t.Helper()
 	result := fullStateRepairResult{Owner: owners[gap.index], CanonicalNonce: gap.nonce, SavedNonce: gap.saved.Nonce(), SavedHash: gap.saved.Hash()}
 	path := filepath.Join(root, "repair")
@@ -196,6 +210,12 @@ func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owne
 	saved, err := gap.saved.MarshalBinary()
 	requireNoError(t, err)
 	requireNoError(t, os.WriteFile(filepath.Join(path, "saved.rlp"), saved, 0600))
+	awaitReceipt := func(tx *types.Transaction) *types.Block {
+		if deliver {
+			return awaitDeliveredFullStateRepair(t, path, nodes, gap, tx)
+		}
+		return awaitLiveRepairReceipt(t, nodes, tx, result.Owner)
+	}
 	var retrieved types.Transactions
 	for nonce := gap.nonce; nonce < gap.saved.Nonce(); nonce++ {
 		tx := originals[nonce]
@@ -236,14 +256,20 @@ func repairFullStateGap(t *testing.T, root string, nodes [2]*rehearsalNode, owne
 			result.FundingFailure = failure
 			return result
 		}
-		block := awaitLiveRepairReceipt(t, nodes, tx, result.Owner)
+		block := awaitReceipt(tx)
 		result.OriginalsIncluded++
 		t.Logf("full-state manual original included nonce=%d hash=%s block=%d %s", nonce, tx.Hash().Hex(), block.NumberU64(), block.Hash().Hex())
 	}
-	savedBlock := awaitLiveRepairReceipt(t, nodes, gap.saved, result.Owner)
+	savedBlock := awaitReceipt(gap.saved)
 	required := [2]uint64{readPeerPurchase(t, nodes[0]).Nonce, readPeerPurchase(t, nodes[1]).Nonce}
 	required[gap.index] = gap.saved.Nonce() + 2
-	resumed := awaitContinuousMinerProgress(t, nodes[0], nodes[1], owners, required, savedBlock.NumberU64(), 120*time.Second)
+	successorWait := 120 * time.Second
+	var observe func()
+	if deliver {
+		successorWait = 300 * time.Second
+		observe = observeDeliveryPools(t, path, nodes)
+	}
+	resumed := awaitContinuousMinerProgressObserved(t, nodes[0], nodes[1], owners, required, savedBlock.NumberU64(), successorWait, observe)
 	for number := savedBlock.NumberU64() + 1; number <= resumed.NumberU64(); number++ {
 		for _, tx := range readRecoveryNodeBlock(t, nodes[0], number).Transactions() {
 			owner, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)

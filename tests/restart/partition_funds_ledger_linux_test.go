@@ -27,7 +27,8 @@ func readPartitionFunds(t *testing.T, node *rehearsalNode, owners []common.Addre
 		var liquid string
 		var locks common.TimeLock
 		requireNoError(t, node.call(t, &liquid, "fsn_getBalance", common.SystemAssetID, owner, number))
-		requireNoError(t, node.call(t, &locks, "fsn_getTimeLockBalance", common.SystemAssetID, owner, number))
+		requireNoError(t, node.call(t, &locks, "fsn_getRawTimeLockBalance", common.SystemAssetID, owner, number))
+		requireNoError(t, locks.IsValid())
 		result.Accounts[owner] = state.Account{BalancesHash: []common.Hash{common.SystemAssetID}, BalancesVal: []*big.Int{decimal(t, liquid)}, TimeLockBalancesHash: []common.Hash{common.SystemAssetID}, TimeLockBalancesVal: []*common.TimeLock{&locks}}
 	}
 	for _, ticket := range result.Tickets {
