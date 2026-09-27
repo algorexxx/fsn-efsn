@@ -147,7 +147,10 @@ successors and actual blocks. No new funding, re-signing, record edits or direct
 delivery is needed. Both 86-block cold ledgers agree; the existing 68-block
 prefix remains unchanged. Purchases 41 and 42 wait for normal ticket returns.
 
-That restarted continuation does not combine rollback and repair in one live
-session, establish a universal reserve or fix unattended equal-weight
-convergence. Crash/power-loss boundaries and operator monitoring remain
-separate. Production P1–P15 and consensus rules are unchanged.
+The [live integration follow-up](restart-live-abandonment-repair.md) now combines
+ordinary synchronization and repair without restarting services, holding a signer
+or issuing a downloader request. The pool automatically recovers 39 and 40; only
+41–42 need manual repair. Both 90-block cold ledgers pass. This does not establish
+a universal reserve or fix unattended equal-weight convergence. Crash/power-loss
+boundaries and operator monitoring remain separate. Production P1–P15 and
+consensus rules are unchanged.

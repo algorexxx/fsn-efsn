@@ -832,3 +832,19 @@ head/state/record edit, forced sync or held signer is used. A separate
 Evidence verification also checks the unchanged 68-block prefix, the four
 original transaction identities at new canonical locations, native purchase
 receipts and stopped records. See the [rollback repair report](../../docs/restart-abandonment-repair.md).
+
+`TestFullStateLiveAbandonmentRepair` copies the old donation branch and the
+preserved heavier entrant branch. It restores donation's exact saved 43, starts
+both real miners/buyers and connects ordinary peers without a forced downloader
+call, held signer or service restart. Pool reinjection must recover the original
+self-transfer 39 and purchase 40 into new canonical receipts before any manual
+submission. A stable observed nonce-41 gap then permits only original purchases
+41–42 to be retrieved, validated and repaired. Saved 43 and two fresh automatic
+successors must execute, and both owners must actually produce. Existing repair
+helpers enforce continuous miners, funding, native receipts and conditional
+predecessor-only delivery. Final shutdown is followed by
+`TestFullStateLiveAbandonmentRepairColdAudit`. The evidence verifier compares the
+two different source inventories, pool/nonce observations, exact old and new
+transaction fields, unchanged accepted history, both complete ledgers and stopped
+records. No production behavior is changed. See the
+[live rollback repair report](../../docs/restart-live-abandonment-repair.md).

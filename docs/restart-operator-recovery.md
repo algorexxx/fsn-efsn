@@ -259,9 +259,16 @@ delivery. All four manual transactions are sent to the originating pool.
 This is a conditional recovery after restart. Check actual ticket ownership,
 return eligibility, remaining interval coverage and pool admission before
 waiting on selection; earlier first-retreat losses can prevent the same route.
-Combining the rollback and this repair without stopping services remains a
-separate integration case. Do not infer automatic nonce-gap repair from this
-operator-assisted pass.
+The [uninterrupted integration](restart-live-abandonment-repair.md) now passes
+ordinary heavier-peer synchronization and recovery with both services running.
+Reinjected self-transfer 39 and purchase 40 execute automatically in the same
+block, so receipt-aware recovery begins at 41 and manually submits only 41–42.
+The unchanged saved 43 and two fresh successors execute automatically; both
+owners produce and both 90-block cold ledgers agree. No new funding, direct
+delivery or operator pause is needed. This closes that specific timing case.
+Do not blindly replay every displaced transaction: inspect its current canonical
+receipt and the pool first. A later saved intent with an empty pool and lower
+canonical nonce still needs monitored/manual gap repair.
 
 ## Acceptance and retained record
 

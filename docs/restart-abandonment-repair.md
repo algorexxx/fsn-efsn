@@ -141,8 +141,10 @@ before deciding whether to replay it. Waiting for a ticket return is appropriate
 only while that live ticket and its usable rights are actually present; the
 earlier first-retreat funding failures remain relevant.
 
-The remaining integration distinction is a live compatible rollback followed by
-this recovery without stopping services or holding a signer. Keep that timing
-case separate from the passing restarted continuation. Release review still
+The [uninterrupted follow-up](restart-live-abandonment-repair.md) now combines
+ordinary heavier-peer synchronization with this recovery in one live session.
+The self-transfer and purchase 40 reappear automatically; only 41–42 need manual
+recovery. Saved 43, fresh successors, actual production and both 90-block cold
+ledgers pass without new funding or an operator pause. Release review still
 needs the chosen monitored/manual policy, alert delivery and response ownership,
 real-address funding checks and independent review of the minimal patch set.
