@@ -37,9 +37,9 @@ gateway is attached only to an internal Docker bridge with no external route.
    builds this checkout and pins the container to the resulting image ID. Build
    references and source revision are saved in `~/fusion-node/node.json`.
    Existing configuration is copied beside it before replacement.
-4. Setup leaves the container **stopped**, with automatic restart and systemd
-   auto-start disabled. It refuses to replace a running container or a container
-   from another mode. Stop/remove an older container through the menu first;
+4. Setup leaves the container **stopped**, with Docker's restart policy `no`.
+   Boot auto-start stays a separate, explicit choice (see below). It refuses to
+   replace a running container or a container from another mode. Stop/remove an older container through the menu first;
    removal now preserves configuration and data.
 5. Copy the complete backed-up `data/efsn/chaindata` directory into
    `~/fusion-node/data/efsn/chaindata`. Include `CURRENT`, its manifest, journals
@@ -120,6 +120,7 @@ The bundled systemd service replaces the former foundation-hosted download.
 ```bash
 bash -n QuickNodeSetup/fsnNode.sh
 bash -n QuickNodeSetup/isolatedGateway.sh
+bash -n QuickNodeSetup/fusion-gateway.sh
 bash QuickNodeSetup/isolatedGateway.test.sh
 bash QuickNodeSetup/fusion-rpc-proxy.test.sh
 ```
@@ -167,10 +168,21 @@ migration; public bindings and extra networks are rejected.
 Menu-driven starts refresh the proxy target and probe `eth_chainId` before
 reporting RPC ready. Probe failure closes the endpoint and leaves the node running
 for diagnosis; a long database recovery can require retrying R after it finishes.
-Menu-driven stop, removal, and recreation close the proxy first. The socket and
-node are not enabled at boot. After reboot, start through the manager. If using
-Docker commands outside the manager, rerun R after a restart/recreation to refresh
-the target. Do not rely on a saved container IP.
+Menu-driven stop, removal, and recreation close the proxy first. If using Docker
+commands outside the manager, rerun R after a restart/recreation to refresh the
+target. Do not rely on a saved container IP.
+
+Boot auto-start is opt-in. Choose **Configure node**, then **auto-start**. This
+installs root-owned copies of the manager scripts in
+`/usr/local/libexec/fusion-gateway/` and enables `fusion-gateway@$USER.service`.
+The unit is ordered after Docker and `network-online.target`. At boot it runs the
+manager's start with its checks and RPC probe. It then retries the R refresh
+every 30 seconds, up to 40 times, while the database loads. At shutdown it runs
+the manager's stop. The unit stays active after a failed start
+so that shutdown still stops the node. Read its journal for the start result.
+Option 9 refreshes the installed copies. `fusion-rpc.socket` sets
+`DefaultDependencies=no`. With default socket ordering, stopping it from the
+gateway unit during shutdown deadlocks until the stop timeout.
 
 From Windows or the Fsnex host, use an SSH tunnel:
 

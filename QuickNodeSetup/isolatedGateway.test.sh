@@ -5,6 +5,7 @@ TEST_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 export TERM=xterm
 export USER="${USER:-gateway-test}"
 source "$TEST_DIR/fsnNode.sh"
+source "$TEST_DIR/fusion-gateway.sh"
 
 runTest() (
     local test_name="$1"
@@ -21,6 +22,8 @@ runTest() (
     FAIL_STOP=false
     FAIL_PULL=false
     FAIL_RPC=false
+    RPC_FAILURES=0
+    UNIT_STATE=disabled
     FAIL_SOCKET=false
     PUBLISHED=false
     PORT_BINDINGS='{}'
@@ -32,10 +35,15 @@ runTest() (
 
     sudo() { "$@"; }
     installIsolatedRpc() { printf 'rpc-install\n' >> "$CALLS"; }
+    installGatewayBoot() { printf 'boot-install\n' >> "$CALLS"; }
     sleep() { :; }
     curl() {
         printf 'rpc-probe\n' >> "$CALLS"
-        if [ "$FAIL_RPC" = true ]; then echo '{"error":{"code":-1}}'; else echo '{"result":"0x7f93"}'; fi
+        if [ "$FAIL_RPC" = true ] || [ "$(grep -c rpc-probe "$CALLS")" -le "$RPC_FAILURES" ]; then
+            echo '{"error":{"code":-1}}'
+        else
+            echo '{"result":"0x7f93"}'
+        fi
     }
     askToContinue() { return 0; }
     pauseScript() { return 0; }
@@ -44,6 +52,7 @@ runTest() (
         printf 'systemctl %s\n' "$*" >> "$CALLS"
         if [ "$*" = "start fusion-rpc.socket" ] && [ "$FAIL_SOCKET" = true ]; then return 1; fi
         if [ "${1:-}" = is-active ]; then echo inactive; return 3; fi
+        if [ "${1:-}" = is-enabled ]; then echo "$UNIT_STATE"; [ "$UNIT_STATE" = enabled ]; return; fi
     }
     git() {
         if [[ "$*" = *rev-parse* ]]; then echo abc123; fi
@@ -273,6 +282,90 @@ startRejectsPublicBinding() {
     ! grep -q 'docker start' "$CALLS"
 }
 
+bootStartVerifiesRpcLikeManualStart() {
+    restoreManifest
+    RUNNING=true
+    startGatewayAtBoot
+    [ "$(grep -c 'docker start fusion' "$CALLS")" -eq 1 ]
+    [ "$(grep -c 'systemctl start fusion-rpc.socket' "$CALLS")" -eq 1 ]
+    ! grep -q 'docker stop' "$CALLS"
+}
+
+bootStartRefreshesRpcWhileNodeLoads() {
+    restoreManifest
+    RUNNING=true
+    RPC_FAILURES=20
+    startGatewayAtBoot
+    [ "$(grep -c 'docker start fusion' "$CALLS")" -eq 1 ]
+    [ "$(grep -c 'systemctl start fusion-rpc.socket' "$CALLS")" -eq 2 ]
+    [ "$(grep -c 'rpc-probe' "$CALLS")" -eq 21 ]
+    ! grep -q 'docker stop' "$CALLS"
+}
+
+bootStartGivesUpButLeavesNodeRunning() {
+    restoreManifest
+    RUNNING=true
+    FAIL_RPC=true
+    GATEWAY_RPC_ATTEMPTS=2
+    if startGatewayAtBoot; then return 1; fi
+    [ "$(grep -c 'systemctl start fusion-rpc.socket' "$CALLS")" -eq 3 ]
+    ! grep -q 'docker stop' "$CALLS"
+}
+
+bootStartStopsNodeWhenTerminatedWhileLoading() {
+    restoreManifest
+    RUNNING=true
+    FAIL_RPC=true
+    sleep() { kill -TERM "$BASHPID"; }
+    if (startGatewayAtBoot); then return 1; fi
+    [ "$(grep -c 'systemctl start fusion-rpc.socket' "$CALLS")" -eq 1 ]
+    [ "$(grep -n 'systemctl stop fusion-rpc.socket' "$CALLS" | tail -n 1 | cut -d: -f1)" -lt "$(grep -n 'docker stop' "$CALLS" | cut -d: -f1)" ]
+}
+
+bootStartStopsRefreshingWhenNodeExits() {
+    restoreManifest
+    FAIL_RPC=true
+    if startGatewayAtBoot; then return 1; fi
+    [ "$(grep -c 'systemctl start fusion-rpc.socket' "$CALLS")" -eq 1 ]
+    ! grep -q 'docker stop' "$CALLS"
+}
+
+bootStartRejectsEmptyDatabase() {
+    if startGatewayAtBoot; then return 1; fi
+    ! grep -q 'docker start' "$CALLS"
+}
+
+bootStartRequiresIsolatedGateway() {
+    printf '{"nodeType":"gateway","testnet":"false"}\n' > "$CONF_FILE"
+    if startGatewayAtBoot; then return 1; fi
+    [ ! -s "$CALLS" ]
+}
+
+bootEntryRejectsUnknownAction() {
+    local status=0
+    bash "$TEST_DIR/fusion-gateway.sh" restart > /dev/null || status=$?
+    [ "$status" -eq 2 ]
+}
+
+autostartEnableInstallsAndStartsUnit() {
+    restoreManifest
+    changeGatewayAutostart
+    [ "$(grep -n 'boot-install' "$CALLS" | cut -d: -f1)" -lt "$(grep -n 'systemctl enable' "$CALLS" | cut -d: -f1)" ]
+    grep -qx "systemctl enable --now fusion-gateway@$USER.service" "$CALLS"
+}
+
+autostartRejectsInvalidGateway() {
+    if changeGatewayAutostart; then return 1; fi
+    ! grep -Eq 'boot-install|systemctl enable' "$CALLS"
+}
+
+autostartDisableKeepsNodeRunning() {
+    UNIT_STATE=enabled
+    changeGatewayAutostart
+    grep -qx "systemctl disable fusion-gateway@$USER.service" "$CALLS"
+    ! grep -Eq 'docker stop|systemctl stop' "$CALLS"
+}
+
 for test_name in installPreservesExistingData initPreservesExistingData \
     startRejectsEmptyDatabase startRejectsManifestTraversal startRejectsExternalNetwork \
     startRejectsExtraNetwork startRejectsChangedImage startAcceptsRestoredIsolatedContainer \
@@ -282,6 +375,12 @@ for test_name in installPreservesExistingData initPreservesExistingData \
     legacyLayoutRequiresManualMigration configureRpcPreservesRunningNode \
     configureRpcRejectsExternalNetwork configureRpcRejectsPublishedPort \
     rpcProbeFailureClosesEndpoint rpcBindFailureIsReported stopClosesRpcBeforeNode \
-    startAcceptsLegacyLoopbackBinding startRejectsPublicBinding; do
+    startAcceptsLegacyLoopbackBinding startRejectsPublicBinding \
+    bootStartVerifiesRpcLikeManualStart bootStartRefreshesRpcWhileNodeLoads \
+    bootStartGivesUpButLeavesNodeRunning bootStartStopsNodeWhenTerminatedWhileLoading \
+    bootStartStopsRefreshingWhenNodeExits \
+    bootStartRejectsEmptyDatabase bootStartRequiresIsolatedGateway bootEntryRejectsUnknownAction \
+    autostartEnableInstallsAndStartsUnit autostartRejectsInvalidGateway \
+    autostartDisableKeepsNodeRunning; do
     runTest "$test_name"
 done

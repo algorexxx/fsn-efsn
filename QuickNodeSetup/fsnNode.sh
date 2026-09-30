@@ -806,9 +806,9 @@ change_wallet() {
 
 change_autostart() {
     if isIsolatedGateway; then
-        echo "Auto-start is disabled during historical recovery. Start the gateway explicitly."
+        changeGatewayAutostart
         pauseScript
-        return 1
+        return
     fi
     local state="$(systemctl show fusion -p UnitFileState --value)"
     # just making the output a bit nicer

@@ -8,6 +8,10 @@ installNodeService() {
     sudo install -m 644 "$SCRIPT_DIR/fusion.service" /etc/systemd/system/fusion.service
 }
 
+isGatewayRunning() {
+    [ "$(sudo docker inspect -f '{{.State.Running}}' fusion 2>/dev/null)" = true ]
+}
+
 setupIsolatedGateway() {
     local repo image_id revision builder runtime config_tmp
     if [ "$EUID" -eq 0 ]; then
@@ -59,8 +63,7 @@ setupIsolatedGateway() {
         '{nodeType:"isolated-gateway", testnet:"false", mining:"false", autobt:"false", nodeName:"", image:$image, revision:$revision, builder:$builder, runtime:$runtime}' \
         > "$config_tmp" || return 1
     installNodeService || return 1
-    installIsolatedRpc || return 1
-    sudo systemctl daemon-reload || return 1
+    installGatewayBoot || return 1
     sudo systemctl disable fusion || return 1
     if [ "$(systemctl is-active fusion 2>/dev/null)" = "active" ]; then
         sudo systemctl stop fusion || return 1
@@ -138,6 +141,34 @@ installIsolatedRpc() {
     sudo systemctl daemon-reload || return 1
 }
 
+installGatewayBoot() {
+    local libexec=/usr/local/libexec/fusion-gateway
+    sudo install -d "$libexec" || return 1
+    sudo install -m 755 "$SCRIPT_DIR/fsnNode.sh" "$SCRIPT_DIR/isolatedGateway.sh" \
+        "$SCRIPT_DIR/fusion-gateway.sh" "$libexec/" || return 1
+    sudo install -m 644 "$SCRIPT_DIR/fusion-gateway@.service" /etc/systemd/system/ || return 1
+    installIsolatedRpc
+}
+
+changeGatewayAutostart() {
+    local unit="fusion-gateway@$USER.service" state
+    state="$(systemctl is-enabled "$unit" 2>/dev/null)" || true
+    echo
+    echo "Gateway auto-start is currently ${state:-not installed}."
+    if [ "$state" = enabled ]; then
+        askToContinue "Disable it? A running node keeps running. [y/n] " || return 0
+        sudo systemctl disable "$unit"
+        return
+    fi
+    validateIsolatedGateway || return 1
+    echo "Enabling starts the gateway at every boot and stops it cleanly at shutdown."
+    echo "It also starts the gateway now, waiting for private RPC while the node loads."
+    askToContinue "Enable it? [y/n] " || return 0
+    installGatewayBoot || return 1
+    sudo systemctl enable --now "$unit" || return 1
+    systemctl status --no-pager --lines 20 "$unit"
+}
+
 stopIsolatedRpc() {
     if sudo systemctl cat fusion-rpc.socket >/dev/null 2>&1; then
         sudo systemctl stop fusion-rpc.socket fusion-rpc.service || return 1
@@ -173,7 +204,7 @@ configureIsolatedRpc() {
         return 1
     fi
     validateIsolatedGateway || return 1
-    if [ "$(sudo docker inspect -f '{{.State.Running}}' fusion)" != true ]; then
+    if ! isGatewayRunning; then
         echo "Start the isolated gateway before configuring private RPC."
         return 1
     fi

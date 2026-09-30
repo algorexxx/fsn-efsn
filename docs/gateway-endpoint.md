@@ -83,10 +83,51 @@ bash QuickNodeSetup/fsnNode.sh
 - **9: Set up isolated historical gateway** rebuilds/recreates the node and is
   only needed for deliberate node updates, not ordinary endpoint use.
 
-Neither node nor proxy is enabled at boot. After a VM reboot, start through the
-manager. After manually restarting/recreating containers outside the manager,
-use R to refresh the proxy. A database recovery that exceeds the readiness probe
-window can require R after the node finishes loading.
+After manually restarting/recreating containers outside the manager, use R to
+refresh the proxy.
+
+## Start at boot
+
+Enable once through the manager: **7: Configure node**, then **4: auto-start**.
+This installs root-owned copies of the manager scripts in
+`/usr/local/libexec/fusion-gateway/` and enables `fusion-gateway@peter.service`.
+The copies do not follow the checkout. After updating the checkout, run option 9
+or toggle auto-start off and on again to refresh them. Enabling also runs the
+start below at once. When the node is already running, private RPC is briefly
+closed and re-verified.
+
+At boot the unit runs after `docker.service` and `network-online.target`, so the
+LAN address exists before the socket binds. It then does what option 3 does:
+validates the historical container, starts it, opens private RPC and waits up to
+15 seconds for `eth_chainId` = `0x7f93`. If the node is still loading its
+database, it repeats option R's proxy refresh every 30 seconds, for up to 40
+attempts (roughly half an hour). It stops retrying if the container exits. At
+shutdown it does what option 4 does: closes private RPC, then gives the node up
+to 300 seconds to close its database before Docker stops.
+
+The unit stays active even when its start fails, so shutdown still stops a node
+that was started by hand afterwards. A failed start shows only in the log:
+
+```bash
+systemctl status fusion-gateway@peter.service
+journalctl -u fusion-gateway@peter.service -b --no-pager
+```
+
+Options 3 and 4 still work while auto-start is enabled. A LAN drop-in on the VM,
+`/etc/systemd/system/fusion-rpc.socket.d/lan.conf`, adds
+`192.168.1.212:9000` for the explorer host 192.168.1.240. Reinstalling the units
+leaves it in place.
+
+`fusion-rpc.socket` sets `DefaultDependencies=no`. With the defaults, systemd
+stops the socket after every ordinary service at shutdown. The gateway unit's
+stop would then wait on the socket, and the socket on the gateway unit, until the
+stop timed out and the node was killed. A systemd 255 simulation reproduced that
+timeout. Without the default dependencies the socket is still stopped at
+shutdown, but nothing orders it against the gateway unit.
+
+A clean stop also needs ESXi to shut the guest down rather than power it off. On
+the `fsnex-node` VM, the host's autostart stop action must be *Shut down* (it
+needs VMware Tools in the guest), with a stop delay of at least 6 minutes.
 
 Test locally on Ubuntu:
 
@@ -97,7 +138,8 @@ curl --fail --silent --show-error http://127.0.0.1:9000 \
 sudo ss -ltnp 'sport = :9000'
 ```
 
-The listener must show `127.0.0.1:9000`. This was verified live, with systemd and
+The listeners must be `127.0.0.1:9000` and, from the LAN drop-in,
+`192.168.1.212:9000`. The loopback listener was verified live, with systemd and
 systemd-socket-proxyd holding the socket. The service activates on the first
 connection, so an inactive proxy service before a request is not itself a fault.
 
@@ -114,7 +156,9 @@ connection, so an inactive proxy service before a request is not itself a fault.
    sudo docker logs --tail 100 fusion
    ```
 
-3. If the node is running but the proxy target is stale, choose R. If the node is
+3. After a reboot, read `journalctl -u fusion-gateway@peter.service -b` first: it
+   shows whether validation, the container start or the RPC wait failed. If the
+   node is running but the proxy target is stale, choose R. If the node is
    stopped, start through the manager and read its logs. Do not delete or restore
    the database merely because a tunnel or proxy failed.
 4. No output from `docker port fusion` is expected for the current design. The
