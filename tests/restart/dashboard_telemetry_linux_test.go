@@ -29,8 +29,9 @@ func TestDashboardTelemetryNode(t *testing.T) {
 		t.Skip("requires an explicit synthetic loopback dashboard fixture")
 	}
 	var settings struct {
-		Collector string
-		Secret    string
+		Collector            string
+		Secret               string
+		TransactionsPerBlock int
 	}
 	data, err := os.ReadFile(filepath.Join(path, "settings.json"))
 	requireNoError(t, err)
@@ -39,6 +40,9 @@ func TestDashboardTelemetryNode(t *testing.T) {
 	requireNoError(t, err)
 	if !filepath.IsAbs(path) || endpoint.Scheme != "ws" || endpoint.Hostname() != "127.0.0.1" || endpoint.Port() == "" || endpoint.Path != "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" || len(settings.Secret) < 32 || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
 		t.Fatal("absolute fixture path, loopback collector, synthetic credential and no backup input required")
+	}
+	if settings.TransactionsPerBlock != 1 && settings.TransactionsPerBlock != 10 {
+		t.Fatal("the fixture supports only one or ten transactions per block")
 	}
 	previous := common.UseDevnetRule
 	common.UseDevnetRule = true
@@ -74,7 +78,13 @@ func TestDashboardTelemetryNode(t *testing.T) {
 	for number := 1; number <= 60; number++ {
 		parent := f.chain.CurrentBlock()
 		purchase := f.signPurchase(t, parent.Time(), common.TimeLockForever)
-		f.importBlock(t, f.buildBlockWithTransactions(t, parent.Time()+120, []*types.Transaction{purchase}))
+		txs := []*types.Transaction{purchase}
+		for offset := 1; offset < settings.TransactionsPerBlock; offset++ {
+			tx, err := types.SignTx(types.NewTransaction(purchase.Nonce()+uint64(offset), owner, new(big.Int), 21000, purchase.GasPrice(), nil), types.LatestSigner(f.chain.Config()), key)
+			requireNoError(t, err)
+			txs = append(txs, tx)
+		}
+		f.importBlock(t, f.buildBlockWithTransactions(t, parent.Time()+120, txs))
 	}
 	requireNoError(t, ethstats.New(stack, service.APIBackend, service.Engine(), "node-a:"+settings.Secret+"@"+settings.Collector))
 	requireNoError(t, stack.Start())

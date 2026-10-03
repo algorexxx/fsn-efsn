@@ -1,0 +1,299 @@
+From e69fe7982049dad5621871d6d96f380624e148af Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 16:20:02 +0200
+Subject: [PATCH] Remove ambiguous dashboard health fields and verify actual
+ browser flow
+
+---
+ docs/actual-efsn-telemetry.md         | 40 ++++++++++-----
+ react-frontend/src/Components/Main.js | 18 +------
+ test/efsn-telemetry.test.cjs          | 30 ++++++++---
+ test/fixtures/efsn-browser.cjs        | 73 +++++++++++++++++++++++++++
+ 4 files changed, 123 insertions(+), 38 deletions(-)
+ create mode 100644 test/fixtures/efsn-browser.cjs
+
+diff --git a/docs/actual-efsn-telemetry.md b/docs/actual-efsn-telemetry.md
+index 60e538e..46147af 100644
+--- a/docs/actual-efsn-telemetry.md
++++ b/docs/actual-efsn-telemetry.md
+@@ -13,7 +13,8 @@ stdin/stdout bridge carries only test process control and captures.
+ 
+ Required environment: `EFSN_TELEMETRY_BINARY` (absolute Windows path to the
+ Linux Go test binary), `EFSN_LINUX_NODE` (absolute Windows path to Linux Node),
+-`EFSN_TELEMETRY_EVIDENCE` (existing output directory), `TEST_PG_PORT` and
++`EFSN_TELEMETRY_EVIDENCE` (existing output directory), `EFSN_BROWSER_MODULE`
++(absolute path to the installed Playwright module), `TEST_PG_PORT` and
+ `TEST_PG_PASSWORD_FILE` (a new cluster's administrator password). The cluster
+ must have database `postgres` and role `dashboard_test_admin`, without the
+ dashboard schema already created. Run:
+@@ -22,22 +23,33 @@ dashboard schema already created. Run:
+ node --test --test-reporter=tap test/efsn-telemetry.test.cjs
+ ```
+ 
++Compile the frontend with `/stats-api` as `REACT_APP_STATS_API_PATH`, a 250 ms
++poll interval and a 1,000 ms request timeout for this test. The fixture serves
++those exact build bytes on loopback beside the actual API. Edge must be available
++to Playwright's `msedge` channel. Other production polling values need their own
++acceptance check.
++
+ The companion repository's
+-`docs/evidence/restart-dashboard-telemetry-2026-10-03/run.py` creates and stops
+-that new database, records input hashes and removes its temporary password.
+-Its accepted third attempt compares the head and fifty history blocks against
+-direct RPC, verifies ticket/peer/pending/mining values through PostgreSQL and
+-the HTTP API, and captures wire sizes. The two earlier failures were capture-
+-harness errors: Primus upgrades via a callback rather than a server connection
+-event. The corrected hook captures the actual messages before transformation.
++`docs/evidence/restart-dashboard-presentation-2026-10-03/run.py` creates and stops
++the database, records source/build hashes and removes its temporary password.
++The current fixture executes/imports 60 blocks with ten transactions each: one
++ticket purchase and nine zero-value self-transfers using public test key 1.
++It compares the head and fifty history blocks against direct RPC, then verifies
++the compiled browser's row, pinning, expiry after snapshot-writer loss and
++recovery. The real node remains stationary and reachable throughout the outage.
+ 
+ Expected legacy differences are explicit assertions: at the stationary head,
+ RPC syncing is false but telemetry `syncing` is true, and reported uptime is
+ 100. These assertions preserve the observed existing protocol; they are not
+-approval of the browser's **Syncing** label or evidence of measured uptime.
++evidence of synchronization or measured uptime. The browser omits **Syncing**
++and **Reported Uptime** for every client version, in both pinned and unpinned
++rows. It preserves the connection indicator and separate report freshness.
++Storage/API retain the original values for compatibility and investigation.
+ 
+-The measured 50-block history with one transaction each is 30,926 bytes.
+-Ten transactions in each of those blocks would increase it to approximately
+-66,026 bytes at the same field lengths. The fixture's 65,536-byte limit is
+-therefore not a production sizing recommendation. Payload envelopes, full
+-report validation, memory limits and compatible browser labels remain open.
++The measured 50-block history with ten transactions each is 66,076 bytes,
++including the larger gas-used fields. It fits the fixture's explicit 128 KiB
++input limit; output and snapshot limits stay at 256 KiB and 64 KiB. These are
++test settings, not production defaults. Full report validation, a compact chart
++cache and a larger bounded payload/node profile remain necessary before selecting
++deployment budgets. Chart consumers need transaction counts; the current-head
++snapshot and `/blocks` API still carry transaction hashes.
+diff --git a/react-frontend/src/Components/Main.js b/react-frontend/src/Components/Main.js
+index 8746b06..29ef91a 100644
+--- a/react-frontend/src/Components/Main.js
++++ b/react-frontend/src/Components/Main.js
+@@ -1,5 +1,5 @@
+ import React from 'react';
+-import {Button, Col, Container, Modal, ProgressBar, Row, Table,} from 'react-bootstrap'
++import {Button, Col, Container, Modal, Row, Table,} from 'react-bootstrap'
+ import NumberFormat from 'react-number-format';
+ import Tooltip from '@material-ui/core/Tooltip';
+ import Delay from './Delay';
+@@ -395,13 +395,9 @@ class Main extends React.Component {
+                                 <Tooltip title="Mining state">
+                                     <th>Mining</th>
+                                 </Tooltip>
+-                                <Tooltip title="Syncing state">
+-                                    <th>Syncing</th>
+-                                </Tooltip>
+                                 <Tooltip title="Amount of peers">
+                                     <th>Peers</th>
+                                 </Tooltip>
+-                                <th>Reported Uptime</th>
+                                 <Tooltip title="Last latency measurement; receipt time is unavailable">
+                                     <th>Last Latency</th>
+                                 </Tooltip>
+@@ -461,13 +457,7 @@ class Main extends React.Component {
+                                                 <td>{!node.fresh.stats ? '—' : node.stats.mining ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+-                                                <td>{!node.fresh.stats ? '—' : node.stats.syncing ?
+-                                                    <span className="text-success">●</span> :
+-                                                    <span className="text-danger">●</span>}</td>
+                                                 <td>{node.fresh.stats ? node.stats.peers : '—'}</td>
+-                                                <td>{node.fresh.stats ? <ProgressBar now={node.stats.uptime}
+-                                                                 label={`${node.stats.uptime}%`}/> : '—'}
+-                                                </td>
+                                                 <td className={latencyClass(this.state.nodesList[index].stats.latency)}>{this.state.nodesList[index].stats.latency}ms</td>
+                                             </tr>
+                                             : null
+@@ -526,13 +516,7 @@ class Main extends React.Component {
+                                                 <td>{!node.fresh.stats ? '—' : node.stats.mining ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+-                                                <td>{!node.fresh.stats ? '—' : node.stats.syncing ?
+-                                                    <span className="text-success">●</span> :
+-                                                    <span className="text-danger">●</span>}</td>
+                                                 <td>{node.fresh.stats ? node.stats.peers : '—'}</td>
+-                                                <td>{node.fresh.stats ? <ProgressBar now={node.stats.uptime}
+-                                                                 label={`${node.stats.uptime}%`}/> : '—'}
+-                                                </td>
+                                                 <td className={latencyClass(this.state.nodesList[index].stats.latency)}>{this.state.nodesList[index].stats.latency}ms</td>
+                                             </tr>
+                                             : null
+diff --git a/test/efsn-telemetry.test.cjs b/test/efsn-telemetry.test.cjs
+index c91bda1..f13190a 100644
+--- a/test/efsn-telemetry.test.cjs
++++ b/test/efsn-telemetry.test.cjs
+@@ -7,6 +7,7 @@ const { join, resolve } = require('node:path');
+ const { tmpdir } = require('node:os');
+ const { Pool } = require('pg');
+ const WebSocket = require('websocket').w3cwebsocket;
++const express = require('express');
+ const Populate = require('../db_methods/populate');
+ const Retrieve = require('../db_methods/retrieve');
+ const createApp = require('../api-server/app');
+@@ -14,6 +15,7 @@ const startSnapshotCollection = require('../wsclient/collect-snapshots');
+ const startCollector = require('./fixtures/collector-wire.cjs');
+ const { secretA } = require('./fixtures/collector.cjs');
+ const request = require('./fixtures/http.cjs');
++const checkBrowser = require('./fixtures/efsn-browser.cjs');
+ 
+ async function waitFor(predicate) {
+     const deadline = Date.now() + 20000;
+@@ -50,12 +52,12 @@ function linuxPath(path) {
+     return '/mnt/' + path[0].toLowerCase() + path.slice(2).replaceAll('\\', '/');
+ }
+ 
+-test('actual efsn reports reach the collector, PostgreSQL and HTTP API and match stationary RPC', { timeout: 65000 }, async t => {
++test('busy efsn reports match RPC through storage, API and browser and expire during writer loss', { timeout: 65000 }, async t => {
+     assert.ok(process.env.EFSN_TELEMETRY_BINARY && process.env.EFSN_TELEMETRY_EVIDENCE && process.env.TEST_PG_PORT && process.env.TEST_PG_PASSWORD_FILE);
+-    const server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE }, 'efsn-wsl-server.cjs');
++    const server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE, COLLECTOR_MAX_MESSAGE_BYTES: '131072' }, 'efsn-wsl-server.cjs');
+     const directory = mkdtempSync(join(tmpdir(), 'efsn-dashboard-'));
+     const settings = join(directory, 'settings.json');
+-    writeFileSync(settings, JSON.stringify({ Collector: `ws://127.0.0.1:${server.port}`, Secret: secretA }), { encoding: 'utf8', mode: 0o600 });
++    writeFileSync(settings, JSON.stringify({ Collector: `ws://127.0.0.1:${server.port}`, Secret: secretA, TransactionsPerBlock: 10 }), { encoding: 'utf8', mode: 0o600 });
+     const child = spawn(join(process.env.SystemRoot, 'System32/wsl.exe'), ['-d', 'FusionRehearsal', '-u', 'rehearsal', '--', 'env', 'GOMAXPROCS=2', 'FUSION_RESTART_CHAINDATA=', 'FUSION_DASHBOARD_FIXTURE=' + linuxPath(directory), linuxPath(process.env.EFSN_TELEMETRY_BINARY), '-test.run=^TestDashboardTelemetryNode$', '-test.v', '-test.timeout=65s'], {
+         cwd: resolve(process.env.EFSN_TELEMETRY_BINARY, '../../tests/restart'),
+         env: { ...process.env, FUSION_DASHBOARD_FIXTURE: directory, FUSION_RESTART_CHAINDATA: '' }, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
+@@ -89,16 +91,23 @@ test('actual efsn reports reach the collector, PostgreSQL and HTTP API and match
+     const populate = new Populate(pool);
+     const retrieve = new Retrieve(pool);
+     const errors = [];
+-    const collector = startSnapshotCollection({ url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: 65536, maxNodes: 2 }, {
++    const collectionConfig = { url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: 65536, maxNodes: 2 };
++    const collectionDependencies = {
+         connect(url, maxBytes) { return new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }); },
+         saveSnapshot: (payload, time) => populate.saveSnapshot(payload, time), now: () => new Date(), setTimeout, clearTimeout, onError: message => errors.push(message),
+-    });
++    };
++    let collector = startSnapshotCollection(collectionConfig, collectionDependencies);
+     t.after(() => collector.stop());
+     const snapshot = await waitFor(async () => {
+         const value = await retrieve.readSnapshot();
+         return value && value.payload.nodes.length === 1 && value.payload.nodes[0].reports.stats !== null && value.payload.charts.height[0] === 21 && value.payload.charts.height[39] === 60 && value;
+     });
+-    const api = createApp(retrieve, Date.now, 10000, 30000).listen(0, '127.0.0.1');
++    const application = express();
++    const apiView = createApp(retrieve, Date.now, 10000, 30000);
++    application.use('/stats-api', apiView);
++    application.use(apiView);
++    application.use(express.static(resolve(__dirname, '../react-frontend/build')));
++    const api = application.listen(0, '127.0.0.1');
+     t.after(() => new Promise(resolve => api.close(resolve)));
+     await once(api, 'listening');
+     const nodes = await request(api.address().port, '/nodes');
+@@ -131,20 +140,27 @@ test('actual efsn reports reach the collector, PostgreSQL and HTTP API and match
+     const incoming = captured.records.filter(record => record.direction === 'incoming' && record.message.emit);
+     const history = incoming.find(record => record.message.emit[0] === 'history' && record.message.emit[1].history.length === 50);
+     assert.ok(history);
++    assert.ok(history.bytes > 65536 && history.bytes < 131072);
+     truth.history = [];
+     for (const block of history.message.emit[1].history) {
++        assert.equal(block.transactions.length, 10);
+         const direct = await rpc(ready.rpc, 'eth_getBlockByNumber', ['0x' + block.number.toString(16), false]);
+         compareBlock(block, direct);
+         truth.history.push(direct);
+     }
+     assert.deepEqual(history.message.emit[1].history.map(block => block.number), Array.from({ length: 50 }, (_, index) => 59 - index));
+     assert.deepEqual(JSON.parse(charts.body[0].charts).height, Array.from({ length: 40 }, (_, index) => 21 + index));
++    const browser = await checkBrowser('http://127.0.0.1:' + api.address().port, truth.head, {
++        stopCollection: () => collector.stop(),
++        resumeCollection() { collector = startSnapshotCollection(collectionConfig, collectionDependencies); },
++        readHead: () => rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false]),
++    });
+     assert.equal((await rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false])).hash, truth.head.hash);
+     assert.deepEqual(errors, []);
+     await collector.stop();
+     writeFileSync(join(directory, 'stop'), '', 'utf8');
+     assert.deepEqual(await exited, [0, null]);
+-    const evidence = { ready, truth, snapshot, nodes, charts, captured, limits: { messageBytes: 65536, bufferedBytes: 262144, messagesPerSecond: 100 }, errors, testMemory: process.memoryUsage() };
++    const evidence = { ready, truth, snapshot, nodes, charts, captured, browser, limits: { messageBytes: 131072, bufferedBytes: 262144, messagesPerSecond: 100, snapshotBytes: 65536 }, errors, testMemory: process.memoryUsage() };
+     writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'comparison.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8');
+     await server.stop();
+ });
+diff --git a/test/fixtures/efsn-browser.cjs b/test/fixtures/efsn-browser.cjs
+new file mode 100644
+index 0000000..65e5ce6
+--- /dev/null
++++ b/test/fixtures/efsn-browser.cjs
+@@ -0,0 +1,73 @@
++const assert = require('node:assert/strict');
++const { writeFileSync } = require('node:fs');
++const { join } = require('node:path');
++
++async function checkBrowser(url, head, controls) {
++    const { chromium } = require(process.env.EFSN_BROWSER_MODULE);
++    const browser = await chromium.launch({ channel: 'msedge', headless: true, chromiumSandbox: true });
++    const errors = [];
++    const foreignRequests = [];
++    const responses = [];
++    const checkpoints = [];
++    const output = process.env.EFSN_TELEMETRY_EVIDENCE;
++    try {
++        const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
++        const page = await context.newPage();
++        page.on('pageerror', error => errors.push(error.message));
++        page.on('response', response => {
++            if (response.url().endsWith('/stats-api/nodes')) {
++                responses.push(response.status());
++            }
++        });
++        await context.route('**/*', route => {
++            if (new URL(route.request().url()).origin !== url) {
++                foreignRequests.push(route.request().url());
++                return route.abort();
++            }
++            return route.continue();
++        });
++        await page.goto(url, { waitUntil: 'domcontentloaded' });
++        await page.getByRole('button', { name: 'Pin node-a', exact: true }).waitFor();
++        const headers = await page.locator('thead th').allTextContents();
++        assert.deepEqual(headers, ['Pin', 'Connected', 'Location', 'Node / Reports', 'Type', 'Height', 'Block Received', 'Pending Txs', 'Tickets', 'Mining', 'Peers', 'Last Latency']);
++        const row = page.locator('tbody tr');
++        assert.equal(await row.count(), 1);
++        assert.equal(await row.locator('td').count(), headers.length);
++        assert.match(await row.locator('td').nth(5).innerText(), /# 60/);
++        assert.ok((await row.locator('td').nth(5).innerText()).includes(head.hash.slice(0, 6) + ' … ' + head.hash.slice(-4)));
++        assert.equal(await row.locator('td').nth(7).innerText(), '0');
++        assert.equal(await row.locator('td').nth(8).innerText(), '2');
++        assert.equal(await row.locator('td').nth(10).innerText(), '0');
++        assert.equal(await page.locator('[role="progressbar"]').count(), 0);
++        checkpoints.push({ name: 'actual-head', headers, row: await row.innerText() });
++        await page.screenshot({ path: join(output, 'browser-actual.png'), fullPage: true });
++        await page.getByRole('button', { name: 'Pin node-a', exact: true }).click();
++        await page.getByRole('button', { name: 'Unpin node-a', exact: true }).waitFor();
++        assert.equal(await row.locator('td').count(), headers.length);
++        assert.equal(await row.locator('td').nth(10).innerText(), '0');
++        assert.equal(await page.locator('[role="progressbar"]').count(), 0);
++        checkpoints.push({ name: 'pinned-actual-head', row: await row.innerText() });
++        await controls.stopCollection();
++        await page.getByText('Dashboard data unavailable or expired. Retrying automatically.', { exact: false }).waitFor({ timeout: 15000 });
++        assert.equal(await page.locator('tbody tr').count(), 0);
++        assert.equal((await page.locator('body').innerText()).includes('# 60'), false);
++        const duringOutage = await controls.readHead();
++        assert.equal(duringOutage.hash, head.hash);
++        checkpoints.push({ name: 'stopped-writer-expired', directHead: duringOutage.hash, text: await page.locator('[aria-live="polite"]').innerText() });
++        await page.screenshot({ path: join(output, 'browser-expired.png'), fullPage: true });
++        controls.resumeCollection();
++        await page.getByRole('button', { name: 'Unpin node-a', exact: true }).waitFor();
++        assert.equal(await row.count(), 1);
++        assert.match(await row.locator('td').nth(5).innerText(), /# 60/);
++        checkpoints.push({ name: 'writer-recovered', row: await row.innerText() });
++        assert.deepEqual(errors, []);
++        assert.deepEqual(foreignRequests, []);
++        assert.ok(responses.includes(503) && responses[responses.length - 1] === 200);
++        return { browser: browser.version(), checkpoints, errors, foreignRequests, responses };
++    } finally {
++        writeFileSync(join(output, 'browser-checkpoints.json'), JSON.stringify({ checkpoints, errors, foreignRequests, responses }, null, 2) + '\n', 'utf8');
++        await browser.close();
++    }
++}
++
++module.exports = checkBrowser;

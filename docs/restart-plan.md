@@ -231,9 +231,16 @@ the unchanged collector, PostgreSQL and HTTP API: 51 distinct synthetic blocks
 match direct RPC, as do ticket, peer, pending and mining values. It confirms a
 legacy sync-flag/RPC mismatch and literal reported uptime. A fifty-block reply
 with only ten transactions per block can exceed the 64 KiB test input limit.
-Compatible browser labels, production payload/resource sizing, complete report
-validation, actual browser/outage acceptance, runtime review and
-proxy/TLS/deployment controls remain open.
+The [presentation and busier telemetry follow-up](restart-dashboard-presentation.md)
+removes the ambiguous sync/uptime columns and passes eight DOM tests, the strict
+build and four compiled Edge checkpoints through the actual node/database/API
+pipeline, including snapshot-writer loss and recovery. Sixty blocks with ten
+transactions each produce a measured 66,076-byte history reply, accepted with an
+explicit 128 KiB fixture limit. An offline model and source review identify
+transaction-hash retention as the next memory issue; those test limits are not
+deployment defaults. Complete report validation, compact chart retention,
+production payload/resource sizing, collector loss during mining, runtime
+review and proxy/TLS/deployment controls remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -292,11 +299,12 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: settle the legacy sync/uptime display semantics and the supported payload
-   envelope from the [actual efsn comparison](restart-dashboard-telemetry.md), then
-   complete report validation, actual browser/outage acceptance, reviewed
-   runtime/dependencies and TLS/deployment controls. The public dashboard gate
-   remains open; the small fixture limits are not deployment defaults.
+1. G6: validate complete report fields and compact chart retention, then measure
+   a bounded larger-report/multiple-node profile and align deployment budgets.
+   The [compiled browser acceptance](restart-dashboard-presentation.md) passes
+   with actual efsn data and writer expiry/recovery; collector loss during mining,
+   runtime/dependency review and TLS/deployment controls remain open. The public
+   dashboard gate remains open; fixture limits are not deployment defaults.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;
