@@ -1,0 +1,501 @@
+From 3ddd7559783de303216bdb361a564d6fd6779d9e Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 11:43:32 +0200
+Subject: [PATCH] Fix PostgreSQL driver compatibility and bound database waits
+
+---
+ README.md                        |  4 ++
+ db/index.js                      |  2 +
+ docs/deployment-configuration.md | 14 +++++
+ docs/postgres-validation.md      | 46 +++++++++++++++
+ lib/deployment-config.js         |  7 +++
+ package-lock.json                | 99 ++++++++++++++------------------
+ package.json                     |  3 +-
+ test/deployment-config.test.cjs  |  7 ++-
+ test/deployment-wiring.test.cjs  | 10 ++--
+ test/postgres.test.cjs           | 75 ++++++++++++++++++++++++
+ 10 files changed, 202 insertions(+), 65 deletions(-)
+ create mode 100644 docs/postgres-validation.md
+ create mode 100644 test/postgres.test.cjs
+
+diff --git a/README.md b/README.md
+index 2d39c75..00fe4fd 100644
+--- a/README.md
++++ b/README.md
+@@ -18,5 +18,9 @@ collector WebSocket check. Install dependencies from the existing lock with
+ `npm ci --ignore-scripts --no-audit --no-fund` for these local checks; this does
+ not constitute a dependency advisory review or production runtime selection.
+ 
++The pinned PostgreSQL driver has [real database validation](docs/postgres-validation.md).
++That optional suite requires a disposable cluster and does not validate the
++legacy persistence pipeline. Database processes now also require `DB_TIMEOUT_MS`.
++
+ No validator signing keys are required by this dashboard. Telemetry enrollment
+ is independent of participation in block production.
+diff --git a/db/index.js b/db/index.js
+index 4106376..a892b71 100644
+--- a/db/index.js
++++ b/db/index.js
+@@ -2,9 +2,11 @@ const config = require('../lib/deployment-config').loadDatabaseConfig(process.en
+ const { Pool } = require('pg')
+ 
+ const pool = new Pool(config);
++pool.on('error', () => console.error('Dashboard database pool connection failed'));
+ 
+ 
+  module.exports = {
++     close: () => pool.end(),
+      query: (text, params, callback) => {
+          return pool.query(text, params, callback)
+      },
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index a7fb8b1..8897a58 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -24,6 +24,7 @@ need acceptance work. These settings are not a production launch approval.
+ | Persistence and API | `DB_NAME` | Provisioned database name |
+ | Persistence and API | `DB_USER` | Provisioned role for this process |
+ | Persistence and API | `DB_PASSWORD_FILE` | Absolute path to a private UTF-8 password file |
++| Persistence and API | `DB_TIMEOUT_MS` | Positive integer limit for connection, server statement and client query waits |
+ | Browser build | `REACT_APP_STATS_API_PATH` | Same-origin API prefix, such as `/stats-api` |
+ 
+ Listeners accept 0 for disposable ephemeral-port tests. Deployed services need
+@@ -46,6 +47,19 @@ ownership, schema creation and migrations belong to a separate administrative
+ role. Configuration validation cannot verify PostgreSQL grants or host access
+ rules; those need an actual database acceptance test.
+ 
++`DB_TIMEOUT_MS` is required, from 1 to 2147483647 milliseconds. The same value is
++passed to the driver's connection timeout, server statement timeout and client
++query timeout. Tests use 1000 ms; choose the deployed value using measured query
++latency. A timeout returns an error; it does not automatically retry a write or
++prove a write was rolled back. The persistence rewrite must recover from a fresh
++collector snapshot and define write retry behavior.
++
++The driver is pinned to `pg` 8.23.1. The inherited 7.12.1 driver failed the Node
++22.11.0 connection check against a disposable PostgreSQL 18.6 server that native
++`psql` could reach. The replacement passes that check and the adapter's database
++tests. This is a tested combination, not approval of the complete dependency
++tree or selection of the final production runtime. See [database validation](postgres-validation.md).
++
+ `COLLECTOR_WS_URL` permits WS only to the numeric loopback addresses, or WSS to
+ a configured host. Credentials in the URL, query strings, fragments and other
+ paths are refused. Persistence consumes the viewer stream; it does not receive
+diff --git a/docs/postgres-validation.md b/docs/postgres-validation.md
+new file mode 100644
+index 0000000..8792532
+--- /dev/null
++++ b/docs/postgres-validation.md
+@@ -0,0 +1,46 @@
++# PostgreSQL compatibility validation
++
++The driver is pinned to `pg` 8.23.1 after reproducing a connection failure with
++7.12.1 on Windows Node 22.11.0. The old driver checks a new socket's `readyState`
++and emits its connected event when the value is `open`, instead of calling
++`connect`. Node 22.11.0 reports that state for the unconnected socket in this
++environment. A native `psql` control succeeded while the old driver reached its
++connection timeout. No workaround or monkeypatch was added to the driver.
++
++The updated package and its PostgreSQL-related dependencies are locked. The
++other dashboard dependency entries and the frontend/API lockfiles are unchanged.
++The broader dependency/runtime review remains open.
++
++## Real database tests
++
++`npm run test:postgres` requires an explicitly provisioned, disposable, empty
++PostgreSQL cluster. It does not create or stop the cluster. The retained
++investigation harness creates a new cluster under ignored scratch storage,
++requires SCRAM authentication, binds only `127.0.0.1` on a temporary port,
++runs the checks, stops the server and removes its generated password file.
++It does not connect to any existing database. PostgreSQL 18.6 was used.
++
++Set `TEST_PG_PORT` and `TEST_PG_PASSWORD_FILE` to that cluster's temporary port
++and absolute UTF-8 admin password file. The test connects to database `postgres`
++as `dashboard_test_admin` and creates a test table and reader role. Never point
++it at a production or shared development database. The test adapter explicitly
++uses `DB_TIMEOUT_MS=1000` and the required loopback configuration.
++
++Five scenarios cover:
++
++- Parameterized insertion/upsert/read of ordinary apostrophes, Unicode, JSON
++  and full UTC timestamps across midnight and a year boundary.
++- A separate reader role that can read but cannot delete or alter the table.
++- Server statement and client query limits, with a usable pool afterwards.
++- A connection deadline when a local test peer accepts TCP but never authenticates.
++- Recovery after rejected SQL, preserving the stored report.
++
++The five scenarios plus their enclosing test produce six passing TAP entries.
++The 86 configuration/authentication/wiring contracts and real collector wire
++check also pass. `db.close()` permits explicit pool cleanup; idle pool errors
++have a fixed log message that omits connection credentials and server detail.
++
++These tests exercise the generic database adapter. They do not exercise the
++legacy `Populate` SQL, persistence client, historical schema or full browser
++pipeline. Those documented blockers still need correction. Do not interpret
++driver success as permission to run `POSTGRESQL_Setup.sh` or public deployment.
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index 342d12d..b4baa41 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -36,6 +36,10 @@ function loadDatabaseConfig(environment) {
+     if (environment.SQLHOST !== undefined || environment.SQLPASS !== undefined) {
+         throw new Error('SQLHOST and SQLPASS are unsupported; configure DB_* settings');
+     }
++    const timeout = requiredSetting(environment, 'DB_TIMEOUT_MS');
++    if (!/^[1-9][0-9]{0,9}$/.test(timeout) || Number(timeout) > 2147483647) {
++        throw new Error('DB_TIMEOUT_MS must be an integer from 1 to 2147483647');
++    }
+     const config = {
+         host: loopbackHost(environment, 'DB_HOST'),
+         port: portNumber(environment, 'DB_PORT', 1),
+@@ -43,6 +47,9 @@ function loadDatabaseConfig(environment) {
+         user: requiredSetting(environment, 'DB_USER'),
+         ssl: false,
+         max: 5,
++        connectionTimeoutMillis: Number(timeout),
++        statement_timeout: Number(timeout),
++        query_timeout: Number(timeout),
+     };
+     const file = requiredSetting(environment, 'DB_PASSWORD_FILE');
+     if (!isAbsolute(file)) {
+diff --git a/package-lock.json b/package-lock.json
+index b873196..0b4f887 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -212,11 +212,6 @@
+       "resolved": "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.1.tgz",
+       "integrity": "sha512-MQcXEUbCKtEo7bhqEs6560Hyd4XaovZlO/k9V3hjVUF/zwW7KBVdSK4gIt/bzwS9MbR5qob+F5jusZsb0YQK2A=="
+     },
+-    "buffer-writer": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/buffer-writer/-/buffer-writer-2.0.0.tgz",
+-      "integrity": "sha512-a7ZpuTZU1TRtnwyCNW3I5dc0wWNC3VR9S++Ewyk2HHZdrO3CQJqSpd+95Us590V6AL7JqUAH2IwZ/398PmNFgw=="
+-    },
+     "buffers": {
+       "version": "0.1.1",
+       "resolved": "https://registry.npmjs.org/buffers/-/buffers-0.1.1.tgz",
+@@ -1655,11 +1650,6 @@
+       "resolved": "https://registry.npmjs.org/over/-/over-0.0.5.tgz",
+       "integrity": "sha1-8phS5w/X4l82DgE6jsRMgq7bVwg="
+     },
+-    "packet-reader": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/packet-reader/-/packet-reader-1.0.0.tgz",
+-      "integrity": "sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ=="
+-    },
+     "pako": {
+       "version": "0.2.9",
+       "resolved": "https://registry.npmjs.org/pako/-/pako-0.2.9.tgz",
+@@ -1719,30 +1709,28 @@
+       }
+     },
+     "pg": {
+-      "version": "7.12.1",
+-      "resolved": "https://registry.npmjs.org/pg/-/pg-7.12.1.tgz",
+-      "integrity": "sha512-l1UuyfEvoswYfcUe6k+JaxiN+5vkOgYcVSbSuw3FvdLqDbaoa2RJo1zfJKfPsSYPFVERd4GHvX3s2PjG1asSDA==",
+-      "requires": {
+-        "buffer-writer": "2.0.0",
+-        "packet-reader": "1.0.0",
+-        "pg-connection-string": "0.1.3",
+-        "pg-pool": "^2.0.4",
+-        "pg-types": "^2.1.0",
+-        "pgpass": "1.x",
+-        "semver": "4.3.2"
+-      },
+-      "dependencies": {
+-        "semver": {
+-          "version": "4.3.2",
+-          "resolved": "https://registry.npmjs.org/semver/-/semver-4.3.2.tgz",
+-          "integrity": "sha1-x6BxWKgL7dBSNVt3DYLWZA+AO+c="
+-        }
+-      }
++      "version": "8.23.1",
++      "resolved": "https://registry.npmjs.org/pg/-/pg-8.23.1.tgz",
++      "integrity": "sha512-aL96AHANtWjPLDOLqnhx+ngp9+UK7ETEU8VJrDCGvsSSi/mGLcWYsS6Herg7lmaBJe4uwrfqsa7gTEFaSizDoQ==",
++      "requires": {
++        "pg-cloudflare": "^1.4.1",
++        "pg-connection-string": "^2.14.1",
++        "pg-pool": "^3.14.0",
++        "pg-protocol": "^1.16.1",
++        "pg-types": "2.2.0",
++        "pgpass": "1.0.5"
++      }
++    },
++    "pg-cloudflare": {
++      "version": "1.4.1",
++      "resolved": "https://registry.npmjs.org/pg-cloudflare/-/pg-cloudflare-1.4.1.tgz",
++      "integrity": "sha512-6PQbsFWZcp9EmJEwy5cGQ2La+AMWpP46lgbb8X+U/XsHIUweYDNCpeuKck5RxL2MdVFi7krbbEi5nX4Zh7JhrQ==",
++      "optional": true
+     },
+     "pg-connection-string": {
+-      "version": "0.1.3",
+-      "resolved": "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-0.1.3.tgz",
+-      "integrity": "sha1-2hhHsglA5C7hSSvq9l1J2RskXfc="
++      "version": "2.14.1",
++      "resolved": "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.14.1.tgz",
++      "integrity": "sha512-qR3kGNPBLpCNtz0evbKA0Y/MRFXwSSdT+pTJvYp/bXTcReZbvX1kzF0IyTc1QnxqF7AZbOeBhNL8R5mYQZV/MA=="
+     },
+     "pg-int8": {
+       "version": "1.0.1",
+@@ -1750,9 +1738,14 @@
+       "integrity": "sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw=="
+     },
+     "pg-pool": {
+-      "version": "2.0.7",
+-      "resolved": "https://registry.npmjs.org/pg-pool/-/pg-pool-2.0.7.tgz",
+-      "integrity": "sha512-UiJyO5B9zZpu32GSlP0tXy8J2NsJ9EFGFfz5v6PSbdz/1hBLX1rNiiy5+mAm5iJJYwfCv4A0EBcQLGWwjbpzZw=="
++      "version": "3.14.0",
++      "resolved": "https://registry.npmjs.org/pg-pool/-/pg-pool-3.14.0.tgz",
++      "integrity": "sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw=="
++    },
++    "pg-protocol": {
++      "version": "1.16.1",
++      "resolved": "https://registry.npmjs.org/pg-protocol/-/pg-protocol-1.16.1.tgz",
++      "integrity": "sha512-p9VOFMiHB/ZbJATetbg+99PxssTVSQRnyuPSQ67mN1+1KBOjZaZ83ZQzltnxPhJwSsC3nwVjJ10DVJlerbFzLg=="
+     },
+     "pg-types": {
+       "version": "2.2.0",
+@@ -1767,11 +1760,11 @@
+       }
+     },
+     "pgpass": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/pgpass/-/pgpass-1.0.2.tgz",
+-      "integrity": "sha1-Knu0G2BltnkH6R2hsHwYR8h3swY=",
++      "version": "1.0.5",
++      "resolved": "https://registry.npmjs.org/pgpass/-/pgpass-1.0.5.tgz",
++      "integrity": "sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==",
+       "requires": {
+-        "split": "^1.0.0"
++        "split2": "^4.1.0"
+       }
+     },
+     "pify": {
+@@ -1798,14 +1791,14 @@
+       "integrity": "sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA=="
+     },
+     "postgres-bytea": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/postgres-bytea/-/postgres-bytea-1.0.0.tgz",
+-      "integrity": "sha1-AntTPAqokOJtFy1Hz5zOzFIazTU="
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/postgres-bytea/-/postgres-bytea-1.0.1.tgz",
++      "integrity": "sha512-5+5HqXnsZPE65IJZSMkZtURARZelel2oXUEO8rH83VS/hxH5vv1uHquPg5wZs8yMAfdv971IU+kcPUczi7NVBQ=="
+     },
+     "postgres-date": {
+-      "version": "1.0.4",
+-      "resolved": "https://registry.npmjs.org/postgres-date/-/postgres-date-1.0.4.tgz",
+-      "integrity": "sha512-bESRvKVuTrjoBluEcpv2346+6kgB7UlnqWZsnbnCccTNq/pqfj1j6oBaN5+b/NrDXepYUT/HKadqv3iS9lJuVA=="
++      "version": "1.0.7",
++      "resolved": "https://registry.npmjs.org/postgres-date/-/postgres-date-1.0.7.tgz",
++      "integrity": "sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q=="
+     },
+     "postgres-interval": {
+       "version": "1.2.0",
+@@ -2151,13 +2144,10 @@
+       "resolved": "https://registry.npmjs.org/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz",
+       "integrity": "sha512-J+FWzZoynJEXGphVIS+XEh3kFSjZX/1i9gFBaWQcB+/tmpe2qUsSBABpcxqxnAxFdiUFEgAX1bjYGQvIZmoz9Q=="
+     },
+-    "split": {
+-      "version": "1.0.1",
+-      "resolved": "https://registry.npmjs.org/split/-/split-1.0.1.tgz",
+-      "integrity": "sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==",
+-      "requires": {
+-        "through": "2"
+-      }
++    "split2": {
++      "version": "4.2.0",
++      "resolved": "https://registry.npmjs.org/split2/-/split2-4.2.0.tgz",
++      "integrity": "sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg=="
+     },
+     "statuses": {
+       "version": "1.5.0",
+@@ -2203,11 +2193,6 @@
+       "resolved": "https://registry.npmjs.org/text-hex/-/text-hex-1.0.0.tgz",
+       "integrity": "sha512-uuVGNWzgJ4yhRaNSiubPY7OjISw4sw4E5Uv0wbjp+OzcbmVU/rsT8ujgcXJhn9ypzsgr5vlzpPqP+MBBKcGvbg=="
+     },
+-    "through": {
+-      "version": "2.3.8",
+-      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
+-      "integrity": "sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU="
+-    },
+     "toidentifier": {
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.0.tgz",
+diff --git a/package.json b/package.json
+index a5c8703..1c96fcf 100644
+--- a/package.json
++++ b/package.json
+@@ -6,6 +6,7 @@
+   "scripts": {
+     "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs",
++    "test:postgres": "node --test test/postgres.test.cjs",
+     "start": "node server.js"
+   },
+   "repository": {
+@@ -36,7 +37,7 @@
+     "http2": "^3.3.7",
+     "jade": "1.11.0",
+     "lodash": "3.10.1",
+-    "pg": "^7.12.1",
++    "pg": "8.23.1",
+     "primus": "^6.1.0",
+     "primus-emit": "^1.0.0",
+     "primus-spark-latency": "^0.1.1",
+diff --git a/test/deployment-config.test.cjs b/test/deployment-config.test.cjs
+index c73d914..2a75a0d 100644
+--- a/test/deployment-config.test.cjs
++++ b/test/deployment-config.test.cjs
+@@ -7,7 +7,7 @@ const { credentialFile } = require('./fixtures/collector.cjs');
+ 
+ function databaseEnvironment(t, password = 'synthetic database password') {
+     return {
+-        DB_HOST: '127.0.0.1', DB_PORT: '5439', DB_NAME: 'stats_test', DB_USER: 'stats_writer',
++        DB_HOST: '127.0.0.1', DB_PORT: '5439', DB_NAME: 'stats_test', DB_USER: 'stats_writer', DB_TIMEOUT_MS: '5000',
+         DB_PASSWORD_FILE: credentialFile(t, password, true),
+     };
+ }
+@@ -31,7 +31,7 @@ test('database settings use explicit values and preserve password whitespace', t
+ 
+     const result = loadDatabaseConfig(environment);
+ 
+-    assert.deepEqual(result, { host: '127.0.0.1', port: 5439, database: 'stats_test', user: 'stats_writer', password: ' synthetic database password ', max: 5, ssl: false });
++    assert.deepEqual(result, { host: '127.0.0.1', port: 5439, database: 'stats_test', user: 'stats_writer', password: ' synthetic database password ', max: 5, ssl: false, connectionTimeoutMillis: 5000, statement_timeout: 5000, query_timeout: 5000 });
+ });
+ 
+ test('all database settings are required and legacy defaults cannot reappear', t => {
+@@ -44,6 +44,9 @@ test('all database settings are required and legacy defaults cannot reappear', t
+     assert.throws(() => loadDatabaseConfig({ ...environment, SQLPASS: 'private-value' }), { message: 'SQLHOST and SQLPASS are unsupported; configure DB_* settings' });
+     assert.throws(() => loadDatabaseConfig({ ...environment, DB_HOST: '192.0.2.10' }), /DB_HOST/);
+     assert.throws(() => loadDatabaseConfig({ ...environment, DB_PORT: '0' }), /DB_PORT/);
++    for (const timeout of ['0', '-1', '1.5', '1000x', '2147483648']) {
++        assert.throws(() => loadDatabaseConfig({ ...environment, DB_TIMEOUT_MS: timeout }), /DB_TIMEOUT_MS/);
++    }
+ });
+ 
+ test('database password read errors omit paths and password contents', t => {
+diff --git a/test/deployment-wiring.test.cjs b/test/deployment-wiring.test.cjs
+index dd99341..ea38432 100644
+--- a/test/deployment-wiring.test.cjs
++++ b/test/deployment-wiring.test.cjs
+@@ -27,7 +27,7 @@ function loadDatabase(environment, Pool) {
+ }
+ 
+ function databaseEnvironment(t) {
+-    return { DB_HOST: '127.0.0.1', DB_PORT: '5439', DB_NAME: 'stats_test', DB_USER: 'stats_reader', DB_PASSWORD_FILE: credentialFile(t, 'synthetic-password', true) };
++    return { DB_HOST: '127.0.0.1', DB_PORT: '5439', DB_NAME: 'stats_test', DB_USER: 'stats_reader', DB_TIMEOUT_MS: '5000', DB_PASSWORD_FILE: credentialFile(t, 'synthetic-password', true) };
+ }
+ 
+ test('collector passes explicit settings to listen and refuses missing or public binds', t => {
+@@ -45,18 +45,18 @@ test('collector passes explicit settings to listen and refuses missing or public
+ test('database pool receives configured credentials without inherited defaults', t => {
+     const environment = databaseEnvironment(t);
+     let actual;
+-    class Pool { constructor(settings) { actual = settings; } }
++    class Pool { constructor(settings) { actual = settings; } on() {} }
+ 
+     loadDatabase(environment, Pool);
+ 
+-    assert.deepEqual(actual, { host: '127.0.0.1', port: 5439, database: 'stats_test', user: 'stats_reader', password: 'synthetic-password', max: 5, ssl: false });
++    assert.deepEqual(actual, { host: '127.0.0.1', port: 5439, database: 'stats_test', user: 'stats_reader', password: 'synthetic-password', max: 5, ssl: false, connectionTimeoutMillis: 5000, statement_timeout: 5000, query_timeout: 5000 });
+ });
+ 
+ test('invalid database configuration stops before constructing a pool', () => {
+     let constructions = 0;
+     class Pool { constructor() { constructions++; } }
+ 
+-    assert.throws(() => loadDatabase({}, Pool), /DB_HOST/);
++    assert.throws(() => loadDatabase({}, Pool), /DB_TIMEOUT_MS/);
+     assert.equal(constructions, 0);
+ });
+ 
+@@ -101,7 +101,7 @@ test('persistence uses the configured URL and validates database settings before
+     let initializations = 0;
+     class Populate { initDbAndTables() { initializations++; } }
+     class WebSocket { constructor(url) { this.readyState = 0; this.OPEN = 1; connections.push(url); } }
+-    class Pool {}
++    class Pool { on() {} }
+     const requireDependency = name => {
+         if (name === '../lib/deployment-config') return config;
+         if (name === '../db_methods/populate') {
+diff --git a/test/postgres.test.cjs b/test/postgres.test.cjs
+new file mode 100644
+index 0000000..dfb7946
+--- /dev/null
++++ b/test/postgres.test.cjs
+@@ -0,0 +1,75 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const net = require('node:net');
++const { once } = require('node:events');
++const { Pool } = require('pg');
++const { loadDatabaseConfig } = require('../lib/deployment-config');
++
++if (!process.env.TEST_PG_PORT || !process.env.TEST_PG_PASSWORD_FILE) {
++    throw new Error('Run PostgreSQL integration tests only with an explicitly provisioned disposable TEST_PG_PORT and TEST_PG_PASSWORD_FILE');
++}
++Object.assign(process.env, {
++    DB_HOST: '127.0.0.1', DB_PORT: process.env.TEST_PG_PORT,
++    DB_NAME: 'postgres', DB_USER: 'dashboard_test_admin',
++    DB_PASSWORD_FILE: process.env.TEST_PG_PASSWORD_FILE, DB_TIMEOUT_MS: '1000',
++});
++const db = require('../db');
++
++test('configured database adapter works against disposable SCRAM PostgreSQL', { timeout: 15000 }, async t => {
++    t.after(() => db.close());
++
++    await t.test('parameterized JSON and full UTC timestamps survive insert, upsert and read', async () => {
++        const name = "Peter's test node — Å";
++        const report = { info: { name }, stats: { block: { number: 15130080, timestamp: 1704067200 }, myTicketNumber: 1 } };
++        await db.query('CREATE TABLE driver_roundtrip (id text PRIMARY KEY, observed_at timestamptz NOT NULL, report jsonb NOT NULL)');
++        await db.query('INSERT INTO driver_roundtrip VALUES ($1, $2, $3::jsonb)', ['node-a', '2025-12-31T23:59:59.123Z', JSON.stringify({ previous: true })]);
++
++        await db.query('INSERT INTO driver_roundtrip VALUES ($1, $2, $3::jsonb) ON CONFLICT (id) DO UPDATE SET observed_at = EXCLUDED.observed_at, report = EXCLUDED.report', ['node-a', '2026-01-01T00:00:01.456Z', JSON.stringify(report)]);
++        const result = await db.query('SELECT id, observed_at, report FROM driver_roundtrip ORDER BY id');
++
++        assert.deepEqual(result.rows, [{ id: 'node-a', observed_at: new Date('2026-01-01T00:00:01.456Z'), report }]);
++    });
++
++    await t.test('reader role can read but cannot write or alter the table', async () => {
++        await db.query("CREATE ROLE dashboard_test_reader LOGIN PASSWORD 'synthetic-reader-password-only'");
++        await db.query('GRANT SELECT ON driver_roundtrip TO dashboard_test_reader');
++        const reader = new Pool({ ...loadDatabaseConfig(process.env), user: 'dashboard_test_reader', password: 'synthetic-reader-password-only' });
++        try {
++            const result = await reader.query('SELECT id FROM driver_roundtrip ORDER BY id');
++            assert.deepEqual(result.rows, [{ id: 'node-a' }]);
++            await assert.rejects(reader.query('DELETE FROM driver_roundtrip'), { code: '42501' });
++            await assert.rejects(reader.query('ALTER TABLE driver_roundtrip ADD COLUMN extra text'), { code: '42501' });
++        } finally {
++            await reader.end();
++        }
++    });
++
++    await t.test('statement timeout cancels a slow query and leaves the pool usable', async () => {
++        const result = await db.query('SHOW statement_timeout');
++        assert.deepEqual(result.rows, [{ statement_timeout: '1s' }]);
++        await assert.rejects(db.query('SELECT pg_sleep(3)'), error => /timeout/.test(error.message));
++        const after = await db.query('SELECT 42::integer AS value');
++        assert.deepEqual(after.rows, [{ value: 42 }]);
++    });
++
++    await t.test('connection timeout bounds a peer that accepts TCP but never authenticates', async () => {
++        const sockets = new Set();
++        const server = net.createServer(socket => { sockets.add(socket); socket.on('error', () => {}); socket.on('close', () => sockets.delete(socket)); });
++        server.listen(0, '127.0.0.1');
++        await once(server, 'listening');
++        const stalled = new Pool({ ...loadDatabaseConfig(process.env), port: server.address().port });
++        try {
++            await assert.rejects(stalled.query('SELECT 1'), error => /timeout/.test(error.message));
++        } finally {
++            await stalled.end();
++            for (const socket of sockets) socket.destroy();
++            await new Promise(resolve => server.close(resolve));
++        }
++    });
++
++    await t.test('rejected SQL does not exhaust the pool or change the stored report', async () => {
++        await assert.rejects(db.query('SELECT missing_column FROM driver_roundtrip'), { code: '42703' });
++        const result = await db.query("SELECT id, report #>> '{info,name}' AS name FROM driver_roundtrip");
++        assert.deepEqual(result.rows, [{ id: 'node-a', name: "Peter's test node — Å" }]);
++    });
++});

@@ -1,0 +1,6 @@
+{
+  "issue": "PostgreSQL started, but its inherited Windows stdout pipe kept subprocess.communicate waiting after pg_ctl startup. The driver's probe did not run.",
+  "recovery": "Explicit pg_ctl fast stop against only tmp/dashboard-postgres-adc6c3ab5913/data; output confirmed server stopped and subsequent status reported no server running.",
+  "fix": "Redirect child output to evidence files instead of capture pipes and use closed stdin.",
+  "application_result": "Not tested in this attempt"
+}

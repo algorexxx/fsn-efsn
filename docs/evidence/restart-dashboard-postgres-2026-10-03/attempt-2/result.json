@@ -1,0 +1,105 @@
+{
+  "mode": "baseline",
+  "dashboard_directory": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth",
+  "scratch_directory": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a",
+  "source_sha256": {
+    "package.json": "bedc5f20d3c820f2ff505b7c7c368197b124ed3ce144cb4c1b67282de7940e6a",
+    "package-lock.json": "3e911183e108ace38bbab66670cfc921b49c402c5b136d5c80b9bcbc5e993c18",
+    "db/index.js": "460114bc95969edd267c2d68afc2aa8261da46309170cce6d5346b2a27b02eb2",
+    "lib/deployment-config.js": "ee3d03f3b4c9a54b96efc97c92e62a0d5aa59c22c576ca4f743e5887f80114d5",
+    "test/deployment-config.test.cjs": "9756fe6b3b400407de3c5a993a50114199bd0885ac488d9fa59bca37fde09fbf",
+    "test/deployment-wiring.test.cjs": "382aff39616371c6d93bc229fbe6c6f01488a98813a3128f58e31e3491c1cc77"
+  },
+  "commands": [
+    {
+      "name": "initdb",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\initdb.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a\\data",
+        "-U",
+        "dashboard_test_admin",
+        "-A",
+        "scram-sha-256",
+        "--pwfile",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a\\password.txt",
+        "--encoding=UTF8",
+        "--locale=C"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "start",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a\\data",
+        "-l",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a\\postgres.log",
+        "-o",
+        "-h 127.0.0.1 -p 49704 -c shared_buffers=16MB -c max_connections=10",
+        "-w",
+        "start"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "psql-control",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "49704",
+        "-U",
+        "dashboard_test_admin",
+        "-d",
+        "postgres",
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-At",
+        "-c",
+        "SELECT 42::integer"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "driver-probe",
+      "command": [
+        "node",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\docs\\evidence\\restart-dashboard-postgres-2026-10-03\\probe.cjs"
+      ],
+      "exit": 1
+    },
+    {
+      "name": "stop",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a\\data",
+        "-m",
+        "fast",
+        "-w",
+        "stop"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "stopped-status",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-5bdc3871425a\\data",
+        "status"
+      ],
+      "exit": 3
+    }
+  ],
+  "expected_outcome_passed": true,
+  "node": "v22.11.0",
+  "pg": "7.12.1",
+  "postgres": "postgres (PostgreSQL) 18.6",
+  "password_file_removed": true,
+  "scope": "Disposable new SCRAM-authenticated loopback-only PostgreSQL cluster; no existing database accessed. Cluster stopped and data retained in ignored scratch directory."
+}

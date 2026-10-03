@@ -200,7 +200,11 @@ real loopback collector test passed with unchanged locked dependencies. The
 to 86 passing contracts and one real collector wire test, including a real HTTP
 API check with stubbed storage. Endpoints, loopback listeners and database
 credentials now require explicit configuration. Inherited persistence, timer,
-SQL and schema problems are recorded as the next blockers. Full
+SQL and schema problems are recorded as the next blockers. A
+[real PostgreSQL compatibility check](restart-dashboard-postgres.md) then exposed
+and corrected the old driver's connection failure on Node 22.11.0. The pinned
+replacement and explicit database timeouts pass five real database scenarios;
+the legacy persistence path remains untested. Full
 storage/API/browser/TLS integration, resource limits and deployment remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
