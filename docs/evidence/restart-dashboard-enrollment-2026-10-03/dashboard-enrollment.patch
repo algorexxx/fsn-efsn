@@ -1,0 +1,743 @@
+From 63d1b14df79aa01f8bf16e2338fc510d753b1a97 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 19:03:39 +0200
+Subject: [PATCH] Bound complete dashboard heads and total credential
+ enrollment
+
+---
+ docs/deployment-configuration.md        |  12 +-
+ docs/head-and-enrollment-limits.md      |  96 ++++++++++++++++
+ docs/telemetry-enrollment.md            |  10 ++
+ lib/collection.js                       |  18 ++-
+ lib/deployment-config.js                |   2 +
+ lib/telemetry-credentials.js            |   8 +-
+ lib/telemetry-head.js                   |  26 +++++
+ lib/telemetry-info.js                   |   7 +-
+ package.json                            |   2 +-
+ server.js                               |   6 +-
+ test/collector-input.test.cjs           |   2 +-
+ test/dashboard-profile.test.cjs         |   2 +-
+ test/enrollment-profile.test.cjs        | 140 ++++++++++++++++++++++++
+ test/fixtures/budget-report.cjs         |  23 ++++
+ test/fixtures/collector-environment.cjs |   2 +
+ test/head-budget.test.cjs               |  95 ++++++++++++++++
+ test/history.test.cjs                   |   4 +-
+ test/report-freshness.test.cjs          |   2 +-
+ test/telemetry-credentials.test.cjs     |   6 +-
+ test/telemetry-report.test.cjs          |   2 +-
+ 20 files changed, 445 insertions(+), 20 deletions(-)
+ create mode 100644 docs/head-and-enrollment-limits.md
+ create mode 100644 lib/telemetry-head.js
+ create mode 100644 test/enrollment-profile.test.cjs
+ create mode 100644 test/fixtures/budget-report.cjs
+ create mode 100644 test/head-budget.test.cjs
+
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 1087fd8..96c3f5a 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -20,6 +20,8 @@ input/output/snapshot budgets and records the remaining admission limits.
+ | Collector | `COLLECTOR_HOST` | `127.0.0.1` or `::1` |
+ | Collector | `COLLECTOR_PORT` | Explicit listener port |
+ | Collector | `COLLECTOR_MAX_MESSAGE_BYTES` | Incoming WebSocket messages must be strictly smaller than this byte threshold |
++| Collector | `COLLECTOR_MAX_HEAD_BYTES` | Maximum projected complete-head JSON bytes before collector timing fields; see [head limits](head-and-enrollment-limits.md) |
++| Collector | `COLLECTOR_MAX_NODES` | Maximum total credential identities, including disconnected nodes; coordinate with `SNAPSHOT_MAX_NODES` |
+ | Collector | `COLLECTOR_MAX_CONNECTIONS` | Shared TCP connection cap for all collector paths |
+ | Collector | `COLLECTOR_HELLO_TIMEOUT_MS` | Maximum wait for completed telemetry registration after WebSocket connection |
+ | Collector | `COLLECTOR_MESSAGES_PER_SECOND` | Per-connection application-message refill rate and initial burst allowance |
+@@ -125,7 +127,9 @@ checks, and [compiled browser acceptance](build-validation.md) now passes locall
+ Complete actual efsn telemetry, production runtime/dependency review, remaining
+ resource limits and TLS/proxy acceptance before public use.
+ 
+-Registration and telemetry ping fields now follow the bounded native efsn
+-[admission contract](metadata-admission.md). Its metadata limit precedes the
+-Primus-derived IP field; proxy forwarding headers and aggregate head/roster
+-budgets still require review before choosing deployment limits.
++Registration and telemetry ping fields follow the bounded native efsn
++[admission contract](metadata-admission.md). Complete heads, total credential
++enrollment and appended IP literals now follow [head/enrollment limits](head-and-enrollment-limits.md),
++with a measured coordinated eight-node candidate. Neither process automatically
++validates the other process's settings. Proxy/TLS and forwarding-header
++normalization still require deployment acceptance.
+diff --git a/docs/head-and-enrollment-limits.md b/docs/head-and-enrollment-limits.md
+new file mode 100644
+index 0000000..a14b640
+--- /dev/null
++++ b/docs/head-and-enrollment-limits.md
+@@ -0,0 +1,96 @@
++# Head reports and total enrollment
++
++3 October 2026. The collector requires two additional explicit settings:
++
++| Setting | Meaning |
++| --- | --- |
++| `COLLECTOR_MAX_HEAD_BYTES` | Maximum UTF-8 JSON size of a projected complete head, before collector timing fields |
++| `COLLECTOR_MAX_NODES` | Maximum number of identities in the startup credential file, including disconnected identities |
++
++Both are positive integers, with no defaults. A credential roster exceeding the
++enrollment limit stops startup before listener construction. Two credentials for
++one identity during rotation consume one slot. Credentials are loaded once;
++changing the roster requires the existing collector restart procedure, which
++also clears its in-memory node/history inventory. All retained inactive nodes
++therefore remain within the same roster bound. The TCP connection cap is separate.
++Set persistence `SNAPSHOT_MAX_NODES` at least as high as the collector roster cap.
++Separate process environments are not automatically cross-validated.
++
++Complete `block` and combined `update` reports are structurally validated, then
++projected to the supported native fields. Every transaction hash and supported
++uncle-header field is retained. Unknown head, transaction and uncle extensions
++are discarded; their incoming bytes still count toward the whole-message cap.
++The projection reuses the existing scalar chart-field mapping, adding complete
++transaction hashes and uncle headers instead of chart counts. It has fixed
++object depth; it does not serialize arbitrary nested extensions.
++
++If that projected head exceeds the configured limit, the entire report is
++rejected before head, history or receipt mutation. Transaction lists are never
++truncated. The session can submit a later acceptable report, and the ordinary
++freshness rules expire the previous head in the meantime. History backfill keeps
++its existing structural validation, fifty-block limit, input byte cap and compact
++chart representation; it does not retain complete historical transaction arrays.
++
++Registration also checks that the Primus-derived address is an IPv4/IPv6 literal
++of at most 45 characters, without an interface scope suffix. The IP added after
++the earlier 2048-byte metadata projection therefore contributes at most 53
++additional JSON bytes. This bounds the field, not its authenticity. Proxy header
++normalization remains required; dashboard geolocation is not peer verification.
++
++## Tested candidate profile
++
++The measured candidate uses 8 enrolled identities, 65536-byte heads, 4 MiB input,
++1 MiB pending output and 1 MiB snapshot messages. These are explicit test values,
++not automatically selected defaults or final production approval. Larger valid
++chain blocks can need a larger dashboard budget; remeasure coordinated limits
++before increasing enrollment or supported report size. Dashboard rejection does
++not change block acceptance, signing, mining or peer admission in efsn.
++
++A sizing run registers eight 64-character identities sequentially under a
++three-TCP-connection cap. Metadata includes U+2028 to exercise Primus JSON
++escaping. Each has exactly 2048 bytes of metadata and 65536 bytes
++of projected head data, including all 714 hashes. All eight disconnect and remain
++in inventory. One reconnects using its rotating credential and replaces its head
++without adding a row. Both API routes preserve complete native fields. Oversized
++single/combined reports leave heads, receipts and chart cache unchanged. These
++are synthetic telemetry objects; padded uncle extra data exercises byte admission
++and is not evidence of consensus-valid uncle headers or chain throughput.
++
++| Quantity | Boundary run |
++| --- | ---: |
++| Fifty-head history message | 3,276,956 bytes |
++| Largest inventory message | 561,635 bytes |
++| Largest stored snapshot JSON | 554,917 bytes |
++| Chart message | 8,798 bytes |
++| HTTP `/nodes` | 589,075 bytes |
++| HTTP `/blocks` | 549,897 bytes |
++
++Both the all-inactive and reconnected snapshots save successfully with zero
++writer errors or output rejections. The prior eight-concurrent-reporter workload
++also passes with these new guards and four advancing snapshots. These runs do
++not simulate public viewer fan-out, arbitrary queued traffic or a prolonged soak.
++The output guard can still disconnect a slow consumer whose queued writes exceed
++its cap even when each individual inventory fits.
++
++For budget review, allow `N * (H + 8192) + 32768` bytes for one inventory plus
++charts under the current schema and locked dependencies: 622592 bytes for this
++profile. The 8 KiB per-node allowance covers up to 4149 wire bytes for metadata/IP
++(including Primus U+2028/U+2029 escaping), 1024 for GeoIP, 1001 for forty
++propagation numbers, 1024 for scalar stats/uptime/receipts, 256 for added timing,
++and 256 for identity/socket ID and outer JSON structure: 7710 bytes in total. The 32 KiB chart allowance covers forty-entry
++scalar arrays (including 78-digit difficulties), histogram bins and two miners.
++This is a conservative schema-based sizing allowance, not a runtime queue/memory
++guarantee. Include frame overhead and queued events when setting transport limits;
++repeat the review if schemas, plugins or dependency versions change.
++
++Validation: six new regressions fail on the previous source; 173 contracts and
++13 existing socket tests pass. Boundary enrollment, concurrent eight-reporter
++and actual efsn/database/API/browser checks pass. The original failed boundary
++attempt expected unknown (`null`) freshness on disconnected known reports;
++the existing API correctly returns zero. Only the test expectation was corrected.
++All five disposable databases are stopped and password files removed.
++
++Review evidence: node repository
++`docs/evidence/restart-dashboard-enrollment-2026-10-03/`.
++Next deployment work: selected proxy/TLS routing and forwarding headers,
++collector loss during mining, runtime/dependency review and supervision.
+diff --git a/docs/telemetry-enrollment.md b/docs/telemetry-enrollment.md
+index 62c864f..e668be5 100644
+--- a/docs/telemetry-enrollment.md
++++ b/docs/telemetry-enrollment.md
+@@ -79,6 +79,16 @@ Enrollment grants dashboard visibility only. A Fusion node can synchronize,
+ buy tickets and produce blocks without being enrolled here. Independent owners
+ retain their signing keys and fund their own tickets.
+ 
++## Total enrollment limit
++
++`COLLECTOR_MAX_NODES` is required at collector startup and limits the entire
++credential roster, including currently disconnected operators. An identity with
++two rotation credentials counts once. An oversized roster stops before listening.
++Set the writer's `SNAPSHOT_MAX_NODES` at least as high and coordinate the byte
++budgets using [head/enrollment limits](head-and-enrollment-limits.md). The tested
++eight-identity profile is a candidate, not a cap on Fusion validators. Increasing
++this dashboard roster needs sizing review; it does not require a consensus change.
++
+ ## Validation and remaining boundaries
+ 
+ `npm test` runs credential and handler/session contracts with fake transports
+diff --git a/lib/collection.js b/lib/collection.js
+index f1fca28..a99901c 100644
+--- a/lib/collection.js
++++ b/lib/collection.js
+@@ -2,10 +2,15 @@ var _ = require('lodash');
+ var Blockchain = require('./history');
+ var Node = require('./node');
+ var isTelemetryReport = require('./telemetry-report');
++var projectTelemetryHead = require('./telemetry-head');
+ 
+-var Collection = function Collection(externalAPI, now)
++var Collection = function Collection(externalAPI, now, maxHeadBytes)
+ 
+ {
++    if (!Number.isSafeInteger(maxHeadBytes) || maxHeadBytes < 1) {
++        throw new Error('A positive head byte budget is required');
++    }
++    this._maxHeadBytes = maxHeadBytes;
+     this._items = [];
+     this._now = now || Date.now;
+ 	this._blockchain = new Blockchain(this._now);
+@@ -39,10 +44,16 @@ Collection.prototype.add = function(data, callback)
+ 
+ Collection.prototype.update = function(id, stats, callback)
+ {
+-    if (!isTelemetryReport('stats', stats) || !isTelemetryReport('block', stats.block) || !isTelemetryReport('pending', stats)) {
++    if (!isTelemetryReport('stats', stats) || !isTelemetryReport('pending', stats)) {
++        callback('Invalid combined report', null);
++        return;
++    }
++    var head = projectTelemetryHead(stats.block, this._maxHeadBytes);
++    if (head === null) {
+         callback('Invalid combined report', null);
+         return;
+     }
++    stats = Object.assign({}, stats, { block: head });
+ 	var node = this.getNode({ id: id });
+ 
+ 	if (!node)
+@@ -79,7 +90,8 @@ Collection.prototype.update = function(id, stats, callback)
+ 
+ Collection.prototype.addBlock = function(id, stats, callback)
+ {
+-    if (!isTelemetryReport('block', stats)) {
++    stats = projectTelemetryHead(stats, this._maxHeadBytes);
++    if (stats === null) {
+         callback('Invalid block report', null);
+         return;
+     }
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index fb05743..fa6927a 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -107,6 +107,8 @@ function loadCollectorConfig(environment) {
+     return {
+         ...loadListenerConfig(environment, 'COLLECTOR'),
+         maxBytes: positiveInteger(environment, 'COLLECTOR_MAX_MESSAGE_BYTES'),
++        maxHeadBytes: positiveInteger(environment, 'COLLECTOR_MAX_HEAD_BYTES'),
++        maxNodes: positiveInteger(environment, 'COLLECTOR_MAX_NODES'),
+         maxConnections: positiveInteger(environment, 'COLLECTOR_MAX_CONNECTIONS'),
+         helloTimeoutMs: positiveInteger(environment, 'COLLECTOR_HELLO_TIMEOUT_MS'),
+         messagesPerSecond: positiveInteger(environment, 'COLLECTOR_MESSAGES_PER_SECOND'),
+diff --git a/lib/telemetry-credentials.js b/lib/telemetry-credentials.js
+index 3cacff2..ab5ce60 100644
+--- a/lib/telemetry-credentials.js
++++ b/lib/telemetry-credentials.js
+@@ -2,7 +2,10 @@ const { readFileSync } = require('node:fs');
+ const { isAbsolute } = require('node:path');
+ const { createHash, timingSafeEqual } = require('node:crypto');
+ 
+-function loadTelemetryCredentials(environment) {
++function loadTelemetryCredentials(environment, maxNodes) {
++    if (!Number.isSafeInteger(maxNodes) || maxNodes < 1) {
++        throw new Error('A positive telemetry enrollment limit is required');
++    }
+     if (environment.WS_SECRET !== undefined) {
+         throw new Error('WS_SECRET is unsupported; configure WS_CREDENTIALS_FILE with per-node credentials');
+     }
+@@ -19,6 +22,9 @@ function loadTelemetryCredentials(environment) {
+     if (!configured || typeof configured !== 'object' || Array.isArray(configured) || Object.keys(configured).length === 0) {
+         throw new Error('Telemetry credentials must be a nonempty object keyed by node ID');
+     }
++    if (Object.keys(configured).length > maxNodes) {
++        throw new Error('Telemetry credential roster exceeds the enrollment limit');
++    }
+     const credentials = new Map();
+     const used = new Set();
+     for (const [id, value] of Object.entries(configured)) {
+diff --git a/lib/telemetry-head.js b/lib/telemetry-head.js
+new file mode 100644
+index 0000000..737baf6
+--- /dev/null
++++ b/lib/telemetry-head.js
+@@ -0,0 +1,26 @@
++var isTelemetryReport = require('./telemetry-report');
++var chartBlock = require('./chart-block');
++
++function projectTelemetryHead(block, maximum) {
++    if (!isTelemetryReport('block', block)) {
++        return null;
++    }
++    var head = chartBlock(block);
++    delete head.transactionCount;
++    delete head.uncleCount;
++    head.transactions = block.transactions.map(function (transaction) {
++        return { hash: transaction.hash };
++    });
++    head.uncles = block.uncles.map(function (uncle) {
++        var header = {};
++        ['hash', 'parentHash', 'sha3Uncles', 'miner', 'stateRoot', 'transactionsRoot', 'receiptsRoot', 'logsBloom', 'difficulty', 'number', 'gasLimit', 'gasUsed', 'timestamp', 'extraData', 'mixHash', 'nonce', 'baseFeePerGas'].forEach(function (field) {
++            if (uncle[field] !== undefined) {
++                header[field] = uncle[field];
++            }
++        });
++        return header;
++    });
++    return Buffer.byteLength(JSON.stringify(head), 'utf8') <= maximum ? head : null;
++}
++
++module.exports = projectTelemetryHead;
+diff --git a/lib/telemetry-info.js b/lib/telemetry-info.js
+index 88b823e..054b025 100644
+--- a/lib/telemetry-info.js
++++ b/lib/telemetry-info.js
+@@ -1,4 +1,9 @@
+-function projectTelemetryInfo(value, identity) {
++var isIP = require('net').isIP;
++
++function projectTelemetryInfo(value, identity, ip) {
++    if (typeof ip !== 'string' || ip.length > 45 || ip.includes('%') || !isIP(ip)) {
++        return null;
++    }
+     if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+         return null;
+     }
+diff --git a/package.json b/package.json
+index 52ecd59..1ce63b8 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs test/head-budget.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs test/metadata-admission-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+diff --git a/server.js b/server.js
+index 151a796..35cfdbd 100644
+--- a/server.js
++++ b/server.js
+@@ -1,5 +1,5 @@
+-var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env);
+ var listener = require('./lib/deployment-config').loadCollectorConfig(process.env);
++var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env, listener.maxNodes);
+ var limitCollectorInput = require('./lib/collector-input');
+ var limitCollectorOutput = require('./lib/collector-output');
+ var projectTelemetryInfo = require('./lib/telemetry-info');
+@@ -71,7 +71,7 @@ external.plugin('emit', require('primus-emit'));
+ 
+ // Init collections
+ var Collection = require('./lib/collection');
+-var Nodes = new Collection(external);
++var Nodes = new Collection(external, Date.now, listener.maxHeadBytes);
+ var telemetrySessions = new Map();
+ 
+ Nodes.setChartsCallback(function (err, charts)
+@@ -143,7 +143,7 @@ api.on('connection', function (spark)
+             rejectTelemetry();
+             return;
+         }
+-        var projectedInfo = projectTelemetryInfo(data.info, data.id);
++        var projectedInfo = projectTelemetryInfo(data.info, data.id, spark.address.ip);
+         if (projectedInfo === null) {
+             rejectTelemetry();
+             return;
+diff --git a/test/collector-input.test.cjs b/test/collector-input.test.cjs
+index 32b7dc9..d8baba2 100644
+--- a/test/collector-input.test.cjs
++++ b/test/collector-input.test.cjs
+@@ -17,7 +17,7 @@ function inputFixture() {
+ }
+ 
+ test('collector input configuration has explicit finite limits and rejects missing or invalid limits', () => {
+-    assert.deepEqual(loadCollectorConfig(environment), { host: '127.0.0.1', port: 0, maxBytes: 65536, maxConnections: 16, helloTimeoutMs: 1000, messagesPerSecond: 100, maxBufferedBytes: 262144 });
++    assert.deepEqual(loadCollectorConfig(environment), { host: '127.0.0.1', port: 0, maxBytes: 65536, maxHeadBytes: 32768, maxNodes: 8, maxConnections: 16, helloTimeoutMs: 1000, messagesPerSecond: 100, maxBufferedBytes: 262144 });
+     for (const name of Object.keys(environment).filter(name => !['COLLECTOR_HOST', 'COLLECTOR_PORT'].includes(name))) {
+         for (const value of [undefined, '', '0', '-1', '1.5', ' 10', '10x', '2147483648']) {
+             assert.throws(() => loadCollectorConfig({ ...environment, [name]: value }), new RegExp(name));
+diff --git a/test/dashboard-profile.test.cjs b/test/dashboard-profile.test.cjs
+index 924116e..e10181d 100644
+--- a/test/dashboard-profile.test.cjs
++++ b/test/dashboard-profile.test.cjs
+@@ -43,7 +43,7 @@ async function waitFor(read, predicate) {
+ 
+ test('bounded dashboard profile: ' + process.env.DASHBOARD_PROFILE, { timeout: 40000 }, async t => {
+     const credentials = Object.fromEntries(Array.from({ length: profile.nodes }, (_, index) => ['profile-' + index, 'synthetic-profile-credential-' + String(index).padStart(16, '0')]));
+-    const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: String(profile.inputBytes), COLLECTOR_MAX_BUFFERED_BYTES: String(profile.outputBytes), COLLECTOR_HELLO_TIMEOUT_MS: '5000' }, 'profile-wire-server.cjs', credentials);
++    const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: String(profile.inputBytes), COLLECTOR_MAX_HEAD_BYTES: '65536', COLLECTOR_MAX_NODES: String(profile.nodes), COLLECTOR_MAX_BUFFERED_BYTES: String(profile.outputBytes), COLLECTOR_HELLO_TIMEOUT_MS: '5000' }, 'profile-wire-server.cjs', credentials);
+     const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
+     t.after(() => pool.end());
+     await pool.query(readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8'));
+diff --git a/test/enrollment-profile.test.cjs b/test/enrollment-profile.test.cjs
+new file mode 100644
+index 0000000..1126b78
+--- /dev/null
++++ b/test/enrollment-profile.test.cjs
+@@ -0,0 +1,140 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { readFileSync, writeFileSync } = require('node:fs');
++const { join } = require('node:path');
++const { once } = require('node:events');
++const { Pool } = require('pg');
++const WebSocket = require('websocket').w3cwebsocket;
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { connect, login, send, waitMessage } = require('./fixtures/wire-client.cjs');
++const { stats } = require('./fixtures/telemetry-report.cjs');
++const { head, metadata } = require('./fixtures/budget-report.cjs');
++const request = require('./fixtures/http.cjs');
++const Populate = require('../db_methods/populate');
++const Retrieve = require('../db_methods/retrieve');
++const createApp = require('../api-server/app');
++const startSnapshotCollection = require('../wsclient/collect-snapshots');
++
++async function waitFor(read, predicate) {
++    const deadline = Date.now() + 6000;
++    while (Date.now() < deadline) {
++        const value = await read();
++        if (predicate(value)) {
++            return value;
++        }
++        await new Promise(resolve => setTimeout(resolve, 50));
++    }
++    throw new Error('Expected bounded enrollment profile state did not arrive');
++}
++
++async function acknowledge(connection, id, marker) {
++    const from = connection.messages.length;
++    send(connection, 'node-ping', { id, clientTime: marker });
++    await waitMessage(connection, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === marker, from);
++}
++
++test('maximum-size enrolled heads remain complete with inactive rows and credential rotation', { timeout: 40000 }, async t => {
++    assert.ok(process.env.TEST_PG_PORT && process.env.TEST_PG_PASSWORD_FILE && process.env.DASHBOARD_PROFILE_EVIDENCE);
++    const ids = Array.from({ length: 8 }, (_, index) => ('enrolled-' + index).padEnd(64, 'x'));
++    const nextSecret = 'synthetic-enrollment-rotating-credential-00000000';
++    const secrets = ids.map((_, index) => 'synthetic-enrollment-credential-' + String(index).padStart(16, '0'));
++    const credentials = Object.fromEntries(ids.map((id, index) => [id, index === 0 ? [secrets[index], nextSecret] : secrets[index]]));
++    const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: '4194304', COLLECTOR_MAX_HEAD_BYTES: '65536', COLLECTOR_MAX_NODES: '8', COLLECTOR_MAX_CONNECTIONS: '3', COLLECTOR_MAX_BUFFERED_BYTES: '1048576' }, 'profile-wire-server.cjs', credentials);
++    const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
++    t.after(() => pool.end());
++    await pool.query(readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8'));
++    const populate = new Populate(pool);
++    const retrieve = new Retrieve(pool);
++    const errors = [];
++    const evidence = { scope: 'Eight synthetic enrolled identities, sequential reporters, three-connection cap; no efsn, real key or chain database.', headBytes: 65536, metadataBytes: 2048, ids: ids.length, errors, saves: [] };
++    t.after(() => writeFileSync(join(process.env.DASHBOARD_PROFILE_EVIDENCE, 'enrollment.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8'));
++
++    for (const [index, id] of ids.entries()) {
++        const connection = connect(t, server.port, 'api');
++        await login(connection, id, secrets[index], metadata(id));
++        const report = head(1000 + index);
++        assert.equal(Buffer.byteLength(JSON.stringify(report)), 65536);
++        assert.equal(Buffer.byteLength(JSON.stringify(metadata(id))), 2048);
++        if (index % 2) {
++            send(connection, 'update', { id, stats: { ...stats(), block: report, pending: Number.MAX_SAFE_INTEGER } });
++        } else {
++            send(connection, 'block', { id, block: report });
++            send(connection, 'stats', { id, stats: stats() });
++            send(connection, 'pending', { id, stats: { pending: Number.MAX_SAFE_INTEGER } });
++        }
++        if (index === 0) {
++            send(connection, 'history', { id, history: Array.from({ length: 50 }, (_, offset) => head(999 - offset)) });
++        }
++        await acknowledge(connection, id, 'accepted');
++        const before = await server.command('inspect');
++        send(connection, 'block', { id, block: head(2000 + index, 65537) });
++        send(connection, 'update', { id, stats: { ...stats(), block: head(3000 + index, 65537), pending: 0 } });
++        await acknowledge(connection, id, 'rejected');
++        const after = await server.command('inspect');
++        assert.deepEqual(after.nodes, before.nodes);
++        assert.deepEqual(after.cache, before.cache);
++        connection.socket.close();
++        await connection.closed;
++        await waitFor(() => server.command('inspect'), state => state.nodes.every(node => !node.connected));
++    }
++    evidence.inactive = await server.command('inspect');
++    assert.equal(evidence.inactive.nodes.length, 8);
++    const unconfigured = connect(t, server.port, 'api');
++    await unconfigured.opened;
++    send(unconfigured, 'hello', { id: 'not-enrolled', secret: secrets[0], info: metadata('not-enrolled') });
++    await unconfigured.closed;
++    assert.deepEqual((await server.command('inspect')).nodes, evidence.inactive.nodes);
++
++    const config = { url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 2000, maxBytes: 1048576, maxNodes: 8 };
++    const writer = startSnapshotCollection(config, {
++        connect(url, maxBytes) { return new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }); },
++        async saveSnapshot(payload, time) {
++            await populate.saveSnapshot(payload, time);
++            evidence.saves.push({ bytes: Buffer.byteLength(JSON.stringify(payload)), connected: payload.nodes.filter(node => node.connected).length });
++        },
++        now: () => new Date(), setTimeout, clearTimeout, onError: message => errors.push(message),
++    });
++    t.after(() => writer.stop());
++    const api = createApp(retrieve, Date.now, 5000, 30000).listen(0, '127.0.0.1');
++    t.after(() => new Promise(resolve => api.close(resolve)));
++    await once(api, 'listening');
++    const snapshot = await waitFor(() => retrieve.readSnapshot(), value => value && value.payload.nodes.length === 8);
++    assert.equal(snapshot.payload.nodes.every(node => !node.connected), true);
++    evidence.http = {};
++    for (const path of ['/nodes', '/blocks']) {
++        const response = await request(api.address().port, path);
++        assert.equal(response.status, 200);
++        assert.equal(response.body.length, 8);
++        evidence.http[path] = { bytes: Number(response.headers['content-length']) };
++        for (const [index, id] of ids.entries()) {
++            const row = response.body.find(value => value.id === id);
++            const current = path === '/nodes' ? JSON.parse(row.stats).stats.block : JSON.parse(row.blocks);
++            const expected = head(1000 + index);
++            for (const [field, value] of Object.entries(expected)) {
++                assert.deepEqual(current[field], value, field);
++            }
++            if (path === '/nodes') {
++                const node = JSON.parse(row.stats);
++                assert.deepEqual(node.info, { ...metadata(id), ip: '127.0.0.1' });
++                assert.deepEqual(row.reportValidForMs, { block: 0, stats: 0, pending: 0 });
++            }
++        }
++    }
++    const replacement = connect(t, server.port, 'api');
++    await login(replacement, ids[0], nextSecret, metadata(ids[0]));
++    send(replacement, 'update', { id: ids[0], stats: { ...stats(), block: head(1010), pending: 0 } });
++    await acknowledge(replacement, ids[0], 'rotated');
++    const rotated = await waitFor(() => retrieve.readSnapshot(), value => value && value.payload.nodes.some(node => node.id === ids[0] && node.stats.block.number === 1010));
++    assert.equal(rotated.payload.nodes.length, 8);
++    assert.equal(rotated.payload.nodes.filter(node => node.connected).length, 1);
++    assert.deepEqual(rotated.payload.nodes.find(node => node.id === ids[0]).stats.block.transactions, head(1010).transactions);
++    evidence.rotated = await server.command('inspect');
++    assert.equal(evidence.rotated.rejectedWrites, 0);
++    assert.equal(evidence.rotated.cache.retainedArrays, 0);
++    assert.ok(evidence.saves.every(save => save.bytes < 1048576));
++    assert.deepEqual(errors, []);
++    await writer.stop();
++    replacement.socket.close();
++    await replacement.closed;
++    await server.stop();
++});
+diff --git a/test/fixtures/budget-report.cjs b/test/fixtures/budget-report.cjs
+new file mode 100644
+index 0000000..45c1c20
+--- /dev/null
++++ b/test/fixtures/budget-report.cjs
+@@ -0,0 +1,23 @@
++const { block, uncle, info } = require('./telemetry-report.cjs');
++
++function head(number = 1000, bytes = 65536) {
++    const value = { ...block(number), difficulty: '9'.repeat(78), totalDifficulty: '9'.repeat(78), gasLimit: Number.MAX_SAFE_INTEGER, gasUsed: Number.MAX_SAFE_INTEGER, transactions: Array.from({ length: 714 }, (_, index) => ({ hash: '0x' + index.toString(16).padStart(64, '0') })), uncles: [uncle()] };
++    const remaining = bytes - Buffer.byteLength(JSON.stringify(value));
++    if (remaining < 0) {
++        throw new Error('Fixture head budget is too small');
++    }
++    value.uncles[0].extraData += 'ab'.repeat(Math.floor(remaining / 2));
++    if (remaining % 2) {
++        value.uncles[0].number = '0x10';
++    }
++    return value;
++}
++
++function metadata(id) {
++    const value = info(id);
++    const remaining = 2048 - Buffer.byteLength(JSON.stringify(value));
++    value.node += '\u2028'.repeat(Math.floor(remaining / 3)) + 'x'.repeat(remaining % 3);
++    return value;
++}
++
++module.exports = { head, metadata };
+diff --git a/test/fixtures/collector-environment.cjs b/test/fixtures/collector-environment.cjs
+index a4e3d68..c47bff6 100644
+--- a/test/fixtures/collector-environment.cjs
++++ b/test/fixtures/collector-environment.cjs
+@@ -2,6 +2,8 @@ module.exports = {
+     COLLECTOR_HOST: '127.0.0.1',
+     COLLECTOR_PORT: '0',
+     COLLECTOR_MAX_MESSAGE_BYTES: '65536',
++    COLLECTOR_MAX_HEAD_BYTES: '32768',
++    COLLECTOR_MAX_NODES: '8',
+     COLLECTOR_MAX_CONNECTIONS: '16',
+     COLLECTOR_HELLO_TIMEOUT_MS: '1000',
+     COLLECTOR_MESSAGES_PER_SECOND: '100',
+diff --git a/test/head-budget.test.cjs b/test/head-budget.test.cjs
+new file mode 100644
+index 0000000..ab3f742
+--- /dev/null
++++ b/test/head-budget.test.cjs
+@@ -0,0 +1,95 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const Collection = require('../lib/collection');
++const loadCredentials = require('../lib/telemetry-credentials');
++const { loadCollector, connectCollector, hello, credentialFile, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
++const { block, stats } = require('./fixtures/telemetry-report.cjs');
++const { head } = require('./fixtures/budget-report.cjs');
++
++function collection(t, maximum = 65536) {
++    const value = new Collection({ write() {} }, () => 1000, maximum);
++    value.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
++    t.after(() => { if (value._debounced) { value._debounced.cancel(); } });
++    return value;
++}
++
++test('head admission requires an explicit finite byte budget', () => {
++    const invalid = [undefined, 0, -1, 1.5, Infinity, Number.MAX_SAFE_INTEGER + 1];
++
++    const rejected = invalid.map(maximum => {
++        try {
++            new Collection({ write() {} }, () => 1000, maximum);
++            return false;
++        } catch (_) {
++            return true;
++        }
++    });
++
++    assert.deepEqual(rejected, [true, true, true, true, true, true]);
++});
++
++test('complete head retains every native hash and uncle field at the byte boundary and discards extensions', t => {
++    const value = collection(t);
++    const expected = head();
++    const input = structuredClone(expected);
++    input.extension = { label: 'unretained' };
++    input.transactions[0].extension = { label: 'unretained' };
++    input.uncles[0].extension = { label: 'unretained' };
++    let error;
++
++    value.addBlock('node-a', input, result => { error = result; });
++    const current = value.getNode({ id: 'node-a' }).stats.block;
++
++    assert.equal(Buffer.byteLength(JSON.stringify(expected)), 65536);
++    assert.equal(error, null);
++    assert.deepEqual(current.transactions, expected.transactions);
++    assert.deepEqual(current.uncles, expected.uncles);
++    assert.equal(current.extension, undefined);
++    assert.equal(current.received, 1000);
++    assert.deepEqual(value.getNode({ id: 'node-a' }).reports, { block: 1000, stats: null, pending: null });
++});
++
++test('oversized block and combined reports cannot replace heads, refresh receipts or populate history', t => {
++    const value = collection(t);
++    value.update('node-a', { ...stats(), block: block(), pending: 0 }, () => {});
++    const before = JSON.stringify({ nodes: value._items, history: value.getHistory()._items });
++    const errors = [];
++
++    value.addBlock('node-a', head(1001, 65537), error => errors.push(error));
++    value.update('node-a', { ...stats(), block: head(1002, 65537), pending: 1 }, error => errors.push(error));
++
++    assert.deepEqual(errors, ['Invalid block report', 'Invalid combined report']);
++    assert.equal(JSON.stringify({ nodes: value._items, history: value.getHistory()._items }), before);
++});
++
++test('enrollment counts all configured identities and rotation does not consume an extra slot', t => {
++    const file = credentialFile(t, { 'node-a': [secretA, secretNext], 'node-b': secretB });
++    const accepted = loadCredentials({ WS_CREDENTIALS_FILE: file }, 2);
++
++    const matches = [accepted('node-a', secretA), accepted('node-a', secretNext), accepted('node-b', secretB)];
++
++    assert.deepEqual(matches, [true, true, true]);
++    assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: file }, 1), /enrollment limit/);
++    assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: file }), /enrollment limit/);
++});
++
++test('over-enrolled collector configuration fails before constructing listeners', t => {
++    const result = loadCollector(t, { environment: { COLLECTOR_MAX_NODES: '1' } });
++
++    assert.equal(result.listening, false);
++    assert.equal(result.sockets.size, 0);
++    assert.match(result.startupError && result.startupError.message, /enrollment limit/);
++});
++
++test('collector-derived addresses must be bounded IP literals before registration', t => {
++    const addresses = ['127.0.0.1', '::1', 'ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255', '::1%scope', 'unbounded-label', 'x'.repeat(1000)];
++    const results = addresses.map(ip => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        spark.address.ip = ip;
++        hello(spark);
++        return { ended: spark.ended, registered: collector.calls.length };
++    });
++
++    assert.deepEqual(results, [{ ended: false, registered: 1 }, { ended: false, registered: 1 }, { ended: false, registered: 1 }, { ended: true, registered: 0 }, { ended: true, registered: 0 }, { ended: true, registered: 0 }]);
++});
+diff --git a/test/history.test.cjs b/test/history.test.cjs
+index 106aedf..be672c4 100644
+--- a/test/history.test.cjs
++++ b/test/history.test.cjs
+@@ -170,7 +170,7 @@ test('ticket charts preserve zero and missing values at their original heights',
+ });
+ 
+ test('malformed history reports cannot partially mutate the cache or leave their callback pending', t => {
+-    const collection = new Collection({ write() {} }, () => 1000);
++    const collection = new Collection({ write() {} }, () => 1000, 65536);
+     const callbacks = [];
+     collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
+     t.after(() => { if (collection._debounced) { collection._debounced.cancel(); } });
+@@ -182,7 +182,7 @@ test('malformed history reports cannot partially mutate the cache or leave their
+ });
+ 
+ test('valid history completes once, does not reorder caller data and shares the injected receipt clock', t => {
+-    const collection = new Collection({ write() {} }, () => 1234);
++    const collection = new Collection({ write() {} }, () => 1234, 65536);
+     const callbacks = [];
+     const input = [block(100), block(99)];
+     collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
+diff --git a/test/report-freshness.test.cjs b/test/report-freshness.test.cjs
+index 6e1616a..39e3a8f 100644
+--- a/test/report-freshness.test.cjs
++++ b/test/report-freshness.test.cjs
+@@ -12,7 +12,7 @@ function stats() {
+ 
+ function fixture(t) {
+     let time = 1000;
+-    const collection = new Collection({ write() {} }, () => time);
++    const collection = new Collection({ write() {} }, () => time, 65536);
+     collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'session-a' }, () => {});
+     const node = collection.getNode({ id: 'node-a' });
+     t.after(() => { if (collection._debounced) { collection._debounced.cancel(); } });
+diff --git a/test/telemetry-credentials.test.cjs b/test/telemetry-credentials.test.cjs
+index 69adfb6..7cfd330 100644
+--- a/test/telemetry-credentials.test.cjs
++++ b/test/telemetry-credentials.test.cjs
+@@ -1,9 +1,13 @@
+ const assert = require('node:assert/strict');
+ const { test } = require('node:test');
+ const { join } = require('node:path');
+-const loadCredentials = require('../lib/telemetry-credentials');
++const loadTelemetryCredentials = require('../lib/telemetry-credentials');
+ const { credentialFile, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
+ 
++function loadCredentials(environment) {
++    return loadTelemetryCredentials(environment, 8);
++}
++
+ test('credentials match only their assigned node and never coerce input', t => {
+     const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
+     const matches = loadCredentials({ WS_CREDENTIALS_FILE: file });
+diff --git a/test/telemetry-report.test.cjs b/test/telemetry-report.test.cjs
+index eb8fcc1..991e770 100644
+--- a/test/telemetry-report.test.cjs
++++ b/test/telemetry-report.test.cjs
+@@ -6,7 +6,7 @@ const Collection = require('../lib/collection');
+ const { block, stats, uncle } = require('./fixtures/telemetry-report.cjs');
+ 
+ function collection(t) {
+-    const value = new Collection({ write() {} }, () => 1000);
++    const value = new Collection({ write() {} }, () => 1000, 65536);
+     value.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
+     t.after(() => { if (value._debounced) { value._debounced.cancel(); } });
+     return value;

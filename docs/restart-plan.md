@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Registration/ping admission](restart-dashboard-admission.md): 167 contracts, 13 socket tests and actual efsn/database/browser pass; prior eight-reporter profile, database and compact-cache evidence retained | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Head/enrollment limits](restart-dashboard-enrollment.md): 173 contracts, 13 socket tests, maximum-size inactive roster, concurrent reporters and actual efsn/database/browser pass | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -269,6 +269,14 @@ a Windows-to-WSL reachability delay; the fixture now checks bounded port readine
 while retaining zero-writer-error assertions and transport diagnostics. Current
 heads, total enrollment/inactive rows and the Primus-derived IP still need
 aggregate bounds. Forwarded-header normalization belongs in proxy acceptance.
+The [head/enrollment follow-up](restart-dashboard-enrollment.md) now adds explicit
+complete-head and credential-roster limits, projects native head fields without
+truncating hashes, and bounds appended IP literals. Six new regressions fail on
+prior source; 173 contracts, 13 socket tests, eight maximum-size inactive rows,
+rotated reconnect, concurrent reporters and actual efsn/database/browser pass.
+The boundary snapshot reaches 554,917 bytes under the tested 1 MiB budget.
+The 8-node / 64 KiB-head / 4/1/1 MiB configuration is a coordinated deployment
+candidate; process settings must match and output queues can still fill.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -327,15 +335,14 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: establish an explicit current-head/extension budget preserving required
-   hashes. Check maximum enrollment, including inactive rows and collector-added
-   address/geo fields, against inventory/output/snapshot budgets before adopting
-   the [measured eight-reporter profile](restart-dashboard-profile.md). Registration
-   and telemetry ping admission now pass [their follow-up](restart-dashboard-admission.md).
-   Preserve receipt/transport diagnostics; test selected proxy/TLS limits and
-   forwarding-header normalization, then finish collector loss during mining,
-   runtime/dependency review and supervision. G6 remains open; the measured
-   4/1/1 MiB fixture limits are not deployment defaults.
+1. G6: test the selected proxy/TLS routes, forwarding-header normalization and
+   matching byte/timeout limits using the [bounded enrollment candidate](restart-dashboard-enrollment.md).
+   Registration, head projection and total-roster sizing now have local evidence.
+   Preserve receipt/transport diagnostics; finish collector loss during actual
+   mining, runtime/dependency review and service supervision. Approve the common
+   deployment manifest before publishing. G6 remains open; eight enrolled nodes,
+   64 KiB heads and the 4/1/1 MiB limits remain an explicit tested candidate,
+   with sizing review required for growth.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;
