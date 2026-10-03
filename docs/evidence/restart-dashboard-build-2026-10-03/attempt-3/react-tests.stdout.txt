@@ -1,0 +1,29 @@
+  console.error
+    Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
+        in Delayed (at Main.js:169)
+
+      11 |     componentDidMount() {
+      12 |         setTimeout(() => {
+    > 13 |             this.setState({hidden: false});
+         |                  ^
+      14 |         }, this.props.waitBeforeShow);
+      15 |     }
+      16 |
+
+      at warningWithoutStack (node_modules/react-dom/cjs/react-dom.development.js:558:32)
+      at warnAboutUpdateOnUnmountedFiberInDEV (node_modules/react-dom/cjs/react-dom.development.js:25690:5)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:23571:5)
+      at Object.enqueueSetState (node_modules/react-dom/cjs/react-dom.development.js:14029:5)
+      at Delayed.setState (node_modules/react/cjs/react.development.js:335:16)
+      at src/Components/Delay.js:13:18
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:729:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1289:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1370:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1378:20)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/modernFakeTimers.js:101:19)
+      at src/App.test.js:42:20
+      at batchedUpdates$1 (node_modules/react-dom/cjs/react-dom.development.js:24328:12)
+      at act (node_modules/react-dom/cjs/react-dom-test-utils.development.js:1120:14)
+      at advance (src/App.test.js:42:8)
+      at Object.<anonymous> (src/App.test.js:161:5)
+

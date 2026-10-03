@@ -1,0 +1,44 @@
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Connected Nodes 1\/2/. Input:
+
+'Node reports do not establish chain agreement. Connection status does not prove that each report is recent.\n' +
+  'Learn more about FUSION \n' +
+  'Dashboard snapshot received. Last snapshot: 2026-10-03T11:11:00.577Z.\n' +
+  'HIGHEST REPORTED BLOCK\n' +
+  '# 42\n' +
+  'BLOCK REPORT RECEIVED\n' +
+  '0 s ago\n' +
+  'AVERAGE BLOCK TIME\n' +
+  '—\n' +
+  'TICKETS\n' +
+  '0\n' +
+  'PENDING TXS\n' +
+  '0\n' +
+  'GEO\n' +
+  'VIEW MAP\n' +
+  'CONNECTED NODES 1/2\n' +
+  'SUMMARY VALUES COME FROM THE CONNECTED NODE REPORTING THE HIGHEST BLOCK.\n' +
+  'PIN\tCONNECTED\tLOCATION\tID\tTYPE\tHEIGHT\tBLOCK RECEIVED\tPENDING TXS\tTICKETS\tMINING\tSYNCING\tPEERS\tUPTIME\tLATENCY\n' +
+  '\t●\t\tsynthetic-offline\t5.0.0\t# 430x1111 … 1111\t0 s ago\t0\t0\t●\t●\t0\t\n' +
+  '100%\n' +
+  '\t0ms\n' +
+  '\t●\t\tsynthetic-alpha\t5.0.0\t# 420x1111 … 1111\t0 s ago\t0\t0\t●\t●\t1\t\n' +
+  '100%\n' +
+  '\t0ms'
+
+    at main (C:\Users\Peter\Documents\CODING\fsn-efsn\docs\evidence\restart-dashboard-build-2026-10-03\browser-check.cjs:44:16) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'Node reports do not establish chain agreement. Connection status does not prove that each report is recent.\n' +
+    'Learn more about FUSION \n' +
+    'Dashboard snapshot received. Last snapshot: 2026-10-03T11:11:00.577Z.\n' +
+    'HIGHEST REPORTED BLOCK\n' +
+    '# 42\n' +
+    'BLOCK REPORT RECEIVED\n' +
+    '0 s ago\n' +
+    'AVERAGE BLOCK TIME\n' +
+    '—\n' +
+    'TICKETS\n' +
+    '...',
+  expected: /Connected Nodes 1\/2/,
+  operator: 'match'
+}
