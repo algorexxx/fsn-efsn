@@ -74,7 +74,7 @@ func (state *incidentHistory) applyBackfill(report *BackfillReport, sequence uin
 		change.Observation = "not_observed"
 		if report.Base.Number < oldTip.Number {
 			change.Observation = "present"
-			change.Details = []string{fmt.Sprintf("previous tip %d:%s displaced after %d:%s", oldTip.Number, oldTip.Hash, report.Base.Number, report.Base.Hash)}
+			change.Details = []string{fmt.Sprintf("previous tip %d:%s displaced after %d:%s", oldTip.Number, oldTip.Hash.Hex(), report.Base.Number, report.Base.Hash.Hex())}
 		}
 		path = append(path[:report.Base.Number-state.Scope.AnchorNumber+1], newHashes...)
 		state.paths[report.Node] = path

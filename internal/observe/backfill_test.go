@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 
@@ -94,12 +95,14 @@ func backfillAt(t *testing.T, history *History, config Config, limit uint64, tic
 }
 
 func TestBackfillRetainedForkAndResume(t *testing.T) {
+	expectedDetails := []string{"previous tip 25:0x2cebfd43780e2db56bfc77dec6240f0100fe0fbab68c3288f235361260c4730d displaced after 24:0xbca984198362614919fc81be99808e8829c40bda9c58114d90405e8d4be919b1"}
 	f, config, evidence := backfillFixture(t, "local")
 	directory := filepath.Join(t.TempDir(), "history")
 	history, err := CreateHistory(directory, config, 16*1024*1024)
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { history.Close() })
 	first := backfillAt(t, history, config, 1, 1)
 	if first.Blocks[0].Status != "complete_at_observation" || first.Blocks[0].StoredThrough.Number != 25 || first.Coverage != "bounded_block_history_see_nodes" {
 		t.Fatal("initial complete branch not retained", first.Blocks)
@@ -110,6 +113,9 @@ func TestBackfillRetainedForkAndResume(t *testing.T) {
 	f.mu.Unlock()
 	fork := backfillAt(t, history, config, 1, 2)
 	change := findIncident(t, fork, "node-1", "canonical_history_change", common.Hash{})
+	if !reflect.DeepEqual(change.Details, expectedDetails) {
+		t.Fatalf("canonical-change details: got %q, want %q", change.Details, expectedDetails)
+	}
 	gap := findIncident(t, fork, "node-1", "block_coverage", common.Hash{})
 	if fork.Blocks[0].Status != "batch_limit" || fork.Blocks[0].StoredThrough.Number != 25 || fork.Blocks[0].StoredThrough.Hash == first.Blocks[0].StoredThrough.Hash || fork.Blocks[0].ObservedHead.Number != 26 || change.Status != "open" || gap.Status != "open" {
 		t.Fatal("fork or incomplete coverage hidden", fork.Blocks)
@@ -121,8 +127,10 @@ func TestBackfillRetainedForkAndResume(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer history.Close()
 	resumed := backfillAt(t, history, config, 1, 3)
+	if replayed := findIncident(t, resumed, "node-1", "canonical_history_change", common.Hash{}); replayed.ID != change.ID || !reflect.DeepEqual(replayed.Details, expectedDetails) {
+		t.Fatal("canonical-change identity or readable details changed after reopening")
+	}
 	if resumed.Blocks[0].Status != "complete_at_observation" || resumed.Blocks[0].StoredThrough.Number != 26 || findIncident(t, resumed, "node-1", "canonical_history_change", common.Hash{}).Status != "open" || findIncident(t, resumed, "node-1", "block_coverage", common.Hash{}).Observation != "not_observed" {
 		t.Fatal("resume failed or automatically resolved incident", resumed.Blocks)
 	}

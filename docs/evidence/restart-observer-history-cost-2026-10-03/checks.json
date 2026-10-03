@@ -1,0 +1,129 @@
+{
+  "passed": true,
+  "windows_suites": true,
+  "linux_race_suites": true,
+  "non_race_cost_run": true,
+  "samples": [
+    {
+      "prior_reports": 10,
+      "final_reports": 11,
+      "logical_bytes": 313783,
+      "closed_file_bytes": 81436,
+      "operations": {
+        "status": {
+          "samples": 3,
+          "median_ms": 6.971604,
+          "min_ms": 6.720518,
+          "max_ms": 7.478441,
+          "median_allocated_bytes": 1405088
+        },
+        "append": {
+          "samples": 1,
+          "median_ms": 10.587149,
+          "min_ms": 10.587149,
+          "max_ms": 10.587149,
+          "median_allocated_bytes": 1646360
+        },
+        "export_discard": {
+          "samples": 3,
+          "median_ms": 8.321647,
+          "min_ms": 7.715201,
+          "max_ms": 8.551863,
+          "median_allocated_bytes": 1600952
+        },
+        "reopen_status": {
+          "samples": 3,
+          "median_ms": 30.2212,
+          "min_ms": 28.494057,
+          "max_ms": 35.397575,
+          "median_allocated_bytes": 12040288
+        }
+      }
+    },
+    {
+      "prior_reports": 100,
+      "final_reports": 101,
+      "logical_bytes": 2877975,
+      "closed_file_bytes": 726839,
+      "operations": {
+        "status": {
+          "samples": 3,
+          "median_ms": 72.846789,
+          "min_ms": 72.341121,
+          "max_ms": 75.568778,
+          "median_allocated_bytes": 13708976
+        },
+        "append": {
+          "samples": 1,
+          "median_ms": 81.84336,
+          "min_ms": 81.84336,
+          "max_ms": 81.84336,
+          "median_allocated_bytes": 13959704
+        },
+        "export_discard": {
+          "samples": 3,
+          "median_ms": 85.154972,
+          "min_ms": 84.887937,
+          "max_ms": 85.27729,
+          "median_allocated_bytes": 13910544
+        },
+        "reopen_status": {
+          "samples": 3,
+          "median_ms": 167.409402,
+          "min_ms": 146.624147,
+          "max_ms": 183.660554,
+          "median_allocated_bytes": 39310560
+        }
+      }
+    },
+    {
+      "prior_reports": 1000,
+      "final_reports": 1001,
+      "logical_bytes": 28520777,
+      "closed_file_bytes": 7155991,
+      "operations": {
+        "status": {
+          "samples": 3,
+          "median_ms": 693.31485,
+          "min_ms": 682.388965,
+          "max_ms": 707.431198,
+          "median_allocated_bytes": 137475544
+        },
+        "append": {
+          "samples": 1,
+          "median_ms": 680.897465,
+          "min_ms": 680.897465,
+          "max_ms": 680.897465,
+          "median_allocated_bytes": 137671928
+        },
+        "export_discard": {
+          "samples": 3,
+          "median_ms": 754.119886,
+          "min_ms": 749.947481,
+          "max_ms": 767.494825,
+          "median_allocated_bytes": 138313816
+        },
+        "reopen_status": {
+          "samples": 3,
+          "median_ms": 1447.203158,
+          "min_ms": 1372.262923,
+          "max_ms": 1465.565766,
+          "median_allocated_bytes": 295295008
+        }
+      }
+    }
+  ],
+  "logical_growth_bytes_per_report": 28492.00222222222,
+  "illustrative_snapshot_only_64_mib_hours": {
+    "15": 9.813991466299198,
+    "60": 39.25596586519679
+  },
+  "limitations": [
+    "one repeated retained two-node snapshot with retimed observations",
+    "no RPC acquisition, growing block ancestry, or timeline cost",
+    "same-process reopen with OS caches warm, not cold storage",
+    "allocation totals are not retained RAM or peak RSS",
+    "physical sizes benefit from repeated-content compression",
+    "cadence and capacity arithmetic are estimates, not deployment guarantees"
+  ]
+}

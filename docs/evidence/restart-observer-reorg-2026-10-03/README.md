@@ -43,9 +43,10 @@ global history sequence differs from the cold query by one. The verifier checks
 those sequences against their respective histories and requires equality of
 every other wallet timeline field. All 22 stopped-node before/after captures match.
 
-Incident explanatory text exposes a raw-byte hash formatting defect, documented
-as an open follow-up in the report. Structured hashes remain intact; the verifier
-does not treat the explanatory string as a source of block identity.
+Incident explanatory text exposes a raw-byte hash formatting defect, subsequently
+corrected in the [history-cost follow-up](../../restart-observer-history-cost.md).
+These original captures remain unchanged. Structured hashes remain intact; the
+verifier does not treat the explanatory string as a source of block identity.
 
 Repeat using an unused attempt name; existing evidence/build paths are rejected:
 

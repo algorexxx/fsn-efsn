@@ -94,9 +94,10 @@ Evidence review found an observer diagnostic defect in
 `internal/observe/block_coverage.go`: the canonical-change incident formats
 `common.Hash` with `%s`, which this fork renders as raw bytes. Its explanatory
 text contains unreadable hashes. Structured block references and retained exports
-still contain the correct hexadecimal identities. Correcting this display text
-and adding an exact-string regression is an open observer follow-up; it does not
-require a node or consensus patch. This phase preserves the tested source.
+still contain the correct hexadecimal identities. This phase preserves the tested
+source. The [history-cost follow-up](restart-observer-history-cost.md) now corrects
+the display text with explicit hexadecimal conversion and an exact-string
+regression, without a node or consensus patch.
 
 ## Boundaries
 
