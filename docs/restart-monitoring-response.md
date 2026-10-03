@@ -14,8 +14,11 @@ contiguous ranges and displaced branches. The
 [offline wallet ticket timeline](restart-observer-tickets.md) now derives native
 events from saved anchor inventory and retained blocks.
 [Historical baseline acquisition](restart-observer-anchor.md) now uses existing
-RPCs after the head advances. Full financial accounting, production historical
-state availability, continuous scheduling and notifications remain open;
+RPCs after the head advances. [Preserved-backup probes](restart-observer-preserved-inventory.md)
+now show sparse historical state, including an unavailable head-minus-two sample.
+Baseline capture and preservation before production are prerequisites; do not
+assume a 128-block acquisition window. Full financial accounting, production
+transport/workload validation, continuous scheduling and notifications remain open;
 the policy below describes the complete intended monitoring behavior, not a
 claim that the snapshot command implements it all.
 The [actual-service follow-up](restart-observer-services.md) now validates eight
@@ -51,6 +54,14 @@ node is expected. Zero peers alone is not a chain-failure alert in the approved
 single-producer arrangement. An unavailable optional verifier means comparison
 is unavailable, rather than that two nodes agree. Once other producers join,
 update the expected-peer and comparison configuration.
+
+Before starting recovery production, acquire each monitored wallet's anchor
+inventory, verify it after reopening the observer history, and preserve a closed
+history copy with the release artifacts. An empty donation-wallet inventory is a
+valid baseline; an RPC error is not. Follow the
+[baseline preservation procedure](restart-observer-preserved-inventory.md#launch-procedure-consequence).
+The backup retains the launch anchor's state, but future ordinary node histories
+must not be assumed to answer that historical query indefinitely.
 
 Use local/private RPC and service logs for operational observations. IPC access
 can confer administrative capabilities even when the collector uses only read

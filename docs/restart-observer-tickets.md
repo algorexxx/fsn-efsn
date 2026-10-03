@@ -120,8 +120,10 @@ There is no added persisted cache or performance claim.
 
 The [historical inventory follow-up](restart-observer-anchor.md) now acquires
 anchor tickets after the head advances and checks them against independently
-saved state on actual IPC/HTTP services. Next validate production historical-state
-availability and cost, and collection during a live competing reorganization.
+saved state on actual IPC/HTTP services. The [preserved-backup probe](restart-observer-preserved-inventory.md)
+now confirms sparse historical state and measures local method cost: capture and
+preserve both wallet baselines before production. Next validate production
+transport/workload cost and collection during a live competing reorganization.
 Representative storage/backlog performance,
 notification delivery, real funding/custody and independent release review
 remain gates in the [main plan](restart-plan.md).

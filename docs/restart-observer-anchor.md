@@ -107,9 +107,13 @@ against the exact original receipt are retained. A later raw-null capture failur
 was a test/client-decoding assumption; its correction changes only the service
 test and is also recorded in the evidence directory.
 
-No production backup, production key, public endpoint or large restore is used.
+That compact rehearsal used no production backup, production key, public endpoint or large restore.
 The compact services use public test keys and an isolated loopback-only network.
-Next validate representative historical-state availability and acquisition cost,
-and collect through a live competing reorganization. Full financial accounting,
+The [preserved-backup follow-up](restart-observer-preserved-inventory.md) now
+measures twelve explicit historical reads without starting a node. State is
+sparse: even head minus two is missing, while the three shutdown checkpoints
+are readable. Capture and preserve each wallet's baseline before production;
+there is no guaranteed 128-block acquisition window. Next collect through a
+live competing reorganization and validate production transport/workload cost. Full financial accounting,
 monitor scheduling/delivery, real funding and signing custody, and independent
 release review remain open in the [main plan](restart-plan.md).

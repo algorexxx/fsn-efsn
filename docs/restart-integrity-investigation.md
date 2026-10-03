@@ -31,6 +31,13 @@ ordinary Ethereum uncle-root validation would be inappropriate here. Its
 `VerifyUncles` currently returns nil. These checks must not be described as full
 independent consensus verification.
 
+A later [read-only ticket inventory probe](restart-observer-preserved-inventory.md)
+confirms sparse historical state in this same backup. Twelve sampled headers
+exist, but only the head, head minus one and head minus 127 samples expose their
+ticket state; even head minus two is unavailable. That is consistent with the
+client's shutdown checkpoints, not a continuous recent-state guarantee. Preserve
+the observer's wallet baselines before restart production.
+
 Checker tests exercise intact in-memory data and deliberately missing/corrupt
 account roots, storage roots, code, bodies, receipts, total difficulty,
 transactions and parent links. All eleven cases passed before the real scan.

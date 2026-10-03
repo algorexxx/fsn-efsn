@@ -33,6 +33,11 @@ With history, the same report fields remain at the top level and an additional
 `History` object describes the committed status. No report is emitted as a
 successful history collection until its event write succeeds.
 
+For launch, acquire and preserve both wallets' anchor inventories before
+production, then verify their baselines after reopening this history. The
+[real-backup probe and procedure](restart-observer-preserved-inventory.md#launch-procedure-consequence)
+show why historical availability cannot be assumed even for every recent block.
+
 History status contains its chain/anchor/named-wallet scope, sequence, latest
 event/report times, logical byte usage, coverage limitation and incident list.
 To acknowledge or resolve a reviewed incident, use its ID and the current
