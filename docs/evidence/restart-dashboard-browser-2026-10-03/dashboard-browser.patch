@@ -1,0 +1,1334 @@
+From c74d6036a080d17b9ac371dd23635b282c5f3edc Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 12:41:04 +0200
+Subject: [PATCH] Expire browser snapshots and recover polling after
+ unavailable data
+
+---
+ README.md                              |   7 +-
+ api-server/app.js                      |   1 +
+ docs/browser-freshness.md              |  76 ++++++
+ docs/deployment-configuration.md       |   7 +-
+ docs/snapshot-storage.md               |  10 +-
+ package.json                           |   2 +-
+ react-frontend/src/App.test.js         | 144 ++++++++++-
+ react-frontend/src/Components/Main.js  | 333 +++++++------------------
+ react-frontend/src/config.js           |  13 +
+ react-frontend/src/snapshot-polling.js |  98 ++++++++
+ react-frontend/src/snapshot-view.js    |  76 ++++++
+ test/browser-snapshot.test.cjs         | 195 +++++++++++++++
+ test/snapshot-api.test.cjs             |   3 +
+ 13 files changed, 713 insertions(+), 252 deletions(-)
+ create mode 100644 docs/browser-freshness.md
+ create mode 100644 react-frontend/src/snapshot-polling.js
+ create mode 100644 react-frontend/src/snapshot-view.js
+ create mode 100644 test/browser-snapshot.test.cjs
+
+diff --git a/README.md b/README.md
+index 74e1090..b8fb611 100644
+--- a/README.md
++++ b/README.md
+@@ -7,9 +7,10 @@ telemetry credentials. Start with [deployment configuration](docs/deployment-con
+ and [node enrollment](docs/telemetry-enrollment.md).
+ 
+ The collector and [snapshot storage/API](docs/snapshot-storage.md) have local
+-acceptance coverage, including real PostgreSQL and two synthetic nodes. Browser
+-freshness/error handling, runtime/dependency review and the complete TLS deployment
+-still need work. Provision the versioned schema in the snapshot guide; do not use
++acceptance coverage, including real PostgreSQL and two synthetic nodes.
++[Browser freshness/error handling](docs/browser-freshness.md) passes React DOM
++checks. Its inherited production build fails on Node 22.11.0; build tooling,
++runtime/dependency review and the complete TLS deployment still need work. Provision the versioned schema in the snapshot guide; do not use
+ the historical database setup script.
+ 
+ Run `npm test` for configuration, identity and startup checks, including an HTTP
+diff --git a/api-server/app.js b/api-server/app.js
+index 9649153..47ced8e 100644
+--- a/api-server/app.js
++++ b/api-server/app.js
+@@ -19,6 +19,7 @@ function createApp(retrieve, now, maximumAgeMs) {
+                     return;
+                 }
+                 response.set('X-Dashboard-Observed-At', snapshot.observed_at.toISOString());
++                response.set('X-Dashboard-Valid-For-Ms', String(maximumAgeMs - age));
+                 response.json(project(snapshot));
+             } catch (_) {
+                 response.status(503).json({ error: 'snapshot_unavailable' });
+diff --git a/docs/browser-freshness.md b/docs/browser-freshness.md
+new file mode 100644
+index 0000000..cc7a94b
+--- /dev/null
++++ b/docs/browser-freshness.md
+@@ -0,0 +1,76 @@
++# Browser snapshot freshness
++
++The dashboard replaces its entire displayed node snapshot on each successful
++response. Removed nodes and map points disappear; summaries are calculated from
++that response. An empty snapshot shows **No nodes reported** and zero connected
++nodes. A missing value is shown as unavailable rather than an invented zero;
++actual zero ticket/pending values remain zero. The old hardcoded 12.99-second
++average is removed; average block time remains unavailable.
++
++The highest reported block summary uses currently connected nodes. The ticket,
++pending and block-received summaries refer to that selected node. Ties use the
++node ID for deterministic ordering. This is a report comparison, not a canonical
++chain selector. Version strings no longer determine the highest block, and old
++high-water values do not survive a replacement snapshot. Full block hashes remain
++in the parsed report and are shortened only for display.
++
++## Required browser configuration
++
++Set these public values at build time:
++
++- `REACT_APP_STATS_API_PATH`: the same-origin API prefix, such as `/stats-api`.
++- `REACT_APP_STATS_POLL_INTERVAL_MS`: delay after a completed or failed request.
++- `REACT_APP_STATS_REQUEST_TIMEOUT_MS`: request deadline before cancellation.
++
++Both durations are required positive integers at most 2147483647. There are no
++production defaults. Select them with the ingestion interval and API age budget:
++the next poll should normally complete before the displayed snapshot expires.
++Tests use 100 ms and 50 ms respectively; those are test values, not launch advice.
++Configuration validation runs when the browser module loads.
++
++## Failure and expiry behavior
++
++The API supplies the observation timestamp in `X-Dashboard-Observed-At` and the
++remaining freshness budget in `X-Dashboard-Valid-For-Ms`. Keep both headers through
++the same-origin proxy, along with `Cache-Control: no-store`; do not cache these
++responses. API and browser must be deployed together for this header contract.
++
++The browser subtracts the elapsed request time, measured with `performance.now`,
++from that budget. This deliberately expires conservatively and does not compare
++the server clock to the user's wall clock. The browser checks response metadata,
++row timestamps, distinct IDs and the report fields it renders. A response already
++expired in transit is unavailable. The expiry timer runs independently of polling
++and clears the current rows, map and summary values even if another request hangs.
++
++HTTP errors, invalid responses and request timeouts also clear current values.
++The status message says data is unavailable or expired and that retries continue.
++The last successfully displayed observation time remains explicitly labeled
++**Last snapshot**. Error details and response payloads are not logged to the UI.
++
++Only one request is pending. The deadline cancels it; late callbacks cannot replace
++a newer view. A completed or failed request schedules one next poll. Unmounting
++cancels the request and timers. Returning to a visible tab clears its view and
++requests a new snapshot because browsers may throttle timers while hidden.
++JavaScript suspension can delay any UI update; the visibility refresh is not a
++guarantee that a suspended process executes an expiry callback on time.
++
++The **Connected** label describes the collector's cached connection status.
++Neither that status nor a fresh stored snapshot proves recent reports from each
++node, chain agreement, correct ticket funding, or working auto-buy. Per-node
++report timestamps and comparison with real efsn/RPC remain separate requirements.
++
++## Local checks and remaining build blocker
++
++Root `npm test` includes the polling/projection contracts and API header checks.
++In `react-frontend`, set the three settings above (the DOM tests expect `/stats-api`,
++100 and 50), then run `CI=true npm test -- --watchAll=false --runInBand` using your
++shell's environment syntax. These tests render the actual React component in
++JSDOM with a controlled HTTP adapter and clock. They are not a deployed browser,
++actual node, PostgreSQL or TLS test.
++
++The locked frontend dependencies install with scripts disabled and no lock change.
++On Node 22.11.0 the inherited `react-scripts` 3.2.0 production build fails in
++webpack's hashing path with `ERR_OSSL_EVP_UNSUPPORTED`, both before and after this
++change. No legacy crypto switch, edited dependency file, runtime downgrade or
++dependency upgrade is included. A reviewed build-tool/runtime correction and
++then actual browser/proxy acceptance are required before release.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 8e67b26..604b24f 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -27,6 +27,8 @@ acceptance. These settings are not a production launch approval.
+ | Persistence and API | `DB_PASSWORD_FILE` | Absolute path to a private UTF-8 password file |
+ | Persistence and API | `DB_TIMEOUT_MS` | Positive integer limit for connection, server statement and client query waits |
+ | Browser build | `REACT_APP_STATS_API_PATH` | Same-origin API prefix, such as `/stats-api` |
++| Browser build | `REACT_APP_STATS_POLL_INTERVAL_MS` | Delay after a completed/failed request before retrying |
++| Browser build | `REACT_APP_STATS_REQUEST_TIMEOUT_MS` | Maximum request wait before cancellation |
+ 
+ Listeners accept 0 for disposable ephemeral-port tests. Deployed services need
+ fixed ports from 1–65535 so the proxy and persistence client can find them.
+@@ -105,6 +107,7 @@ been replaced. The old database setup script remains historical and must not be
+ used to provision this candidate.
+ 
+ Real collector → PostgreSQL → HTTP API checks now pass with distinct synthetic
+-nodes and reconnects. Complete browser freshness/error handling, actual efsn
+-telemetry, production runtime/dependency review, resource limits and TLS/proxy
++nodes and reconnects. The [browser freshness implementation](browser-freshness.md) passes React DOM
++checks; its production build still fails in the inherited webpack dependency.
++Complete the build and actual efsn telemetry, production runtime/dependency review, resource limits and TLS/proxy
+ acceptance before public use.
+diff --git a/docs/snapshot-storage.md b/docs/snapshot-storage.md
+index a87f359..397fcb0 100644
+--- a/docs/snapshot-storage.md
++++ b/docs/snapshot-storage.md
+@@ -94,14 +94,16 @@ stored document. `/blocks` and `/info` expose each node's reported block/info;
+ they do not choose a canonical chain. `/charts` exposes the stored chart object.
+ 
+ All four routes set `Cache-Control: no-store`. Successful responses include
+-`X-Dashboard-Observed-At`. A missing, old or future snapshot, or a read failure,
++`X-Dashboard-Observed-At` and `X-Dashboard-Valid-For-Ms` (remaining server freshness
++budget). A missing, old or future snapshot, or a read failure,
+ returns HTTP 503 with `{"error":"snapshot_unavailable"}` and no old payload or
+ database error detail. The last stored snapshot is retained. A fresh empty
+ collector snapshot returns empty nodes normally.
+ 
+-The frontend still needs explicit stale/error rendering and removal of previously
+-displayed cached nodes. An API freshness check does not by itself fix browser
+-behavior or establish per-node freshness. The collector's `active` field is its
++The [browser](browser-freshness.md) clears displayed reports on failure or expiry
++and retries with a bounded request wait. Its React DOM checks pass, but the
++inherited production build fails on Node 22.11.0. Neither snapshot freshness
++nor the browser display establishes per-node freshness. The collector's `active` field is its
+ cached status, not proof of recent transactions, block agreement or ticket health.
+ 
+ ## Acceptance scope
+diff --git a/package.json b/package.json
+index 6a87ea5..2ff2b9e 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs",
++    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+diff --git a/react-frontend/src/App.test.js b/react-frontend/src/App.test.js
+index a754b20..51a3cb4 100644
+--- a/react-frontend/src/App.test.js
++++ b/react-frontend/src/App.test.js
+@@ -1,9 +1,145 @@
+ import React from 'react';
+ import ReactDOM from 'react-dom';
++import {act} from 'react-dom/test-utils';
++import axios from 'axios';
+ import App from './App';
+ 
+-it('renders without crashing', () => {
+-  const div = document.createElement('div');
+-  ReactDOM.render(<App />, div);
+-  ReactDOM.unmountComponentAtNode(div);
++let container;
++let requests;
++let time;
++
++function snapshot(ids, budget = '1000') {
++    const observedAt = '2026-10-03T12:00:00.000Z';
++    return {
++        status: 200,
++        headers: {'x-dashboard-observed-at': observedAt, 'x-dashboard-valid-for-ms': budget},
++        data: ids.map((id, index) => ({
++            id, utctime: observedAt,
++            stats: JSON.stringify({
++                id, info: {node: 'efsn/v5.0.0-local'}, geo: null,
++                stats: {
++                    active: index === 0, mining: true, syncing: false, peers: 1, pending: 0,
++                    myTicketNumber: 0, uptime: 100, latency: 0,
++                    block: {number: 42, hash: '0x' + '1'.repeat(64), received: 1791028799000, ticketNumber: 0}
++                }
++            })
++        }))
++    };
++}
++
++async function reply(index, value, failed = false) {
++    await act(async () => {
++        if (failed) {
++            requests[index].reject(value);
++        } else {
++            requests[index].resolve(value);
++        }
++    });
++}
++
++function advance(milliseconds) {
++    time += milliseconds;
++    act(() => jest.advanceTimersByTime(milliseconds));
++}
++
++beforeEach(() => {
++    jest.useFakeTimers();
++    requests = [];
++    time = 0;
++    localStorage.clear();
++    jest.spyOn(performance, 'now').mockImplementation(() => time);
++    jest.spyOn(axios, 'get').mockImplementation((url, options) => new Promise((resolve, reject) => {
++        requests.push({url, options, resolve, reject});
++    }));
++    container = document.createElement('div');
++    document.body.appendChild(container);
++    act(() => { ReactDOM.render(<App/>, container); });
++});
++
++afterEach(() => {
++    act(() => { ReactDOM.unmountComponentAtNode(container); });
++    container.remove();
++    jest.clearAllTimers();
++    jest.restoreAllMocks();
++    jest.useRealTimers();
++});
++
++it('replaces rows and summary values with an explicit empty snapshot', async () => {
++    expect(container.textContent).toContain('Loading dashboard');
++    await reply(0, snapshot(['alpha', 'beta']));
++    expect(container.querySelectorAll('tbody tr')).toHaveLength(2);
++    expect(container.textContent).toContain('Connected Nodes 1/2');
++    expect(container.textContent).toContain('Tickets0');
++    expect(container.textContent).not.toContain('12.99');
++    advance(100);
++    await reply(1, snapshot([]));
++    expect(container.querySelectorAll('tbody tr')).toHaveLength(0);
++    expect(container.textContent).toContain('No nodes reported.');
++    expect(container.textContent).toContain('Connected Nodes 0/0');
++    expect(container.textContent).not.toContain('# 42');
++    expect(requests.map(request => request.url)).toEqual(['/stats-api/nodes', '/stats-api/nodes']);
++});
++
++it('removes old rows on HTTP failure, shows last observation and recovers automatically', async () => {
++    await reply(0, snapshot(['alpha']));
++    advance(100);
++    await reply(1, new Error('HTTP 503'), true);
++    expect(container.querySelectorAll('tbody tr')).toHaveLength(0);
++    expect(container.textContent).toContain('Dashboard data unavailable or expired. Retrying automatically.');
++    expect(container.textContent).toContain('Last snapshot: 2026-10-03T12:00:00.000Z');
++    expect(container.textContent).not.toContain('# 42');
++    advance(100);
++    await reply(2, snapshot(['beta']));
++    expect(container.textContent).toContain('beta');
++    expect(container.textContent).not.toContain('alpha');
++    expect(container.textContent).not.toContain('Retrying automatically');
++});
++
++it('expires visible rows while the next request is pending and cancels on unmount', async () => {
++    await reply(0, snapshot(['alpha'], '120'));
++    advance(100);
++    advance(20);
++    expect(container.querySelectorAll('tbody tr')).toHaveLength(0);
++    expect(container.textContent).toContain('Dashboard data unavailable or expired');
++    act(() => { ReactDOM.unmountComponentAtNode(container); });
++    expect(requests[1].options.cancelToken.reason).toBeDefined();
++    await reply(1, snapshot(['late']));
++    advance(10000);
++    expect(container.textContent).toBe('');
++    expect(requests).toHaveLength(2);
++});
++
++it('retries a timed-out initial request and rejects malformed successful JSON', async () => {
++    advance(50);
++    expect(requests[0].options.cancelToken.reason).toBeDefined();
++    expect(container.textContent).toContain('Dashboard data unavailable or expired');
++    advance(100);
++    await reply(1, {status: 200, headers: {}, data: []});
++    expect(container.textContent).toContain('Dashboard data unavailable or expired');
++    advance(100);
++    await reply(2, snapshot(['recovered']));
++    expect(container.textContent).toContain('recovered');
++});
++
++it('requires a fresh request after returning to a visible tab', async () => {
++    await reply(0, snapshot(['alpha']));
++    Object.defineProperty(document, 'visibilityState', {configurable: true, value: 'visible'});
++    act(() => { document.dispatchEvent(new Event('visibilitychange')); });
++    expect(container.querySelectorAll('tbody tr')).toHaveLength(0);
++    expect(requests).toHaveLength(2);
++    await reply(1, snapshot(['beta']));
++    expect(container.textContent).toContain('beta');
++    delete document.visibilityState;
++});
++
++it('renders a zero block height and an unavailable receive time without a perpetual spinner', async () => {
++    const response = snapshot(['genesis']);
++    const node = JSON.parse(response.data[0].stats);
++    node.stats.block.number = 0;
++    node.stats.block.received = 0;
++    response.data[0].stats = JSON.stringify(node);
++    await reply(0, response);
++    const row = container.querySelector('tbody tr');
++    expect(row.textContent).toContain('# 0');
++    expect(row.cells[6].textContent).toBe('—');
+ });
+diff --git a/react-frontend/src/Components/Main.js b/react-frontend/src/Components/Main.js
+index ef3a5dd..11992de 100644
+--- a/react-frontend/src/Components/Main.js
++++ b/react-frontend/src/Components/Main.js
+@@ -1,4 +1,3 @@
+-/* eslint-disable */
+ import React from 'react';
+ import {Button, Col, Container, Modal, ProgressBar, Row, Table,} from 'react-bootstrap'
+ import NumberFormat from 'react-number-format';
+@@ -13,203 +12,62 @@ import buildFormatter from 'react-timeago/lib/formatters/buildFormatter'
+ import Spinner from './Spinner';
+ import AttentionWarning from './AttentionWarning';
+ import FusionLogo from '../img/Fusion_White.svg';
+-import loadApiPath from '../config';
++import loadApiPath, {loadPollingConfig} from '../config';
++import startSnapshotPolling from '../snapshot-polling';
+ 
+ const statsApiPath = loadApiPath(process.env.REACT_APP_STATS_API_PATH);
+ 
+ 
+-class Main extends React.Component {
+-    constructor(props) {
+-        super(props);
+-
+-        let URL = statsApiPath;
+-        let allNodes = [];
+-        let identifiers = [];
+-
+-        let totalNodes = 0;
+-        const getData = () => {
+-            console.log('Retrieving data')
+-            let countNodes = 0;
+-            axios.get(`${URL}/nodes`).then(async function (data) {
+-                let nodeData = data.data;
+-                for (let node in nodeData) {
+-                    countNodes++;
+-                    if (nodeData.length === (parseInt(node) + 1)) {
+-                        totalNodes = countNodes;
+-                    }
+-                    processStats(nodeData[node]);
+-                }
+-            });
+-        }
+-
+-        getData();
+-
+-        // axios.get(`${URL}/charts`).then(function (data) {
+-        //     if (data.data.length > 0) processCharts(data);
+-        // });
+-
+-        let highestVersion = "";
+-        let highestBlock = 0;
+-        let lastUpdatedBlock = 0;
+-        let pendingTransactions = 0;
+-        // const processCharts = (data) => {
+-        //     let chartData = JSON.parse(data.data[0].charts);
+-        //     // let highestBlock = Math.max(...chartData.height);
+-        //     let heightChart = chartData.height;
+-        //     let avgBlockTime = chartData.avgBlocktime.toString().substr(0, 5);
+-        //     let difficulty = Math.max(...chartData.difficulty);
+-        //
+-        //     let blocksChart = [];
+-        //
+-        //     for (let i in chartData.blocktime) {
+-        //         blocksChart[i] = {
+-        //             "blocktime": chartData.blocktime[i],
+-        //             "height": chartData.height[i]
+-        //         };
+-        //     }
+-        //
+-        //     this.setState({
+-        //         chartData: heightChart,
+-        //         avgBlockTime: avgBlockTime,
+-        //         difficulty: difficulty,
+-        //         avgBlockTimeChart: blocksChart
+-        //     });
+-        // }
+-
+-        const getVersionNumber = (string) => {
+-            let vIndex = string.indexOf('v');
+-            let minV = string.substring(vIndex + 1, string.length);
+-            let dashIndex = minV.indexOf('-');
+-            return minV.substring(0, dashIndex);
+-        }
+-
+-        let geoCharts = [];
+-        const processStats = async (data) => {
+-            let id = data.id;
+-            let stats = JSON.parse(data.stats);
+-            let info = stats.info;
+-            let geo = stats.geo;
+-            stats.id = id;
+-            stats.info = info;
+-            stats.geo = geo;
++const pollingConfig = loadPollingConfig(
++    process.env.REACT_APP_STATS_POLL_INTERVAL_MS,
++    process.env.REACT_APP_STATS_REQUEST_TIMEOUT_MS
++);
+ 
+-            if (geo !== null) {
+-                let geoData = {
+-                    name: id,
+-                    radius: 2,
+-                    latitude: geo.ll[0],
+-                    longitude: geo.ll[1],
+-                    fillKey: 'bubbleFill'
++class Main extends React.Component {
++    state = {
++        status: 'loading',
++        observedAt: null,
++        nodesList: [],
++        geoCharts: [],
++        totalNodes: null,
++        activeNodes: null,
++        highestBlock: null,
++        lastUpdatedBlock: null,
++        ticketNumber: null,
++        pendingTransactions: null
++    };
++
++    componentDidMount() {
++        this.polling = startSnapshotPolling(pollingConfig, {
++            request: () => {
++                const source = axios.CancelToken.source();
++                return {
++                    promise: axios.get(`${statsApiPath}/nodes`, {cancelToken: source.token}),
++                    cancel: () => source.cancel()
+                 };
+-                geoCharts.push(geoData);
+-            }
+-
+-            // Make hash smaller
+-            stats.stats.block.hash = formatHash(stats.stats.block.hash);
+-
+-            let objIndex = allNodes.findIndex((value => value.id === id));
+-            if (objIndex === -1) {
+-                allNodes.push(stats);
+-                objIndex = allNodes.findIndex((value => value.id === id));
+-                identifiers[objIndex] = id;
+-            } else {
+-                objIndex = allNodes.findIndex((value => value.id === id));
+-                identifiers[objIndex] = id;
+-            }
+-
+-
+-            if (Object.keys(allNodes).length === totalNodes) {
+-                this.setState({
+-                    totalNodes: Object.keys(allNodes).length,
+-                    nodeIdentifiers: identifiers,
+-                    nodesList: allNodes,
+-                    geoCharts: geoCharts
+-                });
+-                this.forceUpdate();
+-            }
+-
+-            await processBlocks(stats.stats.block, id, getVersionNumber(stats.info.node));
+-        }
+-
+-
+-        let totalTickets = 0;
+-
+-        const processBlocks = async (data, id, version) => {
+-            data.id = id;
+-            let objIndex = allNodes.findIndex((value => value.id === data.id));
+-            if (objIndex === -1) {
+-            } else {
+-                let propagationChart = [];
+-                for (let i in data.history) {
+-                    propagationChart[i] = {
+-                        "id": i,
+-                        "value": data.history[i]
+-                    };
+-                }
+-
+-                if (version > highestVersion) {
+-                    highestVersion = version;
+-                }
+-
+-                if (version === highestVersion && data.number > highestBlock) {
+-                    highestBlock = data.number;
+-                    lastUpdatedBlock = data.received;
+-                    totalTickets = data.ticketNumber;
+-                    pendingTransactions = allNodes[objIndex].stats.pending;
+-                }
+-
+-                allNodes[objIndex].version = version;
+-                allNodes[objIndex].height = data.number;
+-                allNodes[objIndex].propagationChart = propagationChart;
+-                allNodes[objIndex].hash = formatHash(data.hash);
+-                allNodes[objIndex].blockLastUpdated = (data.received * 1000);
+-
+-                if (Object.keys(allNodes).length === totalNodes) {
+-                    allNodes.sort((a, b) => {
+-                        if (a.version < b.version) {
+-                            return 1;
+-                        } else if (a.version > b.version) {
+-                            return -1;
+-                        } else {
+-                            return b.height - a.height;
+-                        }
+-                    });
+-                    this.setState({
+-                        nodesList: allNodes,
+-                        highestBlock: highestBlock,
+-                        lastUpdatedBlock: lastUpdatedBlock,
+-                        ticketNumber: totalTickets,
+-                        lastUpdatedData: Date.now() + 5000,
+-                        pendingTransactions: pendingTransactions
+-                    })
+-
+-                    allNodes = [];
+-                    identifiers = [];
+-                    setTimeout(function () {
+-                        getData()
+-                    }, 10000)
+-                }
+-            }
+-        }
+-
+-        const formatHash = (hash) => {
+-            let a = hash.length;
+-            let b = hash.substring(0, 4);
+-            return b + ' ... ' + hash.substring(a - 4, a);
+-        }
++            },
++            now: () => performance.now(),
++            setTimeout: (callback, delay) => window.setTimeout(callback, delay),
++            clearTimeout: timer => window.clearTimeout(timer),
++            onSnapshot: snapshot => this.setState({...snapshot, status: 'ready'}),
++            onUnavailable: () => this.setState({
++                status: 'unavailable', nodesList: [], geoCharts: [], totalNodes: null,
++                activeNodes: null, highestBlock: null, lastUpdatedBlock: null,
++                ticketNumber: null, pendingTransactions: null, showModal: false
++            })
++        });
++        document.addEventListener('visibilitychange', this.refreshVisiblePage);
+     }
+ 
++    refreshVisiblePage = () => {
++        if (document.visibilityState === 'visible') {
++            this.polling.refresh();
++        }
++    };
+ 
+-    state = {
+-        highestBlock: undefined,
+-        chartData: {},
+-        avgBlockTime: 12.99,
+-        difficulty: 0,
+-        nodesList: [],
+-        nodeIdentifiers: [],
+-        totalNodes: undefined,
+-        avgBlockTimeChart: [],
+-        lastUpdatedBlock: 0
++    componentWillUnmount() {
++        document.removeEventListener('visibilitychange', this.refreshVisiblePage);
++        this.polling.stop();
+     }
+ 
+     render() {
+@@ -243,10 +101,8 @@ class Main extends React.Component {
+         }
+ 
+         const getVersionNumber = (string) => {
+-            let vIndex = string.indexOf('v');
+-            let minV = string.substring(vIndex + 1, string.length);
+-            let dashIndex = minV.indexOf('-');
+-            return minV.substring(0, dashIndex);
++            const match = string.match(/(?:^|\/)v?([0-9]+\.[0-9]+\.[0-9]+)/);
++            return match ? match[1] : string;
+         }
+ 
+ 
+@@ -288,19 +144,22 @@ class Main extends React.Component {
+         };
+ 
+         const getTicketPercentage = (totalTickets, nodeTicket) => {
+-            if (totalTickets && nodeTicket) {
++            if (totalTickets > 0 && nodeTicket !== null) {
+                 if (nodeTicket === 0) {
+                     return '0% of all tickets';
+                 } else {
+                     let o = totalTickets / 100;
+-                    return `${(nodeTicket / o).toFixed(2)}% of all tickets`;
++                    return `${(nodeTicket / o).toFixed(2)}% of reported tickets`;
+                 }
+             }
++            return 'Ticket share unavailable';
+         }
+ 
+         const formatter = buildFormatter(customStrings);
++        const missingValue = this.state.status === 'loading' ? <Spinner/> : '—';
++        const formatHash = hash => `${hash.substring(0, 6)} … ${hash.substring(hash.length - 4)}`;
+ 
+-        return <body className={'bg-dark'}>
++        return <div className={'bg-dark'}>
+         <div className={'main-content'}>
+             <Modal show={this.state.showModal} onHide={handleClose}>
+                 <Modal.Header closeButton>
+@@ -316,7 +175,7 @@ class Main extends React.Component {
+                             responsive={true}
+                             bubbles={this.state.geoCharts}
+                         /> </Delay>
+-                    : <Spinner/>}
++                    : missingValue}
+ 
+                 <Modal.Footer>
+                     <Button variant="secondary" onClick={handleClose}>
+@@ -338,7 +197,7 @@ class Main extends React.Component {
+                             <div className="row">
+                                 <div className="col-6">
+                                         <span className={'text-white'}>
+-                                        This monitor does not represent the entire state of the FUSION Network.
++                                        Node reports do not establish chain agreement. Connection status does not prove that each report is recent.
+                                         </span>
+                                 </div>
+                                 <div className="col-6 text-md-right">
+@@ -348,19 +207,27 @@ class Main extends React.Component {
+                             </div>
+                         </div>
+                     </Col>
++                    <Col md={12}>
++                        <div role="status" aria-live="polite" className="alert alert-secondary mt-2">
++                            {this.state.status === 'loading' && 'Loading dashboard…'}
++                            {this.state.status === 'unavailable' && 'Dashboard data unavailable or expired. Retrying automatically.'}
++                            {this.state.status === 'ready' && (this.state.totalNodes === 0 ? 'No nodes reported.' : 'Dashboard snapshot received.')}
++                            {this.state.observedAt && <span> Last snapshot: <time dateTime={this.state.observedAt}>{this.state.observedAt}</time>.</span>}
++                        </div>
++                    </Col>
+                     <Col md={2}>
+                         <div className="card">
+                             <div className="card-body">
+                                 <div className="row align-items-center">
+                                     <div className="col">
+                                         <h6 className="card-title text-uppercase text-muted mb-2">
+-                                            Last Block
++                                            Highest Reported Block
+                                         </h6>
+                                         <span className="h2 mb-0">
+-                                                {this.state.highestBlock ?
++                                                {this.state.highestBlock !== null ?
+                                                     <NumberFormat value={this.state.highestBlock} displayType={'text'}
+                                                                   thousandSeparator={true} prefix={"# "}/>
+-                                                    : <Spinner/>}
++                                                    : missingValue}
+                                             </span>
+                                     </div>
+                                     <div className="col-auto">
+@@ -376,12 +243,12 @@ class Main extends React.Component {
+                                 <div className="row align-items-center">
+                                     <div className="col">
+                                         <h6 className="card-title text-uppercase text-muted mb-2">
+-                                            Block Time Ago
++                                            Block Report Received
+                                         </h6>
+                                         <span className="h2 mb-0">
+                                                 {this.state.lastUpdatedBlock ?
+                                                     <TimeAgo date={this.state.lastUpdatedBlock}
+-                                                             formatter={formatter}/> : <Spinner/>}
++                                                             formatter={formatter}/> : missingValue}
+                                             </span>
+                                     </div>
+                                     <div className="col-auto">
+@@ -400,7 +267,7 @@ class Main extends React.Component {
+                                             Average Block Time
+                                         </h6>
+                                         <span className="h2 mb-0">
+-                                                {this.state.avgBlockTime || <Spinner/>}
++                                                —
+                                             </span>
+                                     </div>
+                                     <div className="col-auto text-center">
+@@ -419,7 +286,7 @@ class Main extends React.Component {
+                                             Tickets
+                                         </h6>
+                                         <span className="h2 mb-0">
+-                                                {this.state.ticketNumber || <Spinner/>}
++                                                {this.state.ticketNumber === null ? missingValue : this.state.ticketNumber}
+                                             </span>
+                                     </div>
+                                     <div className="col-auto">
+@@ -438,7 +305,7 @@ class Main extends React.Component {
+                                             Pending Txs
+                                         </h6>
+                                         <span className="h2 mb-0">
+-                                                {this.state.pendingTransactions || 0}
++                                                {this.state.pendingTransactions === null ? missingValue : this.state.pendingTransactions}
+                                             </span>
+                                     </div>
+                                     <div className="col-auto">
+@@ -456,7 +323,7 @@ class Main extends React.Component {
+                                         <h6 className="card-title text-uppercase text-muted mb-2">
+                                             Geo
+                                         </h6>
+-                                        <button className={'btn btn-sm text-stats p-0'} onClick={() => {
++                                        <button disabled={this.state.status !== 'ready' || this.state.geoCharts.length === 0} className={'btn btn-sm text-stats p-0'} onClick={() => {
+                                             handleShow()
+                                         }}>View Map
+                                         </button>
+@@ -472,10 +339,9 @@ class Main extends React.Component {
+                 <div className="col-md-12 pb-3 text-stats">
+                     <div className="row">
+                         <div className="mx-auto">
+-                            Active Nodes {this.state.totalNodes ?
++                            Connected Nodes {this.state.totalNodes !== null ?
+                             <span
+-                                className={'nodes-badge p-1'}>{this.state.totalNodes}/{this.state.totalNodes}</span> :
+-                            <Spinner/>}
++                                className={'nodes-badge p-1'}>{this.state.activeNodes}/{this.state.totalNodes}</span> : missingValue}
+                         </div>
+                         <div className="mx-auto">
+                             {pinnedNodes.length > 0 ?
+@@ -494,8 +360,7 @@ class Main extends React.Component {
+                             </span> : ''}
+                         </div>
+                         <div className="mx-auto">
+-                            Updating In: <TimeAgo date={this.state.lastUpdatedData}
+-                                                  formatter={formatter}/>
++                            Summary values come from the connected node reporting the highest block.
+                         </div>
+                     </div>
+                 </div>
+@@ -505,7 +370,7 @@ class Main extends React.Component {
+                             <thead className={'text-center text-muted'}>
+                             <tr>
+                                 <th>Pin</th>
+-                                <th>Active</th>
++                                <th>Connected</th>
+                                 <Tooltip title="Location of the node">
+                                     <th>Location</th>
+                                 </Tooltip>
+@@ -518,8 +383,8 @@ class Main extends React.Component {
+                                 <Tooltip title="The current block height the node is at">
+                                     <th>Height</th>
+                                 </Tooltip>
+-                                <Tooltip title="Time since last block">
+-                                    <th>Block Time</th>
++                                <Tooltip title="When the collector received the reported block">
++                                    <th>Block Received</th>
+                                 </Tooltip>
+                                 <Tooltip title="Pending Transactions in current block">
+                                     <th>Pending Txs</th>
+@@ -544,9 +409,9 @@ class Main extends React.Component {
+                             </thead>
+                             <tbody className={'text-center'}>
+                             {
+-                                this.state.nodeIdentifiers.map(((key, index) =>
++                                this.state.nodesList.map(((node, index) =>
+                                         pinnedNodes.includes(this.state.nodesList[index].id) ?
+-                                            <tr>
++                                            <tr key={node.id}>
+                                                 <td><a onClick={function () {
+                                                     removePinnedNode(this.state.nodesList[index].id)
+                                                 }.bind(this)}>
+@@ -566,15 +431,12 @@ class Main extends React.Component {
+                                                 </td>
+                                                 <td className={blockClass(this.state.nodesList[index].stats.block.number, this.state.highestBlock, getVersionNumber(this.state.nodesList[index].info.node))}>
+ 
+-                                                    {this.state.nodesList[index].stats.block.number ?
+-                                                        <NumberFormat
++                                                    {<NumberFormat
+                                                             value={this.state.nodesList[index].stats.block.number}
+                                                             displayType={'text'} thousandSeparator={true}
+-                                                            prefix={"# "}/>
+-                                                        :
+-                                                        <Spinner/>}
++                                                            prefix={"# "}/>}
+                                                     <span
+-                                                        className={'pl-4'}>{this.state.nodesList[index].stats.block.hash}
++                                                        className={'pl-4'}>{formatHash(this.state.nodesList[index].stats.block.hash)}
+                                                         <AttentionWarning
+                                                             highestBlock={this.state.highestBlock || 0}
+                                                             currentBlock={this.state.nodesList[index].stats.block.number}
+@@ -584,8 +446,7 @@ class Main extends React.Component {
+                                                 <td>{this.state.nodesList[index].stats.block.received ?
+                                                     <TimeAgo
+                                                         date={this.state.nodesList[index].stats.block.received}
+-                                                        formatter={formatter}/> :
+-                                                    <Spinner/>}</td>
++                                                        formatter={formatter}/> : '—'}</td>
+                                                 <td>{this.state.nodesList[index].stats.pending}</td>
+                                                 <Tooltip
+                                                     title={getTicketPercentage(this.state.ticketNumber, this.state.nodesList[index].stats.myTicketNumber)}>
+@@ -603,13 +464,13 @@ class Main extends React.Component {
+                                                 </td>
+                                                 <td className={latencyClass(this.state.nodesList[index].stats.latency)}>{this.state.nodesList[index].stats.latency}ms</td>
+                                             </tr>
+-                                            : ''
++                                            : null
+                                 ))
+                             }
+                             {
+-                                this.state.nodeIdentifiers.map(((key, index) =>
++                                this.state.nodesList.map(((node, index) =>
+                                         !pinnedNodes.includes(this.state.nodesList[index].id) && !this.state.hideNonPinned ?
+-                                            <tr>
++                                            <tr key={node.id}>
+                                                 <td><a onClick={function () {
+                                                     setPinnedNode(this.state.nodesList[index].id)
+                                                 }.bind(this)}>
+@@ -629,15 +490,12 @@ class Main extends React.Component {
+                                                 </td>
+                                                 <td className={blockClass(this.state.nodesList[index].stats.block.number, this.state.highestBlock, getVersionNumber(this.state.nodesList[index].info.node))}>
+ 
+-                                                    {this.state.nodesList[index].stats.block.number ?
+-                                                        <NumberFormat
++                                                    {<NumberFormat
+                                                             value={this.state.nodesList[index].stats.block.number}
+                                                             displayType={'text'} thousandSeparator={true}
+-                                                            prefix={"# "}/>
+-                                                        :
+-                                                        <Spinner/>}
++                                                            prefix={"# "}/>}
+                                                     <span
+-                                                        className={'pl-4'}>{this.state.nodesList[index].stats.block.hash}
++                                                        className={'pl-4'}>{formatHash(this.state.nodesList[index].stats.block.hash)}
+                                                         <AttentionWarning
+                                                             highestBlock={this.state.highestBlock || 0}
+                                                             currentBlock={this.state.nodesList[index].stats.block.number}
+@@ -647,8 +505,7 @@ class Main extends React.Component {
+                                                 <td>{this.state.nodesList[index].stats.block.received ?
+                                                     <TimeAgo
+                                                         date={this.state.nodesList[index].stats.block.received}
+-                                                        formatter={formatter}/> :
+-                                                    <Spinner/>}</td>
++                                                        formatter={formatter}/> : '—'}</td>
+                                                 <td>{this.state.nodesList[index].stats.pending}</td>
+                                                 <Tooltip
+                                                     title={getTicketPercentage(this.state.ticketNumber, this.state.nodesList[index].stats.myTicketNumber)}>
+@@ -666,7 +523,7 @@ class Main extends React.Component {
+                                                 </td>
+                                                 <td className={latencyClass(this.state.nodesList[index].stats.latency)}>{this.state.nodesList[index].stats.latency}ms</td>
+                                             </tr>
+-                                            : ''
++                                            : null
+                                 ))
+                             }
+                             </tbody>
+@@ -675,7 +532,7 @@ class Main extends React.Component {
+                 </div>
+             </Container>
+         </div>
+-        </body>;
++        </div>;
+     }
+ }
+ 
+diff --git a/react-frontend/src/config.js b/react-frontend/src/config.js
+index e033e62..e2f9c5e 100644
+--- a/react-frontend/src/config.js
++++ b/react-frontend/src/config.js
+@@ -6,3 +6,16 @@ function loadApiPath(value) {
+ }
+ 
+ module.exports = loadApiPath;
++
++module.exports.loadPollingConfig = function loadPollingConfig(interval, timeout) {
++    function positiveInteger(value, name) {
++        if (typeof value !== 'string' || !/^[1-9][0-9]*$/.test(value) || Number(value) > 2147483647) {
++            throw new Error(name + ' must be a positive integer no greater than 2147483647');
++        }
++        return Number(value);
++    }
++    return {
++        intervalMs: positiveInteger(interval, 'REACT_APP_STATS_POLL_INTERVAL_MS'),
++        timeoutMs: positiveInteger(timeout, 'REACT_APP_STATS_REQUEST_TIMEOUT_MS'),
++    };
++};
+diff --git a/react-frontend/src/snapshot-polling.js b/react-frontend/src/snapshot-polling.js
+new file mode 100644
+index 0000000..c0535cf
+--- /dev/null
++++ b/react-frontend/src/snapshot-polling.js
+@@ -0,0 +1,98 @@
++const prepareSnapshot = require('./snapshot-view');
++
++function startSnapshotPolling(config, dependencies) {
++    let stopped = false;
++    let request = null;
++    let pollTimer;
++    let deadlineTimer;
++    let expiryTimer;
++
++    function clearSnapshot() {
++        if (stopped) {
++            return;
++        }
++        dependencies.clearTimeout(expiryTimer);
++        dependencies.onUnavailable();
++    }
++
++    function finishRequest(current) {
++        if (stopped || request !== current) {
++            return false;
++        }
++        request = null;
++        dependencies.clearTimeout(deadlineTimer);
++        pollTimer = dependencies.setTimeout(poll, config.intervalMs);
++        return true;
++    }
++
++    function poll() {
++        if (stopped || request !== null) {
++            return;
++        }
++        const startedAt = dependencies.now();
++        let current;
++        try {
++            current = dependencies.request();
++        } catch (_) {
++            clearSnapshot();
++            pollTimer = dependencies.setTimeout(poll, config.intervalMs);
++            return;
++        }
++        request = current;
++        deadlineTimer = dependencies.setTimeout(() => {
++            if (finishRequest(current)) {
++                current.cancel();
++                clearSnapshot();
++            }
++        }, config.timeoutMs);
++        current.promise.then(response => {
++            if (stopped || request !== current) {
++                return;
++            }
++            const { validForMs, ...snapshot } = prepareSnapshot(response);
++            const remaining = validForMs - (dependencies.now() - startedAt);
++            if (remaining <= 0) {
++                throw new Error('Snapshot expired in transit');
++            }
++            finishRequest(current);
++            dependencies.clearTimeout(expiryTimer);
++            dependencies.onSnapshot(snapshot);
++            expiryTimer = dependencies.setTimeout(clearSnapshot, remaining);
++        }).catch(() => {
++            if (finishRequest(current)) {
++                clearSnapshot();
++            }
++        });
++    }
++
++    function refresh() {
++        if (stopped) {
++            return;
++        }
++        dependencies.clearTimeout(pollTimer);
++        dependencies.clearTimeout(deadlineTimer);
++        const previous = request;
++        request = null;
++        if (previous) {
++            previous.cancel();
++        }
++        clearSnapshot();
++        poll();
++    }
++
++    function stop() {
++        stopped = true;
++        dependencies.clearTimeout(pollTimer);
++        dependencies.clearTimeout(deadlineTimer);
++        dependencies.clearTimeout(expiryTimer);
++        if (request) {
++            request.cancel();
++            request = null;
++        }
++    }
++
++    poll();
++    return { refresh, stop };
++}
++
++module.exports = startSnapshotPolling;
+diff --git a/react-frontend/src/snapshot-view.js b/react-frontend/src/snapshot-view.js
+new file mode 100644
+index 0000000..e5be468
+--- /dev/null
++++ b/react-frontend/src/snapshot-view.js
+@@ -0,0 +1,76 @@
++function object(value) {
++    return value !== null && typeof value === 'object' && !Array.isArray(value);
++}
++
++function optionalNumber(value) {
++    if (value === undefined || value === null) {
++        return null;
++    }
++    if (!Number.isFinite(value) || value < 0) {
++        throw new Error('Invalid numeric report');
++    }
++    return value;
++}
++
++function readNode(row, observedAt) {
++    if (!object(row) || typeof row.id !== 'string' || row.utctime !== observedAt || typeof row.stats !== 'string') {
++        throw new Error('Invalid node row');
++    }
++    const node = JSON.parse(row.stats);
++    if (!object(node) || node.id !== row.id || !object(node.info) || typeof node.info.node !== 'string' ||
++        !object(node.stats) || !object(node.stats.block)) {
++        throw new Error('Invalid node report');
++    }
++    const block = node.stats.block;
++    if (!Number.isSafeInteger(block.number) || block.number < 0 || typeof block.hash !== 'string' ||
++        !/^0x[0-9a-fA-F]{64}$/.test(block.hash)) {
++        throw new Error('Invalid reported block');
++    }
++    for (const field of ['active', 'mining', 'syncing']) {
++        if (typeof node.stats[field] !== 'boolean') {
++            throw new Error('Invalid reported state');
++        }
++    }
++    for (const field of ['pending', 'myTicketNumber', 'peers', 'uptime', 'latency']) {
++        node.stats[field] = optionalNumber(node.stats[field]);
++    }
++    node.stats.block.received = optionalNumber(block.received);
++    node.stats.block.ticketNumber = optionalNumber(block.ticketNumber);
++    const geo = node.geo;
++    if (geo !== null && (!object(geo) || typeof geo.country !== 'string' || !/^[A-Z]{2}$/.test(geo.country) ||
++        !Array.isArray(geo.ll) || geo.ll.length !== 2 || !geo.ll.every(Number.isFinite) ||
++        Math.abs(geo.ll[0]) > 90 || Math.abs(geo.ll[1]) > 180)) {
++        node.geo = null;
++    }
++    return node;
++}
++
++function prepareSnapshot(response) {
++    const observedAt = response.headers && response.headers['x-dashboard-observed-at'];
++    const budget = response.headers && response.headers['x-dashboard-valid-for-ms'];
++    if (response.status !== 200 || typeof observedAt !== 'string' || !Number.isFinite(Date.parse(observedAt)) ||
++        new Date(observedAt).toISOString() !== observedAt || typeof budget !== 'string' ||
++        !/^(0|[1-9][0-9]*)$/.test(budget) || Number(budget) > 2147483647 || !Array.isArray(response.data)) {
++        throw new Error('Invalid snapshot response');
++    }
++    const nodesList = response.data.map(row => readNode(row, observedAt));
++    if (new Set(nodesList.map(node => node.id)).size !== nodesList.length) {
++        throw new Error('Duplicate node');
++    }
++    nodesList.sort((left, right) => right.stats.block.number - left.stats.block.number || left.id.localeCompare(right.id));
++    const activeNodes = nodesList.filter(node => node.stats.active);
++    const highest = activeNodes[0];
++    const geoCharts = nodesList.filter(node => node.geo !== null).map(node => ({
++        name: node.id, radius: 2, latitude: node.geo.ll[0], longitude: node.geo.ll[1], fillKey: 'bubbleFill',
++    }));
++    return {
++        observedAt, validForMs: Number(budget), nodesList, geoCharts,
++        totalNodes: nodesList.length, activeNodes: activeNodes.length,
++        highestBlock: highest ? highest.stats.block.number : null,
++        lastUpdatedBlock: highest ? highest.stats.block.received : null,
++        ticketNumber: highest ? highest.stats.block.ticketNumber : null,
++        pendingTransactions: highest ? highest.stats.pending : null,
++    };
++}
++
++module.exports = prepareSnapshot;
+diff --git a/test/browser-snapshot.test.cjs b/test/browser-snapshot.test.cjs
+new file mode 100644
+index 0000000..2453be2
+--- /dev/null
++++ b/test/browser-snapshot.test.cjs
+@@ -0,0 +1,195 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const prepareSnapshot = require('../react-frontend/src/snapshot-view');
++const startSnapshotPolling = require('../react-frontend/src/snapshot-polling');
++const { loadPollingConfig } = require('../react-frontend/src/config');
++
++const observedAt = '2026-10-03T12:00:00.000Z';
++const hash = '0x' + '1'.repeat(64);
++
++function row(id, height, active = true) {
++    return { id, utctime: observedAt, stats: JSON.stringify({
++        id, info: { node: 'efsn/v5.0.0-local' }, geo: null,
++        stats: { active, mining: true, syncing: false, pending: 0, myTicketNumber: 0, peers: 0, uptime: 100, latency: 0,
++            block: { number: height, hash, received: 1791028799000, ticketNumber: 0 } },
++    }) };
++}
++
++function response(data = [], budget = '1000') {
++    return { status: 200, headers: { 'x-dashboard-observed-at': observedAt, 'x-dashboard-valid-for-ms': budget }, data };
++}
++
++function fixture() {
++    let time = 0;
++    let nextTimer = 0;
++    const timers = new Map();
++    const requests = [];
++    const states = [];
++    const polling = startSnapshotPolling({ intervalMs: 100, timeoutMs: 50 }, {
++        now: () => time,
++        setTimeout(callback, delay) { timers.set(++nextTimer, { callback, at: time + delay }); return nextTimer; },
++        clearTimeout(id) { timers.delete(id); },
++        request() {
++            let resolve, reject;
++            const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
++            const request = { promise, resolve, reject, canceled: false, cancel() { this.canceled = true; } };
++            requests.push(request);
++            return request;
++        },
++        onSnapshot(snapshot) { states.push({ status: 'ready', snapshot }); },
++        onUnavailable() { states.push({ status: 'unavailable' }); },
++    });
++    function advance(milliseconds) {
++        const end = time + milliseconds;
++        while (true) {
++            const next = [...timers].sort((a, b) => a[1].at - b[1].at)[0];
++            if (!next || next[1].at > end) { break; }
++            time = next[1].at;
++            timers.delete(next[0]);
++            next[1].callback();
++        }
++        time = end;
++    }
++    return { polling, requests, states, timers, advance };
++}
++
++async function settle() {
++    await Promise.resolve();
++    await Promise.resolve();
++    await Promise.resolve();
++}
++
++test('browser timing settings require bounded explicit positive integers', () => {
++    assert.deepEqual(loadPollingConfig('100', '50'), { intervalMs: 100, timeoutMs: 50 });
++    for (const value of [undefined, '', '0', '-1', '1.5', '2147483648', '100x']) {
++        assert.throws(() => loadPollingConfig(value, '50'), /REACT_APP_STATS_POLL_INTERVAL_MS/);
++        assert.throws(() => loadPollingConfig('100', value), /REACT_APP_STATS_REQUEST_TIMEOUT_MS/);
++    }
++});
++
++test('snapshot summaries use current connected reports and preserve zeroes and full hashes', () => {
++    const result = prepareSnapshot(response([row('offline', 999, false), row('beta', 2), row('alpha', 1)]));
++    assert.deepEqual({ total: result.totalNodes, active: result.activeNodes, height: result.highestBlock,
++        received: result.lastUpdatedBlock, tickets: result.ticketNumber, pending: result.pendingTransactions,
++        ids: result.nodesList.map(node => node.id), hash: result.nodesList[1].stats.block.hash, geo: result.geoCharts },
++    { total: 3, active: 2, height: 2, received: 1791028799000, tickets: 0, pending: 0,
++        ids: ['offline', 'beta', 'alpha'], hash: '0x1111111111111111111111111111111111111111111111111111111111111111', geo: [] });
++});
++
++test('empty and disconnected snapshots do not invent current block, ticket or pending values', () => {
++    for (const data of [[], [row('offline', 42, false)]]) {
++        const result = prepareSnapshot(response(data));
++        assert.deepEqual([result.activeNodes, result.highestBlock, result.ticketNumber, result.pendingTransactions], [0, null, null, null]);
++    }
++});
++
++test('response validation rejects incomplete metadata, mixed observations and malformed rows', () => {
++    const invalid = [
++        { ...response(), status: 503 }, { ...response(), headers: {} }, response({}, '1000'), response([], '-1'),
++        response([], '2147483648'), response([{ ...row('alpha', 1), utctime: '2026-10-03T11:00:00.000Z' }]),
++        response([row('alpha', 1), row('alpha', 2)]), response([{ ...row('alpha', 1), stats: '{' }]),
++        response([{ ...row('alpha', 1), stats: JSON.stringify({}) }]),
++    ];
++    for (const value of invalid) { assert.throws(() => prepareSnapshot(value)); }
++});
++
++test('new snapshots replace nodes, geography and summary values even when height decreases', () => {
++    const first = row('alpha', 100);
++    const node = JSON.parse(first.stats);
++    node.geo = { country: 'SE', ll: [59, 18] };
++    first.stats = JSON.stringify(node);
++    const initial = prepareSnapshot(response([first]));
++    const replacement = prepareSnapshot(response([row('beta', 1)]));
++    assert.deepEqual(initial.geoCharts, [{ name: 'alpha', radius: 2, latitude: 59, longitude: 18, fillKey: 'bubbleFill' }]);
++    assert.deepEqual([replacement.nodesList.map(value => value.id), replacement.highestBlock, replacement.geoCharts], [['beta'], 1, []]);
++});
++
++test('HTTP failure clears a successful view, retries once and recovers with an empty snapshot', async () => {
++    const f = fixture();
++    f.requests[0].resolve(response([row('alpha', 1)]));
++    await settle();
++    f.advance(100);
++    f.requests[1].reject(new Error('HTTP 503'));
++    await settle();
++    f.advance(100);
++    f.requests[2].resolve(response());
++    await settle();
++    assert.deepEqual(f.states.map(state => state.status), ['ready', 'unavailable', 'ready']);
++    assert.deepEqual(f.states[2].snapshot.nodesList, []);
++    assert.equal(f.requests.length, 3);
++    f.polling.stop();
++});
++
++test('request timeout cancels work and late success cannot replace a newer response', async () => {
++    const f = fixture();
++    f.advance(50);
++    f.advance(100);
++    f.requests[1].resolve(response([row('beta', 2)]));
++    await settle();
++    f.requests[0].resolve(response([row('alpha', 1)]));
++    await settle();
++    assert.equal(f.requests[0].canceled, true);
++    assert.deepEqual(f.states.map(state => state.status), ['unavailable', 'ready']);
++    assert.equal(f.states[1].snapshot.nodesList[0].id, 'beta');
++    f.polling.stop();
++});
++
++test('snapshot expires during a pending poll after subtracting transport time', async () => {
++    const f = fixture();
++    f.advance(20);
++    f.requests[0].resolve(response([row('alpha', 1)], '150'));
++    await settle();
++    f.advance(100);
++    assert.equal(f.requests.length, 2);
++    f.advance(29);
++    assert.equal(f.states.at(-1).status, 'ready');
++    f.advance(1);
++    assert.deepEqual(f.states.map(state => state.status), ['ready', 'unavailable']);
++    f.polling.stop();
++});
++
++test('expired-in-transit and malformed successful responses clear data and retain retries', async () => {
++    const f = fixture();
++    f.advance(20);
++    f.requests[0].resolve(response([], '10'));
++    await settle();
++    f.advance(100);
++    f.requests[1].resolve({ status: 200, data: [] });
++    await settle();
++    f.advance(100);
++    assert.deepEqual(f.states, [{ status: 'unavailable' }, { status: 'unavailable' }]);
++    assert.equal(f.requests.length, 3);
++    f.polling.stop();
++});
++
++test('visibility refresh invalidates old data and cancels pending callbacks; stop removes timers', async () => {
++    const f = fixture();
++    f.requests[0].resolve(response([row('alpha', 1)]));
++    await settle();
++    f.advance(100);
++    f.polling.refresh();
++    f.requests[1].resolve(response([row('old', 99)]));
++    await settle();
++    f.requests[2].resolve(response([row('new', 2)]));
++    f.polling.stop();
++    await settle();
++    f.advance(10000);
++    assert.equal(f.requests[1].canceled, true);
++    assert.equal(f.requests[2].canceled, true);
++    assert.deepEqual(f.states.map(state => state.status), ['ready', 'unavailable']);
++    assert.equal(f.timers.size, 0);
++    assert.equal(f.requests.length, 3);
++});
++
++test('a synchronous request-adapter error becomes unavailable with one retry timer', () => {
++    const events = [];
++    const polling = startSnapshotPolling({ intervalMs: 100, timeoutMs: 50 }, {
++        now: () => 0,
++        request() { throw new Error('Request setup failed'); },
++        onUnavailable() { events.push('unavailable'); },
++        setTimeout(callback, delay) { events.push(delay); },
++        clearTimeout() {},
++    });
++    assert.deepEqual(events, ['unavailable', 100]);
++    polling.stop();
++});
+diff --git a/test/snapshot-api.test.cjs b/test/snapshot-api.test.cjs
+index 6a638ed..a49216b 100644
+--- a/test/snapshot-api.test.cjs
++++ b/test/snapshot-api.test.cjs
+@@ -24,6 +24,7 @@ test('all four views derive their data from one snapshot without redundant datab
+     assert.equal(nodes.status, 200);
+     assert.equal(nodes.headers['cache-control'], 'no-store');
+     assert.equal(nodes.headers['x-dashboard-observed-at'], '2026-10-03T12:00:00.000Z');
++    assert.equal(nodes.headers['x-dashboard-valid-for-ms'], '1000');
+ });
+ 
+ test('missing, stale, future and failed reads are unavailable without stale payload or database details', async t => {
+@@ -41,6 +42,7 @@ test('missing, stale, future and failed reads are unavailable without stale payl
+             assert.deepEqual(response.body, { error: 'snapshot_unavailable' });
+             assert.equal(response.headers['cache-control'], 'no-store');
+             assert.equal(response.headers['x-dashboard-observed-at'], undefined);
++            assert.equal(response.headers['x-dashboard-valid-for-ms'], undefined);
+         }
+     }
+ });
+@@ -50,4 +52,5 @@ test('fresh empty snapshots stay valid through the exact age boundary', async t
+     const response = await get('/nodes');
+     assert.equal(response.status, 200);
+     assert.deepEqual(response.body, []);
++    assert.equal(response.headers['x-dashboard-valid-for-ms'], '0');
+ });

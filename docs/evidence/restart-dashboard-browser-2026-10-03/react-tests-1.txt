@@ -1,0 +1,37 @@
+
+> react-play@0.1.0 test C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\react-frontend
+> react-scripts test "--watchAll=false" "--runInBand"
+
+(node:26072) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  console.error node_modules/react-dom/cjs/react-dom.development.js:558
+    Warning: validateDOMNesting(...): Whitespace text nodes cannot appear as a child of <tbody>. Make sure you don't have any extra whitespace between tags on each line of your source code.
+        in tbody (at Main.js:410)
+        in table (created by Table)
+        in Table (created by Bootstrap(Table))
+        in Bootstrap(Table) (at Main.js:369)
+        in div (at Main.js:368)
+        in div (at Main.js:367)
+        in div (created by Container)
+        in Container (at Main.js:186)
+        in div (at Main.js:163)
+        in div (at Main.js:162)
+        in Main (at App.js:11)
+        in div (at App.js:9)
+        in App (at App.test.js:56)
+
+PASS src/App.test.js (11.771s)
+  √ replaces rows and summary values with an explicit empty snapshot (97ms)
+  √ removes old rows on HTTP failure, shows last observation and recovers automatically (32ms)
+  √ expires visible rows while the next request is pending and cancels on unmount (23ms)
+  √ retries a timed-out initial request and rejects malformed successful JSON (27ms)
+  √ requires a fresh request after returning to a visible tab (27ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        21.011s
+Ran all test suites.
+  console.error node_modules/react-dom/cjs/react-dom-test-utils.development.js:80
+    Warning: The callback passed to act(...) function must return undefined, or a Promise. You returned true
+
