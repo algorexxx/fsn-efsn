@@ -1,0 +1,85 @@
+TAP version 13
+# (node:45164) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real telemetry login deadline closes a silent socket and ordinary login still works
+ok 1 - real telemetry login deadline closes a silent socket and ordinary login still works
+  ---
+  duration_ms: 1939.5102
+  ...
+# Subtest: real transport refuses a message over its byte limit on every collector path
+not ok 2 - real transport refuses a message over its byte limit on every collector path
+  ---
+  duration_ms: 10027.7128
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\collector-input-wire.test.cjs:24:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 10000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: real transport counts the aggregate bytes of a fragmented message
+not ok 3 - real transport counts the aggregate bytes of a fragmented message
+  ---
+  duration_ms: 10022.051
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\collector-input-wire.test.cjs:40:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 10000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: application message allowance closes the sender and permits a later fresh session
+ok 4 - application message allowance closes the sender and permits a later fresh session
+  ---
+  duration_ms: 202.951
+  ...
+# Subtest: TCP connection budget is shared across paths and a closed slot can be reused
+not ok 5 - TCP connection budget is shared across paths and a closed slot can be reused
+  ---
+  duration_ms: 197.9318
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\collector-input-wire.test.cjs:67:1'
+  failureType: 'testCodeFailure'
+  error: 'read ECONNRESET'
+  code: 'ECONNRESET'
+  stack: |-
+    TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+  ...
+# Subtest: invalid envelopes close before the event plugin and do not interrupt another node
+ok 6 - invalid envelopes close before the event plugin and do not interrupt another node
+  ---
+  duration_ms: 203.3532
+  ...
+# Subtest: efsn-sized history reaches collection and an extra entry closes the reporting session
+not ok 7 - efsn-sized history reaches collection and an extra entry closes the reporting session
+  ---
+  duration_ms: 1194.0925
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\collector-input-wire.test.cjs:109:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    51 !== 100
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 100
+  actual: 51
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\collector-input-wire.test.cjs:120:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# (node:25912) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+ok 8 - real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+  ---
+  duration_ms: 1688.4915
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 4
+# fail 2
+# cancelled 2
+# skipped 0
+# todo 0
+# duration_ms 24172.7634

@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Build/browser acceptance](restart-dashboard-build.md): strict build, 110 contracts, seven DOM tests and nine compiled-browser checkpoints pass | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Collector input acceptance](restart-dashboard-input.md): 120 contracts/eight socket tests pass; prior strict build and browser checks pass | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -212,8 +212,12 @@ failure/expiry and recovering automatically. Its inherited webpack production
 build initially failed on Node 22.11.0. The [build correction and compiled-browser
 acceptance](restart-dashboard-build.md) now pass: 110 contracts, seven React DOM
 tests and nine Edge checkpoints, including outage recovery and accessible map
-closure. Per-node freshness, actual efsn/RPC comparison, resource limits, runtime
-review and TLS/deployment remain open.
+closure. [Collector input limits](restart-dashboard-input.md) now pass 120 contracts
+and eight real socket tests, including byte/connection/message caps, login expiry
+and bounded history replies. The inherited chart cache still ignores some new
+heads, selects the wrong chart window and lacks a per-height fork cap. Per-node
+freshness, chart/remaining resource corrections, actual efsn/RPC comparison,
+runtime review and TLS/deployment remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -272,11 +276,11 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: collector input/resource limits and per-node report freshness, then actual
-   efsn/RPC comparison, reviewed runtime/dependencies and TLS/deployment acceptance.
-   [Strict build and compiled browser checks](restart-dashboard-build.md) now pass
-   locally alongside snapshot storage/API evidence; the public dashboard gate
-   remains open.
+1. G6: per-node report freshness, chart-cache correctness/retention and remaining
+   resource limits, then actual efsn/RPC comparison, reviewed runtime/dependencies
+   and TLS/deployment acceptance. [Collector input checks](restart-dashboard-input.md)
+   now pass alongside the prior strict build, browser and snapshot storage/API
+   evidence; the public dashboard gate remains open.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

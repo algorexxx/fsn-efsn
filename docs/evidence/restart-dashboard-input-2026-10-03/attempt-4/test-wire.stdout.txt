@@ -1,0 +1,54 @@
+TAP version 13
+# (node:39948) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real telemetry login deadline closes a silent socket and ordinary login still works
+ok 1 - real telemetry login deadline closes a silent socket and ordinary login still works
+  ---
+  duration_ms: 514.7474
+  ...
+# Subtest: real transport refuses a message over its byte limit on every collector path
+ok 2 - real transport refuses a message over its byte limit on every collector path
+  ---
+  duration_ms: 208.474
+  ...
+# Subtest: real transport counts the aggregate bytes of a fragmented message
+ok 3 - real transport counts the aggregate bytes of a fragmented message
+  ---
+  duration_ms: 177.6271
+  ...
+# Subtest: application message allowance closes the sender and permits a later fresh session
+ok 4 - application message allowance closes the sender and permits a later fresh session
+  ---
+  duration_ms: 182.6682
+  ...
+# Subtest: TCP connection budget is shared across paths and a closed slot can be reused
+ok 5 - TCP connection budget is shared across paths and a closed slot can be reused
+  ---
+  duration_ms: 252.6378
+  ...
+# Subtest: invalid envelopes close before the event plugin and do not interrupt another node
+ok 6 - invalid envelopes close before the event plugin and do not interrupt another node
+  ---
+  duration_ms: 198.1499
+  ...
+# Subtest: efsn-sized history reaches collection and an extra entry closes the reporting session
+ok 7 - efsn-sized history reaches collection and an extra entry closes the reporting session
+  ---
+  duration_ms: 1232.3284
+  ...
+# (node:27412) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+ok 8 - real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+  ---
+  duration_ms: 272.9335
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2854.1072

@@ -1,0 +1,787 @@
+From 3d73e9576e4565bbabb3f6124dfad1bdc5e70fe1 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 13:58:30 +0200
+Subject: [PATCH] Bound dashboard collector input and registration waits
+
+---
+ docs/collector-input-limits.md          |  64 +++++++++++
+ docs/deployment-configuration.md        |  13 ++-
+ docs/telemetry-enrollment.md            |   3 +-
+ lib/collector-input.js                  |  34 ++++++
+ lib/deployment-config.js                |  12 +-
+ package.json                            |   4 +-
+ server.js                               |  27 ++++-
+ test/collector-input-wire.test.cjs      | 146 ++++++++++++++++++++++++
+ test/collector-input.test.cjs           | 131 +++++++++++++++++++++
+ test/fixtures/collector-environment.cjs |   8 ++
+ test/fixtures/collector-wire.cjs        |  48 ++++++++
+ test/fixtures/collector.cjs             |  19 ++-
+ test/fixtures/wire-server.cjs           |   3 +
+ test/persistence.test.cjs               |   2 +-
+ test/telemetry-wire.test.cjs            |   3 +-
+ 15 files changed, 498 insertions(+), 19 deletions(-)
+ create mode 100644 docs/collector-input-limits.md
+ create mode 100644 lib/collector-input.js
+ create mode 100644 test/collector-input-wire.test.cjs
+ create mode 100644 test/collector-input.test.cjs
+ create mode 100644 test/fixtures/collector-environment.cjs
+ create mode 100644 test/fixtures/collector-wire.cjs
+
+diff --git a/docs/collector-input-limits.md b/docs/collector-input-limits.md
+new file mode 100644
+index 0000000..7c05a31
+--- /dev/null
++++ b/docs/collector-input-limits.md
+@@ -0,0 +1,64 @@
++# Collector input limits
++
++The collector now requires four positive integer settings in addition to its
++listener and credential configuration. Missing or invalid values stop startup.
++These limits affect dashboard telemetry only; they do not change efsn consensus,
++block validity, mining, or eligibility to join the chain.
++
++| Setting | Enforced behavior |
++| --- | --- |
++| `COLLECTOR_MAX_MESSAGE_BYTES` | Incoming messages must be strictly below this byte threshold, including their JSON envelope. Applies to `/api`, `/primus` and `/external`, including aggregate fragmented messages. Compression is disabled. |
++| `COLLECTOR_MAX_CONNECTIONS` | Native HTTP server TCP connection cap, shared across all paths and incomplete upgrades. Connections above it are dropped. A slot becomes reusable after the server observes TCP closure. |
++| `COLLECTOR_HELLO_TIMEOUT_MS` | `/api` must complete credential checking and registration within this interval after its WebSocket connection. Expiry ends the session and releases any identity reservation. |
++| `COLLECTOR_MESSAGES_PER_SECOND` | Each connection starts with this many application-message credits. Credits refill continuously at this rate, capped at the initial allowance. An event needs one whole credit; exceeding the allowance ends the session. |
++
++Settings accept decimal integers from 1 to 2147483647. The local fixtures use
++65536 bytes, 16 connections, 1000 ms and 100 messages/second. These are fixture
++values, not production sizing. Measure complete real efsn block/history reports,
++sync bursts, expected operator count and proxy overhead before choosing deployed
++limits. A legitimate report above a configured limit will also disconnect.
++In particular, a history report includes transaction hashes for up to 50 blocks.
++
++The locked `ws` 1.1.5 receiver rejects the exact byte threshold too. Tests cover
++2047 accepted bytes versus 2048 rejected bytes, multibyte text and fragmented
++messages. Transport/JSON decoding errors destroy the request's socket promptly;
++this avoids the old library's 30-second close-handshake wait. Peers then observe
++abnormal closure code 1006. Ordinary session rejection still uses Primus closure.
++
++Application envelopes are checked before the legacy event plugin runs. They
++must contain exactly an event name and an object argument. `/api` accepts hello,
++update, block, pending, stats, history, node-ping and latency; existing credential
++and session-ownership checks still apply. `/primus` accepts ready and client-pong.
++The unused legacy `/external` stream accepts no inbound application events.
++Old JavaScript clients sending a separate `_latency` packet are outside this
++efsn-focused contract; efsn uses the authenticated `latency` event.
++
++History replies are limited to 50 entries, matching efsn's default batch and
++this collector's requested list size. Individual report fields are otherwise
++still subject to the existing validation, not a new full telemetry schema.
++The limiter does not count Primus control messages, WebSocket control frames or
++HTTP traffic. The local proxy still needs request, handshake, connection-rate
++and public-traffic limits. Application limits reset with a new connection;
++they are not a source-address quota or protection against many reconnects.
++
++## Acceptance and outstanding work
++
++Node 22.11.0 passes 120 contracts and eight real loopback socket scenarios with
++synthetic credentials. Tests cover login expiry, late-registration rejection,
++input/rate/connection limits, fragmented messages, invalid envelopes, reconnects,
++and normal head/history reporting followed by an oversized history batch.
++Processes exit and test sockets close. Existing dependency deprecations remain.
++This step changes no dependency versions or frontend/storage code.
++
++The inherited chart history remains a separate blocker. Its partly filled cache
++can ignore an advancing head. With head 100 and history 51–100, it stores all 50
++heights but charts 51–90 rather than the latest 40. Per-height fork arrays also
++lack a retention cap. These findings need focused correction and acceptance;
++passing ingress checks does not prove bounded total process memory or correct
++chart reporting. Outbound buffering/slow consumers and credential-count sizing
++also remain part of resource review.
++
++Next distinguish collector connection state from recent accepted block, stats
++and pending reports. Neither a fresh database snapshot nor a ping proves those
++fields are recent. Then complete real efsn/RPC comparison, chart/cache bounds,
++runtime/dependency review, supervision and TLS/proxy acceptance before public use.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 0099529..9d6dee7 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -16,6 +16,10 @@ acceptance. These settings are not a production launch approval.
+ | --- | --- | --- |
+ | Collector | `COLLECTOR_HOST` | `127.0.0.1` or `::1` |
+ | Collector | `COLLECTOR_PORT` | Explicit listener port |
++| Collector | `COLLECTOR_MAX_MESSAGE_BYTES` | Incoming WebSocket messages must be strictly smaller than this byte threshold |
++| Collector | `COLLECTOR_MAX_CONNECTIONS` | Shared TCP connection cap for all collector paths |
++| Collector | `COLLECTOR_HELLO_TIMEOUT_MS` | Maximum wait for completed telemetry registration after WebSocket connection |
++| Collector | `COLLECTOR_MESSAGES_PER_SECOND` | Per-connection application-message refill rate and initial burst allowance |
+ | Collector | `WS_CREDENTIALS_FILE` | Absolute private JSON file; see [enrollment](telemetry-enrollment.md) |
+ | Persistence | `COLLECTOR_WS_URL` | Explicit URL ending in `/primus`; local WS or WSS |
+ | API | `API_HOST` | `127.0.0.1` or `::1` |
+@@ -89,7 +93,10 @@ legacy `/external` stream automatically. The final proxy must provide certificat
+ WebSocket upgrade handling, suitable timeouts and bounded requests/connections.
+ Those deployment settings and loss/reconnect behavior still need testing.
+ 
+-For a local collector test after installing the locked dependencies:
++Set the four collector limits in the protected environment before starting it;
++see [collector input limits](collector-input-limits.md) for tested behavior and
++the remaining resource limits. For a local collector test after installing the
++locked dependencies:
+ 
+ ```sh
+ NODE_ENV=production COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json npm start
+@@ -109,5 +116,5 @@ used to provision this candidate.
+ Real collector → PostgreSQL → HTTP API checks now pass with distinct synthetic
+ nodes and reconnects. The [browser freshness implementation](browser-freshness.md) passes React DOM
+ checks, and [compiled browser acceptance](build-validation.md) now passes locally.
+-Complete actual efsn telemetry, production runtime/dependency review, resource
+-limits and TLS/proxy acceptance before public use.
++Complete actual efsn telemetry, production runtime/dependency review, remaining
++resource limits and TLS/proxy acceptance before public use.
+diff --git a/docs/telemetry-enrollment.md b/docs/telemetry-enrollment.md
+index cade3d6..62c864f 100644
+--- a/docs/telemetry-enrollment.md
++++ b/docs/telemetry-enrollment.md
+@@ -27,7 +27,8 @@ collector service account and its administrator. Provide each operator only
+ their own dashboard credential. Never collect validator signing keys. No real
+ credential or populated deployment configuration belongs in Git.
+ 
+-For a Unix service with its environment already protected, the collector uses:
++For a Unix service with its environment already protected and all four
++[collector input limits](collector-input-limits.md) configured, the collector uses:
+ 
+ ```sh
+ WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json NODE_ENV=production COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 npm start
+diff --git a/lib/collector-input.js b/lib/collector-input.js
+new file mode 100644
+index 0000000..8ac8a34
+--- /dev/null
++++ b/lib/collector-input.js
+@@ -0,0 +1,34 @@
++const { performance } = require('perf_hooks');
++
++function limitCollectorInput(primus, events, messagesPerSecond, now = () => performance.now()) {
++    const connections = new WeakMap();
++    primus.on('connection', function (spark) {
++        spark.on('error', function () { spark.request.destroy(); });
++    });
++    primus.transform('incoming', function (packet) {
++        const time = now();
++        let state = connections.get(this);
++        if (!state) {
++            state = { time, allowance: messagesPerSecond, closed: false };
++            connections.set(this, state);
++        }
++        if (state.closed) {
++            return false;
++        }
++        state.allowance = Math.min(messagesPerSecond, state.allowance + Math.max(0, time - state.time) * messagesPerSecond / 1000);
++        state.time = time;
++        const data = packet.data;
++        const validEnvelope = data !== null && typeof data === 'object' && !Array.isArray(data)
++            && Array.isArray(data.emit) && data.emit.length === 2
++            && events.includes(data.emit[0]) && data.emit[1] !== null
++            && typeof data.emit[1] === 'object' && !Array.isArray(data.emit[1]);
++        if (!validEnvelope || state.allowance < 1) {
++            state.closed = true;
++            this.end(undefined, { reconnect: false });
++            return false;
++        }
++        state.allowance -= 1;
++    });
++}
++
++module.exports = limitCollectorInput;
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index b926057..7c0c1e1 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -103,4 +103,14 @@ function loadApiConfig(environment) {
+     return { ...loadListenerConfig(environment, 'API'), maxAgeMs: positiveInteger(environment, 'SNAPSHOT_MAX_AGE_MS') };
+ }
+ 
+-module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl, loadPersistenceConfig, loadApiConfig };
++function loadCollectorConfig(environment) {
++    return {
++        ...loadListenerConfig(environment, 'COLLECTOR'),
++        maxBytes: positiveInteger(environment, 'COLLECTOR_MAX_MESSAGE_BYTES'),
++        maxConnections: positiveInteger(environment, 'COLLECTOR_MAX_CONNECTIONS'),
++        helloTimeoutMs: positiveInteger(environment, 'COLLECTOR_HELLO_TIMEOUT_MS'),
++        messagesPerSecond: positiveInteger(environment, 'COLLECTOR_MESSAGES_PER_SECOND'),
++    };
++}
++
++module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl, loadPersistenceConfig, loadApiConfig, loadCollectorConfig };
+diff --git a/package.json b/package.json
+index 2ff2b9e..ced1cd3 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,8 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs",
+-    "test:wire": "node --test test/telemetry-wire.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs",
++    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+     "start": "node server.js"
+diff --git a/server.js b/server.js
+index 6917a11..3bf207b 100644
+--- a/server.js
++++ b/server.js
+@@ -1,5 +1,6 @@
+ var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env);
+-var listener = require('./lib/deployment-config').loadListenerConfig(process.env, 'COLLECTOR');
++var listener = require('./lib/deployment-config').loadCollectorConfig(process.env);
++var limitCollectorInput = require('./lib/collector-input');
+ var _ = require('lodash');
+ var logger = require('./lib/utils/logger');
+ var chalk = require('chalk');
+@@ -16,6 +17,8 @@ if( process.env.NODE_ENV !== 'production' )
+ else
+     server = http.createServer();
+ 
++server.maxConnections = listener.maxConnections;
++
+ // Init socket vars
+ var Primus = require('primus');
+ var api;
+@@ -27,9 +30,12 @@ var server;
+ api = new Primus(server, {
+     transformer: 'websockets',
+     pathname: '/api',
+-    parser: 'JSON'
++    parser: 'JSON',
++    maxLength: listener.maxBytes,
++    compression: false
+ });
+ 
++limitCollectorInput(api, ['hello', 'update', 'block', 'pending', 'stats', 'history', 'node-ping', 'latency'], listener.messagesPerSecond);
+ api.plugin('emit', require('primus-emit'));
+ api.plugin('spark-latency', require('primus-spark-latency'));
+ 
+@@ -38,19 +44,25 @@ api.plugin('spark-latency', require('primus-spark-latency'));
+ client = new Primus(server, {
+     transformer: 'websockets',
+     pathname: '/primus',
+-    parser: 'JSON'
++    parser: 'JSON',
++    maxLength: listener.maxBytes,
++    compression: false
+ });
+ 
++limitCollectorInput(client, ['ready', 'client-pong'], listener.messagesPerSecond);
+ client.plugin('emit', require('primus-emit'));
+ 
+ 
+ // Init external API
+-external = new Primus(server, {
++var external = new Primus(server, {
+     transformer: 'websockets',
+     pathname: '/external',
+-    parser: 'JSON'
++    parser: 'JSON',
++    maxLength: listener.maxBytes,
++    compression: false
+ });
+ 
++limitCollectorInput(external, [], listener.messagesPerSecond);
+ external.plugin('emit', require('primus-emit'));
+ 
+ // Init collections
+@@ -83,9 +95,11 @@ api.on('connection', function (spark)
+     var identity = null;
+     var ready = false;
+     var ended = false;
++    var helloDeadline = setTimeout(rejectTelemetry, listener.helloTimeoutMs);
+ 
+     function endSession()
+     {
++        clearTimeout(helloDeadline);
+         ended = true;
+         ready = false;
+         if (identity === null || telemetrySessions.get(identity) !== spark) {
+@@ -143,6 +157,7 @@ api.on('connection', function (spark)
+                 return;
+             }
+             ready = true;
++            clearTimeout(helloDeadline);
+             spark.emit('ready');
+             console.success('API', 'CON', 'Connected', identity);
+             client.write({ action: 'add', data: info });
+@@ -280,7 +295,7 @@ api.on('connection', function (spark)
+ 
+     onTelemetry('history', function (data)
+     {
+-        if (!Array.isArray(data.history) || !data.history.every(isTelemetryObject)) {
++        if (!Array.isArray(data.history) || data.history.length > 50 || !data.history.every(isTelemetryObject)) {
+             rejectTelemetry();
+             return;
+         }
+diff --git a/test/collector-input-wire.test.cjs b/test/collector-input-wire.test.cjs
+new file mode 100644
+index 0000000..fa9620b
+--- /dev/null
++++ b/test/collector-input-wire.test.cjs
+@@ -0,0 +1,146 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const net = require('node:net');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const { connect, waitMessage, send, login, inventory } = require('./fixtures/wire-client.cjs');
++
++test('real telemetry login deadline closes a silent socket and ordinary login still works', { timeout: 10000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_HELLO_TIMEOUT_MS: '250' });
++    const silent = connect(t, server.port, 'api');
++    await silent.opened;
++    await silent.closed;
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    assert.deepEqual((await inventory(viewer)).map(node => node.id), ['node-a']);
++    owner.socket.close();
++    viewer.socket.close();
++    await Promise.all([owner.closed, viewer.closed]);
++    await server.stop();
++});
++
++test('real transport refuses a message over its byte limit on every collector path', { timeout: 10000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: '2048' });
++    const permitted = connect(t, server.port, 'primus');
++    await permitted.opened;
++    const padding = 2047 - Buffer.byteLength(JSON.stringify({ emit: ['ready', { padding: '' }] }));
++    permitted.socket.send(JSON.stringify({ emit: ['ready', { padding: 'x'.repeat(padding) }] }));
++    await waitMessage(permitted, message => message.emit && message.emit[0] === 'init');
++    permitted.socket.close();
++    await permitted.closed;
++    for (const endpoint of ['api', 'primus', 'external']) {
++        const connection = connect(t, server.port, endpoint);
++        await connection.opened;
++        connection.socket.send(JSON.stringify('Å'.repeat(1024)));
++        const [code] = await connection.closed;
++        assert.equal(code, 1006);
++    }
++    const boundary = connect(t, server.port, 'primus');
++    await boundary.opened;
++    boundary.socket.send(JSON.stringify({ emit: ['ready', { padding: 'x'.repeat(padding + 1) }] }));
++    assert.equal((await boundary.closed)[0], 1006);
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    owner.socket.close();
++    await owner.closed;
++    await server.stop();
++});
++
++test('real transport counts the aggregate bytes of a fragmented message', { timeout: 10000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: '2048' });
++    const connection = connect(t, server.port, 'primus');
++    await connection.opened;
++    const message = JSON.stringify({ emit: ['ready', { padding: 'x'.repeat(2050) }] });
++    connection.socket.send(message.slice(0, 1500), { fin: false });
++    connection.socket.send(message.slice(1500), { fin: true });
++    const [code] = await connection.closed;
++    assert.equal(code, 1006);
++    await server.stop();
++});
++
++test('application message allowance closes the sender and permits a later fresh session', { timeout: 10000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_MESSAGES_PER_SECOND: '3' });
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    for (let index = 0; index < 4; index++) send(viewer, 'ready', {});
++    await viewer.closed;
++    assert.equal(viewer.messages.filter(message => message.emit && message.emit[0] === 'init').length, 3);
++    const replacement = connect(t, server.port, 'primus');
++    await replacement.opened;
++    assert.deepEqual(await inventory(replacement), []);
++    replacement.socket.close();
++    await replacement.closed;
++    await server.stop();
++});
++
++test('TCP connection budget is shared across paths and a closed slot can be reused', { timeout: 10000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_MAX_CONNECTIONS: '3', COLLECTOR_HELLO_TIMEOUT_MS: '5000' });
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    const viewer = connect(t, server.port, 'primus');
++    const external = connect(t, server.port, 'external');
++    await Promise.all([viewer.opened, external.opened]);
++    const extra = net.connect({ host: '127.0.0.1', port: server.port });
++    extra.on('error', () => {});
++    t.after(() => extra.destroy());
++    await new Promise(resolve => extra.once('close', resolve));
++    viewer.socket.close();
++    await viewer.closed;
++    await server.waitForConnections(2);
++    const replacement = connect(t, server.port, 'primus');
++    await replacement.opened;
++    assert.deepEqual((await inventory(replacement)).map(node => node.id), ['node-a']);
++    owner.socket.close();
++    external.socket.close();
++    replacement.socket.close();
++    await Promise.all([owner.closed, external.closed, replacement.closed]);
++    await server.stop();
++});
++
++test('invalid envelopes close before the event plugin and do not interrupt another node', { timeout: 10000 }, async t => {
++    const server = await startCollector(t);
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    for (const data of [null, { emit: ['end', {}] }, { emit: ['ready', {}, 'extra'] }]) {
++        const invalid = connect(t, server.port, 'primus');
++        await invalid.opened;
++        invalid.socket.send(JSON.stringify(data));
++        await invalid.closed;
++    }
++    const undecodable = connect(t, server.port, 'api');
++    await undecodable.opened;
++    undecodable.socket.send('{');
++    assert.equal((await undecodable.closed)[0], 1006);
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    assert.equal((await inventory(viewer))[0].stats.active, true);
++    owner.socket.close();
++    viewer.socket.close();
++    await Promise.all([owner.closed, viewer.closed]);
++    await server.stop();
++});
++
++test('efsn-sized history reaches collection and an extra entry closes the reporting session', { timeout: 10000 }, async t => {
++    const server = await startCollector(t);
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    const history = Array.from({ length: 50 }, (_, index) => ({ number: 100 - index, hash: `0x${(100 - index).toString(16).padStart(64, '0')}`, parentHash: '0x' + '0'.repeat(64), difficulty: '1', totalDifficulty: '1', timestamp: 1704067200, gasLimit: 1000000, gasUsed: 0, transactions: [], uncles: [], miner: '0x' + '0'.repeat(40) }));
++    send(owner, 'block', { id: 'node-a', block: history[0] });
++    send(owner, 'history', { id: 'node-a', history });
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'synthetic-time' });
++    await waitMessage(owner, message => message.emit && message.emit[0] === 'node-pong');
++    const charts = await waitMessage(viewer, message => message.action === 'charts');
++    assert.equal(charts.data.height.length, 40);
++    assert.equal((await inventory(viewer))[0].stats.block.number, 100);
++    send(owner, 'history', { id: 'node-a', history: [...history, history[0]] });
++    await owner.closed;
++    await waitMessage(viewer, message => message.action === 'inactive');
++    assert.equal((await inventory(viewer))[0].stats.active, false);
++    viewer.socket.close();
++    await viewer.closed;
++    await server.stop();
++});
+diff --git a/test/collector-input.test.cjs b/test/collector-input.test.cjs
+new file mode 100644
+index 0000000..d7904d4
+--- /dev/null
++++ b/test/collector-input.test.cjs
+@@ -0,0 +1,131 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const limitCollectorInput = require('../lib/collector-input');
++const { loadCollectorConfig } = require('../lib/deployment-config');
++const environment = require('./fixtures/collector-environment.cjs');
++const { loadCollector, connectCollector, hello } = require('./fixtures/collector.cjs');
++
++function inputFixture() {
++    let incoming;
++    let time = 0;
++    limitCollectorInput({ on() {}, transform(name, handler) { assert.equal(name, 'incoming'); incoming = handler; } }, ['ready'], 2, () => time);
++    return {
++        spark() { return { ends: 0, end() { this.ends++; } }; },
++        receive(spark, data = { emit: ['ready', {}] }) { return incoming.call(spark, { data }); },
++        advance(milliseconds) { time += milliseconds; },
++    };
++}
++
++test('collector input configuration has explicit finite limits and rejects missing or invalid limits', () => {
++    assert.deepEqual(loadCollectorConfig(environment), { host: '127.0.0.1', port: 0, maxBytes: 65536, maxConnections: 16, helloTimeoutMs: 1000, messagesPerSecond: 100 });
++    for (const name of Object.keys(environment).filter(name => !['COLLECTOR_HOST', 'COLLECTOR_PORT'].includes(name))) {
++        for (const value of [undefined, '', '0', '-1', '1.5', ' 10', '10x', '2147483648']) {
++            assert.throws(() => loadCollectorConfig({ ...environment, [name]: value }), new RegExp(name));
++        }
++    }
++});
++
++test('missing collector input limits stop before constructing any listener', t => {
++    const collector = loadCollector(t, { environment: { COLLECTOR_MAX_MESSAGE_BYTES: undefined } });
++    assert.match(collector.startupError.message, /COLLECTOR_MAX_MESSAGE_BYTES/);
++    assert.equal(collector.listening, false);
++    assert.equal(collector.sockets.size, 0);
++});
++
++test('all collector WebSocket paths receive the transport byte limit without compression', t => {
++    const collector = loadCollector(t);
++    assert.equal(collector.server.maxConnections, 16);
++    assert.deepEqual([...collector.sockets].map(([path, socket]) => ({ path, maxLength: socket.config.maxLength, compression: socket.config.compression, guards: socket.transforms.length })), [
++        { path: '/api', maxLength: 65536, compression: false, guards: 1 },
++        { path: '/primus', maxLength: 65536, compression: false, guards: 1 },
++        { path: '/external', maxLength: 65536, compression: false, guards: 1 },
++    ]);
++});
++
++test('application allowance refills gradually, stays capped and closes only the over-budget connection', () => {
++    const fixture = inputFixture();
++    const a = fixture.spark();
++    const b = fixture.spark();
++    assert.equal(fixture.receive(a), undefined);
++    assert.equal(fixture.receive(a), undefined);
++    fixture.advance(500);
++    assert.equal(fixture.receive(a), undefined);
++    fixture.advance(10000);
++    assert.equal(fixture.receive(a), undefined);
++    assert.equal(fixture.receive(a), undefined);
++    assert.equal(fixture.receive(a), false);
++    fixture.advance(10000);
++    assert.equal(fixture.receive(a), false);
++    assert.equal(fixture.receive(b), undefined);
++    assert.deepEqual({ a: a.ends, b: b.ends }, { a: 1, b: 0 });
++});
++
++test('a fractional allowance cannot admit another application event', () => {
++    const fixture = inputFixture();
++    const spark = fixture.spark();
++    fixture.receive(spark);
++    fixture.receive(spark);
++    fixture.advance(499);
++    assert.equal(fixture.receive(spark), false);
++    assert.equal(spark.ends, 1);
++});
++
++test('unsupported or malformed application envelopes close before event dispatch', () => {
++    for (const data of [null, [], {}, 'text', { emit: null }, { emit: ['end', {}] }, { emit: ['ready'] }, { emit: ['ready', null] }, { emit: ['ready', []] }, { emit: ['ready', {}, 'extra'] }]) {
++        const fixture = inputFixture();
++        const spark = fixture.spark();
++        assert.equal(fixture.receive(spark, data), false);
++        assert.equal(spark.ends, 1);
++    }
++});
++
++test('silent telemetry connections expire without registering a node', t => {
++    const collector = loadCollector(t);
++    const spark = connectCollector(collector);
++    const deadline = [...collector.timers.values()][0];
++    assert.equal(deadline.delay, 1000);
++    deadline.callback();
++    hello(spark);
++    assert.equal(spark.ended, true);
++    assert.deepEqual(collector.calls, []);
++    assert.equal(collector.timers.size, 0);
++});
++
++test('successful hello and disconnect both cancel their login deadline', t => {
++    const collector = loadCollector(t);
++    const owner = connectCollector(collector);
++    hello(owner);
++    assert.equal(collector.timers.size, 0);
++    const silent = connectCollector(collector, 'silent');
++    silent.handlers.get('end')();
++    assert.equal(collector.timers.size, 0);
++    assert.equal(owner.ended, false);
++});
++
++test('registration that completes after the deadline cannot publish ready and releases its identity', t => {
++    const collector = loadCollector(t, { deferAdd: true });
++    const old = connectCollector(collector);
++    hello(old);
++    [...collector.timers.values()][0].callback();
++    const fresh = connectCollector(collector, 'fresh');
++    hello(fresh);
++    collector.registrations[0]();
++    collector.registrations[1]();
++    assert.equal(old.ended, true);
++    assert.deepEqual(old.emitted, []);
++    assert.deepEqual(fresh.emitted, [{ name: 'ready', data: undefined }]);
++    assert.equal(collector.timers.size, 0);
++});
++
++test('history admits the efsn batch limit and refuses a larger batch before collection', t => {
++    const collector = loadCollector(t);
++    const spark = connectCollector(collector);
++    hello(spark);
++    collector.calls.length = 0;
++    spark.handlers.get('history')({ id: 'node-a', history: Array.from({ length: 50 }, (_, index) => ({ number: index + 1 })) });
++    assert.deepEqual(collector.calls, [{ method: 'addHistory', id: 'node-a' }]);
++    collector.calls.length = 0;
++    spark.handlers.get('history')({ id: 'node-a', history: Array.from({ length: 51 }, (_, index) => ({ number: index + 1 })) });
++    assert.deepEqual(collector.calls, [{ method: 'inactive', spark: 'session-a' }]);
++    assert.equal(spark.ended, true);
++});
+diff --git a/test/fixtures/collector-environment.cjs b/test/fixtures/collector-environment.cjs
+new file mode 100644
+index 0000000..663944c
+--- /dev/null
++++ b/test/fixtures/collector-environment.cjs
+@@ -0,0 +1,8 @@
++module.exports = {
++    COLLECTOR_HOST: '127.0.0.1',
++    COLLECTOR_PORT: '0',
++    COLLECTOR_MAX_MESSAGE_BYTES: '65536',
++    COLLECTOR_MAX_CONNECTIONS: '16',
++    COLLECTOR_HELLO_TIMEOUT_MS: '1000',
++    COLLECTOR_MESSAGES_PER_SECOND: '100',
++};
+diff --git a/test/fixtures/collector-wire.cjs b/test/fixtures/collector-wire.cjs
+new file mode 100644
+index 0000000..ce69927
+--- /dev/null
++++ b/test/fixtures/collector-wire.cjs
+@@ -0,0 +1,48 @@
++const assert = require('node:assert/strict');
++const { fork } = require('node:child_process');
++const { once } = require('node:events');
++const { join } = require('node:path');
++const environment = require('./collector-environment.cjs');
++const { credentialFile, secretA, secretB } = require('./collector.cjs');
++
++async function startCollector(t, settings = {}) {
++    const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
++    const child = fork(join(__dirname, 'wire-server.cjs'), [], {
++        env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', VERBOSITY: '2', WS_CREDENTIALS_FILE: file, ...environment, ...settings },
++        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
++    });
++    let logs = '';
++    child.stdout.on('data', chunk => { logs += chunk; });
++    child.stderr.on('data', chunk => { logs += chunk; });
++    const exited = once(child, 'exit');
++    t.after(async () => {
++        if (child.exitCode === null && child.signalCode === null) {
++            child.kill();
++        }
++        await exited;
++        assert.equal(logs.includes(secretA) || logs.includes(secretB), false);
++    });
++    const [address] = await Promise.race([once(child, 'message'), exited.then(() => { throw new Error(`Collector startup failed: ${logs}`); })]);
++    assert.equal(address.address, '127.0.0.1');
++    return {
++        port: address.port,
++        async waitForConnections(expected) {
++            for (let attempt = 0; attempt < 40; attempt++) {
++                const response = once(child, 'message');
++                child.send('connections');
++                const [message] = await response;
++                if (message.connections === expected) {
++                    return;
++                }
++                await new Promise(resolve => setTimeout(resolve, 50));
++            }
++            throw new Error(`Collector TCP connection count did not reach ${expected}`);
++        },
++        async stop() {
++            child.send('stop');
++            assert.deepEqual(await exited, [0, null]);
++        },
++    };
++}
++
++module.exports = startCollector;
+diff --git a/test/fixtures/collector.cjs b/test/fixtures/collector.cjs
+index e2fbbdb..06b0e18 100644
+--- a/test/fixtures/collector.cjs
++++ b/test/fixtures/collector.cjs
+@@ -4,6 +4,7 @@ const { join } = require('node:path');
+ const { tmpdir } = require('node:os');
+ const vm = require('node:vm');
+ const loadTelemetryCredentials = require('../../lib/telemetry-credentials');
++const collectorEnvironment = require('./collector-environment.cjs');
+ 
+ const secretA = 'synthetic-node-a-credential-00000000000001';
+ const secretB = 'synthetic-node-b-credential-00000000000002';
+@@ -19,16 +20,23 @@ function credentialFile(t, value, raw = false) {
+ 
+ function loadCollector(t, options = {}) {
+     const file = credentialFile(t, options.credentials || { 'node-a': secretA, 'node-b': secretB });
+-    const result = { calls: [], logs: [], sockets: new Map(), listening: false, registrations: [] };
++    const result = { calls: [], logs: [], sockets: new Map(), listening: false, registrations: [], timers: new Map() };
+     const server = { listen(port, host) { result.listening = true; result.listener = { port, host }; } };
++    result.server = server;
+     class Primus {
+         constructor(_, config) {
+             this.handlers = new Map();
+             this.writes = [];
++            this.config = config;
++            this.transforms = [];
+             result.sockets.set(config.pathname, this);
+         }
+         plugin() {}
+-        on(name, handler) { this.handlers.set(name, handler); }
++        transform(name, handler) { this.transforms.push({ name, handler }); }
++        on(name, handler) {
++            const previous = this.handlers.get(name);
++            this.handlers.set(name, previous ? (...args) => { previous(...args); handler(...args); } : handler);
++        }
+         write(data) { this.writes.push(data); }
+     }
+     class Collection {
+@@ -57,6 +65,7 @@ function loadCollector(t, options = {}) {
+     const modules = {
+         './lib/telemetry-credentials': loadTelemetryCredentials,
+         './lib/deployment-config': require('../../lib/deployment-config'),
++        './lib/collector-input': require('../../lib/collector-input'),
+         lodash: { isUndefined: value => value === undefined, now: () => 1234 },
+         './lib/utils/logger': {},
+         './lib/utils/config': { banned: options.banned || [] },
+@@ -73,9 +82,11 @@ function loadCollector(t, options = {}) {
+             if (!Object.hasOwn(modules, name)) throw new Error(`Unexpected dependency: ${name}`);
+             return modules[name];
+         },
+-        process: { env: { NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0', ...options.environment } },
++        process: { env: { NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, ...collectorEnvironment, ...options.environment } },
+         console: consoleStub,
+         setInterval: () => 0,
++        setTimeout(callback, delay) { const timer = { callback, delay }; result.timers.set(timer, timer); return timer; },
++        clearTimeout(timer) { result.timers.delete(timer); },
+         module: { exports: {} },
+     });
+     try {
+@@ -89,7 +100,7 @@ function loadCollector(t, options = {}) {
+ function connectCollector(collector, id = 'session-a') {
+     assert.equal(collector.startupError, undefined);
+     const spark = {
+-        id, address: { ip: '127.0.0.1' }, handlers: new Map(), emitted: [], ended: false,
++        id, address: { ip: '127.0.0.1' }, request: { destroy() {} }, handlers: new Map(), emitted: [], ended: false,
+         on(name, handler) { this.handlers.set(name, handler); },
+         emit(name, data) { this.emitted.push({ name, data }); },
+         end() { this.ended = true; },
+diff --git a/test/fixtures/wire-server.cjs b/test/fixtures/wire-server.cjs
+index ee09cfd..6643e5b 100644
+--- a/test/fixtures/wire-server.cjs
++++ b/test/fixtures/wire-server.cjs
+@@ -2,4 +2,7 @@ const server = require('../../server');
+ server.on('listening', () => process.send(server.address()));
+ process.on('message', message => {
+     if (message === 'stop') server.close(() => process.exit(0));
++    if (message === 'connections') {
++        server.getConnections((error, count) => process.send({ connections: count }));
++    }
+ });
+diff --git a/test/persistence.test.cjs b/test/persistence.test.cjs
+index b8ba14e..ce4dc25 100644
+--- a/test/persistence.test.cjs
++++ b/test/persistence.test.cjs
+@@ -69,7 +69,7 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+     });
+ 
+     const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
+-    const child = fork(join(__dirname, 'fixtures/wire-server.cjs'), [], { env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0', VERBOSITY: '2' }, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
++    const child = fork(join(__dirname, 'fixtures/wire-server.cjs'), [], { env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, ...require('./fixtures/collector-environment.cjs'), VERBOSITY: '2' }, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
+     let logs = '';
+     child.stdout.on('data', chunk => { logs += chunk; });
+     child.stderr.on('data', chunk => { logs += chunk; });
+diff --git a/test/telemetry-wire.test.cjs b/test/telemetry-wire.test.cjs
+index be01409..2cc0444 100644
+--- a/test/telemetry-wire.test.cjs
++++ b/test/telemetry-wire.test.cjs
+@@ -3,6 +3,7 @@ const { test } = require('node:test');
+ const { fork } = require('node:child_process');
+ const { join } = require('node:path');
+ const { once } = require('node:events');
++const collectorEnvironment = require('./fixtures/collector-environment.cjs');
+ const { credentialFile, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
+ 
+ const { connect, waitMessage, send, login, inventory } = require('./fixtures/wire-client.cjs');
+@@ -10,7 +11,7 @@ const { connect, waitMessage, send, login, inventory } = require('./fixtures/wir
+ test('real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect', { timeout: 15000 }, async t => {
+     const file = credentialFile(t, { 'node-a': [secretA, secretNext], 'node-b': secretB });
+     const child = fork(join(__dirname, 'fixtures/wire-server.cjs'), [], {
+-        env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0', VERBOSITY: '2' },
++        env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, ...collectorEnvironment, VERBOSITY: '2' },
+         stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+     });
+     let logs = '';
