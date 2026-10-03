@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Source baseline and local contracts](restart-dashboard-readiness.md): two pass, five fail; remediation required | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Authentication correction](restart-dashboard-auth.md): 71 contracts and real loopback collector pass; full deployment remains open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -193,9 +193,10 @@ must continue if it is unavailable.
 - [ ] Publish the actual dashboard and operating runbook before announcing public
   economic use. Record maintenance ownership, access, retention and recovery.
 
-The [readiness baseline](restart-dashboard-readiness.md) now records five failing
-collector contracts (secret configuration, session ownership and redaction) and
-unchanged source. Full dependency/build/browser integration is still unverified.
+The [authentication correction](restart-dashboard-auth.md) now addresses the
+five baseline failures in a separate dashboard branch: 71 contracts and one
+real loopback collector test pass with unchanged locked dependencies. Full
+storage/API/browser/TLS integration, resource limits and deployment remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -254,10 +255,11 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: correct the five locally reproduced collector contract failures, define
-   per-identity enrollment and validate all update/reconnect paths. Then establish
-   the real dependency build and isolated storage/API/browser integration before
-   deployment. See the [dashboard baseline](restart-dashboard-readiness.md).
+1. G6: complete explicit endpoint/database configuration, input/resource limits
+   and a reviewed runtime/dependency build, then the storage/API/browser/TLS
+   acceptance path. The [per-identity authentication patch](restart-dashboard-auth.md)
+   now passes local contracts and a real loopback collector check; it remains a
+   separately reviewed dashboard change.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

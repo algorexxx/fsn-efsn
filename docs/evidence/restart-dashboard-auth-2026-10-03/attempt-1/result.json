@@ -1,0 +1,74 @@
+{
+  "dashboard_worktree": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth",
+  "dashboard_branch": "codex/dashboard-telemetry-auth",
+  "dashboard_baseline": "e2049634802d4a49adadf998853ce6ee6b1158d0",
+  "efsn_head": "83cae63d04d20fcaadb38d93c33ba52e74b01065",
+  "node_version": "v22.11.0",
+  "dependency_versions": {
+    "primus": "6.1.0",
+    "primus-emit": "1.0.0",
+    "primus-spark-latency": "0.1.1",
+    "ws": "1.1.5",
+    "lodash": "3.10.1",
+    "geoip-lite": "1.2.1"
+  },
+  "source_sha256": {
+    "server.js": "9db1b3ac173dd244229ef19da5eb594efb64918930852cb4dfedd8a060b5cac7",
+    "lib/telemetry-credentials.js": "658711cace5b3b3526329877edd8394d74d5766987823fafa4684faea4989804",
+    "package.json": "5e4dc1224e621175db38489d3afe0eafa73a8b844fb4d62c4291a6747b349bbf",
+    "package-lock.json": "3e911183e108ace38bbab66670cfc921b49c402c5b136d5c80b9bcbc5e993c18",
+    ".gitignore": "1b231e64442526378b83460a858c47506be47d4a69508f452abe1f1e6a4d79fa",
+    "README.md": "990642b4a0f483f7999d6a595cf13cfc6045549b3b105e82090d351dcdfb8bdd",
+    "docs/telemetry-enrollment.md": "eb755eb79804e30df815b4a203a0ab9a6cdfdd7828237c2210eca5fef26eeee9",
+    "test/collector.test.cjs": "7caec372d1c4ca829ef19aae150f8ec8181a6ea5003333df54f873d84382079b",
+    "test/telemetry-credentials.test.cjs": "d2ffe85dc53aa7266d3cf36f53a16635b884dd3e8c72abcdf9d4c1cfa04ec9bd",
+    "test/telemetry-wire.test.cjs": "26a27b036dc75312594c3ee39d72435f1a3ab15b2bb10e74696d2c0156cd309b",
+    "test/fixtures/collector.cjs": "ebfed7b9215c6adac838faa95c7fca2d00a9fff0cd76cb4a4eaf0969f5af3b3f",
+    "test/fixtures/wire-server.cjs": "45ee86a99a4f7fe8de0cf39921c6583ea370d7c160fc43993b08ca227572a840"
+  },
+  "commands": [
+    {
+      "name": "syntax-server",
+      "command": [
+        "node",
+        "--check",
+        "server.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "syntax-credentials",
+      "command": [
+        "node",
+        "--check",
+        "lib/telemetry-credentials.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "test/collector.test.cjs",
+        "test/telemetry-credentials.test.cjs"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "wire",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "test/telemetry-wire.test.cjs"
+      ],
+      "exit": 0
+    }
+  ],
+  "original_source_and_status_unchanged": true,
+  "candidate_sources_unchanged_by_tests": true,
+  "all_exits_zero": true,
+  "scope": "Handler/credential contracts and real pinned collector/collection/WebSocket plugins; synthetic clients; child listener forced to 127.0.0.1 and an ephemeral port. No chain node, PostgreSQL, HTTP read API, browser, TLS or public deployment."
+}

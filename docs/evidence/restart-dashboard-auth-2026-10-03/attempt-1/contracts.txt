@@ -1,0 +1,365 @@
+TAP version 13
+# Subtest: ordinary hello becomes ready and strips the credential before collection
+ok 1 - ordinary hello becomes ready and strips the credential before collection
+  ---
+  duration_ms: 7.9731
+  ...
+# Subtest: invalid startup never listens: missing credential file
+ok 2 - invalid startup never listens: missing credential file
+  ---
+  duration_ms: 3.968
+  ...
+# Subtest: invalid startup never listens: empty credential path
+ok 3 - invalid startup never listens: empty credential path
+  ---
+  duration_ms: 2.561
+  ...
+# Subtest: invalid startup never listens: empty configured secret
+ok 4 - invalid startup never listens: empty configured secret
+  ---
+  duration_ms: 3.0828
+  ...
+# Subtest: invalid startup never listens: legacy shared secret
+ok 5 - invalid startup never listens: legacy shared secret
+  ---
+  duration_ms: 3.9164
+  ...
+# Subtest: update accepts the authenticated identity
+ok 6 - update accepts the authenticated identity
+  ---
+  duration_ms: 3.6051
+  ...
+# Subtest: update is blocked before hello
+ok 7 - update is blocked before hello
+  ---
+  duration_ms: 3.0972
+  ...
+# Subtest: update is blocked different identity
+ok 8 - update is blocked different identity
+  ---
+  duration_ms: 3.7289
+  ...
+# Subtest: update is blocked after disconnect
+ok 9 - update is blocked after disconnect
+  ---
+  duration_ms: 3.2085
+  ...
+# Subtest: block accepts the authenticated identity
+ok 10 - block accepts the authenticated identity
+  ---
+  duration_ms: 3.7021
+  ...
+# Subtest: block is blocked before hello
+ok 11 - block is blocked before hello
+  ---
+  duration_ms: 2.7129
+  ...
+# Subtest: block is blocked different identity
+ok 12 - block is blocked different identity
+  ---
+  duration_ms: 2.5995
+  ...
+# Subtest: block is blocked after disconnect
+ok 13 - block is blocked after disconnect
+  ---
+  duration_ms: 2.3448
+  ...
+# Subtest: pending accepts the authenticated identity
+ok 14 - pending accepts the authenticated identity
+  ---
+  duration_ms: 2.7604
+  ...
+# Subtest: pending is blocked before hello
+ok 15 - pending is blocked before hello
+  ---
+  duration_ms: 2.6295
+  ...
+# Subtest: pending is blocked different identity
+ok 16 - pending is blocked different identity
+  ---
+  duration_ms: 2.826
+  ...
+# Subtest: pending is blocked after disconnect
+ok 17 - pending is blocked after disconnect
+  ---
+  duration_ms: 2.265
+  ...
+# Subtest: stats accepts the authenticated identity
+ok 18 - stats accepts the authenticated identity
+  ---
+  duration_ms: 2.5913
+  ...
+# Subtest: stats is blocked before hello
+ok 19 - stats is blocked before hello
+  ---
+  duration_ms: 2.5732
+  ...
+# Subtest: stats is blocked different identity
+ok 20 - stats is blocked different identity
+  ---
+  duration_ms: 2.8867
+  ...
+# Subtest: stats is blocked after disconnect
+ok 21 - stats is blocked after disconnect
+  ---
+  duration_ms: 2.6467
+  ...
+# Subtest: history accepts the authenticated identity
+ok 22 - history accepts the authenticated identity
+  ---
+  duration_ms: 3.1927
+  ...
+# Subtest: history is blocked before hello
+ok 23 - history is blocked before hello
+  ---
+  duration_ms: 2.2799
+  ...
+# Subtest: history is blocked different identity
+ok 24 - history is blocked different identity
+  ---
+  duration_ms: 2.1446
+  ...
+# Subtest: history is blocked after disconnect
+ok 25 - history is blocked after disconnect
+  ---
+  duration_ms: 2.4623
+  ...
+# Subtest: latency accepts the authenticated identity
+ok 26 - latency accepts the authenticated identity
+  ---
+  duration_ms: 2.2149
+  ...
+# Subtest: latency is blocked before hello
+ok 27 - latency is blocked before hello
+  ---
+  duration_ms: 2.5414
+  ...
+# Subtest: latency is blocked different identity
+ok 28 - latency is blocked different identity
+  ---
+  duration_ms: 3.1027
+  ...
+# Subtest: latency is blocked after disconnect
+ok 29 - latency is blocked after disconnect
+  ---
+  duration_ms: 2.0139
+  ...
+# Subtest: node-ping accepts the authenticated identity
+ok 30 - node-ping accepts the authenticated identity
+  ---
+  duration_ms: 2.4891
+  ...
+# Subtest: node-ping is blocked before hello
+ok 31 - node-ping is blocked before hello
+  ---
+  duration_ms: 2.0304
+  ...
+# Subtest: node-ping is blocked different identity
+ok 32 - node-ping is blocked different identity
+  ---
+  duration_ms: 2.0016
+  ...
+# Subtest: node-ping is blocked after disconnect
+ok 33 - node-ping is blocked after disconnect
+  ---
+  duration_ms: 1.9348
+  ...
+# Subtest: a credential for another node cannot register a different identity
+ok 34 - a credential for another node cannot register a different identity
+  ---
+  duration_ms: 2.4849
+  ...
+# Subtest: rejected hello neither logs its credential nor permits a later hello on that session
+ok 35 - rejected hello neither logs its credential nor permits a later hello on that session
+  ---
+  duration_ms: 2.2272
+  ...
+# Subtest: banned source address cannot authenticate
+ok 36 - banned source address cannot authenticate
+  ---
+  duration_ms: 2.3067
+  ...
+# Subtest: duplicate identity is rejected without changing the existing session
+ok 37 - duplicate identity is rejected without changing the existing session
+  ---
+  duration_ms: 2.4116
+  ...
+# Subtest: reconnect after disconnect accepts the rotating credential and ignores a late old end event
+ok 38 - reconnect after disconnect accepts the rotating credential and ignores a late old end event
+  ---
+  duration_ms: 2.1431
+  ...
+# Subtest: repeated hello ends the old session and releases the identity for reconnect
+ok 39 - repeated hello ends the old session and releases the identity for reconnect
+  ---
+  duration_ms: 2.3725
+  ...
+# Subtest: failed collection registration sends no ready and releases its reservation
+ok 40 - failed collection registration sends no ready and releases its reservation
+  ---
+  duration_ms: 2.4021
+  ...
+# Subtest: a delayed registration cannot publish ready after disconnect or replace a new owner
+ok 41 - a delayed registration cannot publish ready after disconnect or replace a new owner
+  ---
+  duration_ms: 2.5865
+  ...
+# Subtest: hello rejects an absent envelope without throwing or logging it
+ok 42 - hello rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 2.4331
+  ...
+# Subtest: update rejects an absent envelope without throwing or logging it
+ok 43 - update rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.207
+  ...
+# Subtest: block rejects an absent envelope without throwing or logging it
+ok 44 - block rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 2.0743
+  ...
+# Subtest: pending rejects an absent envelope without throwing or logging it
+ok 45 - pending rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 1.9647
+  ...
+# Subtest: stats rejects an absent envelope without throwing or logging it
+ok 46 - stats rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 2.1512
+  ...
+# Subtest: history rejects an absent envelope without throwing or logging it
+ok 47 - history rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 2.1459
+  ...
+# Subtest: latency rejects an absent envelope without throwing or logging it
+ok 48 - latency rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 2.7514
+  ...
+# Subtest: node-ping rejects an absent envelope without throwing or logging it
+ok 49 - node-ping rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 2.0376
+  ...
+# Subtest: malformed report bodies close the authenticated session without a collection update
+ok 50 - malformed report bodies close the authenticated session without a collection update
+  ---
+  duration_ms: 10.7089
+  ...
+# Subtest: credentials match only their assigned node and never coerce input
+ok 51 - credentials match only their assigned node and never coerce input
+  ---
+  duration_ms: 8.5736
+  ...
+# Subtest: rotation accepts current and next credentials until old credential is removed on reload
+ok 52 - rotation accepts current and next credentials until old credential is removed on reload
+  ---
+  duration_ms: 5.05
+  ...
+# Subtest: invalid credential configuration fails: null
+ok 53 - invalid credential configuration fails: null
+  ---
+  duration_ms: 1.8028
+  ...
+# Subtest: invalid credential configuration fails: array
+ok 54 - invalid credential configuration fails: array
+  ---
+  duration_ms: 1.1139
+  ...
+# Subtest: invalid credential configuration fails: empty mapping
+ok 55 - invalid credential configuration fails: empty mapping
+  ---
+  duration_ms: 1.4225
+  ...
+# Subtest: invalid credential configuration fails: empty token
+ok 56 - invalid credential configuration fails: empty token
+  ---
+  duration_ms: 1.9536
+  ...
+# Subtest: invalid credential configuration fails: whitespace token
+ok 57 - invalid credential configuration fails: whitespace token
+  ---
+  duration_ms: 2.5883
+  ...
+# Subtest: invalid credential configuration fails: short token
+ok 58 - invalid credential configuration fails: short token
+  ---
+  duration_ms: 2.0561
+  ...
+# Subtest: invalid credential configuration fails: oversized token
+ok 59 - invalid credential configuration fails: oversized token
+  ---
+  duration_ms: 2.3703
+  ...
+# Subtest: invalid credential configuration fails: URL delimiter
+ok 60 - invalid credential configuration fails: URL delimiter
+  ---
+  duration_ms: 3.0598
+  ...
+# Subtest: invalid credential configuration fails: numeric token
+ok 61 - invalid credential configuration fails: numeric token
+  ---
+  duration_ms: 2.6353
+  ...
+# Subtest: invalid credential configuration fails: no rotation entries
+ok 62 - invalid credential configuration fails: no rotation entries
+  ---
+  duration_ms: 1.5939
+  ...
+# Subtest: invalid credential configuration fails: empty rotation entry
+ok 63 - invalid credential configuration fails: empty rotation entry
+  ---
+  duration_ms: 1.8581
+  ...
+# Subtest: invalid credential configuration fails: three rotation entries
+ok 64 - invalid credential configuration fails: three rotation entries
+  ---
+  duration_ms: 1.9475
+  ...
+# Subtest: invalid credential configuration fails: shared credential
+ok 65 - invalid credential configuration fails: shared credential
+  ---
+  duration_ms: 2.1453
+  ...
+# Subtest: invalid credential configuration fails: duplicate rotation credential
+ok 66 - invalid credential configuration fails: duplicate rotation credential
+  ---
+  duration_ms: 1.8235
+  ...
+# Subtest: invalid credential configuration fails: invalid node name
+ok 67 - invalid credential configuration fails: invalid node name
+  ---
+  duration_ms: 1.5285
+  ...
+# Subtest: invalid credential configuration fails: long node name
+ok 68 - invalid credential configuration fails: long node name
+  ---
+  duration_ms: 1.5261
+  ...
+# Subtest: invalid JSON does not reveal file contents through the error
+ok 69 - invalid JSON does not reveal file contents through the error
+  ---
+  duration_ms: 2.1449
+  ...
+# Subtest: missing path, relative path and unreadable file fail closed
+ok 70 - missing path, relative path and unreadable file fail closed
+  ---
+  duration_ms: 1.7204
+  ...
+# Subtest: legacy shared secret setting cannot silently override the identity mapping
+ok 71 - legacy shared secret setting cannot silently override the identity mapping
+  ---
+  duration_ms: 1.4517
+  ...
+1..71
+# tests 71
+# suites 0
+# pass 71
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 234.7358

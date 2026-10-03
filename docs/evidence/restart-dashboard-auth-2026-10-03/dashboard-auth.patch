@@ -1,0 +1,1087 @@
+From 497b0831a148d67624974748c0ee609b4e815a08 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 11:07:12 +0200
+Subject: [PATCH] Bind dashboard telemetry credentials and updates to node
+ sessions
+
+---
+ .gitignore                          |   3 +
+ README.md                           |  13 +-
+ docs/telemetry-enrollment.md        |  98 +++++++++++++++
+ lib/telemetry-credentials.js        |  60 +++++++++
+ package.json                        |   3 +-
+ server.js                           | 183 ++++++++++++++--------------
+ test/collector.test.cjs             | 182 +++++++++++++++++++++++++++
+ test/fixtures/collector.cjs         | 104 ++++++++++++++++
+ test/fixtures/wire-server.cjs       |  10 ++
+ test/telemetry-credentials.test.cjs |  63 ++++++++++
+ test/telemetry-wire.test.cjs        | 138 +++++++++++++++++++++
+ 11 files changed, 760 insertions(+), 97 deletions(-)
+ create mode 100644 docs/telemetry-enrollment.md
+ create mode 100644 lib/telemetry-credentials.js
+ create mode 100644 test/collector.test.cjs
+ create mode 100644 test/fixtures/collector.cjs
+ create mode 100644 test/fixtures/wire-server.cjs
+ create mode 100644 test/telemetry-credentials.test.cjs
+ create mode 100644 test/telemetry-wire.test.cjs
+
+diff --git a/.gitignore b/.gitignore
+index f0a36c3..57c9743 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -63,3 +63,6 @@ typings/
+ 
+ # next.js build output
+ .next
++
++/ws_secret.json
++/telemetry-credentials*.json
+diff --git a/README.md b/README.md
+index c2900d0..a7ece28 100644
+--- a/README.md
++++ b/README.md
+@@ -2,6 +2,15 @@
+ 
+ Fusion's node monitor
+ 
++The collector now requires per-node credentials. Read
++[telemetry enrollment](docs/telemetry-enrollment.md) before starting it. The
++historical PostgreSQL and public-endpoint setup below is not a production launch
++configuration; database credentials, private access, endpoints and TLS still
++need deployment work.
++
++Collector checks: `npm test` for local contracts and `npm run test:wire` for the
++real loopback WebSocket check after installing the locked dependencies.
++
+ 
+ #Install postgreSQL
+ 
+@@ -63,7 +72,7 @@ If you want to test the installation using a local efsn node, then this can be d
+ 
+ #SHELL 1  (download the Fusion efsn source from github and build according the instructions)
+ 
+-efsn --ethstats myName:lol@localhost:3000  # Run node locally outputting to PORT 3000
++efsn --ethstats '<configured-node-name>:<its-generated-credential>@ws://127.0.0.1:3000'  # Local test only; use explicit WSS for public hosting
+ 
+ Set the WebSocket client in wsclient.js to be :-
+ 
+@@ -74,7 +83,7 @@ Alternatively, the default is to use the WebSocket client 'wss://node.fusionnetw
+ 
+ #SHELL 2  Start the server.js script which fires on the spark signals from the nodes in the network :-
+ 
+-npm start WS_SECRET="lol" PORT=3000 nodemon start  # Collect data from the efsn MANAGERS
++WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json NODE_ENV=production PORT=3000 npm start
+ 
+ #SHELL 3 Set some environmental variables and start the WebSocket client :-
+ 
+diff --git a/docs/telemetry-enrollment.md b/docs/telemetry-enrollment.md
+new file mode 100644
+index 0000000..9084616
+--- /dev/null
++++ b/docs/telemetry-enrollment.md
+@@ -0,0 +1,98 @@
++# Collector credentials and node enrollment
++
++The collector requires `WS_CREDENTIALS_FILE`, an absolute path to a private
++UTF-8 JSON file. There is no shared `WS_SECRET` or implicit `ws_secret.json`
++fallback. An invalid or missing configuration stops startup before listening.
++This changes collector configuration; the existing efsn `hello` / `ready`
++WebSocket envelope and `--ethstats` format stay unchanged.
++
++The JSON object maps each permitted dashboard node name to its own credential:
++
++```json
++{
++  "donation-node": "<unique-generated-token>",
++  "independent-node": "<different-unique-generated-token>"
++}
++```
++
++Replace the placeholders. Node names use 1–64 letters, digits, dots, underscores
++or hyphens and start with a letter or digit. Credentials use 32–256 characters
++from `A-Z`, `a-z`, `0-9`, `_` and `-`. Use cryptographically generated credentials,
++for example 32 random bytes encoded as 64 hex characters. Minimum length alone
++does not establish entropy. Duplicate credentials, even under different node
++names, are refused.
++
++Store the actual file outside the checkout with access restricted to the
++collector service account and its administrator. Provide each operator only
++their own dashboard credential. Never collect validator signing keys. No real
++credential or populated deployment configuration belongs in Git.
++
++For a Unix service with its environment already protected, the collector uses:
++
++```sh
++WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json NODE_ENV=production PORT=3000 npm start
++```
++
++The existing listener is HTTP; public hosting still needs a private bind/proxy
++arrangement and TLS. Configure nodes with explicit WSS through that deployment:
++
++```text
++--ethstats <node-name>:<that-node-credential>@wss://<telemetry-host>
++```
++
++Use protected service configuration when supplying credentials. Changing the
++dashboard name requires changing its configured credential mapping as well.
++The published display name is the authenticated node name.
++
++## Sessions, reconnect and rotation
++
++Only one live connection owns a dashboard name at a time. A second connection
++with that name is rejected without changing the first. Stop the old telemetry
++connection and allow its disconnect to complete before moving the same identity
++to another process. Each concurrently running node needs a distinct dashboard
++name and credential, independent of its P2P or validator identity.
++
++Updates, block/history reports, pending/stat reports, latency and ping require a
++completed login and the same node name on that connection. A repeated hello,
++cross-node update or invalid top-level envelope ends the session. Closed sessions
++cannot change a later connection's state. Failed registration releases its
++reservation; delayed callbacks cannot make a disconnected session ready again.
++
++For rotation, a node's value may temporarily contain two unique credentials:
++
++```json
++{
++  "donation-node": ["<current-generated-token>", "<next-generated-token>"]
++}
++```
++
++The file is loaded at startup. Update it and restart the collector to enable the
++next credential, reconnect the node with that credential, then remove the old
++one and restart the collector again. The restart closes existing sessions, so
++removing a credential also requires reconnecting with an accepted one. There is
++no live reload or cross-process session coordination. Operate one collector for
++this identity registry until shared ownership has its own tested design.
++
++Enrollment grants dashboard visibility only. A Fusion node can synchronize,
++buy tickets and produce blocks without being enrolled here. Independent owners
++retain their signing keys and fund their own tickets.
++
++## Validation and remaining boundaries
++
++`npm test` runs credential and handler/session contracts with fake transports
++and collection callbacks. `npm run test:wire` runs the real pinned collector,
++Primus/WebSocket plugins and collection against synthetic clients on an ephemeral
++`127.0.0.1` listener. Tests use temporary synthetic credential files and delete
++them after completion. The observed runner is Node 22.11.0; the test API requires
++a runtime providing `node:test`. This does not select the production runtime.
++
++The transport check uses the efsn message envelope without running a chain node.
++It exercises collector-to-viewer updates and graceful child-process shutdown,
++not PostgreSQL persistence, the HTTP read API, a browser, TLS or deployment.
++Dependency deprecation warnings are retained, not treated as an advisory audit.
++
++This patch validates authentication and basic envelope/body shapes. Complete
++field schemas, payload/rate/connection limits, login deadlines, stale-data
++display, dependency maintenance and deployment configuration still need their
++own acceptance checks before public hosting. Dashboard data remains self-reported
++and is not proof of chain agreement or ticket-purchase health.
+diff --git a/lib/telemetry-credentials.js b/lib/telemetry-credentials.js
+new file mode 100644
+index 0000000..3cacff2
+--- /dev/null
++++ b/lib/telemetry-credentials.js
+@@ -0,0 +1,60 @@
++const { readFileSync } = require('node:fs');
++const { isAbsolute } = require('node:path');
++const { createHash, timingSafeEqual } = require('node:crypto');
++
++function loadTelemetryCredentials(environment) {
++    if (environment.WS_SECRET !== undefined) {
++        throw new Error('WS_SECRET is unsupported; configure WS_CREDENTIALS_FILE with per-node credentials');
++    }
++    const file = environment.WS_CREDENTIALS_FILE;
++    if (typeof file !== 'string' || !isAbsolute(file)) {
++        throw new Error('WS_CREDENTIALS_FILE must name an absolute credential file');
++    }
++    let configured;
++    try {
++        configured = JSON.parse(readFileSync(file, 'utf8'));
++    } catch (_) {
++        throw new Error('Cannot read valid telemetry credentials from WS_CREDENTIALS_FILE');
++    }
++    if (!configured || typeof configured !== 'object' || Array.isArray(configured) || Object.keys(configured).length === 0) {
++        throw new Error('Telemetry credentials must be a nonempty object keyed by node ID');
++    }
++    const credentials = new Map();
++    const used = new Set();
++    for (const [id, value] of Object.entries(configured)) {
++        if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$/.test(id)) {
++            throw new Error('Telemetry node IDs must be 1-64 letters, digits, dots, underscores or hyphens, starting with a letter or digit');
++        }
++        const secrets = Array.isArray(value) ? value : [value];
++        if (secrets.length < 1 || secrets.length > 2) {
++            throw new Error('Each telemetry node requires one credential or two during rotation');
++        }
++        const digests = [];
++        for (const secret of secrets) {
++            if (!validSecret(secret) || used.has(secret)) {
++                throw new Error('Telemetry credentials must be unique 32-256 character URL-safe tokens');
++            }
++            used.add(secret);
++            digests.push(digestSecret(secret));
++        }
++        credentials.set(id, digests);
++    }
++    return function matchesTelemetryCredential(id, secret) {
++        const expected = credentials.get(id);
++        if (!expected || !validSecret(secret)) {
++            return false;
++        }
++        const digest = digestSecret(secret);
++        return expected.some(value => timingSafeEqual(value, digest));
++    };
++}
++
++function validSecret(secret) {
++    return typeof secret === 'string' && /^[A-Za-z0-9_-]{32,256}$/.test(secret);
++}
++
++function digestSecret(secret) {
++    return createHash('sha256').update(secret, 'utf8').digest();
++}
++
++module.exports = loadTelemetryCredentials;
+diff --git a/package.json b/package.json
+index 672a1d2..96fa1ea 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,8 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "echo \"Error: no test specified\" && exit 1",
++    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs",
++    "test:wire": "node --test test/telemetry-wire.test.cjs",
+     "start": "node server.js"
+   },
+   "repository": {
+diff --git a/server.js b/server.js
+index 4545c19..ce7b1a6 100644
+--- a/server.js
++++ b/server.js
+@@ -1,34 +1,9 @@
++var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env);
+ var _ = require('lodash');
+ var logger = require('./lib/utils/logger');
+ var chalk = require('chalk');
+ var http = require('http');
+ 
+-// Init WS SECRET
+-var WS_SECRET;
+-
+-if( !_.isUndefined(process.env.WS_SECRET) && !_.isNull(process.env.WS_SECRET) )
+-{
+-    if( process.env.WS_SECRET.indexOf('|') > 0 )
+-    {
+-        WS_SECRET = process.env.WS_SECRET.split('|');
+-    }
+-    else
+-    {
+-        WS_SECRET = [process.env.WS_SECRET];
+-    }
+-}
+-else
+-{
+-    try {
+-        var tmp_secret_json = require('./ws_secret.json');
+-        WS_SECRET = _.values(tmp_secret_json);
+-    }
+-    catch (e)
+-    {
+-        console.error("WS_SECRET NOT SET!!!");
+-    }
+-}
+-
+ var banned = require('./lib/utils/config').banned;
+ 
+ // Init http server
+@@ -80,6 +55,7 @@ external.plugin('emit', require('primus-emit'));
+ // Init collections
+ var Collection = require('./lib/collection');
+ var Nodes = new Collection(external);
++var telemetrySessions = new Map();
+ 
+ Nodes.setChartsCallback(function (err, charts)
+ {
+@@ -103,51 +79,79 @@ api.on('connection', function (spark)
+ {
+     console.info('API', 'CON', 'Open:', spark.address.ip);
+ 
+-    spark.on('hello', function (data)
+-    {
+-        console.info('API', 'CON', 'Hello', data['id']);
+-
+-        if( _.isUndefined(data.secret) || WS_SECRET.indexOf(data.secret) === -1 || banned.indexOf(spark.address.ip) >= 0 )
+-        {
+-            spark.end(undefined, { reconnect: false });
+-            console.error('API', 'CON', 'Closed - wrong auth', data);
++    var identity = null;
++    var ready = false;
++    var ended = false;
+ 
+-            return false;
++    function endSession()
++    {
++        ended = true;
++        ready = false;
++        if (identity === null || telemetrySessions.get(identity) !== spark) {
++            return;
+         }
++        telemetrySessions.delete(identity);
++        Nodes.inactive(spark.id, function (err, stats) {
++            if (err !== null) {
++                console.error('API', 'CON', 'Connection end error');
++                return;
++            }
++            client.write({ action: 'inactive', data: stats });
++        });
++    }
+ 
+-        if( !_.isUndefined(data.id) && !_.isUndefined(data.info) )
+-        {
+-            data.ip = spark.address.ip;
+-            data.spark = spark.id;
+-            data.latency = spark.latency || 0;
+-
+-            Nodes.add( data, function (err, info)
+-            {
+-                if(err !== null)
+-                {
+-                    console.error('API', 'CON', 'Connection error:', err);
+-                    return false;
+-                }
+-
+-                if(info !== null)
+-                {
+-                    spark.emit('ready');
++    function rejectTelemetry()
++    {
++        endSession();
++        spark.end(undefined, { reconnect: false });
++        console.error('API', 'CON', 'Telemetry session rejected');
++    }
+ 
+-                    console.success('API', 'CON', 'Connected', data.id);
++    function onTelemetry(event, handler)
++    {
++        spark.on(event, function (data) {
++            if (ended || !ready || telemetrySessions.get(identity) !== spark || !isTelemetryObject(data) || data.id !== identity) {
++                rejectTelemetry();
++                return;
++            }
++            handler(data);
++        });
++    }
+ 
+-                    client.write({
+-                        action: 'add',
+-                        data: info
+-                    });
+-                }
+-            });
++    spark.on('hello', function (data)
++    {
++        if (ended || identity !== null || !isTelemetryObject(data) || !isTelemetryObject(data.info) || !matchesTelemetryCredential(data.id, data.secret) || banned.indexOf(spark.address.ip) >= 0 || telemetrySessions.has(data.id)) {
++            rejectTelemetry();
++            return;
+         }
++        identity = data.id;
++        telemetrySessions.set(identity, spark);
++        var registration = {
++            id: identity,
++            info: Object.assign({}, data.info, { name: identity }),
++            ip: spark.address.ip,
++            spark: spark.id,
++            latency: spark.latency || 0
++        };
++        Nodes.add(registration, function (err, info) {
++            if (ended || telemetrySessions.get(identity) !== spark) {
++                return;
++            }
++            if (err !== null || info == null) {
++                rejectTelemetry();
++                return;
++            }
++            ready = true;
++            spark.emit('ready');
++            console.success('API', 'CON', 'Connected', identity);
++            client.write({ action: 'add', data: info });
++        });
+     });
+ 
+ 
+-    spark.on('update', function (data)
++    onTelemetry('update', function (data)
+     {
+-        if( !_.isUndefined(data.id) && !_.isUndefined(data.stats) )
++        if( isTelemetryObject(data.stats) )
+         {
+             Nodes.update(data.id, data.stats, function (err, stats)
+             {
+@@ -164,7 +168,7 @@ api.on('connection', function (spark)
+                             data: stats
+                         });
+ 
+-                        console.info('API', 'UPD', 'Update from:', data.id, 'for:', stats);
++                        console.info('API', 'UPD', 'Update from:', data.id);
+ 
+                         Nodes.getCharts();
+                     }
+@@ -173,14 +177,14 @@ api.on('connection', function (spark)
+         }
+         else
+         {
+-            console.error('API', 'UPD', 'Update error:', data);
++            rejectTelemetry();
+         }
+     });
+ 
+ 
+-    spark.on('block', function (data)
++    onTelemetry('block', function (data)
+     {
+-        if( !_.isUndefined(data.id) && !_.isUndefined(data.block) )
++        if( isTelemetryObject(data.block) )
+         {
+             Nodes.addBlock(data.id, data.block, function (err, stats)
+             {
+@@ -207,14 +211,14 @@ api.on('connection', function (spark)
+         }
+         else
+         {
+-            console.error('API', 'BLK', 'Block error:', data);
++            rejectTelemetry();
+         }
+     });
+ 
+ 
+-    spark.on('pending', function (data)
++    onTelemetry('pending', function (data)
+     {
+-        if( !_.isUndefined(data.id) && !_.isUndefined(data.stats) )
++        if( isTelemetryObject(data.stats) )
+         {
+             Nodes.updatePending(data.id, data.stats, function (err, stats) {
+                 if(err !== null)
+@@ -235,14 +239,14 @@ api.on('connection', function (spark)
+         }
+         else
+         {
+-            console.error('API', 'TXS', 'Pending error:', data);
++            rejectTelemetry();
+         }
+     });
+ 
+ 
+-    spark.on('stats', function (data)
++    onTelemetry('stats', function (data)
+     {
+-        if( !_.isUndefined(data.id) && !_.isUndefined(data.stats) )
++        if( isTelemetryObject(data.stats) )
+         {
+ 
+             Nodes.updateStats(data.id, data.stats, function (err, stats)
+@@ -268,13 +272,17 @@ api.on('connection', function (spark)
+         }
+         else
+         {
+-            console.error('API', 'STA', 'Stats error:', data);
++            rejectTelemetry();
+         }
+     });
+ 
+ 
+-    spark.on('history', function (data)
++    onTelemetry('history', function (data)
+     {
++        if (!Array.isArray(data.history) || !data.history.every(isTelemetryObject)) {
++            rejectTelemetry();
++            return;
++        }
+         console.success('API', 'HIS', 'Got history from:', data.id);
+         
+         //console.log(data);
+@@ -301,7 +309,7 @@ api.on('connection', function (spark)
+     });
+ 
+ 
+-    spark.on('node-ping', function (data)
++    onTelemetry('node-ping', function (data)
+     {
+         var start = (!_.isUndefined(data) && !_.isUndefined(data.clientTime) ? data.clientTime : null);
+ 
+@@ -314,7 +322,7 @@ api.on('connection', function (spark)
+     });
+ 
+ 
+-    spark.on('latency', function (data)
++    onTelemetry('latency', function (data)
+     {
+         if( !_.isUndefined(data.id) )
+         {
+@@ -349,29 +357,16 @@ api.on('connection', function (spark)
+     });
+ 
+ 
+-    spark.on('end', function (data)
+-    {
+-        Nodes.inactive(spark.id, function (err, stats)
+-        {
+-            if(err !== null)
+-            {
+-                console.error('API', 'CON', 'Connection end error:', err);
+-            }
+-            else
+-            {
+-                client.write({
+-                    action: 'inactive',
+-                    data: stats
+-                });
+-
+-                console.warn('API', 'CON', 'Connection with:', spark.id, 'ended:', data);
+-            }
+-        });
+-    });
++    spark.on('end', endSession);
+ });
+ 
+ 
+ 
++function isTelemetryObject(value)
++{
++    return value !== null && typeof value === 'object' && !Array.isArray(value);
++}
++
+ client.on('connection', function (clientSpark)
+ {
+     clientSpark.on('ready', function (data)
+diff --git a/test/collector.test.cjs b/test/collector.test.cjs
+new file mode 100644
+index 0000000..a4d7912
+--- /dev/null
++++ b/test/collector.test.cjs
+@@ -0,0 +1,182 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { loadCollector, connectCollector, hello, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
++
++const events = [
++    ['update', { stats: { block: {} } }, 'update'],
++    ['block', { block: { number: 1 } }, 'addBlock'],
++    ['pending', { stats: { pending: 1 } }, 'updatePending'],
++    ['stats', { stats: { peers: 1, mining: true } }, 'updateStats'],
++    ['history', { history: [{ number: 1 }] }, 'addHistory'],
++    ['latency', { latency: '12' }, 'updateLatency'],
++    ['node-ping', { clientTime: '2026-10-03T00:00:00Z' }, null],
++];
++
++test('ordinary hello becomes ready and strips the credential before collection', t => {
++    const collector = loadCollector(t);
++    const spark = connectCollector(collector);
++    hello(spark);
++    assert.deepEqual(spark.emitted, [{ name: 'ready', data: undefined }]);
++    assert.equal(collector.calls[0].data.id, 'node-a');
++    assert.equal(collector.calls[0].data.info.name, 'node-a');
++    assert.equal(Object.hasOwn(collector.calls[0].data, 'secret'), false);
++    assert.equal(JSON.stringify(collector.logs).includes(secretA), false);
++});
++
++for (const [name, options] of [
++    ['missing credential file', { environment: { WS_CREDENTIALS_FILE: undefined } }],
++    ['empty credential path', { environment: { WS_CREDENTIALS_FILE: '' } }],
++    ['empty configured secret', { credentials: { 'node-a': '' } }],
++    ['legacy shared secret', { environment: { WS_SECRET: secretA } }],
++]) {
++    test(`invalid startup never listens: ${name}`, t => {
++        const collector = loadCollector(t, options);
++        assert.equal(collector.listening, false);
++        assert.ok(collector.startupError);
++        assert.deepEqual(collector.calls, []);
++    });
++}
++
++for (const [event, payload, method] of events) {
++    test(`${event} accepts the authenticated identity`, t => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        hello(spark);
++        collector.calls.length = 0;
++        spark.handlers.get(event)({ id: 'node-a', ...payload });
++        assert.deepEqual(collector.calls, method ? [{ method, id: 'node-a' }] : []);
++        assert.equal(spark.ended, false);
++        if (event === 'node-ping') assert.equal(spark.emitted[1].name, 'node-pong');
++    });
++    for (const mode of ['before hello', 'different identity', 'after disconnect']) {
++        test(`${event} is blocked ${mode}`, t => {
++            const collector = loadCollector(t);
++            const spark = connectCollector(collector);
++            if (mode !== 'before hello') hello(spark);
++            if (mode === 'after disconnect') spark.handlers.get('end')();
++            collector.calls.length = 0;
++            spark.handlers.get(event)({ id: mode === 'different identity' ? 'node-b' : 'node-a', ...payload });
++            assert.deepEqual(collector.calls, mode === 'different identity' ? [{ method: 'inactive', spark: 'session-a' }] : []);
++            assert.equal(spark.ended, true);
++        });
++    }
++}
++
++test('a credential for another node cannot register a different identity', t => {
++    const collector = loadCollector(t);
++    const spark = connectCollector(collector);
++    hello(spark, 'node-b', secretA);
++    assert.deepEqual(collector.calls, []);
++    assert.deepEqual(spark.emitted, []);
++    assert.equal(spark.ended, true);
++});
++
++test('rejected hello neither logs its credential nor permits a later hello on that session', t => {
++    const collector = loadCollector(t);
++    const spark = connectCollector(collector);
++    hello(spark, 'node-a', secretB);
++    hello(spark);
++    assert.deepEqual(collector.calls, []);
++    assert.deepEqual(spark.emitted, []);
++    assert.equal(collector.logs.some(value => value.includes(secretB)), false);
++});
++
++test('banned source address cannot authenticate', t => {
++    const collector = loadCollector(t, { banned: ['127.0.0.1'] });
++    const spark = connectCollector(collector);
++    hello(spark);
++    assert.equal(spark.ended, true);
++    assert.deepEqual(collector.calls, []);
++});
++
++test('duplicate identity is rejected without changing the existing session', t => {
++    const collector = loadCollector(t);
++    const owner = connectCollector(collector);
++    hello(owner);
++    collector.calls.length = 0;
++    const duplicate = connectCollector(collector, 'session-duplicate');
++    hello(duplicate);
++    duplicate.handlers.get('end')();
++    owner.handlers.get('stats')({ id: 'node-a', stats: { peers: 1 } });
++    assert.deepEqual(collector.calls, [{ method: 'updateStats', id: 'node-a' }]);
++    assert.equal(duplicate.ended, true);
++    assert.equal(owner.ended, false);
++});
++
++test('reconnect after disconnect accepts the rotating credential and ignores a late old end event', t => {
++    const collector = loadCollector(t, { credentials: { 'node-a': [secretA, secretNext] } });
++    const old = connectCollector(collector);
++    hello(old);
++    old.handlers.get('end')();
++    assert.equal(collector.calls.at(-1).method, 'inactive');
++    const fresh = connectCollector(collector, 'session-new');
++    hello(fresh, 'node-a', secretNext);
++    collector.calls.length = 0;
++    old.handlers.get('end')();
++    old.handlers.get('stats')({ id: 'node-a', stats: { peers: 1 } });
++    fresh.handlers.get('stats')({ id: 'node-a', stats: { peers: 2 } });
++    assert.deepEqual(collector.calls, [{ method: 'updateStats', id: 'node-a' }]);
++    assert.deepEqual(fresh.emitted, [{ name: 'ready', data: undefined }]);
++});
++
++test('repeated hello ends the old session and releases the identity for reconnect', t => {
++    const collector = loadCollector(t);
++    const old = connectCollector(collector);
++    hello(old);
++    collector.calls.length = 0;
++    hello(old);
++    assert.deepEqual(collector.calls, [{ method: 'inactive', spark: 'session-a' }]);
++    const fresh = connectCollector(collector, 'session-new');
++    hello(fresh);
++    assert.deepEqual(fresh.emitted, [{ name: 'ready', data: undefined }]);
++});
++
++test('failed collection registration sends no ready and releases its reservation', t => {
++    const collector = loadCollector(t, { failAdd: true });
++    const first = connectCollector(collector);
++    hello(first);
++    const second = connectCollector(collector, 'session-new');
++    hello(second);
++    assert.deepEqual(collector.calls.map(call => call.method), ['add', 'inactive', 'add', 'inactive']);
++    assert.deepEqual(first.emitted, []);
++    assert.deepEqual(second.emitted, []);
++});
++
++test('a delayed registration cannot publish ready after disconnect or replace a new owner', t => {
++    const collector = loadCollector(t, { deferAdd: true });
++    const old = connectCollector(collector);
++    hello(old);
++    old.handlers.get('stats')({ id: 'node-a', stats: { peers: 1 } });
++    const fresh = connectCollector(collector, 'session-new');
++    hello(fresh);
++    collector.registrations[0]();
++    collector.registrations[1]();
++    collector.calls.length = 0;
++    old.handlers.get('end')();
++    fresh.handlers.get('stats')({ id: 'node-a', stats: { peers: 1 } });
++    assert.deepEqual(old.emitted, []);
++    assert.deepEqual(fresh.emitted, [{ name: 'ready', data: undefined }]);
++    assert.deepEqual(collector.calls, [{ method: 'updateStats', id: 'node-a' }]);
++});
++
++for (const event of ['hello', ...events.map(value => value[0])]) {
++    test(`${event} rejects an absent envelope without throwing or logging it`, t => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        if (event !== 'hello') hello(spark);
++        spark.handlers.get(event)(null);
++        assert.equal(spark.ended, true);
++    });
++}
++
++test('malformed report bodies close the authenticated session without a collection update', t => {
++    for (const event of ['update', 'block', 'pending', 'stats', 'history']) {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        hello(spark);
++        collector.calls.length = 0;
++        spark.handlers.get(event)({ id: 'node-a', stats: null, block: null, history: [null], secret: secretA });
++        assert.deepEqual(collector.calls, [{ method: 'inactive', spark: 'session-a' }]);
++        assert.equal(collector.logs.some(value => value.includes(secretA)), false);
++    }
++});
+diff --git a/test/fixtures/collector.cjs b/test/fixtures/collector.cjs
+new file mode 100644
+index 0000000..649efc2
+--- /dev/null
++++ b/test/fixtures/collector.cjs
+@@ -0,0 +1,104 @@
++const assert = require('node:assert/strict');
++const { readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } = require('node:fs');
++const { join } = require('node:path');
++const { tmpdir } = require('node:os');
++const vm = require('node:vm');
++const loadTelemetryCredentials = require('../../lib/telemetry-credentials');
++
++const secretA = 'synthetic-node-a-credential-00000000000001';
++const secretB = 'synthetic-node-b-credential-00000000000002';
++const secretNext = 'synthetic-node-a-credential-00000000000003';
++
++function credentialFile(t, value, raw = false) {
++    const directory = mkdtempSync(join(tmpdir(), 'fsn-stats-credentials-'));
++    const file = join(directory, 'credentials.json');
++    writeFileSync(file, raw ? value : JSON.stringify(value), { encoding: 'utf8', mode: 0o600 });
++    t.after(() => { unlinkSync(file); rmdirSync(directory); });
++    return file;
++}
++
++function loadCollector(t, options = {}) {
++    const file = credentialFile(t, options.credentials || { 'node-a': secretA, 'node-b': secretB });
++    const result = { calls: [], logs: [], sockets: new Map(), listening: false, registrations: [] };
++    const server = { listen() { result.listening = true; } };
++    class Primus {
++        constructor(_, config) {
++            this.handlers = new Map();
++            this.writes = [];
++            result.sockets.set(config.pathname, this);
++        }
++        plugin() {}
++        on(name, handler) { this.handlers.set(name, handler); }
++        write(data) { this.writes.push(data); }
++    }
++    class Collection {
++        setChartsCallback() {}
++        add(data, callback) {
++            result.calls.push({ method: 'add', id: data.id, spark: data.spark, data });
++            if (options.deferAdd) {
++                result.registrations.push(() => callback(null, { id: data.id }));
++                return;
++            }
++            callback(options.failAdd ? 'registration failed' : null, { id: data.id });
++        }
++        inactive(spark, callback) {
++            result.calls.push({ method: 'inactive', spark });
++            callback(null, { active: false });
++        }
++        getCharts() {}
++        requiresUpdate() { return false; }
++    }
++    for (const method of ['update', 'addBlock', 'updatePending', 'updateStats', 'addHistory', 'updateLatency']) {
++        Collection.prototype[method] = function (id, data, callback) {
++            result.calls.push({ method, id });
++            callback(null, data);
++        };
++    }
++    const modules = {
++        './lib/telemetry-credentials': loadTelemetryCredentials,
++        lodash: { isUndefined: value => value === undefined, now: () => 1234 },
++        './lib/utils/logger': {},
++        './lib/utils/config': { banned: options.banned || [] },
++        chalk: { reset: { cyan: value => value } },
++        http: { createServer: () => server },
++        primus: Primus,
++        'primus-emit': {},
++        'primus-spark-latency': {},
++        './lib/collection': Collection,
++    };
++    const consoleStub = Object.fromEntries(['info', 'error', 'success', 'warn', 'log', 'time', 'timeEnd'].map(name => [name, (...args) => result.logs.push(JSON.stringify(args))]));
++    const context = vm.createContext({
++        require(name) {
++            if (!Object.hasOwn(modules, name)) throw new Error(`Unexpected dependency: ${name}`);
++            return modules[name];
++        },
++        process: { env: { NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, ...options.environment } },
++        console: consoleStub,
++        setInterval: () => 0,
++        module: { exports: {} },
++    });
++    try {
++        vm.runInContext(readFileSync(join(__dirname, '../../server.js'), 'utf8'), context, { filename: 'fsn-stats/server.js', timeout: 1000 });
++    } catch (error) {
++        result.startupError = error;
++    }
++    return result;
++}
++
++function connectCollector(collector, id = 'session-a') {
++    assert.equal(collector.startupError, undefined);
++    const spark = {
++        id, address: { ip: '127.0.0.1' }, handlers: new Map(), emitted: [], ended: false,
++        on(name, handler) { this.handlers.set(name, handler); },
++        emit(name, data) { this.emitted.push({ name, data }); },
++        end() { this.ended = true; },
++    };
++    collector.sockets.get('/api').handlers.get('connection')(spark);
++    return spark;
++}
++
++function hello(spark, id = 'node-a', secret = secretA) {
++    spark.handlers.get('hello')({ id, secret, info: { name: id, node: 'efsn-test', network: '99032659' } });
++}
++
++module.exports = { credentialFile, loadCollector, connectCollector, hello, secretA, secretB, secretNext };
+diff --git a/test/fixtures/wire-server.cjs b/test/fixtures/wire-server.cjs
+new file mode 100644
+index 0000000..17d7be6
+--- /dev/null
++++ b/test/fixtures/wire-server.cjs
+@@ -0,0 +1,10 @@
++const http = require('node:http');
++const listen = http.Server.prototype.listen;
++http.Server.prototype.listen = function () {
++    return listen.call(this, 0, '127.0.0.1');
++};
++const server = require('../../server');
++server.on('listening', () => process.send(server.address()));
++process.on('message', message => {
++    if (message === 'stop') server.close(() => process.exit(0));
++});
+diff --git a/test/telemetry-credentials.test.cjs b/test/telemetry-credentials.test.cjs
+new file mode 100644
+index 0000000..69adfb6
+--- /dev/null
++++ b/test/telemetry-credentials.test.cjs
+@@ -0,0 +1,63 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { join } = require('node:path');
++const loadCredentials = require('../lib/telemetry-credentials');
++const { credentialFile, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
++
++test('credentials match only their assigned node and never coerce input', t => {
++    const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
++    const matches = loadCredentials({ WS_CREDENTIALS_FILE: file });
++    assert.equal(matches('node-a', secretA), true);
++    assert.equal(matches('node-b', secretB), true);
++    assert.equal(matches('node-b', secretA), false);
++    assert.equal(matches('unknown-node', secretA), false);
++    assert.equal(matches('node-a', [secretA]), false);
++    assert.equal(matches(['node-a'], secretA), false);
++});
++
++test('rotation accepts current and next credentials until old credential is removed on reload', t => {
++    const overlap = loadCredentials({ WS_CREDENTIALS_FILE: credentialFile(t, { 'node-a': [secretA, secretNext] }) });
++    const rotated = loadCredentials({ WS_CREDENTIALS_FILE: credentialFile(t, { 'node-a': secretNext }) });
++    assert.equal(overlap('node-a', secretA), true);
++    assert.equal(overlap('node-a', secretNext), true);
++    assert.equal(rotated('node-a', secretA), false);
++    assert.equal(rotated('node-a', secretNext), true);
++});
++
++for (const [name, value] of [
++    ['null', null], ['array', []], ['empty mapping', {}],
++    ['empty token', { 'node-a': '' }], ['whitespace token', { 'node-a': ' '.repeat(32) }],
++    ['short token', { 'node-a': 'short' }], ['oversized token', { 'node-a': 'x'.repeat(257) }],
++    ['URL delimiter', { 'node-a': secretA + '@' }], ['numeric token', { 'node-a': 1234 }],
++    ['no rotation entries', { 'node-a': [] }], ['empty rotation entry', { 'node-a': [secretA, ''] }],
++    ['three rotation entries', { 'node-a': [secretA, secretB, secretNext] }],
++    ['shared credential', { 'node-a': secretA, 'node-b': secretA }],
++    ['duplicate rotation credential', { 'node-a': [secretA, secretA] }],
++    ['invalid node name', { 'node a': secretA }], ['long node name', { ['x'.repeat(65)]: secretA }],
++]) {
++    test(`invalid credential configuration fails: ${name}`, t => {
++        const file = credentialFile(t, value);
++        assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: file }), error => !error.message.includes(secretA));
++    });
++}
++
++test('invalid JSON does not reveal file contents through the error', t => {
++    const file = credentialFile(t, '{"node-a":"' + secretA, true);
++    assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: file }), {
++        message: 'Cannot read valid telemetry credentials from WS_CREDENTIALS_FILE',
++    });
++});
++
++test('missing path, relative path and unreadable file fail closed', t => {
++    const file = credentialFile(t, { 'node-a': secretA });
++    assert.throws(() => loadCredentials({}));
++    assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: 'relative.json' }));
++    assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: join(file, 'missing.json') }));
++});
++
++test('legacy shared secret setting cannot silently override the identity mapping', t => {
++    const file = credentialFile(t, { 'node-a': secretA });
++    assert.throws(() => loadCredentials({ WS_CREDENTIALS_FILE: file, WS_SECRET: secretA }), {
++        message: 'WS_SECRET is unsupported; configure WS_CREDENTIALS_FILE with per-node credentials',
++    });
++});
+diff --git a/test/telemetry-wire.test.cjs b/test/telemetry-wire.test.cjs
+new file mode 100644
+index 0000000..2cdf4fb
+--- /dev/null
++++ b/test/telemetry-wire.test.cjs
+@@ -0,0 +1,138 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { fork } = require('node:child_process');
++const { join } = require('node:path');
++const { once, EventEmitter } = require('node:events');
++const WebSocket = require('ws');
++const { credentialFile, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
++
++function connect(t, port, endpoint) {
++    const socket = new WebSocket(`ws://127.0.0.1:${port}/${endpoint}`);
++    const connection = { socket, messages: [], changed: new EventEmitter() };
++    socket.on('message', raw => {
++        const message = JSON.parse(raw.toString());
++        if (typeof message === 'string' && message.startsWith('primus::ping::')) {
++            socket.send(JSON.stringify(message.replace('primus::ping::', 'primus::pong::')));
++            return;
++        }
++        connection.messages.push(message);
++        connection.changed.emit('message');
++    });
++    socket.on('error', () => {});
++    connection.closed = once(socket, 'close');
++    t.after(() => socket.terminate());
++    connection.opened = once(socket, 'open');
++    return connection;
++}
++
++function waitMessage(connection, predicate, from = 0) {
++    return new Promise((resolve, reject) => {
++        const timer = setTimeout(() => {
++            connection.changed.off('message', check);
++            reject(new Error('Expected collector message did not arrive'));
++        }, 3000);
++        function check() {
++            const message = connection.messages.slice(from).find(predicate);
++            if (!message) return;
++            clearTimeout(timer);
++            connection.changed.off('message', check);
++            resolve(message);
++        }
++        connection.changed.on('message', check);
++        check();
++    });
++}
++
++function send(connection, event, payload) {
++    connection.socket.send(JSON.stringify({ emit: [event, payload] }));
++}
++
++async function login(connection, id, secret) {
++    await connection.opened;
++    send(connection, 'hello', {
++        id, secret,
++        info: { name: id, node: 'efsn-test', port: 30303, net: '99032659', protocol: 'efsn/66', api: 'No', os: 'linux', os_v: 'amd64', client: '0.1.1', canUpdateHistory: true },
++    });
++    await waitMessage(connection, message => message.emit && message.emit[0] === 'ready');
++}
++
++async function inventory(viewer) {
++    const from = viewer.messages.length;
++    send(viewer, 'ready', {});
++    const response = await waitMessage(viewer, message => message.emit && message.emit[0] === 'init', from);
++    return response.emit[1].nodes;
++}
++
++test('real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect', { timeout: 15000 }, async t => {
++    const file = credentialFile(t, { 'node-a': [secretA, secretNext], 'node-b': secretB });
++    const child = fork(join(__dirname, 'fixtures/wire-server.cjs'), [], {
++        env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, VERBOSITY: '2' },
++        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
++    });
++    let logs = '';
++    child.stdout.on('data', chunk => { logs += chunk; });
++    child.stderr.on('data', chunk => { logs += chunk; });
++    const exited = once(child, 'exit');
++    t.after(async () => {
++        if (child.exitCode === null && child.signalCode === null) child.kill();
++        await exited;
++    });
++    const [address] = await Promise.race([
++        once(child, 'message'),
++        exited.then(() => { throw new Error(`Collector exited before listening: ${logs}`); }),
++    ]);
++    assert.equal(address.address, '127.0.0.1');
++    const viewer = connect(t, address.port, 'primus');
++    await viewer.opened;
++    const owner = connect(t, address.port, 'api');
++    await login(owner, 'node-a', secretA);
++    const stats = { active: true, mining: true, syncing: false, hashrate: 0, peers: 1, gasPrice: 1, ticketNumber: 2, myTicketNumber: 1, uptime: 100 };
++    send(owner, 'stats', { id: 'node-a', stats });
++    await waitMessage(viewer, message => message.action === 'stats' && message.data.id === 'node-a');
++    assert.equal((await inventory(viewer))[0].stats.peers, 1);
++
++    const unauthenticated = connect(t, address.port, 'api');
++    await unauthenticated.opened;
++    send(unauthenticated, 'stats', { id: 'node-a', stats: { ...stats, peers: 9 } });
++    await unauthenticated.closed;
++    assert.equal((await inventory(viewer))[0].stats.peers, 1);
++
++    const wrongCredential = connect(t, address.port, 'api');
++    await wrongCredential.opened;
++    send(wrongCredential, 'hello', { id: 'node-b', secret: secretA, info: { name: 'node-b' } });
++    await wrongCredential.closed;
++    assert.deepEqual((await inventory(viewer)).map(node => node.id), ['node-a']);
++
++    const duplicate = connect(t, address.port, 'api');
++    await duplicate.opened;
++    send(duplicate, 'hello', { id: 'node-a', secret: secretNext, info: { name: 'node-a' } });
++    await duplicate.closed;
++    assert.equal((await inventory(viewer))[0].stats.active, true);
++
++    const other = connect(t, address.port, 'api');
++    await login(other, 'node-b', secretB);
++    send(other, 'stats', { id: 'node-a', stats: { ...stats, peers: 9 } });
++    await other.closed;
++    const afterRejectedUpdate = await inventory(viewer);
++    assert.equal(afterRejectedUpdate.find(node => node.id === 'node-a').stats.peers, 1);
++    assert.equal(afterRejectedUpdate.find(node => node.id === 'node-b').stats.active, false);
++
++    const from = viewer.messages.length;
++    owner.socket.close();
++    await owner.closed;
++    await waitMessage(viewer, message => message.action === 'inactive' && message.data.id === 'node-a', from);
++    const reconnected = connect(t, address.port, 'api');
++    await login(reconnected, 'node-a', secretNext);
++    send(reconnected, 'stats', { id: 'node-a', stats: { ...stats, peers: 2 } });
++    await waitMessage(viewer, message => message.action === 'stats' && message.data.id === 'node-a' && message.data.stats.peers === 2);
++    assert.equal((await inventory(viewer)).find(node => node.id === 'node-a').stats.peers, 2);
++
++    viewer.socket.close();
++    reconnected.socket.close();
++    await Promise.all([viewer.closed, reconnected.closed]);
++    child.send('stop');
++    const [code, signal] = await exited;
++    assert.equal(code, 0);
++    assert.equal(signal, null);
++    for (const secret of [secretA, secretB, secretNext]) assert.equal(logs.includes(secret), false);
++});

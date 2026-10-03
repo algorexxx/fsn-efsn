@@ -6,6 +6,10 @@ now includes a public dashboard before public economic use. The existing
 tests ran, with **two passing and five failing** against the archived source.
 This is baseline failure evidence, not a passing dashboard acceptance run.
 
+The subsequent [authentication correction](restart-dashboard-auth.md) addresses
+the five failures with 71 passing contracts and a real loopback collector check.
+The original baseline below is preserved; full public dashboard readiness remains open.
+
 ## Source and scope
 
 Dashboard checkout:
