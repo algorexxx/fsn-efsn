@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [API update](restart-dashboard-api.md) and shared backend lock pass native WSS/browser/proxy checks; nine root dependency findings and public deployment controls remain open | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Backend dependency acceptance](restart-dashboard-geoip.md) passes with zero known root advisories; frontend and public deployment controls remain open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -324,9 +324,13 @@ to 4.18.1. All 178 contract/14 socket tests and actual WSS/mining checks pass.
 That reduced the root audit to 18 affected names. The subsequent
 [API update](restart-dashboard-api.md) pins Express 4.22.3 and removes the
 separate API install, clearing all nine Express-related findings. The current
-178 contract/14 socket tests and native WSS/browser/proxy checks pass. GeoIP,
-diagnostics color dependencies and frontend work remain open. No application
-JavaScript or node sources change in the API slice.
+178 contract/14 socket tests and native WSS/browser/proxy checks pass. The
+[GeoIP/diagnostics update](restart-dashboard-geoip.md) subsequently clears the
+remaining nine backend findings, with all 144 installed paths matching the lock.
+It requires Node >=24 and passes a clean Linux install plus the same integration
+checks. No application JavaScript or node sources change in these two slices.
+Frontend dependencies, GeoIP dataset operations and public hosting controls
+remain open.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -387,11 +391,11 @@ The last two items are post-bootstrap milestones; the first two precede release.
 Current technical order:
 
 1. G6: continue the [runtime/dependency worklist](restart-dashboard-runtime.md).
-   The [API update](restart-dashboard-api.md) passes on Node 24 with one backend
-   lock. Next address GeoIP and diagnostics color dependencies, then browser
-   Axios and the obsolete deployment workflow. Review
-   remaining findings and validate a clean pinned installation; public hosting
-   is not approved yet.
+   The [backend update](restart-dashboard-geoip.md) passes on Node 24 with zero
+   known root advisories. Next address browser Axios/build dependencies and the
+   obsolete deployment workflow, then verify the final clean installation.
+   Complete GeoIP dataset selection/attribution and update operations; public
+   hosting is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log
    lifecycle checks. Preserve receipt/transport diagnostics and the same-host
    clock assumption. Review retry pacing and log volume using the

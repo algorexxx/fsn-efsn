@@ -1,0 +1,99 @@
+{
+  "name": "geoip-lite",
+  "version": "2.0.3",
+  "description": "A light weight native JavaScript implementation of GeoIP API from MaxMind",
+  "keywords": [
+    "geo",
+    "geoip",
+    "ip",
+    "ipv4",
+    "ipv6",
+    "geolookup",
+    "maxmind",
+    "geolite"
+  ],
+  "homepage": "https://github.com/geoip-lite/node-geoip",
+  "author": {
+    "name": "Philip Tellis",
+    "email": "philip@bluesmoon.info",
+    "url": "http://bluesmoon.info/"
+  },
+  "main": "lib/geoip.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/geoip-lite/node-geoip.git"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "pretest": "eslint .",
+    "test": "node --test test/tests.js",
+    "updatedb": "node scripts/updatedb.js",
+    "updatedb-debug": "node scripts/updatedb.js debug",
+    "updatedb-force": "node scripts/updatedb.js force"
+  },
+  "dependencies": {
+    "chalk": "4.1 - 4.1.2",
+    "iconv-lite": "0.4.13 - 0.6.3",
+    "ip-address": "^10.2.0",
+    "lazy": "1.0.11",
+    "yauzl": "^3.3.1"
+  },
+  "config": {
+    "update": true
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "eslint": "^10.0.0",
+    "globals": "^17.0.0"
+  },
+  "license": "Apache-2.0",
+  "contributors": [
+    {
+      "name": "Philip Tellis",
+      "email": "philip@bluesmoon.info",
+      "url": "http://bluesmoon.info/"
+    },
+    {
+      "name": "Arturs Sosins",
+      "email": "@ar2rsawseen"
+    }
+  ],
+  "gitHead": "f3c921b94007e821a832f942e4a04ea8c8605380",
+  "_id": "geoip-lite@2.0.3",
+  "bugs": {
+    "url": "https://github.com/geoip-lite/node-geoip/issues"
+  },
+  "_nodeVersion": "25.9.0",
+  "_npmVersion": "11.12.1",
+  "dist": {
+    "integrity": "sha512-I0v/6sITK5FhEXHmatGSPBMply2nHN/2D743LIx4KkksttZt/E505lDaV6qUwt5RM08MbZW+/4E0KxusLVN39w==",
+    "shasum": "ff2bfb64a964911b3fa09cf4a4f5e3e7c15100a7",
+    "tarball": "https://registry.npmjs.org/geoip-lite/-/geoip-lite-2.0.3.tgz",
+    "fileCount": 17,
+    "unpackedSize": 115398763,
+    "signatures": [
+      {
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+        "sig": "MEUCIQCp/7dWeKRj06i6WNPfj32zEUUuS+CRaNd7G2gZ8cHqBAIgDaEux5xYG2sPdTW0pKP68+fAHlY4yev8VtfzKuOLY3Y="
+      }
+    ]
+  },
+  "_npmUser": {
+    "name": "bluesmoon",
+    "email": "philip.tellis@gmail.com"
+  },
+  "directories": {},
+  "maintainers": [
+    {
+      "name": "bluesmoon",
+      "email": "philip.tellis@gmail.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages-npm-production",
+    "tmp": "tmp/geoip-lite_2.0.3_1781716386851_0.8307338659561829"
+  },
+  "_hasShrinkwrap": false
+}

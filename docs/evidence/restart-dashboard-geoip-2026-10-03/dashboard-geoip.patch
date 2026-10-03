@@ -1,0 +1,812 @@
+From bf710d39a0b5c88120ef37373c580cc8f8432ef4 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 23:06:27 +0200
+Subject: [PATCH] Update GeoIP and diagnostics dependencies on Node 24
+
+---
+ README.md                          |   9 +
+ docs/geoip-dependency-upgrade.md   | 124 +++++++++++
+ docs/head-and-enrollment-limits.md |   5 +
+ docs/runtime-dependency-review.md  |  31 +--
+ docs/snapshot-storage.md           |   8 +-
+ package-lock.json                  | 323 +++++++----------------------
+ package.json                       |   5 +-
+ 7 files changed, 239 insertions(+), 266 deletions(-)
+ create mode 100644 docs/geoip-dependency-upgrade.md
+
+diff --git a/README.md b/README.md
+index f1fb5d7..68d1108 100644
+--- a/README.md
++++ b/README.md
+@@ -17,6 +17,15 @@ native efsn/TLS integration and mining-outage checks. Remaining dependencies
+ and public deployment controls still need work. Provision the versioned schema
+ in the snapshot guide; do not use the historical database setup script.
+ 
++The [GeoIP/diagnostics update](docs/geoip-dependency-upgrade.md) clears the
++remaining backend advisories in the recorded audit. The backend now requires
++Node 24 or newer; local acceptance uses Node 24.21.0 and npm 10.9.0. Public
++deployment still needs the frontend and operational release checks.
++This product includes GeoLite2 data created by MaxMind, available from
++[MaxMind](https://www.maxmind.com/). Country flags and map locations use this
++approximate data. Follow the dataset attribution/update requirements in the
++GeoIP guide before public use.
++
+ Run `npm test` for configuration, identity and startup checks, including an HTTP
+ API test with stubbed storage. Run `npm run test:wire` for the real loopback
+ collector WebSocket check. Install dependencies from the existing lock with
+diff --git a/docs/geoip-dependency-upgrade.md b/docs/geoip-dependency-upgrade.md
+new file mode 100644
+index 0000000..80b876d
+--- /dev/null
++++ b/docs/geoip-dependency-upgrade.md
+@@ -0,0 +1,124 @@
++# Dashboard GeoIP and diagnostics dependency update
++
++Local evidence date: 2026-10-03. The shared backend lock now reports zero known
++npm advisories, down from nine affected package names. GeoIP is pinned from
++1.2.1 to 2.0.3; the compatible transitive `color-string` resolution moves from
++1.5.3 to 1.9.1. The root manifest requires Node >=24.0.0. No application
++JavaScript, efsn source, schema, test expectations or compiled frontend changes
++are needed. G6 remains open for frontend and deployment work.
++
++## Package scope and installation
++
++The captured registry identifies GeoIP 2.0.3 as the latest stable release. Its
++[upstream documentation](https://github.com/geoip-lite/node-geoip) and selected
++archive require Node 24. The locked tree contains 144 installed paths, down
++from 167: 32 removed, nine added and two updated. Every change belongs to the
++old/new GeoIP or color-string dependency tree. All other direct declarations
++remain unchanged; no override, automatic audit fix or new direct dependency
++is introduced.
++
++GeoIP's native asynchronous file loading replaces its old `async` dependency;
++its explicit updater uses `yauzl` instead of the obsolete `unzip` stack.
++The diagnostic path remains Primus -> diagnostics -> colorspace -> color ->
++color-string; version 1.9.1 satisfies color's existing `^1.5.2` requirement.
++These are dependency corrections, not evidence that an exploit was reachable.
++
++Resolution and a clean `npm ci --ignore-scripts --no-audit --no-fund` run use
++Linux Node 24.21.0 and npm 10.9.0 with engine checks enforced. The existing
++cross-platform npm CLI is run by the Linux Node binary. The preserved v1 lock
++still produces npm's old-lock warning; yaeti 0.0.6 also has a deprecation
++warning. Those warnings are retained, despite the zero-advisory result.
++The final production Node/npm pairing and host image remain release decisions.
++
++Both selected archives match npm's SHA-512 integrity values. All 21 archive
++files, including the GeoIP binary datasets, match the installed files. This
++checks integrity, not independent publisher attestation. All 144 installed
++versions match the lock. All 32 removed dependency paths and any API-local
++installation are absent. Installation leaves the manifest and lock unchanged.
++
++## Lookup and dashboard compatibility
++
++GeoIP is used by `lib/node.js` for country flags and map coordinates. Retain
++this functionality. Eight local lookups exercise public IPv4, public IPv6,
++IPv4-mapped IPv6, loopback and all three RFC1918 ranges; no connection is made
++to those addresses. The public country/region/city/timezone expectations come
++from the selected upstream package's `test/tests.js`. They describe that
++bundled dataset, not independently verified present-day locations.
++
++The actual node model still normalizes the mapped address and exposes null
++for the five private/loopback cases. The actual frontend snapshot mapper
++accepts all three public records and produces finite in-range map coordinates.
++The largest sampled GeoIP JSON object is 164 bytes. Normal RGB parsing passes
++published CSS colour values, and four diagnostic namespace colours match the
++pre-upgrade capture.
++
++The existing 1024-byte GeoIP allowance is also reviewed against the 2.0.3
++reader, not inferred from those samples. Its five string fields are bounded by
++84 source bytes in a fixed 88-byte location record. Allow six JSON/wire bytes
++per source byte, plus 24 bytes each for the six numeric values and the fixed
++JSON structure. The resulting ceiling is 744 bytes; IPv6's empty
++range and country-only/null results are smaller. Recheck this allowance when
++the reader's schema changes. Dataset changes within this format do not enlarge
++the string fields.
++
++All 178 contract tests and 14 loopback socket tests pass on Linux Node 24.
++The native efsn reporter passes WSS -> nginx -> PostgreSQL 16.15 -> HTTPS API ->
++compiled Edge browser. All four checkpoints pass, including writer expiry and
++recovery, with matching head/fifty-block history and no writer/browser errors.
++The eight-reporter proxy fixture passes certificate checks, route isolation,
++authentication, normalized forwarding and the normal 3,276,956-byte history
++payload. These are bounded local acceptance checks.
++
++All 1007 Go/module files and 547 compiled frontend files retain their prior
++hashes. The original dashboard checkout is preserved. Test services are
++stopped and temporary credentials removed; one stopped disposable PostgreSQL
++directory remains. No chain restore or real signing is involved. The earlier
++mining-outage result is retained; this metadata dependency slice does not
++repeat that drill or constitute final combined deployment acceptance.
++
++## Dataset licensing and launch requirement
++
++The selected archive's [LICENSE](https://github.com/geoip-lite/node-geoip/blob/main/LICENSE)
++separately identifies Apache 2.0 code and bundled GeoLite2 data under CC BY-SA
++4.0, with a 2012-2018 MaxMind copyright notice. Preserve both notices. The
++package version, tar timestamps and copyright year do not establish dataset
++freshness. The package README instructs operators to update the bundled data.
++
++This product includes GeoLite2 data created by MaxMind, available from
++[MaxMind](https://www.maxmind.com/).
++
++For newly downloaded GeoLite datasets, [MaxMind's current instructions](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data/)
++require an account/license key and describe ongoing update and deletion
++obligations. Review the terms attached to the selected download; do not assume
++the older bundled CC dataset and a current download have identical terms.
++IP geolocation is approximate network location, not operator identity or proof
++of validator independence.
++
++The updater was inspected, not run. It is an explicit script, not an install
++hook, and accepts a license key through an argument or `LICENSE_KEY`, with
++`GEODATADIR`/`GEOTMPDIR` overrides. No account/key was supplied and no MaxMind
++download, redistribution or updater network behavior was tested.
++
++Before public deployment, select and record the dataset source, applicable
++terms, edition/date and hashes; preserve required notices in documentation and
++map-facing attribution. Obtain updates using a protected job without exposing
++the license key in arguments, URLs or logs. Stage the complete dataset outside
++the serving process, verify lookup compatibility, then switch and restart the
++collector with an explicit `GEODATADIR`. Verify update failure/retry behavior,
++rollback availability subject to retention terms, and the required refresh and
++deletion schedule. This operational acceptance remains open; the package
++upgrade does not certify fresh map data.
++
++## Next work
++
++Address browser Axios and build dependencies, replace the inherited deployment
++workflow, and finalize the reproducible runtime/build matrix. Complete G6
++service supervision, public TLS renewal, retries/log retention, GeoIP dataset
++operations and the coordinated deployment manifest. Repeat advisory review
++and combined acceptance on that final release. A zero backend audit is a
++point-in-time result, not a security guarantee or a cleared frontend audit.
++
++Exact inputs, package metadata/integrity, lock changes, lookup captures, audits,
++test results, cleanup and the portable dashboard patch are retained under
++`docs/evidence/restart-dashboard-geoip-2026-10-03/` in the efsn investigation.
++The accompanying efsn investigation's `docs/restart-plan.md` owns the launch gates.
+diff --git a/docs/head-and-enrollment-limits.md b/docs/head-and-enrollment-limits.md
+index a14b640..f972a13 100644
+--- a/docs/head-and-enrollment-limits.md
++++ b/docs/head-and-enrollment-limits.md
+@@ -83,6 +83,11 @@ This is a conservative schema-based sizing allowance, not a runtime queue/memory
+ guarantee. Include frame overhead and queued events when setting transport limits;
+ repeat the review if schemas, plugins or dependency versions change.
+ 
++The [GeoIP 2.0.3 review](geoip-dependency-upgrade.md) rechecks its fixed record
++schema and bounds the GeoIP object at 744 wire bytes, within the existing
++1024-byte allowance. The package update leaves these configured budgets
++unchanged. Recheck the bound if the reader schema changes.
++
+ Validation: six new regressions fail on the previous source; 173 contracts and
+ 13 existing socket tests pass. Boundary enrollment, concurrent eight-reporter
+ and actual efsn/database/API/browser checks pass. The original failed boundary
+diff --git a/docs/runtime-dependency-review.md b/docs/runtime-dependency-review.md
+index 363ef4e..81bca15 100644
+--- a/docs/runtime-dependency-review.md
++++ b/docs/runtime-dependency-review.md
+@@ -32,30 +32,33 @@ These include dependency-level findings and are not unique CVE or reachable
+ exploit counts. Build tools live in `dependencies`, so omitting devDependencies
+ would not remove them. No automatic audit fix was used.
+ 
+-Subsequent [transport](transport-upgrade.md), [backend cleanup](backend-cleanup.md)
+-and [API dependency](api-dependency-upgrade.md) work completes Primus/ws, Lodash,
+-unused backend removal, Express 4.22.3 and the shared root API installation.
+-The latest slice passes 178 contract/14 socket tests plus native WSS/browser
+-and eight-reporter proxy acceptance. The root audit now has nine affected
+-package names; the earlier counts describe the original review.
++Subsequent [transport](transport-upgrade.md), [backend cleanup](backend-cleanup.md),
++[API dependency](api-dependency-upgrade.md) and
++[GeoIP/diagnostics](geoip-dependency-upgrade.md) work completes the backend
++dependency corrections and shared root API installation. The latest slice
++passes 178 contract/14 socket tests, native WSS/browser and eight-reporter proxy
++acceptance. All 144 installed backend paths match the lock; its current audit
++reports zero known advisories. Earlier counts describe earlier trees.
++Node >=24 is now required. A clean Linux Node 24.21.0/npm 10.9.0 installation
++passes with engine checks enforced and lifecycle scripts disabled.
+ 
+ Required follow-up, in order:
+ 
+-1. Review/update GeoIP and the diagnostics `color-string` dependency. Check
+-   lookup compatibility, data licensing and updater paths, then re-audit and
+-   disposition every remaining backend finding.
+-2. Update or replace browser Axios 0.21.2 and review unused/build-only packages.
++1. Update or replace browser Axios 0.21.2 and review unused/build-only packages.
+    Preserve freshness, cancellation and timeout behavior. Review the
+    [deprecated CRA build](https://react.dev/blog/2025/02/14/sunsetting-create-react-app)
+-   separately from the completed backend transport changes.
+-3. Select and verify the final Node/npm matrix and a clean Linux installation.
++   separately from the completed backend changes.
++2. Select and verify the final Node/npm matrix and combined clean installation.
+    Replace the inherited Node 16/`npm install`/foundation S3 workflow before
+    enabling deployment. No workflow has been run for these changes.
++3. Select and record the GeoIP dataset and its terms/attribution. Accept the
++   protected update workflow, failure/recovery and refresh/deletion schedule
++   before public use; package compatibility does not establish fresh data.
+ 4. Complete supervision, public certificates/renewal, retries/log retention and
+    the common deployment profile. Repeat combined acceptance and the advisory
+    review on that final package before public use.
+ 
+ The accompanying efsn investigation retains the original review in
+-`docs/restart-dashboard-runtime.md` and the API follow-up in
+-`docs/restart-dashboard-api.md`, with exact package and local test evidence
++`docs/restart-dashboard-runtime.md` and the latest follow-up in
++`docs/restart-dashboard-geoip.md`, with exact package and local test evidence
+ under their corresponding `docs/evidence/` directories.
+diff --git a/docs/snapshot-storage.md b/docs/snapshot-storage.md
+index e130a2b..65ac8ea 100644
+--- a/docs/snapshot-storage.md
++++ b/docs/snapshot-storage.md
+@@ -8,11 +8,13 @@ finality or a claim that every node recently sent a report.
+ 
+ ## Install and start
+ 
+-Use a fresh release directory with the selected Node/npm runtime. From the
+-repository root, install the shared backend lock:
++Use a fresh release directory with Node >=24.0.0. Local backend acceptance
++uses Linux Node 24.21.0 and npm 10.9.0; pin the reviewed production pair in the
++release manifest. From the repository root, enforce engine requirements when
++installing the shared backend lock:
+ 
+ ```sh
+-npm ci --ignore-scripts --no-audit --no-fund
++npm ci --engine-strict --ignore-scripts --no-audit --no-fund
+ ```
+ 
+ The API has no separate package manifest, lock or dependency installation.
+diff --git a/package-lock.json b/package-lock.json
+index c5f0894..1876466 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -38,34 +38,12 @@
+       "resolved": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz",
+       "integrity": "sha1-ml9pkFGx5wczKPKgCJaLZOopVdI="
+     },
+-    "async": {
+-      "version": "2.6.3",
+-      "resolved": "https://registry.npmjs.org/async/-/async-2.6.3.tgz",
+-      "integrity": "sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==",
+-      "requires": {
+-        "lodash": "^4.17.14"
+-      }
+-    },
+     "asyncemit": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/asyncemit/-/asyncemit-3.0.1.tgz",
+       "integrity": "sha1-zD4P4No5tTzBXls6qGFupqcr1Zk=",
+       "requires": {}
+     },
+-    "balanced-match": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.0.tgz",
+-      "integrity": "sha1-ibTRmasr7kneFk6gK4nORi1xt2c="
+-    },
+-    "binary": {
+-      "version": "0.3.0",
+-      "resolved": "https://registry.npmjs.org/binary/-/binary-0.3.0.tgz",
+-      "integrity": "sha1-n2BVO8XOjDOG87VTz/R0Yq3sqnk=",
+-      "requires": {
+-        "buffers": "~0.1.1",
+-        "chainsaw": "~0.1.0"
+-      }
+-    },
+     "body-parser": {
+       "version": "1.20.8",
+       "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
+@@ -85,20 +63,6 @@
+         "unpipe": "~1.0.0"
+       }
+     },
+-    "brace-expansion": {
+-      "version": "1.1.11",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz",
+-      "integrity": "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==",
+-      "requires": {
+-        "balanced-match": "^1.0.0",
+-        "concat-map": "0.0.1"
+-      }
+-    },
+-    "buffers": {
+-      "version": "0.1.1",
+-      "resolved": "https://registry.npmjs.org/buffers/-/buffers-0.1.1.tgz",
+-      "integrity": "sha1-skV5w77U1tOWru5tmorn9Ugqt7s="
+-    },
+     "bytes": {
+       "version": "3.1.2",
+       "resolved": "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz",
+@@ -122,14 +86,6 @@
+         "get-intrinsic": "^1.3.0"
+       }
+     },
+-    "chainsaw": {
+-      "version": "0.1.0",
+-      "resolved": "https://registry.npmjs.org/chainsaw/-/chainsaw-0.1.0.tgz",
+-      "integrity": "sha1-XqtQsor+WAdNDVgpE4iCi15fvJg=",
+-      "requires": {
+-        "traverse": ">=0.3.0 <0.4"
+-      }
+-    },
+     "chalk": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/chalk/-/chalk-1.1.1.tgz",
+@@ -165,9 +121,9 @@
+       "integrity": "sha1-p9BVi9icQveV3UIyj3QIMcpTvCU="
+     },
+     "color-string": {
+-      "version": "1.5.3",
+-      "resolved": "https://registry.npmjs.org/color-string/-/color-string-1.5.3.tgz",
+-      "integrity": "sha512-dC2C5qeWoYkxki5UAXapdjqO672AM4vZuPGRQfO8b5HKuKGBbKWpITyDYN7TOFKvRW7kOgAn3746clDBMDJyQw==",
++      "version": "1.9.1",
++      "resolved": "https://registry.npmjs.org/color-string/-/color-string-1.9.1.tgz",
++      "integrity": "sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==",
+       "requires": {
+         "color-name": "^1.0.0",
+         "simple-swizzle": "^0.2.2"
+@@ -178,11 +134,6 @@
+       "resolved": "https://registry.npmjs.org/colornames/-/colornames-1.1.1.tgz",
+       "integrity": "sha1-+IiQMGhcfE/54qVZ9Qd+t2qBb5Y="
+     },
+-    "colors": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/colors/-/colors-1.4.0.tgz",
+-      "integrity": "sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA=="
+-    },
+     "colorspace": {
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/colorspace/-/colorspace-1.1.2.tgz",
+@@ -192,11 +143,6 @@
+         "text-hex": "1.0.x"
+       }
+     },
+-    "concat-map": {
+-      "version": "0.0.1",
+-      "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
+-      "integrity": "sha1-2Klr13/Wjfd5OnMDajug1UBdR3s="
+-    },
+     "connected": {
+       "version": "0.0.2",
+       "resolved": "https://registry.npmjs.org/connected/-/connected-0.0.2.tgz",
+@@ -225,11 +171,6 @@
+       "resolved": "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.6.tgz",
+       "integrity": "sha1-4wOogrNCzD7oylE6eZmXNNqzriw="
+     },
+-    "core-util-is": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz",
+-      "integrity": "sha1-tf1UIgqivFq1eqtxQMlAdUUDwac="
+-    },
+     "create-server": {
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/create-server/-/create-server-1.0.2.tgz",
+@@ -419,22 +360,6 @@
+       "resolved": "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz",
+       "integrity": "sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q=="
+     },
+-    "fs.realpath": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz",
+-      "integrity": "sha1-FQStJSMVjKpA20onh8sBQRmU6k8="
+-    },
+-    "fstream": {
+-      "version": "0.1.31",
+-      "resolved": "https://registry.npmjs.org/fstream/-/fstream-0.1.31.tgz",
+-      "integrity": "sha1-czfwWPu7vvqMn1YaKMqwhJICyYg=",
+-      "requires": {
+-        "graceful-fs": "~3.0.2",
+-        "inherits": "~2.0.0",
+-        "mkdirp": "0.5",
+-        "rimraf": "2"
+-      }
+-    },
+     "function-bind": {
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+@@ -450,17 +375,55 @@
+       }
+     },
+     "geoip-lite": {
+-      "version": "1.2.1",
+-      "resolved": "https://registry.npmjs.org/geoip-lite/-/geoip-lite-1.2.1.tgz",
+-      "integrity": "sha1-OcSO+T5JiiWezka8npjPPdtoDYs=",
+-      "requires": {
+-        "async": "^2.1.1",
+-        "colors": "^1.1.2",
+-        "glob": "^7.1.1",
+-        "iconv-lite": "^0.4.13",
+-        "lazy": "^1.0.11",
+-        "rimraf": "^2.5.2",
+-        "unzip": "^0.1.11"
++      "version": "2.0.3",
++      "resolved": "https://registry.npmjs.org/geoip-lite/-/geoip-lite-2.0.3.tgz",
++      "integrity": "sha512-I0v/6sITK5FhEXHmatGSPBMply2nHN/2D743LIx4KkksttZt/E505lDaV6qUwt5RM08MbZW+/4E0KxusLVN39w==",
++      "requires": {
++        "chalk": "4.1 - 4.1.2",
++        "iconv-lite": "0.4.13 - 0.6.3",
++        "ip-address": "^10.2.0",
++        "lazy": "1.0.11",
++        "yauzl": "^3.3.1"
++      },
++      "dependencies": {
++        "ansi-styles": {
++          "version": "4.3.0",
++          "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz",
++          "integrity": "sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==",
++          "requires": {
++            "color-convert": "^2.0.1"
++          }
++        },
++        "chalk": {
++          "version": "4.1.2",
++          "resolved": "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz",
++          "integrity": "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==",
++          "requires": {
++            "ansi-styles": "^4.1.0",
++            "supports-color": "^7.1.0"
++          }
++        },
++        "color-convert": {
++          "version": "2.0.1",
++          "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz",
++          "integrity": "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==",
++          "requires": {
++            "color-name": "~1.1.4"
++          }
++        },
++        "color-name": {
++          "version": "1.1.4",
++          "resolved": "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz",
++          "integrity": "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA=="
++        },
++        "supports-color": {
++          "version": "7.2.0",
++          "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz",
++          "integrity": "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==",
++          "requires": {
++            "has-flag": "^4.0.0"
++          }
++        }
+       }
+     },
+     "get-intrinsic": {
+@@ -489,32 +452,11 @@
+         "es-object-atoms": "^1.0.0"
+       }
+     },
+-    "glob": {
+-      "version": "7.1.4",
+-      "resolved": "https://registry.npmjs.org/glob/-/glob-7.1.4.tgz",
+-      "integrity": "sha512-hkLPepehmnKk41pUGm3sYxoFs/umurYfYJCerbXEyFIWcAzvpipAgVkBqqT9RBKMGjnq6kMuyYwha6csxbiM1A==",
+-      "requires": {
+-        "fs.realpath": "^1.0.0",
+-        "inflight": "^1.0.4",
+-        "inherits": "2",
+-        "minimatch": "^3.0.4",
+-        "once": "^1.3.0",
+-        "path-is-absolute": "^1.0.0"
+-      }
+-    },
+     "gopd": {
+       "version": "1.2.0",
+       "resolved": "https://registry.npmjs.org/gopd/-/gopd-1.2.0.tgz",
+       "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="
+     },
+-    "graceful-fs": {
+-      "version": "3.0.12",
+-      "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-3.0.12.tgz",
+-      "integrity": "sha512-J55gaCS4iTTJfTXIxSVw3EMQckcqkpdRv3IR7gu6sq0+tbC363Zx6KH/SEwXASK9JRbhyZmVjJEVJIOxYsB3Qg==",
+-      "requires": {
+-        "natives": "^1.1.3"
+-      }
+-    },
+     "has-ansi": {
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/has-ansi/-/has-ansi-2.0.0.tgz",
+@@ -523,6 +465,11 @@
+         "ansi-regex": "^2.0.0"
+       }
+     },
++    "has-flag": {
++      "version": "4.0.0",
++      "resolved": "https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz",
++      "integrity": "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="
++    },
+     "has-symbols": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/has-symbols/-/has-symbols-1.1.0.tgz",
+@@ -556,20 +503,16 @@
+         "safer-buffer": ">= 2.1.2 < 3"
+       }
+     },
+-    "inflight": {
+-      "version": "1.0.6",
+-      "resolved": "https://registry.npmjs.org/inflight/-/inflight-1.0.6.tgz",
+-      "integrity": "sha1-Sb1jMdfQLQwJvJEKEHW6gWW1bfk=",
+-      "requires": {
+-        "once": "^1.3.0",
+-        "wrappy": "1"
+-      }
+-    },
+     "inherits": {
+       "version": "2.0.4",
+       "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
+       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
+     },
++    "ip-address": {
++      "version": "10.7.3",
++      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.3.tgz",
++      "integrity": "sha512-A1kdq/tSb5QjvKvAMgIoEvDBIgL7qaqVP/jkvSwYYRZ9iEzvPpopxp2wQfu3SuZRHtpHNxMn8Fs0bS+gf5Xmwg=="
++    },
+     "ipaddr.js": {
+       "version": "1.9.1",
+       "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+@@ -580,11 +523,6 @@
+       "resolved": "https://registry.npmjs.org/is-typedarray/-/is-typedarray-1.0.0.tgz",
+       "integrity": "sha1-5HnICFjfDBsR3dppQPlgEfzaSpo="
+     },
+-    "isarray": {
+-      "version": "0.0.1",
+-      "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz",
+-      "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
+-    },
+     "kuler": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/kuler/-/kuler-1.0.1.tgz",
+@@ -603,15 +541,6 @@
+       "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
+       "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q=="
+     },
+-    "match-stream": {
+-      "version": "0.0.2",
+-      "resolved": "https://registry.npmjs.org/match-stream/-/match-stream-0.0.2.tgz",
+-      "integrity": "sha1-mesFAJOzTf+t5CG5rAtBCpz6F88=",
+-      "requires": {
+-        "buffers": "~0.1.1",
+-        "readable-stream": "~1.0.0"
+-      }
+-    },
+     "math-intrinsics": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
+@@ -655,27 +584,6 @@
+         "mime-db": "1.52.0"
+       }
+     },
+-    "minimatch": {
+-      "version": "3.0.4",
+-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz",
+-      "integrity": "sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==",
+-      "requires": {
+-        "brace-expansion": "^1.1.7"
+-      }
+-    },
+-    "minimist": {
+-      "version": "0.0.8",
+-      "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz",
+-      "integrity": "sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0="
+-    },
+-    "mkdirp": {
+-      "version": "0.5.1",
+-      "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.1.tgz",
+-      "integrity": "sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=",
+-      "requires": {
+-        "minimist": "0.0.8"
+-      }
+-    },
+     "ms": {
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+@@ -691,11 +599,6 @@
+       "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.19.tgz",
+       "integrity": "sha512-Y2tUNy4ouw6tq5oDSKeQYGOyhkUBhNOcGV/02KC+6kd9eDGqdZd++mjMiIDilrBYvjEnCYvVtsuHCuP+okSfug=="
+     },
+-    "natives": {
+-      "version": "1.1.6",
+-      "resolved": "https://registry.npmjs.org/natives/-/natives-1.1.6.tgz",
+-      "integrity": "sha512-6+TDFewD4yxY14ptjKaS63GVdtKiES1pTPyxn9Jb0rBqPMZ7VcCiooEhPNsr+mqHtMGxa/5c/HhcC4uPEUw/nA=="
+-    },
+     "negotiator": {
+       "version": "0.6.3",
+       "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz",
+@@ -714,34 +617,21 @@
+         "ee-first": "1.1.1"
+       }
+     },
+-    "once": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/once/-/once-1.4.0.tgz",
+-      "integrity": "sha1-WDsap3WWHUsROsF9nFC6753Xa9E=",
+-      "requires": {
+-        "wrappy": "1"
+-      }
+-    },
+-    "over": {
+-      "version": "0.0.5",
+-      "resolved": "https://registry.npmjs.org/over/-/over-0.0.5.tgz",
+-      "integrity": "sha1-8phS5w/X4l82DgE6jsRMgq7bVwg="
+-    },
+     "parseurl": {
+       "version": "1.3.3",
+       "resolved": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz",
+       "integrity": "sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ=="
+     },
+-    "path-is-absolute": {
+-      "version": "1.0.1",
+-      "resolved": "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz",
+-      "integrity": "sha1-F0uSaHNVNP+8es5r9TpanhtcX18="
+-    },
+     "path-to-regexp": {
+       "version": "0.1.13",
+       "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.1.13.tgz",
+       "integrity": "sha512-A/AGNMFN3c8bOlvV9RreMdrv7jsmF9XIfDeCd87+I8RNg6s78BhJxMu69NEMHBSJFxKidViTEdruRwEk/WIKqA=="
+     },
++    "pend": {
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/pend/-/pend-1.2.0.tgz",
++      "integrity": "sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg=="
++    },
+     "pg": {
+       "version": "8.23.1",
+       "resolved": "https://registry.npmjs.org/pg/-/pg-8.23.1.tgz",
+@@ -892,17 +782,6 @@
+         "ipaddr.js": "1.9.1"
+       }
+     },
+-    "pullstream": {
+-      "version": "0.4.1",
+-      "resolved": "https://registry.npmjs.org/pullstream/-/pullstream-0.4.1.tgz",
+-      "integrity": "sha1-1vs79a7Wl+gxFQ6xACwlo/iuExQ=",
+-      "requires": {
+-        "over": ">= 0.0.5 < 1",
+-        "readable-stream": "~1.0.31",
+-        "setimmediate": ">= 1.0.2 < 2",
+-        "slice-stream": ">= 1.0.0 < 2"
+-      }
+-    },
+     "qs": {
+       "version": "6.16.0",
+       "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
+@@ -928,25 +807,6 @@
+         "unpipe": "~1.0.0"
+       }
+     },
+-    "readable-stream": {
+-      "version": "1.0.34",
+-      "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-1.0.34.tgz",
+-      "integrity": "sha1-Elgg40vIQtLyqq+v5MKRbuMsFXw=",
+-      "requires": {
+-        "core-util-is": "~1.0.0",
+-        "inherits": "~2.0.1",
+-        "isarray": "0.0.1",
+-        "string_decoder": "~0.10.x"
+-      }
+-    },
+-    "rimraf": {
+-      "version": "2.7.1",
+-      "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz",
+-      "integrity": "sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==",
+-      "requires": {
+-        "glob": "^7.1.3"
+-      }
+-    },
+     "safe-buffer": {
+       "version": "5.2.1",
+       "resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz",
+@@ -1003,11 +863,6 @@
+         "diagnostics": "1.x.x"
+       }
+     },
+-    "setimmediate": {
+-      "version": "1.0.5",
+-      "resolved": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz",
+-      "integrity": "sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU="
+-    },
+     "setprototypeof": {
+       "version": "1.2.0",
+       "resolved": "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.2.0.tgz",
+@@ -1072,14 +927,6 @@
+         }
+       }
+     },
+-    "slice-stream": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/slice-stream/-/slice-stream-1.0.0.tgz",
+-      "integrity": "sha1-WzO9ZvATsaf4ZGCwPUY97DmtPqA=",
+-      "requires": {
+-        "readable-stream": "~1.0.31"
+-      }
+-    },
+     "split2": {
+       "version": "4.2.0",
+       "resolved": "https://registry.npmjs.org/split2/-/split2-4.2.0.tgz",
+@@ -1111,11 +958,6 @@
+         }
+       }
+     },
+-    "string_decoder": {
+-      "version": "0.10.31",
+-      "resolved": "https://registry.npmjs.org/string_decoder/-/string_decoder-0.10.31.tgz",
+-      "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
+-    },
+     "strip-ansi": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz",
+@@ -1139,11 +981,6 @@
+       "resolved": "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz",
+       "integrity": "sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA=="
+     },
+-    "traverse": {
+-      "version": "0.3.9",
+-      "resolved": "https://registry.npmjs.org/traverse/-/traverse-0.3.9.tgz",
+-      "integrity": "sha1-cXuPIgzAu3tE5AUUwisui7xw2Lk="
+-    },
+     "type-is": {
+       "version": "1.6.18",
+       "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz",
+@@ -1171,19 +1008,6 @@
+       "resolved": "https://registry.npmjs.org/unpipe/-/unpipe-1.0.0.tgz",
+       "integrity": "sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ=="
+     },
+-    "unzip": {
+-      "version": "0.1.11",
+-      "resolved": "https://registry.npmjs.org/unzip/-/unzip-0.1.11.tgz",
+-      "integrity": "sha1-iXScY7BY19kNYZ+GuYqhU107l/A=",
+-      "requires": {
+-        "binary": ">= 0.3.0 < 1",
+-        "fstream": ">= 0.1.30 < 1",
+-        "match-stream": ">= 0.0.2 < 1",
+-        "pullstream": ">= 0.4.1 < 1",
+-        "readable-stream": "~1.0.31",
+-        "setimmediate": ">= 1.0.1 < 2"
+-      }
+-    },
+     "utils-merge": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz",
+@@ -1205,11 +1029,6 @@
+         "yaeti": "^0.0.6"
+       }
+     },
+-    "wrappy": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz",
+-      "integrity": "sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8="
+-    },
+     "ws": {
+       "version": "8.22.0",
+       "resolved": "https://registry.npmjs.org/ws/-/ws-8.22.0.tgz",
+@@ -1225,6 +1044,14 @@
+       "version": "0.0.6",
+       "resolved": "https://registry.npmjs.org/yaeti/-/yaeti-0.0.6.tgz",
+       "integrity": "sha1-8m9ITXJoTPQr7ft2lwqhYI+/lXc="
++    },
++    "yauzl": {
++      "version": "3.4.0",
++      "resolved": "https://registry.npmjs.org/yauzl/-/yauzl-3.4.0.tgz",
++      "integrity": "sha512-jIH9yLR9wqr0wOS0TpBvo/g/2UgZH5qePVbjgRliiF0BYvOZyaBknKsF+x9Iht0O6sqgnB93rCICdOZFecJuDw==",
++      "requires": {
++        "pend": "~1.2.0"
++      }
+     }
+   }
+ }
+diff --git a/package.json b/package.json
+index 141afd6..5efc2a0 100644
+--- a/package.json
++++ b/package.json
+@@ -25,7 +25,7 @@
+     "chalk": "1.1.1",
+     "d3": "3.5.6",
+     "express": "4.22.3",
+-    "geoip-lite": "1.2.1",
++    "geoip-lite": "2.0.3",
+     "lodash": "4.18.1",
+     "pg": "8.23.1",
+     "primus": "8.0.9",
+@@ -33,5 +33,8 @@
+     "primus-spark-latency": "^0.1.1",
+     "websocket": "^1.0.30",
+     "ws": "8.22.0"
++  },
++  "engines": {
++    "node": ">=24.0.0"
+   }
+ }

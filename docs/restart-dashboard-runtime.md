@@ -144,24 +144,28 @@ inventory also remains unchanged. Scratch services are stopped and temporary
 credentials removed. The original dashboard checkout is preserved.
 
 Subsequent [transport](restart-dashboard-transport.md),
-[backend cleanup](restart-dashboard-backend.md) and
-[API dependency](restart-dashboard-api.md) work completes the Primus/ws and
-Lodash corrections, unused backend removal, Express 4.22.3 update and shared
-API installation. The latest slice passes 178 contract/14 socket tests and
-the actual WSS/browser and eight-reporter proxy fixtures. The root lock now
-has nine affected package names; earlier counts describe the original review.
+[backend cleanup](restart-dashboard-backend.md),
+[API dependency](restart-dashboard-api.md) and
+[GeoIP/diagnostics](restart-dashboard-geoip.md) work completes the backend
+dependency corrections and shared API installation. The latest slice passes
+178 contract/14 socket tests, native WSS/browser and eight-reporter proxy
+acceptance. All 144 installed backend paths match the lock; the current root
+audit reports zero known advisories. Earlier counts describe earlier trees.
+The backend requires Node >=24 and passes a clean Linux Node 24.21.0/npm 10.9.0
+installation with engine checks enforced and lifecycle scripts disabled.
 
 ## Work order and exit condition
 
-1. Review/update GeoIP and the remaining diagnostics color dependency. Check
-   lookup/data licensing and updater paths, then re-audit the final backend
-   lock and record a concrete disposition for every remaining finding.
-2. Update the browser HTTP client and review the build-only dependency set;
-   rebuild and check the actual compiled browser. Freeze a fresh-install
-   Node/npm/package matrix, removing the obsolete deployment workflow.
+1. Update the browser HTTP client and review the build-only dependency set;
+   rebuild and check the actual compiled browser. Freeze the final Node/npm
+   package matrix, replacing the obsolete deployment workflow. Retest the
+   combined clean installation, including the frontend.
+2. Finish GeoIP dataset selection, applicable terms/attribution, protected
+   updates, failure/recovery and refresh/deletion operations. The package
+   update does not establish data freshness or accept its download workflow.
 3. Continue G6 supervision, retry/log lifecycle, public certificates and the
-   coordinated deployment manifest. Recheck current advisories at release and
-   rerun combined acceptance on that exact package. These local compatibility
+   coordinated deployment manifest. Recheck advisories at release and rerun
+   combined acceptance on that exact package. These local compatibility
    results do not constitute release approval.
 
 G6 remains open. The [consolidated plan](restart-plan.md) owns the launch gates;
