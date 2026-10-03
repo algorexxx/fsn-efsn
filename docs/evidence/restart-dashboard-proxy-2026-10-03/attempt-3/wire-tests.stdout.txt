@@ -1,0 +1,108 @@
+TAP version 13
+# (node:450) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real telemetry login deadline closes a silent socket and ordinary login still works
+ok 1 - real telemetry login deadline closes a silent socket and ordinary login still works
+  ---
+  duration_ms: 1145.975693
+  ...
+# Subtest: real transport refuses a message over its byte limit on every collector path
+not ok 2 - real transport refuses a message over its byte limit on every collector path
+  ---
+  duration_ms: 1187.03024
+  location: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/collector-input-wire.test.cjs:24:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1009 !== 1006
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1006
+  actual: 1009
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/collector-input-wire.test.cjs:38:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: real transport counts the aggregate bytes of a fragmented message
+ok 3 - real transport counts the aggregate bytes of a fragmented message
+  ---
+  duration_ms: 1042.739411
+  ...
+# Subtest: application message allowance closes the sender and permits a later fresh session
+ok 4 - application message allowance closes the sender and permits a later fresh session
+  ---
+  duration_ms: 1208.772857
+  ...
+# Subtest: TCP connection budget is shared across paths and a closed slot can be reused
+ok 5 - TCP connection budget is shared across paths and a closed slot can be reused
+  ---
+  duration_ms: 1336.274701
+  ...
+# Subtest: invalid envelopes close before the event plugin and do not interrupt another node
+ok 6 - invalid envelopes close before the event plugin and do not interrupt another node
+  ---
+  duration_ms: 1333.429371
+  ...
+# Subtest: efsn-sized history reaches collection and an extra entry closes the reporting session
+ok 7 - efsn-sized history reaches collection and an extra entry closes the reporting session
+  ---
+  duration_ms: 2404.846156
+  ...
+# (node:456) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: held output disconnects only the slow telemetry session and its identity can reconnect
+ok 8 - held output disconnects only the slow telemetry session and its identity can reconnect
+  ---
+  duration_ms: 940.991273
+  ...
+# {"held":{"queued":8077,"peak":8077,"writes":41,"destroyed":false},"stopped":{"queued":0,"peak":8077,"writes":42,"destroyed":true}}
+# Subtest: Primus and WebSocket control replies share the same output budget on every collector path
+ok 9 - Primus and WebSocket control replies share the same output budget on every collector path
+  ---
+  duration_ms: 1218.82415
+  ...
+# {"endpoint":"api","protocol":{"queued":23,"peak":23,"writes":1,"destroyed":false},"held":{"queued":404,"peak":404,"writes":4,"destroyed":false},"stopped":{"queued":0,"peak":404,"writes":5,"destroyed":true}}
+# {"endpoint":"primus","protocol":{"queued":23,"peak":23,"writes":1,"destroyed":false},"held":{"queued":404,"peak":404,"writes":4,"destroyed":false},"stopped":{"queued":0,"peak":404,"writes":5,"destroyed":true}}
+# {"endpoint":"external","protocol":{"queued":23,"peak":23,"writes":1,"destroyed":false},"held":{"queued":404,"peak":404,"writes":4,"destroyed":false},"stopped":{"queued":0,"peak":404,"writes":5,"destroyed":true}}
+# (node:462) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: collector backfills requested gaps and broadcasts the newest forty heights as heads advance
+ok 10 - collector backfills requested gaps and broadcasts the newest forty heights as heads advance
+  ---
+  duration_ms: 3320.902797
+  ...
+# (node:506) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real collector bounds registration and ping while retaining only native metadata across reconnect
+ok 11 - real collector bounds registration and ping while retaining only native metadata across reconnect
+  ---
+  duration_ms: 1080.572173
+  ...
+# (node:527) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect
+ok 12 - real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect
+  ---
+  duration_ms: 1235.310499
+  ...
+# (node:541) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+ok 13 - real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+  ---
+  duration_ms: 1313.758293
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 12
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9833.875727

@@ -1,0 +1,374 @@
+TAP version 13
+# (node:406) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: local TLS proxy preserves bounded telemetry and isolates private routes
+not ok 1 - local TLS proxy preserves bounded telemetry and isolates private routes
+  ---
+  duration_ms: 3701.763537
+  location: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/proxy-tls.test.cjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      {
+    +   'primus::req::backup': {
+    +     _consuming: false,
+    +     _dumped: false,
+    +     _events: {},
+    +     _readableState: {
+    +       awaitDrainWriters: null,
+    +       buffer: [],
+    +       bufferIndex: 0,
+    +       highWaterMark: 65536,
+    +       length: 0,
+    +       pipes: []
+    +     },
+    +     aborted: false,
+    +     client: {
+    +       _closeAfterHandlingError: false,
+    +       _events: {
+    +         end: [
+    +           null,
+    +           null,
+    +           null
+    +         ]
+    +       },
+    +       _eventsCount: 4,
+    +       _hadError: false,
+    +       _host: null,
+    +       _parent: null,
+    +       _paused: false,
+    +       _pendingData: null,
+    +       _pendingEncoding: '',
+    +       _readableState: {
+    +         awaitDrainWriters: null,
+    +         buffer: [],
+    +         bufferIndex: 0,
+    +         highWaterMark: 65536,
+    +         length: 0,
+    +         pipes: []
+    +       },
+    +       _server: {
+    +         _connectionKey: '4:127.0.0.1:0',
+    +         _connections: 8,
+    +         _events: {
+    +           close: [
+    +             null,
+    +             null,
+    +             null
+    +           ],
+    +           connection: [
+    +             null,
+    +             null
+    +           ],
+    ...
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    host: 'dashboard.test'
+    upgrade: 'websocket'
+    connection: 'upgrade'
+    x-forwarded-for: '127.0.0.1'
+    x-forwarded-proto: 'https'
+  actual:
+    host: 'dashboard.test'
+    upgrade: 'websocket'
+    connection: 'upgrade'
+    x-forwarded-for: '127.0.0.1'
+    x-forwarded-proto: 'https'
+    primus::req::backup:
+      _events:
+      _readableState:
+        highWaterMark: 65536
+        buffer:
+        bufferIndex: 0
+        length: 0
+        pipes:
+        awaitDrainWriters: ~
+      socket:
+        connecting: false
+        _hadError: false
+        _parent: ~
+        _host: ~
+        _closeAfterHandlingError: false
+        _events:
+          end:
+            0: ~
+            1: ~
+            2: ~
+        _readableState:
+          highWaterMark: 65536
+          buffer:
+          bufferIndex: 0
+          length: 0
+          pipes:
+          awaitDrainWriters: ~
+        _writableState:
+          highWaterMark: 65536
+          length: 0
+          corked: 0
+          writelen: 0
+          bufferedIndex: 0
+          pendingcb: 0
+        allowHalfOpen: true
+        _eventsCount: 4
+        _sockname: ~
+        _pendingData: ~
+        _pendingEncoding: ''
+        server:
+          requestTimeout: 300000
+          headersTimeout: 60000
+          keepAliveTimeout: 5000
+          connectionsCheckingInterval: 30000
+          requireHostHeader: true
+          rejectNonStandardBodyWrites: false
+          _events:
+            connection:
+              0: ~
+              1: ~
+            listening:
+              0: ~
+              1: ~
+            close:
+              0: ~
+              1: ~
+              2: ~
+          _eventsCount: 5
+          _connections: 8
+          _handle:
+            reading: false
+          _usingWorkers: false
+          _workers:
+          _unref: false
+          _listeningId: 2
+          allowHalfOpen: true
+          pauseOnConnect: false
+          noDelay: true
+          keepAlive: false
+          keepAliveInitialDelay: 0
+          highWaterMark: 65536
+          httpAllowHalfOpen: false
+          timeout: 0
+          maxHeadersCount: ~
+          maxRequestsPerSocket: 0
+          maxConnections: 16
+          _connectionKey: '4:127.0.0.1:0'
+        _server:
+          requestTimeout: 300000
+          headersTimeout: 60000
+          keepAliveTimeout: 5000
+          connectionsCheckingInterval: 30000
+          requireHostHeader: true
+          rejectNonStandardBodyWrites: false
+          _events:
+            connection:
+              0: ~
+              1: ~
+            listening:
+              0: ~
+              1: ~
+            close:
+              0: ~
+              1: ~
+              2: ~
+          _eventsCount: 5
+          _connections: 8
+          _handle:
+            reading: false
+          _usingWorkers: false
+          _workers:
+          _unref: false
+          _listeningId: 2
+          allowHalfOpen: true
+          pauseOnConnect: false
+          noDelay: true
+          keepAlive: false
+          keepAliveInitialDelay: 0
+          highWaterMark: 65536
+          httpAllowHalfOpen: false
+          timeout: 0
+          maxHeadersCount: ~
+          maxRequestsPerSocket: 0
+          maxConnections: 16
+          _connectionKey: '4:127.0.0.1:0'
+        parser: ~
+        _paused: false
+        timeout: 0
+      httpVersionMajor: 1
+      httpVersionMinor: 1
+      httpVersion: '1.1'
+      complete: true
+      rawHeaders:
+        0: 'Host'
+        1: 'dashboard.test'
+        2: 'Upgrade'
+        3: 'websocket'
+        4: 'Connection'
+        5: 'upgrade'
+        6: 'Sec-WebSocket-Key'
+        7: 'MTMtMTc5MTA0ODI3NTc1OA=='
+        8: 'Sec-WebSocket-Version'
+        9: '13'
+        10: 'X-Forwarded-For'
+        11: '127.0.0.1'
+        12: 'X-Forwarded-Port'
+        13: '57370'
+        14: 'X-Forwarded-Proto'
+        15: 'https'
+      rawTrailers:
+      joinDuplicateHeaders: ~
+      aborted: false
+      upgrade: true
+      url: '/api'
+      method: 'GET'
+      statusCode: ~
+      statusMessage: ~
+      client:
+        connecting: false
+        _hadError: false
+        _parent: ~
+        _host: ~
+        _closeAfterHandlingError: false
+        _events:
+          end:
+            0: ~
+            1: ~
+            2: ~
+        _readableState:
+          highWaterMark: 65536
+          buffer:
+          bufferIndex: 0
+          length: 0
+          pipes:
+          awaitDrainWriters: ~
+        _writableState:
+          highWaterMark: 65536
+          length: 0
+          corked: 0
+          writelen: 0
+          bufferedIndex: 0
+          pendingcb: 0
+        allowHalfOpen: true
+        _eventsCount: 4
+        _sockname: ~
+        _pendingData: ~
+        _pendingEncoding: ''
+        server:
+          requestTimeout: 300000
+          headersTimeout: 60000
+          keepAliveTimeout: 5000
+          connectionsCheckingInterval: 30000
+          requireHostHeader: true
+          rejectNonStandardBodyWrites: false
+          _events:
+            connection:
+              0: ~
+              1: ~
+            listening:
+              0: ~
+              1: ~
+            close:
+              0: ~
+              1: ~
+              2: ~
+          _eventsCount: 5
+          _connections: 8
+          _handle:
+            reading: false
+          _usingWorkers: false
+          _workers:
+          _unref: false
+          _listeningId: 2
+          allowHalfOpen: true
+          pauseOnConnect: false
+          noDelay: true
+          keepAlive: false
+          keepAliveInitialDelay: 0
+          highWaterMark: 65536
+          httpAllowHalfOpen: false
+          timeout: 0
+          maxHeadersCount: ~
+          maxRequestsPerSocket: 0
+          maxConnections: 16
+          _connectionKey: '4:127.0.0.1:0'
+        _server:
+          requestTimeout: 300000
+          headersTimeout: 60000
+          keepAliveTimeout: 5000
+          connectionsCheckingInterval: 30000
+          requireHostHeader: true
+          rejectNonStandardBodyWrites: false
+          _events:
+            connection:
+              0: ~
+              1: ~
+            listening:
+              0: ~
+              1: ~
+            close:
+              0: ~
+              1: ~
+              2: ~
+          _eventsCount: 5
+          _connections: 8
+          _handle:
+            reading: false
+          _usingWorkers: false
+          _workers:
+          _unref: false
+          _listeningId: 2
+          allowHalfOpen: true
+          pauseOnConnect: false
+          noDelay: true
+          keepAlive: false
+          keepAliveInitialDelay: 0
+          highWaterMark: 65536
+          httpAllowHalfOpen: false
+          timeout: 0
+          maxHeadersCount: ~
+          maxRequestsPerSocket: 0
+          maxConnections: 16
+          _connectionKey: '4:127.0.0.1:0'
+        parser: ~
+        _paused: false
+        timeout: 0
+      _consuming: false
+      _dumped: false
+      parser: ~
+      uri:
+        protocol: ~
+        slashes: ~
+        auth: ~
+        host: ~
+        port: ~
+        hostname: ~
+        hash: ~
+        search: ~
+        query:
+        pathname: '/api'
+        path: '/api'
+        href: '/api'
+      query:
+      originalUrl: '/api'
+      forwarded:
+        ip: '127.0.0.1'
+        secure: true
+        port: 57370
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/proxy-tls.test.cjs:131:16)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8362.651726

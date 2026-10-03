@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Head/enrollment limits](restart-dashboard-enrollment.md): 173 contracts, 13 socket tests, maximum-size inactive roster, concurrent reporters and actual efsn/database/browser pass | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Local TLS proxy](restart-dashboard-proxy.md): route isolation, trusted TLS, forwarded-header normalization, eight bounded reporters and cross-platform socket checks pass; actual WSS pipeline/mining outage remain | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -277,6 +277,15 @@ rotated reconnect, concurrent reporters and actual efsn/database/browser pass.
 The boundary snapshot reaches 554,917 bytes under the tested 1 MiB budget.
 The 8-node / 64 KiB-head / 4/1/1 MiB configuration is a coordinated deployment
 candidate; process settings must match and output queues can still fill.
+The [local TLS proxy follow-up](restart-dashboard-proxy.md) now tests an nginx
+candidate with certificate/hostname verification, private-route refusal and
+normalized forwarding headers. Eight bounded WSS reporters, complete heads,
+a 3,276,956-byte history message, API freshness, connection caps and inactivity
+timeouts pass. Synthetic pings follow the actual fifteen-second efsn cadence.
+All thirteen socket tests pass on Linux and Windows after correcting an
+OS-dependent close-code assertion. No application/consensus code changed.
+This proxy slice uses an in-memory store and byte-compares compiled assets;
+actual efsn WSS/database/browser and collector loss during mining remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -335,14 +344,14 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: test the selected proxy/TLS routes, forwarding-header normalization and
-   matching byte/timeout limits using the [bounded enrollment candidate](restart-dashboard-enrollment.md).
-   Registration, head projection and total-roster sizing now have local evidence.
-   Preserve receipt/transport diagnostics; finish collector loss during actual
-   mining, runtime/dependency review and service supervision. Approve the common
-   deployment manifest before publishing. G6 remains open; eight enrolled nodes,
-   64 KiB heads and the 4/1/1 MiB limits remain an explicit tested candidate,
-   with sizing review required for growth.
+1. G6: carry actual efsn WSS through PostgreSQL and the compiled browser using
+   the [locally accepted proxy candidate](restart-dashboard-proxy.md), then
+   finish collector loss during actual mining, runtime/dependency review,
+   service supervision and certificate/log lifecycle checks. Preserve receipt
+   and transport diagnostics. Approve the common deployment manifest before
+   publishing. G6 remains open; eight enrolled nodes, 64 KiB heads and the
+   4/1/1 MiB limits remain an explicit tested candidate, with sizing review
+   required for growth.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

@@ -1,0 +1,33 @@
+TAP version 13
+# (node:410) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# Subtest: local TLS proxy preserves bounded telemetry and isolates private routes
+not ok 1 - local TLS proxy preserves bounded telemetry and isolates private routes
+  ---
+  duration_ms: 48499.507008
+  location: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/proxy-tls.test.cjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/proxy-tls.test.cjs:194:16)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 50712.937693

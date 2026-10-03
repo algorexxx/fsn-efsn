@@ -1,0 +1,643 @@
+From 4ca1f59bb273569e5b82a1390e93b36e1fdd4b01 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 19:37:07 +0200
+Subject: [PATCH] Add and verify local dashboard TLS proxy candidate
+
+---
+ deploy/nginx.conf.template          | 104 ++++++++++++
+ docs/deployment-configuration.md    |   6 +
+ docs/proxy-tls.md                   | 102 ++++++++++++
+ test/collector-input-wire.test.cjs  |  13 +-
+ test/fixtures/nginx.cjs             |  62 ++++++++
+ test/fixtures/proxy-wire-server.cjs |  21 +++
+ test/fixtures/wire-client.cjs       |   5 +-
+ test/proxy-tls.test.cjs             | 238 ++++++++++++++++++++++++++++
+ 8 files changed, 546 insertions(+), 5 deletions(-)
+ create mode 100644 deploy/nginx.conf.template
+ create mode 100644 docs/proxy-tls.md
+ create mode 100644 test/fixtures/nginx.cjs
+ create mode 100644 test/fixtures/proxy-wire-server.cjs
+ create mode 100644 test/proxy-tls.test.cjs
+
+diff --git a/deploy/nginx.conf.template b/deploy/nginx.conf.template
+new file mode 100644
+index 0000000..56399ac
+--- /dev/null
++++ b/deploy/nginx.conf.template
+@@ -0,0 +1,104 @@
++worker_processes 1;
++daemon off;
++pid "@@RUN@@/nginx.pid";
++error_log "@@RUN@@/nginx-error.log" warn;
++events {
++    worker_connections 256;
++}
++http {
++    types {
++        text/html html;
++        text/css css;
++        application/javascript js;
++        application/json json;
++        image/png png;
++        image/jpeg jpg jpeg;
++        image/svg+xml svg;
++        image/x-icon ico;
++        font/woff woff;
++        font/woff2 woff2;
++        font/ttf ttf;
++    }
++    default_type application/octet-stream;
++    log_format dashboard '$remote_addr $request_method $uri $status $body_bytes_sent';
++    access_log "@@RUN@@/nginx-access.log" dashboard;
++    client_body_temp_path "@@RUN@@/body";
++    proxy_temp_path "@@RUN@@/proxy";
++    fastcgi_temp_path "@@RUN@@/fastcgi";
++    uwsgi_temp_path "@@RUN@@/uwsgi";
++    scgi_temp_path "@@RUN@@/scgi";
++    server_tokens off;
++    client_header_timeout 5s;
++    client_body_timeout 5s;
++    client_max_body_size 1k;
++    client_header_buffer_size 1k;
++    large_client_header_buffers 2 8k;
++    keepalive_timeout 15s;
++    keepalive_requests 100;
++    send_timeout 10s;
++    limit_conn_zone $server_name zone=dashboard:1m;
++    limit_conn_zone $server_name zone=reporters:1m;
++    limit_conn_status 503;
++    server {
++        listen 127.0.0.1:@@TLS_PORT@@ ssl;
++        server_name @@HOST@@;
++        ssl_certificate "@@CERT@@";
++        ssl_certificate_key "@@KEY@@";
++        ssl_protocols TLSv1.2 TLSv1.3;
++        ssl_session_cache shared:dashboard_tls:1m;
++        ssl_session_timeout 10m;
++        ssl_session_tickets off;
++        root "@@BUILD@@";
++        index index.html;
++        limit_conn dashboard 64;
++        if ($host != "@@HOST@@") { return 421; }
++        location = /api {
++            if ($request_method != GET) { return 405; }
++            if ($http_upgrade !~* ^websocket$) { return 426; }
++            limit_conn dashboard 64;
++            limit_conn reporters 12;
++            proxy_pass http://127.0.0.1:@@COLLECTOR_PORT@@;
++            proxy_http_version 1.1;
++            proxy_pass_request_headers off;
++            proxy_pass_request_body off;
++            proxy_set_header Host $host;
++            proxy_set_header Upgrade websocket;
++            proxy_set_header Connection upgrade;
++            proxy_set_header Sec-WebSocket-Key $http_sec_websocket_key;
++            proxy_set_header Sec-WebSocket-Version $http_sec_websocket_version;
++            proxy_set_header X-Forwarded-For $remote_addr;
++            proxy_set_header X-Forwarded-Port $remote_port;
++            proxy_set_header X-Forwarded-Proto $scheme;
++            proxy_connect_timeout 2s;
++            proxy_read_timeout 45s;
++            proxy_send_timeout 10s;
++            proxy_buffering off;
++            proxy_request_buffering off;
++            proxy_next_upstream off;
++        }
++        location /api { return 404; }
++        location /primus { return 404; }
++        location /external { return 404; }
++        location ~ ^/stats-api/(nodes|blocks|info|charts)$ {
++            if ($request_method !~ ^(GET|HEAD)$) { return 405; }
++            rewrite ^/stats-api/(.*)$ /$1 break;
++            proxy_pass http://127.0.0.1:@@API_PORT@@;
++            proxy_http_version 1.1;
++            proxy_pass_request_headers off;
++            proxy_pass_request_body off;
++            proxy_set_header Host $host;
++            proxy_set_header Connection close;
++            proxy_connect_timeout 2s;
++            proxy_read_timeout 5s;
++            proxy_send_timeout 5s;
++            proxy_buffering off;
++            proxy_cache off;
++            proxy_next_upstream off;
++        }
++        location /stats-api { return 404; }
++        location / {
++            limit_except GET { deny all; }
++            try_files $uri $uri/ =404;
++        }
++    }
++}
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 96c3f5a..2ee28f8 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -133,3 +133,9 @@ enrollment and appended IP literals now follow [head/enrollment limits](head-and
+ with a measured coordinated eight-node candidate. Neither process automatically
+ validates the other process's settings. Proxy/TLS and forwarding-header
+ normalization still require deployment acceptance.
++
++## Local proxy acceptance candidate
++
++See [proxy-tls.md](proxy-tls.md) for the loopback nginx template, tested routes,
++forwarding-header trust boundary, coordinated limits and remaining public
++deployment checks. This local candidate does not approve public hosting.
+diff --git a/docs/proxy-tls.md b/docs/proxy-tls.md
+new file mode 100644
+index 0000000..5c5ba8e
+--- /dev/null
++++ b/docs/proxy-tls.md
+@@ -0,0 +1,102 @@
++# Local TLS proxy candidate
++
++`deploy/nginx.conf.template` is a tested, loopback-only nginx candidate for the
++eight-enrolled-node profile in `head-and-enrollment-limits.md`. It is not a public
++deployment manifest. No collector, writer, API, frontend or efsn application code
++changes are needed for this proxy.
++
++The test uses Ubuntu nginx `1.24.0-2ubuntu7.18`, extracted without installing a
++service, and Node 22.11.0. Public hosting still requires a supported runtime and
++dependency review, operator-selected host/domain, certificate issuance/renewal,
++service supervision and final configuration acceptance.
++
++## Routes and trust boundary
++
++| Public HTTPS path | Destination |
++| --- | --- |
++| `/` and existing static files | Compiled `react-frontend/build` |
++| Exact `/api`, GET with WebSocket upgrade | Loopback collector reporter endpoint |
++| Exact `/stats-api/nodes`, `/blocks`, `/info`, `/charts` | Corresponding loopback API path, GET/HEAD only |
++| `/primus*`, `/external*`, other `/api*` and `/stats-api*` paths | 404 |
++
++The four API paths in the table all include the `/stats-api` prefix. The private
++snapshot writer uses direct loopback `/primus`. Keep the collector and API bound
++to numeric loopback; only the selected HTTPS listener is intended for public
++exposure after deployment review. No new HTTP redirect listener is included.
++
++The proxy discards incoming request headers before forwarding. On `/api`, it
++constructs only Host, Upgrade, Connection, the WebSocket key/version and three
++forwarding headers. `X-Forwarded-For` is the actual proxy TCP peer, not an incoming
++header chain. Tests supply all five header families understood by the installed
++`forwarded-for` package and verify the collector receives only the constructed
++values. Cookies and Authorization are not forwarded. Reporter credentials remain
++in the normal TLS-protected hello message.
++
++This assumes nginx directly receives client connections. Adding a CDN, load
++balancer or another proxy changes the address trust boundary and needs a reviewed
++trusted-proxy configuration and another acceptance run. Numeric IP metadata alone
++does not prove operator identity. Local processes remain inside the trust boundary.
++
++## Coordinated candidate limits
++
++| Boundary | Candidate |
++| --- | --- |
++| Collector identities / head / metadata | 8 / 65,536 bytes / 2,048 projected JSON bytes |
++| Collector incoming messages / pending writes | 4 MiB / 1 MiB per connection |
++| Snapshot message / node count | 1 MiB / 8 |
++| Collector TCP connections / hello deadline | 16 / 5 seconds |
++| nginx simultaneous reporter requests | 12, leaving collector room for the private writer |
++| nginx active requests / worker connections | 64 / 256 with one worker |
++| nginx HTTP request body / header buffers | 1 KiB / initial 1 KiB and two 8 KiB large buffers |
++| nginx header/body inactivity / keepalive / send inactivity | 5 / 15 / 10 seconds |
++| Upstream connect / API read / reporter read / reporter send inactivity | 2 / 5 / 45 / 10 seconds |
++| Snapshot interval / deadline used in the test | 250 / 2,000 milliseconds |
++| API snapshot/report validity used in the test | 10,000 / 30,000 milliseconds |
++
++Use the existing collector setting `COLLECTOR_MESSAGES_PER_SECOND=100` for this
++candidate. Writer/API intervals are fixture values, not selected public operating
++cadences. Process configurations still need to be coordinated in one reviewed
++manifest; the separate loaders do not cross-validate each other.
++
++nginx tunnels WebSocket bytes after upgrade. Its 1 KiB HTTP body cap does not limit
++WebSocket messages; the collector's 4 MiB cap does. Response buffering is disabled.
++Neither nginx's small buffers nor the collector write guard are a bound on total
++process, TLS or kernel memory. `limit_conn` counts requests with completed headers,
++not all partially opened sockets; worker connections also include upstream sockets.
++These settings are not a measured public-client capacity guarantee.
++
++Current efsn reports every 15 seconds and includes a node-ping exchange. The
++installed Primus closes clients silent for 35 seconds. nginx's 45-second upstream
++read inactivity allows the regular replies through. Missing hello closes at five
++seconds. API timeout returns 504; API stale data remains 503 with `no-store`.
++
++## Reproduction and remaining acceptance
++
++Render the template's explicit `@@RUN@@`, `@@TLS_PORT@@`, `@@HOST@@`, `@@CERT@@`,
++`@@KEY@@`, `@@BUILD@@`, `@@COLLECTOR_PORT@@` and `@@API_PORT@@` values into a private
++runtime directory. `@@BUILD@@` must point only at the compiled public directory.
++Validate with `nginx -t`; the test fixture renders and checks that exact template.
++Do not apply blanket environment substitution that expands nginx's `$variables`.
++The candidate deliberately listens on `127.0.0.1`; changing it is a deployment step.
++
++The opt-in test is `node --test test/proxy-tls.test.cjs`, with `TEST_NGINX`,
++`TEST_TLS_CA`, `TEST_TLS_CERT`, `TEST_TLS_KEY` and `DASHBOARD_PROXY_EVIDENCE` set.
++It expects Linux, the existing compiled frontend, a fresh evidence directory and
++a test certificate for `dashboard.test` and `127.0.0.1`. Its test CA is supplied
++only to individual clients; certificate verification stays enabled and no system
++trust store is changed. Never use the short-lived test certificates for hosting.
++
++This slice exercises real collector/writer/API code with an in-memory snapshot
++store and synthetic native-shaped reports. It serves and byte-compares compiled
++frontend assets, but does not execute a browser or run PostgreSQL or an efsn miner.
++Complete actual efsn WSS, PostgreSQL and browser integration and collector outage
++during mining before closing dashboard acceptance. Certificate renewal, service
++restart, log retention, public-network conditions and runtime/dependency review
++remain open. Access logs omit query strings and request bodies; production log
++ownership and rotation still need to be configured.
++
++Reference semantics: [nginx WebSocket tunneling](https://nginx.org/en/docs/http/websocket.html),
++[proxy buffering, headers and timeouts](https://nginx.org/en/docs/http/ngx_http_proxy_module.html),
++[connection accounting](https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html),
++[HTTP request limits](https://nginx.org/en/docs/http/ngx_http_core_module.html),
++and [TLS settings](https://nginx.org/en/docs/http/ngx_http_ssl_module.html).
+diff --git a/test/collector-input-wire.test.cjs b/test/collector-input-wire.test.cjs
+index 3697e9d..ac9d9d6 100644
+--- a/test/collector-input-wire.test.cjs
++++ b/test/collector-input-wire.test.cjs
+@@ -35,12 +35,17 @@ test('real transport refuses a message over its byte limit on every collector pa
+         await connection.opened;
+         connection.socket.send(JSON.stringify('Å'.repeat(1024)));
+         const [code] = await connection.closed;
+-        assert.equal(code, 1006);
++        assert.ok([1006, 1009].includes(code));
++        assert.equal(connection.messages.some(message => message.emit && message.emit[0] === 'init'), false);
++        t.diagnostic(JSON.stringify({ endpoint, code }));
+     }
+     const boundary = connect(t, server.port, 'primus');
+     await boundary.opened;
+     boundary.socket.send(JSON.stringify({ emit: ['ready', { padding: 'x'.repeat(padding + 1) }] }));
+-    assert.equal((await boundary.closed)[0], 1006);
++    const [boundaryCode] = await boundary.closed;
++    assert.ok([1006, 1009].includes(boundaryCode));
++    assert.equal(boundary.messages.some(message => message.emit && message.emit[0] === 'init'), false);
++    t.diagnostic(JSON.stringify({ endpoint: 'primus', boundaryCode }));
+     const owner = connect(t, server.port, 'api');
+     await login(owner, 'node-a', secretA);
+     owner.socket.close();
+@@ -56,7 +61,9 @@ test('real transport counts the aggregate bytes of a fragmented message', { time
+     connection.socket.send(message.slice(0, 1500), { fin: false });
+     connection.socket.send(message.slice(1500), { fin: true });
+     const [code] = await connection.closed;
+-    assert.equal(code, 1006);
++    assert.ok([1006, 1009].includes(code));
++    assert.equal(connection.messages.some(message => message.emit && message.emit[0] === 'init'), false);
++    t.diagnostic(JSON.stringify({ fragmented: true, code }));
+     await server.stop();
+ });
+ 
+diff --git a/test/fixtures/nginx.cjs b/test/fixtures/nginx.cjs
+new file mode 100644
+index 0000000..d3c59c4
+--- /dev/null
++++ b/test/fixtures/nginx.cjs
+@@ -0,0 +1,62 @@
++const assert = require('node:assert/strict');
++const { spawn, spawnSync } = require('node:child_process');
++const { readFileSync, writeFileSync, mkdirSync } = require('node:fs');
++const { once } = require('node:events');
++const { join } = require('node:path');
++const net = require('node:net');
++
++async function availablePort() {
++    const server = net.createServer().listen(0, '127.0.0.1');
++    await once(server, 'listening');
++    const port = server.address().port;
++    await new Promise(resolve => server.close(resolve));
++    return port;
++}
++
++async function startProxy(t, directory, values) {
++    mkdirSync(directory, { recursive: true });
++    const port = await availablePort();
++    const template = readFileSync(join(__dirname, '../../deploy/nginx.conf.template'), 'utf8');
++    const config = template.replace(/@@([A-Z_]+)@@/g, (_, name) => {
++        const value = { RUN: directory, TLS_PORT: port, ...values }[name];
++        assert.ok(value !== undefined && !/["\r\n]/.test(String(value)));
++        return value;
++    });
++    const file = join(directory, 'nginx.conf');
++    writeFileSync(file, config, 'utf8');
++    const args = ['-p', directory + '/', '-c', file];
++    const checked = spawnSync(process.env.TEST_NGINX, [...args, '-t'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
++    writeFileSync(join(directory, 'config-check.txt'), checked.stdout + checked.stderr, 'utf8');
++    assert.equal(checked.status, 0);
++    const child = spawn(process.env.TEST_NGINX, args, { stdio: ['ignore', 'pipe', 'pipe'] });
++    let output = '';
++    child.stdout.on('data', chunk => { output += chunk; });
++    child.stderr.on('data', chunk => { output += chunk; });
++    const exited = once(child, 'exit');
++    t.after(async () => {
++        if (child.exitCode === null && child.signalCode === null) {
++            child.kill('SIGTERM');
++        }
++        const result = await exited;
++        writeFileSync(join(directory, 'process.json'), JSON.stringify({ pid: child.pid, result, output }) + '\n', 'utf8');
++        assert.deepEqual(result, [0, null]);
++    });
++    for (let attempt = 0; attempt < 50; attempt++) {
++        if (child.exitCode !== null) {
++            throw new Error('nginx exited before readiness: ' + output);
++        }
++        const ready = await new Promise(resolve => {
++            const socket = net.connect({ host: '127.0.0.1', port });
++            socket.once('connect', () => { socket.destroy(); resolve(true); });
++            socket.once('error', () => { socket.destroy(); resolve(false); });
++            socket.setTimeout(100, () => { socket.destroy(); resolve(false); });
++        });
++        if (ready) {
++            return { port, config };
++        }
++        await new Promise(resolve => setTimeout(resolve, 20));
++    }
++    throw new Error('nginx readiness deadline exceeded');
++}
++
++module.exports = startProxy;
+diff --git a/test/fixtures/proxy-wire-server.cjs b/test/fixtures/proxy-wire-server.cjs
+new file mode 100644
+index 0000000..29ac724
+--- /dev/null
++++ b/test/fixtures/proxy-wire-server.cjs
+@@ -0,0 +1,21 @@
++const WebSocket = require('ws');
++const headers = [];
++const upgrade = WebSocket.Server.prototype.handleUpgrade;
++WebSocket.Server.prototype.handleUpgrade = function (request, ...args) {
++    const pairs = [];
++    for (let index = 0; index < request.rawHeaders.length; index += 2) {
++        const name = request.rawHeaders[index].toLowerCase();
++        if (!name.startsWith('sec-websocket-')) {
++            pairs.push([name, request.rawHeaders[index + 1]]);
++        }
++    }
++    const forwarded = Object.fromEntries(pairs);
++    headers.push({ path: request.url, headers: forwarded });
++    return upgrade.call(this, request, ...args);
++};
++require('./wire-server.cjs');
++process.on('message', message => {
++    if (message === 'headers') {
++        process.send(headers);
++    }
++});
+diff --git a/test/fixtures/wire-client.cjs b/test/fixtures/wire-client.cjs
+index 4271297..7bdc014 100644
+--- a/test/fixtures/wire-client.cjs
++++ b/test/fixtures/wire-client.cjs
+@@ -2,8 +2,9 @@ const { once, EventEmitter } = require('node:events');
+ const WebSocket = require('ws');
+ const { info } = require('./telemetry-report.cjs');
+ 
+-function connect(t, port, endpoint) {
+-    const socket = new WebSocket(`ws://127.0.0.1:${port}/${endpoint}`);
++function connect(t, port, endpoint, options = {}) {
++    const { secure, ...socketOptions } = options;
++    const socket = new WebSocket(`${secure ? 'wss' : 'ws'}://127.0.0.1:${port}/${endpoint}`, socketOptions);
+     const connection = { socket, messages: [], changed: new EventEmitter() };
+     socket.on('message', raw => {
+         const message = JSON.parse(raw.toString());
+diff --git a/test/proxy-tls.test.cjs b/test/proxy-tls.test.cjs
+new file mode 100644
+index 0000000..9a805e7
+--- /dev/null
++++ b/test/proxy-tls.test.cjs
+@@ -0,0 +1,238 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { once } = require('node:events');
++const { readFileSync, writeFileSync } = require('node:fs');
++const { join } = require('node:path');
++const https = require('node:https');
++const http = require('node:http');
++const { setTimeout: delay } = require('node:timers/promises');
++const WebSocket = require('ws');
++const SnapshotWebSocket = require('websocket').w3cwebsocket;
++const startProxy = require('./fixtures/nginx.cjs');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { connect, login, send, waitMessage } = require('./fixtures/wire-client.cjs');
++const { head, metadata } = require('./fixtures/budget-report.cjs');
++const { stats } = require('./fixtures/telemetry-report.cjs');
++const createApp = require('../api-server/app');
++const startSnapshotCollection = require('../wsclient/collect-snapshots');
++
++function request(port, ca, path, options = {}) {
++    return new Promise((resolve, reject) => {
++        const connection = https.request({ host: '127.0.0.1', port, servername: 'dashboard.test', ca, path, agent: false, headers: { Host: 'dashboard.test' }, ...options }, response => {
++            const chunks = [];
++            const protocol = response.socket.getProtocol();
++            response.on('data', chunk => chunks.push(chunk));
++            response.on('error', reject);
++            response.on('end', () => resolve({ status: response.statusCode, headers: response.headers, body: Buffer.concat(chunks), protocol }));
++        });
++        connection.on('error', reject);
++        connection.setTimeout(8000, () => connection.destroy(new Error('HTTPS request deadline exceeded')));
++        connection.end();
++    });
++}
++
++async function waitFor(read, predicate) {
++    const deadline = Date.now() + 6000;
++    while (Date.now() < deadline) {
++        const value = await read();
++        if (predicate(value)) {
++            return value;
++        }
++        await delay(50);
++    }
++    throw new Error('Proxy fixture state deadline exceeded');
++}
++
++test('local TLS proxy preserves bounded telemetry and isolates private routes', { timeout: 85000 }, async t => {
++    const directory = process.env.DASHBOARD_PROXY_EVIDENCE;
++    assert.ok(directory && process.env.TEST_NGINX && process.env.TEST_TLS_CERT && process.env.TEST_TLS_KEY && process.env.TEST_TLS_CA);
++    const ca = readFileSync(process.env.TEST_TLS_CA);
++    const evidence = { scope: 'Loopback nginx, synthetic reporters, real collector/writer/API, in-memory snapshot store, compiled frontend bytes; no chain data, mining, PostgreSQL or browser execution.', requests: [], errors: [], saves: [], checks: {} };
++    t.after(() => writeFileSync(join(directory, 'proxy.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8'));
++    const ids = Array.from({ length: 8 }, (_, index) => ('tls-node-' + index).padEnd(64, 'x'));
++    const secrets = ids.map((_, index) => 'synthetic-tls-credential-' + String(index).padStart(20, '0'));
++    const credentials = Object.fromEntries(ids.map((id, index) => [id, secrets[index]]));
++    const collector = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: '4194304', COLLECTOR_MAX_HEAD_BYTES: '65536', COLLECTOR_MAX_BUFFERED_BYTES: '1048576', COLLECTOR_HELLO_TIMEOUT_MS: '5000' }, 'proxy-wire-server.cjs', credentials);
++    let snapshot = null;
++    let clock = Date.now();
++    let delayedRead = false;
++    const api = createApp({ async readSnapshot() { if (delayedRead) { await delay(6000); } return snapshot; } }, () => clock, 10000, 30000).listen(0, '127.0.0.1');
++    t.after(() => new Promise(resolve => api.close(resolve)));
++    await once(api, 'listening');
++    const values = { HOST: 'dashboard.test', CERT: process.env.TEST_TLS_CERT, KEY: process.env.TEST_TLS_KEY, BUILD: join(__dirname, '../react-frontend/build'), COLLECTOR_PORT: collector.port, API_PORT: api.address().port };
++    const proxy = await startProxy(t, join(directory, 'active'), values);
++    const options = { secure: true, ca, servername: 'dashboard.test', headers: { Host: 'dashboard.test' } };
++    for (const protocol of ['TLSv1.2', 'TLSv1.3']) {
++        const response = await request(proxy.port, ca, '/', { minVersion: protocol, maxVersion: protocol });
++        assert.equal(response.status, 200);
++        assert.equal(response.protocol, protocol);
++        assert.deepEqual(response.body, readFileSync(join(values.BUILD, 'index.html')));
++        evidence.requests.push({ path: '/', status: response.status, protocol });
++    }
++    await assert.rejects(request(proxy.port, undefined, '/'), error => error.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE');
++    await assert.rejects(request(proxy.port, ca, '/', { servername: 'wrong.test' }), error => error.code === 'ERR_TLS_CERT_ALTNAME_INVALID');
++    assert.equal((await request(proxy.port, ca, '/', { headers: { Host: 'wrong.test' } })).status, 421);
++    evidence.checks.certificateTrustAndHostname = true;
++    const manifest = JSON.parse(readFileSync(join(values.BUILD, 'asset-manifest.json'), 'utf8'));
++    const assetPath = manifest.files['main.js'];
++    const asset = await request(proxy.port, ca, assetPath);
++    assert.equal(asset.status, 200);
++    assert.match(asset.headers['content-type'], /application\/javascript/);
++    assert.deepEqual(asset.body, readFileSync(join(values.BUILD, assetPath)));
++    evidence.checks.compiledAssets = true;
++    const routes = ['/primus', '/primus/', '/primus/primus.js', '/external', '/external/', '/api/primus.js', '/api/extra', '/stats-api', '/stats-api/private', '/stats-api/primus'];
++    for (const path of routes) {
++        for (const headers of [{ Host: 'dashboard.test' }, { Host: 'dashboard.test', Upgrade: 'websocket', Connection: 'upgrade' }]) {
++            const response = await request(proxy.port, ca, path, { headers });
++            assert.equal(response.status, 404, path);
++            evidence.requests.push({ path, upgrade: Boolean(headers.Upgrade), status: response.status });
++        }
++    }
++    assert.equal((await request(proxy.port, ca, '/api')).status, 426);
++    assert.equal((await request(proxy.port, ca, '/stats-api/nodes', { method: 'POST' })).status, 405);
++    assert.equal((await request(proxy.port, ca, '/stats-api/nodes', { headers: { Host: 'dashboard.test', 'Content-Length': '1025' } })).status, 413);
++    assert.deepEqual(await collector.command('headers'), []);
++    evidence.checks.routeIsolation = true;
++
++    const silentServer = http.createServer().listen(0, '127.0.0.1');
++    await once(silentServer, 'listening');
++    const silentSockets = new WebSocket.Server({ server: silentServer });
++    const silentConnections = [];
++    silentSockets.on('connection', socket => silentConnections.push(socket));
++    t.after(() => { for (const socket of silentConnections) { socket.terminate(); } silentSockets.close(); silentServer.close(); });
++    const silentProxy = await startProxy(t, join(directory, 'idle'), { ...values, COLLECTOR_PORT: silentServer.address().port });
++    const silent = connect(t, silentProxy.port, 'api', options);
++    await silent.opened;
++    const idleStart = Date.now();
++    const idleClosed = silent.closed.then(() => Date.now() - idleStart);
++
++    const forwarded = { ...options.headers, 'Fastly-Client-IP': '192.0.2.1', 'Fastly-Client-Port': '2345', 'Fastly-SSL': '1', 'X-Forwarded-For': '192.0.2.2', 'X-Forwarded-Port': '2345', 'X-Forwarded-Proto': 'https', 'Z-Forwarded-For': '192.0.2.3', 'Z-Forwarded-Port': '2345', 'Z-Forwarded-Proto': 'https', Forwarded: '192.0.2.4', 'Forwarded-Port': '2345', 'Forwarded-Proto': 'https', 'X-Real-IP': '192.0.2.5', 'X-Real-Port': '2345', 'X-Real-Proto': 'https', Cookie: 'synthetic=unused', Authorization: 'synthetic-unused' };
++    const connections = [];
++    let heartbeatCount = 0;
++    let heartbeatTimer;
++    t.after(() => clearInterval(heartbeatTimer));
++    for (const [index, id] of ids.entries()) {
++        const connection = connect(t, proxy.port, 'api', { ...options, headers: forwarded });
++        connection.socket.on('message', raw => {
++            const value = JSON.parse(String(raw));
++            if (value.emit && value.emit[0] === 'node-pong' && value.emit[1].clientTime.startsWith('periodic-')) {
++                heartbeatCount++;
++            }
++        });
++        connections.push(connection);
++        await login(connection, id, secrets[index], metadata(id));
++        send(connection, 'update', { id, stats: { ...stats(), block: head(1000 + index), pending: 0 } });
++        if (index === 0) {
++            const history = { id, history: Array.from({ length: 50 }, (_, offset) => head(999 - offset)) };
++            evidence.historyBytes = Buffer.byteLength(JSON.stringify({ emit: ['history', history] }));
++            send(connection, 'history', history);
++        }
++        send(connection, 'node-ping', { id, clientTime: 'accepted-' + index });
++        await waitMessage(connection, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'accepted-' + index);
++    }
++    heartbeatTimer = setInterval(() => {
++        for (const [index, connection] of connections.entries()) {
++            if (connection.socket.readyState === WebSocket.OPEN) {
++                send(connection, 'node-ping', { id: ids[index], clientTime: 'periodic-' + Date.now() });
++            }
++        }
++    }, 15000);
++    const headers = (await collector.command('headers')).filter(value => value.path === '/api');
++    assert.equal(headers.length, 8);
++    for (const value of headers) {
++        const { 'x-forwarded-port': port, ...remaining } = value.headers;
++        assert.match(port, /^[1-9][0-9]*$/);
++        assert.deepEqual(remaining, { host: 'dashboard.test', upgrade: 'websocket', connection: 'upgrade', 'x-forwarded-for': '127.0.0.1', 'x-forwarded-proto': 'https' });
++    }
++    evidence.forwardedHeaders = headers;
++    const writer = startSnapshotCollection({ url: `ws://127.0.0.1:${collector.port}/primus`, intervalMs: 250, timeoutMs: 2000, maxBytes: 1048576, maxNodes: 8 }, {
++        connect(url, maxBytes) { return new SnapshotWebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }); },
++        async saveSnapshot(payload, time) { snapshot = { observed_at: time, payload }; clock = time.getTime(); evidence.saves.push({ bytes: Buffer.byteLength(JSON.stringify(payload)), nodes: payload.nodes.length }); },
++        now: () => new Date(), setTimeout, clearTimeout, onError: message => evidence.errors.push(message),
++    });
++    t.after(() => writer.stop());
++    await waitFor(() => snapshot, value => value && value.payload.nodes.length === 8);
++    for (const path of ['/nodes', '/blocks', '/info', '/charts']) {
++        const response = await request(proxy.port, ca, '/stats-api' + path);
++        assert.equal(response.status, 200);
++        assert.equal(response.headers['cache-control'], 'no-store');
++        assert.ok(response.headers['x-dashboard-observed-at']);
++        const body = JSON.parse(response.body);
++        if (path === '/nodes' || path === '/blocks') {
++            assert.equal(body.length, 8);
++            for (const [index, id] of ids.entries()) {
++                const row = body.find(value => value.id === id);
++                const block = path === '/nodes' ? JSON.parse(row.stats).stats.block : JSON.parse(row.blocks);
++                for (const [key, value] of Object.entries(head(1000 + index))) {
++                    assert.deepEqual(block[key], value);
++                }
++                if (path === '/nodes') {
++                    assert.deepEqual(JSON.parse(row.info), { ...metadata(id), ip: '127.0.0.1' });
++                }
++            }
++        }
++        evidence.requests.push({ path: '/stats-api' + path, status: response.status, bytes: response.body.length });
++    }
++    await writer.stop();
++    clock = snapshot.observed_at.getTime() + 10001;
++    const stale = await request(proxy.port, ca, '/stats-api/nodes');
++    assert.equal(stale.status, 503);
++    assert.deepEqual(JSON.parse(stale.body), { error: 'snapshot_unavailable' });
++    assert.equal(stale.headers['cache-control'], 'no-store');
++    evidence.checks.staleSnapshotUnavailable = true;
++    delayedRead = true;
++    const timeoutStart = Date.now();
++    const timedOut = await request(proxy.port, ca, '/stats-api/nodes');
++    evidence.apiTimeoutMs = Date.now() - timeoutStart;
++    assert.equal(timedOut.status, 504);
++    assert.ok(evidence.apiTimeoutMs >= 4500 && evidence.apiTimeoutMs < 7500);
++    delayedRead = false;
++
++    const noHello = connect(t, proxy.port, 'api', options);
++    await noHello.opened;
++    const helloStart = Date.now();
++    await noHello.closed;
++    evidence.helloTimeoutMs = Date.now() - helloStart;
++    assert.ok(evidence.helloTimeoutMs >= 4500 && evidence.helloTimeoutMs < 7500);
++
++    const held = [];
++    for (let index = 0; index < 4; index++) {
++        const connection = connect(t, proxy.port, 'api', options);
++        held.push(connection);
++        await connection.opened;
++    }
++    const excess = connect(t, proxy.port, 'api', options);
++    const refusal = await Promise.allSettled([excess.opened, excess.closed]);
++    assert.equal(refusal[0].status, 'rejected');
++    assert.match(refusal[0].reason.message, /503/);
++    for (const connection of held) { connection.socket.close(); await connection.closed; }
++    evidence.checks.reporterConnectionLimit = true;
++
++    evidence.idleTimeoutMs = await idleClosed;
++    assert.ok(evidence.idleTimeoutMs >= 44000 && evidence.idleTimeoutMs < 50000);
++    await delay(Math.max(0, idleStart + 47000 - Date.now()));
++    for (const [index, connection] of connections.entries()) {
++        assert.equal(connection.socket.readyState, WebSocket.OPEN);
++        send(connection, 'node-ping', { id: ids[index], clientTime: 'still-alive' });
++        await waitMessage(connection, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'still-alive');
++    }
++    assert.ok(heartbeatCount >= 16);
++    evidence.heartbeatCount = heartbeatCount;
++    evidence.activeDurationMs = Date.now() - idleStart;
++    assert.deepEqual(evidence.errors, []);
++    assert.ok(evidence.saves.length > 0 && evidence.saves.every(value => value.bytes < 1048576));
++    clearInterval(heartbeatTimer);
++    connections[7].socket.close();
++    await connections[7].closed;
++    const badCredential = connect(t, proxy.port, 'api', options);
++    await badCredential.opened;
++    send(badCredential, 'hello', { id: ids[7], secret: 'synthetic-wrong-credential-000000000000', info: metadata(ids[7]) });
++    await badCredential.closed;
++    assert.equal(badCredential.messages.some(value => value.emit && value.emit[0] === 'ready'), false);
++    connections[7] = connect(t, proxy.port, 'api', options);
++    await login(connections[7], ids[7], secrets[7], metadata(ids[7]));
++    evidence.checks.authentication = true;
++    for (const connection of connections) { connection.socket.close(); await connection.closed; }
++    await collector.stop();
++    evidence.checks.complete = true;
++});
