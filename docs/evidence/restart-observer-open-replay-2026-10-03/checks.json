@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "comparison": [
+    {
+      "prior_reports": 10,
+      "logical_bytes": 313783,
+      "baseline": {
+        "median_ms": 36.448662,
+        "median_allocated_bytes": 12038928
+      },
+      "candidate": {
+        "median_ms": 23.608607,
+        "median_allocated_bytes": 10490296
+      },
+      "median_time_reduction_percent": 35.22778147521575
+    },
+    {
+      "prior_reports": 100,
+      "logical_bytes": 2877975,
+      "baseline": {
+        "median_ms": 173.864487,
+        "median_allocated_bytes": 39322840
+      },
+      "candidate": {
+        "median_ms": 114.856208,
+        "median_allocated_bytes": 25442000
+      },
+      "median_time_reduction_percent": 33.93923625127655
+    },
+    {
+      "prior_reports": 1000,
+      "logical_bytes": 28520777,
+      "baseline": {
+        "median_ms": 1550.734757,
+        "median_allocated_bytes": 295393720
+      },
+      "candidate": {
+        "median_ms": 739.596557,
+        "median_allocated_bytes": 157632352
+      },
+      "median_time_reduction_percent": 52.30670147415803
+    }
+  ],
+  "byte_identical_outputs": {
+    "timeline-status.json": "c3aced2c06d11bd5329d7e392e07690b69a4fe54e1b0422f39d871683aa729a6",
+    "timeline.jsonl": "e1fafdd4b96114f046cd612f17ff26c36a441741f86ff1acef96e6e804cd45c5",
+    "fork-status.json": "b5c9145e9e84887b55c3263c202fb9ebae0d7750dbb506fb6005bc5c711251c6",
+    "fork-history.jsonl": "cb8bd95b8aa65efb2363384213ac76286f55ed628bbe6f4f90c325663b93626c",
+    "node-1.json": "b0339da5f603972ec918925aea88abb2c02d4264fbca0f7208d4356a99b517a3",
+    "node-2.json": "cedbb48df387abe99fa63b307bed00148eb2d35f7f0f897d3240c01f24ddca45"
+  },
+  "windows_suites": true,
+  "linux_race_suites": true,
+  "mixed_workload_race": {
+    "passed": true,
+    "final_height": 31,
+    "logical_bytes": 522018,
+    "budget_bytes": 524288,
+    "rejected_commands": [
+      "fill-snapshot-17",
+      "fill-backfill-01",
+      "retry-snapshot",
+      "retry-backfill"
+    ],
+    "offline_inventories_match": true,
+    "exports_preserved": true
+  },
+  "limitations": [
+    "warm-cache same-process benchmark; not total deployed command latency",
+    "first operation only; subsequent operations still replay",
+    "no reduction in retained logical bytes or storage-budget requirement",
+    "long advancing ancestry, retention and notification delivery remain open"
+  ]
+}

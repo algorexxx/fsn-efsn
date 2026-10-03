@@ -1,0 +1,82 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0xa40f785a46be1d559231fbdf15d5f314586701fe932dc17fe5db312127a7acda",
+    "AnchorNumber": 24,
+    "AnchorHash": "0xbca984198362614919fc81be99808e8829c40bda9c58114d90405e8d4be919b1",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf"
+    }
+  },
+  "Sequence": 5,
+  "LastEventUTC": "2026-09-27T20:00:05Z",
+  "LastReportUTC": "0001-01-01T00:00:00Z",
+  "LogicalBytes": 33145,
+  "MaxBytes": 16777216,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [
+    {
+      "ID": "8933e548fda23323f57c9004b6809fb1e71b5b6f232e2f5663148bf0f8c3b145",
+      "Node": "node-1",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "canonical_history_change",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "previous tip 26:0x6e9010ff667835bc89ed8fb88352622e7381e4c809a02a0b5b61b5174dff36c8 displaced after 24:0xbca984198362614919fc81be99808e8829c40bda9c58114d90405e8d4be919b1"
+      ],
+      "FirstSequence": 2,
+      "LastSequence": 5,
+      "FirstUTC": "2026-09-27T20:00:02Z",
+      "LastSeenUTC": "2026-09-27T20:00:05Z",
+      "Occurrences": 2,
+      "LastReview": {
+        "Action": "resolve",
+        "Incident": "8933e548fda23323f57c9004b6809fb1e71b5b6f232e2f5663148bf0f8c3b145",
+        "Reason": "Synthetic fork review only."
+      },
+      "LastReviewSequence": 4
+    },
+    {
+      "ID": "8b1ca5a4ca77631c908c3e5b666ba7784e2f929e6c1515440cd7cfd9fd8db997",
+      "Node": "node-1",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "block_coverage",
+      "Status": "open",
+      "Observation": "not_observed",
+      "Details": [
+        "batch_limit"
+      ],
+      "FirstSequence": 2,
+      "LastSequence": 2,
+      "FirstUTC": "2026-09-27T20:00:02Z",
+      "LastSeenUTC": "2026-09-27T20:00:02Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    }
+  ],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 25,
+        "Hash": "0x2cebfd43780e2db56bfc77dec6240f0100fe0fbab68c3288f235361260c4730d"
+      },
+      "ObservedHead": {
+        "Number": 25,
+        "Hash": "0x2cebfd43780e2db56bfc77dec6240f0100fe0fbab68c3288f235361260c4730d"
+      },
+      "CheckedUTC": "2026-09-27T20:00:05Z",
+      "Status": "complete_at_observation"
+    }
+  ]
+}

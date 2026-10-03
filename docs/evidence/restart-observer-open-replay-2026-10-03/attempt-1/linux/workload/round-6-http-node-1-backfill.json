@@ -1,0 +1,55 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0x53a0bc0a6ea4539fdc717bc8c64da8286a5040a1b2c114dc4c970e8e7d7cae2e",
+    "AnchorNumber": 24,
+    "AnchorHash": "0xc7b64352536326373277f66da6d2785944f69d7f918357469a9481cffe759c12",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf"
+    }
+  },
+  "Sequence": 19,
+  "LastEventUTC": "2026-10-03T08:35:42.386677438Z",
+  "LastReportUTC": "2026-10-03T08:35:41.248037338Z",
+  "LogicalBytes": 218901,
+  "MaxBytes": 524288,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 30,
+        "Hash": "0xba3985ffb1ad6798bdc2d62a239bfdf5212f0b6b2994443cc977315598a7a67a"
+      },
+      "ObservedHead": {
+        "Number": 30,
+        "Hash": "0xba3985ffb1ad6798bdc2d62a239bfdf5212f0b6b2994443cc977315598a7a67a"
+      },
+      "CheckedUTC": "2026-10-03T08:35:42.386677438Z",
+      "Status": "complete_at_observation"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 29,
+        "Hash": "0x83db6bcf0704481b657bf349c4ad56e56c075da5d792d1964db854192aec0650"
+      },
+      "ObservedHead": {
+        "Number": 29,
+        "Hash": "0x83db6bcf0704481b657bf349c4ad56e56c075da5d792d1964db854192aec0650"
+      },
+      "CheckedUTC": "2026-10-03T08:35:25.352794728Z",
+      "Status": "not_rechecked"
+    }
+  ]
+}

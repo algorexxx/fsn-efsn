@@ -62,8 +62,8 @@ baselines, reviews and larger reports consume additional budget. Compression
 does not extend the logical budget. At exhaustion, appends stop without pruning.
 
 Code inspection and these samples agree that local work grows with history size:
-opening validates the complete log, and status/append replay it again. The current
-CLI therefore pays for more than one replay. The RPC timeout does not bound this
+opening validates the complete log, and status/append replay it again in this
+report's baseline. That CLI therefore pays for more than one replay. The RPC timeout does not bound this
 local work. Increasing the byte budget alone does not establish sustainable
 collection. No cache, index, pruning, rotation or new history format is introduced
 by this investigation.
@@ -73,8 +73,11 @@ advancing block/receipt batches with snapshots through actual IPC/HTTP commands.
 Both ordinary and race builds pass a deliberately small 512 KiB exhaustion and
 offline reopening check, preserving status, exports and ticket inventories.
 Its small-history timings do not remove the larger replay-cost finding here.
-Next compare a single replay per command with the current implementation before
-considering a persistent derived-state cache, and measure longer ancestry.
+The [opening-state follow-up](restart-observer-open-replay.md) now reuses the
+validated opening replay once, reducing paired reopen/status at 1,000 prior
+snapshots from 1.55 seconds to 0.74 seconds with byte-identical outputs and passing
+race/budget checks. It persists no derived state and does not reduce logical
+storage or eliminate linear replay cost. Longer ancestry remains to measure.
 Any eventual retention scheme must preserve anchor baselines, unresolved incidents,
 review identity and displaced evidence across history boundaries; starting an
 empty history is not an accepted workaround. Cadence, retention and notification

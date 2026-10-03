@@ -2,7 +2,8 @@
 
 27 September 2026, baseline `b13c92c`. The external `fsn-observe` command now has
 opt-in local history and incident review. Raw observations and explicit operator
-reviews are retained; status is reconstructed from those records each time.
+reviews are retained; status is reconstructed from those records. The complete
+opening replay is reused once by the first operation that needs it.
 The chain RPC allowlist, node runtime and P1–P15 are unchanged. No notification,
 scheduler, recovery action or automatic incident resolution is introduced.
 
@@ -126,10 +127,13 @@ automatic pruning, rotation, budget expansion or migration command. Do not
 start an empty history to make an unresolved incident disappear. An approved
 retention/capacity and migration procedure is still required before deployment.
 
-Each operation reconstructs status from the bounded event history. The RPC
-timeout does not bound this local replay. A [bounded local measurement](restart-observer-history-cost.md)
-now finds 0.69-second status replay and 1.45-second reopen/status at 1,000 repeated
-two-node snapshots, with about 27 MiB logical data. The 64 MiB example budget is
+Opening reconstructs and validates status from the bounded event history. The
+[validated opening state is now reused once](restart-observer-open-replay.md);
+later operations replay normally. No derived state is persisted. The RPC
+timeout does not bound this local work. The paired follow-up reduces reopen/status
+from 1.55 seconds to 0.74 seconds at 1,000 prior repeated two-node snapshots,
+with about 27 MiB logical data. The [earlier measurement](restart-observer-history-cost.md)
+and the follow-up both show growing cost and unchanged storage needs. The 64 MiB example budget is
 not a deployment retention recommendation. A [mixed actual-command workload](restart-observer-mixed-workload.md)
 now passes six advancing IPC/HTTP rounds and a 512 KiB logical-budget exhaustion
 check with both ordinary and race builds. Rejected writes preserve evidence and

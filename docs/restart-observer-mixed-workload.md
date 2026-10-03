@@ -79,10 +79,11 @@ mean every smaller event is blocked; budget checks apply to each prospective eve
 
 This small-history command run does not supersede the [larger snapshot replay
 measurement](restart-observer-history-cost.md), which found growing local replay
-cost and short example-budget lifetimes at frequent collection. The next useful
-comparison is avoiding duplicate complete replay within one command while keeping
-the same source events, validation, scope checks and review semantics. Measure
-that before introducing a persistent status cache. Longer advancing ancestry,
+cost and short example-budget lifetimes at frequent collection. The
+[opening-state follow-up](restart-observer-open-replay.md) now removes the
+redundant first-operation replay, with byte-identical retained-fixture outputs
+and another passing race workload/budget check. It retains full opening
+validation and introduces no persistent status cache. Longer advancing ancestry,
 ticket-timeline reconstruction cost and actual operational cadence remain open.
 
 Retention must preserve anchor baselines, unresolved incidents, review identity
