@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0xc8326c970d9b8a9953d8e3ded753465be3197d873fd93831bd1ec2b41728afc5",
+    "AnchorNumber": 24,
+    "AnchorHash": "0x1d4996ed768b6bef6b72fa0e7be6cf3b9879177f39d15a7e118b0f78ca42420d",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf"
+    }
+  },
+  "Sequence": 2,
+  "LastEventUTC": "2026-10-03T07:35:11.149680845Z",
+  "LastReportUTC": "2026-10-03T07:34:10.172513541Z",
+  "LogicalBytes": 25558,
+  "MaxBytes": 16777216,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [
+    {
+      "ID": "404dc6ae32aa41bafb55e561186a9d2dc6a228747fd5c8f8dc81f94280fa2abc",
+      "Node": "node-2",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "block_coverage",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "batch_limit"
+      ],
+      "FirstSequence": 2,
+      "LastSequence": 2,
+      "FirstUTC": "2026-10-03T07:35:11.149680845Z",
+      "LastSeenUTC": "2026-10-03T07:35:11.149680845Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    }
+  ],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 24,
+        "Hash": "0x1d4996ed768b6bef6b72fa0e7be6cf3b9879177f39d15a7e118b0f78ca42420d"
+      },
+      "ObservedHead": null,
+      "CheckedUTC": "0001-01-01T00:00:00Z",
+      "Status": "not_requested"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 25,
+        "Hash": "0x8d372cf5c0ea8b3b67bde7a1ff9a7adc5913852ab3e109149688dd93606cf824"
+      },
+      "ObservedHead": {
+        "Number": 27,
+        "Hash": "0xba558382d69b87add37d7f49eba0b61539fc82f0f8046de0a4a390c1e8359638"
+      },
+      "CheckedUTC": "2026-10-03T07:35:11.149680845Z",
+      "Status": "batch_limit"
+    }
+  ]
+}

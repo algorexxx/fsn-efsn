@@ -101,6 +101,7 @@ investigation tool, not a supported observer-history importer or node startup
 procedure. Full reconstruction of pruned state is separate work.
 
 [Evidence, measurements and runner](evidence/restart-observer-preserved-inventory-2026-10-03/README.md)
-are retained. The next observer test is collection during a live competing
-reorganization. Production transport cost, concurrent workload, history growth,
+are retained. The [live competing-reorganization test](restart-observer-reorg.md)
+now passes crossing-read invalidation and subsequent canonical inventory checks.
+Production transport cost, concurrent workload, wider forks, history growth,
 notification delivery, full financial accounting and release review remain open.

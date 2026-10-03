@@ -164,8 +164,11 @@ now derives native events without adding stored inventory or changing history
 format. [Historical anchor acquisition](restart-observer-anchor.md) subsequently
 adds an immutable `AnchorInventory` event, accepted by the updated reader and
 rejected by older readers. It leaves live incidents and block coverage unchanged.
-Live competing reorganizations, representative storage/load, production historical
-state availability and complete financial accounting remain to validate.
+The [live reorganization follow-up](restart-observer-reorg.md) now passes invalidated
+collection, unchanged evidence prefixes, open branch-change incidents and final/cold
+inventories. [Real backup samples](restart-observer-preserved-inventory.md) establish
+sparse historical state and the need for pre-production baseline preservation.
+Wider forks, representative storage/load and complete financial accounting remain to validate.
 Notification routing, timing, acknowledgements in
 the delivery system and a separately checked lost-monitor heartbeat remain
 undeployed. The [main plan](restart-plan.md) retains those release gates.

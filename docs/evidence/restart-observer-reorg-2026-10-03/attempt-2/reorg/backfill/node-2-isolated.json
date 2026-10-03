@@ -1,0 +1,55 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0xaa9792e92a12feb1e5f31aa4af644a5c5e35469f58797c0b4457444d2ae2d337",
+    "AnchorNumber": 24,
+    "AnchorHash": "0x49acb30efd1e65a632abf1db94dd74a604f8d916fe921edbdf23764cf24026bb",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf"
+    }
+  },
+  "Sequence": 4,
+  "LastEventUTC": "2026-10-03T07:27:50.696994004Z",
+  "LastReportUTC": "0001-01-01T00:00:00Z",
+  "LogicalBytes": 46401,
+  "MaxBytes": 16777216,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 28,
+        "Hash": "0x26816a2cfa51f49ed47aded9c482c101fdf88d79506f03fe9a60da2637e3b8de"
+      },
+      "ObservedHead": {
+        "Number": 28,
+        "Hash": "0x26816a2cfa51f49ed47aded9c482c101fdf88d79506f03fe9a60da2637e3b8de"
+      },
+      "CheckedUTC": "2026-10-03T07:27:49.58303468Z",
+      "Status": "complete_at_observation"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 26,
+        "Hash": "0x0e47fa34c97834ec800893d09094d6bdf3dc820c3d2e1192599efd7c6e1ec566"
+      },
+      "ObservedHead": {
+        "Number": 26,
+        "Hash": "0x0e47fa34c97834ec800893d09094d6bdf3dc820c3d2e1192599efd7c6e1ec566"
+      },
+      "CheckedUTC": "2026-10-03T07:27:50.696994004Z",
+      "Status": "complete_at_observation"
+    }
+  ]
+}

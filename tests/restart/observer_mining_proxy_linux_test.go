@@ -2,6 +2,7 @@ package restart
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,12 +12,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FusionFoundation/efsn/v5/common"
 	"github.com/FusionFoundation/efsn/v5/common/hexutil"
 )
 
 type observerMiningWindow struct {
 	GateMethod     string
 	PinnedHeight   uint64
+	PinnedHash     common.Hash
 	AdvancedHeight uint64
 	StartedUTC     time.Time
 	FinishedUTC    time.Time
@@ -31,6 +34,7 @@ type observerMiningProxy struct {
 	node     *rehearsalNode
 	endpoint string
 	window   observerMiningWindow
+	gate     func(context.Context, observerMiningWindow) (uint64, error)
 }
 
 func newObserverMiningProxy(t *testing.T, node *rehearsalNode, endpoint, method string) *observerMiningProxy {
@@ -70,7 +74,15 @@ func (proxy *observerMiningProxy) ServeHTTP(w http.ResponseWriter, request *http
 	}
 	if call.Method == proxy.window.GateMethod && proxy.window.PinnedHeight != 0 && !proxy.window.Completed {
 		proxy.window.StartedUTC = time.Now().UTC()
-		for {
+		if proxy.gate != nil {
+			height, err := proxy.gate(request.Context(), proxy.window)
+			if err != nil {
+				proxy.window.Error = err.Error()
+			} else {
+				proxy.window.AdvancedHeight, proxy.window.Completed = height, true
+			}
+		}
+		for proxy.gate == nil {
 			var current hexutil.Uint64
 			if err := proxy.node.client.CallContext(request.Context(), &current, "eth_blockNumber"); err != nil {
 				proxy.window.Error = fmt.Sprintf("mining gate read failed: %v", err)
@@ -117,12 +129,16 @@ func (proxy *observerMiningProxy) ServeHTTP(w http.ResponseWriter, request *http
 	}
 	if call.Method == "eth_getBlockByNumber" && len(call.Params) > 0 && string(call.Params[0]) == `"latest"` && proxy.window.PinnedHeight == 0 {
 		var result struct {
-			Result struct{ Number hexutil.Uint64 }
+			Result struct {
+				Number hexutil.Uint64
+				Hash   common.Hash
+			}
 		}
 		if err := json.Unmarshal(body, &result); err != nil {
 			proxy.window.Error = err.Error()
 		}
 		proxy.window.PinnedHeight = uint64(result.Result.Number)
+		proxy.window.PinnedHash = result.Result.Hash
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(response.StatusCode)

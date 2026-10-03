@@ -122,8 +122,9 @@ The [historical inventory follow-up](restart-observer-anchor.md) now acquires
 anchor tickets after the head advances and checks them against independently
 saved state on actual IPC/HTTP services. The [preserved-backup probe](restart-observer-preserved-inventory.md)
 now confirms sparse historical state and measures local method cost: capture and
-preserve both wallet baselines before production. Next validate production
-transport/workload cost and collection during a live competing reorganization.
+preserve both wallet baselines before production. The [live reorganization test](restart-observer-reorg.md)
+now verifies invalidated collection, preserved evidence and final/cold inventories
+against ordinary miners' executed state. Wider forks and production transport/workload cost remain open.
 Representative storage/backlog performance,
 notification delivery, real funding/custody and independent release review
 remain gates in the [main plan](restart-plan.md).

@@ -150,13 +150,16 @@ not exercise ordinary live mining, deeper arbitrary forks or production load.
 The [ordinary-mining follow-up](restart-observer-mining.md) now passes with one
 producer and one verifier, including reads deliberately spanning natural head
 advancement, bounded catch-up, cold rechecks and test-only native inventory
-reconstruction. It changes no observer or node runtime source. Live competing
-reorganizations and representative backlog, storage and receipt-index availability
-remain to validate. The [offline wallet ticket timeline](restart-observer-tickets.md)
+reconstruction. It changes no observer or node runtime source. The [live reorganization follow-up](restart-observer-reorg.md)
+now passes crossing-read invalidation, preserved displaced evidence and settled
+canonical catch-up with ordinary competing miners. Wider forks and representative
+backlog, storage and receipt-index availability remain to validate.
+The [offline wallet ticket timeline](restart-observer-tickets.md)
 now derives scoped events using the saved anchor inventory, with separate
 accounting coverage and explicit gaps. [Historical anchor acquisition](restart-observer-anchor.md)
 now supplies that baseline when monitoring starts later, provided the endpoint
-retains historical state. Production state availability and complete financial
-accounting remain open; review the
+retains historical state. [Real backup probes](restart-observer-preserved-inventory.md)
+demonstrate sparse availability and require baseline preservation before production.
+Production transport/workload cost and complete financial accounting remain open; review the
 [P16 parser correction](restart-snapshot-framing.md) separately. Delivery, operational timings,
 lost-monitor checks and release review remain open in the [main plan](restart-plan.md).

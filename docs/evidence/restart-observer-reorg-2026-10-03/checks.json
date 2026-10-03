@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "linux_race_detection": true,
+  "displaced_node": "node-2",
+  "final_height": 30,
+  "cases": {
+    "snapshot": {
+      "pinned_height": 26,
+      "old_hash": "0x22c6bdfb147d89bf5f86173728ed69123a858585e7da1c625866e7cc5bba3fca",
+      "replacement_hash": "0x97109f6612c759b2f1f4fe9358715e2c4a0759eb5683577452c5f5cef4966e6a",
+      "unchanged_stopped_node_captures": 11,
+      "original_evidence_retained": true,
+      "both_final_and_cold_inventories_match": true
+    },
+    "backfill": {
+      "pinned_height": 26,
+      "old_hash": "0x22c6bdfb147d89bf5f86173728ed69123a858585e7da1c625866e7cc5bba3fca",
+      "replacement_hash": "0x97109f6612c759b2f1f4fe9358715e2c4a0759eb5683577452c5f5cef4966e6a",
+      "unchanged_stopped_node_captures": 11,
+      "original_evidence_retained": true,
+      "both_final_and_cold_inventories_match": true
+    }
+  },
+  "ordinary_mining_regression": true,
+  "limitations": [
+    "one compact synthetic branch replacement",
+    "staggered starts and test-induced RPC delays",
+    "ordinary initial peer join, not a public outage/reconnect",
+    "no claim of both buyers replenishing after reorganization",
+    "no production backlog/storage or notification-delivery validation"
+  ]
+}

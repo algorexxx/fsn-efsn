@@ -118,11 +118,13 @@ implements a scoped derivation from this retained anchor inventory and block
 evidence, with explicit baseline/unsupported gaps and rewind/replacement tests.
 It changes only the external observer. The [historical baseline follow-up](restart-observer-anchor.md)
 now handles a monitor first started after the anchor, with actual-service
-state comparisons and explicit unavailable/conflicting results. Production
-historical-state availability and acquisition cost remain open. Review the
+state comparisons and explicit unavailable/conflicting results. [Real backup probes](restart-observer-preserved-inventory.md)
+now establish sparse historical state and require baseline preservation before
+production. Production transport/workload cost remains open. Review the
 [P16 parser correction and narrowed validation scope](restart-snapshot-framing.md)
-separately. Collection during a live competing
-reorganization, representative backlog/storage/receipt-index availability,
+separately. The [live reorganization follow-up](restart-observer-reorg.md) now passes
+crossing-read invalidation, retained displaced evidence and final/cold inventories.
+Wider forks, representative backlog/storage/receipt-index availability,
 deployment scheduling and notification delivery remain open. The
 [main plan](restart-plan.md) and [monitoring policy](restart-monitoring-response.md)
 retain those gates; this test does not declare the restart ready for release.

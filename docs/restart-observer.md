@@ -183,8 +183,11 @@ now derives scoped native events from saved anchor inventory and retained blocks
 with matching cross-platform results and explicit gaps.
 [Historical anchor acquisition](restart-observer-anchor.md) supports monitoring
 started after the anchor, using existing RPCs and explicit consistency checks.
-Production historical-state availability, live competing reorganizations,
-representative workload and full account accounting remain open.
+[Real backup samples](restart-observer-preserved-inventory.md) now establish sparse
+historical state and the need to preserve wallet baselines before production.
+The [live reorganization test](restart-observer-reorg.md) passes invalidation,
+canonical catch-up, evidence preservation and final/cold inventory checks.
+Wider forks, representative workload and full account accounting remain open.
 Select operational
 timings, retention and notification destinations before deployment; demonstrate
 actual delivery, acknowledgement, loss of the collector, and receipt rollback

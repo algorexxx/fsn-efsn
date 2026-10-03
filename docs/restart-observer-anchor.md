@@ -113,7 +113,9 @@ The [preserved-backup follow-up](restart-observer-preserved-inventory.md) now
 measures twelve explicit historical reads without starting a node. State is
 sparse: even head minus two is missing, while the three shutdown checkpoints
 are readable. Capture and preserve each wallet's baseline before production;
-there is no guaranteed 128-block acquisition window. Next collect through a
-live competing reorganization and validate production transport/workload cost. Full financial accounting,
-monitor scheduling/delivery, real funding and signing custody, and independent
+there is no guaranteed 128-block acquisition window. A [live reorganization test](restart-observer-reorg.md)
+now passes snapshot invalidation, unstable backfill, canonical catch-up and cold
+inventory checks with ordinary competing miners. Production transport/workload
+cost, wider fork coverage, full financial accounting, monitor scheduling/delivery,
+real funding and signing custody, and independent
 release review remain open in the [main plan](restart-plan.md).
