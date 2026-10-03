@@ -226,8 +226,14 @@ representative; this remains diagnostic
 telemetry, not chain selection. [Output limits](restart-dashboard-output.md) now
 bound pending collector socket writes across telemetry, viewer and control
 replies: 151 contracts, 12 socket tests and six database scenarios pass.
-Actual efsn/RPC comparison, production payload/resource sizing, complete report
-validation, runtime review and proxy/TLS/deployment controls remain open.
+The [actual efsn comparison](restart-dashboard-telemetry.md) now passes through
+the unchanged collector, PostgreSQL and HTTP API: 51 distinct synthetic blocks
+match direct RPC, as do ticket, peer, pending and mining values. It confirms a
+legacy sync-flag/RPC mismatch and literal reported uptime. A fifty-block reply
+with only ten transactions per block can exceed the 64 KiB test input limit.
+Compatible browser labels, production payload/resource sizing, complete report
+validation, actual browser/outage acceptance, runtime review and
+proxy/TLS/deployment controls remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -286,11 +292,11 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: actual efsn/RPC comparison and payload/resource sizing, then
-   complete report validation, reviewed runtime/dependencies and TLS/deployment
-   acceptance. [Per-node freshness](restart-dashboard-node-freshness.md) now passes
-   across the collector, stored snapshot, API and browser; the public dashboard
-   gate remains open.
+1. G6: settle the legacy sync/uptime display semantics and the supported payload
+   envelope from the [actual efsn comparison](restart-dashboard-telemetry.md), then
+   complete report validation, actual browser/outage acceptance, reviewed
+   runtime/dependencies and TLS/deployment controls. The public dashboard gate
+   remains open; the small fixture limits are not deployment defaults.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

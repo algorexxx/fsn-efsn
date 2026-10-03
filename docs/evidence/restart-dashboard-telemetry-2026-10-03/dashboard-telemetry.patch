@@ -1,0 +1,301 @@
+From b94e16cbf9527c42a4797e9590c407d7c521ec13 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 15:58:43 +0200
+Subject: [PATCH] Verify actual efsn telemetry against RPC through storage and
+ API
+
+---
+ docs/actual-efsn-telemetry.md      |  43 +++++++++
+ test/efsn-telemetry.test.cjs       | 150 +++++++++++++++++++++++++++++
+ test/fixtures/efsn-wire-server.cjs |  41 ++++++++
+ test/fixtures/efsn-wsl-server.cjs  |  26 +++++
+ 4 files changed, 260 insertions(+)
+ create mode 100644 docs/actual-efsn-telemetry.md
+ create mode 100644 test/efsn-telemetry.test.cjs
+ create mode 100644 test/fixtures/efsn-wire-server.cjs
+ create mode 100644 test/fixtures/efsn-wsl-server.cjs
+
+diff --git a/docs/actual-efsn-telemetry.md b/docs/actual-efsn-telemetry.md
+new file mode 100644
+index 0000000..60e538e
+--- /dev/null
++++ b/docs/actual-efsn-telemetry.md
+@@ -0,0 +1,43 @@
++# Actual efsn integration fixture
++
++`test/efsn-telemetry.test.cjs` is an opt-in integration test, separate from the
++normal unit/socket test commands. It requires a disposable PostgreSQL cluster
++and the companion efsn `TestDashboardTelemetryNode` test binary. Never point it
++at an existing database or a real wallet.
++
++The current harness uses Windows Node 22.11.0 and the `FusionRehearsal` WSL
++distribution's `rehearsal` user. It starts the unchanged collector with a portable
++Linux Node 22.11.0 runtime, then the real synthetic efsn service. Both bind
++loopback; Windows reaches them through WSL localhost forwarding. The fixture's
++stdin/stdout bridge carries only test process control and captures.
++
++Required environment: `EFSN_TELEMETRY_BINARY` (absolute Windows path to the
++Linux Go test binary), `EFSN_LINUX_NODE` (absolute Windows path to Linux Node),
++`EFSN_TELEMETRY_EVIDENCE` (existing output directory), `TEST_PG_PORT` and
++`TEST_PG_PASSWORD_FILE` (a new cluster's administrator password). The cluster
++must have database `postgres` and role `dashboard_test_admin`, without the
++dashboard schema already created. Run:
++
++```
++node --test --test-reporter=tap test/efsn-telemetry.test.cjs
++```
++
++The companion repository's
++`docs/evidence/restart-dashboard-telemetry-2026-10-03/run.py` creates and stops
++that new database, records input hashes and removes its temporary password.
++Its accepted third attempt compares the head and fifty history blocks against
++direct RPC, verifies ticket/peer/pending/mining values through PostgreSQL and
++the HTTP API, and captures wire sizes. The two earlier failures were capture-
++harness errors: Primus upgrades via a callback rather than a server connection
++event. The corrected hook captures the actual messages before transformation.
++
++Expected legacy differences are explicit assertions: at the stationary head,
++RPC syncing is false but telemetry `syncing` is true, and reported uptime is
++100. These assertions preserve the observed existing protocol; they are not
++approval of the browser's **Syncing** label or evidence of measured uptime.
++
++The measured 50-block history with one transaction each is 30,926 bytes.
++Ten transactions in each of those blocks would increase it to approximately
++66,026 bytes at the same field lengths. The fixture's 65,536-byte limit is
++therefore not a production sizing recommendation. Payload envelopes, full
++report validation, memory limits and compatible browser labels remain open.
+diff --git a/test/efsn-telemetry.test.cjs b/test/efsn-telemetry.test.cjs
+new file mode 100644
+index 0000000..c91bda1
+--- /dev/null
++++ b/test/efsn-telemetry.test.cjs
+@@ -0,0 +1,150 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { once } = require('node:events');
++const { spawn } = require('node:child_process');
++const { readFileSync, writeFileSync, existsSync, mkdtempSync, unlinkSync, rmdirSync } = require('node:fs');
++const { join, resolve } = require('node:path');
++const { tmpdir } = require('node:os');
++const { Pool } = require('pg');
++const WebSocket = require('websocket').w3cwebsocket;
++const Populate = require('../db_methods/populate');
++const Retrieve = require('../db_methods/retrieve');
++const createApp = require('../api-server/app');
++const startSnapshotCollection = require('../wsclient/collect-snapshots');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const request = require('./fixtures/http.cjs');
++
++async function waitFor(predicate) {
++    const deadline = Date.now() + 20000;
++    while (Date.now() < deadline) {
++        const result = await predicate();
++        if (result) {
++            return result;
++        }
++        await new Promise(resolve => setTimeout(resolve, 100));
++    }
++    throw new Error('Expected actual efsn observation did not arrive');
++}
++
++async function rpc(endpoint, method, params = []) {
++    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }), signal: AbortSignal.timeout(3000) });
++    const result = await response.json();
++    assert.equal(result.error, undefined, method);
++    return result.result;
++}
++
++function compareBlock(report, block) {
++    for (const [name, source] of Object.entries({ number: 'number', timestamp: 'timestamp', gasUsed: 'gasUsed', gasLimit: 'gasLimit', difficulty: 'difficulty', totalDifficulty: 'totalDifficulty' })) {
++        assert.equal(BigInt(report[name]), BigInt(block[source]), name);
++    }
++    for (const [name, source] of Object.entries({ hash: 'hash', parentHash: 'parentHash', miner: 'miner', transactionsRoot: 'transactionsRoot', stateRoot: 'stateRoot' })) {
++        assert.equal(report[name].toLowerCase(), block[source].toLowerCase(), name);
++    }
++    assert.deepEqual(report.transactions.map(tx => tx.hash), block.transactions);
++    assert.deepEqual(report.uncles, block.uncles);
++}
++
++function linuxPath(path) {
++    assert.match(path, /^[A-Za-z]:[\\/]/);
++    return '/mnt/' + path[0].toLowerCase() + path.slice(2).replaceAll('\\', '/');
++}
++
++test('actual efsn reports reach the collector, PostgreSQL and HTTP API and match stationary RPC', { timeout: 65000 }, async t => {
++    assert.ok(process.env.EFSN_TELEMETRY_BINARY && process.env.EFSN_TELEMETRY_EVIDENCE && process.env.TEST_PG_PORT && process.env.TEST_PG_PASSWORD_FILE);
++    const server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE }, 'efsn-wsl-server.cjs');
++    const directory = mkdtempSync(join(tmpdir(), 'efsn-dashboard-'));
++    const settings = join(directory, 'settings.json');
++    writeFileSync(settings, JSON.stringify({ Collector: `ws://127.0.0.1:${server.port}`, Secret: secretA }), { encoding: 'utf8', mode: 0o600 });
++    const child = spawn(join(process.env.SystemRoot, 'System32/wsl.exe'), ['-d', 'FusionRehearsal', '-u', 'rehearsal', '--', 'env', 'GOMAXPROCS=2', 'FUSION_RESTART_CHAINDATA=', 'FUSION_DASHBOARD_FIXTURE=' + linuxPath(directory), linuxPath(process.env.EFSN_TELEMETRY_BINARY), '-test.run=^TestDashboardTelemetryNode$', '-test.v', '-test.timeout=65s'], {
++        cwd: resolve(process.env.EFSN_TELEMETRY_BINARY, '../../tests/restart'),
++        env: { ...process.env, FUSION_DASHBOARD_FIXTURE: directory, FUSION_RESTART_CHAINDATA: '' }, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
++    });
++    const exited = once(child, 'exit');
++    let logs = '';
++    child.stdout.on('data', data => { logs += data; });
++    child.stderr.on('data', data => { logs += data; });
++    t.after(async () => {
++        if (child.exitCode === null && child.signalCode === null) {
++            child.kill();
++        }
++        await exited;
++        assert.equal(logs.includes(secretA), false);
++        writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'efsn.txt'), logs, 'utf8');
++        for (const name of ['settings.json', 'ready.json', 'stop']) {
++            const path = join(directory, name);
++            if (existsSync(path)) {
++                unlinkSync(path);
++            }
++        }
++        rmdirSync(directory);
++    });
++    const ready = await waitFor(() => {
++        assert.equal(child.exitCode, null, logs);
++        return existsSync(join(directory, 'ready.json')) && JSON.parse(readFileSync(join(directory, 'ready.json'), 'utf8'));
++    });
++    const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
++    t.after(() => pool.end());
++    await pool.query(readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8'));
++    const populate = new Populate(pool);
++    const retrieve = new Retrieve(pool);
++    const errors = [];
++    const collector = startSnapshotCollection({ url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: 65536, maxNodes: 2 }, {
++        connect(url, maxBytes) { return new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }); },
++        saveSnapshot: (payload, time) => populate.saveSnapshot(payload, time), now: () => new Date(), setTimeout, clearTimeout, onError: message => errors.push(message),
++    });
++    t.after(() => collector.stop());
++    const snapshot = await waitFor(async () => {
++        const value = await retrieve.readSnapshot();
++        return value && value.payload.nodes.length === 1 && value.payload.nodes[0].reports.stats !== null && value.payload.charts.height[0] === 21 && value.payload.charts.height[39] === 60 && value;
++    });
++    const api = createApp(retrieve, Date.now, 10000, 30000).listen(0, '127.0.0.1');
++    t.after(() => new Promise(resolve => api.close(resolve)));
++    await once(api, 'listening');
++    const nodes = await request(api.address().port, '/nodes');
++    const charts = await request(api.address().port, '/charts');
++    assert.equal(nodes.status, 200);
++    assert.equal(charts.status, 200);
++    const node = JSON.parse(nodes.body[0].stats);
++    const truth = {};
++    for (const [name, method, params] of [
++        ['head', 'eth_getBlockByNumber', ['latest', false]], ['syncing', 'eth_syncing', []], ['mining', 'eth_mining', []],
++        ['peers', 'net_peerCount', []], ['pending', 'txpool_status', []], ['tickets', 'fsn_totalNumberOfTickets', ['latest']],
++        ['ownTickets', 'fsn_totalNumberOfTicketsByAddress', [ready.owner, 'latest']],
++    ]) {
++        truth[name] = await rpc(ready.rpc, method, params);
++    }
++    compareBlock(node.stats.block, truth.head);
++    assert.equal(node.stats.block.hash, ready.head);
++    assert.equal(node.stats.mining, truth.mining);
++    assert.equal(node.stats.peers, Number(BigInt(truth.peers)));
++    assert.equal(node.stats.pending, Number(BigInt(truth.pending.pending)));
++    assert.equal(node.stats.ticketNumber, truth.tickets);
++    assert.equal(node.stats.myTicketNumber, truth.ownTickets);
++    assert.equal(node.connected, true);
++    assert.equal(Object.values(nodes.body[0].reportValidForMs).every(value => value > 0), true);
++    assert.equal(truth.syncing, false);
++    assert.equal(node.stats.syncing, true);
++    assert.equal(node.stats.uptime, 100);
++    const captured = await server.command('capture');
++    writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'capture.json'), JSON.stringify(captured, null, 2) + '\n', 'utf8');
++    const incoming = captured.records.filter(record => record.direction === 'incoming' && record.message.emit);
++    const history = incoming.find(record => record.message.emit[0] === 'history' && record.message.emit[1].history.length === 50);
++    assert.ok(history);
++    truth.history = [];
++    for (const block of history.message.emit[1].history) {
++        const direct = await rpc(ready.rpc, 'eth_getBlockByNumber', ['0x' + block.number.toString(16), false]);
++        compareBlock(block, direct);
++        truth.history.push(direct);
++    }
++    assert.deepEqual(history.message.emit[1].history.map(block => block.number), Array.from({ length: 50 }, (_, index) => 59 - index));
++    assert.deepEqual(JSON.parse(charts.body[0].charts).height, Array.from({ length: 40 }, (_, index) => 21 + index));
++    assert.equal((await rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false])).hash, truth.head.hash);
++    assert.deepEqual(errors, []);
++    await collector.stop();
++    writeFileSync(join(directory, 'stop'), '', 'utf8');
++    assert.deepEqual(await exited, [0, null]);
++    const evidence = { ready, truth, snapshot, nodes, charts, captured, limits: { messageBytes: 65536, bufferedBytes: 262144, messagesPerSecond: 100 }, errors, testMemory: process.memoryUsage() };
++    writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'comparison.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8');
++    await server.stop();
++});
+diff --git a/test/fixtures/efsn-wire-server.cjs b/test/fixtures/efsn-wire-server.cjs
+new file mode 100644
+index 0000000..a6f568c
+--- /dev/null
++++ b/test/fixtures/efsn-wire-server.cjs
+@@ -0,0 +1,41 @@
++const WebSocket = require('ws');
++if (!process.send) {
++    process.send = message => process.stdout.write('FIXTURE_IPC ' + JSON.stringify(message) + '\n');
++    require('node:readline').createInterface({ input: process.stdin }).on('line', line => process.emit('message', JSON.parse(line)));
++    setTimeout(() => process.exit(2), 70000).unref();
++}
++const records = [];
++const upgrade = WebSocket.Server.prototype.handleUpgrade;
++WebSocket.Server.prototype.handleUpgrade = function (request, connection, head, complete) {
++    return upgrade.call(this, request, connection, head, socket => {
++        socket.on('message', raw => capture('incoming', raw));
++        const send = socket.send;
++        socket.send = function (data, ...options) {
++            capture('outgoing', data);
++            return send.call(this, data, ...options);
++        };
++        complete(socket);
++    });
++};
++
++function capture(direction, raw) {
++    if (records.length >= 500) {
++        throw new Error('Fixture capture limit exceeded');
++    }
++    const message = JSON.parse(raw.toString());
++    if (message.emit && message.emit[0] === 'hello') {
++        delete message.emit[1].secret;
++    }
++    records.push({ direction, bytes: Buffer.byteLength(raw), message });
++}
++
++const server = require('../../server');
++server.on('listening', () => process.send(server.address()));
++process.on('message', message => {
++    if (message === 'stop') {
++        server.close(() => process.exit(0));
++    }
++    if (message === 'capture') {
++        process.send({ records, memory: process.memoryUsage() });
++    }
++});
+diff --git a/test/fixtures/efsn-wsl-server.cjs b/test/fixtures/efsn-wsl-server.cjs
+new file mode 100644
+index 0000000..7b23dae
+--- /dev/null
++++ b/test/fixtures/efsn-wsl-server.cjs
+@@ -0,0 +1,26 @@
++const { spawn } = require('node:child_process');
++const { createInterface } = require('node:readline');
++const { join } = require('node:path');
++
++function linuxPath(path) {
++    if (!/^[A-Za-z]:[\\/]/.test(path)) {
++        throw new Error('Absolute Windows fixture path required');
++    }
++    return '/mnt/' + path[0].toLowerCase() + path.slice(2).replaceAll('\\', '/');
++}
++
++const settings = Object.entries(process.env).filter(([name]) => name.startsWith('COLLECTOR_') || ['NODE_ENV', 'VERBOSITY'].includes(name)).map(([name, value]) => name + '=' + value);
++settings.push('WS_CREDENTIALS_FILE=' + linuxPath(process.env.WS_CREDENTIALS_FILE));
++const child = spawn(join(process.env.SystemRoot, 'System32/wsl.exe'), ['-d', 'FusionRehearsal', '-u', 'rehearsal', '--', 'env', ...settings, linuxPath(process.env.EFSN_LINUX_NODE), linuxPath(join(__dirname, 'efsn-wire-server.cjs'))], { windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
++createInterface({ input: child.stdout }).on('line', line => {
++    if (line.startsWith('FIXTURE_IPC ')) {
++        process.send(JSON.parse(line.slice(12)));
++    } else {
++        process.stdout.write(line + '\n');
++    }
++});
++child.stderr.pipe(process.stderr);
++child.on('error', error => { process.stderr.write(error.message); process.exit(1); });
++child.on('exit', code => process.exit(code === null ? 1 : code));
++process.on('message', message => child.stdin.write(JSON.stringify(message) + '\n'));
++process.on('disconnect', () => child.stdin.write('"stop"\n'));
