@@ -1,0 +1,163 @@
+TAP version 13
+# Subtest: ordinary hello and same-node stats reach the collector
+ok 1 - ordinary hello and same-node stats reach the collector
+  ---
+  duration_ms: 2.1431
+  ...
+# Subtest: missing telemetry secret prevents listening
+not ok 2 - missing telemetry secret prevents listening
+  ---
+  duration_ms: 1.2329
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\docs\\evidence\\restart-dashboard-readiness-2026-10-03\\collector-contract.test.cjs:100:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    A deployment without any configured secret must fail before listening
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\docs\evidence\restart-dashboard-readiness-2026-10-03\collector-contract.test.cjs:102:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: empty telemetry secret prevents listening
+not ok 3 - empty telemetry secret prevents listening
+  ---
+  duration_ms: 0.7011
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\docs\\evidence\\restart-dashboard-readiness-2026-10-03\\collector-contract.test.cjs:105:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    An empty secret must not enable the telemetry listener
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\docs\evidence\restart-dashboard-readiness-2026-10-03\collector-contract.test.cjs:107:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: stats require a successful hello on the same session
+not ok 4 - stats require a successful hello on the same session
+  ---
+  duration_ms: 1.4432
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\docs\\evidence\\restart-dashboard-readiness-2026-10-03\\collector-contract.test.cjs:110:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Unregistered sessions must not dispatch collection updates
+    + actual - expected
+    
+    + [
+    +   {
+    +     id: 'synthetic-node-a',
+    +     method: 'updateStats'
+    +   }
+    + ]
+    - []
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      method: 'updateStats'
+      id: 'synthetic-node-a'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\docs\evidence\restart-dashboard-readiness-2026-10-03\collector-contract.test.cjs:114:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: stats identity remains bound to the authenticated session
+not ok 5 - stats identity remains bound to the authenticated session
+  ---
+  duration_ms: 0.8267
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\docs\\evidence\\restart-dashboard-readiness-2026-10-03\\collector-contract.test.cjs:117:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    A registered session must not dispatch updates for a different node
+    + actual - expected
+    
+    + [
+    +   {
+    +     id: 'synthetic-node-b',
+    +     method: 'updateStats'
+    +   }
+    + ]
+    - []
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+      method: 'updateStats'
+      id: 'synthetic-node-b'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\docs\evidence\restart-dashboard-readiness-2026-10-03\collector-contract.test.cjs:123:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: rejected hello does not disclose its secret to logging
+not ok 6 - rejected hello does not disclose its secret to logging
+  ---
+  duration_ms: 0.7476
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\docs\\evidence\\restart-dashboard-readiness-2026-10-03\\collector-contract.test.cjs:126:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Authentication logs must omit telemetry secrets
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\docs\evidence\restart-dashboard-readiness-2026-10-03\collector-contract.test.cjs:132:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: disconnect marks the originating session inactive
+ok 7 - disconnect marks the originating session inactive
+  ---
+  duration_ms: 0.7701
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 2
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 74.3777

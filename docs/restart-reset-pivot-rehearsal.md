@@ -108,4 +108,4 @@ behavior is outside these anchored persistence claims.
 The unchanged node code still needs full-state recovery, accounting review,
 supported-mode decisions and independent operator rehearsal before activation.
 The next practical step is the bounded full-state extraction described in the
-[main plan](restart-plan.md#full-state-rehearsal-with-limited-disk-space).
+[main plan](restart-investigation-record.md#full-state-rehearsal-with-limited-disk-space).

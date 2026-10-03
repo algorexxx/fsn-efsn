@@ -1,0 +1,20 @@
+node:internal/test_runner/harness:99
+      throw err;
+      ^
+
+Error: EPERM: operation not permitted, lstat 'C:\Users\Peter'
+    at lstatSync (node:fs:1634:25)
+    at getDirentSync (node:internal/fs/glob:59:16)
+    at Cache.statSync (node:internal/fs/glob:85:17)
+    at #addSubpatterns (node:internal/fs/glob:321:32)
+    at Glob.globSync (node:internal/fs/glob:242:29)
+    at createTestFileList (node:internal/test_runner/runner:119:24)
+    at run (node:internal/test_runner/runner:682:28)
+    at node:internal/main/test_runner:34:1 {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'lstat',
+  path: 'C:\\Users\\Peter'
+}
+
+Node.js v22.11.0
