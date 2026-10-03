@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: real telemetry login deadline closes a silent socket and ordinary login still works
+ok 1 - real telemetry login deadline closes a silent socket and ordinary login still works
+  ---
+  duration_ms: 2574.486375
+  type: 'test'
+  ...
+# Subtest: real transport refuses a message over its byte limit on every collector path
+not ok 2 - real transport refuses a message over its byte limit on every collector path
+  ---
+  duration_ms: 10017.59361
+  type: 'test'
+  location: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/collector-input-wire.test.cjs:24:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 10000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# {"endpoint":"api","code":1009}
+# {"endpoint":"primus","code":1009}
+# {"endpoint":"external","code":1009}
+# Subtest: real transport counts the aggregate bytes of a fragmented message
+ok 3 - real transport counts the aggregate bytes of a fragmented message
+  ---
+  duration_ms: 2402.986879
+  type: 'test'
+  ...
+# {"fragmented":true,"code":1009}
+# Subtest: application message allowance closes the sender and permits a later fresh session
+ok 4 - application message allowance closes the sender and permits a later fresh session
+  ---
+  duration_ms: 3738.10344
+  type: 'test'
+  ...
+# Subtest: TCP connection budget is shared across paths and a closed slot can be reused
+ok 5 - TCP connection budget is shared across paths and a closed slot can be reused
+  ---
+  duration_ms: 1571.67661
+  type: 'test'
+  ...
+# Subtest: invalid envelopes close before the event plugin and do not interrupt another node
+ok 6 - invalid envelopes close before the event plugin and do not interrupt another node
+  ---
+  duration_ms: 1655.767539
+  type: 'test'
+  ...
+# Subtest: efsn-sized history reaches collection and an extra entry closes the reporting session
+ok 7 - efsn-sized history reaches collection and an extra entry closes the reporting session
+  ---
+  duration_ms: 3410.458602
+  type: 'test'
+  ...
+# Subtest: held output disconnects only the slow telemetry session and its identity can reconnect
+ok 8 - held output disconnects only the slow telemetry session and its identity can reconnect
+  ---
+  duration_ms: 2384.10575
+  type: 'test'
+  ...
+# {"held":{"queued":8077,"peak":8077,"writes":82,"destroyed":false},"stopped":{"queued":0,"peak":8081,"writes":84,"destroyed":true}}
+# Subtest: Primus and WebSocket control replies share the same output budget on every collector path
+ok 9 - Primus and WebSocket control replies share the same output budget on every collector path
+  ---
+  duration_ms: 1335.802751
+  type: 'test'
+  ...
+# {"endpoint":"api","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+# {"endpoint":"primus","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+# {"endpoint":"external","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+# Subtest: collector backfills requested gaps and broadcasts the newest forty heights as heads advance
+ok 10 - collector backfills requested gaps and broadcasts the newest forty heights as heads advance
+  ---
+  duration_ms: 4364.174283
+  type: 'test'
+  ...
+# Subtest: real collector bounds registration and ping while retaining only native metadata across reconnect
+ok 11 - real collector bounds registration and ping while retaining only native metadata across reconnect
+  ---
+  duration_ms: 1294.248324
+  type: 'test'
+  ...
+# Subtest: real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect
+ok 12 - real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect
+  ---
+  duration_ms: 1330.512237
+  type: 'test'
+  ...
+# Subtest: real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+ok 13 - real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+  ---
+  duration_ms: 1506.874706
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 12
+# fail 0
+# cancelled 1
+# skipped 0
+# todo 0
+# duration_ms 25826.838562

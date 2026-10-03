@@ -1,0 +1,457 @@
+From 3151cfee04d879b059580dab85dfe3ad0ce55233 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 21:40:15 +0200
+Subject: [PATCH] Upgrade collector Primus and ws transport dependencies
+
+---
+ docs/collector-input-limits.md     |  19 ++--
+ docs/runtime-dependency-review.md  |   4 +
+ docs/transport-upgrade.md          |  73 +++++++++++++++
+ package-lock.json                  | 138 ++++++++++++++++-------------
+ package.json                       |   4 +-
+ test/collector-input-wire.test.cjs |  13 ++-
+ test/fixtures/wire-server.cjs      |  17 ++++
+ 7 files changed, 197 insertions(+), 71 deletions(-)
+ create mode 100644 docs/transport-upgrade.md
+
+diff --git a/docs/collector-input-limits.md b/docs/collector-input-limits.md
+index 9e71aac..5a8cc1c 100644
+--- a/docs/collector-input-limits.md
++++ b/docs/collector-input-limits.md
+@@ -7,7 +7,7 @@ block validity, mining, or eligibility to join the chain.
+ 
+ | Setting | Enforced behavior |
+ | --- | --- |
+-| `COLLECTOR_MAX_MESSAGE_BYTES` | Incoming messages must be strictly below this byte threshold, including their JSON envelope. Applies to `/api`, `/primus` and `/external`, including aggregate fragmented messages. Compression is disabled. |
++| `COLLECTOR_MAX_MESSAGE_BYTES` | Incoming messages may be at most this many bytes, including their JSON envelope. Applies to `/api`, `/primus` and `/external`, including aggregate fragmented messages. Compression is disabled. |
+ | `COLLECTOR_MAX_CONNECTIONS` | Native HTTP server TCP connection cap, shared across all paths and incomplete upgrades. Connections above it are dropped. A slot becomes reusable after the server observes TCP closure. |
+ | `COLLECTOR_HELLO_TIMEOUT_MS` | `/api` must complete credential checking and registration within this interval after its WebSocket connection. Expiry ends the session and releases any identity reservation. |
+ | `COLLECTOR_MESSAGES_PER_SECOND` | Each connection starts with this many application-message credits. Credits refill continuously at this rate, capped at the initial allowance. An event needs one whole credit; exceeding the allowance ends the session. |
+@@ -19,11 +19,18 @@ sync bursts, expected operator count and proxy overhead before choosing deployed
+ limits. A legitimate report above a configured limit will also disconnect.
+ In particular, a history report includes transaction hashes for up to 50 blocks.
+ 
+-The locked `ws` 1.1.5 receiver rejects the exact byte threshold too. Tests cover
+-2047 accepted bytes versus 2048 rejected bytes, multibyte text and fragmented
+-messages. Transport/JSON decoding errors destroy the request's socket promptly;
+-this avoids the old library's 30-second close-handshake wait. Peers then observe
+-abnormal closure code 1006. Ordinary session rejection still uses Primus closure.
++The transport update pins Primus 8.0.9 and ws 8.22.0. The maximum is now
++inclusive: tests cover 2048 accepted bytes versus 2049 rejected bytes, multibyte
++text and fragmented messages. Previously ws 1.1.5 rejected the exact configured
++threshold too; this one-byte boundary change is explicit. Transport/JSON decoding
++errors still destroy the request's socket promptly. Peers may observe closure
++code 1006 or 1009. Ordinary session rejection still uses Primus closure.
++
++The real-transport test also checks the locked parser defaults on all three
++paths: at most 16,384 message fragments and 262,144 buffered chunks, compression
++disabled and UTF-8 validation enabled. These count limits supplement the byte
++limit; they are not a total process-memory budget. See the
++[transport update](transport-upgrade.md) for dependency and integration evidence.
+ 
+ Application envelopes are checked before the legacy event plugin runs. They
+ must contain exactly an event name and an object argument. `/api` accepts hello,
+diff --git a/docs/runtime-dependency-review.md b/docs/runtime-dependency-review.md
+index 7a8eb15..47fd9e1 100644
+--- a/docs/runtime-dependency-review.md
++++ b/docs/runtime-dependency-review.md
+@@ -32,6 +32,10 @@ These include dependency-level findings and are not unique CVE or reachable
+ exploit counts. Build tools live in `dependencies`, so omitting devDependencies
+ would not remove them. No automatic audit fix was used.
+ 
++The subsequent [transport upgrade](transport-upgrade.md) completes item 1
++locally with Primus 8.0.9/ws 8.22.0. Its contract, socket, proxy, native WSS and
++mining-outage checks pass; 41 other root findings remain. Continue with item 2.
++
+ Required follow-up, in order:
+ 
+ 1. Review and update Primus 6.1.0 and its resolved ws 1.1.5 together. The latter
+diff --git a/docs/transport-upgrade.md b/docs/transport-upgrade.md
+new file mode 100644
+index 0000000..ffa4fd3
+--- /dev/null
++++ b/docs/transport-upgrade.md
+@@ -0,0 +1,73 @@
++# Collector transport upgrade
++
++2026-10-03. The root manifest now pins Primus 8.0.9 and ws 8.22.0. Their locked
++dependency changes replace the affected ws 1.1.5 parser and Primus 6.1.0's old
++setheader dependency. The collector, writer, API and browser application source
++remain unchanged. Both existing Primus plugins retain their versions.
++
++The package archives matched npm's published SHA-512 integrity values before
++inspection. Primus 8's WebSocket adapter uses the upgrade request directly and
++converts text frames to strings for the existing JSON parser. It supports the
++current ws interface while retaining the efsn `emit` envelopes and Primus
++ping/pong protocol. There is no efsn source, mining or consensus change here.
++
++Only the root package/lock pair changes. The v1 lock retains other direct
++dependency versions; 17 package-path records change, including removals and
++relocations. The total goes from 331 to 333 entries. A clean backend installation
++with npm 10.9.0 and scripts disabled leaves the lock intact; all 333 installed
++versions match it. Frontend and separate API locks remain unchanged.
++
++The repeated npm audit no longer flags ws, Primus or setheader. Root findings
++fall from 44 to 41: 12 critical, 18 high, six moderate and five low. Those remaining
++entries still need the [runtime/dependency worklist](runtime-dependency-review.md).
++The unchanged legacy `http2` engine warning and other dependency deprecations
++remain recorded. This update is not approval of the complete runtime dependency
++tree or public hosting.
++
++## Boundary and parser settings
++
++The underlying byte maximum is now inclusive. A configured limit of 2048 accepts
++2048 bytes and rejects 2049; the older parser rejected 2048 too. The first socket
++run retained that old expectation and timed out waiting for a valid connection
++to close. Its evidence is retained. The updated test explicitly checks the new
++boundary, including successful delivery at the maximum, plus the existing
++multibyte and aggregate-fragment cases. No production limit values were raised.
++
++One added test reads the actual WebSocket server options on all three collector
++paths. It confirms the configured byte cap, default 16,384 message-fragment and
++262,144 buffered-chunk caps, disabled compression and enabled UTF-8 validation.
++The test uses ordinary startup and configuration inspection. It does not attempt
++to exhaust memory or replay advisory exploit examples. These parser count caps
++do not establish a bound on total process memory.
++
++See [input limits](collector-input-limits.md) for the current configuration
++contract. Finite output queues, credential checks and telemetry admission rules
++continue to apply separately.
++
++## Local acceptance
++
++Linux Node 24.21.0 passes all 173 contract and 14 socket tests. The actual efsn
++WSS/PostgreSQL/HTTPS/browser fixture passes direct RPC comparisons, fifty-block
++history and four browser checkpoints including writer expiry/recovery. The
++eight-reporter proxy scenario passes unchanged, including normalized forwarding
++headers, private routes, connection limits and a 3,276,956-byte history reply.
++
++The collector-loss mining drill also passes: the isolated synthetic chain mines
++twelve blocks and makes twelve automatic ticket purchases while its collector
++is stopped. Collector restoration requires no node or writer restart. Height 74
++reaches HTTPS, all thirteen purchases since height 61 match canonical receipts,
++and the recovered chart covers heights 35–74. P17's telemetry fix still yields
++heads 73, 73, 74, 74 after reconnect. Real backup data and real signing keys were
++not used. Test services stop and temporary credentials are removed.
++
++The original 547-file compiled frontend remains unchanged. These local results
++do not select a public host or approve the remaining dependency tree.
++
++## Remaining work
++
++Continue the dependency review with active Lodash/Express/GeoIP and unused legacy
++tools, the separate API install, browser Axios and the old deployment workflow.
++Then freeze and verify the final fresh-install release matrix and complete
++supervision, public certificates, retries/log lifecycle and hosting acceptance.
++The efsn investigation retains exact locks, package integrity, audit output and
++test captures under `docs/evidence/restart-dashboard-transport-2026-10-03/`.
+diff --git a/package-lock.json b/package-lock.json
+index 0b4f887..19ad058 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -40,16 +40,6 @@
+         "millisecond": "~0.1.2",
+         "setheader": "~1.0.0",
+         "vary": "~1.1.0"
+-      },
+-      "dependencies": {
+-        "setheader": {
+-          "version": "1.0.2",
+-          "resolved": "https://registry.npmjs.org/setheader/-/setheader-1.0.2.tgz",
+-          "integrity": "sha512-A704nIwzqGed0CnJZIqDE+0udMPS839ocgf1R9OJ8aq8vw4U980HWeNaD9ec8VnmBni9lyGEWDedOWXT/C5kxA==",
+-          "requires": {
+-            "diagnostics": "1.x.x"
+-          }
+-        }
+       }
+     },
+     "acorn": {
+@@ -139,7 +129,8 @@
+     "asyncemit": {
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/asyncemit/-/asyncemit-3.0.1.tgz",
+-      "integrity": "sha1-zD4P4No5tTzBXls6qGFupqcr1Zk="
++      "integrity": "sha1-zD4P4No5tTzBXls6qGFupqcr1Zk=",
++      "requires": {}
+     },
+     "auto-bind": {
+       "version": "2.1.1",
+@@ -607,9 +598,9 @@
+       "integrity": "sha1-j2G3XN4BKy6esoTUVFWDtWQ7Yas="
+     },
+     "eventemitter3": {
+-      "version": "2.0.3",
+-      "resolved": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-2.0.3.tgz",
+-      "integrity": "sha1-teEHm1n7XhuidxwKmTvgYKWMmbo="
++      "version": "5.0.4",
++      "resolved": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-5.0.4.tgz",
++      "integrity": "sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw=="
+     },
+     "exit": {
+       "version": "0.1.2",
+@@ -755,9 +746,9 @@
+       "integrity": "sha1-mMI9qxF1ZXuMBXPozszZGw/xjIQ="
+     },
+     "forwarded-for": {
+-      "version": "1.0.1",
+-      "resolved": "https://registry.npmjs.org/forwarded-for/-/forwarded-for-1.0.1.tgz",
+-      "integrity": "sha1-59pIFAJRaP/AoQ0/954UFfRq9Gk="
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/forwarded-for/-/forwarded-for-1.1.0.tgz",
++      "integrity": "sha512-1Yam9ht7GyMXMBvuwJfUYqpdtLVodtT5ee5JMBzGiSwVVeh37ZN8LuOWkNHd6ho2zUxpSZCHuQrt1Vjl2AxDNA=="
+     },
+     "fresh": {
+       "version": "0.5.2",
+@@ -1577,6 +1568,11 @@
+       "resolved": "https://registry.npmjs.org/nan/-/nan-2.14.0.tgz",
+       "integrity": "sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg=="
+     },
++    "nanoid": {
++      "version": "3.3.19",
++      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.19.tgz",
++      "integrity": "sha512-Y2tUNy4ouw6tq5oDSKeQYGOyhkUBhNOcGV/02KC+6kd9eDGqdZd++mjMiIDilrBYvjEnCYvVtsuHCuP+okSfug=="
++    },
+     "natives": {
+       "version": "1.1.6",
+       "resolved": "https://registry.npmjs.org/natives/-/natives-1.1.6.tgz",
+@@ -1640,11 +1636,6 @@
+         "wordwrap": "~0.0.2"
+       }
+     },
+-    "options": {
+-      "version": "0.0.6",
+-      "resolved": "https://registry.npmjs.org/options/-/options-0.0.6.tgz",
+-      "integrity": "sha1-7CLTEoBrtT5zF3Pnza788cZDEo8="
+-    },
+     "over": {
+       "version": "0.0.5",
+       "resolved": "https://registry.npmjs.org/over/-/over-0.0.5.tgz",
+@@ -1740,7 +1731,8 @@
+     "pg-pool": {
+       "version": "3.14.0",
+       "resolved": "https://registry.npmjs.org/pg-pool/-/pg-pool-3.14.0.tgz",
+-      "integrity": "sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw=="
++      "integrity": "sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw==",
++      "requires": {}
+     },
+     "pg-protocol": {
+       "version": "1.16.1",
+@@ -1826,20 +1818,43 @@
+       }
+     },
+     "primus": {
+-      "version": "6.1.0",
+-      "resolved": "https://registry.npmjs.org/primus/-/primus-6.1.0.tgz",
+-      "integrity": "sha1-s79Mk46weHS4crwrDOnA2oVdbBI=",
++      "version": "8.0.9",
++      "resolved": "https://registry.npmjs.org/primus/-/primus-8.0.9.tgz",
++      "integrity": "sha512-gWsd6pWHAHGfyArl6DQU9iCAp4bAgFrintDpFbyA2r0wdzJ2n9SsffSaFqOKYZeE9wqKcBepnwBGoFKzNybqMA==",
+       "requires": {
+         "access-control": "~1.0.0",
+         "asyncemit": "~3.0.1",
+         "create-server": "~1.0.1",
+-        "diagnostics": "~1.1.0",
+-        "eventemitter3": "~2.0.2",
+-        "forwarded-for": "~1.0.1",
++        "diagnostics": "~2.0.0",
++        "eventemitter3": "~5.0.0",
++        "forwarded-for": "~1.1.0",
+         "fusing": "~1.0.0",
+-        "setheader": "~0.0.4",
+-        "ultron": "~1.1.0",
+-        "yeast": "~0.1.2"
++        "nanoid": "~3.3.3",
++        "setheader": "~1.0.2",
++        "ultron": "~1.1.0"
++      },
++      "dependencies": {
++        "diagnostics": {
++          "version": "2.0.2",
++          "resolved": "https://registry.npmjs.org/diagnostics/-/diagnostics-2.0.2.tgz",
++          "integrity": "sha512-gvnlQHwkWTOeSM1iRNEwPcUuUwlhovzbuQzalKrTbcJhI5cvhtkRVZZqomwZt4pCl2dvbsugD6yyu+66rtMy3Q==",
++          "requires": {
++            "colorspace": "1.1.x",
++            "enabled": "2.0.x",
++            "kuler": "^2.0.0",
++            "storage-engine": "3.0.x"
++          }
++        },
++        "enabled": {
++          "version": "2.0.0",
++          "resolved": "https://registry.npmjs.org/enabled/-/enabled-2.0.0.tgz",
++          "integrity": "sha512-AKrN98kuwOzMIdAizXGI86UFBoo26CL21UM763y1h/GMSJ4/OHU9k2YlsmBpyScFo/wbLzWQJBMCW4+IO3/+OQ=="
++        },
++        "kuler": {
++          "version": "2.0.0",
++          "resolved": "https://registry.npmjs.org/kuler/-/kuler-2.0.0.tgz",
++          "integrity": "sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A=="
++        }
+       }
+     },
+     "primus-emit": {
+@@ -2051,18 +2066,11 @@
+       }
+     },
+     "setheader": {
+-      "version": "0.0.4",
+-      "resolved": "https://registry.npmjs.org/setheader/-/setheader-0.0.4.tgz",
+-      "integrity": "sha1-km7SjPdiFJYgkx566j8blYFuxpQ=",
++      "version": "1.0.2",
++      "resolved": "https://registry.npmjs.org/setheader/-/setheader-1.0.2.tgz",
++      "integrity": "sha512-A704nIwzqGed0CnJZIqDE+0udMPS839ocgf1R9OJ8aq8vw4U980HWeNaD9ec8VnmBni9lyGEWDedOWXT/C5kxA==",
+       "requires": {
+-        "debug": "0.7.x"
+-      },
+-      "dependencies": {
+-        "debug": {
+-          "version": "0.7.4",
+-          "resolved": "https://registry.npmjs.org/debug/-/debug-0.7.4.tgz",
+-          "integrity": "sha1-BuHqgILCyxTjmAbiLi9vdX+Srzk="
+-        }
++        "diagnostics": "1.x.x"
+       }
+     },
+     "setimmediate": {
+@@ -2154,6 +2162,27 @@
+       "resolved": "https://registry.npmjs.org/statuses/-/statuses-1.5.0.tgz",
+       "integrity": "sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow="
+     },
++    "storage-engine": {
++      "version": "3.0.7",
++      "resolved": "https://registry.npmjs.org/storage-engine/-/storage-engine-3.0.7.tgz",
++      "integrity": "sha512-V/jJykpPdsyDImLwu19syIAWn/Tb41tBDikQS+aQPH2h2OgqdLxwOg7wI9nPH3Y0Mh1ce566JZl2u+4eH1nAsg==",
++      "requires": {
++        "enabled": "^2.0.0",
++        "eventemitter3": "^4.0.0"
++      },
++      "dependencies": {
++        "enabled": {
++          "version": "2.0.0",
++          "resolved": "https://registry.npmjs.org/enabled/-/enabled-2.0.0.tgz",
++          "integrity": "sha512-AKrN98kuwOzMIdAizXGI86UFBoo26CL21UM763y1h/GMSJ4/OHU9k2YlsmBpyScFo/wbLzWQJBMCW4+IO3/+OQ=="
++        },
++        "eventemitter3": {
++          "version": "4.0.7",
++          "resolved": "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz",
++          "integrity": "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw=="
++        }
++      }
++    },
+     "string_decoder": {
+       "version": "0.10.31",
+       "resolved": "https://registry.npmjs.org/string_decoder/-/string_decoder-0.10.31.tgz",
+@@ -2380,20 +2409,10 @@
+       "integrity": "sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8="
+     },
+     "ws": {
+-      "version": "1.1.5",
+-      "resolved": "https://registry.npmjs.org/ws/-/ws-1.1.5.tgz",
+-      "integrity": "sha512-o3KqipXNUdS7wpQzBHSe180lBGO60SoK0yVo3CYJgb2MkobuWuBX6dhkYP5ORCLd55y+SaflMOV5fqAB53ux4w==",
+-      "requires": {
+-        "options": ">=0.0.5",
+-        "ultron": "1.0.x"
+-      },
+-      "dependencies": {
+-        "ultron": {
+-          "version": "1.0.2",
+-          "resolved": "https://registry.npmjs.org/ultron/-/ultron-1.0.2.tgz",
+-          "integrity": "sha1-rOEWq1V80Zc4ak6I9GhTeMiy5Po="
+-        }
+-      }
++      "version": "8.22.0",
++      "resolved": "https://registry.npmjs.org/ws/-/ws-8.22.0.tgz",
++      "integrity": "sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==",
++      "requires": {}
+     },
+     "xtend": {
+       "version": "4.0.2",
+@@ -2422,11 +2441,6 @@
+           "integrity": "sha1-m7UwTS4LVmmLLHWLCKPqqdqlijk="
+         }
+       }
+-    },
+-    "yeast": {
+-      "version": "0.1.2",
+-      "resolved": "https://registry.npmjs.org/yeast/-/yeast-0.1.2.tgz",
+-      "integrity": "sha1-AI4G2AlDIMNy28L47XagymyKxBk="
+     }
+   }
+ }
+diff --git a/package.json b/package.json
+index 1ce63b8..e3d114b 100644
+--- a/package.json
++++ b/package.json
+@@ -39,10 +39,10 @@
+     "jade": "1.11.0",
+     "lodash": "3.10.1",
+     "pg": "8.23.1",
+-    "primus": "^6.1.0",
++    "primus": "8.0.9",
+     "primus-emit": "^1.0.0",
+     "primus-spark-latency": "^0.1.1",
+     "websocket": "^1.0.30",
+-    "ws": "^1.1.1"
++    "ws": "8.22.0"
+   }
+ }
+diff --git a/test/collector-input-wire.test.cjs b/test/collector-input-wire.test.cjs
+index ac9d9d6..108ce16 100644
+--- a/test/collector-input-wire.test.cjs
++++ b/test/collector-input-wire.test.cjs
+@@ -5,6 +5,17 @@ const startCollector = require('./fixtures/collector-wire.cjs');
+ const { secretA } = require('./fixtures/collector.cjs');
+ const { connect, waitMessage, send, login, inventory } = require('./fixtures/wire-client.cjs');
+ 
++test('every real collector transport retains byte, fragment and buffered chunk bounds with text validation', { timeout: 10000 }, async t => {
++    const server = await startCollector(t);
++    const settings = await server.command('transport-settings');
++    await server.stop();
++    assert.deepEqual(settings, [
++        { maxPayload: 65536, maxFragments: 16384, maxBufferedChunks: 262144, perMessageDeflate: false, skipUTF8Validation: false },
++        { maxPayload: 65536, maxFragments: 16384, maxBufferedChunks: 262144, perMessageDeflate: false, skipUTF8Validation: false },
++        { maxPayload: 65536, maxFragments: 16384, maxBufferedChunks: 262144, perMessageDeflate: false, skipUTF8Validation: false },
++    ]);
++});
++
+ test('real telemetry login deadline closes a silent socket and ordinary login still works', { timeout: 10000 }, async t => {
+     const server = await startCollector(t, { COLLECTOR_HELLO_TIMEOUT_MS: '250' });
+     const silent = connect(t, server.port, 'api');
+@@ -25,7 +36,7 @@ test('real transport refuses a message over its byte limit on every collector pa
+     const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: '2048' });
+     const permitted = connect(t, server.port, 'primus');
+     await permitted.opened;
+-    const padding = 2047 - Buffer.byteLength(JSON.stringify({ emit: ['ready', { padding: '' }] }));
++    const padding = 2048 - Buffer.byteLength(JSON.stringify({ emit: ['ready', { padding: '' }] }));
+     permitted.socket.send(JSON.stringify({ emit: ['ready', { padding: 'x'.repeat(padding) }] }));
+     await waitMessage(permitted, message => message.emit && message.emit[0] === 'init');
+     permitted.socket.close();
+diff --git a/test/fixtures/wire-server.cjs b/test/fixtures/wire-server.cjs
+index 6643e5b..48a570d 100644
+--- a/test/fixtures/wire-server.cjs
++++ b/test/fixtures/wire-server.cjs
+@@ -1,3 +1,11 @@
++const WebSocket = require('ws');
++const transports = [];
++WebSocket.Server = class extends WebSocket.Server {
++    constructor(options) {
++        super(options);
++        transports.push(this);
++    }
++};
+ const server = require('../../server');
+ server.on('listening', () => process.send(server.address()));
+ process.on('message', message => {
+@@ -5,4 +13,13 @@ process.on('message', message => {
+     if (message === 'connections') {
+         server.getConnections((error, count) => process.send({ connections: count }));
+     }
++    if (message === 'transport-settings') {
++        process.send(transports.map(({ options }) => ({
++            maxPayload: options.maxPayload,
++            maxFragments: options.maxFragments,
++            maxBufferedChunks: options.maxBufferedChunks,
++            perMessageDeflate: options.perMessageDeflate,
++            skipUTF8Validation: options.skipUTF8Validation,
++        })));
++    }
+ });

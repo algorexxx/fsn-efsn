@@ -143,6 +143,11 @@ existing 547-file compiled frontend remain unchanged. The efsn Go/module source
 inventory also remains unchanged. Scratch services are stopped and temporary
 credentials removed. The original dashboard checkout is preserved.
 
+The [transport follow-up](restart-dashboard-transport.md) now completes item 1
+locally: Primus 8.0.9/ws 8.22.0 pass the native WSS, proxy and mining-outage
+checks without application or node source changes. The audit clears ws, Primus
+and setheader; 41 other root findings remain. Continue from item 2 below.
+
 ## Work order and exit condition
 
 1. Correct the Primus/ws pair with the smallest compatible dashboard change;

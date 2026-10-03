@@ -1,0 +1,247 @@
+{
+  "scope": "Loopback nginx, synthetic reporters, real collector/writer/API, in-memory snapshot store, compiled frontend bytes; no chain data, mining, PostgreSQL or browser execution.",
+  "requests": [
+    {
+      "path": "/",
+      "status": 200,
+      "protocol": "TLSv1.2"
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "protocol": "TLSv1.3"
+    },
+    {
+      "path": "/primus",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/primus",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/primus/",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/primus/",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/primus/primus.js",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/primus/primus.js",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/external",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/external",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/external/",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/external/",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/api/primus.js",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/api/primus.js",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/api/extra",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/api/extra",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/stats-api",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/stats-api",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/stats-api/private",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/stats-api/private",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/stats-api/primus",
+      "upgrade": false,
+      "status": 404
+    },
+    {
+      "path": "/stats-api/primus",
+      "upgrade": true,
+      "status": 404
+    },
+    {
+      "path": "/stats-api/nodes",
+      "status": 200,
+      "bytes": 588797
+    },
+    {
+      "path": "/stats-api/blocks",
+      "status": 200,
+      "bytes": 549892
+    },
+    {
+      "path": "/stats-api/info",
+      "status": 200,
+      "bytes": 17809
+    },
+    {
+      "path": "/stats-api/charts",
+      "status": 200,
+      "bytes": 9416
+    }
+  ],
+  "errors": [],
+  "saves": [
+    {
+      "bytes": 554541,
+      "nodes": 8
+    }
+  ],
+  "checks": {
+    "certificateTrustAndHostname": true,
+    "compiledAssets": true,
+    "routeIsolation": true,
+    "staleSnapshotUnavailable": true,
+    "reporterConnectionLimit": true,
+    "authentication": true,
+    "complete": true
+  },
+  "historyBytes": 3276956,
+  "forwardedHeaders": [
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52340",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52342",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52356",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52372",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52380",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52394",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52400",
+        "x-forwarded-proto": "https"
+      }
+    },
+    {
+      "path": "/api",
+      "headers": {
+        "host": "dashboard.test",
+        "upgrade": "websocket",
+        "connection": "upgrade",
+        "x-forwarded-for": "127.0.0.1",
+        "x-forwarded-port": "52412",
+        "x-forwarded-proto": "https"
+      }
+    }
+  ],
+  "apiTimeoutMs": 5010,
+  "helloTimeoutMs": 5005,
+  "idleTimeoutMs": 46026,
+  "heartbeatCount": 24,
+  "activeDurationMs": 47005
+}

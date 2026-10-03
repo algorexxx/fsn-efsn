@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Mining outage](restart-dashboard-mining-outage.md) passes; [Node 24 runtime review](restart-dashboard-runtime.md) passes compatibility, but public collector dependencies require correction | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Transport upgrade](restart-dashboard-transport.md) passes native WSS, proxy and mining-outage checks on Node 24; remaining dependencies and public deployment controls are open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -310,7 +310,13 @@ the obsolete deployment workflow. Audit counts distinguish package findings from
 proven reachable issues. Update the transport pair first, then re-audit and
 validate the final pinned installation; runtime compatibility alone does not
 close dependency acceptance. Supervision, public certificates and log lifecycle
-acceptance also remain open.
+acceptance also remain open. The [transport correction](restart-dashboard-transport.md)
+now pins Primus 8.0.9 and ws 8.22.0 with no application or efsn source change.
+All 173 contracts, 14 socket tests, native WSS/database/browser, eight-reporter
+proxy and the mining-outage drill pass on Node 24. The byte maximum is explicitly
+inclusive after the upgrade. A fresh audit clears the three targeted package
+findings; 41 other root findings remain for disposition. Continue the remaining
+dependency work before public deployment acceptance.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -369,11 +375,12 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: follow the [runtime/dependency worklist](restart-dashboard-runtime.md),
-   starting with the collector Primus/ws pair. The Node 24 compatibility check
-   passes; its unchanged dependency tree is not approved for public hosting.
-   Update active dependencies, prune unused ones, fix the separate API install
-   and obsolete deployment workflow, then validate a clean pinned installation.
+1. G6: continue the [runtime/dependency worklist](restart-dashboard-runtime.md).
+   The [Primus/ws correction](restart-dashboard-transport.md) passes on Node 24.
+   Next update active Lodash/Express/GeoIP as needed, prune unused dependencies,
+   consolidate the separate API install, address browser Axios and replace the
+   obsolete deployment workflow. Review remaining findings and validate a clean
+   pinned installation; public hosting is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log
    lifecycle checks. Preserve receipt/transport diagnostics and the same-host
    clock assumption. Review retry pacing and log volume using the
