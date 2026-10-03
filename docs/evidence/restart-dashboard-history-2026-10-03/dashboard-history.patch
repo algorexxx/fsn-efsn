@@ -1,0 +1,767 @@
+From 6893caa09e0db17d8b0f70a5d8349c1fb5bbb2c2 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 15:04:22 +0200
+Subject: [PATCH] Correct dashboard chart windows and reclaim unused forks
+
+---
+ docs/chart-history.md      |  57 +++++++++++
+ lib/collection.js          |  32 +++---
+ lib/history.js             | 114 +++++++++++----------
+ package.json               |   4 +-
+ server.js                  |   9 +-
+ test/history-wire.test.cjs |  41 ++++++++
+ test/history.test.cjs      | 199 +++++++++++++++++++++++++++++++++++++
+ test/persistence.test.cjs  |  16 ++-
+ 8 files changed, 388 insertions(+), 84 deletions(-)
+ create mode 100644 docs/chart-history.md
+ create mode 100644 test/history-wire.test.cjs
+ create mode 100644 test/history.test.cjs
+
+diff --git a/docs/chart-history.md b/docs/chart-history.md
+new file mode 100644
+index 0000000..faaf8fa
+--- /dev/null
++++ b/docs/chart-history.md
+@@ -0,0 +1,57 @@
++# Chart history retention
++
++The collector caches telemetry for the last 2,000 positive heights relative to
++the highest reported height. Advancing heads and out-of-order reports within
++that window are admitted even before the cache fills. An advancing window
++evicts older entries; later backfill cannot restore entries below its floor.
++Genesis remains excluded. This is a disposable dashboard cache, not chain data.
++
++The chart selects the latest 40 available cached heights and then displays them
++in ascending order. It does not fabricate missing heights. Explicit array
++reversal through Lodash's `thru` avoids the incorrect slice/reverse result in
++the pinned Lodash 3.10.1. Ticket arrays retain zero and use null for missing
++counts, preserving their height positions. Dependencies remain unchanged.
++
++Backfill requests contain at most 50 missing heights from the current window,
++newest first in selection and ascending in the transmitted list. `min` and
++`max` match that list's endpoints. Requests stop when the window is complete
++and do not request genesis or return nonfinite endpoints. Backfill can start
++after the first head. History batches receive the same minimal block validation
++as head reports before any cache mutation. They complete their callback once,
++do not reverse the caller's array and do not refresh current report receipts.
++The existing debounced chart callback is the sole history chart broadcast.
++
++Each retained height has at most one propagation record per authenticated node
++ID. When a node changes its reported fork, that reference moves to the new
++fork. Forks with no remaining propagation references are removed, except for
++the selected chart representative. Fork indices are remapped together.
++
++For N distinct node IDs configured at collector startup, retained state is
++bounded by 2,000 heights, at most N propagation records per height and at most
++N + 1 forks per height. Registration is limited to the fixed credential map;
++reconnects reuse the same identity. An insertion can temporarily add one fork
++before pruning. No new numeric fork-limit setting is needed. Changing the
++credential file requires restarting the collector, which resets this cache.
++
++The inherited representative policy remains: first report at a height unless
++an existing trusted source selects another fork. In ordinary configuration the
++trusted IP list is empty; `LITE=true` treats every source as trusted. Neither
++policy proves canonical-chain agreement. The cache is not a complete fork
++archive and does not infer finality, choose a consensus fork or affect mining.
++An incorrect high self-reported height can move this diagnostic window.
++
++Exact duplicates preserve first-seen propagation times. Switching forks gets
++a new receipt and uses the selected fork's first-seen receipt for propagation;
++the collection and cache share an injectable clock. These timing metrics are
++not the separate per-node freshness receipts documented in
++[node-report-freshness.md](node-report-freshness.md).
++
++This bound is not a production memory budget. N and the configured message byte
++limit still determine possible retained size. Slow consumers, outgoing queues,
++connection churn, HTTP/control traffic and the complete telemetry schema need
++separate review. Legacy arrival-based block times and hashrate estimates also
++remain diagnostic; recent reports alone do not establish chain progress.
++
++Run `npm test`, `npm run test:wire` and, with an explicitly disposable PostgreSQL
++cluster configured, `npm run test:persistence`. The chart checks use synthetic
++reports, fake clocks and loopback sockets; they require no chain restore or key.
+diff --git a/lib/collection.js b/lib/collection.js
+index 6d0a038..01eb7b0 100644
+--- a/lib/collection.js
++++ b/lib/collection.js
+@@ -8,7 +8,7 @@ var Collection = function Collection(externalAPI, now)
+ {
+     this._items = [];
+     this._now = now || Date.now;
+-	this._blockchain = new Blockchain();
++	this._blockchain = new Blockchain(this._now);
+ 	this._askedForHistory = false;
+ 	this._askedForHistoryTime = 0;
+ 	this._debounced = null;
+@@ -153,30 +153,22 @@ Collection.prototype.updateStats = function(id, stats, callback)
+ 	}
+ }
+ 
+-// TODO: Async series
+ Collection.prototype.addHistory = function(id, blocks, callback)
+ {
+ 	var node = this.getNode({ id: id });
+-
+-	if (!node)
+-	{
+-		callback('Node not found', null)
++	this.askedForHistory(false);
++	if (!node) {
++		callback('Node not found', null);
++		return;
+ 	}
+-	else
+-	{
+-		blocks = blocks.reverse();
+-
+-		// this._blockchain.clean(this.getBestBlockFromItems());
+-
+-		for (var i = 0; i <= blocks.length - 1; i++)
+-		{
+-			this._blockchain.add(blocks[i], id, node.trusted, true);
+-		};
+-
+-		this.getCharts();
++	if (!Array.isArray(blocks) || !blocks.every(function (block) { return isTelemetryReport('block', block); })) {
++		callback('Invalid history report', null);
++		return;
+ 	}
+-
+-	this.askedForHistory(false);
++	var history = this._blockchain;
++	blocks.slice().reverse().forEach(function (block) { history.add(block, id, node.trusted, true); });
++	this.getCharts();
++	callback(null);
+ }
+ 
+ Collection.prototype.updateLatency = function(id, latency, callback)
+diff --git a/lib/history.js b/lib/history.js
+index a7ac1c7..f3952fb 100644
+--- a/lib/history.js
++++ b/lib/history.js
+@@ -1,5 +1,6 @@
+ var _ = require('lodash');
+ var d3 = require('d3');
++var isTelemetryReport = require('./telemetry-report');
+ 
+ var MAX_HISTORY = 2000;
+ 
+@@ -11,23 +12,24 @@ var MAX_UNCLES = 1000;
+ var MAX_UNCLES_PER_BIN = 25;
+ var MAX_BINS = 40;
+ 
+-var History = function History(data)
++var History = function History(now)
+ {
+ 	this._items = [];
+ 	this._callback = null;
++	this._now = now || Date.now;
+ }
+ 
+ History.prototype.add = function(block, id, trusted, addingHistory)
+ {
+ 	var changed = false;
+ 
+-	if( !_.isUndefined(block) && !_.isUndefined(block.number) && !_.isUndefined(block.uncles) && !_.isUndefined(block.transactions) && !_.isUndefined(block.difficulty) && block.number > 0 )
++	if( isTelemetryReport('block', block) && block.number > 0 )
+ 	{
+ 		trusted = (process.env.LITE === 'true' ? true : trusted);
+ 		var historyBlock = this.search(block.number);
+ 		var forkIndex = -1;
+ 
+-		var now = _.now();
++		var now = this._now();
+ 
+ 		block.trusted = trusted;
+ 		block.arrived = now;
+@@ -52,6 +54,7 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 				{
+ 					// Found fork => update data
+ 					block.arrived = historyBlock.forks[forkIndex].arrived;
++					block.time = historyBlock.forks[forkIndex].time;
+ 					block.propagation = now - historyBlock.forks[forkIndex].received;
+ 				}
+ 				else
+@@ -91,6 +94,7 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 				{
+ 					// Matching fork found => update data
+ 					block.arrived = historyBlock.forks[forkIndex].arrived;
++					block.time = historyBlock.forks[forkIndex].time;
+ 
+ 					if( forkIndex === historyBlock.propagTimes[propIndex].fork )
+ 					{
+@@ -102,16 +106,13 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 					{
+ 						// Fork index is different
+ 						historyBlock.propagTimes[propIndex].fork = forkIndex;
++						historyBlock.propagTimes[propIndex].received = now;
+ 						historyBlock.propagTimes[propIndex].propagation = block.propagation = now - historyBlock.forks[forkIndex].received;
+ 					}
+ 
+ 				}
+ 				else
+ 				{
+-					// No matching fork found => replace old one
+-					block.received = historyBlock.propagTimes[propIndex].received;
+-					block.propagation = historyBlock.propagTimes[propIndex].propagation;
+-
+ 					var prevBlock = this.prevMaxBlock(block.number);
+ 
+ 					if( prevBlock )
+@@ -128,6 +129,9 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 
+ 					forkIndex = historyBlock.forks.push(block) - 1;
+ 					historyBlock.forks[forkIndex].fork = forkIndex;
++					historyBlock.propagTimes[propIndex].fork = forkIndex;
++					historyBlock.propagTimes[propIndex].received = now;
++					historyBlock.propagTimes[propIndex].propagation = block.propagation;
+ 				}
+ 			}
+ 
+@@ -138,7 +142,7 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 				historyBlock.block = historyBlock.forks[forkIndex];
+ 			}
+ 
+-			block.fork = forkIndex;
++			block.fork = retainReportedForks(historyBlock, forkIndex);
+ 
+ 			changed = true;
+ 
+@@ -169,7 +173,7 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 				propagTimes: []
+ 			}
+ 
+-			if( this._items.length === 0 || (this._items.length === MAX_HISTORY && block.number > this.worstBlockNumber()) || (this._items.length < MAX_HISTORY && block.number < this.bestBlockNumber() && addingHistory) )
++			if( block.number >= Math.max(1, this.bestBlockNumber() - MAX_HISTORY + 1) )
+ 			{
+ 				item.propagTimes.push({
+ 					node: id,
+@@ -194,6 +198,28 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 	return false;
+ }
+ 
++function retainReportedForks(item, reportedIndex)
++{
++	var retained = new Set(item.propagTimes.map(function (report) { return report.fork; }));
++	retained.add(item.forks.indexOf(item.block));
++	var indices = new Map();
++	item.forks = item.forks.filter(function (fork, index) {
++		if (!retained.has(index)) {
++			return false;
++		}
++		indices.set(index, indices.size);
++		fork.fork = indices.get(index);
++		return true;
++	});
++	item.propagTimes.forEach(function (report) { report.fork = indices.get(report.fork); });
++	return indices.get(reportedIndex);
++}
++
++function reverseItems(items)
++{
++	return items.slice().reverse();
++}
++
+ function compareBlocks(block1, block2)
+ {
+ 	if( block1.hash 				!== block2.hash ||
+@@ -229,11 +255,8 @@ History.prototype._save = function(block)
+ 	this._items.unshift(block);
+ 
+ 	this._items = _.sortByOrder( this._items, 'height', false );
+-
+-	if(this._items.length > MAX_HISTORY)
+-	{
+-		this._items.pop();
+-	}
++	var floor = Math.max(1, this.bestBlockNumber() - MAX_HISTORY + 1);
++	this._items = this._items.filter(function (item) { return item.height >= floor; });
+ }
+ 
+ History.prototype.clean = function(max)
+@@ -309,7 +332,7 @@ History.prototype.getNodePropagation = function(id)
+ {
+ 	var propagation = new Array( MAX_PEER_PROPAGATION );
+ 	var bestBlock = this.bestBlockNumber();
+-	var lastBlocktime = _.now();
++	var lastBlocktime = this._now();
+ 
+ 	_.fill(propagation, -1);
+ 
+@@ -335,7 +358,7 @@ History.prototype.getNodePropagation = function(id)
+ 				}
+ 			}
+ 		})
+-		.reverse()
++		.thru(reverseItems)
+ 		.value();
+ 
+ 	return propagation;
+@@ -426,7 +449,7 @@ History.prototype.getBlockTimes = function()
+ 			// return item.block.trusted;
+ 		// })
+ 		.slice(0, MAX_BINS)
+-		.reverse()
++		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+ 			return item.block.time / 1000;
+@@ -445,7 +468,7 @@ History.prototype.getAvgBlocktime = function()
+ 			// return item.block.trusted;
+ 		// })
+ 		// .slice(0, MAX_BINS)
+-		.reverse()
++		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+ 			return item.block.time / 1000;
+@@ -464,7 +487,7 @@ History.prototype.getGasLimit = function()
+ 		// 	return item.block.trusted;
+ 		// })
+ 		.slice(0, MAX_BINS)
+-		.reverse()
++		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+ 			return item.block.gasLimit;
+@@ -483,7 +506,7 @@ History.prototype.getDifficulty = function()
+ 			return item.block.trusted;
+ 		})
+ 		.slice(0, MAX_BINS)
+-		.reverse()
++		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+ 			return item.block.difficulty;
+@@ -502,7 +525,7 @@ History.prototype.getTransactionsCount = function()
+ 			return item.block.trusted;
+ 		})
+ 		.slice(0, MAX_BINS)
+-		.reverse()
++		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+ 			return item.block.transactions.length;
+@@ -521,7 +544,7 @@ History.prototype.getGasSpending = function()
+ 			return item.block.trusted;
+ 		})
+ 		.slice(0, MAX_BINS)
+-		.reverse()
++		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+ 			return item.block.gasUsed;
+@@ -559,15 +582,11 @@ History.prototype.getTicketNumber = function()
+ {
+     var ticketNumbers = _( this._items )
+         .sortByOrder( 'height', false )
+-        .filter(function (item)
+-        {
+-            return item.block.ticketNumber;
+-        })
+         .slice(0, MAX_BINS)
+-        .reverse()
++        .thru(reverseItems)
+         .map(function (item)
+         {
+-            return item.block.ticketNumber;
++            return item.block.ticketNumber == null ? null : item.block.ticketNumber;
+         })
+         .value();
+ 
+@@ -577,15 +596,11 @@ History.prototype.getmyTicketNumber = function()
+ {
+     var ticketNumbers = _( this._items )
+         .sortByOrder( 'height', false )
+-        .filter(function (item)
+-        {
+-            return item.block.myTicketNumber;
+-        })
+         .slice(0, MAX_BINS)
+-        .reverse()
++        .thru(reverseItems)
+         .map(function (item)
+         {
+-            return item.block.myTicketNumber;
++            return item.block.myTicketNumber == null ? null : item.block.myTicketNumber;
+         })
+         .value();
+ 
+@@ -637,7 +652,7 @@ History.prototype.getCharts = function()
+ 			// 	return item.block.trusted;
+ 			// })
+ 			.slice(0, MAX_BINS)
+-			.reverse()
++			.thru(reverseItems)
+ 			.map(function (item)
+ 			{
+                 return {
+@@ -676,29 +691,22 @@ History.prototype.getCharts = function()
+ 
+ History.prototype.requiresUpdate = function()
+ {
+-	// return ( this._items.length < MAX_HISTORY && !_.isEmpty(this._items) );
+-	return ( this._items.length < MAX_HISTORY );
++	return this.getHistoryRequestRange() !== false;
+ }
+ 
+ History.prototype.getHistoryRequestRange = function()
+ {
+-	if( this._items.length < 2 )
++	var best = this.bestBlockNumber();
++	if (best === 0) {
+ 		return false;
+-
+-	var blocks = _.pluck( this._items, 'height' );
+-	var best = _.max( blocks );
+-	var range = _.range( _.max([ 0, best - MAX_HISTORY ]), best + 1);
+-
+-	var missing = _.difference( range, blocks );
+-
+-	var max = _.max(missing);
+-	var min = max - Math.min( 50, (MAX_HISTORY - this._items.length + 1) ) + 1;
+-
+-	return {
+-		max: max,
+-		min: min,
+-		list: _( missing ).reverse().slice(0, 50).reverse().value()
+-	};
++	}
++	var blocks = _.pluck(this._items, 'height');
++	var range = _.range(Math.max(1, best - MAX_HISTORY + 1), best + 1);
++	var list = _.difference(range, blocks).slice(-50);
++	if (list.length === 0) {
++		return false;
++	}
++	return { min: list[0], max: list[list.length - 1], list: list };
+ }
+ 
+ module.exports = History;
+diff --git a/package.json b/package.json
+index c442afd..ef8f29b 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,8 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs",
+-    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs",
++    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+     "start": "node server.js"
+diff --git a/server.js b/server.js
+index 3bf207b..5ee301b 100644
+--- a/server.js
++++ b/server.js
+@@ -306,7 +306,7 @@ api.on('connection', function (spark)
+         var time = chalk.reset.cyan((new Date()).toJSON()) + " ";
+         console.time(time, 'COL', 'CHR', 'Got charts in');
+ 
+-        Nodes.addHistory(data.id, data.history, function (err, history)
++        Nodes.addHistory(data.id, data.history, function (err)
+         {
+             console.timeEnd(time, 'COL', 'CHR', 'Got charts in');
+ 
+@@ -314,13 +314,6 @@ api.on('connection', function (spark)
+             {
+                 console.error('COL', 'CHR', 'History error:', err);
+             }
+-            else
+-            {
+-                client.write({
+-                    action: 'charts',
+-                    data: history
+-                });
+-            }
+         });
+     });
+ 
+diff --git a/test/history-wire.test.cjs b/test/history-wire.test.cjs
+new file mode 100644
+index 0000000..cdf3b49
+--- /dev/null
++++ b/test/history-wire.test.cjs
+@@ -0,0 +1,41 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
++
++function block(number) {
++    return { number, hash: '0x' + number.toString(16).padStart(64, '0'), difficulty: '1', totalDifficulty: '2', timestamp: number * 10, transactions: [], uncles: [], ticketNumber: 0 };
++}
++
++test('collector backfills requested gaps and broadcasts the newest forty heights as heads advance', { timeout: 15000 }, async t => {
++    const server = await startCollector(t);
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    send(owner, 'block', { id: 'node-a', block: block(100) });
++    send(owner, 'latency', { id: 'node-a', latency: '12' });
++    const request = await waitMessage(owner, message => message.emit && message.emit[0] === 'history');
++    assert.deepEqual(request.emit[1], { min: 50, max: 99, list: Array.from({ length: 50 }, (_, index) => 50 + index) });
++    send(owner, 'history', { id: 'node-a', history: request.emit[1].list.slice().reverse().map(block) });
++    await inventory(viewer);
++    const initial = await waitMessage(viewer, message => message.action === 'charts' && message.data.height.length === 40);
++    assert.deepEqual(initial.data.height, Array.from({ length: 40 }, (_, index) => 61 + index));
++    assert.deepEqual(initial.data.ticketNumber, Array(40).fill(0));
++    const ownerFrom = owner.messages.length;
++    send(owner, 'latency', { id: 'node-a', latency: '12' });
++    const remaining = await waitMessage(owner, message => message.emit && message.emit[0] === 'history', ownerFrom);
++    assert.deepEqual(remaining.emit[1], { min: 1, max: 49, list: Array.from({ length: 49 }, (_, index) => 1 + index) });
++    send(owner, 'history', { id: 'node-a', history: remaining.emit[1].list.slice().reverse().map(block) });
++    const viewerFrom = viewer.messages.length;
++    send(owner, 'block', { id: 'node-a', block: block(101) });
++    const advanced = await waitMessage(viewer, message => message.action === 'charts' && message.data.height[39] === 101, viewerFrom);
++    assert.deepEqual(advanced.data.height, Array.from({ length: 40 }, (_, index) => 62 + index));
++    assert.equal(viewer.messages.filter(message => message.action === 'charts').every(message => message.data && Array.isArray(message.data.height)), true);
++    assert.equal((await inventory(viewer))[0].stats.block.number, 101);
++    viewer.socket.close();
++    owner.socket.close();
++    await Promise.all([viewer.closed, owner.closed]);
++    await server.stop();
++});
+diff --git a/test/history.test.cjs b/test/history.test.cjs
+new file mode 100644
+index 0000000..718af4e
+--- /dev/null
++++ b/test/history.test.cjs
+@@ -0,0 +1,199 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const History = require('../lib/history');
++const Collection = require('../lib/collection');
++
++function block(number, fork = 0) {
++    return { number, hash: '0x' + (number * 100 + fork).toString(16).padStart(64, '0'), parentHash: '0x' + '0'.repeat(64), difficulty: String(number), totalDifficulty: String(number * 2), timestamp: number * 10, miner: 'miner-a', transactions: [], uncles: [], gasLimit: number, gasUsed: number, ticketNumber: number, myTicketNumber: number };
++}
++
++function charts(history) {
++    let result;
++    history.setCallback((error, value) => { assert.equal(error, null); result = value; });
++    history.getCharts();
++    return result;
++}
++
++test('a partly filled cache accepts advancing heads and out-of-order reports', () => {
++    const history = new History(() => 1000);
++    history.add(block(100), 'node-a', false);
++    history.add(block(102), 'node-a', false);
++    history.add(block(101), 'node-b', false);
++
++    const result = charts(history);
++
++    assert.deepEqual(result.height, [100, 101, 102]);
++});
++
++test('charts take the newest forty heights before reversing and keep every series aligned', () => {
++    const history = new History(() => 1000);
++    const expected = Array.from({ length: 40 }, (_, index) => 61 + index);
++    history.add(block(100), 'node-a', true);
++    for (let height = 99; height >= 51; height--) {
++        history.add(block(height), 'node-a', true, true);
++    }
++
++    const result = charts(history);
++    const standalone = [history.getGasLimit(), history.getGasSpending(), history.getDifficulty(), history.getTicketNumber(), history.getmyTicketNumber()];
++
++    assert.deepEqual(result.height, expected);
++    assert.deepEqual([result.gasLimit, result.gasSpending, result.ticketNumber, result.myTicketNumber], [expected, expected, expected, expected]);
++    assert.deepEqual(result.difficulty, expected.map(String));
++    assert.deepEqual(standalone, [expected, expected, expected.map(String), expected, expected]);
++    assert.deepEqual(history._items.map(item => item.height), Array.from({ length: 50 }, (_, index) => 100 - index));
++});
++
++test('a moving two-thousand-height window evicts old reports and rejects later backfill below its floor', () => {
++    const history = new History(() => 1000);
++    history.add(block(2000), 'node-a', false);
++    history.add(block(1), 'node-a', false, true);
++    history.add(block(2001), 'node-a', false);
++    history.add(block(2), 'node-a', false, true);
++    history.add(block(1), 'node-a', false, true);
++
++    const firstWindow = history._items.map(item => item.height);
++    history.add(block(5001), 'node-a', false);
++
++    assert.deepEqual(firstWindow, [2001, 2000, 2]);
++    assert.deepEqual(history._items.map(item => item.height), [5001]);
++});
++
++test('full cache retains exactly the two thousand most recent positive heights', () => {
++    const history = new History(() => 1000);
++    for (let height = 2001; height >= 1; height--) {
++        history.add(block(height), 'node-a', false, true);
++    }
++
++    const retained = history._items.map(item => item.height);
++    const displayed = charts(history).height;
++
++    assert.deepEqual(retained, Array.from({ length: 2000 }, (_, index) => 2001 - index));
++    assert.deepEqual(displayed, Array.from({ length: 40 }, (_, index) => 1962 + index));
++    assert.equal(history.requiresUpdate(), false);
++    assert.equal(history.getHistoryRequestRange(), false);
++});
++
++test('history requests contain the newest fifty missing positive heights in ascending order', () => {
++    const history = new History(() => 1000);
++    history.add(block(100), 'node-a', false);
++
++    const result = history.getHistoryRequestRange();
++
++    assert.deepEqual(result, { min: 50, max: 99, list: Array.from({ length: 50 }, (_, index) => 50 + index) });
++    assert.equal(history.requiresUpdate(), true);
++});
++
++test('history request completion handles empty, genesis-only and contiguous short histories', () => {
++    const history = new History(() => 1000);
++    const before = { range: history.getHistoryRequestRange(), needsUpdate: history.requiresUpdate() };
++    history.add(block(0), 'node-a', false, true);
++    history.add(block(3), 'node-a', false);
++    history.add(block(1), 'node-a', false, true);
++    const gap = history.getHistoryRequestRange();
++    history.add(block(2), 'node-a', false, true);
++
++    const after = { range: history.getHistoryRequestRange(), needsUpdate: history.requiresUpdate() };
++
++    assert.deepEqual(before, { range: false, needsUpdate: false });
++    assert.deepEqual(gap, { min: 2, max: 2, list: [2] });
++    assert.deepEqual(after, { range: false, needsUpdate: false });
++});
++
++test('changing one node report releases unused forks while preserving the representative', () => {
++    const history = new History(() => 1000);
++    for (let fork = 0; fork < 12; fork++) {
++        history.add(block(100, fork), 'node-a', false);
++    }
++
++    const item = history.search(100);
++
++    assert.deepEqual(item.forks.map(value => value.hash), [block(100, 0).hash, block(100, 11).hash]);
++    assert.equal(item.block.hash, block(100, 0).hash);
++    assert.deepEqual(item.propagTimes.map(value => ({ node: value.node, fork: value.fork })), [{ node: 'node-a', fork: 1 }]);
++});
++
++test('two reporting nodes keep their distinct forks and indices remain consistent when one switches', () => {
++    const history = new History(() => 1000);
++    history.add(block(100, 0), 'node-a', false);
++    history.add(block(100, 1), 'node-b', false);
++    history.add(block(100, 2), 'node-a', false);
++    history.add(block(100, 3), 'node-a', false);
++
++    const before = history.search(100).forks.map(value => value.hash);
++    history.add(block(100, 1), 'node-a', false);
++    const item = history.search(100);
++
++    assert.deepEqual(before, [block(100, 0).hash, block(100, 1).hash, block(100, 3).hash]);
++    assert.deepEqual(item.forks.map(value => ({ hash: value.hash, fork: value.fork })), [{ hash: block(100, 0).hash, fork: 0 }, { hash: block(100, 1).hash, fork: 1 }]);
++    assert.deepEqual(item.propagTimes.map(value => ({ node: value.node, fork: value.fork })), [{ node: 'node-a', fork: 1 }, { node: 'node-b', fork: 1 }]);
++});
++
++test('trusted representative selection is preserved while abandoned forks are reclaimed', () => {
++    const history = new History(() => 1000);
++    history.add(block(100, 0), 'node-a', false);
++    history.add(block(100, 1), 'node-b', true);
++    history.add(block(100, 2), 'node-b', true);
++
++    const item = history.search(100);
++
++    assert.deepEqual(item.forks.map(value => value.hash), [block(100, 0).hash, block(100, 2).hash]);
++    assert.equal(item.block.hash, block(100, 2).hash);
++    assert.equal(item.block.trusted, true);
++    assert.deepEqual(item.propagTimes.map(value => ({ node: value.node, fork: value.fork })), [{ node: 'node-a', fork: 0 }, { node: 'node-b', fork: 1 }]);
++});
++
++test('duplicate reports preserve propagation timing but a changed fork receives a new receipt', () => {
++    let now = 1000;
++    const history = new History(() => now);
++    history.add(block(100), 'node-a', false);
++    now = 1500;
++    history.add(block(100), 'node-b', false);
++    now = 2000;
++    const duplicate = history.add(block(100), 'node-b', false);
++    now = 3000;
++    const switched = history.add(block(100, 1), 'node-b', false);
++
++    assert.deepEqual({ arrived: duplicate.block.arrived, received: duplicate.block.received, propagation: duplicate.block.propagation }, { arrived: 1000, received: 1500, propagation: 500 });
++    assert.deepEqual({ arrived: switched.block.arrived, received: switched.block.received, propagation: switched.block.propagation }, { arrived: 3000, received: 3000, propagation: 0 });
++    assert.deepEqual(history.search(100).propagTimes.map(value => ({ node: value.node, received: value.received, propagation: value.propagation })), [{ node: 'node-a', received: 1000, propagation: 0 }, { node: 'node-b', received: 3000, propagation: 0 }]);
++});
++
++test('ticket charts preserve zero and missing values at their original heights', () => {
++    const history = new History(() => 1000);
++    history.add({ ...block(3), ticketNumber: 4, myTicketNumber: 1 }, 'node-a', false);
++    history.add({ ...block(2), ticketNumber: 0, myTicketNumber: 0 }, 'node-a', false, true);
++    history.add({ ...block(1), ticketNumber: undefined, myTicketNumber: undefined }, 'node-a', false, true);
++
++    const result = charts(history);
++
++    assert.deepEqual(result.height, [1, 2, 3]);
++    assert.deepEqual(result.ticketNumber, [null, 0, 4]);
++    assert.deepEqual(result.myTicketNumber, [null, 0, 1]);
++});
++
++test('malformed history reports cannot partially mutate the cache or leave their callback pending', t => {
++    const collection = new Collection({ write() {} }, () => 1000);
++    const callbacks = [];
++    collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
++    t.after(() => { if (collection._debounced) { collection._debounced.cancel(); } });
++
++    collection.addHistory('node-a', [block(100), { ...block(99), transactions: null }], error => callbacks.push(error));
++
++    assert.deepEqual(callbacks, ['Invalid history report']);
++    assert.deepEqual(collection.getHistory()._items, []);
++});
++
++test('valid history completes once, does not reorder caller data and shares the injected receipt clock', t => {
++    const collection = new Collection({ write() {} }, () => 1234);
++    const callbacks = [];
++    const input = [block(100), block(99)];
++    collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
++    t.after(() => { if (collection._debounced) { collection._debounced.cancel(); } });
++
++    collection.addHistory('node-a', input, error => callbacks.push(error));
++
++    assert.deepEqual(callbacks, [null]);
++    assert.deepEqual(input.map(value => value.number), [100, 99]);
++    assert.deepEqual(collection.getHistory()._items.map(item => item.block.arrived), [1234, 1234]);
++    assert.deepEqual(collection.getNode({ id: 'node-a' }).reports, { block: null, stats: null, pending: null });
++});
+diff --git a/test/persistence.test.cjs b/test/persistence.test.cjs
+index 7c2ac68..ee2dad2 100644
+--- a/test/persistence.test.cjs
++++ b/test/persistence.test.cjs
+@@ -23,7 +23,7 @@ async function waitForSnapshot(retrieve, predicate) {
+     const deadline = Date.now() + 8000;
+     while (Date.now() < deadline) {
+         const snapshot = await retrieve.readSnapshot();
+-        if (snapshot && predicate(snapshot.payload.nodes)) {
++        if (snapshot && predicate(snapshot.payload.nodes, snapshot.payload.charts)) {
+             return snapshot;
+         }
+         await new Promise(resolve => setTimeout(resolve, 50));
+@@ -129,6 +129,20 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+         }
+     });
+ 
++    await t.test('advancing chart heights survive the collector, PostgreSQL snapshot and HTTP API', async () => {
++        const history = Array.from({ length: 50 }, (_, index) => {
++            const number = 102 - index;
++            return { number, hash: '0x' + String(number).padStart(64, '0'), difficulty: 1, totalDifficulty: 1, timestamp: 1704067200 + number, transactions: [], uncles: [], ticketNumber: 0 };
++        });
++        send(a, 'history', { id: 'node-a', history });
++        send(a, 'block', { id: 'node-a', block: { ...history[0], number: 103, hash: '0x' + '103'.padStart(64, '0') } });
++        const snapshot = await waitForSnapshot(retrieve, (_, charts) => charts.height && charts.height[39] === 103);
++        const response = await request(server.address().port, '/charts');
++        assert.equal(response.status, 200);
++        assert.deepEqual(snapshot.payload.charts.height, Array.from({ length: 40 }, (_, index) => 64 + index));
++        assert.deepEqual(JSON.parse(response.body[0].charts), snapshot.payload.charts);
++    });
++
+     await t.test('writer reconnect and node disconnect replace the snapshot with fresh complete reports', async () => {
+         sockets[0].close();
+         a.socket.close();

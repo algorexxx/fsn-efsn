@@ -1,0 +1,687 @@
+TAP version 13
+# Subtest: a partly filled cache accepts advancing heads and out-of-order reports
+not ok 1 - a partly filled cache accepts advancing heads and out-of-order reports
+  ---
+  duration_ms: 3.7603
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:17:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        100,
+    -   101,
+    -   102
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 100
+    1: 101
+    2: 102
+  actual:
+    0: 100
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:25:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.start (node:internal/test_runner/test:833:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: charts take the newest forty heights before reversing and keep every series aligned
+not ok 2 - charts take the newest forty heights before reversing and keep every series aligned
+  ---
+  duration_ms: 3.1645
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      [
+    +   51,
+    +   52,
+    +   53,
+    +   54,
+    +   55,
+    +   56,
+    +   57,
+    +   58,
+    +   59,
+    +   60,
+    +   61,
+    +   62,
+    +   63,
+    +   64,
+    +   65,
+    +   66,
+    +   67,
+    +   68,
+    +   69,
+    +   70,
+    +   71,
+    +   72,
+    +   73,
+    +   74,
+    +   75,
+    ...
+    -   61,
+    -   62,
+    -   63,
+    -   64,
+    -   65,
+    -   66,
+    -   67,
+    -   68,
+    -   69,
+    -   70,
+    -   71,
+    -   72,
+    -   73,
+    -   74,
+    -   75,
+    -   76,
+    -   77,
+    -   78,
+    -   79,
+    -   80,
+    -   81,
+    -   82,
+    -   83,
+    -   84,
+    -   85,
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 61
+    1: 62
+    2: 63
+    3: 64
+    4: 65
+    5: 66
+    6: 67
+    7: 68
+    8: 69
+    9: 70
+    10: 71
+    11: 72
+    12: 73
+    13: 74
+    14: 75
+    15: 76
+    16: 77
+    17: 78
+    18: 79
+    19: 80
+    20: 81
+    21: 82
+    22: 83
+    23: 84
+    24: 85
+    25: 86
+    26: 87
+    27: 88
+    28: 89
+    29: 90
+    30: 91
+    31: 92
+    32: 93
+    33: 94
+    34: 95
+    35: 96
+    36: 97
+    37: 98
+    38: 99
+    39: 100
+  actual:
+    0: 51
+    1: 52
+    2: 53
+    3: 54
+    4: 55
+    5: 56
+    6: 57
+    7: 58
+    8: 59
+    9: 60
+    10: 61
+    11: 62
+    12: 63
+    13: 64
+    14: 65
+    15: 66
+    16: 67
+    17: 68
+    18: 69
+    19: 70
+    20: 71
+    21: 72
+    22: 73
+    23: 74
+    24: 75
+    25: 76
+    26: 77
+    27: 78
+    28: 79
+    29: 80
+    30: 81
+    31: 82
+    32: 83
+    33: 84
+    34: 85
+    35: 86
+    36: 87
+    37: 88
+    38: 89
+    39: 90
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:39:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: a moving two-thousand-height window evicts old reports and rejects later backfill below its floor
+not ok 3 - a moving two-thousand-height window evicts old reports and rejects later backfill below its floor
+  ---
+  duration_ms: 0.3314
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   2000,
+    +   2,
+    +   1
+    -   2001,
+    -   2000,
+    -   2
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 2001
+    1: 2000
+    2: 2
+  actual:
+    0: 2000
+    1: 2
+    2: 1
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:57:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: full cache retains exactly the two thousand most recent positive heights
+not ok 4 - full cache retains exactly the two thousand most recent positive heights
+  ---
+  duration_ms: 146.7609
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:61:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   list: [
+    +     1
+    +   ],
+    +   max: 1,
+    +   min: 1
+    + }
+    - false
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual:
+    max: 1
+    min: 1
+    list:
+      0: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:71:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: history requests contain the newest fifty missing positive heights in ascending order
+not ok 5 - history requests contain the newest fifty missing positive heights in ascending order
+  ---
+  duration_ms: 0.2482
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:74:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+    + false
+    ...
+    - {
+    -   list: [
+    -     50,
+    -     51,
+    -     52,
+    -     53,
+    -     54,
+    -     55,
+    -     56,
+    -     57,
+    -     58,
+    -     59,
+    -     60,
+    -     61,
+    -     62,
+    -     63,
+    -     64,
+    -     65,
+    -     66,
+    -     67,
+    -     68,
+    -     69,
+    -     70,
+    -     71,
+    -     72,
+    -     73,
+    -     74,
+    -     75,
+    -     76,
+    -     77,
+    -     78,
+    -     79,
+    -     80,
+    -     81,
+    -     82,
+    -     83,
+    -     84,
+    -     85,
+    -     86,
+    -     87,
+    -     88,
+    -     89,
+    -     90,
+    -     91,
+    -     92,
+    -     93,
+    -     94,
+    -     95,
+    -     96,
+    -     97,
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    min: 50
+    max: 99
+    list:
+      0: 50
+      1: 51
+      2: 52
+      3: 53
+      4: 54
+      5: 55
+      6: 56
+      7: 57
+      8: 58
+      9: 59
+      10: 60
+      11: 61
+      12: 62
+      13: 63
+      14: 64
+      15: 65
+      16: 66
+      17: 67
+      18: 68
+      19: 69
+      20: 70
+      21: 71
+      22: 72
+      23: 73
+      24: 74
+      25: 75
+      26: 76
+      27: 77
+      28: 78
+      29: 79
+      30: 80
+      31: 81
+      32: 82
+      33: 83
+      34: 84
+      35: 85
+      36: 86
+      37: 87
+      38: 88
+      39: 89
+      40: 90
+      41: 91
+      42: 92
+      43: 93
+      44: 94
+      45: 95
+      46: 96
+      47: 97
+      48: 98
+      49: 99
+  actual: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:80:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: history request completion handles empty, genesis-only and contiguous short histories
+not ok 6 - history request completion handles empty, genesis-only and contiguous short histories
+  ---
+  duration_ms: 0.3757
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:84:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   needsUpdate: true,
+    -   needsUpdate: false,
+        range: false
+      }
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    range: false
+    needsUpdate: false
+  actual:
+    range: false
+    needsUpdate: true
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:95:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: changing one node report releases unused forks while preserving the representative
+not ok 7 - changing one node report releases unused forks while preserving the representative
+  ---
+  duration_ms: 0.384
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:100:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        '0x0000000000000000000000000000000000000000000000000000000000002710',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002711',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002712',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002713',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002714',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002715',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002716',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002717',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002718',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002719',
+    +   '0x000000000000000000000000000000000000000000000000000000000000271a',
+        '0x000000000000000000000000000000000000000000000000000000000000271b'
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '0x0000000000000000000000000000000000000000000000000000000000002710'
+    1: '0x000000000000000000000000000000000000000000000000000000000000271b'
+  actual:
+    0: '0x0000000000000000000000000000000000000000000000000000000000002710'
+    1: '0x0000000000000000000000000000000000000000000000000000000000002711'
+    2: '0x0000000000000000000000000000000000000000000000000000000000002712'
+    3: '0x0000000000000000000000000000000000000000000000000000000000002713'
+    4: '0x0000000000000000000000000000000000000000000000000000000000002714'
+    5: '0x0000000000000000000000000000000000000000000000000000000000002715'
+    6: '0x0000000000000000000000000000000000000000000000000000000000002716'
+    7: '0x0000000000000000000000000000000000000000000000000000000000002717'
+    8: '0x0000000000000000000000000000000000000000000000000000000000002718'
+    9: '0x0000000000000000000000000000000000000000000000000000000000002719'
+    10: '0x000000000000000000000000000000000000000000000000000000000000271a'
+    11: '0x000000000000000000000000000000000000000000000000000000000000271b'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:108:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: two reporting nodes keep their distinct forks and indices remain consistent when one switches
+not ok 8 - two reporting nodes keep their distinct forks and indices remain consistent when one switches
+  ---
+  duration_ms: 0.2111
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:113:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        '0x0000000000000000000000000000000000000000000000000000000000002710',
+        '0x0000000000000000000000000000000000000000000000000000000000002711',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002712',
+        '0x0000000000000000000000000000000000000000000000000000000000002713'
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '0x0000000000000000000000000000000000000000000000000000000000002710'
+    1: '0x0000000000000000000000000000000000000000000000000000000000002711'
+    2: '0x0000000000000000000000000000000000000000000000000000000000002713'
+  actual:
+    0: '0x0000000000000000000000000000000000000000000000000000000000002710'
+    1: '0x0000000000000000000000000000000000000000000000000000000000002711'
+    2: '0x0000000000000000000000000000000000000000000000000000000000002712'
+    3: '0x0000000000000000000000000000000000000000000000000000000000002713'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:124:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: trusted representative selection is preserved while abandoned forks are reclaimed
+not ok 9 - trusted representative selection is preserved while abandoned forks are reclaimed
+  ---
+  duration_ms: 0.4207
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:129:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        '0x0000000000000000000000000000000000000000000000000000000000002710',
+    +   '0x0000000000000000000000000000000000000000000000000000000000002711',
+        '0x0000000000000000000000000000000000000000000000000000000000002712'
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '0x0000000000000000000000000000000000000000000000000000000000002710'
+    1: '0x0000000000000000000000000000000000000000000000000000000000002712'
+  actual:
+    0: '0x0000000000000000000000000000000000000000000000000000000000002710'
+    1: '0x0000000000000000000000000000000000000000000000000000000000002711'
+    2: '0x0000000000000000000000000000000000000000000000000000000000002712'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:137:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: duplicate reports preserve propagation timing but a changed fork receives a new receipt
+not ok 10 - duplicate reports preserve propagation timing but a changed fork receives a new receipt
+  ---
+  duration_ms: 0.4408
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:143:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   arrived: 1791031891921,
+    +   propagation: 0,
+    +   received: 1791031891921
+    -   arrived: 1000,
+    -   propagation: 500,
+    -   received: 1500
+      }
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    arrived: 1000
+    received: 1500
+    propagation: 500
+  actual:
+    arrived: 1791031891921
+    received: 1791031891921
+    propagation: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:154:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: ticket charts preserve zero and missing values at their original heights
+not ok 11 - ticket charts preserve zero and missing values at their original heights
+  ---
+  duration_ms: 0.3622
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:159:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    -   null,
+    -   0,
+        4
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: ~
+    1: 0
+    2: 4
+  actual:
+    0: 4
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:168:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: malformed history reports cannot partially mutate the cache or leave their callback pending
+not ok 12 - malformed history reports cannot partially mutate the cache or leave their callback pending
+  ---
+  duration_ms: 1.6023
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:172:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   'Invalid history report'
+    - ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'Invalid history report'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:180:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: valid history completes once, does not reorder caller data and shares the injected receipt clock
+not ok 13 - valid history completes once, does not reorder caller data and shares the injected receipt clock
+  ---
+  duration_ms: 0.3838
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\history.test.cjs:184:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + []
+    - [
+    -   null
+    - ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: ~
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\history.test.cjs:193:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 0
+# fail 13
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 663.9687
