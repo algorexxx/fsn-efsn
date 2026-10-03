@@ -109,6 +109,12 @@ rollback availability subject to retention terms, and the required refresh and
 deletion schedule. This operational acceptance remains open; the package
 upgrade does not certify fresh map data.
 
+The subsequent [offline operations investigation](restart-dashboard-geoip-operations.md)
+now runs the installed updater against synthetic responses. It reproduces
+unverified archive checksums, false success with missing data and partial writes.
+Isolated switching, fresh-process lookup and rollback pass; the protected live
+download/validation/supervision workflow remains unimplemented.
+
 ## Next work
 
 Address browser Axios and build dependencies, replace the inherited deployment

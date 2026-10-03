@@ -348,6 +348,12 @@ tooltip/theme migration choices. It fixes reproduced saved-pin failures without
 changing dependencies: malformed or blocked browser storage no longer prevents
 live reports. Twenty-two frontend tests, seven storage browser scenarios, the
 existing nine browser checkpoints and native telemetry acceptance pass.
+The [GeoIP operations investigation](restart-dashboard-geoip-operations.md)
+then completes ten offline updater cases and five dataset-switch checkpoints.
+The stock updater accepts mismatched archive checksums and missing data, and
+failed updates can leave mixed files. Isolated staging preserves active data;
+fresh-reader activation and rollback pass. Implement the protected downloader,
+complete dataset validation and supervised restart before accepting public updates.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -416,8 +422,12 @@ Current technical order:
    or explicit legacy-stack acceptance remains a final release decision;
    browser coverage and lint differences remain named limitations. Hosted
    validation is unrun.
-   Complete GeoIP dataset selection/attribution and update operations; public
-   hosting is not approved yet.
+   Implement and test the bounded GeoIP update workflow specified in the
+   [operations investigation](restart-dashboard-geoip-operations.md): protected
+   downloads, archive integrity, complete dataset validation and supervised
+   activation/recovery. The stock updater alone is insufficient. Source/account
+   selection, attribution and refresh/deletion terms remain open; public hosting
+   is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log
    lifecycle checks. Preserve receipt/transport diagnostics and the same-host
    clock assumption. Review retry pacing and log volume using the

@@ -174,9 +174,11 @@ report records lint coverage differences and remaining maintenance work.
    disposition at release review. Keep lint differences and the intended
    browser matrix explicit. Hosted validation remains unrun; the current
    dependency locks retain the prior zero-advisory results.
-2. Finish GeoIP dataset selection, applicable terms/attribution, protected
-   updates, failure/recovery and refresh/deletion operations. The package
-   update does not establish data freshness or accept its download workflow.
+2. Use the [GeoIP operations investigation](restart-dashboard-geoip-operations.md)
+   for reproduced updater failures and passing isolated switch/rollback checks.
+   Implement the protected downloader, integrity/completeness checks and supervised
+   activation. Source/account selection, applicable terms/attribution and refresh/
+   deletion operations remain open; the stock updater is not an accepted job.
 3. Continue G6 supervision, retry/log lifecycle, public certificates and the
    coordinated deployment manifest. Recheck advisories at release and rerun
    combined acceptance on that exact package. These local compatibility
