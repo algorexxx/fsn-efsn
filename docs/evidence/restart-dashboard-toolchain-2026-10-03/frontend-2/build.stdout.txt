@@ -1,0 +1,1022 @@
+
+> react-play@0.1.0 build
+> npm run lint && rsbuild build
+
+
+> react-play@0.1.0 lint
+> oxlint src --max-warnings=0
+
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-redeclare): 'content' is already defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/select2.js[0m:42:11]
+ [2m41[0m │     if (avatar) {
+ [2m42[0m │       var content = document.createElement('div');
+    · [38;2;246;87;248m          ───┬───[0m
+    ·              [38;2;246;87;248m╰── [38;2;246;87;248m'content' is already defined.[0m[0m
+ [2m43[0m │ 
+ [2m44[0m │       content.innerHTML = '<span class="avatar avatar-xs mr-3"><img class="avatar-img rounded-circle" src="' + avatar + '" alt="' + item.text + '"></span><span>' + item.text + '</span>';
+ [2m45[0m │     } else {
+ [2m46[0m │       var content = item.text;
+    · [38;2;30;201;212m          ───┬───[0m
+    ·              [38;2;30;201;212m╰── [38;2;30;201;212mIt can not be redeclared here.[0m[0m
+ [2m47[0m │     }
+    ╰────
+[38;2;106;159;181m  help: [0mUse a different variable name or remove the duplicate declaration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/select2.js[0m:25:23]
+ [2m24[0m │     var defaultOptions = {
+ [2m25[0m │       dropdownParent: $(el).closest('.modal').length ? $(el).closest('.modal') : $(document.body),
+    · [38;2;246;87;248m                      ─[0m
+ [2m26[0m │       templateResult: formatTemplate
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/select2.js[0m:25:56]
+ [2m24[0m │     var defaultOptions = {
+ [2m25[0m │       dropdownParent: $(el).closest('.modal').length ? $(el).closest('.modal') : $(document.body),
+    · [38;2;246;87;248m                                                       ─[0m
+ [2m26[0m │       templateResult: formatTemplate
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/select2.js[0m:25:82]
+ [2m24[0m │     var defaultOptions = {
+ [2m25[0m │       dropdownParent: $(el).closest('.modal').length ? $(el).closest('.modal') : $(document.body),
+    · [38;2;246;87;248m                                                                                 ─[0m
+ [2m26[0m │       templateResult: formatTemplate
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/select2.js[0m:30:5]
+ [2m29[0m │ 
+ [2m30[0m │     $(el).select2(options);
+    · [38;2;246;87;248m    ─[0m
+ [2m31[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'jQuery' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/select2.js[0m:57:7]
+ [2m56[0m │ 
+ [2m57[0m │   if (jQuery().select2 && toggle) {
+    · [38;2;246;87;248m      ──────[0m
+ [2m58[0m │     [].forEach.call(toggle, function(el) {
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'jQuery' or remove the reference to it. If 'jQuery' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'autosize' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/autosize.js[0m:22:5]
+ [2m21[0m │   function init(el) {
+ [2m22[0m │     autosize(el);
+    · [38;2;246;87;248m    ────────[0m
+ [2m23[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'autosize' or remove the reference to it. If 'autosize' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dropdowns.js[0m:60:3]
+ [2m59[0m │ 
+ [2m60[0m │   $(dropdown).on('hide.bs.dropdown', function() {
+    · [38;2;246;87;248m  ─[0m
+ [2m61[0m │     hideSubmenu(this);
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'flatpickr' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/flatpickr.js[0m:25:5]
+ [2m24[0m │ 
+ [2m25[0m │     flatpickr(el, options);
+    · [38;2;246;87;248m    ─────────[0m
+ [2m26[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'flatpickr' or remove the reference to it. If 'flatpickr' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'hljs' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/highlight.js[0m:22:5]
+ [2m21[0m │   function init(el) {
+ [2m22[0m │     hljs.highlightBlock(el);
+    · [38;2;246;87;248m    ────[0m
+ [2m23[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'hljs' or remove the reference to it. If 'hljs' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Dropzone' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dropzone.js[0m:22:5]
+ [2m21[0m │   function globalOptions() {
+ [2m22[0m │     Dropzone.autoDiscover = false;
+    · [38;2;246;87;248m    ────────[0m
+ [2m23[0m │     Dropzone.thumbnailWidth = null;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Dropzone' or remove the reference to it. If 'Dropzone' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Dropzone' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dropzone.js[0m:23:5]
+ [2m22[0m │     Dropzone.autoDiscover = false;
+ [2m23[0m │     Dropzone.thumbnailWidth = null;
+    · [38;2;246;87;248m    ────────[0m
+ [2m24[0m │     Dropzone.thumbnailHeight = null;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Dropzone' or remove the reference to it. If 'Dropzone' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Dropzone' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dropzone.js[0m:24:5]
+ [2m23[0m │     Dropzone.thumbnailWidth = null;
+ [2m24[0m │     Dropzone.thumbnailHeight = null;
+    · [38;2;246;87;248m    ────────[0m
+ [2m25[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Dropzone' or remove the reference to it. If 'Dropzone' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Dropzone' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dropzone.js[0m:50:9]
+ [2m49[0m │     // Init dropzone
+ [2m50[0m │     new Dropzone(el, options);
+    · [38;2;246;87;248m        ────────[0m
+ [2m51[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Dropzone' or remove the reference to it. If 'Dropzone' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dropzone.js[0m:37:24]
+ [2m36[0m │           var maxFiles = elementOptions.maxFiles;
+ [2m37[0m │           if (maxFiles == 1 && currentFile) {
+    · [38;2;246;87;248m                       ──[0m
+ [2m38[0m │             this.removeFile(currentFile);
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Catch parameter '_' is caught but never used.[0m
+    ╭─[[38;2;92;157;255;1msrc/snapshot-polling.js[0m:42:18]
+ [2m41[0m │             expiryTimer = dependencies.setTimeout(() => publishSnapshot(response, startedAt), Math.max(1, Math.ceil(remaining)));
+ [2m42[0m │         } catch (_) {
+    · [38;2;246;87;248m                 ┬[0m
+    ·                  [38;2;246;87;248m╰── [38;2;246;87;248m'_' is declared here[0m[0m
+ [2m43[0m │             clearSnapshot();
+    ╰────
+[38;2;106;159;181m  help: [0mConsider handling this error.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Catch parameter '_' is caught but never used.[0m
+    ╭─[[38;2;92;157;255;1msrc/snapshot-polling.js[0m:55:18]
+ [2m54[0m │             current = dependencies.request();
+ [2m55[0m │         } catch (_) {
+    · [38;2;246;87;248m                 ┬[0m
+    ·                  [38;2;246;87;248m╰── [38;2;246;87;248m'_' is declared here[0m[0m
+ [2m56[0m │             clearSnapshot();
+    ╰────
+[38;2;106;159;181m  help: [0mConsider handling this error.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'demoMode' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:84:11]
+ [2m83[0m │     } else {
+ [2m84[0m │       if (demoMode && config.colorScheme == 'dark') {
+    · [38;2;246;87;248m          ────────[0m
+ [2m85[0m │         globalOptions();
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'demoMode' or remove the reference to it. If 'demoMode' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:44:5]
+ [2m43[0m │     // Global
+ [2m44[0m │     Chart.defaults.global.defaultColor = colors.gray[700];
+    · [38;2;246;87;248m    ─────[0m
+ [2m45[0m │     Chart.defaults.global.defaultFontColor = colors.gray[700];
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:45:5]
+ [2m44[0m │     Chart.defaults.global.defaultColor = colors.gray[700];
+ [2m45[0m │     Chart.defaults.global.defaultFontColor = colors.gray[700];
+    · [38;2;246;87;248m    ─────[0m
+ [2m46[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:48:5]
+ [2m47[0m │     // Arc
+ [2m48[0m │     Chart.defaults.global.elements.arc.borderColor = colors.gray[800];
+    · [38;2;246;87;248m    ─────[0m
+ [2m49[0m │     Chart.defaults.global.elements.arc.hoverBorderColor = colors.gray[800];
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:49:5]
+ [2m48[0m │     Chart.defaults.global.elements.arc.borderColor = colors.gray[800];
+ [2m49[0m │     Chart.defaults.global.elements.arc.hoverBorderColor = colors.gray[800];
+    · [38;2;246;87;248m    ─────[0m
+ [2m50[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:52:5]
+ [2m51[0m │     // yAxes
+ [2m52[0m │     Chart.scaleService.updateScaleDefaults('linear', {
+    · [38;2;246;87;248m    ─────[0m
+ [2m53[0m │       gridLines: {
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts-dark.js[0m:84:42]
+ [2m83[0m │     } else {
+ [2m84[0m │       if (demoMode && config.colorScheme == 'dark') {
+    · [38;2;246;87;248m                                         ──[0m
+ [2m85[0m │         globalOptions();
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/tooltip.js[0m:22:5]
+ [2m21[0m │   function init(toggle) {
+ [2m22[0m │     $(toggle).tooltip();
+    · [38;2;246;87;248m    ─[0m
+ [2m23[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/popover.js[0m:22:5]
+ [2m21[0m │   function init(toggle) {
+ [2m22[0m │     $(toggle).popover();
+    · [38;2;246;87;248m    ─[0m
+ [2m23[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/navbar.js[0m:26:9]
+ [2m25[0m │       if (currentEl !== el) {
+ [2m26[0m │         $(currentEl).collapse('hide');
+    · [38;2;246;87;248m        ─[0m
+ [2m27[0m │       }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/navbar.js[0m:36:3]
+ [2m35[0m │ 
+ [2m36[0m │   $(navbarCollapse).on('show.bs.collapse', function() {
+    · [38;2;246;87;248m  ─[0m
+ [2m37[0m │     toggleAccordion(this);
+    ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Draggable' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/kanban.js[0m:24:9]
+ [2m23[0m │   function init(categories) {
+ [2m24[0m │     new Draggable.Sortable(categories, {
+    · [38;2;246;87;248m        ─────────[0m
+ [2m25[0m │       draggable: '.kanban-item',
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Draggable' or remove the reference to it. If 'Draggable' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Quill' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/quill.js[0m:32:9]
+ [2m31[0m │ 
+ [2m32[0m │     new Quill(el, options);
+    · [38;2;246;87;248m        ─────[0m
+ [2m33[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Quill' or remove the reference to it. If 'Quill' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'mapboxgl' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/map.js[0m:32:5]
+ [2m31[0m │     // Get access token
+ [2m32[0m │     mapboxgl.accessToken = accessToken;
+    · [38;2;246;87;248m    ────────[0m
+ [2m33[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'mapboxgl' or remove the reference to it. If 'mapboxgl' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'mapboxgl' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/map.js[0m:35:9]
+ [2m34[0m │     // Init map
+ [2m35[0m │     new mapboxgl.Map(options);
+    · [38;2;246;87;248m        ────────[0m
+ [2m36[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'mapboxgl' or remove the reference to it. If 'mapboxgl' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:27:9]
+ [2m26[0m │   function init(chart) {
+ [2m27[0m │     new Chart(chart, {
+    · [38;2;246;87;248m        ─────[0m
+ [2m28[0m │       type: 'line',
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:102:9]
+ [2m101[0m │   function init(chart) {
+ [2m102[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m103[0m │       type: 'line',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:173:9]
+ [2m172[0m │   function init(chart) {
+ [2m173[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m174[0m │       type: 'line',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:244:9]
+ [2m243[0m │   function init(chart) {
+ [2m244[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m245[0m │       type: 'bar',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:315:9]
+ [2m314[0m │   function init(chart) {
+ [2m315[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m316[0m │       type: 'bar',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:386:9]
+ [2m385[0m │   function init(chart) {
+ [2m386[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m387[0m │       type: 'doughnut',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:449:9]
+ [2m448[0m │   function init(chart) {
+ [2m449[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m450[0m │       type: 'bar',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:519:9]
+ [2m518[0m │   function init(chart) {
+ [2m519[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m520[0m │       type: 'line',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/dashkit.js[0m:583:9]
+ [2m582[0m │   function init(chart) {
+ [2m583[0m │     new Chart(chart, {
+     · [38;2;246;87;248m        ─────[0m
+ [2m584[0m │       type: 'line',
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'List' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/list.js[0m:26:9]
+ [2m25[0m │ 
+ [2m26[0m │     new List(el, options);
+    · [38;2;246;87;248m        ────[0m
+ [2m27[0m │   }
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'List' or remove the reference to it. If 'List' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-redeclare): 'i' is already defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:79:18]
+ [2m78[0m │ 
+ [2m79[0m │         for (var i = 0; i < containers.length; i++) {
+    · [38;2;246;87;248m                 ┬[0m
+    ·                  [38;2;246;87;248m╰── [38;2;246;87;248m'i' is already defined.[0m[0m
+ [2m80[0m │           containers[i].classList.remove('container-fluid');
+ [2m81[0m │           containers[i].classList.add('container');
+ [2m82[0m │         }
+ [2m83[0m │       } else if (navPosition == 'combo') {
+ [2m84[0m │         hideNode(topnav);
+ [2m85[0m │         hideNode(sidebarUser);
+ [2m86[0m │         hideNode(sidebarUserSmall);
+ [2m87[0m │ 
+ [2m88[0m │         for (var i = 0; i < containers.length; i++) {
+    · [38;2;30;201;212m                 ┬[0m
+    ·                  [38;2;30;201;212m╰── [38;2;30;201;212mIt can not be redeclared here.[0m[0m
+ [2m89[0m │           containers[i].classList.remove('container');
+    ╰────
+[38;2;106;159;181m  help: [0mUse a different variable name or remove the duplicate declaration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-redeclare): 'i' is already defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:88:18]
+ [2m87[0m │ 
+ [2m88[0m │         for (var i = 0; i < containers.length; i++) {
+    · [38;2;246;87;248m                 ┬[0m
+    ·                  [38;2;246;87;248m╰── [38;2;246;87;248m'i' is already defined.[0m[0m
+ [2m89[0m │           containers[i].classList.remove('container');
+ [2m90[0m │           containers[i].classList.add('container-fluid');
+ [2m91[0m │         }
+ [2m92[0m │       } else if (navPosition == 'sidenav') {
+ [2m93[0m │         hideNode(topnav);
+ [2m94[0m │         hideNode(topbar);
+ [2m95[0m │ 
+ [2m96[0m │         for (var i = 0; i < containers.length; i++) {
+    · [38;2;30;201;212m                 ┬[0m
+    ·                  [38;2;30;201;212m╰── [38;2;30;201;212mIt can not be redeclared here.[0m[0m
+ [2m97[0m │           containers[i].classList.remove('container');
+    ╰────
+[38;2;106;159;181m  help: [0mUse a different variable name or remove the duplicate declaration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:154:5]
+ [2m153[0m │   function toggleFormControls(form, colorScheme, navPosition, navColor, sidebarSize) {
+ [2m154[0m │     $(form).find('[name="colorScheme"][value="' + colorScheme + '"]').closest('.btn').button('toggle');
+     · [38;2;246;87;248m    ─[0m
+ [2m155[0m │     $(form).find('[name="navPosition"][value="' + navPosition + '"]').closest('.btn').button('toggle');
+     ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:155:5]
+ [2m154[0m │     $(form).find('[name="colorScheme"][value="' + colorScheme + '"]').closest('.btn').button('toggle');
+ [2m155[0m │     $(form).find('[name="navPosition"][value="' + navPosition + '"]').closest('.btn').button('toggle');
+     · [38;2;246;87;248m    ─[0m
+ [2m156[0m │     $(form).find('[name="navColor"][value="' + navColor + '"]').closest('.btn').button('toggle');
+     ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:156:5]
+ [2m155[0m │     $(form).find('[name="navPosition"][value="' + navPosition + '"]').closest('.btn').button('toggle');
+ [2m156[0m │     $(form).find('[name="navColor"][value="' + navColor + '"]').closest('.btn').button('toggle');
+     · [38;2;246;87;248m    ─[0m
+ [2m157[0m │     $(form).find('[name="sidebarSize"][value="' + sidebarSize + '"]').closest('.btn').button('toggle');
+     ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:157:5]
+ [2m156[0m │     $(form).find('[name="navColor"][value="' + navColor + '"]').closest('.btn').button('toggle');
+ [2m157[0m │     $(form).find('[name="sidebarSize"][value="' + sidebarSize + '"]').closest('.btn').button('toggle');
+     · [38;2;246;87;248m    ─[0m
+ [2m158[0m │   }
+     ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:162:7]
+ [2m161[0m │     if (navPosition == 'topnav') {
+ [2m162[0m │       $(sidebarSizeContainer).collapse('hide');
+     · [38;2;246;87;248m      ─[0m
+ [2m163[0m │     } else {
+     ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): '$' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:164:7]
+ [2m163[0m │     } else {
+ [2m164[0m │       $(sidebarSizeContainer).collapse('show');
+     · [38;2;246;87;248m      ─[0m
+ [2m165[0m │     }
+     ╰────
+[38;2;106;159;181m  help: [0mEither define '$' or remove the reference to it. If '$' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Variable 'demoMode' is declared but never used.[0m
+   ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:8:5]
+ [2m7[0m │ 
+ [2m8[0m │ var demoMode = (function() {
+   · [38;2;246;87;248m    ────┬───[0m
+   ·         [38;2;246;87;248m╰── [38;2;246;87;248m'demoMode' is declared here[0m[0m
+ [2m9[0m │ 
+   ╰────
+[38;2;106;159;181m  help: [0mConsider removing this declaration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Variable 'stylesheets' is declared but never used.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:24:7]
+ [2m23[0m │   var containers = document.querySelectorAll('[class^="container"]');
+ [2m24[0m │   var stylesheets = document.querySelectorAll('#stylesheetLight, #stylesheetDark');
+    · [38;2;246;87;248m      ─────┬─────[0m
+    ·            [38;2;246;87;248m╰── [38;2;246;87;248m'stylesheets' is declared here[0m[0m
+ [2m25[0m │   var stylesheetLight = document.querySelector('#stylesheetLight');
+    ╰────
+[38;2;106;159;181m  help: [0mConsider removing this declaration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:49:16]
+ [2m48[0m │ 
+ [2m49[0m │       if (prop == 'colorScheme' || prop == 'navPosition' || prop == 'navColor' || prop == 'sidebarSize') {
+    · [38;2;246;87;248m               ──[0m
+ [2m50[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:49:41]
+ [2m48[0m │ 
+ [2m49[0m │       if (prop == 'colorScheme' || prop == 'navPosition' || prop == 'navColor' || prop == 'sidebarSize') {
+    · [38;2;246;87;248m                                        ──[0m
+ [2m50[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:49:66]
+ [2m48[0m │ 
+ [2m49[0m │       if (prop == 'colorScheme' || prop == 'navPosition' || prop == 'navColor' || prop == 'sidebarSize') {
+    · [38;2;246;87;248m                                                                 ──[0m
+ [2m50[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:49:88]
+ [2m48[0m │ 
+ [2m49[0m │       if (prop == 'colorScheme' || prop == 'navPosition' || prop == 'navColor' || prop == 'sidebarSize') {
+    · [38;2;246;87;248m                                                                                       ──[0m
+ [2m50[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:61:21]
+ [2m60[0m │   function toggleColorScheme(colorScheme) {
+ [2m61[0m │     if (colorScheme == 'light') {
+    · [38;2;246;87;248m                    ──[0m
+ [2m62[0m │       stylesheetLight.disabled = false;
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:65:28]
+ [2m64[0m │       colorScheme = 'light';
+ [2m65[0m │     } else if (colorScheme == 'dark') {
+    · [38;2;246;87;248m                           ──[0m
+ [2m66[0m │       stylesheetLight.disabled = true;
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:74:23]
+ [2m73[0m │     if (topnav && topbar && sidebar && sidebarSmall && sidebarUser && sidebarUserSmall) {
+ [2m74[0m │       if (navPosition == 'topnav') {
+    · [38;2;246;87;248m                      ──[0m
+ [2m75[0m │         hideNode(topbar);
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:83:30]
+ [2m82[0m │         }
+ [2m83[0m │       } else if (navPosition == 'combo') {
+    · [38;2;246;87;248m                             ──[0m
+ [2m84[0m │         hideNode(topnav);
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+    ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:92:30]
+ [2m91[0m │         }
+ [2m92[0m │       } else if (navPosition == 'sidenav') {
+    · [38;2;246;87;248m                             ──[0m
+ [2m93[0m │         hideNode(topnav);
+    ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:108:20]
+ [2m107[0m │ 
+ [2m108[0m │       if (navColor == 'default') {
+     · [38;2;246;87;248m                   ──[0m
+ [2m109[0m │ 
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:119:27]
+ [2m118[0m │ 
+ [2m119[0m │       } else if (navColor == 'inverted') {
+     · [38;2;246;87;248m                          ──[0m
+ [2m120[0m │ 
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:130:27]
+ [2m129[0m │ 
+ [2m130[0m │       } else if (navColor == 'vibrant') {
+     · [38;2;246;87;248m                          ──[0m
+ [2m131[0m │ 
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:146:21]
+ [2m145[0m │   function toggleSidebarSize(sidebarSize) {
+ [2m146[0m │     if (sidebarSize == 'base') {
+     · [38;2;246;87;248m                    ──[0m
+ [2m147[0m │       hideNode(sidebarSmall);
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:148:28]
+ [2m147[0m │       hideNode(sidebarSmall);
+ [2m148[0m │     } else if (sidebarSize == 'small') {
+     · [38;2;246;87;248m                           ──[0m
+ [2m149[0m │       hideNode(sidebar);
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/demo.js[0m:161:21]
+ [2m160[0m │   function toggleSidebarSizeCongainer(navPosition) {
+ [2m161[0m │     if (navPosition == 'topnav') {
+     · [38;2;246;87;248m                    ──[0m
+ [2m162[0m │       $(sidebarSizeContainer).collapse('hide');
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:48:5]
+ [2m47[0m │ 
+ [2m48[0m │     Chart.defaults.global.responsive = true;
+    · [38;2;246;87;248m    ─────[0m
+ [2m49[0m │     Chart.defaults.global.maintainAspectRatio = false;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:49:5]
+ [2m48[0m │     Chart.defaults.global.responsive = true;
+ [2m49[0m │     Chart.defaults.global.maintainAspectRatio = false;
+    · [38;2;246;87;248m    ─────[0m
+ [2m50[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:52:5]
+ [2m51[0m │     // Default
+ [2m52[0m │     Chart.defaults.global.defaultColor = colors.gray[600];
+    · [38;2;246;87;248m    ─────[0m
+ [2m53[0m │     Chart.defaults.global.defaultFontColor = colors.gray[600];
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:53:5]
+ [2m52[0m │     Chart.defaults.global.defaultColor = colors.gray[600];
+ [2m53[0m │     Chart.defaults.global.defaultFontColor = colors.gray[600];
+    · [38;2;246;87;248m    ─────[0m
+ [2m54[0m │     Chart.defaults.global.defaultFontFamily = fonts.base;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:54:5]
+ [2m53[0m │     Chart.defaults.global.defaultFontColor = colors.gray[600];
+ [2m54[0m │     Chart.defaults.global.defaultFontFamily = fonts.base;
+    · [38;2;246;87;248m    ─────[0m
+ [2m55[0m │     Chart.defaults.global.defaultFontSize = 13;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:55:5]
+ [2m54[0m │     Chart.defaults.global.defaultFontFamily = fonts.base;
+ [2m55[0m │     Chart.defaults.global.defaultFontSize = 13;
+    · [38;2;246;87;248m    ─────[0m
+ [2m56[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:58:5]
+ [2m57[0m │     // Layout
+ [2m58[0m │     Chart.defaults.global.layout.padding = 0;
+    · [38;2;246;87;248m    ─────[0m
+ [2m59[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:61:5]
+ [2m60[0m │     // Legend
+ [2m61[0m │     Chart.defaults.global.legend.display = false;
+    · [38;2;246;87;248m    ─────[0m
+ [2m62[0m │     Chart.defaults.global.legend.position = 'bottom';
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:62:5]
+ [2m61[0m │     Chart.defaults.global.legend.display = false;
+ [2m62[0m │     Chart.defaults.global.legend.position = 'bottom';
+    · [38;2;246;87;248m    ─────[0m
+ [2m63[0m │     Chart.defaults.global.legend.labels.usePointStyle = true;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:63:5]
+ [2m62[0m │     Chart.defaults.global.legend.position = 'bottom';
+ [2m63[0m │     Chart.defaults.global.legend.labels.usePointStyle = true;
+    · [38;2;246;87;248m    ─────[0m
+ [2m64[0m │     Chart.defaults.global.legend.labels.padding = 16;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:64:5]
+ [2m63[0m │     Chart.defaults.global.legend.labels.usePointStyle = true;
+ [2m64[0m │     Chart.defaults.global.legend.labels.padding = 16;
+    · [38;2;246;87;248m    ─────[0m
+ [2m65[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:67:5]
+ [2m66[0m │     // Point
+ [2m67[0m │     Chart.defaults.global.elements.point.radius = 0;
+    · [38;2;246;87;248m    ─────[0m
+ [2m68[0m │     Chart.defaults.global.elements.point.backgroundColor = colors.primary[700];
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:68:5]
+ [2m67[0m │     Chart.defaults.global.elements.point.radius = 0;
+ [2m68[0m │     Chart.defaults.global.elements.point.backgroundColor = colors.primary[700];
+    · [38;2;246;87;248m    ─────[0m
+ [2m69[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:71:5]
+ [2m70[0m │     // Line
+ [2m71[0m │     Chart.defaults.global.elements.line.tension = .4;
+    · [38;2;246;87;248m    ─────[0m
+ [2m72[0m │     Chart.defaults.global.elements.line.borderWidth = 3;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:72:5]
+ [2m71[0m │     Chart.defaults.global.elements.line.tension = .4;
+ [2m72[0m │     Chart.defaults.global.elements.line.borderWidth = 3;
+    · [38;2;246;87;248m    ─────[0m
+ [2m73[0m │     Chart.defaults.global.elements.line.borderColor = colors.primary[700];
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:73:5]
+ [2m72[0m │     Chart.defaults.global.elements.line.borderWidth = 3;
+ [2m73[0m │     Chart.defaults.global.elements.line.borderColor = colors.primary[700];
+    · [38;2;246;87;248m    ─────[0m
+ [2m74[0m │     Chart.defaults.global.elements.line.backgroundColor = colors.transparent;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:74:5]
+ [2m73[0m │     Chart.defaults.global.elements.line.borderColor = colors.primary[700];
+ [2m74[0m │     Chart.defaults.global.elements.line.backgroundColor = colors.transparent;
+    · [38;2;246;87;248m    ─────[0m
+ [2m75[0m │     Chart.defaults.global.elements.line.borderCapStyle = 'rounded';
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:75:5]
+ [2m74[0m │     Chart.defaults.global.elements.line.backgroundColor = colors.transparent;
+ [2m75[0m │     Chart.defaults.global.elements.line.borderCapStyle = 'rounded';
+    · [38;2;246;87;248m    ─────[0m
+ [2m76[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:78:5]
+ [2m77[0m │     // Rectangle
+ [2m78[0m │     Chart.defaults.global.elements.rectangle.backgroundColor = colors.primary[700];
+    · [38;2;246;87;248m    ─────[0m
+ [2m79[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:81:5]
+ [2m80[0m │     // Arc
+ [2m81[0m │     Chart.defaults.global.elements.arc.backgroundColor = colors.primary[700];
+    · [38;2;246;87;248m    ─────[0m
+ [2m82[0m │     Chart.defaults.global.elements.arc.borderColor = colors.white;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:82:5]
+ [2m81[0m │     Chart.defaults.global.elements.arc.backgroundColor = colors.primary[700];
+ [2m82[0m │     Chart.defaults.global.elements.arc.borderColor = colors.white;
+    · [38;2;246;87;248m    ─────[0m
+ [2m83[0m │     Chart.defaults.global.elements.arc.borderWidth = 4;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:83:5]
+ [2m82[0m │     Chart.defaults.global.elements.arc.borderColor = colors.white;
+ [2m83[0m │     Chart.defaults.global.elements.arc.borderWidth = 4;
+    · [38;2;246;87;248m    ─────[0m
+ [2m84[0m │     Chart.defaults.global.elements.arc.hoverBorderColor = colors.white;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:84:5]
+ [2m83[0m │     Chart.defaults.global.elements.arc.borderWidth = 4;
+ [2m84[0m │     Chart.defaults.global.elements.arc.hoverBorderColor = colors.white;
+    · [38;2;246;87;248m    ─────[0m
+ [2m85[0m │ 
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:87:5]
+ [2m86[0m │     // Tooltips
+ [2m87[0m │     Chart.defaults.global.tooltips.enabled = false;
+    · [38;2;246;87;248m    ─────[0m
+ [2m88[0m │     Chart.defaults.global.tooltips.mode = 'index';
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:88:5]
+ [2m87[0m │     Chart.defaults.global.tooltips.enabled = false;
+ [2m88[0m │     Chart.defaults.global.tooltips.mode = 'index';
+    · [38;2;246;87;248m    ─────[0m
+ [2m89[0m │     Chart.defaults.global.tooltips.intersect = false;
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:89:5]
+ [2m88[0m │     Chart.defaults.global.tooltips.mode = 'index';
+ [2m89[0m │     Chart.defaults.global.tooltips.intersect = false;
+    · [38;2;246;87;248m    ─────[0m
+ [2m90[0m │     Chart.defaults.global.tooltips.custom = function(model) {
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+    ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:90:5]
+ [2m89[0m │     Chart.defaults.global.tooltips.intersect = false;
+ [2m90[0m │     Chart.defaults.global.tooltips.custom = function(model) {
+    · [38;2;246;87;248m    ─────[0m
+ [2m91[0m │       var tooltip = document.getElementById('chart-tooltip');
+    ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:159:5]
+ [2m158[0m │     };
+ [2m159[0m │     Chart.defaults.global.tooltips.callbacks.label = function(item, data) {
+     · [38;2;246;87;248m    ─────[0m
+ [2m160[0m │       var label = data.datasets[item.datasetIndex].label || '';
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:174:5]
+ [2m173[0m │     // Doughnut
+ [2m174[0m │     Chart.defaults.doughnut.cutoutPercentage = 83;
+     · [38;2;246;87;248m    ─────[0m
+ [2m175[0m │     Chart.defaults.doughnut.tooltips.callbacks.title = function(item, data) {
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:175:5]
+ [2m174[0m │     Chart.defaults.doughnut.cutoutPercentage = 83;
+ [2m175[0m │     Chart.defaults.doughnut.tooltips.callbacks.title = function(item, data) {
+     · [38;2;246;87;248m    ─────[0m
+ [2m176[0m │       var title = data.labels[item[0].index];
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:179:5]
+ [2m178[0m │     };
+ [2m179[0m │     Chart.defaults.doughnut.tooltips.callbacks.label = function(item, data) {
+     · [38;2;246;87;248m    ─────[0m
+ [2m180[0m │       var value = data.datasets[0].data[item.index];
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:186:5]
+ [2m185[0m │     };
+ [2m186[0m │     Chart.defaults.doughnut.legendCallback = function(chart) {
+     · [38;2;246;87;248m    ─────[0m
+ [2m187[0m │       var data = chart.data;
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:203:5]
+ [2m202[0m │     // yAxes
+ [2m203[0m │     Chart.scaleService.updateScaleDefaults('linear', {
+     · [38;2;246;87;248m    ─────[0m
+ [2m204[0m │       gridLines: {
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:226:5]
+ [2m225[0m │     // xAxes
+ [2m226[0m │     Chart.scaleService.updateScaleDefaults('category', {
+     · [38;2;246;87;248m    ─────[0m
+ [2m227[0m │       gridLines: {
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:342:5]
+ [2m341[0m │ 
+ [2m342[0m │     Chart.helpers.each(Chart.instances, function(instance) {
+     · [38;2;246;87;248m    ─────[0m
+ [2m343[0m │       if (chart == instance.chart.canvas) {
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1meslint(no-undef): 'Chart' is not defined.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:342:24]
+ [2m341[0m │ 
+ [2m342[0m │     Chart.helpers.each(Chart.instances, function(instance) {
+     · [38;2;246;87;248m                       ─────[0m
+ [2m343[0m │       if (chart == instance.chart.canvas) {
+     ╰────
+[38;2;106;159;181m  help: [0mEither define 'Chart' or remove the reference to it. If 'Chart' is a global variable, add it to the 'globals' configuration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Variable 'canvasWidth' is declared but never used.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:139:11]
+ [2m138[0m │ 
+ [2m139[0m │       var canvasWidth = canvas.offsetWidth;
+     · [38;2;246;87;248m          ─────┬─────[0m
+     ·                [38;2;246;87;248m╰── [38;2;246;87;248m'canvasWidth' is declared here[0m[0m
+ [2m140[0m │       var canvasHeight = canvas.offsetHeight;
+     ╰────
+[38;2;106;159;181m  help: [0mConsider removing this declaration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-unused-vars): Variable 'canvasHeight' is declared but never used.[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:140:11]
+ [2m139[0m │       var canvasWidth = canvas.offsetWidth;
+ [2m140[0m │       var canvasHeight = canvas.offsetHeight;
+     · [38;2;246;87;248m          ──────┬─────[0m
+     ·                 [38;2;246;87;248m╰── [38;2;246;87;248m'canvasHeight' is declared here[0m[0m
+ [2m141[0m │ 
+     ╰────
+[38;2;106;159;181m  help: [0mConsider removing this declaration.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-loop-func): Function declared in a loop contains unsafe references to variable(s)[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:285:31]
+ [2m284[0m │           if (Array.isArray(options[item])) {
+ [2m285[0m │ [38;2;246;87;248m╭[0m[38;2;246;87;248m─[0m[38;2;246;87;248m▶[0m         options[item].forEach(function(data) {
+ [2m286[0m │ [38;2;246;87;248m│[0m             chart[item].push(data);
+ [2m287[0m │ [38;2;246;87;248m╰[0m[38;2;246;87;248m─[0m[38;2;246;87;248m▶[0m         });
+ [2m288[0m │           } else {
+     ╰────
+[38;2;106;159;181m  help: [0mVariables declared with 'var' are function-scoped, not block-scoped. Consider using 'let' or 'const' for block-scoped variables, or move the function outside the loop.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(no-loop-func): Function declared in a loop contains unsafe references to variable(s)[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:297:31]
+ [2m296[0m │           if (Array.isArray(options[item])) {
+ [2m297[0m │ [38;2;246;87;248m╭[0m[38;2;246;87;248m─[0m[38;2;246;87;248m▶[0m         options[item].forEach(function(data) {
+ [2m298[0m │ [38;2;246;87;248m│[0m             chart[item].pop();
+ [2m299[0m │ [38;2;246;87;248m╰[0m[38;2;246;87;248m─[0m[38;2;246;87;248m▶[0m         });
+ [2m300[0m │           } else {
+     ╰────
+[38;2;106;159;181m  help: [0mVariables declared with 'var' are function-scoped, not block-scoped. Consider using 'let' or 'const' for block-scoped variables, or move the function outside the loop.
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1meslint(eqeqeq): Expected === and instead saw ==[0m
+     ╭─[[38;2;92;157;255;1msrc/js/charts.js[0m:343:17]
+ [2m342[0m │     Chart.helpers.each(Chart.instances, function(instance) {
+ [2m343[0m │       if (chart == instance.chart.canvas) {
+     · [38;2;246;87;248m                ──[0m
+ [2m344[0m │         chartInstance = instance;
+     ╰────
+[38;2;106;159;181m  help: [0mPrefer === operator
+
+Found 29 warnings and 79 errors.
+Exceeded maximum number of warnings. Found 29.
+Finished in 1.6s on 30 files with 99 rules using 4 threads.

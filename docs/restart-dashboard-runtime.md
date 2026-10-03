@@ -159,16 +159,19 @@ removes thirteen unused direct packages and replaces the Foundation deployment
 workflow with validation only. A clean Linux install, eight React DOM tests,
 CI build, nine compiled-browser checkpoints and native WSS/browser acceptance
 pass. The frontend audit falls from 76 to 73; none of its remaining affected
-names appears in the production source maps. Build-tool review remains open.
+names appears in the production source maps. The subsequent
+[toolchain replacement](restart-dashboard-toolchain.md) removes CRA and clears
+all 73 remaining advisory names, including the separate map Acorn path. Clean
+installation, DOM/build/lint gates and compiled/native browser acceptance pass.
+The final lock retains every active direct application-library version; the
+report records lint coverage differences and remaining maintenance work.
 
 ## Work order and exit condition
 
-1. Resolve the remaining frontend build-tool findings and supported build/test
-   matrix. Review maintenance of the used UI libraries separately. Preserve
-   the tested browser behavior, then repeat clean installation and combined
-   acceptance. The new validation workflow has not run on GitHub yet.
-   Include the legacy map dependency tree's Acorn path; a CRA replacement
-   alone does not clear every installed dependency path.
+1. Review maintenance of the used UI libraries, the toolchain report's lint
+   coverage differences and the intended browser matrix. Frontend/backend
+   audits now report zero known advisories, with local acceptance complete
+   for Linux Node 24.21.0/npm 10.9.0 and Edge. Hosted validation is unrun.
 2. Finish GeoIP dataset selection, applicable terms/attribution, protected
    updates, failure/recovery and refresh/deletion operations. The package
    update does not establish data freshness or accept its download workflow.

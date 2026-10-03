@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Frontend acceptance](restart-dashboard-frontend.md) passes; backend remains at zero known advisories, with 73 frontend build-tool findings and public deployment controls open | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Toolchain acceptance](restart-dashboard-toolchain.md) passes; frontend and backend audits now report zero known advisories, with maintenance and public deployment controls open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -335,7 +335,14 @@ workflow with validation only. Eight React tests, the production build, nine
 compiled-browser checkpoints and native WSS/browser acceptance pass. The frontend
 audit drops from 76 to 73; remaining findings are absent from the production
 source maps but still require build-tool review. Application JavaScript and node
-sources remain unchanged. GeoIP dataset operations and hosting controls stay open.
+sources remain unchanged. The subsequent [toolchain replacement](restart-dashboard-toolchain.md)
+removes CRA and clears the remaining 73 frontend advisories, including the map
+Acorn path. Clean Linux Node 24/npm 10 installation, DOM/build/lint checks,
+compiled-browser and native telemetry acceptance pass. A reproduced linter gap
+is covered by maintained ESLint's undefined-name check; the report records the
+remaining lint coverage differences. All active application-library versions
+and efsn sources are preserved. UI maintenance, GeoIP operations and hosting
+controls stay open.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -396,11 +403,11 @@ The last two items are post-bootstrap milestones; the first two precede release.
 Current technical order:
 
 1. G6: continue the [runtime/dependency worklist](restart-dashboard-runtime.md).
-   The [frontend update](restart-dashboard-frontend.md) passes on Node 24 with
-   Axios corrected and validation-only CI. Next resolve the 73 remaining
-   build-tool findings and supported test/build matrix, then verify the final
-   clean installation. The backend remains at zero known advisories.
-   Include the separate legacy map Acorn path in that dependency review.
+   The [toolchain replacement](restart-dashboard-toolchain.md) passes clean
+   installation and acceptance on Linux Node 24/npm 10. Both package audits
+   report zero known advisories; the separate map Acorn path is corrected.
+   Record dispositions for used UI-library maintenance, remaining lint-rule
+   differences and the intended browser matrix. Hosted validation is unrun.
    Complete GeoIP dataset selection/attribution and update operations; public
    hosting is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log

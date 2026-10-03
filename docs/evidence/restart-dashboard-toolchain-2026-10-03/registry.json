@@ -1,0 +1,2248 @@
+{
+  "@rsbuild/core": {
+    "latest": "2.2.11",
+    "selected": {
+      "_id": "@rsbuild/core@2.2.11",
+      "bin": {
+        "rsbuild": "./bin/rsbuild.js"
+      },
+      "bugs": {
+        "url": "https://github.com/web-infra-dev/rsbuild/issues"
+      },
+      "dist": {
+        "shasum": "fc87294217aa4a44ae65b2b6500306186d78084c",
+        "tarball": "https://registry.npmjs.org/@rsbuild/core/-/core-2.2.11.tgz",
+        "integrity": "sha512-avPW0j6RaEbtV2mfl0AzTAJEimPX4Xj0pCcZyxNCrE9vkS91HmweM5V7XQj3kI5iTYfHRp9Y6To8RRHYLEvG7A==",
+        "fileCount": 270,
+        "unpackedSize": 4885235,
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@rsbuild%2fcore@2.2.11",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEYCIQD+h7RaTb1PMlKA8cuNpvIhAukSexgbcCHU9EVOHkXKCwIhANeSDnFAMJER0HCn/fbdROTy58StJfTYcx/VoYWePpcy"
+          }
+        ]
+      },
+      "name": "@rsbuild/core",
+      "type": "module",
+      "types": "./dist/index.d.ts",
+      "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        },
+        "./types": {
+          "types": "./types.d.ts"
+        },
+        "./package.json": "./package.json"
+      },
+      "license": "MIT",
+      "scripts": {
+        "dev": "rs lib -w",
+        "test": "rs test",
+        "build": "rs lib",
+        "prebundle": "prebundle"
+      },
+      "version": "2.2.11",
+      "_npmUser": {
+        "name": "GitHub Actions",
+        "email": "npm-oidc-no-reply@github.com",
+        "trustedPublisher": {
+          "id": "github",
+          "oidcConfigId": "361589d7-4fcd-482b-b2cb-df2f7073e204"
+        },
+        "approver": {
+          "name": "chenjiahan",
+          "email": "416417567@163.com"
+        }
+      },
+      "homepage": "https://rsbuild.rs",
+      "repository": {
+        "url": "https://github.com/web-infra-dev/rsbuild",
+        "type": "git",
+        "directory": "packages/core"
+      },
+      "description": "The Rspack-based build tool.",
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "chenjiahan",
+          "email": "416417567@163.com"
+        },
+        {
+          "name": "hardfist3",
+          "email": "13738085484@139.com"
+        }
+      ],
+      "dependencies": {
+        "@rspack/core": "~2.2.8",
+        "@swc/helpers": "^0.5.23"
+      },
+      "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+      },
+      "devDependencies": {
+        "ws": "^8.22.0",
+        "cac": "^7.0.0",
+        "cors": "^2.8.6",
+        "jiti": "^2.7.0",
+        "open": "^11.0.4",
+        "sirv": "^3.0.2",
+        "memfs": "4.79.0",
+        "rslog": "^2.3.0",
+        "mrmime": "^2.0.1",
+        "core-js": "^3.50.0",
+        "postcss": "^8.5.28",
+        "chokidar": "^5.0.0",
+        "@types/ws": "^8.18.1",
+        "deepmerge": "^4.3.1",
+        "prebundle": "1.6.5",
+        "css-loader": "7.1.5",
+        "tinyglobby": "^0.2.17",
+        "typescript": "^6.0.3",
+        "@types/cors": "^2.8.19",
+        "@types/node": "^24.13.6",
+        "on-finished": "2.4.1",
+        "connect-next": "5.0.0",
+        "fresh-import": "^0.2.1",
+        "range-parser": "^1.3.0",
+        "rspack-chain": "^2.3.2",
+        "rspack-merge": "1.0.1",
+        "style-loader": "^4.0.0",
+        "dotenv-expand": "^13.0.0",
+        "postcss-loader": "8.2.1",
+        "reduce-configs": "^2.0.1",
+        "stacktrace-parser": "^0.1.11",
+        "@types/on-finished": "2.3.5",
+        "html-rspack-plugin": "6.1.11",
+        "@types/range-parser": "^1.2.7",
+        "postcss-load-config": "6.0.1",
+        "@jsonjoy.com/fs-core": "4.79.0",
+        "@jridgewell/remapping": "^2.3.5",
+        "@rstackjs/load-config": "^1.0.1",
+        "http-proxy-middleware": "4.2.0",
+        "rspack-manifest-plugin": "5.2.2",
+        "browserslist-load-config": "^1.0.3",
+        "launch-editor-middleware": "^2.14.1",
+        "@jridgewell/trace-mapping": "^0.3.31"
+      },
+      "peerDependencies": {
+        "core-js": ">= 3.0.0"
+      },
+      "peerDependenciesMeta": {
+        "core-js": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/core_2.2.11_1790650278530_0.3903812438445762"
+      },
+      "_hasShrinkwrap": false
+    },
+    "published": "2026-09-29T02:51:18.630Z",
+    "registry_sha256": "53f3b0a3b0e9da08a82d2f17a1718038de83221915792a4a75febf0637292353"
+  },
+  "@rsbuild/plugin-react": {
+    "latest": "2.1.1",
+    "selected": {
+      "_id": "@rsbuild/plugin-react@2.1.1",
+      "bugs": {
+        "url": "https://github.com/web-infra-dev/rsbuild/issues"
+      },
+      "dist": {
+        "shasum": "8fcd73fa6f6e020ab9125d83dd79204ce3ed07fe",
+        "tarball": "https://registry.npmjs.org/@rsbuild/plugin-react/-/plugin-react-2.1.1.tgz",
+        "integrity": "sha512-tLtUedsRtTLS6M4VtwzI6aakFLOFdgl9Sh1ZNBWvxb0Te3EnHrppaE7UiYEmDUXQDJ50gfr6yyirtxY5N6moyg==",
+        "fileCount": 6,
+        "unpackedSize": 12165,
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@rsbuild%2fplugin-react@2.1.1",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "signatures": [
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEQCIDubrjjKoblcFNFcW5Y5dzfyxe9PFKQy2qwGzcFKoz5rAiAZB1KADU1SBgWdiIkODfi07Dcnj9n6tdz04rXMOwp5Ig=="
+          }
+        ]
+      },
+      "name": "@rsbuild/plugin-react",
+      "type": "module",
+      "types": "./dist/index.d.ts",
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "license": "MIT",
+      "scripts": {
+        "dev": "rs lib -w",
+        "test": "rs test",
+        "build": "rs lib"
+      },
+      "version": "2.1.1",
+      "_npmUser": {
+        "name": "GitHub Actions",
+        "email": "npm-oidc-no-reply@github.com",
+        "trustedPublisher": {
+          "id": "github",
+          "oidcConfigId": "oidc:587892a7-fa36-4bc7-af35-ae0f167bbfe4"
+        },
+        "approver": {
+          "name": "chenjiahan",
+          "email": "416417567@163.com"
+        }
+      },
+      "homepage": "https://rsbuild.rs",
+      "repository": {
+        "url": "https://github.com/web-infra-dev/rsbuild",
+        "type": "git",
+        "directory": "packages/plugin-react"
+      },
+      "description": "React plugin for Rsbuild",
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "chenjiahan",
+          "email": "416417567@163.com"
+        },
+        {
+          "name": "hardfist3",
+          "email": "13738085484@139.com"
+        }
+      ],
+      "dependencies": {
+        "react-refresh": "^0.19.0",
+        "@rspack/plugin-react-refresh": "^2.0.2"
+      },
+      "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+      },
+      "devDependencies": {
+        "typescript": "^6.0.3",
+        "@types/node": "^24.13.6",
+        "@rspack/core": "~2.2.7",
+        "@rsbuild/core": "2.2.10",
+        "@scripts/test-helper": "1.0.0"
+      },
+      "peerDependencies": {
+        "@rsbuild/core": "^2.0.0"
+      },
+      "peerDependenciesMeta": {
+        "@rsbuild/core": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/plugin-react_2.1.1_1790593222683_0.08068407045750625"
+      },
+      "_hasShrinkwrap": false
+    },
+    "published": "2026-09-28T11:00:22.768Z",
+    "registry_sha256": "962ab4c8dc35a2574fe62dadfbdcbdd6caae290ab88c52176f20fec4d961b033"
+  },
+  "@swc/core": {
+    "latest": "1.16.13",
+    "selected": {
+      "_id": "@swc/core@1.16.13",
+      "bugs": {
+        "url": "https://github.com/swc-project/swc/issues"
+      },
+      "dist": {
+        "shasum": "2a9a576314d6013ce76d3d272f1bd349b4b2abc7",
+        "tarball": "https://registry.npmjs.org/@swc/core/-/core-1.16.13.tgz",
+        "fileCount": 14,
+        "integrity": "sha512-k4uUsIMS0IwOKVsrQs48IZK75O4roV3FnuJEdL7ES+DFESftdgvz73QBqN3VUAbUmUr78We4tzG0kgYj36M22Q==",
+        "signatures": [
+          {
+            "sig": "MEYCIQCpDdIOWy22SOBIFQFnQ0wtuwB0JKkpHO67rpoYmZWrmAIhAMOYy3Z0BUk/YN2okStnAVEAW2WzB9wvjhXR+hJvahzI",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEUCIQDCxCl6ov2aQMQMC+ZBpqqWuAbZkoPkVOs9lG++ZIJ8BwIgEfHdZtYH5DZRRN31p3xCxTLLVuD1im2is6ROOfdRTdU="
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/@swc%2fcore@1.16.13",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 134383
+      },
+      "main": "./index.js",
+      "name": "@swc/core",
+      "napi": {
+        "targets": [
+          "x86_64-apple-darwin",
+          "x86_64-pc-windows-msvc",
+          "x86_64-unknown-linux-gnu",
+          "powerpc64le-unknown-linux-gnu",
+          "s390x-unknown-linux-gnu",
+          "x86_64-unknown-linux-musl",
+          "i686-pc-windows-msvc",
+          "armv7-unknown-linux-gnueabihf",
+          "aarch64-apple-darwin",
+          "aarch64-unknown-linux-gnu",
+          "aarch64-unknown-linux-musl",
+          "aarch64-pc-windows-msvc"
+        ],
+        "binaryName": "swc"
+      },
+      "_from": "file:/home/runner/work/swc/swc/target/npm/core/swc-core-1.16.13.tgz",
+      "types": "./index.d.ts",
+      "author": {
+        "name": "\uac15\ub3d9\uc724",
+        "email": "kdy1997.dev@gmail.com"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://opencollective.com/swc",
+        "type": "opencollective"
+      },
+      "license": "Apache-2.0",
+      "scripts": {
+        "pack": "wasm-pack",
+        "test": "rstest",
+        "build": "tsc -d && napi build --manifest-path ../../Cargo.toml --platform -p binding_core_node --js ./binding.js --dts ./binding.d.ts --release -o .",
+        "version": "napi version --npm-dir scripts/npm",
+        "build:ts": "tsc -d",
+        "artifacts": "napi artifacts --npm-dir scripts/npm",
+        "build:dev": "tsc -d && napi build --manifest-path ../../Cargo.toml --platform -p binding_core_node --js ./binding.js --dts ./binding.d.ts -o .",
+        "build:wasm": "npm-run-all \"pack -- build ../../bindings/binding_core_wasm --scope swc {1} -t {2} --features plugin\" --",
+        "postinstall": "node postinstall.js"
+      },
+      "version": "1.16.13",
+      "_npmUser": {
+        "name": "GitHub Actions",
+        "email": "npm-oidc-no-reply@github.com",
+        "trustedPublisher": {
+          "id": "github",
+          "oidcConfigId": "4a5b94ab-7532-4a6e-a0e1-8b52a694c526"
+        }
+      },
+      "homepage": "https://swc.rs",
+      "keywords": [
+        "swc",
+        "swcpack",
+        "babel",
+        "typescript",
+        "rust",
+        "webpack",
+        "tsc"
+      ],
+      "_resolved": "/home/runner/work/swc/swc/target/npm/core/swc-core-1.16.13.tgz",
+      "_integrity": "sha512-k4uUsIMS0IwOKVsrQs48IZK75O4roV3FnuJEdL7ES+DFESftdgvz73QBqN3VUAbUmUr78We4tzG0kgYj36M22Q==",
+      "repository": {
+        "url": "git+https://github.com/swc-project/swc.git",
+        "type": "git",
+        "directory": "packages/core"
+      },
+      "_npmVersion": "12.1.0",
+      "description": "Super-fast alternative for babel",
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "kdy1",
+          "email": "kdy.1997.dev@gmail.com"
+        }
+      ],
+      "_nodeVersion": "24.21.0",
+      "dependencies": {
+        "@swc/types": "^0.1.28",
+        "@swc/counter": "^0.1.3"
+      },
+      "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/",
+        "provenance": true
+      },
+      "_hasShrinkwrap": false,
+      "devDependencies": {
+        "cross-env": "^7.0.3",
+        "typescript": "^5.3.3",
+        "@napi-rs/cli": "^3.2.0",
+        "@rstest/core": "^0.7.8"
+      },
+      "peerDependencies": {
+        "@swc/helpers": ">=0.5.17"
+      },
+      "optionalDependencies": {
+        "@swc/core-darwin-x64": "1.16.13",
+        "@swc/core-darwin-arm64": "1.16.13",
+        "@swc/core-linux-x64-gnu": "1.16.13",
+        "@swc/core-linux-x64-musl": "1.16.13",
+        "@swc/core-win32-x64-msvc": "1.16.13",
+        "@swc/core-linux-arm64-gnu": "1.16.13",
+        "@swc/core-linux-ppc64-gnu": "1.16.13",
+        "@swc/core-linux-s390x-gnu": "1.16.13",
+        "@swc/core-win32-ia32-msvc": "1.16.13",
+        "@swc/core-linux-arm64-musl": "1.16.13",
+        "@swc/core-win32-arm64-msvc": "1.16.13",
+        "@swc/core-linux-arm-gnueabihf": "1.16.13"
+      },
+      "peerDependenciesMeta": {
+        "@swc/helpers": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/core_1.16.13_1790761891802_0.38129770976836674"
+      }
+    },
+    "published": "2026-09-30T09:51:31.904Z",
+    "registry_sha256": "3f79000be676305111e1ca17b197bee4ee7b4c5b399266d063a17276773bf677"
+  },
+  "@swc/jest": {
+    "latest": "0.2.39",
+    "selected": {
+      "name": "@swc/jest",
+      "version": "0.2.39",
+      "keywords": [],
+      "author": {
+        "name": "\uac15\ub3d9\uc724",
+        "email": "kdy1997.dev@gmail.com"
+      },
+      "license": "MIT",
+      "_id": "@swc/jest@0.2.39",
+      "maintainers": [
+        {
+          "name": "kdy1",
+          "email": "kdy.1997.dev@gmail.com"
+        },
+        {
+          "name": "kwonoj",
+          "email": "kwon.ohjoong@gmail.com"
+        }
+      ],
+      "homepage": "https://github.com/swc-project/pkgs/tree/main/packages/jest",
+      "bugs": {
+        "url": "https://github.com/swc-project/pkgs/issues"
+      },
+      "dist": {
+        "shasum": "482bee0adb0726fab1487a4f902a278ec563a6b7",
+        "tarball": "https://registry.npmjs.org/@swc/jest/-/jest-0.2.39.tgz",
+        "fileCount": 5,
+        "integrity": "sha512-eyokjOwYd0Q8RnMHri+8/FS1HIrIUKK/sRrFp8c1dThUOfNeCWbLmBP1P5VsKdvmkd25JaH+OKYwEYiAYg9YAA==",
+        "signatures": [
+          {
+            "sig": "MEUCIQDw8HGRKIidDLmgVEeEeZMZIupiMqtAxmJqQrkejobxFAIgedaaKFGDeJ5QWtFrwU1N3tlPbApQdwfVtEdCnC4I2Qw=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 14553
+      },
+      "main": "index.js",
+      "_from": "file:swc-jest-0.2.39.tgz",
+      "types": "index.d.ts",
+      "engines": {
+        "npm": ">= 7.0.0"
+      },
+      "scripts": {
+        "lint": "eslint . --ext .ts",
+        "build": "tsc"
+      },
+      "_npmUser": {
+        "name": "kdy1",
+        "actor": {
+          "name": "kdy1",
+          "type": "user",
+          "email": "kdy.1997.dev@gmail.com"
+        },
+        "email": "kdy.1997.dev@gmail.com"
+      },
+      "_resolved": "/private/var/folders/3b/dnz47vf55xv93dh4qpjqlp000000gn/T/19c24a6b0bce9dd0294695a43d76daa4/swc-jest-0.2.39.tgz",
+      "_integrity": "sha512-eyokjOwYd0Q8RnMHri+8/FS1HIrIUKK/sRrFp8c1dThUOfNeCWbLmBP1P5VsKdvmkd25JaH+OKYwEYiAYg9YAA==",
+      "repository": {
+        "url": "git+https://github.com/swc-project/pkgs.git",
+        "type": "git"
+      },
+      "_npmVersion": "10.8.2",
+      "description": "swc integration for jest",
+      "directories": {},
+      "_nodeVersion": "20.19.3",
+      "dependencies": {
+        "@swc/counter": "^0.1.3",
+        "jsonc-parser": "^3.2.0",
+        "@jest/create-cache-key-function": "^30.0.0"
+      },
+      "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+      },
+      "_hasShrinkwrap": false,
+      "devDependencies": {
+        "jest": "^30.0.0",
+        "eslint": "^8.4.1",
+        "@swc/core": "^1.6.4",
+        "typescript": "^5.8.3",
+        "@types/node": "^16.11.12",
+        "@jest/transform": "^30.0.0",
+        "@typescript-eslint/parser": "^5.6.0",
+        "@typescript-eslint/eslint-plugin": "^5.6.0"
+      },
+      "peerDependencies": {
+        "@swc/core": "*"
+      },
+      "_npmOperationalInternal": {
+        "tmp": "tmp/jest_0.2.39_1752039798771_0.30455029878588036",
+        "host": "s3://npm-registry-packages-npm-production"
+      }
+    },
+    "published": "2025-07-09T05:43:18.938Z",
+    "registry_sha256": "f9932506d942c1162faea95b667a5aceca0d4dd2a7c6826486f08edf8b42392b"
+  },
+  "jest": {
+    "latest": "30.5.2",
+    "selected": {
+      "_id": "jest@30.5.2",
+      "bin": {
+        "jest": "bin/jest.js"
+      },
+      "bugs": {
+        "url": "https://github.com/jestjs/jest/issues"
+      },
+      "dist": {
+        "shasum": "f70e547083b214a3a8314fcf45f54d559b32d4a1",
+        "tarball": "https://registry.npmjs.org/jest/-/jest-30.5.2.tgz",
+        "fileCount": 7,
+        "integrity": "sha512-3gnpdBIza8ijCl3iMV9ChE3hSt1+46865qqod863gQtJr1DixOkAU5DoGbi3u+XlRcw++BhZQMu/y4xBdHBvSQ==",
+        "signatures": [
+          {
+            "sig": "MEQCIBY/WRFESpzBG5OT5qUlrsEweexOV4p2EtpZGdPboE6OAiBUyW9I4rKAYM2XAJB1+j1oLo7If0p2naETgiUV0mA9Fg==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEQCIFQxIu2FfgH3U6i3z4cCBMNfvSBSQCuGhMkxeLzF9ZA8AiBvl81DQJKAcD9bB+VQ7sf3xSkvRMUceVVMO0VRIcA7xA=="
+          }
+        ],
+        "unpackedSize": 6698
+      },
+      "main": "./build/index.js",
+      "name": "jest",
+      "types": "./build/index.d.ts",
+      "engines": {
+        "node": "^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./build/index.d.ts",
+          "import": "./build/index.mjs",
+          "default": "./build/index.js",
+          "require": "./build/index.js"
+        },
+        "./bin/jest": "./bin/jest.js",
+        "./package.json": "./package.json"
+      },
+      "gitHead": "202dd8a14777c270607c2416bd5034c3c0abc984",
+      "license": "MIT",
+      "version": "30.5.2",
+      "_npmUser": {
+        "name": "simenb",
+        "email": "sbekkhus91@gmail.com"
+      },
+      "homepage": "https://jestjs.io/",
+      "keywords": [
+        "ava",
+        "babel",
+        "coverage",
+        "easy",
+        "expect",
+        "facebook",
+        "immersive",
+        "instant",
+        "jasmine",
+        "jest",
+        "jsdom",
+        "mocha",
+        "mocking",
+        "painless",
+        "qunit",
+        "runner",
+        "sandboxed",
+        "snapshot",
+        "tap",
+        "tape",
+        "test",
+        "testing",
+        "typescript",
+        "watch"
+      ],
+      "repository": {
+        "url": "git+https://github.com/jestjs/jest.git",
+        "type": "git",
+        "directory": "packages/jest"
+      },
+      "_npmVersion": "lerna/4.11.5/node@v26.8.1+arm64 (darwin)",
+      "description": "Delightful JavaScript Testing.",
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "aaronabramov",
+          "email": "aaron@abramov.io"
+        },
+        {
+          "name": "simenb",
+          "email": "sbekkhus91@gmail.com"
+        },
+        {
+          "name": "rickhanlonii",
+          "email": "rickhanlonii@gmail.com"
+        },
+        {
+          "name": "openjs-operations",
+          "email": "operations@openjsf.org"
+        },
+        {
+          "name": "cpojer",
+          "email": "christoph.pojer@gmail.com"
+        }
+      ],
+      "_nodeVersion": "26.8.1",
+      "dependencies": {
+        "jest-cli": "30.5.2",
+        "@jest/core": "30.5.2",
+        "@jest/types": "30.5.1",
+        "import-local": "^3.2.0"
+      },
+      "publishConfig": {
+        "access": "public"
+      },
+      "_hasShrinkwrap": false,
+      "peerDependencies": {
+        "node-notifier": "^8.0.1 || ^9.0.0 || ^10.0.0"
+      },
+      "peerDependenciesMeta": {
+        "node-notifier": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/jest_30.5.2_1789739887057_0.10522504603617744"
+      }
+    },
+    "published": "2026-09-18T13:58:07.141Z",
+    "registry_sha256": "3e883853c703ee6dcb83b72ec4aa628290b86fc2c880cfc42856686769968381"
+  },
+  "jest-environment-jsdom": {
+    "latest": "30.5.2",
+    "selected": {
+      "_id": "jest-environment-jsdom@30.5.2",
+      "bugs": {
+        "url": "https://github.com/jestjs/jest/issues"
+      },
+      "dist": {
+        "shasum": "955498169b52596391e54704bbc5cd82280fc9d6",
+        "tarball": "https://registry.npmjs.org/jest-environment-jsdom/-/jest-environment-jsdom-30.5.2.tgz",
+        "fileCount": 5,
+        "integrity": "sha512-6NOZjEP+WNi4WXjbxb/1ROnfaMxn6Dhqu6uSC22o0H28z+uppejs/jZ9KCVoLepqqoCjcNZujtzQqC9jSV15jg==",
+        "signatures": [
+          {
+            "sig": "MEUCIQC2iKJky8ge4barXl62von+bDI2Q+G+dujPduycVtEaCAIgZsfHeD1v4sam7IyjZqNWn1SqnH7uJNT61yvhEboyvlk=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEUCIQCpnsPZbb/Dt4NiU8dX3VIhDgzViD0vrmhQ8CcO656+0gIgBAgecqtglVqtUUIsFHHRUCNr+oKF4cJHh3LdMkIid7M="
+          }
+        ],
+        "unpackedSize": 4996
+      },
+      "main": "./build/index.js",
+      "name": "jest-environment-jsdom",
+      "types": "./build/index.d.ts",
+      "engines": {
+        "node": "^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./build/index.d.ts",
+          "import": "./build/index.mjs",
+          "default": "./build/index.js",
+          "require": "./build/index.js"
+        },
+        "./package.json": "./package.json"
+      },
+      "gitHead": "202dd8a14777c270607c2416bd5034c3c0abc984",
+      "license": "MIT",
+      "version": "30.5.2",
+      "_npmUser": {
+        "name": "simenb",
+        "email": "sbekkhus91@gmail.com"
+      },
+      "homepage": "https://github.com/jestjs/jest#readme",
+      "repository": {
+        "url": "git+https://github.com/jestjs/jest.git",
+        "type": "git",
+        "directory": "packages/jest-environment-jsdom"
+      },
+      "_npmVersion": "lerna/4.11.5/node@v26.8.1+arm64 (darwin)",
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "aaronabramov",
+          "email": "aaron@abramov.io"
+        },
+        {
+          "name": "simenb",
+          "email": "sbekkhus91@gmail.com"
+        },
+        {
+          "name": "rickhanlonii",
+          "email": "rickhanlonii@gmail.com"
+        },
+        {
+          "name": "openjs-operations",
+          "email": "operations@openjsf.org"
+        },
+        {
+          "name": "cpojer",
+          "email": "christoph.pojer@gmail.com"
+        }
+      ],
+      "_nodeVersion": "26.8.1",
+      "dependencies": {
+        "jsdom": "^26.1.0",
+        "@types/jsdom": "^21.1.7",
+        "@jest/environment": "30.5.2",
+        "@jest/environment-jsdom-abstract": "30.5.2"
+      },
+      "publishConfig": {
+        "access": "public"
+      },
+      "_hasShrinkwrap": false,
+      "devDependencies": {
+        "@jest/test-utils": "30.5.2"
+      },
+      "peerDependencies": {
+        "canvas": "^3.0.0"
+      },
+      "peerDependenciesMeta": {
+        "canvas": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/jest-environment-jsdom_30.5.2_1789739800646_0.039103221968441515"
+      }
+    },
+    "published": "2026-09-18T13:56:40.727Z",
+    "registry_sha256": "53a57e2672fbbac6becea5f2c4b6c432136240847870e7bdffcfce1e7542cafe"
+  },
+  "eslint": {
+    "latest": "10.12.0",
+    "selected": {
+      "name": "eslint",
+      "version": "9.39.5",
+      "keywords": [
+        "ast",
+        "lint",
+        "javascript",
+        "ecmascript",
+        "espree"
+      ],
+      "author": {
+        "name": "Nicholas C. Zakas",
+        "email": "nicholas+npm@nczconsulting.com"
+      },
+      "license": "MIT",
+      "_id": "eslint@9.39.5",
+      "maintainers": [
+        {
+          "name": "openjsfoundation",
+          "email": "npm@openjsf.org"
+        },
+        {
+          "name": "eslintbot",
+          "email": "contact@eslint.org"
+        }
+      ],
+      "homepage": "https://eslint.org",
+      "bugs": {
+        "url": "https://github.com/eslint/eslint/issues/"
+      },
+      "bin": {
+        "eslint": "bin/eslint.js"
+      },
+      "dist": {
+        "shasum": "2a4e3c8b0f753196efae943c8ffaa8730fc6a3fa",
+        "tarball": "https://registry.npmjs.org/eslint/-/eslint-9.39.5.tgz",
+        "fileCount": 426,
+        "integrity": "sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==",
+        "signatures": [
+          {
+            "sig": "MEQCIHJMfgiHn8FqX/m+C6QjvjegpkewOjnsonHYZIeXRnAmAiAcR74ioJVvvL67b0gqBskGmlMDAybTPajnpK9jAKPcnA==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 3008896
+      },
+      "main": "./lib/api.js",
+      "type": "commonjs",
+      "types": "./lib/types/index.d.ts",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./lib/types/index.d.ts",
+          "default": "./lib/api.js"
+        },
+        "./rules": {
+          "types": "./lib/types/rules.d.ts"
+        },
+        "./config": {
+          "types": "./lib/types/config-api.d.ts",
+          "default": "./lib/config-api.js"
+        },
+        "./universal": {
+          "types": "./lib/types/universal.d.ts",
+          "default": "./lib/universal.js"
+        },
+        "./package.json": "./package.json",
+        "./use-at-your-own-risk": {
+          "types": "./lib/types/use-at-your-own-risk.d.ts",
+          "default": "./lib/unsupported-api.js"
+        }
+      },
+      "funding": "https://eslint.org/donate",
+      "gitHead": "4a24e8c09d374d773a034e36b1d7a7fbe1216478",
+      "scripts": {
+        "lint": "trunk check --no-fix --ignore=docs/**/*.js -a --filter=eslint && trunk check --no-fix --ignore=docs/**/*.js",
+        "test": "node Makefile.js test",
+        "lint:fix": "trunk check -y --ignore=docs/**/*.js -a --filter=eslint && trunk check -y --ignore=docs/**/*.js",
+        "test:cli": "mocha",
+        "test:fuzz": "node Makefile.js fuzz",
+        "test:pnpm": "cd tests/pnpm && node check.js && pnpm install && pnpm exec tsc",
+        "build:site": "node Makefile.js gensite",
+        "lint:types": "attw --pack",
+        "test:types": "tsc -p tests/lib/types/tsconfig.json",
+        "lint:unused": "knip",
+        "test:emfile": "node tools/check-emfile-handling.js",
+        "build:readme": "node tools/update-readme.js",
+        "lint:docs:js": "trunk check --no-fix --ignore=** --ignore=!docs/**/*.js -a --filter=eslint && trunk check --no-fix --ignore=** --ignore=!docs/**/*.js",
+        "test:browser": "node Makefile.js cypress",
+        "build:webpack": "node Makefile.js webpack",
+        "lint:rule-types": "node tools/update-rule-type-headers.js --check",
+        "release:publish": "node Makefile.js publishRelease",
+        "lint:fix:docs:js": "trunk check -y --ignore=** --ignore=!docs/**/*.js -a --filter=eslint && trunk check -y --ignore=** --ignore=!docs/**/*.js",
+        "test:performance": "node Makefile.js perf",
+        "build:rules-index": "node Makefile.js generateRuleIndexPage",
+        "release:generate:rc": "node Makefile.js generatePrerelease -- rc",
+        "release:generate:beta": "node Makefile.js generatePrerelease -- beta",
+        "release:generate:alpha": "node Makefile.js generatePrerelease -- alpha",
+        "build:docs:update-links": "node tools/fetch-docs-links.js",
+        "lint:docs:rule-examples": "node Makefile.js checkRuleExamples",
+        "release:generate:latest": "node Makefile.js generateRelease -- latest",
+        "release:generate:maintenance": "node Makefile.js generateRelease -- maintenance"
+      },
+      "_npmUser": {
+        "name": "eslintbot",
+        "email": "contact@eslint.org"
+      },
+      "gitHooks": {
+        "pre-commit": "lint-staged"
+      },
+      "overrides": {
+        "@metascraper/helpers": {
+          "re2": "~1.24.1"
+        },
+        "@arethetypeswrong/core": {
+          "fflate": "0.8.2"
+        }
+      },
+      "deprecated": "This version is no longer supported. Please see https://eslint.org/version-support for other options.",
+      "repository": {
+        "url": "git+https://github.com/eslint/eslint.git",
+        "type": "git"
+      },
+      "_npmVersion": "10.9.4",
+      "description": "An AST-based pattern checker for JavaScript.",
+      "directories": {},
+      "lint-staged": {
+        "*": "trunk check --fix",
+        "lib/rules/*.js": [
+          "node tools/update-eslint-all.js",
+          "node tools/update-eslint-recommended.js",
+          "node tools/update-rule-type-headers.js",
+          "git add packages/js/src/configs/*.js lib/types/rules.d.ts"
+        ],
+        "docs/src/rules/*.md": [
+          "node tools/check-rule-examples.js",
+          "node tools/fetch-docs-links.js",
+          "git add docs/src/_data/further_reading_links.json"
+        ]
+      },
+      "_nodeVersion": "22.21.0",
+      "dependencies": {
+        "ajv": "^6.14.0",
+        "chalk": "^4.0.0",
+        "debug": "^4.3.2",
+        "espree": "^10.4.0",
+        "ignore": "^5.2.0",
+        "esquery": "^1.5.0",
+        "esutils": "^2.0.2",
+        "find-up": "^5.0.0",
+        "is-glob": "^4.0.0",
+        "minimatch": "^3.1.5",
+        "@eslint/js": "9.39.5",
+        "optionator": "^0.9.3",
+        "cross-spawn": "^7.0.6",
+        "glob-parent": "^6.0.2",
+        "imurmurhash": "^0.1.4",
+        "@eslint/core": "^0.17.0",
+        "eslint-scope": "^8.4.0",
+        "lodash.merge": "^4.6.2",
+        "@humanfs/node": "^0.16.6",
+        "@types/estree": "^1.0.6",
+        "fast-deep-equal": "^3.1.3",
+        "natural-compare": "^1.4.0",
+        "@eslint/eslintrc": "^3.3.6",
+        "file-entry-cache": "^8.0.0",
+        "@eslint/plugin-kit": "^0.4.1",
+        "eslint-visitor-keys": "^4.2.1",
+        "@eslint/config-array": "^0.21.2",
+        "@humanwhocodes/retry": "^0.4.2",
+        "escape-string-regexp": "^4.0.0",
+        "@eslint/config-helpers": "^0.4.2",
+        "@eslint-community/regexpp": "^4.12.1",
+        "@eslint-community/eslint-utils": "^4.8.0",
+        "@humanwhocodes/module-importer": "^1.0.1",
+        "json-stable-stringify-without-jsonify": "^1.0.1"
+      },
+      "typesVersions": {
+        "*": {
+          "rules": [
+            "./lib/types/rules.d.ts"
+          ],
+          "config": [
+            "./lib/types/config-api.d.ts"
+          ],
+          "universal": [
+            "./lib/types/universal.d.ts"
+          ],
+          "use-at-your-own-risk": [
+            "./lib/types/use-at-your-own-risk.d.ts"
+          ]
+        }
+      },
+      "_hasShrinkwrap": false,
+      "readmeFilename": "README.md",
+      "devDependencies": {
+        "c8": "^7.12.0",
+        "ejs": "^3.0.2",
+        "got": "^11.8.3",
+        "chai": "^4.0.1",
+        "glob": "^10.0.0",
+        "jiti": "^2.6.1",
+        "knip": "^5.60.2",
+        "mocha": "^11.7.1",
+        "sinon": "^11.0.0",
+        "eslint": "file:.",
+        "eslump": "^3.0.0",
+        "marked": "^4.0.8",
+        "recast": "^0.23.0",
+        "semver": "^7.5.3",
+        "yorkie": "^2.0.0",
+        "cheerio": "^0.22.0",
+        "core-js": "^3.1.3",
+        "cypress": "^14.1.0",
+        "esprima": "^4.0.1",
+        "globals": "^16.2.0",
+        "pirates": "^4.0.5",
+        "shelljs": "^0.10.0",
+        "webpack": "^5.23.0",
+        "progress": "^2.0.3",
+        "fast-glob": "^3.2.11",
+        "jiti-v2.0": "npm:jiti@2.0.x",
+        "jiti-v2.1": "npm:jiti@2.1.x",
+        "proxyquire": "^2.0.1",
+        "typescript": "^5.3.3",
+        "@babel/core": "^7.4.3",
+        "@types/node": "^22.13.14",
+        "common-tags": "^1.8.0",
+        "fs-teardown": "^0.1.3",
+        "gray-matter": "^4.0.3",
+        "lint-staged": "^11.0.0",
+        "markdown-it": "^12.2.0",
+        "metascraper": "^5.25.7",
+        "npm-license": "^0.3.3",
+        "webpack-cli": "^4.5.0",
+        "@eslint/json": "^0.13.2",
+        "babel-loader": "^8.0.5",
+        "@types/esquery": "^1.5.4",
+        "eslint-release": "^3.3.0",
+        "metascraper-logo": "^5.25.7",
+        "@babel/preset-env": "^7.4.3",
+        "@trunkio/launcher": "^1.3.4",
+        "eslint-plugin-yml": "^1.14.0",
+        "metascraper-image": "^5.29.3",
+        "metascraper-title": "^5.25.7",
+        "regenerator-runtime": "^0.14.0",
+        "eslint-config-eslint": "file:packages/eslint-config-eslint",
+        "eslint-rule-composer": "^0.3.0",
+        "@arethetypeswrong/cli": "^0.18.0",
+        "markdown-it-container": "^3.0.0",
+        "metascraper-description": "^5.25.7",
+        "metascraper-logo-favicon": "^5.25.7",
+        "@typescript-eslint/parser": "^8.4.0",
+        "eslint-plugin-expect-type": "^0.6.0",
+        "eslint-plugin-eslint-plugin": "^6.0.0",
+        "node-polyfill-webpack-plugin": "^1.0.3",
+        "@cypress/webpack-preprocessor": "^6.0.2"
+      },
+      "peerDependencies": {
+        "jiti": "*"
+      },
+      "peerDependenciesMeta": {
+        "jiti": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "tmp": "tmp/eslint_9.39.5_1783716107272_0.507747376497784",
+        "host": "s3://npm-registry-packages-npm-production"
+      }
+    },
+    "published": "2026-07-10T20:41:47.507Z",
+    "registry_sha256": "6567075f90c2b74fce6ec49655c388cbeb04c43302ac387d9bd2e4d30acf62ad"
+  },
+  "eslint-plugin-react": {
+    "latest": "7.37.5",
+    "selected": {
+      "name": "eslint-plugin-react",
+      "version": "7.37.5",
+      "author": {
+        "name": "Yannick Croissant",
+        "email": "yannick.croissant+npm@gmail.com"
+      },
+      "description": "React specific linting rules for ESLint",
+      "main": "index.js",
+      "types": "index.d.ts",
+      "scripts": {
+        "clean-built-types": "rm -f $(find . -maxdepth 1 -type f -name '*.d.ts*') $(find lib -type f -name '*.d.ts*' ! -name 'types.d.ts')",
+        "prebuild-types": "npm run clean-built-types",
+        "build-types": "tsc -p build.tsconfig.json",
+        "prepack": "npm run build-types && npmignore --auto --commentLines=autogenerated",
+        "prelint": "npm run lint:docs",
+        "lint:docs": "markdownlint \"**/*.md\"",
+        "postlint:docs": "npm run update:eslint-docs -- --check",
+        "lint": "eslint .",
+        "postlint": "npm run type-check",
+        "pretest": "npm run lint",
+        "test": "npm run unit-test",
+        "posttest": "npx npm@'>= 10.2' audit --production",
+        "type-check": "tsc",
+        "unit-test": "istanbul cover node_modules/mocha/bin/_mocha tests/lib/**/*.js tests/util/**/*.js tests/index.js tests/flat-config.js",
+        "update:eslint-docs": "eslint-doc-generator"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jsx-eslint/eslint-plugin-react.git"
+      },
+      "directories": {
+        "test": [
+          "test",
+          "tests",
+          "test-published-types"
+        ]
+      },
+      "homepage": "https://github.com/jsx-eslint/eslint-plugin-react",
+      "bugs": {
+        "url": "https://github.com/jsx-eslint/eslint-plugin-react/issues"
+      },
+      "dependencies": {
+        "array-includes": "^3.1.8",
+        "array.prototype.findlast": "^1.2.5",
+        "array.prototype.flatmap": "^1.3.3",
+        "array.prototype.tosorted": "^1.1.4",
+        "doctrine": "^2.1.0",
+        "es-iterator-helpers": "^1.2.1",
+        "estraverse": "^5.3.0",
+        "hasown": "^2.0.2",
+        "jsx-ast-utils": "^2.4.1 || ^3.0.0",
+        "minimatch": "^3.1.2",
+        "object.entries": "^1.1.9",
+        "object.fromentries": "^2.0.8",
+        "object.values": "^1.2.1",
+        "prop-types": "^15.8.1",
+        "resolve": "^2.0.0-next.5",
+        "semver": "^6.3.1",
+        "string.prototype.matchall": "^4.0.12",
+        "string.prototype.repeat": "^1.0.0"
+      },
+      "devDependencies": {
+        "@babel/core": "^7.26.10",
+        "@babel/eslint-parser": "^7.27.0",
+        "@babel/plugin-syntax-decorators": "^7.25.9",
+        "@babel/plugin-syntax-do-expressions": "^7.25.9",
+        "@babel/plugin-syntax-function-bind": "^7.25.9",
+        "@babel/preset-react": "^7.26.3",
+        "@types/eslint": "=7.2.10",
+        "@types/estree": "0.0.52",
+        "@types/node": "^4.9.5",
+        "@typescript-eslint/parser": "^2.34.0 || ^3.10.1 || ^4 || ^5 || ^6.20 || ^7.14.1 || 8.4 - 8.17",
+        "babel-eslint": "^8 || ^9 || ^10.1.0",
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-doc-generator": "^1.7.1",
+        "eslint-plugin-eslint-plugin": "^2.3.0 || ^3.5.3 || ^4.0.1 || ^5.0.5",
+        "eslint-plugin-import": "^2.31.0",
+        "eslint-remote-tester": "^3.0.1",
+        "eslint-remote-tester-repositories": "^1.0.1",
+        "eslint-scope": "^3.7.3",
+        "espree": "^3.5.4",
+        "gfm-footnotes": "^1.0.1",
+        "glob": "=10.3.7",
+        "istanbul": "^0.4.5",
+        "jackspeak": "=2.1.1",
+        "ls-engines": "^0.8.1",
+        "markdownlint-cli": "^0.8.0 || ^0.32.2",
+        "mocha": "^5.2.0",
+        "npmignore": "^0.3.1",
+        "sinon": "^7.5.0",
+        "typescript": "^3.9.9",
+        "typescript-eslint-parser": "^20.1.1"
+      },
+      "peerDependencies": {
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "keywords": [
+        "eslint",
+        "eslint-plugin",
+        "eslintplugin",
+        "react"
+      ],
+      "license": "MIT",
+      "publishConfig": {
+        "ignore": [
+          ".github/",
+          "!lib",
+          "docs/",
+          "test/",
+          "test-published-types/",
+          "tests/",
+          "*.md",
+          "*.config.js",
+          ".eslint-doc-generatorrc.js",
+          ".eslintrc",
+          ".editorconfig",
+          "tsconfig.json",
+          "build.tsconfig.json",
+          ".markdownlint*",
+          "types",
+          "!*.d.ts",
+          "!*.d.ts.map"
+        ]
+      },
+      "_id": "eslint-plugin-react@7.37.5",
+      "gitHead": "2c98b83c451a4297edf1787d9a616e50687e27e8",
+      "_nodeVersion": "23.5.0",
+      "_npmVersion": "10.9.2",
+      "dist": {
+        "integrity": "sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==",
+        "shasum": "2975511472bdda1b272b34d779335c9b0e877065",
+        "tarball": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.37.5.tgz",
+        "fileCount": 406,
+        "unpackedSize": 937569,
+        "signatures": [
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEUCICSNRvL9Jzj5j1Oy46rZG9V8PLLdyOF9okd8dfbGRNF+AiEA/388X+hcfwIUZjeT+53CI1bsDE+bvHxbpnN7jr7YeVo="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "ljharb",
+        "email": "ljharb@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "ljharb",
+          "email": "ljharb@gmail.com"
+        },
+        {
+          "name": "yannickcr",
+          "email": "yannick.croissant+npm@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/eslint-plugin-react_7.37.5_1743710475510_0.008482062019489423"
+      },
+      "_hasShrinkwrap": false
+    },
+    "published": "2025-04-03T20:01:15.958Z",
+    "registry_sha256": "4755763719a6a93d66c484af2d82c00792ad2265791baebac96fb3d9f88a7495"
+  },
+  "eslint-plugin-react-hooks": {
+    "latest": "7.1.1",
+    "selected": {
+      "name": "eslint-plugin-react-hooks",
+      "version": "7.1.1",
+      "keywords": [
+        "eslint",
+        "eslint-plugin",
+        "eslintplugin",
+        "react"
+      ],
+      "license": "MIT",
+      "_id": "eslint-plugin-react-hooks@7.1.1",
+      "maintainers": [
+        {
+          "name": "react-bot",
+          "email": "react-core@meta.com"
+        }
+      ],
+      "homepage": "https://react.dev/",
+      "bugs": {
+        "url": "https://github.com/facebook/react/issues"
+      },
+      "dist": {
+        "shasum": "e6742cad75d970c0a3f30d7d3fa80a4784f55927",
+        "tarball": "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-7.1.1.tgz",
+        "fileCount": 8,
+        "integrity": "sha512-f2I7Gw6JbvCexzIInuSbZpfdQ44D7iqdWX01FKLvrPgqxoE7oMj8clOfto8U6vYiz4yd5oKu39rRSVOe1zRu0g==",
+        "signatures": [
+          {
+            "sig": "MEYCIQCdi56UBcCdIG9KuraMEEC9DmLaBSwFdu3/FH8z6uwFlAIhAPKLC+VSc1yZGOqe0obrEL1J80GrzRndCFDhDWqVCZWw",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 4095735
+      },
+      "main": "./index.js",
+      "types": "./index.d.ts",
+      "engines": {
+        "node": ">=18"
+      },
+      "gitHead": "1ddff43c41147b880c22eb363e07aade5a71c5d9",
+      "scripts": {
+        "test": "yarn build:compiler && jest",
+        "typecheck": "tsc --noEmit",
+        "build:compiler": "cd ../../compiler && yarn workspace babel-plugin-react-compiler build"
+      },
+      "_npmUser": {
+        "name": "react-bot",
+        "email": "react-core@meta.com"
+      },
+      "repository": {
+        "url": "git+https://github.com/facebook/react.git",
+        "type": "git",
+        "directory": "packages/eslint-plugin-react-hooks"
+      },
+      "_npmVersion": "10.8.2",
+      "description": "ESLint rules for React Hooks",
+      "directories": {},
+      "_nodeVersion": "20.19.0",
+      "dependencies": {
+        "zod": "^3.25.0 || ^4.0.0",
+        "@babel/core": "^7.24.4",
+        "@babel/parser": "^7.24.4",
+        "hermes-parser": "^0.25.1",
+        "zod-validation-error": "^3.5.0 || ^4.0.0"
+      },
+      "_hasShrinkwrap": false,
+      "devDependencies": {
+        "jest": "^29.5.0",
+        "eslint-v7": "npm:eslint@^7.7.0",
+        "eslint-v8": "npm:eslint@^8.57.1",
+        "eslint-v9": "npm:eslint@^9.0.0",
+        "typescript": "^5.4.3",
+        "@types/node": "^20.2.5",
+        "@babel/types": "^7.19.0",
+        "babel-eslint": "^10.0.3",
+        "@types/eslint": "^9.6.1",
+        "@types/estree": "^1.0.6",
+        "@types/estree-jsx": "^1.0.5",
+        "@tsconfig/strictest": "^2.0.5",
+        "@babel/eslint-parser": "^7.11.4",
+        "@babel/preset-typescript": "^7.26.0",
+        "@typescript-eslint/parser-v2": "npm:@typescript-eslint/parser@^2.26.0",
+        "@typescript-eslint/parser-v3": "npm:@typescript-eslint/parser@^3.10.0",
+        "@typescript-eslint/parser-v4": "npm:@typescript-eslint/parser@^4.1.0",
+        "@typescript-eslint/parser-v5": "npm:@typescript-eslint/parser@^5.62.0"
+      },
+      "peerDependencies": {
+        "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0"
+      },
+      "_npmOperationalInternal": {
+        "tmp": "tmp/eslint-plugin-react-hooks_7.1.1_1776448999403_0.57469495177969",
+        "host": "s3://npm-registry-packages-npm-production"
+      }
+    },
+    "published": "2026-04-17T18:03:19.591Z",
+    "registry_sha256": "7f140e91e5c85eec75f2e8acda41101eb271216fde497195c2fcf2adba10c0da"
+  },
+  "eslint-plugin-jsx-a11y": {
+    "latest": "6.10.2",
+    "selected": {
+      "name": "eslint-plugin-jsx-a11y",
+      "version": "6.10.2",
+      "description": "Static AST checker for accessibility rules on JSX elements.",
+      "keywords": [
+        "eslint",
+        "eslintplugin",
+        "eslint-plugin",
+        "a11y",
+        "accessibility",
+        "jsx"
+      ],
+      "author": {
+        "name": "Ethan Cohen"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jsx-eslint/eslint-plugin-jsx-a11y.git"
+      },
+      "main": "lib/index.js",
+      "scripts": {
+        "prepack": "npmignore --auto --commentLines=autogenerated && npm run build",
+        "build": "rimraf lib && babel src --out-dir lib --copy-files",
+        "create": "node ./scripts/create-rule",
+        "flow": "flow",
+        "lint:fix": "npm run lint -- --fix",
+        "lint": "npx eslint@8 --ext=js,mjs,cjs,ts,tsx .",
+        "prepublish": "not-in-publish || npm run prepublishOnly",
+        "prepublishOnly": "safe-publish-latest && npm run lint && npm run flow && npm run tests-only",
+        "pretest": "npm run lint:fix && npm run flow",
+        "test": "npm run tests-only",
+        "tests-only": "tape --require=@babel/register '__tests__/**/*.js'",
+        "posttest": "npx npm@'>=10.2' audit --production",
+        "pretest:examples": "npm run build",
+        "test:examples": "npm run test-example:legacy && npm run test-example:flat-esm && npm run test-example:flat-cjs",
+        "test-example:legacy": "cd examples/legacy && npm install && npm run lint",
+        "test-example:flat-esm": "cd examples/flat-esm && npm install && npm run lint",
+        "test-example:flat-cjs": "cd examples/flat-cjs && npm install && npm run lint",
+        "pregenerate-list-of-rules": "npm run build",
+        "generate-list-of-rules": "eslint-doc-generator --rule-doc-title-format prefix-name --rule-doc-section-options false --config-emoji recommended,\u2611\ufe0f --ignore-config flat/recommended --ignore-config flat/strict",
+        "generate-list-of-rules:check": "npm run generate-list-of-rules -- --check",
+        "version": "auto-changelog && git add CHANGELOG.md",
+        "postversion": "auto-changelog && git add CHANGELOG.md && git commit --no-edit --amend && git tag -f \"v$(node -e \"console.log(require('./package.json').version)\")\""
+      },
+      "devDependencies": {
+        "@babel/cli": "^7.25.9",
+        "@babel/core": "^7.26.0",
+        "@babel/eslint-parser": "^7.25.9",
+        "@babel/plugin-transform-flow-strip-types": "^7.25.9",
+        "@babel/register": "^7.25.9",
+        "auto-changelog": "^2.5.0",
+        "babel-plugin-add-module-exports": "^1.0.4",
+        "babel-preset-airbnb": "^5.0.0",
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-doc-generator": "^1.7.1",
+        "eslint-plugin-eslint-plugin": "^4.3.0",
+        "eslint-plugin-flowtype": "^5.8.0 || ^8.0.3",
+        "eslint-plugin-import": "^2.31.0",
+        "estraverse": "^5.3.0",
+        "flow-bin": "^0.147.0",
+        "in-publish": "^2.0.1",
+        "jackspeak": "=2.1.1",
+        "jscodeshift": "^17.0.0",
+        "minimist": "^1.2.8",
+        "npmignore": "^0.3.1",
+        "object.assign": "^4.1.5",
+        "object.entries": "^1.1.8",
+        "rimraf": "^3.0.2",
+        "safe-publish-latest": "^2.0.0",
+        "semver": "^6.3.1",
+        "tape": "^5.9.0",
+        "to-ast": "^1.0.0"
+      },
+      "engines": {
+        "node": ">=4.0"
+      },
+      "license": "MIT",
+      "dependencies": {
+        "aria-query": "^5.3.2",
+        "array-includes": "^3.1.8",
+        "array.prototype.flatmap": "^1.3.2",
+        "ast-types-flow": "^0.0.8",
+        "axe-core": "^4.10.0",
+        "axobject-query": "^4.1.0",
+        "damerau-levenshtein": "^1.0.8",
+        "emoji-regex": "^9.2.2",
+        "hasown": "^2.0.2",
+        "jsx-ast-utils": "^3.3.5",
+        "language-tags": "^1.0.9",
+        "minimatch": "^3.1.2",
+        "object.fromentries": "^2.0.8",
+        "safe-regex-test": "^1.0.3",
+        "string.prototype.includes": "^2.0.1"
+      },
+      "peerDependencies": {
+        "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9"
+      },
+      "auto-changelog": {
+        "output": "CHANGELOG.md",
+        "template": "keepachangelog",
+        "unreleased": false,
+        "commitLimit": false,
+        "backfillLimit": false,
+        "hideCredit": true,
+        "startingVersion": "6.6.2"
+      },
+      "publishConfig": {
+        "ignore": [
+          "!lib",
+          ".github/workflows",
+          ".flowconfig",
+          "/src",
+          "/reports",
+          "/flow",
+          "scripts/",
+          "CONTRIBUTING.md",
+          "/examples"
+        ]
+      },
+      "_id": "eslint-plugin-jsx-a11y@6.10.2",
+      "gitHead": "7f3d698f40d697471555e1dae74bfc7ee94d0b86",
+      "bugs": {
+        "url": "https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues"
+      },
+      "homepage": "https://github.com/jsx-eslint/eslint-plugin-jsx-a11y#readme",
+      "_nodeVersion": "23.1.0",
+      "_npmVersion": "10.9.0",
+      "dist": {
+        "integrity": "sha512-scB3nz4WmG75pV8+3eRUQOHZlNSUhFNq37xnpgRkCCELU3XMvXAxLk1eqWWyE22Ki4Q01Fnsw9BA3cJHDPgn2Q==",
+        "shasum": "d2812bb23bf1ab4665f1718ea442e8372e638483",
+        "tarball": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.10.2.tgz",
+        "fileCount": 229,
+        "unpackedSize": 752797,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIBLVcMo1z8881smPVhZGfvKqwjP/+8M3bzoHT8HZNUjkAiA/xOYOovyHHvvQMOBMfy5+Yr/IUGMhxRrzLV+dMim4GA=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "ljharb",
+        "email": "ljharb@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "ljharb",
+          "email": "ljharb@gmail.com"
+        },
+        {
+          "name": "lencioni",
+          "email": "joe.lencioni@gmail.com"
+        },
+        {
+          "name": "jessebeach",
+          "email": "jesse.r.beach@icloud.com"
+        },
+        {
+          "name": "evcohen",
+          "email": "ethanvcohen@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/eslint-plugin-jsx-a11y_6.10.2_1729917917787_0.38443942450029756"
+      },
+      "_hasShrinkwrap": false
+    },
+    "published": "2024-10-26T04:45:18.067Z",
+    "registry_sha256": "76697948c9693323db1a27e73c45675b0660ea0cbd67c769f824ff410b70b20a"
+  },
+  "eslint-plugin-import": {
+    "latest": "2.32.0",
+    "selected": {
+      "name": "eslint-plugin-import",
+      "version": "2.32.0",
+      "description": "Import with sanity.",
+      "engines": {
+        "node": ">=4"
+      },
+      "main": "lib/index.js",
+      "types": "index.d.ts",
+      "directories": {
+        "test": "tests"
+      },
+      "scripts": {
+        "prebuild": "rimraf lib",
+        "build": "babel --quiet --out-dir lib src",
+        "postbuild": "npm run copy-metafiles",
+        "copy-metafiles": "node --require babel-register ./scripts/copyMetafiles",
+        "watch": "npm run tests-only -- -- --watch",
+        "pretest": "linklocal",
+        "posttest": "eslint . && npm run update:eslint-docs -- --check && markdownlint \"**/*.md\"",
+        "mocha": "cross-env BABEL_ENV=test nyc mocha",
+        "tests-only": "npm run mocha tests/src",
+        "test": "npm run tests-only",
+        "test-compiled": "npm run prepublish && BABEL_ENV=testCompiled mocha --compilers js:babel-register tests/src",
+        "test-all": "node --require babel-register ./scripts/testAll",
+        "test-examples": "npm run build && npm run test-example:legacy && npm run test-example:flat && npm run test-example:v9",
+        "test-example:legacy": "cd examples/legacy && npm install && npm run lint",
+        "test-example:flat": "cd examples/flat && npm install && npm run lint",
+        "test-example:v9": "cd examples/v9 && npm install && npm run lint",
+        "test-types": "npx --package typescript@latest tsc --noEmit index.d.ts",
+        "prepublishOnly": "safe-publish-latest && npm run build",
+        "prepublish": "not-in-publish || npm run prepublishOnly",
+        "preupdate:eslint-docs": "npm run build",
+        "update:eslint-docs": "eslint-doc-generator --rule-doc-title-format prefix-name --rule-doc-section-options false --rule-list-split meta.docs.category --ignore-config stage-0 --config-emoji recommended,\u2611\ufe0f"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/import-js/eslint-plugin-import.git"
+      },
+      "keywords": [
+        "eslint",
+        "eslintplugin",
+        "eslint-plugin",
+        "es6",
+        "jsnext",
+        "modules",
+        "import",
+        "export"
+      ],
+      "author": {
+        "name": "Ben Mosher",
+        "email": "me@benmosher.com"
+      },
+      "license": "MIT",
+      "bugs": {
+        "url": "https://github.com/import-js/eslint-plugin-import/issues"
+      },
+      "homepage": "https://github.com/import-js/eslint-plugin-import",
+      "devDependencies": {
+        "@angular-eslint/template-parser": "^13.5.0",
+        "@eslint/import-test-order-redirect-scoped": "file:./tests/files/order-redirect-scoped",
+        "@test-scope/some-module": "file:./tests/files/symlinked-module",
+        "@types/eslint": "^8.56.12",
+        "@typescript-eslint/parser": "^2.23.0 || ^3.3.0 || ^4.29.3 || ^5.10.0",
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.3",
+        "babel-eslint": "=8.0.3 || ^8.2.6",
+        "babel-plugin-istanbul": "^4.1.6",
+        "babel-plugin-module-resolver": "^2.7.1",
+        "babel-preset-airbnb": "^2.6.0",
+        "babel-preset-flow": "^6.23.0",
+        "babel-register": "^6.26.0",
+        "babylon": "^6.18.0",
+        "chai": "^4.3.10",
+        "cross-env": "^4.0.0",
+        "escope": "^3.6.0",
+        "eslint": "^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9",
+        "eslint-doc-generator": "^1.6.1",
+        "eslint-import-resolver-node": "file:./resolvers/node",
+        "eslint-import-resolver-typescript": "^1.0.2 || ^1.1.1",
+        "eslint-import-resolver-webpack": "file:./resolvers/webpack",
+        "eslint-import-test-order-redirect": "file:./tests/files/order-redirect",
+        "eslint-module-utils": "file:./utils",
+        "eslint-plugin-eslint-plugin": "^2.3.0",
+        "eslint-plugin-import": "2.x",
+        "eslint-plugin-json": "^2.1.2",
+        "find-babel-config": "=1.2.0",
+        "fs-copy-file-sync": "^1.1.1",
+        "glob": "^7.2.3",
+        "in-publish": "^2.0.1",
+        "jackspeak": "=2.1.1",
+        "jsonc-parser": "=3.2.0",
+        "linklocal": "^2.8.2",
+        "lodash.isarray": "^4.0.0",
+        "markdownlint-cli": "~0.35",
+        "mocha": "^3.5.3",
+        "npm-which": "^3.0.1",
+        "nyc": "^11.9.0",
+        "redux": "^3.7.2",
+        "rimraf": "^2.7.1",
+        "safe-publish-latest": "^2.0.0",
+        "sinon": "^2.4.1",
+        "tmp": "^0.2.1",
+        "typescript": "^2.8.1 || ~3.9.5 || ~4.5.2",
+        "typescript-eslint-parser": "^15 || ^20 || ^22"
+      },
+      "peerDependencies": {
+        "eslint": "^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9"
+      },
+      "dependencies": {
+        "@rtsao/scc": "^1.1.0",
+        "array-includes": "^3.1.9",
+        "array.prototype.findlastindex": "^1.2.6",
+        "array.prototype.flat": "^1.3.3",
+        "array.prototype.flatmap": "^1.3.3",
+        "debug": "^3.2.7",
+        "doctrine": "^2.1.0",
+        "eslint-import-resolver-node": "^0.3.9",
+        "eslint-module-utils": "^2.12.1",
+        "hasown": "^2.0.2",
+        "is-core-module": "^2.16.1",
+        "is-glob": "^4.0.3",
+        "minimatch": "^3.1.2",
+        "object.fromentries": "^2.0.8",
+        "object.groupby": "^1.0.3",
+        "object.values": "^1.2.1",
+        "semver": "^6.3.1",
+        "string.prototype.trimend": "^1.0.9",
+        "tsconfig-paths": "^3.15.0"
+      },
+      "_id": "eslint-plugin-import@2.32.0",
+      "gitHead": "01c9eb04331d2efa8d63f2d7f4bfec3bc44c94f3",
+      "_nodeVersion": "24.2.0",
+      "_npmVersion": "11.3.0",
+      "dist": {
+        "integrity": "sha512-whOE1HFo/qJDyX4SnXzP4N6zOWn79WhnCUY/iDR0mPfQZO8wcYE4JClzI2oZrhBnnMUCBCHZhO6VQyoBU95mZA==",
+        "shasum": "602b55faa6e4caeaa5e970c198b5c00a37708980",
+        "tarball": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.32.0.tgz",
+        "fileCount": 132,
+        "unpackedSize": 1417661,
+        "signatures": [
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEYCIQDB1cmN9UIDrsRT8rxmciSqaKZon/8NSub1RHdOqbXP5QIhAI5/WIZoQ5xVPcUeHZwhzG6NELESnUdt8ok4ZKrsEWdm"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "ljharb",
+        "email": "ljharb@gmail.com",
+        "actor": {
+          "name": "ljharb",
+          "email": "ljharb@gmail.com",
+          "type": "user"
+        }
+      },
+      "maintainers": [
+        {
+          "name": "benmosher",
+          "email": "me@benmosher.com"
+        },
+        {
+          "name": "ljharb",
+          "email": "ljharb@gmail.com"
+        },
+        {
+          "name": "jfmengels",
+          "email": "jfm.engels@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/eslint-plugin-import_2.32.0_1750456749527_0.43356429602469726"
+      },
+      "_hasShrinkwrap": false
+    },
+    "published": "2025-06-20T21:59:09.822Z",
+    "registry_sha256": "38241666b1362b0a6e84bdd50bddb83c96fb44b401caa2c268726e6c82252cce"
+  },
+  "globals": {
+    "latest": "17.13.0",
+    "selected": {
+      "xo": {
+        "rules": {
+          "unicorn/prefer-module": "off"
+        },
+        "overrides": [
+          {
+            "files": [
+              "data/*.mjs"
+            ],
+            "rules": {
+              "camelcase": "off",
+              "unicorn/filename-case": [
+                "error",
+                {
+                  "cases": {
+                    "camelCase": true,
+                    "kebabCase": true
+                  }
+                }
+              ],
+              "import/no-anonymous-default-export": "off"
+            }
+          },
+          {
+            "files": [
+              "scripts/*.mjs"
+            ],
+            "rules": {
+              "n/no-unsupported-features/node-builtins": "off"
+            }
+          },
+          {
+            "envs": [
+              "browser",
+              "worker",
+              "serviceworker"
+            ],
+            "files": [
+              "scripts/browser/assets/**/*.mjs"
+            ],
+            "rules": {
+              "unicorn/prefer-add-event-listener": "off",
+              "n/no-unsupported-features/node-builtins": "off"
+            }
+          }
+        ]
+      },
+      "_id": "globals@17.13.0",
+      "tsd": {
+        "compilerOptions": {
+          "resolveJsonModule": true
+        }
+      },
+      "bugs": {
+        "url": "https://github.com/sindresorhus/globals/issues"
+      },
+      "dist": {
+        "shasum": "ab2134b5ededbf2fbe2831dd0acc36f4f1ddeac5",
+        "tarball": "https://registry.npmjs.org/globals/-/globals-17.13.0.tgz",
+        "fileCount": 6,
+        "integrity": "sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==",
+        "signatures": [
+          {
+            "sig": "MEUCIQCJh3tH+GPb5uR8CECspSFViMYLu6NqLmQzWWUlSf/lggIgFZA0rn0Ctra7/xgzquqvYkQPpBFjoZIAZPZ/1W2KbxA=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          },
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEUCIC2EvNfh3gvDsa6HTCF8MjCs3//7gVv9foGSPi0YpMrHAiEA/W01oEP5Dn9ZWTqESdLCD2Wi+k5+uiP0VTofqR88X3o="
+          }
+        ],
+        "unpackedSize": 257100
+      },
+      "name": "globals",
+      "types": "./index.d.ts",
+      "author": {
+        "url": "https://sindresorhus.com",
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "engines": {
+        "node": ">=18"
+      },
+      "funding": "https://github.com/sponsors/sindresorhus",
+      "gitHead": "ce512bc1949f918ad6c17cc864a63ab6b077764f",
+      "license": "MIT",
+      "scripts": {
+        "test": "npm run build && xo && ava && tsd",
+        "build": "run-s build:data build:types",
+        "update": "node scripts/update.mjs",
+        "prepare": "npm run build",
+        "build:data": "node scripts/generate-data.mjs",
+        "build:types": "node scripts/generate-types.mjs",
+        "update:jest": "node scripts/update.mjs --job=jest",
+        "update:vitest": "node scripts/update.mjs --job=vitest",
+        "update:worker": "node scripts/update.mjs --job=worker",
+        "update:browser": "node scripts/update.mjs --job=browser",
+        "update:builtin": "node scripts/update.mjs --job=builtin",
+        "update:shelljs": "node scripts/update.mjs --job=shelljs",
+        "update:bunBuiltin": "node scripts/update.mjs --job=bunBuiltin",
+        "update:denoBuiltin": "node scripts/update.mjs --job=denoBuiltin",
+        "update:nodeBuiltin": "node scripts/update.mjs --job=nodeBuiltin",
+        "update:audioWorklet": "node scripts/update.mjs --job=audioWorklet",
+        "update:sharedWorker": "node scripts/update.mjs --job=sharedWorker",
+        "update:serviceworker": "node scripts/update.mjs --job=serviceworker",
+        "update:builtin-yearly": "node scripts/update.mjs --job=builtin-yearly"
+      },
+      "version": "17.13.0",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "homepage": "https://github.com/sindresorhus/globals#readme",
+      "keywords": [
+        "globals",
+        "global",
+        "identifiers",
+        "variables",
+        "vars",
+        "jshint",
+        "eslint",
+        "environments"
+      ],
+      "repository": {
+        "url": "git+https://github.com/sindresorhus/globals.git",
+        "type": "git"
+      },
+      "_npmVersion": "12.0.1",
+      "description": "Global identifiers from different JavaScript environments",
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "byk",
+          "email": "ben@byk.im"
+        },
+        {
+          "name": "nzakas",
+          "email": "nicholas@nczconsulting.com"
+        },
+        {
+          "name": "lo1tuma",
+          "email": "schreck.mathias@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "sideEffects": false,
+      "_nodeVersion": "26.9.0",
+      "_hasShrinkwrap": false,
+      "devDependencies": {
+        "xo": "^0.60.0",
+        "ava": "^6.3.0",
+        "tsd": "^0.32.0",
+        "cheerio": "^1.0.0",
+        "outdent": "^0.8.0",
+        "shelljs": "^0.9.2",
+        "get-port": "^7.1.0",
+        "puppeteer": "^25.12.0",
+        "type-fest": "^4.41.0",
+        "nano-spawn": "^0.2.0",
+        "npm-run-all2": "^8.0.1",
+        "is-identifier": "^1.0.1",
+        "eslint-plugin-jest": "^28.11.0",
+        "@vitest/eslint-plugin": "^1.1.44"
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/globals_17.13.0_1790827031858_0.8361383428664118"
+      }
+    },
+    "published": "2026-10-01T03:57:11.938Z",
+    "registry_sha256": "e0ec1d8e8bd3a8e8fb0633144e3d8d3cddcd4f248e4b84f182e6b75743a9fe4c"
+  },
+  "confusing-browser-globals": {
+    "latest": "1.0.11",
+    "selected": {
+      "name": "confusing-browser-globals",
+      "version": "1.0.11",
+      "keywords": [
+        "eslint",
+        "globals"
+      ],
+      "license": "MIT",
+      "_id": "confusing-browser-globals@1.0.11",
+      "maintainers": [
+        {
+          "name": "gaearon",
+          "email": "dan.abramov@gmail.com"
+        },
+        {
+          "name": "fb",
+          "email": "opensource+npm@fb.com"
+        },
+        {
+          "name": "timer",
+          "email": "timer150@gmail.com"
+        },
+        {
+          "name": "iansu",
+          "email": "ian@iansutherland.ca"
+        },
+        {
+          "name": "ianschmitz",
+          "email": "ianschmitz@gmail.com"
+        }
+      ],
+      "homepage": "https://github.com/facebook/create-react-app#readme",
+      "bugs": {
+        "url": "https://github.com/facebook/create-react-app/issues"
+      },
+      "dist": {
+        "shasum": "ae40e9b57cdd3915408a2805ebd3a5585608dc81",
+        "tarball": "https://registry.npmjs.org/confusing-browser-globals/-/confusing-browser-globals-1.0.11.tgz",
+        "fileCount": 4,
+        "integrity": "sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA==",
+        "signatures": [
+          {
+            "sig": "MEQCIE9a1TYoC7bMer9bQY5SaRPWWLZ7q5lQ4RT5PbBSYXzKAiAmYBX06V/qvUvygbDeLvNKmYYI7icPNFdudXy0KlQARg==",
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA"
+          }
+        ],
+        "unpackedSize": 3871,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJhuL4ZCRA9TVsSAnZWagAAGB0P/ibPEJZRqv2Q2ns93ulo\n5B+GK0if5nzlS0AupgAdb2eZl38qqQC0peSVvixLKaTZC0xlooXKbQX83vlN\nePn5Tli5E5An8r3blEp3B0zWV0knrsHtpCsL5YPSEsCCojsNXeF7SQPudX3Y\nQz8v8Pj4kGBFMYo2F/vLXXOxid1YU+GB57ElGadvMgF6oEiQmPuBX5VNiG7Y\nozHxlaePOxCknY8tfcNwTXrt9HxUUMaI+/FywJu/2QTTKBU79fT61l4ujgZn\nxi+Ij3x0vmKU/zNht5J6/d0J515Sm6pykBnkM588q5od/0mzqf8m3FbzhjAY\n6CuOw0vNZY67iU4LCRedURNVb1AZEXOyGXQITBVrlWSDmW3p1lVYMnvnLqmY\nDOxOELXS0rS3V9ELNwzqFY38J9n002MIlNZaK04jLlxALdCCkcKqr1zgK8+y\nPrcckuavraGBVpiw1je/fmUBE6q1+FU64y1IhYd6FNBLwn9fIYCcglMIa1rL\nnQ+ndJlH81o34iMeeKfmaKswLaf3OYolQh1gR1v7AK2IGDOTVHZmal1zZeaa\nrALWlkda8U6eO8ButSZ2p7Iq5ovOYYFtdgReDeONUoosz1eKToSArg1cP8HU\nP6wNdQAoBoQFlsDdt2/7mNhedOJksHSXSzfeO9CRZaWQvagwtuXurMacFNoj\n5HX5\r\n=PUlU\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "main": "index.js",
+      "gitHead": "221e511730ca51c036c6954a9d2ee7659ff860f9",
+      "scripts": {
+        "test": "jest"
+      },
+      "_npmUser": {
+        "name": "iansu",
+        "email": "ian@iansutherland.ca"
+      },
+      "repository": {
+        "url": "git+https://github.com/facebook/create-react-app.git",
+        "type": "git",
+        "directory": "packages/confusing-browser-globals"
+      },
+      "_npmVersion": "lerna/4.0.0/node@v16.13.0+arm64 (darwin)",
+      "description": "A list of browser globals that are often used by mistake instead of local variables",
+      "directories": {},
+      "_nodeVersion": "16.13.0",
+      "_hasShrinkwrap": false,
+      "devDependencies": {
+        "jest": "^27.4.3"
+      },
+      "_npmOperationalInternal": {
+        "tmp": "tmp/confusing-browser-globals_1.0.11_1639497241019_0.39151501504665953",
+        "host": "s3://npm-registry-packages"
+      }
+    },
+    "published": "2021-12-14T15:54:01.150Z",
+    "registry_sha256": "c090e71158324d58f122dcd57f187a42a844b06b0a38b80885517b6a53748bc9"
+  },
+  "acorn": {
+    "latest": "8.18.0",
+    "selected": {
+      "name": "acorn",
+      "version": "5.7.4",
+      "license": "MIT",
+      "_id": "acorn@5.7.4",
+      "maintainers": [
+        {
+          "name": "adrianheine",
+          "email": "mail@adrianheine.de"
+        },
+        {
+          "name": "marijn",
+          "email": "marijnh@gmail.com"
+        },
+        {
+          "name": "rreverser",
+          "email": "me@rreverser.com"
+        }
+      ],
+      "contributors": [
+        {
+          "name": "List of Acorn contributors. Updated before every release."
+        },
+        {
+          "name": "Adrian Heine"
+        },
+        {
+          "name": "Adrian Rakovsky"
+        },
+        {
+          "name": "Alistair Braidwood"
+        },
+        {
+          "name": "Amila Welihinda"
+        },
+        {
+          "name": "Andres Suarez"
+        },
+        {
+          "name": "Angelo"
+        },
+        {
+          "name": "Aparajita Fishman"
+        },
+        {
+          "name": "Arian Stolwijk"
+        },
+        {
+          "name": "Artem Govorov"
+        },
+        {
+          "name": "Boopesh Mahendran"
+        },
+        {
+          "name": "Bradley Heinz"
+        },
+        {
+          "name": "Brandon Mills"
+        },
+        {
+          "name": "Charles Hughes"
+        },
+        {
+          "name": "Charmander"
+        },
+        {
+          "name": "Chris McKnight"
+        },
+        {
+          "name": "Conrad Irwin"
+        },
+        {
+          "name": "Daniel Tschinder"
+        },
+        {
+          "name": "David Bonnet"
+        },
+        {
+          "name": "Domenico Matteo"
+        },
+        {
+          "name": "ehmicky"
+        },
+        {
+          "name": "Eugene Obrezkov"
+        },
+        {
+          "name": "Felix Maier"
+        },
+        {
+          "name": "Forbes Lindesay"
+        },
+        {
+          "name": "Gilad Peleg"
+        },
+        {
+          "name": "impinball"
+        },
+        {
+          "name": "Ingvar Stepanyan"
+        },
+        {
+          "name": "Jackson Ray Hamilton"
+        },
+        {
+          "name": "Jesse McCarthy"
+        },
+        {
+          "name": "Jiaxing Wang"
+        },
+        {
+          "name": "Joel Kemp"
+        },
+        {
+          "name": "Johannes Herr"
+        },
+        {
+          "name": "John-David Dalton"
+        },
+        {
+          "name": "Jordan Klassen"
+        },
+        {
+          "name": "J\u00fcrg Lehni"
+        },
+        {
+          "name": "Kai Cataldo"
+        },
+        {
+          "name": "keeyipchan"
+        },
+        {
+          "name": "Keheliya Gallaba"
+        },
+        {
+          "name": "Kevin Irish"
+        },
+        {
+          "name": "Kevin Kwok"
+        },
+        {
+          "name": "krator"
+        },
+        {
+          "name": "laosb"
+        },
+        {
+          "name": "luckyzeng"
+        },
+        {
+          "name": "Marek"
+        },
+        {
+          "name": "Marijn Haverbeke"
+        },
+        {
+          "name": "Martin Carlberg"
+        },
+        {
+          "name": "Mat Garcia"
+        },
+        {
+          "name": "Mathias Bynens"
+        },
+        {
+          "name": "Mathieu 'p01' Henri"
+        },
+        {
+          "name": "Matthew Bastien"
+        },
+        {
+          "name": "Max Schaefer"
+        },
+        {
+          "name": "Max Zerzouri"
+        },
+        {
+          "name": "Mihai Bazon"
+        },
+        {
+          "name": "Mike Rennie"
+        },
+        {
+          "name": "naoh"
+        },
+        {
+          "name": "Nicholas C. Zakas"
+        },
+        {
+          "name": "Nick Fitzgerald"
+        },
+        {
+          "name": "Olivier Thomann"
+        },
+        {
+          "name": "Oskar Sch\u00f6ldstr\u00f6m"
+        },
+        {
+          "name": "Paul Harper"
+        },
+        {
+          "name": "Peter Rust"
+        },
+        {
+          "name": "PlNG"
+        },
+        {
+          "name": "Prayag Verma"
+        },
+        {
+          "name": "ReadmeCritic"
+        },
+        {
+          "name": "r-e-d"
+        },
+        {
+          "name": "Ren\u00e9e Kooi"
+        },
+        {
+          "name": "Richard Gibson"
+        },
+        {
+          "name": "Rich Harris"
+        },
+        {
+          "name": "Sebastian McKenzie"
+        },
+        {
+          "name": "Shahar Soel"
+        },
+        {
+          "name": "Sheel Bedi"
+        },
+        {
+          "name": "Simen Bekkhus"
+        },
+        {
+          "name": "Teddy Katz"
+        },
+        {
+          "name": "Timothy Gu"
+        },
+        {
+          "name": "Toru Nagashima"
+        },
+        {
+          "name": "Victor Homyakov"
+        },
+        {
+          "name": "Wexpo Lyu"
+        },
+        {
+          "name": "zsjforcn"
+        }
+      ],
+      "homepage": "https://github.com/acornjs/acorn",
+      "bugs": {
+        "url": "https://github.com/acornjs/acorn/issues"
+      },
+      "bin": {
+        "acorn": "bin/acorn"
+      },
+      "dist": {
+        "shasum": "3e8d8a9947d0599a1796d10225d7432f4a4acf5e",
+        "tarball": "https://registry.npmjs.org/acorn/-/acorn-5.7.4.tgz",
+        "fileCount": 29,
+        "integrity": "sha512-1D++VG7BhrtvQpNbBzovKNc1FLGGEE/oGe7b9xJm/RFHMBeUaUGpluV9RLjZa47YFdPcDAenEYuq9pQPcMdLJg==",
+        "signatures": [
+          {
+            "sig": "MEUCIQDT26LFBYaJGfNMbnP7HnlM0HySFrQnivHfnoqUiqqhbwIgDUatTtVPjvByZicCYnO2GOafXzGWBUx+J6sB+6xx6A0=",
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA"
+          }
+        ],
+        "unpackedSize": 2022352,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJeZtCECRA9TVsSAnZWagAAaBgQAIAIcEZZUDphnt6spUk5\nlRlsQr6ynCQaCsoet1ZBnfOv20J9EcoSb26dN1GRM54fnoOLdUFOPQZtSK1l\nVN6v+YEti7uqM3xmZdJDJeQGgMBSt+tWvxmuqBoplifB8cdahsDa8BRqQJcp\nnjUGP44vqv5CpxPgAhQYaY2J2aqPPlRoyQQlc04/F3O35Dgitb3UjvmO+2Gt\nZe92SOWh8bw1XWK5m2DP39vEwfSDAoC4FnJRavLFpVAAQJ3t/7fdaysFvCkw\ncqGBgRM9ltFIGh9zDOWNpIzA8YqvgOAOUUSq7BoOct88RSnKIvrE41NdvKH0\n1LCknp9pXWm7iJ2fGzx1SahdT+Dw7z0iL9vEgA+wgEiCjcH/T31tMGFwSdWl\nk5n9xFpRqBcNP1u4zIzdmsi/sbq1QWwt+vjh5Vnao5wsc+fc/52xqCYRRwrI\nmNKRZbKx0PgrU8piPylZrQzxhQLeYZ5UAzYvkXzLOTgTTbXvaJDEQo7qCrvp\n7l9BMTvQjBLzd9G9vfxfZhGeNDnSPMNs19FV8QcXvZecKNqePjb091ukjaJ5\nkL+xNX6alq5N4KBqY0mzcLPLv95tk6dCWnLeWYlZ3ha2Pk9EFyGYqN7cIJZH\nz5y+JZqJLWGv98Aep6iwc0zUNl3Ls7olpNg/4RY8PJe1KOEIax5JvLdYsz49\nnZ5S\r\n=uMur\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "main": "dist/acorn.js",
+      "module": "dist/acorn.es.js",
+      "engines": {
+        "node": ">=0.4.0"
+      },
+      "gitHead": "6370e90067552022710190319cbbbd8c43001957",
+      "scripts": {
+        "lint": "eslint src/",
+        "test": "node test/run.js && node test/lint.js",
+        "build": "npm run build:main && npm run build:walk && npm run build:loose && npm run build:bin",
+        "prepare": "npm run build && node test/run.js && node test/lint.js",
+        "pretest": "npm run build:main && npm run build:loose",
+        "build:bin": "rollup -c rollup/config.bin.js",
+        "build:main": "rollup -c rollup/config.main.js",
+        "build:walk": "rollup -c rollup/config.walk.js",
+        "build:loose": "rollup -c rollup/config.loose.js && rollup -c rollup/config.loose_es.js",
+        "test:test262": "node bin/run_test262.js"
+      },
+      "_npmUser": {
+        "name": "marijn",
+        "email": "marijnh@gmail.com"
+      },
+      "repository": {
+        "url": "git+https://github.com/acornjs/acorn.git",
+        "type": "git"
+      },
+      "_npmVersion": "6.13.4",
+      "description": "ECMAScript parser",
+      "directories": {},
+      "_nodeVersion": "12.10.0",
+      "_hasShrinkwrap": false,
+      "readmeFilename": "README.md",
+      "devDependencies": {
+        "eslint": "^4.10.0",
+        "rollup": "^0.45.0",
+        "test262": "git+https://github.com/tc39/test262.git#3bfad28cc302fd4455badcfcbca7c5bb7ce41a72",
+        "unicode-11.0.0": "^0.7.7",
+        "eslint-plugin-node": "^5.2.1",
+        "rollup-plugin-buble": "^0.16.0",
+        "eslint-plugin-import": "^2.2.0",
+        "eslint-plugin-promise": "^3.5.0",
+        "test262-parser-runner": "^0.4.0",
+        "eslint-config-standard": "^10.2.1",
+        "eslint-plugin-standard": "^3.0.1"
+      },
+      "_npmOperationalInternal": {
+        "tmp": "tmp/acorn_5.7.4_1583796355918_0.7955430376538595",
+        "host": "s3://npm-registry-packages"
+      }
+    },
+    "published": "2020-03-09T23:25:56.153Z",
+    "registry_sha256": "49b337e8c6de3031cfbaf8cc69fd300d00cd8db03a131c6e2f3a1e26126f2df1"
+  }
+}
