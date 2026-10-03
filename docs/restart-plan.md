@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Backend cleanup](restart-dashboard-backend.md) passes native WSS/mining checks; 18 root dependency findings and public deployment controls remain open | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [API update](restart-dashboard-api.md) and shared backend lock pass native WSS/browser/proxy checks; nine root dependency findings and public deployment controls remain open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -321,8 +321,12 @@ dependency work before public deployment acceptance.
 The [backend cleanup](restart-dashboard-backend.md) subsequently removes twelve
 unused direct dependencies and the unserved legacy adapter, and migrates Lodash
 to 4.18.1. All 178 contract/14 socket tests and actual WSS/mining checks pass.
-The root audit now has 18 affected names; Express/GeoIP, remaining transitives,
-the separate API install and frontend work remain open. Node sources are unchanged.
+That reduced the root audit to 18 affected names. The subsequent
+[API update](restart-dashboard-api.md) pins Express 4.22.3 and removes the
+separate API install, clearing all nine Express-related findings. The current
+178 contract/14 socket tests and native WSS/browser/proxy checks pass. GeoIP,
+diagnostics color dependencies and frontend work remain open. No application
+JavaScript or node sources change in the API slice.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -383,10 +387,9 @@ The last two items are post-bootstrap milestones; the first two precede release.
 Current technical order:
 
 1. G6: continue the [runtime/dependency worklist](restart-dashboard-runtime.md).
-   The [backend cleanup](restart-dashboard-backend.md) passes on Node 24 with
-   unused tools removed and Lodash migrated. Next update Express/GeoIP and the
-   remaining transitive dependencies, consolidate the separate API install,
-   address browser Axios and replace the obsolete deployment workflow. Review
+   The [API update](restart-dashboard-api.md) passes on Node 24 with one backend
+   lock. Next address GeoIP and diagnostics color dependencies, then browser
+   Axios and the obsolete deployment workflow. Review
    remaining findings and validate a clean pinned installation; public hosting
    is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log

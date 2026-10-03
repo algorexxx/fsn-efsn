@@ -143,32 +143,26 @@ existing 547-file compiled frontend remain unchanged. The efsn Go/module source
 inventory also remains unchanged. Scratch services are stopped and temporary
 credentials removed. The original dashboard checkout is preserved.
 
-The [transport follow-up](restart-dashboard-transport.md) now completes item 1
-locally: Primus 8.0.9/ws 8.22.0 pass the native WSS, proxy and mining-outage
-checks without application or node source changes. The audit clears ws, Primus
-and setheader; 41 other root findings remain. Continue from item 2 below.
-
-The [backend cleanup](restart-dashboard-backend.md) now completes
-unused dependency removal and Lodash compatibility: twelve direct dependencies and the unserved legacy adapter
-are removed; Lodash 4.18.1 passes 178 contract/14 socket tests plus the native
-WSS and mining-outage fixtures. The root audit is down to 18 affected package
-names. Express/GeoIP, the remaining transitive findings and separate API install
-are still open. Earlier versions/counts below describe the original review.
+Subsequent [transport](restart-dashboard-transport.md),
+[backend cleanup](restart-dashboard-backend.md) and
+[API dependency](restart-dashboard-api.md) work completes the Primus/ws and
+Lodash corrections, unused backend removal, Express 4.22.3 update and shared
+API installation. The latest slice passes 178 contract/14 socket tests and
+the actual WSS/browser and eight-reporter proxy fixtures. The root lock now
+has nine affected package names; earlier counts describe the original review.
 
 ## Work order and exit condition
 
-1. Correct the Primus/ws pair with the smallest compatible dashboard change;
-   retain ordinary wire tests and the actual WSS comparison as acceptance.
-2. Prune unused backend dependencies, update actively used affected packages and
-   resolve the separate API install. Re-audit the resulting runtime lock and
-   record a concrete disposition for each remaining runtime finding.
-3. Update the browser HTTP client and review the build-only dependency set;
+1. Review/update GeoIP and the remaining diagnostics color dependency. Check
+   lookup/data licensing and updater paths, then re-audit the final backend
+   lock and record a concrete disposition for every remaining finding.
+2. Update the browser HTTP client and review the build-only dependency set;
    rebuild and check the actual compiled browser. Freeze a fresh-install
    Node/npm/package matrix, removing the obsolete deployment workflow.
-4. Continue G6 supervision, retry/log lifecycle, public certificates and the
+3. Continue G6 supervision, retry/log lifecycle, public certificates and the
    coordinated deployment manifest. Recheck current advisories at release and
-   rerun the combined acceptance on that exact package, rather than carrying
-   this unchanged-dependency result forward as release approval.
+   rerun combined acceptance on that exact package. These local compatibility
+   results do not constitute release approval.
 
 G6 remains open. The [consolidated plan](restart-plan.md) owns the launch gates;
-this report records the review and the next bounded dependency changes.
+this report records the initial review and current dependency work order.
