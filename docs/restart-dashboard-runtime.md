@@ -176,7 +176,9 @@ report records lint coverage differences and remaining maintenance work.
    dependency locks retain the prior zero-advisory results.
 2. Use the [GeoIP operations investigation](restart-dashboard-geoip-operations.md)
    for reproduced updater failures and passing isolated switch/rollback checks.
-   Implement the protected downloader, integrity/completeness checks and supervised
+   The [read-only validator](restart-dashboard-geoip-validation.md) implements
+   binary checks and exposes incompatible IPv6 data. Resolve reader/format
+   compatibility, then finish protected downloads, conversion and supervised
    activation. Source/account selection, applicable terms/attribution and refresh/
    deletion operations remain open; the stock updater is not an accepted job.
 3. Continue G6 supervision, retry/log lifecycle, public certificates and the

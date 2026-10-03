@@ -1,0 +1,119 @@
+TAP version 13
+# Subtest: every real collector transport retains byte, fragment and buffered chunk bounds with text validation
+ok 1 - every real collector transport retains byte, fragment and buffered chunk bounds with text validation
+  ---
+  duration_ms: 1855.493238
+  type: 'test'
+  ...
+# Subtest: real telemetry login deadline closes a silent socket and ordinary login still works
+ok 2 - real telemetry login deadline closes a silent socket and ordinary login still works
+  ---
+  duration_ms: 1630.01777
+  type: 'test'
+  ...
+# Subtest: real transport refuses a message over its byte limit on every collector path
+ok 3 - real transport refuses a message over its byte limit on every collector path
+  ---
+  duration_ms: 1216.732771
+  type: 'test'
+  ...
+# {"endpoint":"api","code":1009}
+# {"endpoint":"primus","code":1009}
+# {"endpoint":"external","code":1009}
+# {"endpoint":"primus","boundaryCode":1009}
+# Subtest: real transport counts the aggregate bytes of a fragmented message
+ok 4 - real transport counts the aggregate bytes of a fragmented message
+  ---
+  duration_ms: 1265.824987
+  type: 'test'
+  ...
+# {"fragmented":true,"code":1009}
+# Subtest: application message allowance closes the sender and permits a later fresh session
+ok 5 - application message allowance closes the sender and permits a later fresh session
+  ---
+  duration_ms: 1287.502634
+  type: 'test'
+  ...
+# Subtest: TCP connection budget is shared across paths and a closed slot can be reused
+ok 6 - TCP connection budget is shared across paths and a closed slot can be reused
+  ---
+  duration_ms: 1384.352266
+  type: 'test'
+  ...
+# Subtest: invalid envelopes close before the event plugin and do not interrupt another node
+ok 7 - invalid envelopes close before the event plugin and do not interrupt another node
+  ---
+  duration_ms: 1252.769836
+  type: 'test'
+  ...
+# Subtest: efsn-sized history reaches collection and an extra entry closes the reporting session
+ok 8 - efsn-sized history reaches collection and an extra entry closes the reporting session
+  ---
+  duration_ms: 2293.485905
+  type: 'test'
+  ...
+# Subtest: held output disconnects only the slow telemetry session and its identity can reconnect
+not ok 9 - held output disconnects only the slow telemetry session and its identity can reconnect
+  ---
+  duration_ms: 1878.32777
+  type: 'test'
+  location: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/collector-output-wire.test.cjs:18:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    4925 !== 8077
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 8077
+  actual: 4925
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/collector-output-wire.test.cjs:34:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: Primus and WebSocket control replies share the same output budget on every collector path
+ok 10 - Primus and WebSocket control replies share the same output budget on every collector path
+  ---
+  duration_ms: 1339.375977
+  type: 'test'
+  ...
+# {"endpoint":"api","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+# {"endpoint":"primus","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+# {"endpoint":"external","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+# Subtest: collector backfills requested gaps and broadcasts the newest forty heights as heads advance
+ok 11 - collector backfills requested gaps and broadcasts the newest forty heights as heads advance
+  ---
+  duration_ms: 3942.437044
+  type: 'test'
+  ...
+# Subtest: real collector bounds registration and ping while retaining only native metadata across reconnect
+ok 12 - real collector bounds registration and ping while retaining only native metadata across reconnect
+  ---
+  duration_ms: 1254.664042
+  type: 'test'
+  ...
+# Subtest: real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect
+ok 13 - real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect
+  ---
+  duration_ms: 1444.793517
+  type: 'test'
+  ...
+# Subtest: real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+ok 14 - real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect
+  ---
+  duration_ms: 1351.362313
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12531.739002

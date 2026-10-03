@@ -1,0 +1,742 @@
+From 2e047abb1eaab6e9315373e39af68212a399b451 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sun, 4 Oct 2026 01:46:57 +0200
+Subject: [PATCH] Validate staged GeoIP data before activation
+
+---
+ README.md                           |   4 +-
+ deploy/validate-geoip.cjs           |  12 ++
+ docs/geoip-operations.md            |  10 +-
+ docs/geoip-validation.md            | 134 ++++++++++++++++
+ docs/runtime-dependency-review.md   |   6 +-
+ lib/geoip-dataset.js                | 156 ++++++++++++++++++
+ package.json                        |   2 +-
+ test/collector-output-wire.test.cjs |  14 +-
+ test/fixtures/geoip-data.json       |  32 ++++
+ test/geoip-dataset.test.cjs         | 235 ++++++++++++++++++++++++++++
+ 10 files changed, 590 insertions(+), 15 deletions(-)
+ create mode 100644 deploy/validate-geoip.cjs
+ create mode 100644 docs/geoip-validation.md
+ create mode 100644 lib/geoip-dataset.js
+ create mode 100644 test/fixtures/geoip-data.json
+ create mode 100644 test/geoip-dataset.test.cjs
+
+diff --git a/README.md b/README.md
+index 82359dd..e8f8d38 100644
+--- a/README.md
++++ b/README.md
+@@ -36,7 +36,9 @@ This product includes GeoLite2 data created by MaxMind, available from
+ approximate data. Follow the dataset attribution/update requirements in the
+ GeoIP guide before public use. The [update and recovery investigation](docs/geoip-operations.md)
+ reproduces updater integrity/partial-write failures and rehearses isolated dataset
+-switching and rollback. A protected production update job still needs implementation.
++switching and rollback. The [read-only validator](docs/geoip-validation.md) now
++checks complete datasets, and rejects incompatible IPv6 data. Reader/format
++compatibility and a protected production update job still need work.
+ 
+ Run `npm test` for configuration, identity and startup checks, including an HTTP
+ API test with stubbed storage. Run `npm run test:wire` for the real loopback
+diff --git a/deploy/validate-geoip.cjs b/deploy/validate-geoip.cjs
+new file mode 100644
+index 0000000..6bb6a0e
+--- /dev/null
++++ b/deploy/validate-geoip.cjs
+@@ -0,0 +1,12 @@
++const validateGeoipDataset = require('../lib/geoip-dataset');
++
++try {
++    const [directory, limit] = process.argv.slice(2);
++    if (process.argv.length !== 4 || !/^[1-9][0-9]*$/.test(limit)) {
++        throw new Error('Usage: node deploy/validate-geoip.cjs ABSOLUTE_DATA_DIRECTORY MAX_DATASET_BYTES');
++    }
++    console.log(JSON.stringify(validateGeoipDataset(directory, Number(limit)), null, 2));
++} catch (error) {
++    console.error(`GeoIP validation failed: ${error.message}`);
++    process.exitCode = 1;
++}
+diff --git a/docs/geoip-operations.md b/docs/geoip-operations.md
+index 94a6eaa..c96edbd 100644
+--- a/docs/geoip-operations.md
++++ b/docs/geoip-operations.md
+@@ -119,10 +119,12 @@ failed attempt without credentials or signed download URLs. Retention must
+ cover downloaded archives, converted data, rollback copies and host backups;
+ keeping the last usable data indefinitely is not the retention policy.
+ 
+-This workflow is specified and partly rehearsed here; its protected downloader,
+-full validator, scheduler and service-manager integration are **not implemented
+-or accepted** by these fixture scripts. Do not deploy the preload mock or the
+-stock updater as a shortcut. Close those concrete operations before public use.
++This workflow is specified and partly rehearsed here. The subsequent
++[read-only dataset validator](geoip-validation.md) implements binary
++checks and reveals an IPv6 reader compatibility blocker. Its tests pass, while
++the bundled dataset is rejected. Protected downloads, compatible conversion,
++scheduling and service-manager integration remain unimplemented/unaccepted.
++Do not deploy the preload mock or the stock updater as a shortcut.
+ 
+ ## Provider selection and release boundary
+ 
+diff --git a/docs/geoip-validation.md b/docs/geoip-validation.md
+new file mode 100644
+index 0000000..fc9e5bc
+--- /dev/null
++++ b/docs/geoip-validation.md
+@@ -0,0 +1,134 @@
++# Dashboard GeoIP dataset validator and IPv6 compatibility finding
++
++Local evidence date: 2026-10-04. A read-only dataset validator is implemented in
++the isolated dashboard candidate. It checks the five binary files before any
++future activation step. Fifty-nine new tests pass, along with all 178 existing
++backend contracts and all 14 socket tests. No collector behavior, frontend,
++dependency version, efsn source or chain rule changes.
++
++The full data review also finds an unresolved reader compatibility problem:
++`geoip-lite` 2.0.3 compares only the upper 64 bits of IPv6 addresses. The bundled
++dataset contains ranges that this reader cannot distinguish correctly. The
++validator rejects that dataset; this is a failed data acceptance result, not a
++waived check. It is not wired into collector startup in this slice.
++
++## Read-only validation command
++
++From the dashboard checkout, under the tested Linux Node 24 runtime:
++
++```sh
++node deploy/validate-geoip.cjs /absolute/path/to/staged-data 134217728
++```
++
++Both arguments are required. The second is a maximum aggregate byte size for
++the five files. The example is the explicit 128 MiB ceiling used for the local
++bundled-data check, not a selected production budget. No download, file write,
++symlink switch, service restart or network lookup occurs.
++
++Success writes JSON containing the resolved directory and each file's byte
++count, record count and SHA-256. Failure writes a diagnostic to stderr, leaves
++stdout empty and exits nonzero. A generated output hash identifies inspected
++bytes; it is **not** an independently trusted provider checksum, proof of
++freshness, geographic accuracy or licensing approval.
++
++The validator requires an absolute dataset directory and a positive safe integer
++byte budget. It opens all five files read-only, rejects symlinks/nonregular files,
++empty files and partial records, and scans bounded record chunks. It validates:
++
++- Ordered, disjoint address ranges and readable location references.
++- IPv6 bounds that the pinned reader can represent: whole /64 units, without
++  overlaps in that reader's upper-64-bit comparison.
++- Country code encoding, location UTF-8 fields, EU/metro metadata, coordinate
++  bounds and nonnegative accuracy radii.
++- Stable directory selection, file identities, sizes and change timestamps
++  across the scan. Files are closed on either success or failure.
++
++The record sizes remain 88 bytes for names, 10/34 for Country IPv4/IPv6 and
++24/48 for City IPv4/IPv6. Empty location countries and the defined `0xffffffff`
++no-location reference remain structurally legal. Structural validity does not
++establish correct missing-location display behavior; the earlier Country-only
++fallback/map issue and sentinel presentation remain part of lookup acceptance.
++
++This is a conservative compatibility gate for the current reader. It rejects
++narrow IPv6 ranges even where neighboring records happen to return identical
++geography; it does not merge, round, drop or reinterpret provider ranges. Do not
++weaken the gate or discard those records to obtain a passing dataset.
++
++The filesystem checks detect ordinary concurrent changes; they are not a lock
++against another writer, nor a guarantee about later bytes. Run after conversion
++has stopped in private staging, then retain immutable data for activation. Source
++archive verification and a supervised fresh-process lookup remain separate steps.
++
++## IPv6 evidence
++
++An independent Python scan reads every record in the installed dataset:
++115,343,066 bytes and 4,239,118 total records. The sampled field/reference checks
++from the earlier dependency review are extended to a full scan here. Location
++encoding, references and coordinate bounds pass. IPv4 ranges are ordered and
++disjoint. IPv6 does not satisfy the same assumptions:
++
++| Installed file | Records | Adjacent full-address overlap/out-of-order pairs | Adjacent pairs overlapping under the reader's upper-64-bit comparison |
++| --- | ---: | ---: | ---: |
++| `geoip-country6.dat` | 95,027 | 751 | 11,480 |
++| `geoip-city6.dat` | 393,146 | 3,557 | 95,168 |
++
++These are adjacent-pair counts from the independent scan, not counts of affected
++IPs or all possible intersections. Some neighbors have identical outputs; others
++do not. The captured examples and counts avoid inferring today's geographic
++truth from the old packaged data.
++
++A separate tiny synthetic dataset encodes two distinct records in the same
++`2001:db8::/64`: `2001:db8::1` has country `NO`, and `2001:db8::2` has country
++`SE`. Both ranges are single addresses and have independent location records.
++The actual dashboard node model returns `NO` for both. These invented records
++prove loss of distinction relative to the supplied bytes, without contacting
++either address or relying on a claim about real-world IP ownership.
++
++The new validator rejects this fixture and the installed bundled dataset. The
++bundled rejection occurs at Country IPv6 record 0 because its bounds require
++more precision than the reader uses. A complete synthetic fixture with supported
++IPv6 bounds passes, with all five output hashes matching the independently
++encoded expected bytes. All inspected datasets retain their original hashes.
++
++## Tests and one existing fixture correction
++
++`npm test` includes the new validator tests. Its 237 tests pass: 178 existing
++contracts plus 59 new cases covering byte budgets, required files, alignment,
++file types, record fields/references, IPv6 precision, range ordering across chunk
++boundaries, changes during validation, hashes and CLI results. The final validator
++test file also passes independently after a test-title-only correction.
++
++The first socket run passes 13 of 14 tests. The existing output-buffer test
++returned early: it waited for a count of socket writes as though each write were
++a whole WebSocket reply. The observed queue was 4,925 bytes while the assertion
++expected 8,077. The fixture exposes low-level writes, and a frame can use separate
++header/payload writes. The premature wait is fixed to wait for the expected
++queued bytes, returning early on destruction so the existing assertions can
++report it. The initial payload thresholds exceed the respective frame headers.
++All exact queue, buffer-limit, disconnect, isolation and reconnect assertions
++remain unchanged. The subsequent complete socket run passes all 14 tests.
++No collector or WebSocket implementation is modified to make this test pass.
++
++Module/CLI syntax checks pass. These changes do not alter the frontend or the
++live collector paths, so native mining, full WSS/database/browser, frontend build
++and dependency audit runs were not repeated. Their earlier results are retained,
++not presented as new tests. The installed package/lock files and compiled assets,
++all 1007 efsn source/module files and the original dashboard checkout are preserved.
++
++## Next decision and remaining work
++
++Resolve GeoIP reader/converter compatibility before attempting to accept a fresh
++production dataset. Compare a bounded correction to the current format with a
++maintained reader/data format, preserving flags, useful coordinates and explicit
++unavailable results. Test real input ranges and fresh-process dashboard mapping;
++do not assume that downloading newer data fixes the 64-bit reader limitation.
++
++Then complete the protected download/conversion job, independent archive
++integrity checks, source metadata, immutable activation/rollback, service
++supervision and refresh/deletion policy from the [operations design](geoip-operations.md).
++No provider account or live download was used, and no scheduler or public
++deployment was created. The validator closes one implementation item, not G6.
++
++The accompanying efsn restart plan owns release decisions. Exact fixtures, scans,
++successful checks, the initial socket-test failure and the portable dashboard
++patch are in `docs/evidence/restart-dashboard-geoip-validation-2026-10-04/`.
+diff --git a/docs/runtime-dependency-review.md b/docs/runtime-dependency-review.md
+index 508cba9..69044cb 100644
+--- a/docs/runtime-dependency-review.md
++++ b/docs/runtime-dependency-review.md
+@@ -66,8 +66,10 @@ Required follow-up, in order:
+    run on GitHub. Public deployment remains separate work.
+ 3. Follow the [GeoIP operations investigation](geoip-operations.md). Isolated
+    switching and rollback pass, but the stock updater fails integrity/completeness
+-   requirements. Implement the protected download, validation and activation job;
+-   select the source/account and record terms, attribution and retention before use.
++   requirements. The [read-only validator](geoip-validation.md) implements binary
++   checks but exposes incompatible IPv6 data. Resolve reader/format compatibility
++   and finish protected downloads/activation. Record source/account, terms,
++   attribution and retention before use.
+ 4. Complete supervision, public certificates/renewal, retries/log retention and
+    the common deployment profile. Repeat combined acceptance and the advisory
+    review on that final package before public use.
+diff --git a/lib/geoip-dataset.js b/lib/geoip-dataset.js
+new file mode 100644
+index 0000000..a1bae96
+--- /dev/null
++++ b/lib/geoip-dataset.js
+@@ -0,0 +1,156 @@
++const fs = require('node:fs');
++const path = require('node:path');
++const {createHash} = require('node:crypto');
++const {isUtf8} = require('node:buffer');
++
++const formats = [
++    {name: 'geoip-city-names.dat', size: 88, addressBytes: 0},
++    {name: 'geoip-country.dat', size: 10, addressBytes: 4},
++    {name: 'geoip-country6.dat', size: 34, addressBytes: 16},
++    {name: 'geoip-city.dat', size: 24, addressBytes: 4},
++    {name: 'geoip-city6.dat', size: 48, addressBytes: 16},
++];
++
++function validateGeoipDataset(directory, maxBytes) {
++    if (typeof directory !== 'string' || !path.isAbsolute(directory)) {
++        throw new Error('GeoIP directory must be an absolute path');
++    }
++    if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0) {
++        throw new Error('GeoIP byte limit must be a positive safe integer');
++    }
++    const resolved = fs.realpathSync(directory);
++    const opened = [];
++    try {
++        openDataset(resolved, maxBytes, opened);
++        const locationCount = Number(opened[0].stat.size) / formats[0].size;
++        const files = Object.fromEntries(opened.map(file => [file.name, inspectFile(file, locationCount)]));
++        verifyUnchanged(directory, resolved, opened);
++        return {directory: resolved, files};
++    } finally {
++        for (const file of opened) {
++            fs.closeSync(file.fd);
++        }
++    }
++}
++
++function openDataset(directory, maxBytes, opened) {
++    let total = 0n;
++    for (const format of formats) {
++        const filename = path.join(directory, format.name);
++        if (!fs.lstatSync(filename).isFile()) {
++            throw new Error(`${format.name}: expected a regular file without a symlink`);
++        }
++        const fd = fs.openSync(filename, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK);
++        const file = {...format, filename, fd};
++        opened.push(file);
++        file.stat = fs.fstatSync(fd, {bigint: true});
++        total += file.stat.size;
++        if (!file.stat.isFile() || file.stat.size === 0n || file.stat.size % BigInt(file.size) !== 0n) {
++            throw new Error(`${format.name}: expected nonempty aligned records`);
++        }
++        if (total > BigInt(maxBytes)) {
++            throw new Error('GeoIP dataset exceeds the configured byte limit');
++        }
++    }
++}
++
++function inspectFile(file, locationCount) {
++    const bytes = Number(file.stat.size);
++    const chunk = Buffer.alloc(file.size * 1024);
++    const hash = createHash('sha256');
++    let previousEnd = null;
++    for (let position = 0; position < bytes; position += chunk.length) {
++        const length = Math.min(chunk.length, bytes - position);
++        readChunk(file, chunk, position, length);
++        hash.update(chunk.subarray(0, length));
++        for (let offset = 0; offset < length; offset += file.size) {
++            const record = chunk.subarray(offset, offset + file.size);
++            const label = `${file.name} record ${(position + offset) / file.size}`;
++            if (file.addressBytes === 0) {
++                validateLocation(record, label);
++            } else {
++                previousEnd = validateRange(record, file.addressBytes, previousEnd, label);
++                validateRangeData(record, file.addressBytes, locationCount, label);
++            }
++        }
++    }
++    return {bytes, records: bytes / file.size, sha256: hash.digest('hex')};
++}
++
++function readChunk(file, chunk, position, length) {
++    let filled = 0;
++    while (filled < length) {
++        const count = fs.readSync(file.fd, chunk, filled, length - filled, position + filled);
++        if (count === 0) {
++            throw new Error(`${file.name}: file changed or ended during validation`);
++        }
++        filled += count;
++    }
++}
++
++function validateLocation(record, label) {
++    validateCountry(record.subarray(0, 2), true, label);
++    if (record.readInt32BE(5) < 0 || ![0, 48, 49].includes(record[9])) {
++        throw new Error(`${label}: invalid location metadata`);
++    }
++    for (const field of [record.subarray(2, 5), record.subarray(10, 42), record.subarray(42, 88)]) {
++        const end = field.indexOf(0);
++        if (!isUtf8(end === -1 ? field : field.subarray(0, end))) {
++            throw new Error(`${label}: invalid UTF-8 location field`);
++        }
++    }
++}
++
++function validateCountry(country, allowEmpty, label) {
++    if (allowEmpty && country[0] === 0 && country[1] === 0) {
++        return;
++    }
++    if (!country.every(value => value >= 65 && value <= 90)) {
++        throw new Error(`${label}: invalid country code`);
++    }
++}
++
++function validateRange(record, width, previousEnd, label) {
++    const first = width === 4 ? BigInt(record.readUInt32BE(0)) : record.readBigUInt64BE(0);
++    const last = width === 4 ? BigInt(record.readUInt32BE(4)) : record.readBigUInt64BE(16);
++    if (first > last) {
++        throw new Error(`${label}: reversed address range`);
++    }
++    if (width === 16 && (record.readBigUInt64BE(8) !== 0n || record.readBigUInt64BE(24) !== 0xffffffffffffffffn)) {
++        throw new Error(`${label}: IPv6 bounds exceed the reader's 64-bit precision`);
++    }
++    if (previousEnd !== null && first <= previousEnd) {
++        throw new Error(`${label}: address ranges overlap or are unsorted`);
++    }
++    return last;
++}
++
++function validateRangeData(record, width, locationCount, label) {
++    const offset = width * 2;
++    if (record.length === offset + 2) {
++        validateCountry(record.subarray(offset), false, label);
++        return;
++    }
++    const location = record.readUInt32BE(offset);
++    if (location !== 0xffffffff && location >= locationCount) {
++        throw new Error(`${label}: location reference is outside the names file`);
++    }
++    if (Math.abs(record.readInt32BE(offset + 4)) > 900000 || Math.abs(record.readInt32BE(offset + 8)) > 1800000 || record.readInt32BE(offset + 12) < 0) {
++        throw new Error(`${label}: invalid coordinates or accuracy radius`);
++    }
++}
++
++function verifyUnchanged(directory, resolved, opened) {
++    if (fs.realpathSync(directory) !== resolved) {
++        throw new Error('GeoIP directory changed during validation');
++    }
++    for (const file of opened) {
++        const current = fs.lstatSync(file.filename, {bigint: true});
++        const handle = fs.fstatSync(file.fd, {bigint: true});
++        if (!current.isFile() || ['dev', 'ino', 'size', 'mtimeNs', 'ctimeNs'].some(key => current[key] !== file.stat[key] || handle[key] !== file.stat[key])) {
++            throw new Error(`${file.name}: file changed during validation`);
++        }
++    }
++}
++
++module.exports = validateGeoipDataset;
+diff --git a/package.json b/package.json
+index 5efc2a0..af85b6b 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs test/head-budget.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs test/head-budget.test.cjs test/geoip-dataset.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs test/metadata-admission-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+diff --git a/test/collector-output-wire.test.cjs b/test/collector-output-wire.test.cjs
+index 8dbe581..2c1928e 100644
+--- a/test/collector-output-wire.test.cjs
++++ b/test/collector-output-wire.test.cjs
+@@ -4,15 +4,15 @@ const startCollector = require('./fixtures/collector-wire.cjs');
+ const { secretA } = require('./fixtures/collector.cjs');
+ const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
+ 
+-async function waitForWrites(server, port, expected) {
++async function waitForQueuedBytes(server, port, expected) {
+     for (let attempt = 0; attempt < 40; attempt++) {
+         const state = await server.command({ action: 'inspect', port });
+-        if (state.writes >= expected) {
++        if (state.queued >= expected || state.destroyed) {
+             return state;
+         }
+         await new Promise(resolve => setTimeout(resolve, 25));
+     }
+-    throw new Error('Expected bounded fixture writes did not arrive');
++    throw new Error('Expected bounded fixture bytes did not arrive');
+ }
+ 
+ test('held output disconnects only the slow telemetry session and its identity can reconnect', { timeout: 15000 }, async t => {
+@@ -24,13 +24,13 @@ test('held output disconnects only the slow telemetry session and its identity c
+     const port = owner.socket._socket.localPort;
+     await server.command({ action: 'cork', port });
+     send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(126) });
+-    const first = await waitForWrites(server, port, 1);
++    const first = await waitForQueuedBytes(server, port, 129);
+     assert.ok(first.queued > 128 && first.queued < 256);
+     const fitting = Math.floor(8192 / first.queued);
+     for (let index = 1; index < fitting; index++) {
+         send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(126) });
+     }
+-    const held = await waitForWrites(server, port, fitting);
++    const held = await waitForQueuedBytes(server, port, fitting * first.queued);
+     assert.equal(held.queued, fitting * first.queued);
+     assert.ok(held.queued <= 8192);
+     assert.equal(held.destroyed, false);
+@@ -61,12 +61,12 @@ test('Primus and WebSocket control replies share the same output budget on every
+         const port = connection.socket._socket.localPort;
+         await server.command({ action: 'cork', port });
+         connection.socket.send(JSON.stringify('primus::id::'));
+-        const protocol = await waitForWrites(server, port, 1);
++        const protocol = await waitForQueuedBytes(server, port, 3);
+         assert.ok(protocol.queued > 0 && protocol.queued < 128);
+         for (let index = 0; index < 3; index++) {
+             connection.socket.ping(Buffer.alloc(125));
+         }
+-        const held = await waitForWrites(server, port, 4);
++        const held = await waitForQueuedBytes(server, port, protocol.queued + 381);
+         assert.equal(held.queued, protocol.queued + 381);
+         assert.equal(held.destroyed, false);
+         connection.socket.ping(Buffer.alloc(125));
+diff --git a/test/fixtures/geoip-data.json b/test/fixtures/geoip-data.json
+new file mode 100644
+index 0000000..7203c4e
+--- /dev/null
++++ b/test/fixtures/geoip-data.json
+@@ -0,0 +1,32 @@
++{
++  "geoip-country.dat": {
++    "hex": "c0000200c00002ff4e4f",
++    "bytes": 10,
++    "records": 1,
++    "sha256": "a0bbbac876cf18d200135994e18d49c730f277da9035774dc24d88d8cba19a66"
++  },
++  "geoip-country6.dat": {
++    "hex": "20010db800000000000000000000000020010db8ffffffffffffffffffffffff4e4f",
++    "bytes": 34,
++    "records": 1,
++    "sha256": "380181def587eb105b65f8f91c75601db8d100f2b9afab35a5052b26ed173942"
++  },
++  "geoip-city-names.dat": {
++    "hex": "4e4f30330000000000314575726f70652f4f736c6f00000000000000000000000000000000000000000046697874757265204200000000000000000000000000000000000000000000000000000000000000000000000000",
++    "bytes": 88,
++    "records": 1,
++    "sha256": "aa341661596e3d6e8116aad67928ed92f71c5cc17a561649b4cd60f51b55468c"
++  },
++  "geoip-city.dat": {
++    "hex": "c0000200c00002ff00000000000924630001a4020000000a",
++    "bytes": 24,
++    "records": 1,
++    "sha256": "e756472060c9bbdfb7f40775fbcecee9972e778b08979d2e9b413e387ee4a4de"
++  },
++  "geoip-city6.dat": {
++    "hex": "20010db800000000000000000000000020010db8ffffffffffffffffffffffff00000000000924630001a4020000000a",
++    "bytes": 48,
++    "records": 1,
++    "sha256": "fbdb5279a862c2d1427335e63e4f82235718aafa2fe7029d348439e54488b261"
++  }
++}
+diff --git a/test/geoip-dataset.test.cjs b/test/geoip-dataset.test.cjs
+new file mode 100644
+index 0000000..b2b3efe
+--- /dev/null
++++ b/test/geoip-dataset.test.cjs
+@@ -0,0 +1,235 @@
++const assert = require('node:assert/strict');
++const {test} = require('node:test');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const {spawnSync} = require('node:child_process');
++const validateGeoipDataset = require('../lib/geoip-dataset');
++const fixture = require('./fixtures/geoip-data.json');
++
++function writeDataset(t) {
++    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'fsn-geoip-'));
++    t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
++    for (const [name, record] of Object.entries(fixture)) {
++        fs.writeFileSync(path.join(directory, name), Buffer.from(record.hex, 'hex'));
++    }
++    return directory;
++}
++
++function readValidation(directory, limit) {
++    try {
++        return validateGeoipDataset(directory, limit);
++    } catch (error) {
++        return {error: error.message};
++    }
++}
++
++test('validates the independently encoded complete fixture at the exact byte limit', t => {
++    const directory = writeDataset(t);
++    const expected = {directory: fs.realpathSync(directory), files: Object.fromEntries(Object.entries(fixture).map(([name, {bytes, records, sha256}]) => [name, {bytes, records, sha256}]))};
++
++    const result = validateGeoipDataset(directory, 204);
++
++    assert.deepEqual(result, expected);
++});
++
++for (const directory of [undefined, '', '.', 'relative/data']) {
++    test(`requires an absolute dataset directory: ${directory}`, () => {
++        const expected = {error: 'GeoIP directory must be an absolute path'};
++
++        const result = readValidation(directory, 204);
++
++        assert.deepEqual(result, expected);
++    });
++}
++
++for (const limit of [undefined, 0, -1, 1.5, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
++    test(`requires an explicit safe byte limit: ${limit}`, t => {
++        const directory = writeDataset(t);
++        const expected = {error: 'GeoIP byte limit must be a positive safe integer'};
++
++        const result = readValidation(directory, limit);
++
++        assert.deepEqual(result, expected);
++    });
++}
++
++test('rejects a dataset over budget before inspecting records', t => {
++    const directory = writeDataset(t);
++    const expected = {error: 'GeoIP dataset exceeds the configured byte limit'};
++
++    const result = readValidation(directory, 203);
++
++    assert.deepEqual(result, expected);
++});
++
++for (const name of Object.keys(fixture)) {
++    test(`requires ${name}`, t => {
++        const directory = writeDataset(t);
++        fs.unlinkSync(path.join(directory, name));
++        const expected = 'ENOENT';
++
++        const result = readValidation(directory, 204).error.split(':')[0];
++
++        assert.equal(result, expected);
++    });
++    for (const mode of ['empty', 'truncated']) {
++        test(`rejects ${mode} ${name}`, t => {
++            const directory = writeDataset(t);
++            fs.truncateSync(path.join(directory, name), mode === 'empty' ? 0 : fixture[name].bytes - 1);
++            const expected = {error: `${name}: expected nonempty aligned records`};
++
++            const result = readValidation(directory, 204);
++
++            assert.deepEqual(result, expected);
++        });
++    }
++}
++
++for (const type of ['directory', 'symlink']) {
++    test(`rejects a ${type} in place of a dataset file`, t => {
++        const directory = writeDataset(t);
++        const file = path.join(directory, 'geoip-city.dat');
++        fs.unlinkSync(file);
++        if (type === 'directory') fs.mkdirSync(file);
++        else fs.symlinkSync(path.join(directory, 'geoip-city6.dat'), file);
++        const expected = {error: 'geoip-city.dat: expected a regular file without a symlink'};
++
++        const result = readValidation(directory, 204);
++
++        assert.deepEqual(result, expected);
++    });
++}
++
++const invalidRecords = [
++    ['geoip-country.dat', b => b.writeUInt32BE(0xc0000300, 0), 'reversed address range'],
++    ['geoip-country6.dat', b => b.writeBigUInt64BE(0x20010db900000000n, 0), 'reversed address range'],
++    ['geoip-country6.dat', b => { b[15] = 1; }, "IPv6 bounds exceed the reader's 64-bit precision"],
++    ['geoip-city6.dat', b => { b[31] = 254; }, "IPv6 bounds exceed the reader's 64-bit precision"],
++    ['geoip-country.dat', b => { b[8] = 110; }, 'invalid country code'],
++    ['geoip-country6.dat', b => { b[32] = 0; }, 'invalid country code'],
++    ['geoip-city-names.dat', b => { b[1] = 0; }, 'invalid country code'],
++    ['geoip-city-names.dat', b => { b[9] = 50; }, 'invalid location metadata'],
++    ['geoip-city-names.dat', b => b.writeInt32BE(-1, 5), 'invalid location metadata'],
++    ['geoip-city-names.dat', b => { b[42] = 255; }, 'invalid UTF-8 location field'],
++    ['geoip-city-names.dat', b => { b[2] = 255; }, 'invalid UTF-8 location field'],
++    ['geoip-city-names.dat', b => { b[10] = 255; }, 'invalid UTF-8 location field'],
++    ['geoip-city.dat', b => b.writeUInt32BE(1, 8), 'location reference is outside the names file'],
++    ['geoip-city6.dat', b => b.writeUInt32BE(1, 32), 'location reference is outside the names file'],
++    ['geoip-city.dat', b => b.writeInt32BE(900001, 12), 'invalid coordinates or accuracy radius'],
++    ['geoip-city.dat', b => b.writeInt32BE(-900001, 12), 'invalid coordinates or accuracy radius'],
++    ['geoip-city6.dat', b => b.writeInt32BE(1800001, 40), 'invalid coordinates or accuracy radius'],
++    ['geoip-city6.dat', b => b.writeInt32BE(-1800001, 40), 'invalid coordinates or accuracy radius'],
++    ['geoip-city.dat', b => b.writeInt32BE(-1, 20), 'invalid coordinates or accuracy radius'],
++];
++for (const [index, [name, edit, reason]] of invalidRecords.entries()) {
++    test(`rejects invalid record ${index}: ${reason}`, t => {
++        const directory = writeDataset(t);
++        const record = Buffer.from(fixture[name].hex, 'hex');
++        edit(record);
++        fs.writeFileSync(path.join(directory, name), record);
++        const expected = {error: `${name} record 0: ${reason}`};
++
++        const result = readValidation(directory, 204);
++
++        assert.deepEqual(result, expected);
++    });
++}
++
++for (const name of ['geoip-country.dat', 'geoip-country6.dat', 'geoip-city.dat', 'geoip-city6.dat']) {
++    test(`rejects overlapping ranges in ${name}`, t => {
++        const directory = writeDataset(t);
++        fs.appendFileSync(path.join(directory, name), Buffer.from(fixture[name].hex, 'hex'));
++        const expected = {error: `${name} record 1: address ranges overlap or are unsorted`};
++
++        const result = readValidation(directory, 1000);
++
++        assert.deepEqual(result, expected);
++    });
++}
++
++test('checks ordering across chunk boundaries', t => {
++    const directory = writeDataset(t);
++    const records = Buffer.alloc(1025 * 10);
++    for (let index = 0; index < 1025; index++) {
++        const value = 0xc0000200 + Math.min(index, 1023);
++        records.writeUInt32BE(value, index * 10);
++        records.writeUInt32BE(value, index * 10 + 4);
++        records.write('NO', index * 10 + 8);
++    }
++    fs.writeFileSync(path.join(directory, 'geoip-country.dat'), records);
++    const expected = {error: 'geoip-country.dat record 1024: address ranges overlap or are unsorted'};
++
++    const result = readValidation(directory, 20000);
++
++    assert.deepEqual(result, expected);
++});
++
++for (const [name, offset] of [['geoip-city.dat', 8], ['geoip-city6.dat', 32]]) {
++    test(`recognizes the defined no-location sentinel in ${name}`, t => {
++        const directory = writeDataset(t);
++        const record = Buffer.from(fixture[name].hex, 'hex');
++        record.writeUInt32BE(0xffffffff, offset);
++        fs.writeFileSync(path.join(directory, name), record);
++        const expected = 1;
++
++        const result = validateGeoipDataset(directory, 204).files[name].records;
++
++        assert.equal(result, expected);
++    });
++}
++
++test('preserves a structurally valid unknown location country', t => {
++    const directory = writeDataset(t);
++    const record = Buffer.from(fixture['geoip-city-names.dat'].hex, 'hex');
++    record.fill(0, 0, 2);
++    fs.writeFileSync(path.join(directory, 'geoip-city-names.dat'), record);
++    const expected = 1;
++
++    const result = validateGeoipDataset(directory, 204).files['geoip-city-names.dat'].records;
++
++    assert.equal(result, expected);
++});
++
++test('rejects a file modified during validation', t => {
++    const directory = writeDataset(t);
++    const read = fs.readSync;
++    let changed = false;
++    t.mock.method(fs, 'readSync', (...args) => {
++        const count = read(...args);
++        if (!changed) {
++            changed = true;
++            const filename = path.join(directory, 'geoip-city-names.dat');
++            const bytes = fs.readFileSync(filename);
++            bytes[42] = 90;
++            fs.writeFileSync(filename, bytes);
++        }
++        return count;
++    });
++    const expected = {error: 'geoip-city-names.dat: file changed during validation'};
++
++    const result = readValidation(directory, 204);
++
++    assert.deepEqual(result, expected);
++});
++
++test('CLI emits only the manifest on success', t => {
++    const directory = writeDataset(t);
++    const command = path.resolve(__dirname, '../deploy/validate-geoip.cjs');
++    const expected = {status: 0, stderr: '', directory: fs.realpathSync(directory)};
++
++    const child = spawnSync(process.execPath, [command, directory, '204'], {encoding: 'utf8', timeout: 10000});
++    const result = {status: child.status, stderr: child.stderr, directory: JSON.parse(child.stdout).directory};
++
++    assert.deepEqual(result, expected);
++});
++
++test('CLI rejects invalid argument counts without reading a dataset', () => {
++    const command = path.resolve(__dirname, '../deploy/validate-geoip.cjs');
++    const expected = {status: 1, stdout: '', stderr: 'GeoIP validation failed: Usage: node deploy/validate-geoip.cjs ABSOLUTE_DATA_DIRECTORY MAX_DATASET_BYTES\n'};
++
++    const child = spawnSync(process.execPath, [command], {encoding: 'utf8', timeout: 10000});
++    const result = {status: child.status, stdout: child.stdout, stderr: child.stderr};
++
++    assert.deepEqual(result, expected);
++});

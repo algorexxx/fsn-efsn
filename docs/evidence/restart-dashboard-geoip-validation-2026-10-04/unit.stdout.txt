@@ -1,0 +1,364 @@
+TAP version 13
+# Subtest: validates the independently encoded complete fixture at the exact byte limit
+ok 1 - validates the independently encoded complete fixture at the exact byte limit
+  ---
+  duration_ms: 10.517284
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: undefined
+ok 2 - requires an absolute dataset directory: undefined
+  ---
+  duration_ms: 0.144264
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: 
+ok 3 - requires an absolute dataset directory: 
+  ---
+  duration_ms: 0.102142
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: .
+ok 4 - requires an absolute dataset directory: .
+  ---
+  duration_ms: 0.074194
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: relative/data
+ok 5 - requires an absolute dataset directory: relative/data
+  ---
+  duration_ms: 0.097014
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: undefined
+ok 6 - requires an explicit safe byte limit: undefined
+  ---
+  duration_ms: 0.949373
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: 0
+ok 7 - requires an explicit safe byte limit: 0
+  ---
+  duration_ms: 0.720181
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: -1
+ok 8 - requires an explicit safe byte limit: -1
+  ---
+  duration_ms: 0.60795
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: 1.5
+ok 9 - requires an explicit safe byte limit: 1.5
+  ---
+  duration_ms: 0.436245
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: Infinity
+ok 10 - requires an explicit safe byte limit: Infinity
+  ---
+  duration_ms: 0.440906
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: 9007199254740992
+ok 11 - requires an explicit safe byte limit: 9007199254740992
+  ---
+  duration_ms: 1.294922
+  type: 'test'
+  ...
+# Subtest: rejects a dataset over budget before inspecting records
+ok 12 - rejects a dataset over budget before inspecting records
+  ---
+  duration_ms: 0.560736
+  type: 'test'
+  ...
+# Subtest: requires geoip-country.dat
+ok 13 - requires geoip-country.dat
+  ---
+  duration_ms: 2.194579
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-country.dat
+ok 14 - rejects empty geoip-country.dat
+  ---
+  duration_ms: 1.482475
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-country.dat
+ok 15 - rejects truncated geoip-country.dat
+  ---
+  duration_ms: 0.505535
+  type: 'test'
+  ...
+# Subtest: requires geoip-country6.dat
+ok 16 - requires geoip-country6.dat
+  ---
+  duration_ms: 0.451899
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-country6.dat
+ok 17 - rejects empty geoip-country6.dat
+  ---
+  duration_ms: 0.863503
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-country6.dat
+ok 18 - rejects truncated geoip-country6.dat
+  ---
+  duration_ms: 1.163644
+  type: 'test'
+  ...
+# Subtest: requires geoip-city-names.dat
+ok 19 - requires geoip-city-names.dat
+  ---
+  duration_ms: 0.51576
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-city-names.dat
+ok 20 - rejects empty geoip-city-names.dat
+  ---
+  duration_ms: 0.990964
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-city-names.dat
+ok 21 - rejects truncated geoip-city-names.dat
+  ---
+  duration_ms: 0.610601
+  type: 'test'
+  ...
+# Subtest: requires geoip-city.dat
+ok 22 - requires geoip-city.dat
+  ---
+  duration_ms: 0.440166
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-city.dat
+ok 23 - rejects empty geoip-city.dat
+  ---
+  duration_ms: 0.618648
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-city.dat
+ok 24 - rejects truncated geoip-city.dat
+  ---
+  duration_ms: 0.567411
+  type: 'test'
+  ...
+# Subtest: requires geoip-city6.dat
+ok 25 - requires geoip-city6.dat
+  ---
+  duration_ms: 0.52203
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-city6.dat
+ok 26 - rejects empty geoip-city6.dat
+  ---
+  duration_ms: 0.483754
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-city6.dat
+ok 27 - rejects truncated geoip-city6.dat
+  ---
+  duration_ms: 0.572243
+  type: 'test'
+  ...
+# Subtest: rejects a directory in place of a dataset file
+ok 28 - rejects a directory in place of a dataset file
+  ---
+  duration_ms: 0.530982
+  type: 'test'
+  ...
+# Subtest: rejects a symlink in place of a dataset file
+ok 29 - rejects a symlink in place of a dataset file
+  ---
+  duration_ms: 0.438702
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 0: reversed address range
+ok 30 - rejects invalid record 0: reversed address range
+  ---
+  duration_ms: 1.518271
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 1: reversed address range
+ok 31 - rejects invalid record 1: reversed address range
+  ---
+  duration_ms: 0.657361
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 2: IPv6 bounds exceed the reader's 64-bit precision
+ok 32 - rejects invalid record 2: IPv6 bounds exceed the reader's 64-bit precision
+  ---
+  duration_ms: 0.784722
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 3: IPv6 bounds exceed the reader's 64-bit precision
+ok 33 - rejects invalid record 3: IPv6 bounds exceed the reader's 64-bit precision
+  ---
+  duration_ms: 1.135566
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 4: invalid country code
+ok 34 - rejects invalid record 4: invalid country code
+  ---
+  duration_ms: 0.751882
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 5: invalid country code
+ok 35 - rejects invalid record 5: invalid country code
+  ---
+  duration_ms: 1.062502
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 6: invalid country code
+ok 36 - rejects invalid record 6: invalid country code
+  ---
+  duration_ms: 0.767442
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 7: invalid location metadata
+ok 37 - rejects invalid record 7: invalid location metadata
+  ---
+  duration_ms: 0.902635
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 8: invalid location metadata
+ok 38 - rejects invalid record 8: invalid location metadata
+  ---
+  duration_ms: 0.727715
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 9: invalid UTF-8 location field
+ok 39 - rejects invalid record 9: invalid UTF-8 location field
+  ---
+  duration_ms: 16.858063
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 10: invalid UTF-8 location field
+ok 40 - rejects invalid record 10: invalid UTF-8 location field
+  ---
+  duration_ms: 0.67017
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 11: invalid UTF-8 location field
+ok 41 - rejects invalid record 11: invalid UTF-8 location field
+  ---
+  duration_ms: 0.648776
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 12: location reference is outside the names file
+ok 42 - rejects invalid record 12: location reference is outside the names file
+  ---
+  duration_ms: 0.727838
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 13: location reference is outside the names file
+ok 43 - rejects invalid record 13: location reference is outside the names file
+  ---
+  duration_ms: 0.874879
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 14: invalid coordinates or accuracy radius
+ok 44 - rejects invalid record 14: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.643566
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 15: invalid coordinates or accuracy radius
+ok 45 - rejects invalid record 15: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.687559
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 16: invalid coordinates or accuracy radius
+ok 46 - rejects invalid record 16: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 1.68628
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 17: invalid coordinates or accuracy radius
+ok 47 - rejects invalid record 17: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 2.006869
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 18: invalid coordinates or accuracy radius
+ok 48 - rejects invalid record 18: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.99004
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-country.dat
+ok 49 - rejects overlapping ranges in geoip-country.dat
+  ---
+  duration_ms: 2.330345
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-country6.dat
+ok 50 - rejects overlapping ranges in geoip-country6.dat
+  ---
+  duration_ms: 1.106777
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-city.dat
+ok 51 - rejects overlapping ranges in geoip-city.dat
+  ---
+  duration_ms: 1.662361
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-city6.dat
+ok 52 - rejects overlapping ranges in geoip-city6.dat
+  ---
+  duration_ms: 1.673194
+  type: 'test'
+  ...
+# Subtest: checks ordering across chunk boundaries
+ok 53 - checks ordering across chunk boundaries
+  ---
+  duration_ms: 5.534663
+  type: 'test'
+  ...
+# Subtest: recognizes the defined no-location sentinel in geoip-city.dat
+ok 54 - recognizes the defined no-location sentinel in geoip-city.dat
+  ---
+  duration_ms: 0.81999
+  type: 'test'
+  ...
+# Subtest: recognizes the defined no-location sentinel in geoip-city6.dat
+ok 55 - recognizes the defined no-location sentinel in geoip-city6.dat
+  ---
+  duration_ms: 0.544473
+  type: 'test'
+  ...
+# Subtest: preserves a structurally valid unknown location country
+ok 56 - preserves a structurally valid unknown location country
+  ---
+  duration_ms: 0.659068
+  type: 'test'
+  ...
+# Subtest: rejects a file modified during validation
+ok 57 - rejects a file modified during validation
+  ---
+  duration_ms: 1.980769
+  type: 'test'
+  ...
+# Subtest: CLI emits only the manifest on success
+ok 58 - CLI emits only the manifest on success
+  ---
+  duration_ms: 57.273238
+  type: 'test'
+  ...
+# Subtest: CLI rejects invalid argument counts without reading a dataset
+ok 59 - CLI rejects invalid argument counts without reading a dataset
+  ---
+  duration_ms: 39.806576
+  type: 'test'
+  ...
+1..59
+# tests 59
+# suites 0
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 341.80695

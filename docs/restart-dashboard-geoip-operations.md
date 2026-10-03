@@ -119,10 +119,12 @@ failed attempt without credentials or signed download URLs. Retention must
 cover downloaded archives, converted data, rollback copies and host backups;
 keeping the last usable data indefinitely is not the retention policy.
 
-This workflow is specified and partly rehearsed here; its protected downloader,
-full validator, scheduler and service-manager integration are **not implemented
-or accepted** by these fixture scripts. Do not deploy the preload mock or the
-stock updater as a shortcut. Close those concrete operations before public use.
+This workflow is specified and partly rehearsed here. The subsequent
+[read-only dataset validator](restart-dashboard-geoip-validation.md) implements binary
+checks and reveals an IPv6 reader compatibility blocker. Its tests pass, while
+the bundled dataset is rejected. Protected downloads, compatible conversion,
+scheduling and service-manager integration remain unimplemented/unaccepted.
+Do not deploy the preload mock or the stock updater as a shortcut.
 
 ## Provider selection and release boundary
 

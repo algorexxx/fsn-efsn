@@ -1,0 +1,1432 @@
+TAP version 13
+# Subtest: browser timing settings require bounded explicit positive integers
+ok 1 - browser timing settings require bounded explicit positive integers
+  ---
+  duration_ms: 4.051038
+  type: 'test'
+  ...
+# Subtest: snapshot summaries use current connected reports and preserve zeroes and full hashes
+ok 2 - snapshot summaries use current connected reports and preserve zeroes and full hashes
+  ---
+  duration_ms: 14.629785
+  type: 'test'
+  ...
+# Subtest: empty and disconnected snapshots do not invent current block, ticket or pending values
+ok 3 - empty and disconnected snapshots do not invent current block, ticket or pending values
+  ---
+  duration_ms: 0.47963
+  type: 'test'
+  ...
+# Subtest: response validation rejects incomplete metadata, mixed observations and malformed rows
+ok 4 - response validation rejects incomplete metadata, mixed observations and malformed rows
+  ---
+  duration_ms: 0.667639
+  type: 'test'
+  ...
+# Subtest: new snapshots replace nodes, geography and summary values even when height decreases
+ok 5 - new snapshots replace nodes, geography and summary values even when height decreases
+  ---
+  duration_ms: 0.546402
+  type: 'test'
+  ...
+# Subtest: HTTP failure clears a successful view, retries once and recovers with an empty snapshot
+ok 6 - HTTP failure clears a successful view, retries once and recovers with an empty snapshot
+  ---
+  duration_ms: 0.718813
+  type: 'test'
+  ...
+# Subtest: request timeout cancels work and late success cannot replace a newer response
+ok 7 - request timeout cancels work and late success cannot replace a newer response
+  ---
+  duration_ms: 0.6778
+  type: 'test'
+  ...
+# Subtest: snapshot expires during a pending poll after subtracting transport time
+ok 8 - snapshot expires during a pending poll after subtracting transport time
+  ---
+  duration_ms: 0.577299
+  type: 'test'
+  ...
+# Subtest: expired-in-transit and malformed successful responses clear data and retain retries
+ok 9 - expired-in-transit and malformed successful responses clear data and retain retries
+  ---
+  duration_ms: 3.855211
+  type: 'test'
+  ...
+# Subtest: visibility refresh invalidates old data and cancels pending callbacks; stop removes timers
+ok 10 - visibility refresh invalidates old data and cancels pending callbacks; stop removes timers
+  ---
+  duration_ms: 0.530011
+  type: 'test'
+  ...
+# Subtest: a synchronous request-adapter error becomes unavailable with one retry timer
+ok 11 - a synchronous request-adapter error becomes unavailable with one retry timer
+  ---
+  duration_ms: 0.246096
+  type: 'test'
+  ...
+# Subtest: browser excludes stale high heads and requires a separate pending budget for summaries
+ok 12 - browser excludes stale high heads and requires a separate pending budget for summaries
+  ---
+  duration_ms: 0.189897
+  type: 'test'
+  ...
+# Subtest: legacy rows without collector receipt metadata stay visible but contribute no current values
+ok 13 - legacy rows without collector receipt metadata stay visible but contribute no current values
+  ---
+  duration_ms: 0.19082
+  type: 'test'
+  ...
+# Subtest: report expiry updates a connected row while a newer request is pending without expiring the snapshot
+ok 14 - report expiry updates a connected row while a newer request is pending without expiring the snapshot
+  ---
+  duration_ms: 1.011738
+  type: 'test'
+  ...
+# Subtest: collector input configuration has explicit finite limits and rejects missing or invalid limits
+ok 15 - collector input configuration has explicit finite limits and rejects missing or invalid limits
+  ---
+  duration_ms: 3.536824
+  type: 'test'
+  ...
+# Subtest: missing collector input limits stop before constructing any listener
+ok 16 - missing collector input limits stop before constructing any listener
+  ---
+  duration_ms: 26.030771
+  type: 'test'
+  ...
+# Subtest: all collector WebSocket paths receive the transport byte limit without compression
+ok 17 - all collector WebSocket paths receive the transport byte limit without compression
+  ---
+  duration_ms: 6.452151
+  type: 'test'
+  ...
+# Subtest: application allowance refills gradually, stays capped and closes only the over-budget connection
+ok 18 - application allowance refills gradually, stays capped and closes only the over-budget connection
+  ---
+  duration_ms: 0.281463
+  type: 'test'
+  ...
+# Subtest: a fractional allowance cannot admit another application event
+ok 19 - a fractional allowance cannot admit another application event
+  ---
+  duration_ms: 0.113679
+  type: 'test'
+  ...
+# Subtest: unsupported or malformed application envelopes close before event dispatch
+ok 20 - unsupported or malformed application envelopes close before event dispatch
+  ---
+  duration_ms: 0.199068
+  type: 'test'
+  ...
+# Subtest: silent telemetry connections expire without registering a node
+ok 21 - silent telemetry connections expire without registering a node
+  ---
+  duration_ms: 3.898715
+  type: 'test'
+  ...
+# Subtest: successful hello and disconnect both cancel their login deadline
+ok 22 - successful hello and disconnect both cancel their login deadline
+  ---
+  duration_ms: 5.386312
+  type: 'test'
+  ...
+# Subtest: registration that completes after the deadline cannot publish ready and releases its identity
+ok 23 - registration that completes after the deadline cannot publish ready and releases its identity
+  ---
+  duration_ms: 5.262761
+  type: 'test'
+  ...
+# Subtest: history admits the efsn batch limit and refuses a larger batch before collection
+ok 24 - history admits the efsn batch limit and refuses a larger batch before collection
+  ---
+  duration_ms: 4.881135
+  type: 'test'
+  ...
+# Subtest: the exact queue budget accepts buffers and multibyte strings with native backpressure
+ok 25 - the exact queue budget accepts buffers and multibyte strings with native backpressure
+  ---
+  duration_ms: 3.76021
+  type: 'test'
+  ...
+# Subtest: one byte above the budget closes only that stream before enqueueing the new write
+ok 26 - one byte above the budget closes only that stream before enqueueing the new write
+  ---
+  duration_ms: 1.143392
+  type: 'test'
+  ...
+# Subtest: a single oversized write fails its callback asynchronously without writing payload bytes
+ok 27 - a single oversized write fails its callback asynchronously without writing payload bytes
+  ---
+  duration_ms: 1.407232
+  type: 'test'
+  ...
+# Subtest: draining output restores the full byte budget rather than accumulating a lifetime quota
+ok 28 - draining output restores the full byte budget rather than accumulating a lifetime quota
+  ---
+  duration_ms: 1.849997
+  type: 'test'
+  ...
+# Subtest: typed byte views count their visible bytes and refused writes need no callback
+ok 29 - typed byte views count their visible bytes and refused writes need no callback
+  ---
+  duration_ms: 0.832339
+  type: 'test'
+  ...
+# Subtest: collector requires an explicit output budget and attaches the guard before listening
+ok 30 - collector requires an explicit output budget and attaches the guard before listening
+  ---
+  duration_ms: 25.960975
+  type: 'test'
+  ...
+# Subtest: ordinary hello becomes ready and strips the credential before collection
+ok 31 - ordinary hello becomes ready and strips the credential before collection
+  ---
+  duration_ms: 25.723009
+  type: 'test'
+  ...
+# Subtest: invalid startup never listens: missing credential file
+ok 32 - invalid startup never listens: missing credential file
+  ---
+  duration_ms: 2.685627
+  type: 'test'
+  ...
+# Subtest: invalid startup never listens: empty credential path
+ok 33 - invalid startup never listens: empty credential path
+  ---
+  duration_ms: 3.248791
+  type: 'test'
+  ...
+# Subtest: invalid startup never listens: empty configured secret
+ok 34 - invalid startup never listens: empty configured secret
+  ---
+  duration_ms: 3.188117
+  type: 'test'
+  ...
+# Subtest: invalid startup never listens: legacy shared secret
+ok 35 - invalid startup never listens: legacy shared secret
+  ---
+  duration_ms: 3.032808
+  type: 'test'
+  ...
+# Subtest: update accepts the authenticated identity
+ok 36 - update accepts the authenticated identity
+  ---
+  duration_ms: 3.03851
+  type: 'test'
+  ...
+# Subtest: update is blocked before hello
+ok 37 - update is blocked before hello
+  ---
+  duration_ms: 5.117457
+  type: 'test'
+  ...
+# Subtest: update is blocked different identity
+ok 38 - update is blocked different identity
+  ---
+  duration_ms: 3.189797
+  type: 'test'
+  ...
+# Subtest: update is blocked after disconnect
+ok 39 - update is blocked after disconnect
+  ---
+  duration_ms: 3.363657
+  type: 'test'
+  ...
+# Subtest: block accepts the authenticated identity
+ok 40 - block accepts the authenticated identity
+  ---
+  duration_ms: 2.730736
+  type: 'test'
+  ...
+# Subtest: block is blocked before hello
+ok 41 - block is blocked before hello
+  ---
+  duration_ms: 2.738011
+  type: 'test'
+  ...
+# Subtest: block is blocked different identity
+ok 42 - block is blocked different identity
+  ---
+  duration_ms: 2.758138
+  type: 'test'
+  ...
+# Subtest: block is blocked after disconnect
+ok 43 - block is blocked after disconnect
+  ---
+  duration_ms: 3.274363
+  type: 'test'
+  ...
+# Subtest: pending accepts the authenticated identity
+ok 44 - pending accepts the authenticated identity
+  ---
+  duration_ms: 3.359303
+  type: 'test'
+  ...
+# Subtest: pending is blocked before hello
+ok 45 - pending is blocked before hello
+  ---
+  duration_ms: 4.507261
+  type: 'test'
+  ...
+# Subtest: pending is blocked different identity
+ok 46 - pending is blocked different identity
+  ---
+  duration_ms: 3.112133
+  type: 'test'
+  ...
+# Subtest: pending is blocked after disconnect
+ok 47 - pending is blocked after disconnect
+  ---
+  duration_ms: 2.886344
+  type: 'test'
+  ...
+# Subtest: stats accepts the authenticated identity
+ok 48 - stats accepts the authenticated identity
+  ---
+  duration_ms: 3.337026
+  type: 'test'
+  ...
+# Subtest: stats is blocked before hello
+ok 49 - stats is blocked before hello
+  ---
+  duration_ms: 2.737607
+  type: 'test'
+  ...
+# Subtest: stats is blocked different identity
+ok 50 - stats is blocked different identity
+  ---
+  duration_ms: 3.220005
+  type: 'test'
+  ...
+# Subtest: stats is blocked after disconnect
+ok 51 - stats is blocked after disconnect
+  ---
+  duration_ms: 3.168859
+  type: 'test'
+  ...
+# Subtest: history accepts the authenticated identity
+ok 52 - history accepts the authenticated identity
+  ---
+  duration_ms: 3.056747
+  type: 'test'
+  ...
+# Subtest: history is blocked before hello
+ok 53 - history is blocked before hello
+  ---
+  duration_ms: 3.426791
+  type: 'test'
+  ...
+# Subtest: history is blocked different identity
+ok 54 - history is blocked different identity
+  ---
+  duration_ms: 3.963238
+  type: 'test'
+  ...
+# Subtest: history is blocked after disconnect
+ok 55 - history is blocked after disconnect
+  ---
+  duration_ms: 3.233856
+  type: 'test'
+  ...
+# Subtest: latency accepts the authenticated identity
+ok 56 - latency accepts the authenticated identity
+  ---
+  duration_ms: 3.101915
+  type: 'test'
+  ...
+# Subtest: latency is blocked before hello
+ok 57 - latency is blocked before hello
+  ---
+  duration_ms: 3.198762
+  type: 'test'
+  ...
+# Subtest: latency is blocked different identity
+ok 58 - latency is blocked different identity
+  ---
+  duration_ms: 4.245137
+  type: 'test'
+  ...
+# Subtest: latency is blocked after disconnect
+ok 59 - latency is blocked after disconnect
+  ---
+  duration_ms: 4.039175
+  type: 'test'
+  ...
+# Subtest: node-ping accepts the authenticated identity
+ok 60 - node-ping accepts the authenticated identity
+  ---
+  duration_ms: 5.770818
+  type: 'test'
+  ...
+# Subtest: node-ping is blocked before hello
+ok 61 - node-ping is blocked before hello
+  ---
+  duration_ms: 3.052776
+  type: 'test'
+  ...
+# Subtest: node-ping is blocked different identity
+ok 62 - node-ping is blocked different identity
+  ---
+  duration_ms: 3.314815
+  type: 'test'
+  ...
+# Subtest: node-ping is blocked after disconnect
+ok 63 - node-ping is blocked after disconnect
+  ---
+  duration_ms: 3.446117
+  type: 'test'
+  ...
+# Subtest: a credential for another node cannot register a different identity
+ok 64 - a credential for another node cannot register a different identity
+  ---
+  duration_ms: 3.027721
+  type: 'test'
+  ...
+# Subtest: rejected hello neither logs its credential nor permits a later hello on that session
+ok 65 - rejected hello neither logs its credential nor permits a later hello on that session
+  ---
+  duration_ms: 3.672567
+  type: 'test'
+  ...
+# Subtest: banned source address cannot authenticate
+ok 66 - banned source address cannot authenticate
+  ---
+  duration_ms: 2.912335
+  type: 'test'
+  ...
+# Subtest: duplicate identity is rejected without changing the existing session
+ok 67 - duplicate identity is rejected without changing the existing session
+  ---
+  duration_ms: 3.675564
+  type: 'test'
+  ...
+# Subtest: reconnect after disconnect accepts the rotating credential and ignores a late old end event
+ok 68 - reconnect after disconnect accepts the rotating credential and ignores a late old end event
+  ---
+  duration_ms: 3.685988
+  type: 'test'
+  ...
+# Subtest: repeated hello ends the old session and releases the identity for reconnect
+ok 69 - repeated hello ends the old session and releases the identity for reconnect
+  ---
+  duration_ms: 3.064966
+  type: 'test'
+  ...
+# Subtest: failed collection registration sends no ready and releases its reservation
+ok 70 - failed collection registration sends no ready and releases its reservation
+  ---
+  duration_ms: 3.197661
+  type: 'test'
+  ...
+# Subtest: a delayed registration cannot publish ready after disconnect or replace a new owner
+ok 71 - a delayed registration cannot publish ready after disconnect or replace a new owner
+  ---
+  duration_ms: 3.402529
+  type: 'test'
+  ...
+# Subtest: hello rejects an absent envelope without throwing or logging it
+ok 72 - hello rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.47045
+  type: 'test'
+  ...
+# Subtest: update rejects an absent envelope without throwing or logging it
+ok 73 - update rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.255647
+  type: 'test'
+  ...
+# Subtest: block rejects an absent envelope without throwing or logging it
+ok 74 - block rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.021187
+  type: 'test'
+  ...
+# Subtest: pending rejects an absent envelope without throwing or logging it
+ok 75 - pending rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.546223
+  type: 'test'
+  ...
+# Subtest: stats rejects an absent envelope without throwing or logging it
+ok 76 - stats rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.78179
+  type: 'test'
+  ...
+# Subtest: history rejects an absent envelope without throwing or logging it
+ok 77 - history rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.633392
+  type: 'test'
+  ...
+# Subtest: latency rejects an absent envelope without throwing or logging it
+ok 78 - latency rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 4.613303
+  type: 'test'
+  ...
+# Subtest: node-ping rejects an absent envelope without throwing or logging it
+ok 79 - node-ping rejects an absent envelope without throwing or logging it
+  ---
+  duration_ms: 3.246024
+  type: 'test'
+  ...
+# Subtest: malformed report bodies close the authenticated session without a collection update
+ok 80 - malformed report bodies close the authenticated session without a collection update
+  ---
+  duration_ms: 16.809948
+  type: 'test'
+  ...
+# Subtest: listeners accept explicit loopback addresses and ephemeral or fixed ports
+ok 81 - listeners accept explicit loopback addresses and ephemeral or fixed ports
+  ---
+  duration_ms: 2.006672
+  type: 'test'
+  ...
+# Subtest: listener configuration never falls back to an implicit or public bind
+ok 82 - listener configuration never falls back to an implicit or public bind
+  ---
+  duration_ms: 0.849994
+  type: 'test'
+  ...
+# Subtest: database settings use explicit values and preserve password whitespace
+ok 83 - database settings use explicit values and preserve password whitespace
+  ---
+  duration_ms: 1.216799
+  type: 'test'
+  ...
+# Subtest: all database settings are required and legacy defaults cannot reappear
+ok 84 - all database settings are required and legacy defaults cannot reappear
+  ---
+  duration_ms: 1.290152
+  type: 'test'
+  ...
+# Subtest: database password read errors omit paths and password contents
+ok 85 - database password read errors omit paths and password contents
+  ---
+  duration_ms: 4.040024
+  type: 'test'
+  ...
+# Subtest: persistence accepts explicit loopback WS or encrypted remote WSS
+ok 86 - persistence accepts explicit loopback WS or encrypted remote WSS
+  ---
+  duration_ms: 5.271277
+  type: 'test'
+  ...
+# Subtest: persistence rejects missing, plaintext remote, credential-bearing and wrong-path URLs
+ok 87 - persistence rejects missing, plaintext remote, credential-bearing and wrong-path URLs
+  ---
+  duration_ms: 0.944299
+  type: 'test'
+  ...
+# Subtest: browser API paths stay on the current origin and normalize one trailing slash
+ok 88 - browser API paths stay on the current origin and normalize one trailing slash
+  ---
+  duration_ms: 1.163075
+  type: 'test'
+  ...
+# Subtest: collector passes explicit settings to listen and refuses missing or public binds
+ok 89 - collector passes explicit settings to listen and refuses missing or public binds
+  ---
+  duration_ms: 27.239815
+  type: 'test'
+  ...
+# Subtest: database pool receives configured credentials without inherited defaults
+ok 90 - database pool receives configured credentials without inherited defaults
+  ---
+  duration_ms: 4.874577
+  type: 'test'
+  ...
+# Subtest: invalid database configuration stops before constructing a pool
+ok 91 - invalid database configuration stops before constructing a pool
+  ---
+  duration_ms: 2.748993
+  type: 'test'
+  ...
+# Subtest: API listener validation happens before loading Express or the database
+ok 92 - API listener validation happens before loading Express or the database
+  ---
+  duration_ms: 2.51187
+  type: 'test'
+  ...
+# Subtest: real HTTP API binds to configured loopback and serves data without wildcard CORS
+ok 93 - real HTTP API binds to configured loopback and serves data without wildcard CORS
+  ---
+  duration_ms: 26.540193
+  type: 'test'
+  ...
+# Subtest: persistence uses the configured URL and validates database settings before connecting
+ok 94 - persistence uses the configured URL and validates database settings before connecting
+  ---
+  duration_ms: 15.757122
+  type: 'test'
+  ...
+# Subtest: missing persistence URL stops before loading the database or opening a socket
+ok 95 - missing persistence URL stops before loading the database or opening a socket
+  ---
+  duration_ms: 4.048387
+  type: 'test'
+  ...
+# Subtest: validates the independently encoded complete fixture at the exact byte limit
+ok 96 - validates the independently encoded complete fixture at the exact byte limit
+  ---
+  duration_ms: 4.848296
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: undefined
+ok 97 - requires an absolute dataset directory: undefined
+  ---
+  duration_ms: 0.196363
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: 
+ok 98 - requires an absolute dataset directory: 
+  ---
+  duration_ms: 0.142432
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: .
+ok 99 - requires an absolute dataset directory: .
+  ---
+  duration_ms: 0.071191
+  type: 'test'
+  ...
+# Subtest: requires an absolute dataset directory: relative/data
+ok 100 - requires an absolute dataset directory: relative/data
+  ---
+  duration_ms: 0.091204
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: undefined
+ok 101 - requires an explicit safe byte limit: undefined
+  ---
+  duration_ms: 0.868615
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: 0
+ok 102 - requires an explicit safe byte limit: 0
+  ---
+  duration_ms: 0.753705
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: -1
+ok 103 - requires an explicit safe byte limit: -1
+  ---
+  duration_ms: 0.385623
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: 1.5
+ok 104 - requires an explicit safe byte limit: 1.5
+  ---
+  duration_ms: 1.093193
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: Infinity
+ok 105 - requires an explicit safe byte limit: Infinity
+  ---
+  duration_ms: 0.849747
+  type: 'test'
+  ...
+# Subtest: requires an explicit safe byte limit: 9007199254740992
+ok 106 - requires an explicit safe byte limit: 9007199254740992
+  ---
+  duration_ms: 0.62907
+  type: 'test'
+  ...
+# Subtest: rejects a dataset over budget before inspecting records
+ok 107 - rejects a dataset over budget before inspecting records
+  ---
+  duration_ms: 0.709227
+  type: 'test'
+  ...
+# Subtest: requires geoip-country.dat
+ok 108 - requires geoip-country.dat
+  ---
+  duration_ms: 1.01885
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-country.dat
+ok 109 - rejects empty geoip-country.dat
+  ---
+  duration_ms: 0.915442
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-country.dat
+ok 110 - rejects truncated geoip-country.dat
+  ---
+  duration_ms: 0.660567
+  type: 'test'
+  ...
+# Subtest: requires geoip-country6.dat
+ok 111 - requires geoip-country6.dat
+  ---
+  duration_ms: 1.161029
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-country6.dat
+ok 112 - rejects empty geoip-country6.dat
+  ---
+  duration_ms: 0.899027
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-country6.dat
+ok 113 - rejects truncated geoip-country6.dat
+  ---
+  duration_ms: 0.546673
+  type: 'test'
+  ...
+# Subtest: requires geoip-city-names.dat
+ok 114 - requires geoip-city-names.dat
+  ---
+  duration_ms: 0.844124
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-city-names.dat
+ok 115 - rejects empty geoip-city-names.dat
+  ---
+  duration_ms: 0.49483
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-city-names.dat
+ok 116 - rejects truncated geoip-city-names.dat
+  ---
+  duration_ms: 0.483452
+  type: 'test'
+  ...
+# Subtest: requires geoip-city.dat
+ok 117 - requires geoip-city.dat
+  ---
+  duration_ms: 0.425784
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-city.dat
+ok 118 - rejects empty geoip-city.dat
+  ---
+  duration_ms: 0.425621
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-city.dat
+ok 119 - rejects truncated geoip-city.dat
+  ---
+  duration_ms: 1.573246
+  type: 'test'
+  ...
+# Subtest: requires geoip-city6.dat
+ok 120 - requires geoip-city6.dat
+  ---
+  duration_ms: 0.754902
+  type: 'test'
+  ...
+# Subtest: rejects empty geoip-city6.dat
+ok 121 - rejects empty geoip-city6.dat
+  ---
+  duration_ms: 0.700378
+  type: 'test'
+  ...
+# Subtest: rejects truncated geoip-city6.dat
+ok 122 - rejects truncated geoip-city6.dat
+  ---
+  duration_ms: 0.461065
+  type: 'test'
+  ...
+# Subtest: rejects a directory in place of a dataset file
+ok 123 - rejects a directory in place of a dataset file
+  ---
+  duration_ms: 0.64393
+  type: 'test'
+  ...
+# Subtest: rejects a symlink in place of a dataset file
+ok 124 - rejects a symlink in place of a dataset file
+  ---
+  duration_ms: 1.510173
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 0: reversed address range
+ok 125 - rejects invalid record 0: reversed address range
+  ---
+  duration_ms: 4.229398
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 1: reversed address range
+ok 126 - rejects invalid record 1: reversed address range
+  ---
+  duration_ms: 0.664941
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 2: IPv6 bounds exceed the reader's 64-bit precision
+ok 127 - rejects invalid record 2: IPv6 bounds exceed the reader's 64-bit precision
+  ---
+  duration_ms: 1.045108
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 3: IPv6 bounds exceed the reader's 64-bit precision
+ok 128 - rejects invalid record 3: IPv6 bounds exceed the reader's 64-bit precision
+  ---
+  duration_ms: 0.985938
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 4: invalid country code
+ok 129 - rejects invalid record 4: invalid country code
+  ---
+  duration_ms: 0.653233
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 5: invalid country code
+ok 130 - rejects invalid record 5: invalid country code
+  ---
+  duration_ms: 0.611133
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 6: invalid country code
+ok 131 - rejects invalid record 6: invalid country code
+  ---
+  duration_ms: 0.482932
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 7: invalid location metadata
+ok 132 - rejects invalid record 7: invalid location metadata
+  ---
+  duration_ms: 0.614575
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 8: invalid location metadata
+ok 133 - rejects invalid record 8: invalid location metadata
+  ---
+  duration_ms: 0.5156
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 9: invalid UTF-8 location field
+ok 134 - rejects invalid record 9: invalid UTF-8 location field
+  ---
+  duration_ms: 9.215553
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 10: invalid UTF-8 location field
+ok 135 - rejects invalid record 10: invalid UTF-8 location field
+  ---
+  duration_ms: 0.627233
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 11: invalid UTF-8 location field
+ok 136 - rejects invalid record 11: invalid UTF-8 location field
+  ---
+  duration_ms: 0.546052
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 12: location reference is outside the names file
+ok 137 - rejects invalid record 12: location reference is outside the names file
+  ---
+  duration_ms: 0.575087
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 13: location reference is outside the names file
+ok 138 - rejects invalid record 13: location reference is outside the names file
+  ---
+  duration_ms: 0.653714
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 14: invalid coordinates or accuracy radius
+ok 139 - rejects invalid record 14: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.634272
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 15: invalid coordinates or accuracy radius
+ok 140 - rejects invalid record 15: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.658919
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 16: invalid coordinates or accuracy radius
+ok 141 - rejects invalid record 16: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 1.152216
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 17: invalid coordinates or accuracy radius
+ok 142 - rejects invalid record 17: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.913055
+  type: 'test'
+  ...
+# Subtest: rejects invalid record 18: invalid coordinates or accuracy radius
+ok 143 - rejects invalid record 18: invalid coordinates or accuracy radius
+  ---
+  duration_ms: 0.787412
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-country.dat
+ok 144 - rejects overlapping ranges in geoip-country.dat
+  ---
+  duration_ms: 0.810912
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-country6.dat
+ok 145 - rejects overlapping ranges in geoip-country6.dat
+  ---
+  duration_ms: 0.444955
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-city.dat
+ok 146 - rejects overlapping ranges in geoip-city.dat
+  ---
+  duration_ms: 0.419998
+  type: 'test'
+  ...
+# Subtest: rejects overlapping ranges in geoip-city6.dat
+ok 147 - rejects overlapping ranges in geoip-city6.dat
+  ---
+  duration_ms: 0.894709
+  type: 'test'
+  ...
+# Subtest: checks ordering across chunk boundaries
+ok 148 - checks ordering across chunk boundaries
+  ---
+  duration_ms: 3.635667
+  type: 'test'
+  ...
+# Subtest: recognizes the defined no-location sentinel in geoip-city.dat
+ok 149 - recognizes the defined no-location sentinel in geoip-city.dat
+  ---
+  duration_ms: 1.597562
+  type: 'test'
+  ...
+# Subtest: recognizes the defined no-location sentinel in geoip-city6.dat
+ok 150 - recognizes the defined no-location sentinel in geoip-city6.dat
+  ---
+  duration_ms: 0.759444
+  type: 'test'
+  ...
+# Subtest: preserves a structurally valid unknown location country
+ok 151 - preserves a structurally valid unknown location country
+  ---
+  duration_ms: 0.63492
+  type: 'test'
+  ...
+# Subtest: rejects a file modified during validation
+ok 152 - rejects a file modified during validation
+  ---
+  duration_ms: 1.901473
+  type: 'test'
+  ...
+# Subtest: CLI emits only the manifest on success and exits nonzero for invalid input
+ok 153 - CLI emits only the manifest on success and exits nonzero for invalid input
+  ---
+  duration_ms: 48.601491
+  type: 'test'
+  ...
+# Subtest: CLI rejects invalid argument counts without reading a dataset
+ok 154 - CLI rejects invalid argument counts without reading a dataset
+  ---
+  duration_ms: 36.5711
+  type: 'test'
+  ...
+# Subtest: head admission requires an explicit finite byte budget
+ok 155 - head admission requires an explicit finite byte budget
+  ---
+  duration_ms: 2.084415
+  type: 'test'
+  ...
+# Subtest: complete head retains every native hash and uncle field at the byte boundary and discards extensions
+ok 156 - complete head retains every native hash and uncle field at the byte boundary and discards extensions
+  ---
+  duration_ms: 5.616366
+  type: 'test'
+  ...
+# Subtest: oversized block and combined reports cannot replace heads, refresh receipts or populate history
+ok 157 - oversized block and combined reports cannot replace heads, refresh receipts or populate history
+  ---
+  duration_ms: 2.575795
+  type: 'test'
+  ...
+# Subtest: enrollment counts all configured identities and rotation does not consume an extra slot
+ok 158 - enrollment counts all configured identities and rotation does not consume an extra slot
+  ---
+  duration_ms: 1.563631
+  type: 'test'
+  ...
+# Subtest: over-enrolled collector configuration fails before constructing listeners
+ok 159 - over-enrolled collector configuration fails before constructing listeners
+  ---
+  duration_ms: 23.155737
+  type: 'test'
+  ...
+# Subtest: collector-derived addresses must be bounded IP literals before registration
+ok 160 - collector-derived addresses must be bounded IP literals before registration
+  ---
+  duration_ms: 30.111325
+  type: 'test'
+  ...
+# Subtest: a partly filled cache accepts advancing heads and out-of-order reports
+ok 161 - a partly filled cache accepts advancing heads and out-of-order reports
+  ---
+  duration_ms: 11.774411
+  type: 'test'
+  ...
+# Subtest: charts take the newest forty heights before reversing and keep every series aligned
+ok 162 - charts take the newest forty heights before reversing and keep every series aligned
+  ---
+  duration_ms: 9.050481
+  type: 'test'
+  ...
+# Subtest: a moving two-thousand-height window evicts old reports and rejects later backfill below its floor
+ok 163 - a moving two-thousand-height window evicts old reports and rejects later backfill below its floor
+  ---
+  duration_ms: 0.338169
+  type: 'test'
+  ...
+# Subtest: full cache retains exactly the two thousand most recent positive heights
+ok 164 - full cache retains exactly the two thousand most recent positive heights
+  ---
+  duration_ms: 308.097655
+  type: 'test'
+  ...
+# Subtest: history requests contain the newest fifty missing positive heights in ascending order
+ok 165 - history requests contain the newest fifty missing positive heights in ascending order
+  ---
+  duration_ms: 0.387232
+  type: 'test'
+  ...
+# Subtest: history request completion handles empty, genesis-only and contiguous short histories
+ok 166 - history request completion handles empty, genesis-only and contiguous short histories
+  ---
+  duration_ms: 0.189999
+  type: 'test'
+  ...
+# Subtest: changing one node report releases unused forks while preserving the representative
+ok 167 - changing one node report releases unused forks while preserving the representative
+  ---
+  duration_ms: 0.529734
+  type: 'test'
+  ...
+# Subtest: two reporting nodes keep their distinct forks and indices remain consistent when one switches
+ok 168 - two reporting nodes keep their distinct forks and indices remain consistent when one switches
+  ---
+  duration_ms: 0.267039
+  type: 'test'
+  ...
+# Subtest: trusted representative selection is preserved while abandoned forks are reclaimed
+ok 169 - trusted representative selection is preserved while abandoned forks are reclaimed
+  ---
+  duration_ms: 0.348451
+  type: 'test'
+  ...
+# Subtest: duplicate reports preserve propagation timing but a changed fork receives a new receipt
+ok 170 - duplicate reports preserve propagation timing but a changed fork receives a new receipt
+  ---
+  duration_ms: 0.283955
+  type: 'test'
+  ...
+# Subtest: ticket charts preserve zero and missing values at their original heights
+ok 171 - ticket charts preserve zero and missing values at their original heights
+  ---
+  duration_ms: 0.497287
+  type: 'test'
+  ...
+# Subtest: malformed history reports cannot partially mutate the cache or leave their callback pending
+ok 172 - malformed history reports cannot partially mutate the cache or leave their callback pending
+  ---
+  duration_ms: 1.301221
+  type: 'test'
+  ...
+# Subtest: valid history completes once, does not reorder caller data and shares the injected receipt clock
+ok 173 - valid history completes once, does not reorder caller data and shares the injected receipt clock
+  ---
+  duration_ms: 0.808825
+  type: 'test'
+  ...
+# Subtest: empty history has zero best and worst heights
+ok 174 - empty history has zero best and worst heights
+  ---
+  duration_ms: 0.151371
+  type: 'test'
+  ...
+# Subtest: history extrema use numeric height after unordered reports
+ok 175 - history extrema use numeric height after unordered reports
+  ---
+  duration_ms: 0.158865
+  type: 'test'
+  ...
+# Subtest: propagation matches each node and keeps missing-height positions
+ok 176 - propagation matches each node and keeps missing-height positions
+  ---
+  duration_ms: 0.351186
+  type: 'test'
+  ...
+# Subtest: an empty collection has no best reported block
+ok 177 - an empty collection has no best reported block
+  ---
+  duration_ms: 0.287497
+  type: 'test'
+  ...
+# Subtest: collection best block includes the highest node head
+ok 178 - collection best block includes the highest node head
+  ---
+  duration_ms: 0.334249
+  type: 'test'
+  ...
+# Subtest: registration projects the native metadata fields and collector identity before collection
+ok 179 - registration projects the native metadata fields and collector identity before collection
+  ---
+  duration_ms: 30.505413
+  type: 'test'
+  ...
+# Subtest: registration rejects missing or malformed native fields before reserving the identity
+ok 180 - registration rejects missing or malformed native fields before reserving the identity
+  ---
+  duration_ms: 56.291384
+  type: 'test'
+  ...
+# Subtest: registration accounts for UTF-8 and JSON escaping within its serialized metadata budget
+ok 181 - registration accounts for UTF-8 and JSON escaping within its serialized metadata budget
+  ---
+  duration_ms: 8.695133
+  type: 'test'
+  ...
+# Subtest: registration accepts the exact serialized metadata boundary and rejects one byte beyond
+ok 182 - registration accepts the exact serialized metadata boundary and rejects one byte beyond
+  ---
+  duration_ms: 6.228823
+  type: 'test'
+  ...
+# Subtest: native efsn timestamp strings and the exact ping boundary are echoed unchanged
+ok 183 - native efsn timestamp strings and the exact ping boundary are echoed unchanged
+  ---
+  duration_ms: 10.972221
+  type: 'test'
+  ...
+# Subtest: invalid ping values end the telemetry session without echoing their contents
+ok 184 - invalid ping values end the telemetry session without echoing their contents
+  ---
+  duration_ms: 30.695276
+  type: 'test'
+  ...
+# Subtest: reports begin unknown and identical accepted values refresh only their own receipt times
+ok 185 - reports begin unknown and identical accepted values refresh only their own receipt times
+  ---
+  duration_ms: 4.26962
+  type: 'test'
+  ...
+# Subtest: history and latency do not refresh current reports; reconnect requires new reports
+ok 186 - history and latency do not refresh current reports; reconnect requires new reports
+  ---
+  duration_ms: 1.096557
+  type: 'test'
+  ...
+# Subtest: incomplete reports do not stamp receipts or replace previously accepted values
+ok 187 - incomplete reports do not stamp receipts or replace previously accepted values
+  ---
+  duration_ms: 0.591587
+  type: 'test'
+  ...
+# Subtest: combined reports refresh all fields, preserve pending zero and complete exactly once
+ok 188 - combined reports refresh all fields, preserve pending zero and complete exactly once
+  ---
+  duration_ms: 1.314496
+  type: 'test'
+  ...
+# Subtest: self-reported active status cannot overwrite the collector connection state
+ok 189 - self-reported active status cannot overwrite the collector connection state
+  ---
+  duration_ms: 0.484916
+  type: 'test'
+  ...
+# Subtest: API report budgets expire independently and do not renew with a fresh snapshot
+ok 190 - API report budgets expire independently and do not renew with a fresh snapshot
+  ---
+  duration_ms: 0.340646
+  type: 'test'
+  ...
+# Subtest: missing, invalid or future receipts never receive a positive budget
+ok 191 - missing, invalid or future receipts never receive a positive budget
+  ---
+  duration_ms: 0.159464
+  type: 'test'
+  ...
+# Subtest: API node-report lifetime must be explicitly configured independently of snapshot lifetime
+ok 192 - API node-report lifetime must be explicitly configured independently of snapshot lifetime
+  ---
+  duration_ms: 0.744497
+  type: 'test'
+  ...
+# Subtest: all four views derive their data from one snapshot without redundant database fields
+ok 193 - all four views derive their data from one snapshot without redundant database fields
+  ---
+  duration_ms: 22.309703
+  type: 'test'
+  ...
+# Subtest: missing, stale, future and failed reads are unavailable without stale payload or database details
+ok 194 - missing, stale, future and failed reads are unavailable without stale payload or database details
+  ---
+  duration_ms: 20.039384
+  type: 'test'
+  ...
+# Subtest: fresh empty snapshots stay valid through the exact age boundary
+ok 195 - fresh empty snapshots stay valid through the exact age boundary
+  ---
+  duration_ms: 2.14534
+  type: 'test'
+  ...
+# Subtest: HTTP node rows carry independent report budgets even while the stored snapshot remains fresh
+ok 196 - HTTP node rows carry independent report budgets even while the stored snapshot remains fresh
+  ---
+  duration_ms: 3.178605
+  type: 'test'
+  ...
+# Subtest: requires explicit positive sampling, deadline, size, node and freshness settings
+ok 197 - requires explicit positive sampling, deadline, size, node and freshness settings
+  ---
+  duration_ms: 2.708034
+  type: 'test'
+  ...
+# Subtest: stores two complete nodes with their own metadata and block after charts arrive
+ok 198 - stores two complete nodes with their own metadata and block after charts arrive
+  ---
+  duration_ms: 4.75607
+  type: 'test'
+  ...
+# Subtest: answers Primus heartbeats while idle without writing or adding timers
+ok 199 - answers Primus heartbeats while idle without writing or adding timers
+  ---
+  duration_ms: 1.384847
+  type: 'test'
+  ...
+# Subtest: database backpressure permits only one write and no queued snapshots
+ok 200 - database backpressure permits only one write and no queued snapshots
+  ---
+  duration_ms: 0.795402
+  type: 'test'
+  ...
+# Subtest: disconnect while writing waits for completion and ignores late old callbacks
+ok 201 - disconnect while writing waits for completion and ignores late old callbacks
+  ---
+  duration_ms: 0.59753
+  type: 'test'
+  ...
+# Subtest: uncertain write failure reconnects for a fresh snapshot without replaying the old write
+ok 202 - uncertain write failure reconnects for a fresh snapshot without replaying the old write
+  ---
+  duration_ms: 0.548772
+  type: 'test'
+  ...
+# Subtest: missing charts expire the whole sample and reconnect with one timer
+ok 203 - missing charts expire the whole sample and reconnect with one timer
+  ---
+  duration_ms: 0.343903
+  type: 'test'
+  ...
+# Subtest: a socket still closing cannot overlap with a new connection or another database write
+ok 204 - a socket still closing cannot overlap with a new connection or another database write
+  ---
+  duration_ms: 0.551788
+  type: 'test'
+  ...
+# Subtest: invalid or oversized snapshots retain the last database state and redact errors
+ok 205 - invalid or oversized snapshots retain the last database state and redact errors
+  ---
+  duration_ms: 0.831104
+  type: 'test'
+  ...
+# Subtest: stop drains a pending write and prevents further timers or reconnects
+ok 206 - stop drains a pending write and prevents further timers or reconnects
+  ---
+  duration_ms: 0.51791
+  type: 'test'
+  ...
+# Subtest: unexpected transport close is reported once without raw reason data and still reconnects
+ok 207 - unexpected transport close is reported once without raw reason data and still reconnects
+  ---
+  duration_ms: 0.209246
+  type: 'test'
+  ...
+# Subtest: transport error is reported once and its subsequent close is not reported twice
+ok 208 - transport error is reported once and its subsequent close is not reported twice
+  ---
+  duration_ms: 0.192214
+  type: 'test'
+  ...
+# Subtest: credentials match only their assigned node and never coerce input
+ok 209 - credentials match only their assigned node and never coerce input
+  ---
+  duration_ms: 3.25203
+  type: 'test'
+  ...
+# Subtest: rotation accepts current and next credentials until old credential is removed on reload
+ok 210 - rotation accepts current and next credentials until old credential is removed on reload
+  ---
+  duration_ms: 2.45683
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: null
+ok 211 - invalid credential configuration fails: null
+  ---
+  duration_ms: 1.135203
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: array
+ok 212 - invalid credential configuration fails: array
+  ---
+  duration_ms: 0.56028
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: empty mapping
+ok 213 - invalid credential configuration fails: empty mapping
+  ---
+  duration_ms: 0.561929
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: empty token
+ok 214 - invalid credential configuration fails: empty token
+  ---
+  duration_ms: 0.482291
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: whitespace token
+ok 215 - invalid credential configuration fails: whitespace token
+  ---
+  duration_ms: 0.494416
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: short token
+ok 216 - invalid credential configuration fails: short token
+  ---
+  duration_ms: 0.622592
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: oversized token
+ok 217 - invalid credential configuration fails: oversized token
+  ---
+  duration_ms: 0.566124
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: URL delimiter
+ok 218 - invalid credential configuration fails: URL delimiter
+  ---
+  duration_ms: 0.849408
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: numeric token
+ok 219 - invalid credential configuration fails: numeric token
+  ---
+  duration_ms: 0.502073
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: no rotation entries
+ok 220 - invalid credential configuration fails: no rotation entries
+  ---
+  duration_ms: 0.413759
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: empty rotation entry
+ok 221 - invalid credential configuration fails: empty rotation entry
+  ---
+  duration_ms: 0.422774
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: three rotation entries
+ok 222 - invalid credential configuration fails: three rotation entries
+  ---
+  duration_ms: 0.574188
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: shared credential
+ok 223 - invalid credential configuration fails: shared credential
+  ---
+  duration_ms: 1.113843
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: duplicate rotation credential
+ok 224 - invalid credential configuration fails: duplicate rotation credential
+  ---
+  duration_ms: 0.528612
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: invalid node name
+ok 225 - invalid credential configuration fails: invalid node name
+  ---
+  duration_ms: 0.432655
+  type: 'test'
+  ...
+# Subtest: invalid credential configuration fails: long node name
+ok 226 - invalid credential configuration fails: long node name
+  ---
+  duration_ms: 0.402438
+  type: 'test'
+  ...
+# Subtest: invalid JSON does not reveal file contents through the error
+ok 227 - invalid JSON does not reveal file contents through the error
+  ---
+  duration_ms: 0.5272
+  type: 'test'
+  ...
+# Subtest: missing path, relative path and unreadable file fail closed
+ok 228 - missing path, relative path and unreadable file fail closed
+  ---
+  duration_ms: 0.561079
+  type: 'test'
+  ...
+# Subtest: legacy shared secret setting cannot silently override the identity mapping
+ok 229 - legacy shared secret setting cannot silently override the identity mapping
+  ---
+  duration_ms: 0.643115
+  type: 'test'
+  ...
+# Subtest: complete efsn reports accept decimal difficulty, zero counters and unavailable ticket counts
+ok 230 - complete efsn reports accept decimal difficulty, zero counters and unavailable ticket counts
+  ---
+  duration_ms: 1.39637
+  type: 'test'
+  ...
+# Subtest: missing and malformed block fields are rejected before arithmetic or chart retention
+ok 231 - missing and malformed block fields are rejected before arithmetic or chart retention
+  ---
+  duration_ms: 0.457109
+  type: 'test'
+  ...
+# Subtest: uncle headers validate their retained wire fields without assuming Fusion uncles are impossible
+ok 232 - uncle headers validate their retained wire fields without assuming Fusion uncles are impossible
+  ---
+  duration_ms: 0.376833
+  type: 'test'
+  ...
+# Subtest: stats require every numeric field that the dashboard stores
+ok 233 - stats require every numeric field that the dashboard stores
+  ---
+  duration_ms: 0.233003
+  type: 'test'
+  ...
+# Subtest: invalid complete and combined reports leave all accepted state and receipts unchanged
+ok 234 - invalid complete and combined reports leave all accepted state and receipts unchanged
+  ---
+  duration_ms: 4.669857
+  type: 'test'
+  ...
+# Subtest: invalid or oversized history batches cannot clear the outstanding request or partially populate history
+ok 235 - invalid or oversized history batches cannot clear the outstanding request or partially populate history
+  ---
+  duration_ms: 0.673779
+  type: 'test'
+  ...
+# Subtest: chart records retain counts and fixed scalar fields while the current head keeps transaction hashes and timing
+ok 236 - chart records retain counts and fixed scalar fields while the current head keeps transaction hashes and timing
+  ---
+  duration_ms: 3.676709
+  type: 'test'
+  ...
+# Subtest: mutating a caller report after ingestion cannot alter cached fork identity or counts
+ok 237 - mutating a caller report after ingestion cannot alter cached fork identity or counts
+  ---
+  duration_ms: 0.353882
+  type: 'test'
+  ...
+1..237
+# tests 237
+# suites 0
+# pass 237
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3498.654674
