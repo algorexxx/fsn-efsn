@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Local TLS proxy](restart-dashboard-proxy.md): route isolation, trusted TLS, forwarded-header normalization, eight bounded reporters and cross-platform socket checks pass; actual WSS pipeline/mining outage remain | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Actual efsn WSS](restart-dashboard-wss.md): RPC, PostgreSQL, HTTPS API and four browser checkpoints pass; 173 contracts and 13 socket tests pass; collector loss during mining remains | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -286,6 +286,14 @@ All thirteen socket tests pass on Linux and Windows after correcting an
 OS-dependent close-code assertion. No application/consensus code changed.
 This proxy slice uses an in-memory store and byte-compares compiled assets;
 actual efsn WSS/database/browser and collector loss during mining remain open.
+The [actual WSS follow-up](restart-dashboard-wss.md) now passes with the real
+node reporter, PostgreSQL, HTTPS API and four compiled-browser checkpoints.
+RPC comparisons and writer-loss expiry/recovery pass. A mixed Windows/WSL
+timestamp-ordering failure led to placing collector, writer and API together
+on Linux, preserving strict freshness rules. Browser trust is pinned only to
+the temporary test certificate; public PKI and renewal remain open. All 173
+contracts, 13 socket tests and the original plain-loopback integration pass.
+Only fixtures changed. The chain is stationary; mining-outage acceptance is next.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -344,14 +352,14 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: carry actual efsn WSS through PostgreSQL and the compiled browser using
-   the [locally accepted proxy candidate](restart-dashboard-proxy.md), then
-   finish collector loss during actual mining, runtime/dependency review,
-   service supervision and certificate/log lifecycle checks. Preserve receipt
-   and transport diagnostics. Approve the common deployment manifest before
-   publishing. G6 remains open; eight enrolled nodes, 64 KiB heads and the
-   4/1/1 MiB limits remain an explicit tested candidate, with sizing review
-   required for growth.
+1. G6: drill collector loss during actual mining now that the
+   [actual WSS/database/browser path](restart-dashboard-wss.md) passes. Then
+   finish runtime/dependency review, service supervision, public certificate
+   acceptance/renewal and log lifecycle checks. Preserve receipt and transport
+   diagnostics and the same-host clock assumption. Approve the common deployment
+   manifest before publishing. G6 remains open; eight enrolled nodes, 64 KiB
+   heads and the 4/1/1 MiB limits remain an explicit tested candidate, with
+   sizing review required for growth.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

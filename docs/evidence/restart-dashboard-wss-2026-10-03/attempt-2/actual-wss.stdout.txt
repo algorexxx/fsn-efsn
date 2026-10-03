@@ -1,0 +1,32 @@
+TAP version 13
+# Subtest: busy efsn reports match RPC through storage, API and browser and expire during writer loss
+not ok 1 - busy efsn reports match RPC through storage, API and browser and expire during writer loss
+  ---
+  duration_ms: 22972.1439
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\efsn-telemetry.test.cjs:75:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"receipts":{"block":1791049982740,"stats":1791049982740,"pending":1791049982740},"budgets":{"block":null,"stats":null,"pending":null},"observedAt":"2026-10-03T17:53:02.103Z"}
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\efsn-telemetry.test.cjs:199:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25244.7768

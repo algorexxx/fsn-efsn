@@ -1,0 +1,507 @@
+From d9dfa96b8323db2621f2d7e41a70304c2f1b7415 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 20:07:33 +0200
+Subject: [PATCH] Verify actual efsn WSS through database and browser
+
+---
+ docs/actual-wss-acceptance.md      | 55 +++++++++++++++++
+ docs/deployment-configuration.md   |  7 +++
+ docs/proxy-tls.md                  |  7 +++
+ test/efsn-telemetry.test.cjs       | 95 +++++++++++++++++++++++-------
+ test/fixtures/collector-wire.cjs   |  2 +
+ test/fixtures/efsn-browser.cjs     | 27 +++++++--
+ test/fixtures/efsn-tls-api.cjs     | 60 +++++++++++++++++++
+ test/fixtures/efsn-wire-server.cjs | 22 ++++++-
+ test/fixtures/efsn-wsl-server.cjs  |  8 +++
+ test/fixtures/http.cjs             |  9 ++-
+ 10 files changed, 261 insertions(+), 31 deletions(-)
+ create mode 100644 docs/actual-wss-acceptance.md
+ create mode 100644 test/fixtures/efsn-tls-api.cjs
+
+diff --git a/docs/actual-wss-acceptance.md b/docs/actual-wss-acceptance.md
+new file mode 100644
+index 0000000..03c1452
+--- /dev/null
++++ b/docs/actual-wss-acceptance.md
+@@ -0,0 +1,55 @@
++# Actual node over WSS: local acceptance
++
++The local nginx candidate now carries actual efsn reports through the collector,
++snapshot writer, PostgreSQL, HTTPS API and compiled Edge browser. The test runs
++the existing synthetic sixty-block chain with ten transactions per block, public
++test key 1, no peers and no ongoing mining. It uses the 8-node capacity settings,
++64 KiB head budget and 4/1/1 MiB input/output/snapshot candidate with one reporter.
++The prior eight-reporter profile remains separate evidence.
++
++The test compares the head and fifty history blocks with direct RPC, preserves
++transaction hashes and chart counts, checks ticket/peer/pending/mining values,
++and exercises four browser checkpoints: current head, pinned head, expired data
++after stopping the writer, and automatic recovery after restarting it. Writer
++loss does not change the stationary node's head. Collector loss during actual
++mining remains a separate required drill.
++
++All timestamp-producing dashboard processes run on the same Linux host. The
++first integration layout mixed Linux collector receipts with a Windows writer;
++one receipt was 637 ms later than its snapshot observation, correctly yielding
++unknown report freshness. Moving the writer beside the collector and API fixes
++the fixture layout without widening timestamp validation. Keep the single-host
++deployment assumption. Any later multi-host setup needs clock synchronization
++and explicit clock-failure acceptance.
++
++The efsn fixture uses an explicit `wss://127.0.0.1:port` URL, so its normal reporter
++cannot fall back to plaintext. A temporary CA is supplied through Go's
++`SSL_CERT_FILE`; the production dialer and certificate verification are unchanged.
++Node HTTPS checks use that CA and record an authorized TLS 1.3 session. A fresh
++Edge process first rejects the untrusted test certificate. The functional browser
++check then uses a temporary browser profile with an exception pinned to this
++test leaf's SHA-256 SPKI. It does not disable all HTTPS checks or alter system
++trust. This verifies browser transport/functionality, not acceptance of a publicly
++issued certificate; issuance, renewal and public trust still need deployment checks.
++The [Chromium switch implementation](https://chromium.googlesource.com/chromium/src/%2B/8402d3c5bc13e018fa75eba650ed881755e0223b%5E%21/)
++describes that scoped test exception.
++
++The Linux test uses PostgreSQL 16.15, Ubuntu nginx 1.24.0-2ubuntu7.18, Node 22.11.0,
++pg 8.23.1 and Edge 154.0.4258.48. PostgreSQL is extracted into scratch and started
++as a fresh private SCRAM-authenticated loopback cluster. The original plain-loopback
++test also passes against Windows PostgreSQL 18.6. These are recorded test inputs,
++not a selected production support matrix.
++
++Opt in through the existing `test/efsn-telemetry.test.cjs` by supplying
++`EFSN_TLS_CA`, `EFSN_TLS_CERT`, `EFSN_TLS_KEY`, `EFSN_TLS_OUTPUT`, `EFSN_TLS_SPKI`
++and `TEST_NGINX` in addition to its existing database, Go binary, Linux Node,
++Playwright and evidence settings. CA/certificate/output/nginx/password paths are
++Windows paths mapped into WSL; the private key path is already a Linux path.
++The Go fixture binary must permit loopback WSS. Linux collector, writer and API
++use the same PostgreSQL cluster; Windows controls the fixture and browser.
++
++No application, dependency, schema, frontend or nginx-template changes were
++required. Changes are restricted to test orchestration, TLS checks and orderly
++cleanup. The writer controller's stop operation is idempotent, and cleanup stops
++the node and writer before closing collector/proxy processes. All 173 contracts,
++13 socket tests, the actual WSS scenario and original plain-loopback scenario pass.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 2ee28f8..2348daa 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -139,3 +139,10 @@ normalization still require deployment acceptance.
+ See [proxy-tls.md](proxy-tls.md) for the loopback nginx template, tested routes,
+ forwarding-header trust boundary, coordinated limits and remaining public
+ deployment checks. This local candidate does not approve public hosting.
++
++## Actual WSS follow-up
++
++[Actual node WSS acceptance](actual-wss-acceptance.md) now covers the real reporter,
++PostgreSQL and compiled browser, with all timestamp-producing processes on one
++Linux host. Collector loss during mining, runtime support and public certificate
++issuance/renewal remain open.
+diff --git a/docs/proxy-tls.md b/docs/proxy-tls.md
+index 5c5ba8e..57b490f 100644
+--- a/docs/proxy-tls.md
++++ b/docs/proxy-tls.md
+@@ -100,3 +100,10 @@ Reference semantics: [nginx WebSocket tunneling](https://nginx.org/en/docs/http/
+ [connection accounting](https://nginx.org/en/docs/http/ngx_http_limit_conn_module.html),
+ [HTTP request limits](https://nginx.org/en/docs/http/ngx_http_core_module.html),
+ and [TLS settings](https://nginx.org/en/docs/http/ngx_http_ssl_module.html).
++
++## Actual WSS follow-up
++
++[Actual node WSS acceptance](actual-wss-acceptance.md) now covers the real reporter,
++PostgreSQL and compiled browser, with all timestamp-producing processes on one
++Linux host. Collector loss during mining, runtime support and public certificate
++issuance/renewal remain open.
+diff --git a/test/efsn-telemetry.test.cjs b/test/efsn-telemetry.test.cjs
+index 51992be..a30df3c 100644
+--- a/test/efsn-telemetry.test.cjs
++++ b/test/efsn-telemetry.test.cjs
+@@ -37,7 +37,7 @@ async function rpc(endpoint, method, params = []) {
+     return result.result;
+ }
+ 
+-async function waitForCollectorPort(port, transport) {
++async function waitForCollectorPort(port, transport, target = 'collector') {
+     await waitFor(() => new Promise(resolve => {
+         const probe = createConnection({ host: '127.0.0.1', port });
+         let finished = false;
+@@ -46,7 +46,7 @@ async function waitForCollectorPort(port, transport) {
+                 return;
+             }
+             finished = true;
+-            transport.push({ kind: 'windows-port-readiness', ready, code, time: Date.now() });
++            transport.push({ kind: 'windows-port-readiness', target, ready, code, time: Date.now() });
+             probe.destroy();
+             resolve(ready);
+         }
+@@ -74,25 +74,46 @@ function linuxPath(path) {
+ 
+ test('busy efsn reports match RPC through storage, API and browser and expire during writer loss', { timeout: 65000 }, async t => {
+     assert.ok(process.env.EFSN_TELEMETRY_BINARY && process.env.EFSN_TELEMETRY_EVIDENCE && process.env.TEST_PG_PORT && process.env.TEST_PG_PASSWORD_FILE);
++    const tls = Boolean(process.env.EFSN_TLS_CA);
++    const ca = tls ? readFileSync(process.env.EFSN_TLS_CA) : undefined;
++    const limits = tls ? { messageBytes: 4194304, headBytes: 65536, bufferedBytes: 1048576, messagesPerSecond: 100, snapshotBytes: 1048576, nodes: 8 } : { messageBytes: 131072, headBytes: 32768, bufferedBytes: 262144, messagesPerSecond: 100, snapshotBytes: 65536, nodes: 2 };
++    const tlsEnvironment = tls ? Object.fromEntries(['EFSN_TLS_CERT', 'EFSN_TLS_KEY', 'EFSN_TLS_OUTPUT', 'TEST_NGINX', 'TEST_PG_PORT', 'TEST_PG_PASSWORD_FILE'].map(name => { assert.ok(process.env[name], name); return [name, process.env[name]]; })) : {};
+     let phase = 'startup';
+     let collector;
++    let server;
++    let serverStopped = false;
++    let stopNode;
+     const transport = [];
+     t.after(async () => {
+         phase = 'cleanup';
+         if (collector) {
+             await collector.stop();
+         }
++        if (stopNode) {
++            await stopNode();
++        }
++        if (server && !serverStopped) {
++            await server.stop();
++            serverStopped = true;
++        }
+     });
+     t.after(() => writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'transport.json'), JSON.stringify(transport, null, 2) + '\n', 'utf8'));
+-    const server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE, COLLECTOR_MAX_MESSAGE_BYTES: '131072' }, 'efsn-wsl-server.cjs');
++    server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE, COLLECTOR_MAX_MESSAGE_BYTES: String(limits.messageBytes), COLLECTOR_MAX_HEAD_BYTES: String(limits.headBytes), COLLECTOR_MAX_BUFFERED_BYTES: String(limits.bufferedBytes), ...tlsEnvironment }, 'efsn-wsl-server.cjs');
+     const directory = mkdtempSync(join(tmpdir(), 'efsn-dashboard-'));
+     const settings = join(directory, 'settings.json');
+-    writeFileSync(settings, JSON.stringify({ Collector: `ws://127.0.0.1:${server.port}`, Secret: secretA, TransactionsPerBlock: 10 }), { encoding: 'utf8', mode: 0o600 });
+-    const child = spawn(join(process.env.SystemRoot, 'System32/wsl.exe'), ['-d', 'FusionRehearsal', '-u', 'rehearsal', '--', 'env', 'GOMAXPROCS=2', 'FUSION_RESTART_CHAINDATA=', 'FUSION_DASHBOARD_FIXTURE=' + linuxPath(directory), linuxPath(process.env.EFSN_TELEMETRY_BINARY), '-test.run=^TestDashboardTelemetryNode$', '-test.v', '-test.timeout=65s'], {
++    writeFileSync(settings, JSON.stringify({ Collector: `${tls ? 'wss' : 'ws'}://127.0.0.1:${tls ? server.tlsPort : server.port}`, Secret: secretA, TransactionsPerBlock: 10 }), { encoding: 'utf8', mode: 0o600 });
++    const trust = tls ? ['SSL_CERT_FILE=' + linuxPath(process.env.EFSN_TLS_CA)] : [];
++    const child = spawn(join(process.env.SystemRoot, 'System32/wsl.exe'), ['-d', 'FusionRehearsal', '-u', 'rehearsal', '--', 'env', 'GOMAXPROCS=2', 'FUSION_RESTART_CHAINDATA=', ...trust, 'FUSION_DASHBOARD_FIXTURE=' + linuxPath(directory), linuxPath(process.env.EFSN_TELEMETRY_BINARY), '-test.run=^TestDashboardTelemetryNode$', '-test.v', '-test.timeout=65s'], {
+         cwd: resolve(process.env.EFSN_TELEMETRY_BINARY, '../../tests/restart'),
+         env: { ...process.env, FUSION_DASHBOARD_FIXTURE: directory, FUSION_RESTART_CHAINDATA: '' }, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
+     });
+     const exited = once(child, 'exit');
++    stopNode = async () => {
++        if (child.exitCode === null && child.signalCode === null) {
++            writeFileSync(join(directory, 'stop'), '', 'utf8');
++        }
++        return exited;
++    };
+     let logs = '';
+     child.stdout.on('data', data => { logs += data; });
+     child.stderr.on('data', data => { logs += data; });
+@@ -115,13 +136,16 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+         assert.equal(child.exitCode, null, logs);
+         return existsSync(join(directory, 'ready.json')) && JSON.parse(readFileSync(join(directory, 'ready.json'), 'utf8'));
+     });
++    if (tls) {
++        await waitForCollectorPort(Number(process.env.TEST_PG_PORT), transport, 'postgres');
++    }
+     const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
+     t.after(() => pool.end());
+     await pool.query(readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8'));
+     const populate = new Populate(pool);
+     const retrieve = new Retrieve(pool);
+     const errors = [];
+-    const collectionConfig = { url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: 65536, maxNodes: 2 };
++    const collectionConfig = { url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: limits.snapshotBytes, maxNodes: limits.nodes };
+     const collectionDependencies = {
+         connect(url, maxBytes) {
+             const connection = new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes });
+@@ -138,23 +162,46 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+             transport.push({ kind: 'writer-error', phase, time: Date.now(), message });
+         },
+     };
++    async function startCollection() {
++        if (tls) {
++            assert.deepEqual(await server.command('writer-start'), { writer: 'started' });
++            let stopped = false;
++            return { async stop() {
++                if (!stopped) {
++                    stopped = true;
++                    assert.deepEqual(await server.command('writer-stop'), { writer: 'stopped' });
++                }
++            } };
++        }
++        return startSnapshotCollection(collectionConfig, collectionDependencies);
++    }
+     await waitForCollectorPort(server.port, transport);
+-    collector = startSnapshotCollection(collectionConfig, collectionDependencies);
++    collector = await startCollection();
+     const snapshot = await waitFor(async () => {
+         const value = await retrieve.readSnapshot();
+         return value && value.payload.nodes.length === 1 && Object.values(value.payload.nodes[0].reports).every(time => time !== null) && value.payload.charts.height[0] === 21 && value.payload.charts.height[39] === 60 && value;
+     });
+-    const application = express();
+-    const apiView = createApp(retrieve, Date.now, 10000, 30000);
+-    application.use('/stats-api', apiView);
+-    application.use(apiView);
+-    application.use(express.static(resolve(__dirname, '../react-frontend/build')));
+-    const api = application.listen(0, '127.0.0.1');
+-    t.after(() => new Promise(resolve => api.close(resolve)));
+-    await once(api, 'listening');
+-    const nodes = await request(api.address().port, '/nodes');
+-    const blocks = await request(api.address().port, '/blocks');
+-    const charts = await request(api.address().port, '/charts');
++    let apiPort = server.tlsPort;
++    if (tls) {
++        await waitForCollectorPort(apiPort, transport, 'https');
++    } else {
++        const application = express();
++        const apiView = createApp(retrieve, Date.now, 10000, 30000);
++        application.use('/stats-api', apiView);
++        application.use(apiView);
++        application.use(express.static(resolve(__dirname, '../react-frontend/build')));
++        const api = application.listen(0, '127.0.0.1');
++        t.after(() => new Promise(resolve => api.close(resolve)));
++        await once(api, 'listening');
++        apiPort = api.address().port;
++    }
++    const prefix = tls ? '/stats-api' : '';
++    const nodes = await request(apiPort, prefix + '/nodes', ca);
++    const blocks = await request(apiPort, prefix + '/blocks', ca);
++    const charts = await request(apiPort, prefix + '/charts', ca);
++    if (tls) {
++        assert.ok([nodes, blocks, charts].every(response => response.tls.authorized && response.tls.protocol.startsWith('TLS')));
++    }
+     writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'api-initial.json'), JSON.stringify({ snapshot, nodes, blocks, charts, captured: await server.command('capture'), time: Date.now() }, null, 2) + '\n', 'utf8');
+     assert.equal(nodes.status, 200);
+     assert.equal(blocks.status, 200);
+@@ -204,18 +251,24 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     assert.deepEqual(history.message.emit[1].history.map(block => block.number), Array.from({ length: 50 }, (_, index) => 59 - index));
+     assert.deepEqual(JSON.parse(charts.body[0].charts).height, Array.from({ length: 40 }, (_, index) => 21 + index));
+     phase = 'browser';
+-    const browser = await checkBrowser('http://127.0.0.1:' + api.address().port, truth.head, {
++    const browser = await checkBrowser(`${tls ? 'https' : 'http'}://127.0.0.1:` + apiPort, truth.head, {
++        certificateSpki: tls ? process.env.EFSN_TLS_SPKI : undefined,
+         stopCollection() { phase = 'writer-stopped'; return collector.stop(); },
+-        resumeCollection() { phase = 'writer-resumed'; collector = startSnapshotCollection(collectionConfig, collectionDependencies); },
++        async resumeCollection() { phase = 'writer-resumed'; collector = await startCollection(); },
+         readHead: () => rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false]),
+     });
+     assert.equal((await rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false])).hash, truth.head.hash);
+     assert.deepEqual(errors, []);
+     phase = 'complete';
+     await collector.stop();
++    const finalCaptured = await server.command('capture');
++    if (tls) {
++        assert.deepEqual(finalCaptured.writer.errors, []);
++    }
+     writeFileSync(join(directory, 'stop'), '', 'utf8');
+     assert.deepEqual(await exited, [0, null]);
+-    const evidence = { ready, truth, snapshot, nodes, blocks, charts, captured, browser, limits: { messageBytes: 131072, bufferedBytes: 262144, messagesPerSecond: 100, snapshotBytes: 65536 }, errors, testMemory: process.memoryUsage() };
++    const evidence = { ready, truth, snapshot, nodes, blocks, charts, captured, finalCaptured, browser, tls, limits, errors, testMemory: process.memoryUsage() };
+     writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'comparison.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8');
+     await server.stop();
++    serverStopped = true;
+ });
+diff --git a/test/fixtures/collector-wire.cjs b/test/fixtures/collector-wire.cjs
+index 18fe54a..e0970a3 100644
+--- a/test/fixtures/collector-wire.cjs
++++ b/test/fixtures/collector-wire.cjs
+@@ -26,6 +26,8 @@ async function startCollector(t, settings = {}, fixture = 'wire-server.cjs', cre
+     assert.equal(address.address, '127.0.0.1');
+     return {
+         port: address.port,
++        tlsPort: address.tlsPort,
++        apiPort: address.apiPort,
+         async command(message) {
+             const response = once(child, 'message');
+             child.send(message);
+diff --git a/test/fixtures/efsn-browser.cjs b/test/fixtures/efsn-browser.cjs
+index 65e5ce6..d6ba208 100644
+--- a/test/fixtures/efsn-browser.cjs
++++ b/test/fixtures/efsn-browser.cjs
+@@ -4,7 +4,22 @@ const { join } = require('node:path');
+ 
+ async function checkBrowser(url, head, controls) {
+     const { chromium } = require(process.env.EFSN_BROWSER_MODULE);
+-    const browser = await chromium.launch({ channel: 'msedge', headless: true, chromiumSandbox: true });
++    const launch = { channel: 'msedge', headless: true, chromiumSandbox: true };
++    let certificateError;
++    if (controls.certificateSpki) {
++        const untrusted = await chromium.launch(launch);
++        try {
++            const page = await untrusted.newPage();
++            await assert.rejects(page.goto(url), error => {
++                certificateError = error.message;
++                return /ERR_CERT_AUTHORITY_INVALID/.test(error.message);
++            });
++        } finally {
++            await untrusted.close();
++        }
++        launch.args = ['--ignore-certificate-errors-spki-list=' + controls.certificateSpki];
++    }
++    const browser = await chromium.launch(launch);
+     const errors = [];
+     const foreignRequests = [];
+     const responses = [];
+@@ -26,7 +41,11 @@ async function checkBrowser(url, head, controls) {
+             }
+             return route.continue();
+         });
+-        await page.goto(url, { waitUntil: 'domcontentloaded' });
++        const navigation = await page.goto(url, { waitUntil: 'domcontentloaded' });
++        const security = await navigation.securityDetails();
++        if (controls.certificateSpki) {
++            assert.ok(security && security.protocol.startsWith('TLS'));
++        }
+         await page.getByRole('button', { name: 'Pin node-a', exact: true }).waitFor();
+         const headers = await page.locator('thead th').allTextContents();
+         assert.deepEqual(headers, ['Pin', 'Connected', 'Location', 'Node / Reports', 'Type', 'Height', 'Block Received', 'Pending Txs', 'Tickets', 'Mining', 'Peers', 'Last Latency']);
+@@ -55,7 +74,7 @@ async function checkBrowser(url, head, controls) {
+         assert.equal(duringOutage.hash, head.hash);
+         checkpoints.push({ name: 'stopped-writer-expired', directHead: duringOutage.hash, text: await page.locator('[aria-live="polite"]').innerText() });
+         await page.screenshot({ path: join(output, 'browser-expired.png'), fullPage: true });
+-        controls.resumeCollection();
++        await controls.resumeCollection();
+         await page.getByRole('button', { name: 'Unpin node-a', exact: true }).waitFor();
+         assert.equal(await row.count(), 1);
+         assert.match(await row.locator('td').nth(5).innerText(), /# 60/);
+@@ -63,7 +82,7 @@ async function checkBrowser(url, head, controls) {
+         assert.deepEqual(errors, []);
+         assert.deepEqual(foreignRequests, []);
+         assert.ok(responses.includes(503) && responses[responses.length - 1] === 200);
+-        return { browser: browser.version(), checkpoints, errors, foreignRequests, responses };
++        return { browser: browser.version(), checkpoints, errors, foreignRequests, responses, security, certificateError, certificateSpki: controls.certificateSpki };
+     } finally {
+         writeFileSync(join(output, 'browser-checkpoints.json'), JSON.stringify({ checkpoints, errors, foreignRequests, responses }, null, 2) + '\n', 'utf8');
+         await browser.close();
+diff --git a/test/fixtures/efsn-tls-api.cjs b/test/fixtures/efsn-tls-api.cjs
+new file mode 100644
+index 0000000..347bb30
+--- /dev/null
++++ b/test/fixtures/efsn-tls-api.cjs
+@@ -0,0 +1,60 @@
++const { once } = require('node:events');
++const { readFileSync } = require('node:fs');
++const { join } = require('node:path');
++const { Pool } = require('pg');
++const WebSocket = require('websocket').w3cwebsocket;
++const Retrieve = require('../../db_methods/retrieve');
++const Populate = require('../../db_methods/populate');
++const startSnapshotCollection = require('../../wsclient/collect-snapshots');
++const createApp = require('../../api-server/app');
++const startProxy = require('./nginx.cjs');
++
++async function startTlsApi(collectorPort, cleanup) {
++    const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
++    cleanup.push(() => pool.end());
++    const api = createApp(new Retrieve(pool), Date.now, 10000, 30000).listen(0, '127.0.0.1');
++    cleanup.push(() => new Promise(resolve => api.close(resolve)));
++    await once(api, 'listening');
++    const proxy = await startProxy({ after(callback) { cleanup.push(callback); } }, process.env.EFSN_TLS_OUTPUT, {
++        HOST: '127.0.0.1', CERT: process.env.EFSN_TLS_CERT, KEY: process.env.EFSN_TLS_KEY,
++        BUILD: join(__dirname, '../../react-frontend/build'), COLLECTOR_PORT: collectorPort, API_PORT: api.address().port,
++    });
++    const populate = new Populate(pool);
++    const state = { errors: [], transport: [], saves: [] };
++    let writer;
++    async function stopCollection() {
++        if (writer) {
++            await writer.stop();
++            writer = undefined;
++        }
++    }
++    cleanup.push(stopCollection);
++    return {
++        address: { tlsPort: proxy.port, apiPort: api.address().port },
++        state,
++        stopCollection,
++        startCollection() {
++            if (writer) {
++                throw new Error('Fixture writer already running');
++            }
++            writer = startSnapshotCollection({ url: `ws://127.0.0.1:${collectorPort}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: 1048576, maxNodes: 8 }, {
++                connect(url, maxBytes) {
++                    const connection = new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes });
++                    const id = state.transport.filter(event => event.kind === 'connect').length;
++                    state.transport.push({ id, kind: 'connect', time: Date.now() });
++                    connection._client.on('connectFailed', error => state.transport.push({ id, kind: 'connectFailed', time: Date.now(), code: error.code }));
++                    connection.addEventListener('open', () => state.transport.push({ id, kind: 'open', time: Date.now() }));
++                    connection.addEventListener('close', event => state.transport.push({ id, kind: 'close', time: Date.now(), code: event.code }));
++                    return connection;
++                },
++                async saveSnapshot(payload, time) {
++                    await populate.saveSnapshot(payload, time);
++                    state.saves.push({ observedAt: time, reports: payload.nodes.map(node => node.reports), bytes: Buffer.byteLength(JSON.stringify(payload)) });
++                },
++                now: () => new Date(), setTimeout, clearTimeout, onError: message => state.errors.push(message),
++            });
++        },
++    };
++}
++
++module.exports = startTlsApi;
+diff --git a/test/fixtures/efsn-wire-server.cjs b/test/fixtures/efsn-wire-server.cjs
+index a6f568c..e1f9029 100644
+--- a/test/fixtures/efsn-wire-server.cjs
++++ b/test/fixtures/efsn-wire-server.cjs
+@@ -30,12 +30,28 @@ function capture(direction, raw) {
+ }
+ 
+ const server = require('../../server');
+-server.on('listening', () => process.send(server.address()));
+-process.on('message', message => {
++const cleanup = [];
++let tlsApi;
++server.on('listening', async () => {
++    tlsApi = process.env.EFSN_TLS_CERT ? await require('./efsn-tls-api.cjs')(server.address().port, cleanup) : undefined;
++    process.send({ ...server.address(), ...(tlsApi ? tlsApi.address : {}) });
++});
++process.on('message', async message => {
+     if (message === 'stop') {
++        for (const close of cleanup.reverse()) {
++            await close();
++        }
+         server.close(() => process.exit(0));
+     }
+     if (message === 'capture') {
+-        process.send({ records, memory: process.memoryUsage() });
++        process.send({ records, memory: process.memoryUsage(), writer: tlsApi && tlsApi.state });
++    }
++    if (message === 'writer-start') {
++        tlsApi.startCollection();
++        process.send({ writer: 'started' });
++    }
++    if (message === 'writer-stop') {
++        await tlsApi.stopCollection();
++        process.send({ writer: 'stopped' });
+     }
+ });
+diff --git a/test/fixtures/efsn-wsl-server.cjs b/test/fixtures/efsn-wsl-server.cjs
+index 7b23dae..acc2048 100644
+--- a/test/fixtures/efsn-wsl-server.cjs
++++ b/test/fixtures/efsn-wsl-server.cjs
+@@ -11,6 +11,14 @@ function linuxPath(path) {
+ 
+ const settings = Object.entries(process.env).filter(([name]) => name.startsWith('COLLECTOR_') || ['NODE_ENV', 'VERBOSITY'].includes(name)).map(([name, value]) => name + '=' + value);
+ settings.push('WS_CREDENTIALS_FILE=' + linuxPath(process.env.WS_CREDENTIALS_FILE));
++if (process.env.EFSN_TLS_CERT) {
++    for (const name of ['EFSN_TLS_CERT', 'EFSN_TLS_OUTPUT', 'TEST_NGINX', 'TEST_PG_PASSWORD_FILE']) {
++        settings.push(name + '=' + linuxPath(process.env[name]));
++    }
++    for (const name of ['EFSN_TLS_KEY', 'TEST_PG_PORT']) {
++        settings.push(name + '=' + process.env[name]);
++    }
++}
+ const child = spawn(join(process.env.SystemRoot, 'System32/wsl.exe'), ['-d', 'FusionRehearsal', '-u', 'rehearsal', '--', 'env', ...settings, linuxPath(process.env.EFSN_LINUX_NODE), linuxPath(join(__dirname, 'efsn-wire-server.cjs'))], { windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
+ createInterface({ input: child.stdout }).on('line', line => {
+     if (line.startsWith('FIXTURE_IPC ')) {
+diff --git a/test/fixtures/http.cjs b/test/fixtures/http.cjs
+index 8ce57ad..d21c906 100644
+--- a/test/fixtures/http.cjs
++++ b/test/fixtures/http.cjs
+@@ -1,15 +1,18 @@
+ const http = require('node:http');
++const https = require('node:https');
+ 
+-function request(port, path) {
++function request(port, path, ca) {
+     return new Promise((resolve, reject) => {
+-        const req = http.get({ host: '127.0.0.1', port, path, agent: false }, response => {
++        const transport = ca === undefined ? http : https;
++        const req = transport.get({ host: '127.0.0.1', port, path, agent: false, ca }, response => {
++            const tls = ca === undefined ? {} : { tls: { authorized: response.socket.authorized, protocol: response.socket.getProtocol(), fingerprint256: response.socket.getPeerCertificate().fingerprint256 } };
+             let body = '';
+             response.setEncoding('utf8');
+             response.on('data', data => { body += data; });
+             response.on('error', reject);
+             response.on('end', () => {
+                 try {
+-                    resolve({ status: response.statusCode, body: JSON.parse(body), headers: response.headers });
++                    resolve({ status: response.statusCode, body: JSON.parse(body), headers: response.headers, ...tls });
+                 } catch (error) {
+                     reject(error);
+                 }

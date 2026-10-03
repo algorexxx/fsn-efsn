@@ -38,7 +38,7 @@ func TestDashboardTelemetryNode(t *testing.T) {
 	requireNoError(t, json.Unmarshal(data, &settings))
 	endpoint, err := url.Parse(settings.Collector)
 	requireNoError(t, err)
-	if !filepath.IsAbs(path) || endpoint.Scheme != "ws" || endpoint.Hostname() != "127.0.0.1" || endpoint.Port() == "" || endpoint.Path != "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" || len(settings.Secret) < 32 || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
+	if !filepath.IsAbs(path) || (endpoint.Scheme != "ws" && endpoint.Scheme != "wss") || endpoint.Hostname() != "127.0.0.1" || endpoint.Port() == "" || endpoint.Path != "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" || len(settings.Secret) < 32 || os.Getenv("FUSION_RESTART_CHAINDATA") != "" {
 		t.Fatal("absolute fixture path, loopback collector, synthetic credential and no backup input required")
 	}
 	if settings.TransactionsPerBlock != 1 && settings.TransactionsPerBlock != 10 {
