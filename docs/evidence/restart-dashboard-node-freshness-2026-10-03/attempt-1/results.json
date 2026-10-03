@@ -1,0 +1,54 @@
+{
+  "node": "v22.11.0",
+  "results": [
+    {
+      "name": "test",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "test/collector.test.cjs",
+        "test/collector-input.test.cjs",
+        "test/telemetry-credentials.test.cjs",
+        "test/deployment-config.test.cjs",
+        "test/deployment-wiring.test.cjs",
+        "test/snapshot-collector.test.cjs",
+        "test/snapshot-api.test.cjs",
+        "test/browser-snapshot.test.cjs",
+        "test/report-freshness.test.cjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.772956132888794
+    },
+    {
+      "name": "test-wire",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "test/telemetry-wire.test.cjs",
+        "test/collector-input-wire.test.cjs"
+      ],
+      "exit_code": 0,
+      "seconds": 3.070584297180176
+    },
+    {
+      "name": "react-tests",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/react-scripts/scripts/test.js",
+        "--watchAll=false",
+        "--runInBand"
+      ],
+      "exit_code": 0,
+      "seconds": 24.26768970489502
+    },
+    {
+      "name": "build",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "node_modules/react-scripts/scripts/build.js"
+      ],
+      "exit_code": 0,
+      "seconds": 58.26574993133545
+    }
+  ]
+}

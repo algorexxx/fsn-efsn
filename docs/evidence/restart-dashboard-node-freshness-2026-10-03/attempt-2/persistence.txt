@@ -1,0 +1,43 @@
+TAP version 13
+# Subtest: real collector, snapshot storage and HTTP API preserve node identity and recover
+    # Subtest: schema is nondestructive, roles are restricted and older/invalid writes cannot replace a snapshot
+    ok 1 - schema is nondestructive, roles are restricted and older/invalid writes cannot replace a snapshot
+      ---
+      duration_ms: 154.5337
+      ...
+# (node:43248) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: distinct reports reach PostgreSQL and the HTTP API without cross-node metadata
+    ok 2 - distinct reports reach PostgreSQL and the HTTP API without cross-node metadata
+      ---
+      duration_ms: 1058.8987
+      ...
+    # Subtest: stored receipts survive projection and expire independently of a fresh database snapshot
+    ok 3 - stored receipts survive projection and expire independently of a fresh database snapshot
+      ---
+      duration_ms: 4.3743
+      ...
+    # Subtest: writer reconnect and node disconnect replace the snapshot with fresh complete reports
+    ok 4 - writer reconnect and node disconnect replace the snapshot with fresh complete reports
+      ---
+      duration_ms: 2306.1454
+      ...
+    # Subtest: stopped ingestion becomes unavailable without clearing the last stored snapshot
+    ok 5 - stopped ingestion becomes unavailable without clearing the last stored snapshot
+      ---
+      duration_ms: 6.6397
+      ...
+    1..5
+ok 1 - real collector, snapshot storage and HTTP API preserve node identity and recover
+  ---
+  duration_ms: 4166.4318
+  ...
+1..1
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5637.3255

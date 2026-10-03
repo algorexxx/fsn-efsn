@@ -1,0 +1,1291 @@
+From f0c87459d0c64a2703714dd236d2a83f10247089 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 14:34:07 +0200
+Subject: [PATCH] Track and expire individual node reports across the dashboard
+
+---
+ api-server/app.js                      |  10 ++-
+ api-server/report-freshness.js         |  12 +++
+ api-server/server.js                   |   2 +-
+ docs/browser-freshness.md              |  15 ++--
+ docs/deployment-configuration.md       |   1 +
+ docs/node-report-freshness.md          |  86 ++++++++++++++++++++
+ docs/snapshot-storage.md               |   9 ++-
+ lib/collection.js                      |  32 +++++++-
+ lib/deployment-config.js               |   2 +-
+ lib/node.js                            |  10 ++-
+ lib/telemetry-report.js                |  25 ++++++
+ package.json                           |   4 +-
+ react-frontend/src/App.test.js         |  26 +++++-
+ react-frontend/src/Components/Main.js  |  86 +++++++++++---------
+ react-frontend/src/snapshot-polling.js |  28 +++++--
+ react-frontend/src/snapshot-view.js    |  44 ++++++++--
+ test/browser-snapshot.test.cjs         |  42 +++++++++-
+ test/deployment-wiring.test.cjs        |   2 +-
+ test/fixtures/browser-server.cjs       |  20 +++--
+ test/persistence.test.cjs              |  23 +++++-
+ test/report-freshness-wire.test.cjs    |  47 +++++++++++
+ test/report-freshness.test.cjs         | 108 +++++++++++++++++++++++++
+ test/snapshot-api.test.cjs             |  17 +++-
+ test/snapshot-collector.test.cjs       |   4 +-
+ wsclient/collect-snapshots.js          |   5 +-
+ 25 files changed, 567 insertions(+), 93 deletions(-)
+ create mode 100644 api-server/report-freshness.js
+ create mode 100644 docs/node-report-freshness.md
+ create mode 100644 lib/telemetry-report.js
+ create mode 100644 test/report-freshness-wire.test.cjs
+ create mode 100644 test/report-freshness.test.cjs
+
+diff --git a/api-server/app.js b/api-server/app.js
+index 47ced8e..ccba171 100644
+--- a/api-server/app.js
++++ b/api-server/app.js
+@@ -1,9 +1,10 @@
+ const express = require('express');
++const reportFreshness = require('./report-freshness');
+ 
+-function createApp(retrieve, now, maximumAgeMs) {
++function createApp(retrieve, now, maximumAgeMs, reportMaximumAgeMs) {
+     const app = express();
+     const views = {
+-        '/nodes': snapshot => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, block: node.stats.block.number, stats: JSON.stringify(node), info: JSON.stringify(node.info) })),
++        '/nodes': (snapshot, time) => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, block: node.stats.block.number, stats: JSON.stringify(node), info: JSON.stringify(node.info), reportValidForMs: reportFreshness(node, snapshot.observed_at.getTime(), time, reportMaximumAgeMs) })),
+         '/blocks': snapshot => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, blocks: JSON.stringify(node.stats.block) })),
+         '/info': snapshot => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, info: JSON.stringify(node.info) })),
+         '/charts': snapshot => [{ utctime: snapshot.observed_at, charts: JSON.stringify(snapshot.payload.charts) }],
+@@ -13,14 +14,15 @@ function createApp(retrieve, now, maximumAgeMs) {
+             response.set('Cache-Control', 'no-store');
+             try {
+                 const snapshot = await retrieve.readSnapshot();
+-                const age = snapshot ? now() - snapshot.observed_at.getTime() : NaN;
++                const time = now();
++                const age = snapshot ? time - snapshot.observed_at.getTime() : NaN;
+                 if (!Number.isFinite(age) || age < 0 || age > maximumAgeMs) {
+                     response.status(503).json({ error: 'snapshot_unavailable' });
+                     return;
+                 }
+                 response.set('X-Dashboard-Observed-At', snapshot.observed_at.toISOString());
+                 response.set('X-Dashboard-Valid-For-Ms', String(maximumAgeMs - age));
+-                response.json(project(snapshot));
++                response.json(project(snapshot, time));
+             } catch (_) {
+                 response.status(503).json({ error: 'snapshot_unavailable' });
+             }
+diff --git a/api-server/report-freshness.js b/api-server/report-freshness.js
+new file mode 100644
+index 0000000..72dfe99
+--- /dev/null
++++ b/api-server/report-freshness.js
+@@ -0,0 +1,12 @@
++function reportFreshness(node, observedAt, now, maximumAgeMs) {
++    return Object.fromEntries(['block', 'stats', 'pending'].map(kind => {
++        const receivedAt = node.reports && node.reports[kind];
++        const known = Number.isSafeInteger(receivedAt) && receivedAt >= 0 && receivedAt <= observedAt && receivedAt <= now;
++        if (!known) {
++            return [kind, null];
++        }
++        return [kind, node.connected === true ? Math.max(0, maximumAgeMs - (now - receivedAt)) : 0];
++    }));
++}
++
++module.exports = reportFreshness;
+diff --git a/api-server/server.js b/api-server/server.js
+index 34b3bab..d7e5c3e 100644
+--- a/api-server/server.js
++++ b/api-server/server.js
+@@ -2,7 +2,7 @@ const config = require('../lib/deployment-config').loadApiConfig(process.env);
+ const database = require('../db');
+ const Retrieve = require('../db_methods/retrieve');
+ const createApp = require('./app');
+-const app = createApp(new Retrieve(database), () => Date.now(), config.maxAgeMs);
++const app = createApp(new Retrieve(database), () => Date.now(), config.maxAgeMs, config.reportMaxAgeMs);
+ const server = app.listen(config.port, config.host, () => console.log('Dashboard API listening'));
+ 
+ module.exports = server;
+diff --git a/docs/browser-freshness.md b/docs/browser-freshness.md
+index 9fde4f9..8c4be58 100644
+--- a/docs/browser-freshness.md
++++ b/docs/browser-freshness.md
+@@ -7,8 +7,9 @@ nodes. A missing value is shown as unavailable rather than an invented zero;
+ actual zero ticket/pending values remain zero. The old hardcoded 12.99-second
+ average is removed; average block time remains unavailable.
+ 
+-The highest reported block summary uses currently connected nodes. The ticket,
+-pending and block-received summaries refer to that selected node. Ties use the
++The highest reported block summary uses connected nodes with a recent accepted
++block report. The ticket, pending and block-received summaries refer to that
++selected node; pending additionally requires its own recent report. Ties use the
+ node ID for deterministic ordering. This is a report comparison, not a canonical
+ chain selector. Version strings no longer determine the highest block, and old
+ high-water values do not survive a replacement snapshot. Full block hashes remain
+@@ -54,10 +55,12 @@ requests a new snapshot because browsers may throttle timers while hidden.
+ JavaScript suspension can delay any UI update; the visibility refresh is not a
+ guarantee that a suspended process executes an expiry callback on time.
+ 
+-The **Connected** label describes the collector's cached connection status.
+-Neither that status nor a fresh stored snapshot proves recent reports from each
+-node, chain agreement, correct ticket funding, or working auto-buy. Per-node
+-report timestamps and comparison with real efsn/RPC remain separate requirements.
++The **Connected** label describes the collector's cached connection observation,
++independently of self-reported active status. [Per-node receipt times and budgets](node-report-freshness.md)
++now control which individual values are current. Labels under each node identify
++recent, stale, absent and disconnected reports. These do not prove chain
++agreement, correct ticket funding, working auto-buy or advancing blocks. Actual
++efsn/RPC comparison remains a separate requirement.
+ 
+ ## Local checks and build validation
+ 
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 9d6dee7..e127cf8 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -24,6 +24,7 @@ acceptance. These settings are not a production launch approval.
+ | Persistence | `COLLECTOR_WS_URL` | Explicit URL ending in `/primus`; local WS or WSS |
+ | API | `API_HOST` | `127.0.0.1` or `::1` |
+ | API | `API_PORT` | Explicit listener port |
++| API | `NODE_REPORT_MAX_AGE_MS` | Independent lifetime of accepted block/stats/pending reports; see [per-node freshness](node-report-freshness.md) |
+ | Persistence and API | `DB_HOST` | `127.0.0.1` or `::1` |
+ | Persistence and API | `DB_PORT` | Database port, 1–65535 |
+ | Persistence and API | `DB_NAME` | Provisioned database name |
+diff --git a/docs/node-report-freshness.md b/docs/node-report-freshness.md
+new file mode 100644
+index 0000000..5da5d52
+--- /dev/null
++++ b/docs/node-report-freshness.md
+@@ -0,0 +1,86 @@
++# Per-node report freshness
++
++The collector records separate receipt times for current block, stats and pending
++reports. A connected WebSocket, a newly saved database snapshot and a recently
++received application report describe different facts. None proves chain agreement,
++block advancement, valid ticket funding or successful automatic ticket purchases.
++
++## Receipt contract
++
++Each node's snapshot contains `reports: {block, stats, pending}` in UTC epoch
++milliseconds, or null when no accepted report exists in the current session.
++The collector supplies these times; client timestamps cannot set them. Valid
++repeated reports of unchanged values refresh the corresponding receipt. Partial
++or invalid reports do not. History replies, latency measurements and pings do not
++refresh these three current-report clocks. Reconnecting resets all three to null.
++
++The snapshot also projects `connected` from the collector's own connection state.
++It is independent of the node's self-reported `stats.active`. The stored receipt
++times and connection observation are facts; freshness labels and expiry budgets
++are derived on read. The existing JSONB document needs no schema migration or
++additional table. `block.received` remains the older propagation-cache timestamp;
++it is not used to date the current block report.
++
++Stats require boolean active/mining/syncing flags, a nonnegative integer peer
++count, uptime from 0 to 100, and nonnegative integer or unknown ticket counts.
++Current blocks require a valid height/hash and the existing transaction, uncle
++and difficulty fields; pending reports require a nonnegative integer count.
++This is validation of the report fields used here, not full blockchain validation
++or comprehensive telemetry resource validation. Combined legacy updates must
++contain all three groups. Their pending assignment and double-callback defect
++are corrected as part of making their receipt times reliable.
++
++Unknown own-ticket counts remain null, not zero or a numeric-looking placeholder.
++efsn's decimal-string latency is normalized to a number. Neither normalization
++changes a receipt clock. Older stored `N/A` ticket and string-latency values are
++also understood by the browser.
++
++## API and browser
++
++The API now requires `NODE_REPORT_MAX_AGE_MS`, a positive decimal integer from
++1 to 2147483647, independently of `SNAPSHOT_MAX_AGE_MS`. Choose the deployed
++value after measuring actual efsn reporting and snapshot latency. The reviewed
++efsn source schedules a full report every 15 seconds; test lifetimes are much
++shorter to exercise boundaries, and are not deployment recommendations.
++
++`/nodes` includes a derived `reportValidForMs` object for the three groups.
++Missing, invalid or future receipt metadata has a null budget. Disconnected or
++expired reports have zero. The API calculates remaining time using its clock;
++collector, snapshot writer and API must have synchronized clocks. Advancing the
++snapshot time alone never renews a receipt. `/blocks`, `/info` and `/charts`
++remain cached diagnostic views; their snapshot headers do not certify per-node
++report freshness. Consumers needing current reports must use `/nodes` metadata.
++
++The browser subtracts monotonic request elapsed time from each budget. A timer
++expires individual report groups even while another API request is pending.
++Expired fields become dashes, and the node remains listed with its connection
++status and Block/Stats/Pending labels: Recent, Stale, Not reported or Disconnected.
++Old snapshots without receipt metadata contribute no current values. Full
++snapshot expiry or API failure still removes the complete view and retries.
++Returning to a visible tab still forces a new request; suspended browser scripts
++cannot update the screen until execution resumes.
++
++Summaries use the connected node with the highest recent block report. Its
++pending count additionally requires its own recent pending report. Own tickets,
++mining, syncing, peers and reported uptime require recent stats. Last Latency is
++explicitly historical; no receipt age is available for that display. A green
++connection marker alone is not a report-health indicator.
++
++Deploy the collector, writer, API and browser candidate together. Configure the
++new API lifetime first. Metadata is additive; existing stored data fails closed
++for freshness until new accepted reports reach the snapshot. No stored balances,
++chain state, validator key or consensus rule is involved.
++
++## Local acceptance and remaining work
++
++132 contracts, nine real collector socket tests, eight React DOM tests, the
++strict production build, five PostgreSQL pipeline scenarios and 13 compiled
++Edge checkpoints pass. Tests include repeated equal reports, forged client
++receipt metadata, ping/history isolation, reconnect reset, independent expiry,
++pending-request expiry, unknown tickets and efsn latency encoding. The database
++suite checks actual stored receipt metadata through the HTTP API. Its outer
++test plus five scenarios produce six TAP passes.
++
++Chart-cache ordering/retention defects, outbound resource bounds, actual efsn/RPC
++comparison, production runtime/dependencies, supervision and public TLS hosting
++remain open. This is synthetic local acceptance, not public launch approval.
+diff --git a/docs/snapshot-storage.md b/docs/snapshot-storage.md
+index 99be778..15cc338 100644
+--- a/docs/snapshot-storage.md
++++ b/docs/snapshot-storage.md
+@@ -44,6 +44,7 @@ view, not an append-only history service.
+ | Persistence | `SNAPSHOT_MAX_BYTES` | Maximum bytes per incoming WebSocket frame/message |
+ | Persistence | `SNAPSHOT_MAX_NODES` | Maximum distinct nodes in a snapshot |
+ | API | `SNAPSHOT_MAX_AGE_MS` | Maximum age of the node observation before the API returns unavailable |
++| API | `NODE_REPORT_MAX_AGE_MS` | Maximum age of each accepted current block/stats/pending report |
+ 
+ All numeric settings are explicit positive integers up to 2147483647. There are
+ no production defaults. Select bounded values for the deployment: the collector
+@@ -102,9 +103,11 @@ collector snapshot returns empty nodes normally.
+ 
+ The [browser](browser-freshness.md) clears displayed reports on failure or expiry
+ and retries with a bounded request wait. Its React DOM checks and
+-[compiled browser acceptance](build-validation.md) now pass locally. Neither snapshot freshness
+-nor the browser display establishes per-node freshness. The collector's `active` field is its
+-cached status, not proof of recent transactions, block agreement or ticket health.
++[compiled browser acceptance](build-validation.md) now pass locally. Per-node receipt
++times and the collector's separate connection observation are now included in each
++node document; [per-node freshness](node-report-freshness.md) defines their expiry.
++`connected` is the collector's observation; `stats.active` remains self-reported.
++Neither proves recent transactions, block agreement or ticket health.
+ 
+ ## Acceptance scope
+ 
+diff --git a/lib/collection.js b/lib/collection.js
+index 23d5118..6d0a038 100644
+--- a/lib/collection.js
++++ b/lib/collection.js
+@@ -1,11 +1,13 @@
+ var _ = require('lodash');
+ var Blockchain = require('./history');
+ var Node = require('./node');
++var isTelemetryReport = require('./telemetry-report');
+ 
+-var Collection = function Collection(externalAPI)
++var Collection = function Collection(externalAPI, now)
+ 
+ {
+     this._items = [];
++    this._now = now || Date.now;
+ 	this._blockchain = new Blockchain();
+ 	this._askedForHistory = false;
+ 	this._askedForHistoryTime = 0;
+@@ -37,6 +39,10 @@ Collection.prototype.add = function(data, callback)
+ 
+ Collection.prototype.update = function(id, stats, callback)
+ {
++    if (!isTelemetryReport('stats', stats) || !isTelemetryReport('block', stats.block) || !isTelemetryReport('pending', stats)) {
++        callback('Invalid combined report', null);
++        return;
++    }
+ 	var node = this.getNode({ id: id });
+ 
+ 	if (!node)
+@@ -61,6 +67,8 @@ Collection.prototype.update = function(id, stats, callback)
+ 			stats.block.received = block.block.received;
+ 			stats.block.propagation = block.block.propagation;
+ 
++            var receivedAt = this._now();
++            node.reports = { block: receivedAt, stats: receivedAt, pending: receivedAt };
+ 			node.setStats(stats, propagationHistory, callback);
+ 		}
+ 	}
+@@ -68,6 +76,10 @@ Collection.prototype.update = function(id, stats, callback)
+ 
+ Collection.prototype.addBlock = function(id, stats, callback)
+ {
++    if (!isTelemetryReport('block', stats)) {
++        callback('Invalid block report', null);
++        return;
++    }
+ 	var node = this.getNode({ id: id });
+ 
+ 	if (!node)
+@@ -101,6 +113,7 @@ Collection.prototype.addBlock = function(id, stats, callback)
+ 				});
+ 			}
+ 
++            node.reports.block = this._now();
+ 			node.setBlock(stats, propagationHistory, callback);
+ 		}
+ 	}
+@@ -108,16 +121,25 @@ Collection.prototype.addBlock = function(id, stats, callback)
+ 
+ Collection.prototype.updatePending = function(id, stats, callback)
+ {
++    if (!isTelemetryReport('pending', stats)) {
++        callback('Invalid pending report', null);
++        return;
++    }
+ 	var node = this.getNode({ id: id });
+ 
+ 	if (!node)
+ 		return false;
+ 
++    node.reports.pending = this._now();
+ 	node.setPending(stats, callback);
+ }
+ 
+ Collection.prototype.updateStats = function(id, stats, callback)
+ {
++    if (!isTelemetryReport('stats', stats)) {
++        callback('Invalid stats report', null);
++        return;
++    }
+ 	var node = this.getNode({ id: id });
+ 
+ 	if (!node)
+@@ -126,6 +148,7 @@ Collection.prototype.updateStats = function(id, stats, callback)
+ 	}
+ 	else
+ 	{
++        node.reports.stats = this._now();
+ 		node.setBasicStats(stats, callback);
+ 	}
+ }
+@@ -158,12 +181,17 @@ Collection.prototype.addHistory = function(id, blocks, callback)
+ 
+ Collection.prototype.updateLatency = function(id, latency, callback)
+ {
++    var milliseconds = typeof latency === 'string' && /^[0-9]+$/.test(latency) ? Number(latency) : latency;
++    if (!Number.isSafeInteger(milliseconds) || milliseconds < 0) {
++        callback('Invalid latency report', null);
++        return;
++    }
+ 	var node = this.getNode({ id: id });
+ 
+ 	if (!node)
+ 		return false;
+ 
+-	node.setLatency(latency, callback);
++	node.setLatency(milliseconds, callback);
+ }
+ 
+ Collection.prototype.inactive = function(id, callback)
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index 7c0c1e1..789e3ff 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -100,7 +100,7 @@ function loadPersistenceConfig(environment) {
+ }
+ 
+ function loadApiConfig(environment) {
+-    return { ...loadListenerConfig(environment, 'API'), maxAgeMs: positiveInteger(environment, 'SNAPSHOT_MAX_AGE_MS') };
++    return { ...loadListenerConfig(environment, 'API'), maxAgeMs: positiveInteger(environment, 'SNAPSHOT_MAX_AGE_MS'), reportMaxAgeMs: positiveInteger(environment, 'NODE_REPORT_MAX_AGE_MS') };
+ }
+ 
+ function loadCollectorConfig(environment) {
+diff --git a/lib/node.js b/lib/node.js
+index 91c7c8f..f7ab272 100644
+--- a/lib/node.js
++++ b/lib/node.js
+@@ -72,6 +72,7 @@ Node.prototype.init = function(data)
+ 
+ Node.prototype.setInfo = function(data, callback)
+ {
++    this.reports = { block: null, stats: null, pending: null };
+ 	if( !_.isUndefined(data.info) )
+ 	{
+ 		this.info = data.info;
+@@ -129,7 +130,7 @@ Node.prototype.getInfo = function(callback)
+ 			uptime: this.stats.uptime,
+ 			latency: this.stats.latency,
+             ticketNumber : this.stats.ticketNumber,
+-            myTicketNumber:(this.stats.myTicketNumber == null) ? 'N/A' : this.stats.myTicketNumber,
++            myTicketNumber: this.stats.myTicketNumber,
+             pending: this.stats.pending,
+ 		},
+ 		history: this.history,
+@@ -145,9 +146,10 @@ Node.prototype.setStats = function(stats, history, callback)
+ 
+ 		this.setBasicStats(stats, function (err, stats) {});
+ 
+-		this.setPending( _.result(stats, 'pending', this.stats.pending), function (err, stats) {} );
++		this.setPending(stats, function (err, stats) {} );
+ 
+ 		callback(null, this.getStats());
++        return;
+ 	}
+ 
+ 	callback('Stats undefined', null);
+@@ -253,7 +255,7 @@ Node.prototype.setBasicStats = function(stats, callback)
+ 			this.stats.peers = stats.peers;
+ 			this.stats.gasPrice = stats.gasPrice;
+             this.stats.ticketNumber = stats.ticketNumber;
+-            this.stats.myTicketNumber = stats.myTicketNumber==null ? 'N/A' : stats.myTicketNumber;
++            this.stats.myTicketNumber = stats.myTicketNumber == null ? null : stats.myTicketNumber;
+ 			this.stats.uptime = stats.uptime;
+ 
+ 			callback(null, this.getBasicStats());
+@@ -340,7 +342,7 @@ Node.prototype.getBasicStats = function()
+ 			peers: this.stats.peers,
+ 			gasPrice: this.stats.gasPrice,
+             ticketNumber:this.stats.ticketNumber,
+-            myTicketNumber:(this.stats.myTicketNumber == null) ? 'N/A' : this.stats.myTicketNumber,
++            myTicketNumber: this.stats.myTicketNumber,
+ 			uptime: this.stats.uptime,
+ 			latency: this.stats.latency
+ 		}
+diff --git a/lib/telemetry-report.js b/lib/telemetry-report.js
+new file mode 100644
+index 0000000..2406047
+--- /dev/null
++++ b/lib/telemetry-report.js
+@@ -0,0 +1,25 @@
++function object(value) {
++    return value !== null && typeof value === 'object' && !Array.isArray(value);
++}
++
++function count(value) {
++    return Number.isSafeInteger(value) && value >= 0;
++}
++
++function isTelemetryReport(kind, value) {
++    if (!object(value)) {
++        return false;
++    }
++    if (kind === 'block') {
++        return count(value.number) && typeof value.hash === 'string' && /^0x[0-9a-fA-F]{64}$/.test(value.hash)
++            && Array.isArray(value.transactions) && Array.isArray(value.uncles) && value.difficulty !== undefined;
++    }
++    if (kind === 'pending') {
++        return count(value.pending);
++    }
++    return ['active', 'mining', 'syncing'].every(field => typeof value[field] === 'boolean')
++        && count(value.peers) && Number.isFinite(value.uptime) && value.uptime >= 0 && value.uptime <= 100
++        && ['ticketNumber', 'myTicketNumber'].every(field => value[field] == null || count(value[field]));
++}
++
++module.exports = isTelemetryReport;
+diff --git a/package.json b/package.json
+index ced1cd3..c442afd 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,8 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs",
+-    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs",
++    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+     "start": "node server.js"
+diff --git a/react-frontend/src/App.test.js b/react-frontend/src/App.test.js
+index 378e516..c559c33 100644
+--- a/react-frontend/src/App.test.js
++++ b/react-frontend/src/App.test.js
+@@ -14,9 +14,10 @@ function snapshot(ids, budget = '1000') {
+         status: 200,
+         headers: {'x-dashboard-observed-at': observedAt, 'x-dashboard-valid-for-ms': budget},
+         data: ids.map((id, index) => ({
+-            id, utctime: observedAt,
++            id, utctime: observedAt, reportValidForMs: {block: 1000, stats: 1000, pending: 1000},
+             stats: JSON.stringify({
+                 id, info: {node: 'efsn/v5.0.0-local'}, geo: null,
++                connected: index === 0, reports: {block: 1791028799000, stats: 1791028799000, pending: 1791028799000},
+                 stats: {
+                     active: index === 0, mining: true, syncing: false, peers: 1, pending: 0,
+                     myTicketNumber: 0, uptime: 100, latency: 0,
+@@ -132,7 +133,7 @@ it('requires a fresh request after returning to a visible tab', async () => {
+     delete document.visibilityState;
+ });
+ 
+-it('renders a zero block height and an unavailable receive time without a perpetual spinner', async () => {
++it('renders a zero block height and uses the report receipt instead of the cached block arrival', async () => {
+     const response = snapshot(['genesis']);
+     const node = JSON.parse(response.data[0].stats);
+     node.stats.block.number = 0;
+@@ -141,7 +142,7 @@ it('renders a zero block height and an unavailable receive time without a perpet
+     await reply(0, response);
+     const row = container.querySelector('tbody tr');
+     expect(row.textContent).toContain('# 0');
+-    expect(row.cells[6].textContent).toBe('—');
++    expect(row.cells[6].textContent).not.toBe('—');
+ });
+ 
+ it('exposes the open map dialog and its close controls to assistive technology', async () => {
+@@ -163,3 +164,22 @@ it('exposes the open map dialog and its close controls to assistive technology',
+     expect(document.querySelector('[role="dialog"]')).toBeNull();
+     expect(errors).not.toHaveBeenCalled();
+ });
++
++it('keeps a silent node connected while its block and pending values expire independently', async () => {
++    const response = snapshot(['silent']);
++    response.data[0].reportValidForMs = {block: 120, stats: 500, pending: 60};
++    await reply(0, response);
++    advance(60);
++    expect(container.querySelector('tbody tr').cells[7].textContent).toBe('—');
++    expect(container.textContent).toContain('Pending: Stale');
++    expect(container.textContent).toContain('# 42');
++    advance(60);
++    expect(container.textContent).not.toContain('# 42');
++    expect(container.textContent).toContain('Connected Nodes 1/1');
++    expect(container.textContent).toContain('Block: Stale');
++    expect(container.textContent).toContain('Stats: Recent');
++    expect(container.textContent).not.toContain('Dashboard data unavailable');
++    await reply(1, snapshot(['silent']));
++    expect(container.textContent).toContain('# 42');
++    expect(container.textContent).toContain('Pending: Recent');
++});
+diff --git a/react-frontend/src/Components/Main.js b/react-frontend/src/Components/Main.js
+index 2b3bc7c..8746b06 100644
+--- a/react-frontend/src/Components/Main.js
++++ b/react-frontend/src/Components/Main.js
+@@ -197,7 +197,7 @@ class Main extends React.Component {
+                             <div className="row">
+                                 <div className="col-6">
+                                         <span className={'text-white'}>
+-                                        Node reports do not establish chain agreement. Connection status does not prove that each report is recent.
++                                        Node reports do not establish chain agreement. Only recent reports are shown as current values. A recent report does not prove the chain is advancing.
+                                         </span>
+                                 </div>
+                                 <div className="col-6 text-md-right">
+@@ -360,7 +360,7 @@ class Main extends React.Component {
+                             </span> : ''}
+                         </div>
+                         <div className="mx-auto">
+-                            Summary values come from the connected node reporting the highest block.
++                            Summary values use the highest recent block report; pending transactions also require a recent pending report from that node.
+                         </div>
+                     </div>
+                 </div>
+@@ -374,8 +374,8 @@ class Main extends React.Component {
+                                 <Tooltip title="Location of the node">
+                                     <th>Location</th>
+                                 </Tooltip>
+-                                <Tooltip title="Name of the node">
+-                                    <th>ID</th>
++                                <Tooltip title="Node name and report receipt freshness">
++                                    <th>Node / Reports</th>
+                                 </Tooltip>
+                                 <Tooltip title="Current version of efsn">
+                                     <th>Type</th>
+@@ -401,9 +401,9 @@ class Main extends React.Component {
+                                 <Tooltip title="Amount of peers">
+                                     <th>Peers</th>
+                                 </Tooltip>
+-                                <th>Uptime</th>
+-                                <Tooltip title="Latency between stats server and the node">
+-                                    <th>Latency</th>
++                                <th>Reported Uptime</th>
++                                <Tooltip title="Last latency measurement; receipt time is unavailable">
++                                    <th>Last Latency</th>
+                                 </Tooltip>
+                             </tr>
+                             </thead>
+@@ -417,13 +417,19 @@ class Main extends React.Component {
+                                                 }.bind(this)}>
+                                                     <span className="fe fe-minus-square text-muted mb-0"></span>
+                                                 </button></td>
+-                                                <td>{this.state.nodesList[index].stats.active ?
++                                                <td>{node.connected === null ? '—' : node.connected ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+                                                 <td>{this.state.nodesList[index].geo ? <ReactCountryFlag cdnUrl={'/flags/4x3/'}
+                                                     code={this.state.nodesList[index].geo.country.toLowerCase()}
+                                                     svg/> : '?'}</td>
+-                                                <td>{this.state.nodesList[index].id}</td>
++                                                <td>{node.id}
++                                                    <div className="small text-left mt-1">
++                                                        <div>Block: {node.reportStatus.block}</div>
++                                                        <div>Stats: {node.reportStatus.stats}</div>
++                                                        <div>Pending: {node.reportStatus.pending}</div>
++                                                    </div>
++                                                </td>
+                                                 <td>
+                                                     <Tooltip title={this.state.nodesList[index].info.node}>
+                                                         <span>{getVersionNumber(this.state.nodesList[index].info.node)}</span>
+@@ -431,36 +437,36 @@ class Main extends React.Component {
+                                                 </td>
+                                                 <td className={blockClass(this.state.nodesList[index].stats.block.number, this.state.highestBlock, getVersionNumber(this.state.nodesList[index].info.node))}>
+ 
+-                                                    {<NumberFormat
++                                                    {node.fresh.block ? <><NumberFormat
+                                                             value={this.state.nodesList[index].stats.block.number}
+                                                             displayType={'text'} thousandSeparator={true}
+-                                                            prefix={"# "}/>}
++                                                            prefix={"# "}/>
+                                                     <span
+                                                         className={'pl-4'}>{formatHash(this.state.nodesList[index].stats.block.hash)}
+                                                         <AttentionWarning
+                                                             highestBlock={this.state.highestBlock || 0}
+                                                             currentBlock={this.state.nodesList[index].stats.block.number}
+                                                             version={getVersionNumber(this.state.nodesList[index].info.node)}/>
+-                                                                      </span>
++                                                                      </span></> : '—'}
+                                                 </td>
+-                                                <td>{this.state.nodesList[index].stats.block.received ?
++                                                <td>{node.fresh.block && node.reports.block ?
+                                                     <TimeAgo
+-                                                        date={this.state.nodesList[index].stats.block.received}
++                                                        date={node.reports.block}
+                                                         formatter={formatter}/> : '—'}</td>
+-                                                <td>{this.state.nodesList[index].stats.pending}</td>
++                                                <td>{node.fresh.pending ? node.stats.pending : '—'}</td>
+                                                 <Tooltip
+-                                                    title={getTicketPercentage(this.state.ticketNumber, this.state.nodesList[index].stats.myTicketNumber)}>
+-                                                    <td>{this.state.nodesList[index].stats.myTicketNumber}</td>
++                                                    title={getTicketPercentage(this.state.ticketNumber, node.fresh.stats ? node.stats.myTicketNumber : null)}>
++                                                    <td>{node.fresh.stats && node.stats.myTicketNumber !== null ? node.stats.myTicketNumber : '—'}</td>
+                                                 </Tooltip>
+-                                                <td>{this.state.nodesList[index].stats.mining ?
++                                                <td>{!node.fresh.stats ? '—' : node.stats.mining ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+-                                                <td>{this.state.nodesList[index].stats.syncing ?
++                                                <td>{!node.fresh.stats ? '—' : node.stats.syncing ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+-                                                <td>{this.state.nodesList[index].stats.peers}</td>
+-                                                <td><ProgressBar now={this.state.nodesList[index].stats.uptime}
+-                                                                 label={`${this.state.nodesList[index].stats.uptime}%`}/>
++                                                <td>{node.fresh.stats ? node.stats.peers : '—'}</td>
++                                                <td>{node.fresh.stats ? <ProgressBar now={node.stats.uptime}
++                                                                 label={`${node.stats.uptime}%`}/> : '—'}
+                                                 </td>
+                                                 <td className={latencyClass(this.state.nodesList[index].stats.latency)}>{this.state.nodesList[index].stats.latency}ms</td>
+                                             </tr>
+@@ -476,13 +482,19 @@ class Main extends React.Component {
+                                                 }.bind(this)}>
+                                                     <span className="fe fe-square text-muted mb-0"></span>
+                                                 </button></td>
+-                                                <td>{this.state.nodesList[index].stats.active ?
++                                                <td>{node.connected === null ? '—' : node.connected ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+                                                 <td>{this.state.nodesList[index].geo ? <ReactCountryFlag cdnUrl={'/flags/4x3/'}
+                                                     code={this.state.nodesList[index].geo.country.toLowerCase()}
+                                                     svg/> : '?'}</td>
+-                                                <td>{this.state.nodesList[index].id}</td>
++                                                <td>{node.id}
++                                                    <div className="small text-left mt-1">
++                                                        <div>Block: {node.reportStatus.block}</div>
++                                                        <div>Stats: {node.reportStatus.stats}</div>
++                                                        <div>Pending: {node.reportStatus.pending}</div>
++                                                    </div>
++                                                </td>
+                                                 <td>
+                                                     <Tooltip title={this.state.nodesList[index].info.node}>
+                                                         <span>{getVersionNumber(this.state.nodesList[index].info.node)}</span>
+@@ -490,36 +502,36 @@ class Main extends React.Component {
+                                                 </td>
+                                                 <td className={blockClass(this.state.nodesList[index].stats.block.number, this.state.highestBlock, getVersionNumber(this.state.nodesList[index].info.node))}>
+ 
+-                                                    {<NumberFormat
++                                                    {node.fresh.block ? <><NumberFormat
+                                                             value={this.state.nodesList[index].stats.block.number}
+                                                             displayType={'text'} thousandSeparator={true}
+-                                                            prefix={"# "}/>}
++                                                            prefix={"# "}/>
+                                                     <span
+                                                         className={'pl-4'}>{formatHash(this.state.nodesList[index].stats.block.hash)}
+                                                         <AttentionWarning
+                                                             highestBlock={this.state.highestBlock || 0}
+                                                             currentBlock={this.state.nodesList[index].stats.block.number}
+                                                             version={getVersionNumber(this.state.nodesList[index].info.node)}/>
+-                                                                      </span>
++                                                                      </span></> : '—'}
+                                                 </td>
+-                                                <td>{this.state.nodesList[index].stats.block.received ?
++                                                <td>{node.fresh.block && node.reports.block ?
+                                                     <TimeAgo
+-                                                        date={this.state.nodesList[index].stats.block.received}
++                                                        date={node.reports.block}
+                                                         formatter={formatter}/> : '—'}</td>
+-                                                <td>{this.state.nodesList[index].stats.pending}</td>
++                                                <td>{node.fresh.pending ? node.stats.pending : '—'}</td>
+                                                 <Tooltip
+-                                                    title={getTicketPercentage(this.state.ticketNumber, this.state.nodesList[index].stats.myTicketNumber)}>
+-                                                    <td>{this.state.nodesList[index].stats.myTicketNumber}</td>
++                                                    title={getTicketPercentage(this.state.ticketNumber, node.fresh.stats ? node.stats.myTicketNumber : null)}>
++                                                    <td>{node.fresh.stats && node.stats.myTicketNumber !== null ? node.stats.myTicketNumber : '—'}</td>
+                                                 </Tooltip>
+-                                                <td>{this.state.nodesList[index].stats.mining ?
++                                                <td>{!node.fresh.stats ? '—' : node.stats.mining ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+-                                                <td>{this.state.nodesList[index].stats.syncing ?
++                                                <td>{!node.fresh.stats ? '—' : node.stats.syncing ?
+                                                     <span className="text-success">●</span> :
+                                                     <span className="text-danger">●</span>}</td>
+-                                                <td>{this.state.nodesList[index].stats.peers}</td>
+-                                                <td><ProgressBar now={this.state.nodesList[index].stats.uptime}
+-                                                                 label={`${this.state.nodesList[index].stats.uptime}%`}/>
++                                                <td>{node.fresh.stats ? node.stats.peers : '—'}</td>
++                                                <td>{node.fresh.stats ? <ProgressBar now={node.stats.uptime}
++                                                                 label={`${node.stats.uptime}%`}/> : '—'}
+                                                 </td>
+                                                 <td className={latencyClass(this.state.nodesList[index].stats.latency)}>{this.state.nodesList[index].stats.latency}ms</td>
+                                             </tr>
+diff --git a/react-frontend/src/snapshot-polling.js b/react-frontend/src/snapshot-polling.js
+index c0535cf..7c94d2b 100644
+--- a/react-frontend/src/snapshot-polling.js
++++ b/react-frontend/src/snapshot-polling.js
+@@ -25,6 +25,25 @@ function startSnapshotPolling(config, dependencies) {
+         return true;
+     }
+ 
++    function publishSnapshot(response, startedAt) {
++        if (stopped) {
++            return;
++        }
++        dependencies.clearTimeout(expiryTimer);
++        try {
++            const { validForMs, nextReportExpiryMs, ...snapshot } = prepareSnapshot(response, dependencies.now() - startedAt);
++            if (validForMs <= 0) {
++                clearSnapshot();
++                return;
++            }
++            dependencies.onSnapshot(snapshot);
++            const remaining = nextReportExpiryMs === null ? validForMs : Math.min(validForMs, nextReportExpiryMs);
++            expiryTimer = dependencies.setTimeout(() => publishSnapshot(response, startedAt), Math.max(1, Math.ceil(remaining)));
++        } catch (_) {
++            clearSnapshot();
++        }
++    }
++
+     function poll() {
+         if (stopped || request !== null) {
+             return;
+@@ -49,15 +68,8 @@ function startSnapshotPolling(config, dependencies) {
+             if (stopped || request !== current) {
+                 return;
+             }
+-            const { validForMs, ...snapshot } = prepareSnapshot(response);
+-            const remaining = validForMs - (dependencies.now() - startedAt);
+-            if (remaining <= 0) {
+-                throw new Error('Snapshot expired in transit');
+-            }
+             finishRequest(current);
+-            dependencies.clearTimeout(expiryTimer);
+-            dependencies.onSnapshot(snapshot);
+-            expiryTimer = dependencies.setTimeout(clearSnapshot, remaining);
++            publishSnapshot(response, startedAt);
+         }).catch(() => {
+             if (finishRequest(current)) {
+                 clearSnapshot();
+diff --git a/react-frontend/src/snapshot-view.js b/react-frontend/src/snapshot-view.js
+index e5be468..62304bc 100644
+--- a/react-frontend/src/snapshot-view.js
++++ b/react-frontend/src/snapshot-view.js
+@@ -12,7 +12,7 @@ function optionalNumber(value) {
+     return value;
+ }
+ 
+-function readNode(row, observedAt) {
++function readNode(row, observedAt, elapsedMs) {
+     if (!object(row) || typeof row.id !== 'string' || row.utctime !== observedAt || typeof row.stats !== 'string') {
+         throw new Error('Invalid node row');
+     }
+@@ -31,11 +31,34 @@ function readNode(row, observedAt) {
+             throw new Error('Invalid reported state');
+         }
+     }
++    if (node.stats.myTicketNumber === 'N/A') {
++        node.stats.myTicketNumber = null;
++    }
++    if (typeof node.stats.latency === 'string' && /^[0-9]+$/.test(node.stats.latency)) {
++        node.stats.latency = Number(node.stats.latency);
++    }
+     for (const field of ['pending', 'myTicketNumber', 'peers', 'uptime', 'latency']) {
+         node.stats[field] = optionalNumber(node.stats[field]);
+     }
+     node.stats.block.received = optionalNumber(block.received);
+     node.stats.block.ticketNumber = optionalNumber(block.ticketNumber);
++    node.connected = typeof node.connected === 'boolean' ? node.connected : null;
++    node.reports = object(node.reports) ? node.reports : {};
++    node.fresh = {};
++    node.reportStatus = {};
++    node.reportValidForMs = {};
++    for (const kind of ['block', 'stats', 'pending']) {
++        const budget = object(row.reportValidForMs) ? row.reportValidForMs[kind] : null;
++        if (budget !== null && (!Number.isSafeInteger(budget) || budget < 0 || budget > 2147483647)) {
++            throw new Error('Invalid report freshness budget');
++        }
++        const received = node.reports[kind];
++        const known = Number.isSafeInteger(received) && received >= 0 && received <= Date.parse(observedAt) && budget !== null;
++        const remaining = known && node.connected === true ? Math.max(0, budget - elapsedMs) : 0;
++        node.reportValidForMs[kind] = remaining;
++        node.fresh[kind] = remaining > 0;
++        node.reportStatus[kind] = node.connected === false ? 'Disconnected' : !known ? 'Not reported' : node.fresh[kind] ? 'Recent' : 'Stale';
++    }
+     const geo = node.geo;
+     if (geo !== null && (!object(geo) || typeof geo.country !== 'string' || !/^[A-Z]{2}$/.test(geo.country) ||
+         !Array.isArray(geo.ll) || geo.ll.length !== 2 || !geo.ll.every(Number.isFinite) ||
+@@ -45,7 +68,10 @@ function readNode(row, observedAt) {
+     return node;
+ }
+ 
+-function prepareSnapshot(response) {
++function prepareSnapshot(response, elapsedMs = 0) {
++    if (!Number.isFinite(elapsedMs) || elapsedMs < 0) {
++        throw new Error('Invalid elapsed request time');
++    }
+     const observedAt = response.headers && response.headers['x-dashboard-observed-at'];
+     const budget = response.headers && response.headers['x-dashboard-valid-for-ms'];
+     if (response.status !== 200 || typeof observedAt !== 'string' || !Number.isFinite(Date.parse(observedAt)) ||
+@@ -53,23 +79,25 @@ function prepareSnapshot(response) {
+         !/^(0|[1-9][0-9]*)$/.test(budget) || Number(budget) > 2147483647 || !Array.isArray(response.data)) {
+         throw new Error('Invalid snapshot response');
+     }
+-    const nodesList = response.data.map(row => readNode(row, observedAt));
++    const nodesList = response.data.map(row => readNode(row, observedAt, elapsedMs));
+     if (new Set(nodesList.map(node => node.id)).size !== nodesList.length) {
+         throw new Error('Duplicate node');
+     }
+     nodesList.sort((left, right) => right.stats.block.number - left.stats.block.number || left.id.localeCompare(right.id));
+-    const activeNodes = nodesList.filter(node => node.stats.active);
+-    const highest = activeNodes[0];
++    const activeNodes = nodesList.filter(node => node.connected === true);
++    const highest = activeNodes.find(node => node.fresh.block);
++    const expiries = nodesList.flatMap(node => Object.values(node.reportValidForMs)).filter(value => value > 0);
+     const geoCharts = nodesList.filter(node => node.geo !== null).map(node => ({
+         name: node.id, radius: 2, latitude: node.geo.ll[0], longitude: node.geo.ll[1], fillKey: 'bubbleFill',
+     }));
+     return {
+-        observedAt, validForMs: Number(budget), nodesList, geoCharts,
++        observedAt, validForMs: Number(budget) - elapsedMs,
++        nextReportExpiryMs: expiries.length ? Math.min(...expiries) : null, nodesList, geoCharts,
+         totalNodes: nodesList.length, activeNodes: activeNodes.length,
+         highestBlock: highest ? highest.stats.block.number : null,
+-        lastUpdatedBlock: highest ? highest.stats.block.received : null,
++        lastUpdatedBlock: highest ? highest.reports.block : null,
+         ticketNumber: highest ? highest.stats.block.ticketNumber : null,
+-        pendingTransactions: highest ? highest.stats.pending : null,
++        pendingTransactions: highest && highest.fresh.pending ? highest.stats.pending : null,
+     };
+ }
+ 
+diff --git a/test/browser-snapshot.test.cjs b/test/browser-snapshot.test.cjs
+index 2453be2..aa5acc4 100644
+--- a/test/browser-snapshot.test.cjs
++++ b/test/browser-snapshot.test.cjs
+@@ -8,8 +8,9 @@ const observedAt = '2026-10-03T12:00:00.000Z';
+ const hash = '0x' + '1'.repeat(64);
+ 
+ function row(id, height, active = true) {
+-    return { id, utctime: observedAt, stats: JSON.stringify({
++    return { id, utctime: observedAt, reportValidForMs: { block: 1000, stats: 1000, pending: 1000 }, stats: JSON.stringify({
+         id, info: { node: 'efsn/v5.0.0-local' }, geo: null,
++        connected: active, reports: { block: 1791028799000, stats: 1791028799000, pending: 1791028799000 },
+         stats: { active, mining: true, syncing: false, pending: 0, myTicketNumber: 0, peers: 0, uptime: 100, latency: 0,
+             block: { number: height, hash, received: 1791028799000, ticketNumber: 0 } },
+     }) };
+@@ -193,3 +194,42 @@ test('a synchronous request-adapter error becomes unavailable with one retry tim
+     assert.deepEqual(events, ['unavailable', 100]);
+     polling.stop();
+ });
++
++test('browser excludes stale high heads and requires a separate pending budget for summaries', () => {
++    const high = { ...row('stale-head', 999), reportValidForMs: { block: 0, stats: 1000, pending: 1000 } };
++    const current = { ...row('recent-head', 42), reportValidForMs: { block: 50, stats: 0, pending: 0 } };
++    const result = prepareSnapshot(response([high, current]), 10);
++    assert.deepEqual({ connected: result.activeNodes, height: result.highestBlock, pending: result.pendingTransactions, next: result.nextReportExpiryMs }, { connected: 2, height: 42, pending: null, next: 40 });
++    assert.deepEqual(result.nodesList[1].reportStatus, { block: 'Recent', stats: 'Stale', pending: 'Stale' });
++});
++
++test('legacy rows without collector receipt metadata stay visible but contribute no current values', () => {
++    const old = row('old', 42);
++    const node = JSON.parse(old.stats);
++    delete node.reports;
++    delete node.connected;
++    node.stats.myTicketNumber = 'N/A';
++    node.stats.latency = '12';
++    old.stats = JSON.stringify(node);
++    delete old.reportValidForMs;
++    const result = prepareSnapshot(response([old]));
++    assert.deepEqual({ connected: result.activeNodes, height: result.highestBlock, pending: result.pendingTransactions, states: result.nodesList[0].reportStatus }, { connected: 0, height: null, pending: null, states: { block: 'Not reported', stats: 'Not reported', pending: 'Not reported' } });
++    assert.equal(result.nodesList[0].stats.myTicketNumber, null);
++    assert.equal(result.nodesList[0].stats.latency, 12);
++});
++
++test('report expiry updates a connected row while a newer request is pending without expiring the snapshot', async () => {
++    const f = fixture();
++    f.requests[0].resolve(response([{ ...row('alpha', 42), reportValidForMs: { block: 120, stats: 500, pending: 60 } }]));
++    await settle();
++    f.advance(60);
++    assert.deepEqual({ status: f.states.at(-1).status, height: f.states.at(-1).snapshot.highestBlock, pending: f.states.at(-1).snapshot.pendingTransactions }, { status: 'ready', height: 42, pending: null });
++    f.advance(60);
++    assert.equal(f.requests.length, 2);
++    assert.deepEqual({ status: f.states.at(-1).status, connected: f.states.at(-1).snapshot.activeNodes, height: f.states.at(-1).snapshot.highestBlock }, { status: 'ready', connected: 1, height: null });
++    f.requests[1].resolve(response([row('alpha', 42)]));
++    await settle();
++    assert.equal(f.states.at(-1).snapshot.highestBlock, 42);
++    f.polling.stop();
++    assert.equal(f.timers.size, 0);
++});
+diff --git a/test/deployment-wiring.test.cjs b/test/deployment-wiring.test.cjs
+index b340ff5..8db4f7b 100644
+--- a/test/deployment-wiring.test.cjs
++++ b/test/deployment-wiring.test.cjs
+@@ -74,7 +74,7 @@ test('API listener validation happens before loading Express or the database', (
+ test('real HTTP API binds to configured loopback and serves data without wildcard CORS', { timeout: 5000 }, async t => {
+     const observedAt = new Date('2026-10-03T12:00:00.000Z');
+     class Retrieve { readSnapshot() { return Promise.resolve({ observed_at: observedAt, payload: { nodes: [], charts: {} } }); } }
+-    const server = evaluate('api-server/server.js', { API_HOST: '127.0.0.1', API_PORT: '0', SNAPSHOT_MAX_AGE_MS: '1000' }, name => {
++    const server = evaluate('api-server/server.js', { API_HOST: '127.0.0.1', API_PORT: '0', SNAPSHOT_MAX_AGE_MS: '1000', NODE_REPORT_MAX_AGE_MS: '2000' }, name => {
+         if (name === '../lib/deployment-config') return config;
+         if (name === '../db_methods/retrieve') return Retrieve;
+         if (name === '../db') return {};
+diff --git a/test/fixtures/browser-server.cjs b/test/fixtures/browser-server.cjs
+index 9621904..bca7118 100644
+--- a/test/fixtures/browser-server.cjs
++++ b/test/fixtures/browser-server.cjs
+@@ -9,7 +9,7 @@ if (!scenarioFile || !path.isAbsolute(scenarioFile)) {
+ }
+ const application = express();
+ const sockets = new Set();
+-const counts = { reads: 0, ready: 0, empty: 0, unavailable: 0, expired: 0, hanging: 0 };
++const counts = { reads: 0, ready: 0, empty: 0, unavailable: 0, expired: 0, hanging: 0, held: 0, partial: 0, unreported: 0 };
+ const requests = [];
+ const maximumAge = 2000;
+ 
+@@ -17,10 +17,20 @@ function readScenario() {
+     return JSON.parse(fs.readFileSync(scenarioFile, 'utf8'));
+ }
+ 
+-function makeNode(id, height, active, observedAt) {
++function makeNode(id, height, active, observedAt, scenario) {
++    const receivedAt = scenario.mode === 'held' ? scenario.reportAt : observedAt.getTime();
++    const reports = { block: receivedAt, stats: receivedAt, pending: receivedAt };
++    if (scenario.mode === 'partial') {
++        reports.stats -= 2000;
++        reports.pending -= 2000;
++    }
++    if (scenario.mode === 'unreported') {
++        reports.block = reports.stats = reports.pending = null;
++    }
+     return {
+         id, info: { node: 'efsn/v5.0.0-browser-acceptance' },
+         geo: { country: 'SE', ll: [59.33, 18.07] }, history: [],
++        connected: active, reports,
+         stats: { active, mining: active, syncing: false, peers: active ? 1 : 0,
+             pending: 0, myTicketNumber: 0, uptime: 100, latency: 0,
+             block: { number: height, hash: '0x' + '1'.repeat(64), received: observedAt.getTime(), ticketNumber: 0 } },
+@@ -45,8 +55,8 @@ const retrieve = {
+             observed_at: observedAt,
+             payload: {
+                 nodes: scenario.mode === 'empty' ? [] : [
+-                    makeNode(scenario.nodeId || 'synthetic-alpha', 42, true, observedAt),
+-                    makeNode('synthetic-offline', 43, false, observedAt),
++                    makeNode(scenario.nodeId || 'synthetic-alpha', 42, true, observedAt, scenario),
++                    makeNode('synthetic-offline', 43, false, observedAt, scenario),
+                 ], charts: {},
+             },
+         };
+@@ -60,7 +70,7 @@ application.use((request, response, next) => {
+     });
+     next();
+ });
+-application.use('/stats-api', createApp(retrieve, () => Date.now(), maximumAge));
++application.use('/stats-api', createApp(retrieve, () => Date.now(), maximumAge, 1000));
+ application.use(express.static(path.resolve(__dirname, '../../react-frontend/build')));
+ const server = application.listen(0, '127.0.0.1', () => {
+     console.log(JSON.stringify({ url: 'http://127.0.0.1:' + server.address().port, pid: process.pid }));
+diff --git a/test/persistence.test.cjs b/test/persistence.test.cjs
+index ce4dc25..7c2ac68 100644
+--- a/test/persistence.test.cjs
++++ b/test/persistence.test.cjs
+@@ -86,6 +86,8 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+     for (const [connection, id, number, peers] of [[a, 'node-a', 101, 1], [b, 'node-b', 102, 2]]) {
+         send(connection, 'block', { id, block: { number, hash: '0x' + String(number).padStart(64, '0'), parentHash: '0x' + '0'.repeat(64), difficulty: 1, totalDifficulty: 1, gasLimit: 1000000, gasUsed: 0, timestamp: 1704067200 + number, miner: id, transactions: [], uncles: [] } });
+         send(connection, 'stats', { id, stats: { active: true, mining: true, syncing: false, peers, ticketNumber: 2, myTicketNumber: 1, hashrate: 0, gasPrice: 1, uptime: 100 } });
++        send(connection, 'pending', { id, stats: { pending: 0 } });
++        send(connection, 'latency', { id, latency: '12' });
+     }
+     await waitMessage(viewer, message => message.action === 'stats' && message.data.id === 'node-b');
+     const errors = [];
+@@ -96,20 +98,37 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+     });
+     t.after(() => collector.stop());
+     let apiTime = null;
+-    const server = createApp(retrieve, () => apiTime === null ? Date.now() : apiTime, 10000).listen(0, '127.0.0.1');
++    const server = createApp(retrieve, () => apiTime === null ? Date.now() : apiTime, 10000, 10000).listen(0, '127.0.0.1');
+     t.after(() => new Promise(resolve => server.close(resolve)));
+     await once(server, 'listening');
+ 
+     await t.test('distinct reports reach PostgreSQL and the HTTP API without cross-node metadata', async () => {
+         const snapshot = await waitForSnapshot(retrieve, nodes => nodes.length === 2 && nodes[0].stats && nodes[0].stats.block.number === 101);
+         assert.deepEqual(snapshot.payload.nodes.map(node => ({ id: node.id, version: node.info.node, height: node.stats.block.number, peers: node.stats.peers })), [{ id: 'node-a', version: "efsn-A's — Å", height: 101, peers: 1 }, { id: 'node-b', version: 'efsn-B', height: 102, peers: 2 }]);
+-        assert.deepEqual(snapshot.payload.nodes, (await inventory(viewer)).map(node => ({ id: node.id, info: node.info, stats: node.stats, history: node.history, geo: node.geo })));
++        assert.deepEqual(snapshot.payload.nodes, (await inventory(viewer)).map(node => ({ id: node.id, info: node.info, stats: node.stats, history: node.history, geo: node.geo, connected: node.uptime.lastStatus, reports: node.reports })));
+         const response = await request(server.address().port, '/nodes');
+         assert.equal(response.status, 200);
+         assert.deepEqual(response.body.map(row => ({ id: row.id, block: row.block, version: JSON.parse(row.stats).info.node })), [{ id: 'node-a', block: 101, version: "efsn-A's — Å" }, { id: 'node-b', block: 102, version: 'efsn-B' }]);
+         assert.equal((await request(server.address().port, '/charts')).status, 200);
+     });
+ 
++    await t.test('stored receipts survive projection and expire independently of a fresh database snapshot', async () => {
++        const snapshot = await waitForSnapshot(retrieve, nodes => nodes.length === 2 && nodes.every(node => node.reports && node.reports.pending !== null));
++        const timestamps = snapshot.payload.nodes.flatMap(node => Object.values(node.reports));
++        assert.equal(snapshot.payload.nodes.every(node => node.connected === true), true);
++        assert.deepEqual(snapshot.payload.nodes.map(node => node.stats.latency), [12, 12]);
++        assert.equal(timestamps.every(value => Number.isSafeInteger(value) && value <= snapshot.observed_at.getTime()), true);
++        apiTime = Math.max(...timestamps) + 10000;
++        try {
++            const response = await request(server.address().port, '/nodes');
++            assert.equal(response.status, 200);
++            assert.deepEqual(response.body.map(row => row.reportValidForMs), [{ block: 0, stats: 0, pending: 0 }, { block: 0, stats: 0, pending: 0 }]);
++            assert.equal(response.body.every(row => JSON.parse(row.stats).connected === true), true);
++        } finally {
++            apiTime = null;
++        }
++    });
++
+     await t.test('writer reconnect and node disconnect replace the snapshot with fresh complete reports', async () => {
+         sockets[0].close();
+         a.socket.close();
+diff --git a/test/report-freshness-wire.test.cjs b/test/report-freshness-wire.test.cjs
+new file mode 100644
+index 0000000..5a933ef
+--- /dev/null
++++ b/test/report-freshness-wire.test.cjs
+@@ -0,0 +1,47 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
++
++test('real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect', { timeout: 15000 }, async t => {
++    const server = await startCollector(t);
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    assert.deepEqual((await inventory(viewer))[0].reports, { block: null, stats: null, pending: null });
++    const block = { number: 100, hash: '0x' + '1'.repeat(64), difficulty: '1', totalDifficulty: '2', timestamp: 100, transactions: [], uncles: [], received: 1 };
++    const startedAt = Date.now();
++    send(owner, 'block', { id: 'node-a', block, reports: { block: 1 } });
++    send(owner, 'stats', { id: 'node-a', stats: { active: false, mining: false, syncing: false, peers: 1, uptime: 100, myTicketNumber: null } });
++    send(owner, 'pending', { id: 'node-a', stats: { pending: 0 } });
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'reports-sent' });
++    await waitMessage(owner, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'reports-sent');
++    const received = (await inventory(viewer))[0];
++    assert.equal(received.uptime.lastStatus, true);
++    assert.equal(received.stats.active, false);
++    assert.equal(received.stats.myTicketNumber, null);
++    for (const timestamp of Object.values(received.reports)) {
++        assert.ok(timestamp >= startedAt && timestamp <= Date.now());
++    }
++    send(owner, 'latency', { id: 'node-a', latency: '12' });
++    send(owner, 'history', { id: 'node-a', history: [{ ...block, number: 99 }] });
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'history-sent' });
++    await waitMessage(owner, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'history-sent');
++    const afterHistory = (await inventory(viewer))[0];
++    assert.deepEqual(afterHistory.reports, received.reports);
++    assert.equal(afterHistory.stats.latency, 12);
++    owner.socket.close();
++    await owner.closed;
++    await waitMessage(viewer, message => message.action === 'inactive');
++    const replacement = connect(t, server.port, 'api');
++    await login(replacement, 'node-a', secretA);
++    const reconnected = (await inventory(viewer))[0];
++    assert.deepEqual(reconnected.reports, { block: null, stats: null, pending: null });
++    assert.equal(reconnected.uptime.lastStatus, true);
++    viewer.socket.close();
++    replacement.socket.close();
++    await Promise.all([viewer.closed, replacement.closed]);
++    await server.stop();
++});
+diff --git a/test/report-freshness.test.cjs b/test/report-freshness.test.cjs
+new file mode 100644
+index 0000000..4890b90
+--- /dev/null
++++ b/test/report-freshness.test.cjs
+@@ -0,0 +1,108 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const Collection = require('../lib/collection');
++const reportFreshness = require('../api-server/report-freshness');
++const { loadApiConfig } = require('../lib/deployment-config');
++
++function block(number = 100) {
++    return { number, hash: '0x' + '1'.repeat(64), difficulty: '1', totalDifficulty: '2', timestamp: 100, transactions: [], uncles: [] };
++}
++
++function stats() {
++    return { active: true, mining: true, syncing: false, peers: 1, uptime: 100, ticketNumber: null, myTicketNumber: null, gasPrice: 0, hashrate: 0 };
++}
++
++function fixture(t) {
++    let time = 1000;
++    const collection = new Collection({ write() {} }, () => time);
++    collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'session-a' }, () => {});
++    const node = collection.getNode({ id: 'node-a' });
++    t.after(() => { if (collection._debounced) { collection._debounced.cancel(); } });
++    return { collection, node, setTime(value) { time = value; } };
++}
++
++test('reports begin unknown and identical accepted values refresh only their own receipt times', t => {
++    const f = fixture(t);
++    assert.deepEqual(f.node.reports, { block: null, stats: null, pending: null });
++    f.collection.addBlock('node-a', block(), () => {});
++    f.setTime(2000);
++    f.collection.updateStats('node-a', stats(), () => {});
++    f.setTime(3000);
++    f.collection.updatePending('node-a', { pending: 0 }, () => {});
++    assert.deepEqual(f.node.reports, { block: 1000, stats: 2000, pending: 3000 });
++    f.setTime(4000);
++    f.collection.addBlock('node-a', block(), () => {});
++    f.setTime(5000);
++    f.collection.updateStats('node-a', stats(), () => {});
++    f.setTime(6000);
++    f.collection.updatePending('node-a', { pending: 0 }, () => {});
++    assert.deepEqual(f.node.reports, { block: 4000, stats: 5000, pending: 6000 });
++    assert.equal(f.node.stats.myTicketNumber, null);
++});
++
++test('history and latency do not refresh current reports; reconnect requires new reports', t => {
++    const f = fixture(t);
++    f.collection.addBlock('node-a', block(), () => {});
++    f.setTime(2000);
++    f.collection.addHistory('node-a', [block(99)], () => {});
++    f.collection.updateLatency('node-a', '12', () => {});
++    assert.deepEqual(f.node.reports, { block: 1000, stats: null, pending: null });
++    f.collection.inactive('session-a', () => {});
++    assert.equal(f.node.uptime.lastStatus, false);
++    f.collection.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'session-new' }, () => {});
++    assert.deepEqual(f.node.reports, { block: null, stats: null, pending: null });
++    assert.equal(f.node.uptime.lastStatus, true);
++});
++
++test('incomplete reports do not stamp receipts or replace previously accepted values', t => {
++    const f = fixture(t);
++    f.collection.addBlock('node-a', block(), () => {});
++    f.collection.updateStats('node-a', stats(), () => {});
++    f.collection.updatePending('node-a', { pending: 2 }, () => {});
++    f.setTime(2000);
++    const errors = [];
++    const capture = error => errors.push(error);
++    f.collection.addBlock('node-a', { number: 101 }, capture);
++    f.collection.updateStats('node-a', { peers: 9 }, capture);
++    f.collection.updatePending('node-a', { pending: -1 }, capture);
++    f.collection.update('node-a', { ...stats(), block: block(101) }, capture);
++    assert.deepEqual(errors, ['Invalid block report', 'Invalid stats report', 'Invalid pending report', 'Invalid combined report']);
++    assert.deepEqual(f.node.reports, { block: 1000, stats: 1000, pending: 1000 });
++    assert.deepEqual({ height: f.node.stats.block.number, peers: f.node.stats.peers, pending: f.node.stats.pending }, { height: 100, peers: 1, pending: 2 });
++});
++
++test('combined reports refresh all fields, preserve pending zero and complete exactly once', t => {
++    const f = fixture(t);
++    const errors = [];
++    f.collection.update('node-a', { ...stats(), block: block(), pending: 0 }, error => errors.push(error));
++    assert.deepEqual(errors, [null]);
++    assert.deepEqual(f.node.reports, { block: 1000, stats: 1000, pending: 1000 });
++    assert.equal(f.node.stats.pending, 0);
++});
++
++test('self-reported active status cannot overwrite the collector connection state', t => {
++    const f = fixture(t);
++    f.collection.updateStats('node-a', { ...stats(), active: false }, () => {});
++    assert.equal(f.node.stats.active, false);
++    assert.equal(f.node.uptime.lastStatus, true);
++});
++
++test('API report budgets expire independently and do not renew with a fresh snapshot', () => {
++    const node = { connected: true, reports: { block: 1000, stats: 1500, pending: 2000 } };
++    assert.deepEqual(reportFreshness(node, 2000, 2000, 1000), { block: 0, stats: 500, pending: 1000 });
++    assert.deepEqual(reportFreshness(node, 3000, 3000, 1000), { block: 0, stats: 0, pending: 0 });
++    assert.deepEqual(reportFreshness({ ...node, connected: false }, 2000, 2000, 1000), { block: 0, stats: 0, pending: 0 });
++});
++
++test('missing, invalid or future receipts never receive a positive budget', () => {
++    assert.deepEqual(reportFreshness({ connected: true }, 2000, 2000, 1000), { block: null, stats: null, pending: null });
++    assert.deepEqual(reportFreshness({ connected: true, reports: { block: -1, stats: 2001, pending: '1000' } }, 2000, 2100, 1000), { block: null, stats: null, pending: null });
++});
++
++test('API node-report lifetime must be explicitly configured independently of snapshot lifetime', () => {
++    const environment = { API_HOST: '127.0.0.1', API_PORT: '0', SNAPSHOT_MAX_AGE_MS: '1000', NODE_REPORT_MAX_AGE_MS: '45000' };
++    assert.deepEqual(loadApiConfig(environment), { host: '127.0.0.1', port: 0, maxAgeMs: 1000, reportMaxAgeMs: 45000 });
++    for (const value of [undefined, '', '0', '-1', '1.5', '2147483648']) {
++        assert.throws(() => loadApiConfig({ ...environment, NODE_REPORT_MAX_AGE_MS: value }), /NODE_REPORT_MAX_AGE_MS/);
++    }
++});
+diff --git a/test/snapshot-api.test.cjs b/test/snapshot-api.test.cjs
+index a49216b..cbbd61f 100644
+--- a/test/snapshot-api.test.cjs
++++ b/test/snapshot-api.test.cjs
+@@ -8,7 +8,7 @@ const observedAt = new Date('2026-10-03T12:00:00.000Z');
+ const node = { id: 'node-a', info: { name: 'Node A' }, stats: { block: { number: 42 } } };
+ 
+ async function serve(t, readSnapshot, time = observedAt.getTime()) {
+-    const server = createApp({ readSnapshot }, () => time, 1000).listen(0, '127.0.0.1');
++    const server = createApp({ readSnapshot }, () => time, 1000, 1000).listen(0, '127.0.0.1');
+     t.after(() => new Promise(resolve => server.close(resolve)));
+     await once(server, 'listening');
+     return path => request(server.address().port, path);
+@@ -17,7 +17,7 @@ async function serve(t, readSnapshot, time = observedAt.getTime()) {
+ test('all four views derive their data from one snapshot without redundant database fields', async t => {
+     const get = await serve(t, async () => ({ observed_at: observedAt, payload: { nodes: [node], charts: { height: [42] } } }));
+     const nodes = await get('/nodes');
+-    assert.deepEqual(nodes.body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', block: 42, stats: '{"id":"node-a","info":{"name":"Node A"},"stats":{"block":{"number":42}}}', info: '{"name":"Node A"}' }]);
++    assert.deepEqual(nodes.body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', block: 42, stats: '{"id":"node-a","info":{"name":"Node A"},"stats":{"block":{"number":42}}}', info: '{"name":"Node A"}', reportValidForMs: { block: null, stats: null, pending: null } }]);
+     assert.deepEqual((await get('/blocks')).body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', blocks: '{"number":42}' }]);
+     assert.deepEqual((await get('/info')).body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', info: '{"name":"Node A"}' }]);
+     assert.deepEqual((await get('/charts')).body, [{ utctime: '2026-10-03T12:00:00.000Z', charts: '{"height":[42]}' }]);
+@@ -54,3 +54,16 @@ test('fresh empty snapshots stay valid through the exact age boundary', async t
+     assert.deepEqual(response.body, []);
+     assert.equal(response.headers['x-dashboard-valid-for-ms'], '0');
+ });
++
++test('HTTP node rows carry independent report budgets even while the stored snapshot remains fresh', async t => {
++    const reported = { ...node, connected: true, reports: { block: observedAt.getTime() - 900, stats: observedAt.getTime() - 500, pending: null } };
++    const read = async () => ({ observed_at: observedAt, payload: { nodes: [reported], charts: {} } });
++    const first = await serve(t, read);
++    const boundary = await serve(t, read, observedAt.getTime() + 100);
++    const firstResponse = await first('/nodes');
++    const boundaryResponse = await boundary('/nodes');
++    assert.deepEqual(firstResponse.body[0].reportValidForMs, { block: 100, stats: 500, pending: null });
++    assert.deepEqual(boundaryResponse.body[0].reportValidForMs, { block: 0, stats: 400, pending: null });
++    assert.equal(boundaryResponse.headers['x-dashboard-valid-for-ms'], '900');
++    assert.equal(JSON.parse(boundaryResponse.body[0].stats).connected, true);
++});
+diff --git a/test/snapshot-collector.test.cjs b/test/snapshot-collector.test.cjs
+index 958bfd9..252feec 100644
+--- a/test/snapshot-collector.test.cjs
++++ b/test/snapshot-collector.test.cjs
+@@ -4,8 +4,8 @@ const startSnapshotCollection = require('../wsclient/collect-snapshots');
+ const { loadPersistenceConfig, loadApiConfig } = require('../lib/deployment-config');
+ 
+ const observedAt = new Date('2026-10-03T12:00:00.000Z');
+-const nodeA = { id: 'node-a', info: { name: "Peter's node", node: 'efsn-test' }, stats: { active: true, block: { number: 10, hash: 'block-a' }, peers: 1 }, history: [], geo: null };
+-const nodeB = { id: 'node-b', info: { name: 'Node B', node: 'efsn-test' }, stats: { active: true, block: { number: 20, hash: 'block-b' }, peers: 2 }, history: [], geo: null };
++const nodeA = { id: 'node-a', info: { name: "Peter's node", node: 'efsn-test' }, stats: { active: true, block: { number: 10, hash: 'block-a' }, peers: 1 }, history: [], geo: null, connected: null, reports: { block: null, stats: null, pending: null } };
++const nodeB = { id: 'node-b', info: { name: 'Node B', node: 'efsn-test' }, stats: { active: true, block: { number: 20, hash: 'block-b' }, peers: 2 }, history: [], geo: null, connected: null, reports: { block: null, stats: null, pending: null } };
+ const charts = { height: [10, 20] };
+ const flush = () => new Promise(resolve => setImmediate(resolve));
+ 
+diff --git a/wsclient/collect-snapshots.js b/wsclient/collect-snapshots.js
+index 4afbd3b..77a2d0e 100644
+--- a/wsclient/collect-snapshots.js
++++ b/wsclient/collect-snapshots.js
+@@ -12,7 +12,10 @@ function projectNodes(nodes, maximum) {
+             throw new Error('Invalid node snapshot');
+         }
+         identities.add(node.id);
+-        return { id: node.id, info: node.info, stats: node.stats, history: node.history, geo: node.geo };
++        const connected = isObject(node.uptime) && typeof node.uptime.lastStatus === 'boolean' ? node.uptime.lastStatus : null;
++        const reports = Object.fromEntries(['block', 'stats', 'pending'].map(kind => [kind,
++            isObject(node.reports) && Number.isSafeInteger(node.reports[kind]) && node.reports[kind] >= 0 ? node.reports[kind] : null]));
++        return { id: node.id, info: node.info, stats: node.stats, history: node.history, geo: node.geo, connected, reports };
+     });
+ }
+ 

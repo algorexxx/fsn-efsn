@@ -1,0 +1,131 @@
+{
+  "mode": "candidate",
+  "dashboard_directory": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth",
+  "scratch_directory": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72",
+  "source_sha256": {
+    "package.json": "de2ea78be83315189d07d1c52547abb6bb1512bf02b0d1d6c5a4de6dde9ec8e5",
+    "package-lock.json": "23ed12819a0f682ecbab74c971116ef01e921b956edf5f29e5870176c5b03ae0",
+    "db/index.js": "deb8de97ca10c6dc1f5ebe30b3bc35f809bb35e61ef216fc6c746ceab2ccce93",
+    "lib/deployment-config.js": "5ff92d01cef91a2e9c28ac9a95e98480980d6fa9c390f30bacac24555f1380d4",
+    "db_methods/populate.js": "5adf363a06d5af230c076ff6abb9351e02ff2c7d790beabd30a0946c48f363b8",
+    "db_methods/retrieve.js": "7f1ce3971f4bb440271d56f213d60e3ad47936d193e94ad99c51966768b0b605",
+    "db/schema/001-dashboard.sql": "589036551f5e734adaea8ff186b37e4c50406a17a70fee91ae3cd9f927263c59",
+    "wsclient/wsclient.js": "b4d1e8063e555db7824a1d5387bf8dfe2fcf3eda69fc3c324a0ffd69d5149416",
+    "wsclient/collect-snapshots.js": "531aed29c030dfcb0eccb822b318e4684ba22d033aa5e10d8b75377ed3034140",
+    "api-server/server.js": "e80865dd4f2c88c7ad00e4122def5b7b30fbef7c7c3dae9f8281b6dfa78627ca",
+    "api-server/app.js": "e959fe01c23b171f559fd8c9316aeafd8a24458079e22fbf72b32c6664bc9624",
+    "test/collector.test.cjs": "7caec372d1c4ca829ef19aae150f8ec8181a6ea5003333df54f873d84382079b",
+    "test/telemetry-credentials.test.cjs": "d2ffe85dc53aa7266d3cf36f53a16635b884dd3e8c72abcdf9d4c1cfa04ec9bd",
+    "test/deployment-config.test.cjs": "507fede41f2de8fd60b34d2c19524635638ff38c610285e8aedc784f80f9f1c5",
+    "test/deployment-wiring.test.cjs": "6fa226fafc2ce6c9a4265ef7b071862c5413f9c1301d0f5f4261c9fc549dbf2e",
+    "test/snapshot-collector.test.cjs": "068d78c280ac1c5c8aa4326150fdedbe10a0d9edacd5e5393be9db1bdd0fbf3b",
+    "test/snapshot-api.test.cjs": "82dbf2d7fe7e6f838482e6d4ae7dc6e924ee334553a194b8fed32e3f3b78426c",
+    "test/postgres.test.cjs": "b469d2ce3fddc29f6d9dd10f42f6e1dd5a4fcd855c8c4bba455ac93c9f3592d3",
+    "test/persistence.test.cjs": "9f83589d857894da8c2d065124df903bac9aeb2fe8b7bc4ef4df7e25637363bc",
+    "test/telemetry-wire.test.cjs": "2929ba70b4483e606c5c5205a94edeacbd6dd1509d95770a49c14c876ce222fe",
+    "test/fixtures/collector.cjs": "a38a0bb9531703f6640279097d98e49fc725adb12268eec0356076663d8e3777",
+    "test/fixtures/wire-client.cjs": "b022037cd3ac8f4357fbb2ba19ed5646e96eb03b5dfeddfe355d48c9cd47b353",
+    "test/fixtures/wire-server.cjs": "36f6429bffe2d98929df7c937d9cd509de38dbca59586e1879dd797757ab5a64",
+    "test/fixtures/http.cjs": "51f61e295be5859bbbd7c500808d7cf5eb0e94001a9433ce4b2b240aa6b4e171",
+    "server.js": "4df85818b433ce718b5e49fae1aafb994349df956ac4fbd1f58bc4c9edca2191",
+    "lib/node.js": "6729801d4518ecebf6dbd8395a882fae9e5cbe95c0ce8f0b9fe824e9f8e679d3",
+    "lib/collection.js": "1e81848100dfc56c1409f4c4944062028ecb56ff4ce5e1e83c91fad1891b90d0",
+    "lib/history.js": "f4374c2bf46f114f9d04274da6befbabfee0f37af803e1a2c7b3e02a755b4e01",
+    "lib/telemetry-report.js": "9bd0650c6ad26228a851d09801eeb9afd14a3227a9abfa3ae954d7217c9d651c",
+    "api-server/report-freshness.js": "80552ed0c767ffbead025f9e8257f15377cca87f375defd9f6e191fdde2eb0e4"
+  },
+  "commands": [
+    {
+      "name": "initdb",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\initdb.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72\\data",
+        "-U",
+        "dashboard_test_admin",
+        "-A",
+        "scram-sha-256",
+        "--pwfile",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72\\password.txt",
+        "--encoding=UTF8",
+        "--locale=C"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "start",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72\\data",
+        "-l",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72\\postgres.log",
+        "-o",
+        "-h 127.0.0.1 -p 49415 -c shared_buffers=16MB -c max_connections=10",
+        "-w",
+        "start"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "psql-control",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\psql.exe",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "49415",
+        "-U",
+        "dashboard_test_admin",
+        "-d",
+        "postgres",
+        "-X",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-At",
+        "-c",
+        "SELECT 42::integer"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "persistence",
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "--test-reporter=tap",
+        "test/persistence.test.cjs"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "stop",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72\\data",
+        "-m",
+        "fast",
+        "-w",
+        "stop"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "stopped-status",
+      "command": [
+        "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe",
+        "-D",
+        "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\dashboard-postgres-d8b916018f72\\data",
+        "status"
+      ],
+      "exit": 3
+    }
+  ],
+  "expected_outcome_passed": true,
+  "node": "v22.11.0",
+  "pg": "8.23.1",
+  "postgres": "postgres (PostgreSQL) 18.6",
+  "password_file_removed": true,
+  "scope": "Disposable new SCRAM-authenticated loopback-only PostgreSQL cluster; no existing database accessed. Cluster stopped and data retained in ignored scratch directory."
+}
