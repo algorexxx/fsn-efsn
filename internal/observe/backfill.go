@@ -93,7 +93,7 @@ func collectBackfill(ctx context.Context, config Config, node NodeConfig, path [
 	if err != nil {
 		return
 	}
-	if !backfillIdentityMatches(scopeFor(config), &report) {
+	if !historyIdentityMatches(scopeFor(config), report.ChainID, report.NetworkID, report.Genesis, report.Anchor) {
 		if report.ChainID == nil || report.NetworkID == nil {
 			return
 		}
@@ -182,10 +182,10 @@ func findBackfillBase(ctx context.Context, reader readClient, anchor uint64, pat
 	return BlockReference{Number: low, Hash: path[low-anchor]}, nil
 }
 
-func backfillIdentityMatches(scope HistoryScope, report *BackfillReport) bool {
-	return report.ChainID != nil && report.NetworkID != nil && report.ChainID.ToInt().String() == scope.ChainID && *report.NetworkID == scope.NetworkID &&
-		validBackfillHeader(report.Genesis) && report.Genesis.Header.Number.Sign() == 0 && report.Genesis.Hash == scope.Genesis &&
-		validBackfillHeader(report.Anchor) && report.Anchor.Header.Number.Uint64() == scope.AnchorNumber && report.Anchor.Hash == scope.AnchorHash
+func historyIdentityMatches(scope HistoryScope, chainID *hexutil.Big, networkID *string, genesis, anchor *Block) bool {
+	return chainID != nil && networkID != nil && chainID.ToInt().String() == scope.ChainID && *networkID == scope.NetworkID &&
+		validBackfillHeader(genesis) && genesis.Header.Number.Sign() == 0 && genesis.Hash == scope.Genesis &&
+		validBackfillHeader(anchor) && anchor.Header.Number.Uint64() == scope.AnchorNumber && anchor.Hash == scope.AnchorHash
 }
 
 func validBackfillHeader(block *Block) bool {

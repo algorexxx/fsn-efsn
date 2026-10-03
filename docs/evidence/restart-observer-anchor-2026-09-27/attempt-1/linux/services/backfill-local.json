@@ -1,0 +1,125 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0xd879696541985dc4fa7a24c144312608149cc5ea1c613a22cdbe124f170f5532",
+    "AnchorNumber": 24,
+    "AnchorHash": "0x3e984017078c867d26e6946592da149cf2961624eaa69cc86354777d5aefbd80",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf"
+    }
+  },
+  "Sequence": 2,
+  "LastEventUTC": "2026-09-27T17:53:59.57350499Z",
+  "LastReportUTC": "2026-09-27T17:53:58.437053962Z",
+  "LogicalBytes": 38888,
+  "MaxBytes": 16777216,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [
+    {
+      "ID": "2bcd9f6d0c0a09118b740a7d1de7b68a0e47b7cf1f6f9aaaf9af6b79026d12b3",
+      "Node": "node-1",
+      "Transaction": "0x3b5bc54c94f9f24a2f3ca9b0f433d02b32bd2ca865ba866bcb7ee027aeeb2f8a",
+      "Kind": "purchase_attention",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "tracked_transaction_nonce_gap"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-09-27T17:53:58.437053962Z",
+      "LastSeenUTC": "2026-09-27T17:53:58.437053962Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "94c7e6a850813805b55bf9ea145a9b95bcf178b29f452ca067e2b0c5195952f6",
+      "Node": "node-2",
+      "Transaction": "0x3b5bc54c94f9f24a2f3ca9b0f433d02b32bd2ca865ba866bcb7ee027aeeb2f8a",
+      "Kind": "purchase_attention",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "tracked_transaction_nonce_gap"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-09-27T17:53:58.437053962Z",
+      "LastSeenUTC": "2026-09-27T17:53:58.437053962Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "9cd88fab345f2f8544501654337b9e07b0af4ce600e311d1845f20378c69351b",
+      "Node": "node-2",
+      "Transaction": "0x60840192176cad1678a2e2a95ef1548d93709f40e5fdcf7769ca8db7a9ae4f09",
+      "Kind": "purchase_attention",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "nonce_consumed_without_confirmed_purchase"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-09-27T17:53:58.437053962Z",
+      "LastSeenUTC": "2026-09-27T17:53:58.437053962Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "f0282dcd9d106c13824c766b952a139ca6781dc71b87dc64cca1c52976ab1f8f",
+      "Node": "",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "branch_divergence",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "different canonical hashes at height 25"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-09-27T17:53:58.437053962Z",
+      "LastSeenUTC": "2026-09-27T17:53:58.437053962Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    }
+  ],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 25,
+        "Hash": "0xdb6175ab79c8f50920bfbafb280fe19f6f0ca55c5e9bdf12fca4c35c2efd2d6e"
+      },
+      "ObservedHead": {
+        "Number": 25,
+        "Hash": "0xdb6175ab79c8f50920bfbafb280fe19f6f0ca55c5e9bdf12fca4c35c2efd2d6e"
+      },
+      "CheckedUTC": "2026-09-27T17:53:59.57350499Z",
+      "Status": "complete_at_observation"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 24,
+        "Hash": "0x3e984017078c867d26e6946592da149cf2961624eaa69cc86354777d5aefbd80"
+      },
+      "ObservedHead": null,
+      "CheckedUTC": "0001-01-01T00:00:00Z",
+      "Status": "not_requested"
+    }
+  ]
+}

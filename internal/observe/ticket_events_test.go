@@ -3,6 +3,8 @@ package observe
 import (
 	"encoding/json"
 	"math/big"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -200,6 +202,55 @@ func TestTicketBlockUnsupportedEvidenceIsAtomic(t *testing.T) {
 
 			if err == nil || encodeErr != nil || actual != nil || actualInventory != nil || string(original) != string(after) {
 				t.Fatal("partial block accounting escaped unsupported evidence", err)
+			}
+		})
+	}
+}
+
+func TestTicketTimelineIgnoresMaturityConversions(t *testing.T) {
+	for _, mode := range []string{"ordinary", "purchase", "failed_purchase", "unrelated_native_log"} {
+		t.Run(mode, func(t *testing.T) {
+			base := filepath.Join("..", "..", "docs", "evidence", "restart-observer-anchor-2026-09-27", "attempt-1", "linux", "services")
+			var report Report
+			readFixture(t, filepath.Join(base, "http-divergence.json"), &report)
+			raw, err := os.ReadFile(filepath.Join(base, "remote-25.rlp"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			receipt := report.Nodes[1].Tracked[2].Receipt
+			block, err := validateBlockEvidence(BlockEvidence{RLP: raw, Receipts: types.Receipts{receipt}})
+			if err != nil {
+				t.Fatal(err)
+			}
+			tx := block.Transactions()[0]
+			if len(receipt.Logs) != 1 || receipt.Logs[0].Address != common.FSNCallAddress || len(receipt.Logs[0].Topics) != 1 || receipt.Logs[0].Topics[0] != common.BytesToHash([]byte{byte(common.TimeLockFunc)}) {
+				t.Fatal("expected recorded automatic maturity conversion")
+			}
+			maturity := receipt.Logs[0]
+			expected := []TicketEvent(nil)
+			expectedInventory := map[common.Hash]common.TicketDisplay{}
+			if mode == "purchase" || mode == "failed_purchase" {
+				var receipts types.Receipts
+				block, receipts = ticketBlockFixture(t, 26)
+				tx, receipt = block.Transactions()[0], receipts[0]
+				receipt.Logs = append(receipt.Logs, maturity)
+				expected = expectedTicketEvents(t, donation, 26, 26)[:1]
+				expectedInventory[expected[0].TicketID] = *expected[0].Ticket
+				if mode == "failed_purchase" {
+					receipt.Status, receipt.Logs = types.ReceiptStatusFailed, []*types.Log{maturity}
+					expected = []TicketEvent{{Block: BlockReference{Number: 26, Hash: block.Hash()}, Kind: "purchase_failed", Transaction: tx.Hash()}}
+					expectedInventory = map[common.Hash]common.TicketDisplay{}
+				}
+			}
+			if mode == "unrelated_native_log" {
+				maturity.Topics[0] = common.BytesToHash([]byte{byte(common.ReportIllegalFunc)})
+			}
+			inventory := map[common.Hash]common.TicketDisplay{}
+
+			actual, err := deriveTicketTransaction(donation, inventory, block, tx, receipt)
+
+			if (err != nil) != (mode == "unrelated_native_log") || !reflect.DeepEqual(actual, expected) || !reflect.DeepEqual(inventory, expectedInventory) {
+				t.Fatalf("maturity log affected ticket accounting: %v %+v", err, actual)
 			}
 		})
 	}

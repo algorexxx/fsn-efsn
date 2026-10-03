@@ -104,6 +104,10 @@ func TestCommandHistoryLifecycle(t *testing.T) {
 		t.Fatal("persistent observation did not reopen reviewed incident")
 	}
 	for _, args := range [][]string{
+		{"--config", configPath, "--timeout", "1s", "--anchor-inventory", "producer"},
+		{"--history", historyPath, "--anchor-inventory", "producer", "--history-status"},
+		{"--config", configPath, "--timeout", "1s", "--history", historyPath, "--anchor-inventory", "producer", "--backfill-node", "producer", "--backfill-blocks", "1"},
+		{"--config", configPath, "--timeout", "1s", "--history", historyPath, "--anchor-inventory", "missing"},
 		{"--history", historyPath, "--ticket-blocks", "1"},
 		{"--history", historyPath, "--ticket-timeline", "producer"},
 		{"--history", historyPath, "--ticket-timeline", "producer", "--ticket-blocks", "129"},
@@ -129,6 +133,13 @@ func TestCommandHistoryLifecycle(t *testing.T) {
 	var coverage observe.HistoryStatus
 	if json.Unmarshal(backfill, &coverage) != nil || coverage.Sequence != 5 || len(coverage.Blocks) != 1 || coverage.Blocks[0].Status != "unavailable" || coverage.Blocks[0].StoredThrough.Number != 1 {
 		t.Fatal("failed backfill was not durably reported", string(backfill))
+	}
+	var anchor observe.AnchorInventory
+	if err := json.Unmarshal(invoke("--config", configPath, "--timeout", "1s", "--history", historyPath, "--anchor-inventory", "producer"), &anchor); err != nil || anchor.Status != "unavailable" || anchor.Tickets != nil {
+		t.Fatal("failed historical acquisition was not explicit", err, anchor)
+	}
+	if !bytes.Contains(invoke("--history", historyPath, "--history-export"), []byte(`"AnchorInventory"`)) {
+		t.Fatal("historical acquisition was not retained")
 	}
 }
 

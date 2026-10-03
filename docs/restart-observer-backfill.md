@@ -154,7 +154,9 @@ reconstruction. It changes no observer or node runtime source. Live competing
 reorganizations and representative backlog, storage and receipt-index availability
 remain to validate. The [offline wallet ticket timeline](restart-observer-tickets.md)
 now derives scoped events using the saved anchor inventory, with separate
-accounting coverage and explicit gaps. Acquiring that baseline when monitoring
-starts later and complete financial accounting remain open; review the
+accounting coverage and explicit gaps. [Historical anchor acquisition](restart-observer-anchor.md)
+now supplies that baseline when monitoring starts later, provided the endpoint
+retains historical state. Production state availability and complete financial
+accounting remain open; review the
 [P16 parser correction](restart-snapshot-framing.md) separately. Delivery, operational timings,
 lost-monitor checks and release review remain open in the [main plan](restart-plan.md).

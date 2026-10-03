@@ -75,7 +75,7 @@ func newIncidentHistory(meta historyMetadata) *incidentHistory {
 
 func (state *incidentHistory) apply(event historyEvent) error {
 	kinds := 0
-	for _, present := range []bool{event.Report != nil, event.Review != nil, event.Backfill != nil} {
+	for _, present := range []bool{event.Report != nil, event.Review != nil, event.Backfill != nil, event.AnchorInventory != nil} {
 		if present {
 			kinds++
 		}
@@ -98,6 +98,13 @@ func (state *incidentHistory) apply(event historyEvent) error {
 			return fmt.Errorf("backfill precedes previous event; inspect clock/order")
 		}
 		if err := state.applyBackfill(event.Backfill, event.Sequence); err != nil {
+			return err
+		}
+	} else if event.AnchorInventory != nil {
+		if !event.TimeUTC.Equal(event.AnchorInventory.FinishedUTC) || event.AnchorInventory.StartedUTC.Before(state.LastEventUTC) {
+			return fmt.Errorf("anchor inventory precedes previous event; inspect clock/order")
+		}
+		if err := validateAnchorInventory(state.Scope, event.AnchorInventory); err != nil {
 			return err
 		}
 	} else {

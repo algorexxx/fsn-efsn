@@ -180,9 +180,11 @@ evidence and exposing gaps. [Ordinary-mining history collection](restart-observe
 now passes natural head advancement, catch-up, cold rechecks and test-only native
 inventory reconstruction. The [offline wallet ticket timeline](restart-observer-tickets.md)
 now derives scoped native events from saved anchor inventory and retained blocks,
-with matching cross-platform results and explicit gaps. Historical baseline
-acquisition for monitoring started after the anchor, live competing
-reorganizations, representative workload and full account accounting remain open.
+with matching cross-platform results and explicit gaps.
+[Historical anchor acquisition](restart-observer-anchor.md) supports monitoring
+started after the anchor, using existing RPCs and explicit consistency checks.
+Production historical-state availability, live competing reorganizations,
+representative workload and full account accounting remain open.
 Select operational
 timings, retention and notification destinations before deployment; demonstrate
 actual delivery, acknowledgement, loss of the collector, and receipt rollback

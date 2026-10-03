@@ -12,8 +12,10 @@ retain incidents across restarts and reopen them on observed recurrence.
 [Bounded block/receipt backfill](restart-observer-backfill.md) now preserves
 contiguous ranges and displaced branches. The
 [offline wallet ticket timeline](restart-observer-tickets.md) now derives native
-events from saved anchor inventory and retained blocks. Full financial accounting,
-historical baseline acquisition, continuous scheduling and notifications remain open;
+events from saved anchor inventory and retained blocks.
+[Historical baseline acquisition](restart-observer-anchor.md) now uses existing
+RPCs after the head advances. Full financial accounting, production historical
+state availability, continuous scheduling and notifications remain open;
 the policy below describes the complete intended monitoring behavior, not a
 claim that the snapshot command implements it all.
 The [actual-service follow-up](restart-observer-services.md) now validates eight
@@ -196,7 +198,7 @@ working nodes solely to satisfy an optional cold audit during a live incident.
 | Manual recovery behavior | Demonstrated for the linked synthetic cases; unsupported conditions remain | Review and accept the scope and limitations in the operator runbook |
 | Observation collector | [External snapshot command implemented](restart-observer.md); retained-case, actual-service and [ordinary-mining checks](restart-observer-mining.md) pass | Validate collection during live competing reorganization and representative deployed workload; select deployment limits |
 | Snapshot history and incident state | [Append-only local history and review](restart-observer-history.md) implemented; cross-platform replay, reopening, abrupt-exit and ordinary-mining checks pass | Validate live competing reorganization and representative workload; approve storage/retention procedure |
-| Block coverage | [Bounded canonical block/receipt backfill](restart-observer-backfill.md) and explicit gaps implemented; retained-fork, IPC/HTTP and ordinary-mining checks pass. [Offline wallet ticket timelines](restart-observer-tickets.md) match the retained ledger and handle explicit gaps, rewinds and replacements | Acquire historical anchor inventory when monitoring starts later; validate representative backlog and live competing reorganization collection; review P16 separately; deploy collection cadence |
+| Block coverage | [Bounded canonical block/receipt backfill](restart-observer-backfill.md) and explicit gaps implemented; retained-fork, IPC/HTTP and ordinary-mining checks pass. [Offline wallet ticket timelines](restart-observer-tickets.md) handle gaps, rewinds and replacements; [historical anchor acquisition](restart-observer-anchor.md) handles monitoring started later | Validate production historical-state availability, representative backlog and live competing reorganization collection; review P16 separately; deploy collection cadence |
 | Routing and operator coverage | Peter is the initial operator; destinations/times unset | Select destinations and timings, then demonstrate notification, acknowledgement and a lost-monitor heartbeat |
 | Detection correctness | Retained snapshots, fault cases, actual-service observations, ordinary-mining collection and durable replay/review/recurrence transitions pass; continuous alerts have not been exercised | Extend history mode to live competing reorganization and isolated public-test-key delivery drills for the cases below |
 | Real funding and custody | Synthetic contributions are not authorized real reserves | Recheck real-address intervals, gas runway and any explicitly agreed funding source; complete backup-key return |

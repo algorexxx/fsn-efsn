@@ -1,0 +1,5 @@
+Focused Windows check initially failed to compile a new test helper call:
+internal/observe/anchor_inventory_test.go:207:20: assignment mismatch: 3 variables but miningTicketFixture returns 2 values
+No runtime test ran in internal/observe during that check; cmd/fsn-observe passed.
+Corrected the test assignment to receive the helper's two values.
+The repeated focused TestAnchorInventory/TestCommandHistory check passed both packages.

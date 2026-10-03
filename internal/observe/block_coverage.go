@@ -37,7 +37,7 @@ func (state *incidentHistory) applyBackfill(report *BackfillReport, sequence uin
 			gap.Observation = "unknown"
 		}
 	} else {
-		if !backfillIdentityMatches(state.Scope, report) || coverage.ObservedHead == nil || report.Base.Number < state.Scope.AnchorNumber || report.Base.Number > oldTip.Number || report.Base.Number > coverage.ObservedHead.Number || path[report.Base.Number-state.Scope.AnchorNumber] != report.Base.Hash {
+		if !historyIdentityMatches(state.Scope, report.ChainID, report.NetworkID, report.Genesis, report.Anchor) || coverage.ObservedHead == nil || report.Base.Number < state.Scope.AnchorNumber || report.Base.Number > oldTip.Number || report.Base.Number > coverage.ObservedHead.Number || path[report.Base.Number-state.Scope.AnchorNumber] != report.Base.Hash {
 			return fmt.Errorf("backfill does not join retained anchor ancestry")
 		}
 		if report.Status != "complete_at_observation" && report.Status != "batch_limit" && report.Status != "data_limit" && report.Status != "block_unavailable_or_invalid" {

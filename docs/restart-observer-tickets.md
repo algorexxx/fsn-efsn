@@ -21,19 +21,19 @@ Collection flags are rejected with this offline operation. It contacts no node
 and appends no history event. Opening LevelDB may still maintain its physical
 files; the immutability assertion concerns original logical events and exports.
 
-The baseline must be a retained report for this named wallet whose identity
-matches the history, whose reads were stable, and whose known ticket inventory
-was collected exactly at the configured anchor. Ticket IDs, owners, purchase
+The baseline must be either a stable matching snapshot taken at the anchor or
+an explicit [historical anchor inventory](restart-observer-anchor.md) for this
+named wallet. Ticket IDs, owners, purchase
 heights, intervals and values receive consistency checks. Repeated eligible
 snapshots must agree. A later-head snapshot is never substituted.
 
-**Current bootstrap limitation:** normal snapshot collection reads the latest
-head. This version therefore works when a snapshot was saved while the node was
-at the anchor, as in the retained rehearsal. A history first created later needs
-a separately designed, explicitly anchored historical inventory acquisition
-path. That path is not implemented here. Do not rewind a running production node
-just to satisfy this report. Until suitable evidence exists, `missing_baseline`
-is the correct result.
+Normal snapshot collection reads the latest head. When monitoring starts later,
+use `--anchor-inventory NODE` with the matching config, history and timeout to
+read the historical anchor through the existing RPC. The
+[acquisition report](restart-observer-anchor.md) covers the checks, successful
+empty-wallet semantics, history-event compatibility and limits. Historical state
+must still be available. Do not rewind a production node to satisfy this report;
+until suitable evidence exists, `missing_baseline` is the correct result.
 
 ## What the report means
 
@@ -57,14 +57,17 @@ stale branch current.
 Block and receipt commitments are checked by the existing backfill validator.
 The timeline follows the final retained canonical path, replaying it from the
 baseline after a rewind or replacement. Displaced raw evidence remains stored.
-No second inventory table, canonical cursor or history format is introduced.
+No second inventory table or canonical cursor is introduced. Historical acquisition
+adds an immutable event kind; older observer readers reject that new kind.
 
 Supported mutations are successful native purchases, selected tickets, retreats,
 remaining-ticket expiry and report deletions. Native failure is distinct from
 outer receipt failure: a successful outer receipt can still contain a native
 error. Purchase attribution binds the native log to the signed payload, owner
 and parent-derived ticket ID. Report deletions affect the wallet regardless of
-who submitted the report. Missing or ambiguous ticket outcomes stop the block;
+who submitted the report. Known `TimeLockFunc` logs, including automatic FSN
+maturity conversions on ordinary transactions, do not mutate tickets and are
+excluded from ticket outcomes. Missing or ambiguous ticket outcomes stop the block;
 events and inventory from a partially derived block are not published.
 
 Return labels describe interval rights, **not liquid FSN refunds**. Genesis
@@ -106,8 +109,8 @@ The replacement test uses an unsigned in-memory structural variant to exercise
 observer branch selection. Native failure/report/removal variants are unit
 fixtures. They are not newly executed consensus-valid blocks or report evidence,
 and are never submitted to a node. The saved ordinary-mining input is unchanged.
-No new node service, public traffic, real key, restored backup or large disk
-workload is involved.
+That original offline run involved no new node service, public traffic, real
+key, restored backup or large disk workload.
 
 Replay currently scans the bounded history for validation, baseline selection
 and derivation. An event range bounds output, not prefix replay cost. Large
@@ -115,8 +118,10 @@ histories, receipt-index availability, additional retirement/expiry/report
 combinations and production workload are not established by this small fixture.
 There is no added persisted cache or performance claim.
 
-Next: acquire an anchor inventory explicitly when monitoring starts after the
-anchor, reconcile it against suitable state evidence, and test collection during
-a live competing reorganization. Representative storage/backlog performance,
+The [historical inventory follow-up](restart-observer-anchor.md) now acquires
+anchor tickets after the head advances and checks them against independently
+saved state on actual IPC/HTTP services. Next validate production historical-state
+availability and cost, and collection during a live competing reorganization.
+Representative storage/backlog performance,
 notification delivery, real funding/custody and independent release review
 remain gates in the [main plan](restart-plan.md).

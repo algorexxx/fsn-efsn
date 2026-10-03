@@ -1,0 +1,296 @@
+=== RUN   TestAnchorInventoryAfterBackfill
+--- PASS: TestAnchorInventoryAfterBackfill (0.24s)
+=== RUN   TestAnchorInventoryFailureAndEmptyResults
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/pruned
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/empty
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/identity
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/wrong_anchor
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/anchor_changed
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/height
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/value
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/retired
+=== RUN   TestAnchorInventoryFailureAndEmptyResults/deadline
+--- PASS: TestAnchorInventoryFailureAndEmptyResults (0.96s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/pruned (0.13s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/empty (0.13s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/identity (0.11s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/wrong_anchor (0.12s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/anchor_changed (0.10s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/height (0.09s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/value (0.09s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/retired (0.08s)
+    --- PASS: TestAnchorInventoryFailureAndEmptyResults/deadline (0.10s)
+=== RUN   TestAnchorInventoryConflictsRemainVisible
+--- PASS: TestAnchorInventoryConflictsRemainVisible (0.11s)
+=== RUN   TestAnchorInventoryReplayValidation
+=== RUN   TestAnchorInventoryReplayValidation/owner
+=== RUN   TestAnchorInventoryReplayValidation/nil_tickets
+=== RUN   TestAnchorInventoryReplayValidation/anchor_after
+=== RUN   TestAnchorInventoryReplayValidation/wallet
+=== RUN   TestAnchorInventoryReplayValidation/unknown_status
+=== RUN   TestAnchorInventoryReplayValidation/failed_with_tickets
+=== RUN   TestAnchorInventoryReplayValidation/time
+--- PASS: TestAnchorInventoryReplayValidation (0.09s)
+    --- PASS: TestAnchorInventoryReplayValidation/owner (0.00s)
+    --- PASS: TestAnchorInventoryReplayValidation/nil_tickets (0.00s)
+    --- PASS: TestAnchorInventoryReplayValidation/anchor_after (0.00s)
+    --- PASS: TestAnchorInventoryReplayValidation/wallet (0.00s)
+    --- PASS: TestAnchorInventoryReplayValidation/unknown_status (0.00s)
+    --- PASS: TestAnchorInventoryReplayValidation/failed_with_tickets (0.00s)
+    --- PASS: TestAnchorInventoryReplayValidation/time (0.00s)
+=== RUN   TestAnchorInventoryBudgetFailurePreservesHistory
+--- PASS: TestAnchorInventoryBudgetFailurePreservesHistory (0.04s)
+=== RUN   TestBackfillRetainedForkAndResume
+--- PASS: TestBackfillRetainedForkAndResume (0.11s)
+=== RUN   TestBackfillFailuresDoNotSkipBlocks
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/missing_receipt
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/wrong_raw
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/wrong_receipt
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/nil_log
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/missing_status
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/bad_root
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/uncles
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/missing_body
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/head_changes
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/missing_block
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/wrong_identity
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/retired
+=== RUN   TestBackfillFailuresDoNotSkipBlocks/timeout
+--- PASS: TestBackfillFailuresDoNotSkipBlocks (0.63s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/missing_receipt (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/wrong_raw (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/wrong_receipt (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/nil_log (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/missing_status (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/bad_root (0.04s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/uncles (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/missing_body (0.06s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/head_changes (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/missing_block (0.05s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/wrong_identity (0.04s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/retired (0.04s)
+    --- PASS: TestBackfillFailuresDoNotSkipBlocks/timeout (0.05s)
+=== RUN   TestBackfillBudgetAndSnapshotInvalidation
+--- PASS: TestBackfillBudgetAndSnapshotInvalidation (0.09s)
+=== RUN   TestBackfillPartialGapThenRetry
+--- PASS: TestBackfillPartialGapThenRetry (0.06s)
+=== RUN   TestBlockEvidenceRejectsTampering
+=== RUN   TestBlockEvidenceRejectsTampering/receipt_root
+=== RUN   TestBlockEvidenceRejectsTampering/receipt_bloom
+=== RUN   TestBlockEvidenceRejectsTampering/log_index
+=== RUN   TestBlockEvidenceRejectsTampering/gas
+=== RUN   TestBlockEvidenceRejectsTampering/missing_receipt
+=== RUN   TestBlockEvidenceRejectsTampering/transaction_root
+=== RUN   TestBlockEvidenceRejectsTampering/parent_link
+--- PASS: TestBlockEvidenceRejectsTampering (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/receipt_root (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/receipt_bloom (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/log_index (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/gas (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/missing_receipt (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/transaction_root (0.00s)
+    --- PASS: TestBlockEvidenceRejectsTampering/parent_link (0.00s)
+=== RUN   TestBackfillReplayRejectsBrokenContinuity
+--- PASS: TestBackfillReplayRejectsBrokenContinuity (0.05s)
+=== RUN   TestRetainedRecoveryReceiptsAndZeroPeers
+    collect_test.go:318: retained saved purchase 43 and zero-value abandonment 39 independently classified at final block 15130170; zero peers is not a fault
+--- PASS: TestRetainedRecoveryReceiptsAndZeroPeers (0.04s)
+=== RUN   TestRetainedRollbackAndFundingFailure
+=== RUN   TestRetainedRollbackAndFundingFailure/restart-abandonment-reorg-2026-09-27
+=== RUN   TestRetainedRollbackAndFundingFailure/restart-paused-purchases-2026-09-27
+--- PASS: TestRetainedRollbackAndFundingFailure (0.05s)
+    --- PASS: TestRetainedRollbackAndFundingFailure/restart-abandonment-reorg-2026-09-27 (0.03s)
+    --- PASS: TestRetainedRollbackAndFundingFailure/restart-paused-purchases-2026-09-27 (0.03s)
+=== RUN   TestReceiptCannotGiveFalseSuccess
+=== RUN   TestReceiptCannotGiveFalseSuccess/native_error
+=== RUN   TestReceiptCannotGiveFalseSuccess/nil_log
+=== RUN   TestReceiptCannotGiveFalseSuccess/missing_status
+=== RUN   TestReceiptCannotGiveFalseSuccess/wrong_raw
+=== RUN   TestReceiptCannotGiveFalseSuccess/noncanonical
+=== RUN   TestReceiptCannotGiveFalseSuccess/rpc_error
+=== RUN   TestReceiptCannotGiveFalseSuccess/snapshot_changed
+=== RUN   TestReceiptCannotGiveFalseSuccess/identity_mismatch
+--- PASS: TestReceiptCannotGiveFalseSuccess (0.20s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/native_error (0.02s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/nil_log (0.03s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/missing_status (0.03s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/wrong_raw (0.02s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/noncanonical (0.02s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/rpc_error (0.02s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/snapshot_changed (0.03s)
+    --- PASS: TestReceiptCannotGiveFalseSuccess/identity_mismatch (0.03s)
+=== RUN   TestMalformedStateDoesNotPanicOrBecomeZero
+--- PASS: TestMalformedStateDoesNotPanicOrBecomeZero (0.04s)
+=== RUN   TestNullStatusIsUnknown
+=== RUN   TestNullStatusIsUnknown/eth_getTransactionCount
+=== RUN   TestNullStatusIsUnknown/fsn_getBalance
+=== RUN   TestNullStatusIsUnknown/fsn_getRawTimeLockBalance
+=== RUN   TestNullStatusIsUnknown/txpool_content
+=== RUN   TestNullStatusIsUnknown/eth_syncing
+=== RUN   TestNullStatusIsUnknown/eth_mining
+=== RUN   TestNullStatusIsUnknown/eth_chainId
+--- PASS: TestNullStatusIsUnknown (0.13s)
+    --- PASS: TestNullStatusIsUnknown/eth_getTransactionCount (0.02s)
+    --- PASS: TestNullStatusIsUnknown/fsn_getBalance (0.02s)
+    --- PASS: TestNullStatusIsUnknown/fsn_getRawTimeLockBalance (0.02s)
+    --- PASS: TestNullStatusIsUnknown/txpool_content (0.02s)
+    --- PASS: TestNullStatusIsUnknown/eth_syncing (0.02s)
+    --- PASS: TestNullStatusIsUnknown/eth_mining (0.02s)
+    --- PASS: TestNullStatusIsUnknown/eth_chainId (0.02s)
+=== RUN   TestMissingDataIsUnknown
+=== RUN   TestMissingDataIsUnknown/eth_getTransactionCount
+=== RUN   TestMissingDataIsUnknown/fsn_getBalance
+=== RUN   TestMissingDataIsUnknown/fsn_getRawTimeLockBalance
+=== RUN   TestMissingDataIsUnknown/fsn_allTicketsByAddress
+=== RUN   TestMissingDataIsUnknown/txpool_content
+=== RUN   TestMissingDataIsUnknown/eth_syncing
+=== RUN   TestMissingDataIsUnknown/eth_mining
+=== RUN   TestMissingDataIsUnknown/eth_chainId
+--- PASS: TestMissingDataIsUnknown (0.15s)
+    --- PASS: TestMissingDataIsUnknown/eth_getTransactionCount (0.02s)
+    --- PASS: TestMissingDataIsUnknown/fsn_getBalance (0.02s)
+    --- PASS: TestMissingDataIsUnknown/fsn_getRawTimeLockBalance (0.02s)
+    --- PASS: TestMissingDataIsUnknown/fsn_allTicketsByAddress (0.02s)
+    --- PASS: TestMissingDataIsUnknown/txpool_content (0.02s)
+    --- PASS: TestMissingDataIsUnknown/eth_syncing (0.02s)
+    --- PASS: TestMissingDataIsUnknown/eth_mining (0.02s)
+    --- PASS: TestMissingDataIsUnknown/eth_chainId (0.02s)
+=== RUN   TestCommonHeightAndDivergence
+=== RUN   TestCommonHeightAndDivergence/false
+=== RUN   TestCommonHeightAndDivergence/true
+--- PASS: TestCommonHeightAndDivergence (0.09s)
+    --- PASS: TestCommonHeightAndDivergence/false (0.04s)
+    --- PASS: TestCommonHeightAndDivergence/true (0.04s)
+=== RUN   TestAllowlistRejectsWritesBeforeTransport
+--- PASS: TestAllowlistRejectsWritesBeforeTransport (0.00s)
+=== RUN   TestDeadlineAndRetiredRole
+--- PASS: TestDeadlineAndRetiredRole (0.06s)
+=== RUN   TestConfigAndResponseBounds
+--- PASS: TestConfigAndResponseBounds (0.02s)
+=== RUN   TestRetainedEqualWeightFork
+--- PASS: TestRetainedEqualWeightFork (0.03s)
+=== RUN   TestExpiredTrackedPurchase
+--- PASS: TestExpiredTrackedPurchase (0.02s)
+=== RUN   TestPartialLocksCannotCombineWithPartialLiquid
+--- PASS: TestPartialLocksCannotCombineWithPartialLiquid (0.02s)
+=== RUN   TestPendingTrackedTransaction
+--- PASS: TestPendingTrackedTransaction (0.02s)
+=== RUN   TestIPCReadTransport
+--- PASS: TestIPCReadTransport (0.00s)
+=== RUN   TestHistoryRetainedServiceTransitions
+    history_test.go:156: nine durable events replay service evidence plus explicit retimed recurrence/unknown variants; acknowledgement survives reopen, success alone does not resolve, receipt loss reopens, omitted tracking stays unknown
+--- PASS: TestHistoryRetainedServiceTransitions (0.17s)
+=== RUN   TestHistoryScopeBudgetAndReviewGuards
+--- PASS: TestHistoryScopeBudgetAndReviewGuards (0.09s)
+=== RUN   TestHistoryCorruptionFailsClosed
+=== RUN   TestHistoryCorruptionFailsClosed/malformed
+=== RUN   TestHistoryCorruptionFailsClosed/sequence_gap
+=== RUN   TestHistoryCorruptionFailsClosed/metadata_missing
+--- PASS: TestHistoryCorruptionFailsClosed (0.24s)
+    --- PASS: TestHistoryCorruptionFailsClosed/malformed (0.08s)
+    --- PASS: TestHistoryCorruptionFailsClosed/sequence_gap (0.08s)
+    --- PASS: TestHistoryCorruptionFailsClosed/metadata_missing (0.08s)
+=== RUN   TestHistoryAbruptProcessExit
+    history_test.go:317: sync-acknowledged observation survived process exit without database Close; this is not a power-loss test
+--- PASS: TestHistoryAbruptProcessExit (0.16s)
+=== RUN   TestTicketPurchaseNativeOutcomes
+=== RUN   TestTicketPurchaseNativeOutcomes/success
+=== RUN   TestTicketPurchaseNativeOutcomes/native_failure
+=== RUN   TestTicketPurchaseNativeOutcomes/outer_failure
+=== RUN   TestTicketPurchaseNativeOutcomes/missing
+=== RUN   TestTicketPurchaseNativeOutcomes/duplicate
+=== RUN   TestTicketPurchaseNativeOutcomes/owner
+=== RUN   TestTicketPurchaseNativeOutcomes/base
+=== RUN   TestTicketPurchaseNativeOutcomes/topic
+=== RUN   TestTicketPurchaseNativeOutcomes/failed_with_log
+=== RUN   TestTicketPurchaseNativeOutcomes/ambiguous_failure
+--- PASS: TestTicketPurchaseNativeOutcomes (0.01s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/success (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/native_failure (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/outer_failure (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/missing (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/duplicate (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/owner (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/base (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/topic (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/failed_with_log (0.00s)
+    --- PASS: TestTicketPurchaseNativeOutcomes/ambiguous_failure (0.00s)
+=== RUN   TestTicketReportRemovesOwnedTickets
+--- PASS: TestTicketReportRemovesOwnedTickets (0.00s)
+=== RUN   TestTicketRemovalReturnRulesAndParentExpiry
+=== RUN   TestTicketRemovalReturnRulesAndParentExpiry/ordinary
+=== RUN   TestTicketRemovalReturnRulesAndParentExpiry/genesis
+=== RUN   TestTicketRemovalReturnRulesAndParentExpiry/expired
+--- PASS: TestTicketRemovalReturnRulesAndParentExpiry (0.01s)
+    --- PASS: TestTicketRemovalReturnRulesAndParentExpiry/ordinary (0.00s)
+    --- PASS: TestTicketRemovalReturnRulesAndParentExpiry/genesis (0.00s)
+    --- PASS: TestTicketRemovalReturnRulesAndParentExpiry/expired (0.00s)
+=== RUN   TestTicketBlockUnsupportedEvidenceIsAtomic
+=== RUN   TestTicketBlockUnsupportedEvidenceIsAtomic/receipt_gap
+=== RUN   TestTicketBlockUnsupportedEvidenceIsAtomic/selection_owner
+=== RUN   TestTicketBlockUnsupportedEvidenceIsAtomic/vote1
+=== RUN   TestTicketBlockUnsupportedEvidenceIsAtomic/timestamp
+=== RUN   TestTicketBlockUnsupportedEvidenceIsAtomic/snapshot_unavailable
+--- PASS: TestTicketBlockUnsupportedEvidenceIsAtomic (0.01s)
+    --- PASS: TestTicketBlockUnsupportedEvidenceIsAtomic/receipt_gap (0.00s)
+    --- PASS: TestTicketBlockUnsupportedEvidenceIsAtomic/selection_owner (0.00s)
+    --- PASS: TestTicketBlockUnsupportedEvidenceIsAtomic/vote1 (0.00s)
+    --- PASS: TestTicketBlockUnsupportedEvidenceIsAtomic/timestamp (0.00s)
+    --- PASS: TestTicketBlockUnsupportedEvidenceIsAtomic/snapshot_unavailable (0.00s)
+=== RUN   TestTicketTimelineIgnoresMaturityConversions
+=== RUN   TestTicketTimelineIgnoresMaturityConversions/ordinary
+    ticket_events_test.go:218: expected recorded automatic maturity conversion
+=== RUN   TestTicketTimelineIgnoresMaturityConversions/purchase
+    ticket_events_test.go:218: expected recorded automatic maturity conversion
+=== RUN   TestTicketTimelineIgnoresMaturityConversions/failed_purchase
+    ticket_events_test.go:218: expected recorded automatic maturity conversion
+=== RUN   TestTicketTimelineIgnoresMaturityConversions/unrelated_native_log
+    ticket_events_test.go:218: expected recorded automatic maturity conversion
+--- FAIL: TestTicketTimelineIgnoresMaturityConversions (0.01s)
+    --- FAIL: TestTicketTimelineIgnoresMaturityConversions/ordinary (0.00s)
+    --- FAIL: TestTicketTimelineIgnoresMaturityConversions/purchase (0.00s)
+    --- FAIL: TestTicketTimelineIgnoresMaturityConversions/failed_purchase (0.00s)
+    --- FAIL: TestTicketTimelineIgnoresMaturityConversions/unrelated_native_log (0.00s)
+=== RUN   TestTicketTimelineRetainedMiningAndColdRead
+--- PASS: TestTicketTimelineRetainedMiningAndColdRead (0.13s)
+=== RUN   TestTicketTimelineRangeAndScope
+--- PASS: TestTicketTimelineRangeAndScope (0.08s)
+=== RUN   TestTicketTimelineBaselineGaps
+=== RUN   TestTicketTimelineBaselineGaps/unknown
+=== RUN   TestTicketTimelineBaselineGaps/unstable
+=== RUN   TestTicketTimelineBaselineGaps/identity
+=== RUN   TestTicketTimelineBaselineGaps/later
+=== RUN   TestTicketTimelineBaselineGaps/nil
+=== RUN   TestTicketTimelineBaselineGaps/owner
+=== RUN   TestTicketTimelineBaselineGaps/value
+=== RUN   TestTicketTimelineBaselineGaps/interval
+=== RUN   TestTicketTimelineBaselineGaps/height
+=== RUN   TestTicketTimelineBaselineGaps/conflict
+--- PASS: TestTicketTimelineBaselineGaps (0.74s)
+    --- PASS: TestTicketTimelineBaselineGaps/unknown (0.07s)
+    --- PASS: TestTicketTimelineBaselineGaps/unstable (0.07s)
+    --- PASS: TestTicketTimelineBaselineGaps/identity (0.07s)
+    --- PASS: TestTicketTimelineBaselineGaps/later (0.07s)
+    --- PASS: TestTicketTimelineBaselineGaps/nil (0.09s)
+    --- PASS: TestTicketTimelineBaselineGaps/owner (0.07s)
+    --- PASS: TestTicketTimelineBaselineGaps/value (0.07s)
+    --- PASS: TestTicketTimelineBaselineGaps/interval (0.08s)
+    --- PASS: TestTicketTimelineBaselineGaps/height (0.08s)
+    --- PASS: TestTicketTimelineBaselineGaps/conflict (0.05s)
+=== RUN   TestTicketTimelineRewindAndReextension
+--- PASS: TestTicketTimelineRewindAndReextension (0.10s)
+=== RUN   TestTicketTimelineBranchReplacement
+--- PASS: TestTicketTimelineBranchReplacement (0.08s)
+=== RUN   TestTicketTimelineStopsBeforeUnsupportedBlock
+--- PASS: TestTicketTimelineStopsBeforeUnsupportedBlock (0.08s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/internal/observe	5.746s
+=== RUN   TestCommandRequiresExplicitInputs
+--- PASS: TestCommandRequiresExplicitInputs (0.00s)
+=== RUN   TestCommandHistoryLifecycle
+--- PASS: TestCommandHistoryLifecycle (0.87s)
+=== RUN   TestCommandEmitsReportWithoutEndpointSecrets
+--- PASS: TestCommandEmitsReportWithoutEndpointSecrets (0.01s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/cmd/fsn-observe	1.375s
+FAIL

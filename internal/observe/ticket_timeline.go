@@ -3,7 +3,6 @@ package observe
 import (
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"reflect"
 	"time"
 
@@ -57,7 +56,7 @@ func (history *History) TicketTimeline(node string, from, maxBlocks uint64) (Tic
 	}
 	result := TicketTimeline{Node: node, Wallet: wallet, Sequence: state.Sequence, Anchor: anchor, From: from, MaxBlocks: maxBlocks, Status: "missing_baseline", Events: []TicketEvent{}, Limitations: []string{
 		"derived from retained RPC evidence for one named wallet; not proof of endpoint honesty, state execution, consensus or finality",
-		"baseline must be a stable matching snapshot exactly at the anchor; other owners are outside this inventory",
+		"baseline must be a matching anchor snapshot or explicit historical anchor inventory; other owners are outside this inventory",
 		"return labels describe ticket interval-right rules, not liquid refunds or complete balance accounting",
 		"events cover the requested range; earlier retained blocks are replayed for inventory; current branch freshness is in Blocks",
 	}}
@@ -159,31 +158,32 @@ func (history *History) ticketBaseline(result *TicketTimeline) (*types.Header, e
 		if err := decodeHistory(iterator.Value(), &event); err != nil {
 			return nil, err
 		}
-		if event.Report == nil {
-			continue
+		var header *types.Header
+		var tickets map[common.Hash]common.TicketDisplay
+		if report := event.AnchorInventory; report != nil && report.Node == result.Node && report.Status == "ready" {
+			header, tickets = report.Anchor.Header, report.Tickets
 		}
-		for _, node := range event.Report.Nodes {
-			if node.Name != result.Node || node.Identity != "matches" || node.Consistency != "stable" || !node.TicketsKnown || node.Head == nil || node.Head.Hash != result.Anchor.Hash || node.Head.Header.Number.Uint64() != result.Anchor.Number {
-				continue
-			}
-			if node.Tickets == nil {
-				result.Status, result.Inventory = "invalid_baseline", nil
-				return nil, nil
-			}
-			for id, ticket := range node.Tickets {
-				if id == (common.Hash{}) || ticket.Owner != result.Wallet || ticket.Height > result.Anchor.Number || ticket.StartTime >= ticket.ExpireTime || ticket.Value == nil || ticket.Value.Cmp(common.TicketPrice(new(big.Int).SetUint64(ticket.Height))) != 0 {
-					result.Status, result.Inventory = "invalid_baseline", nil
-					return nil, nil
+		if event.Report != nil {
+			for _, node := range event.Report.Nodes {
+				if node.Name == result.Node && node.Identity == "matches" && node.Consistency == "stable" && node.TicketsKnown && node.Head != nil && node.Head.Hash == result.Anchor.Hash && node.Head.Header.Number.Uint64() == result.Anchor.Number {
+					header, tickets = node.Head.Header, node.Tickets
 				}
 			}
-			if parent != nil && !reflect.DeepEqual(result.Inventory, node.Tickets) {
-				result.Status, result.Inventory = "conflicting_baseline", nil
-				return nil, nil
-			}
-			if parent == nil {
-				parent, result.Inventory = node.Head.Header, node.Tickets
-				result.BaselineSequence, result.BaselineTimeUTC = event.Sequence, event.TimeUTC
-			}
+		}
+		if header == nil {
+			continue
+		}
+		if !validTicketInventory(tickets, result.Wallet, result.Anchor.Number) {
+			result.Status, result.Inventory = "invalid_baseline", nil
+			return nil, nil
+		}
+		if parent != nil && !reflect.DeepEqual(result.Inventory, tickets) {
+			result.Status, result.Inventory = "conflicting_baseline", nil
+			return nil, nil
+		}
+		if parent == nil {
+			parent, result.Inventory = header, tickets
+			result.BaselineSequence, result.BaselineTimeUTC = event.Sequence, event.TimeUTC
 		}
 	}
 	return parent, iterator.Error()

@@ -16,6 +16,9 @@ func deriveTicketTransaction(wallet common.Address, inventory map[common.Hash]co
 	var nativeLogs []*types.Log
 	for _, entry := range receipt.Logs {
 		if entry.Address == common.FSNCallAddress {
+			if len(entry.Topics) == 1 && entry.Topics[0] == common.BytesToHash([]byte{byte(common.TimeLockFunc)}) {
+				continue
+			}
 			nativeLogs = append(nativeLogs, entry)
 		}
 	}

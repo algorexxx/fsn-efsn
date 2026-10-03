@@ -35,11 +35,12 @@ type historyMetadata struct {
 }
 
 type historyEvent struct {
-	Sequence uint64
-	TimeUTC  time.Time
-	Report   *Report         `json:",omitempty"`
-	Review   *Review         `json:",omitempty"`
-	Backfill *BackfillReport `json:",omitempty"`
+	Sequence        uint64
+	TimeUTC         time.Time
+	Report          *Report          `json:",omitempty"`
+	Review          *Review          `json:",omitempty"`
+	Backfill        *BackfillReport  `json:",omitempty"`
+	AnchorInventory *AnchorInventory `json:",omitempty"`
 }
 
 type Review struct {

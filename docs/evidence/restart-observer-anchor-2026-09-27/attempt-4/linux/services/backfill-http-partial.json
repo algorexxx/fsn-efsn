@@ -1,0 +1,146 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0x338b7e0ab0bc6e0a03b3a9f5bdf299ab34a0af60246fb81902485a042efdf546",
+    "AnchorNumber": 24,
+    "AnchorHash": "0x927064aa08acea61ea06dd75e7a98c6f5e223227a032f1a163839e0679fbb1df",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf"
+    }
+  },
+  "Sequence": 3,
+  "LastEventUTC": "2026-10-03T06:44:22.929431922Z",
+  "LastReportUTC": "2026-10-03T06:44:19.357514903Z",
+  "LogicalBytes": 46067,
+  "MaxBytes": 16777216,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [
+    {
+      "ID": "404dc6ae32aa41bafb55e561186a9d2dc6a228747fd5c8f8dc81f94280fa2abc",
+      "Node": "node-2",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "block_coverage",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "batch_limit"
+      ],
+      "FirstSequence": 3,
+      "LastSequence": 3,
+      "FirstUTC": "2026-10-03T06:44:22.929431922Z",
+      "LastSeenUTC": "2026-10-03T06:44:22.929431922Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "47f2b5d8a4173a58431cf33dbb4e4b3cbab8b76c7d73d6b64551bc32871d9adc",
+      "Node": "node-2",
+      "Transaction": "0x3791b85e3b3f6213674f3fe5f1f7829221642391820b0c801b681c9bc98526dd",
+      "Kind": "purchase_attention",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "nonce_consumed_without_confirmed_purchase"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-10-03T06:44:19.357514903Z",
+      "LastSeenUTC": "2026-10-03T06:44:19.357514903Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "b2ae9b740ae1eace34879920bfc99940a34f6e4ba0bcba9add31439b003d679c",
+      "Node": "node-1",
+      "Transaction": "0x2ce96c02a9ae614f636bf65675afbfdec56cd93f35aa519227dab7b14d6b54c4",
+      "Kind": "purchase_attention",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "tracked_transaction_nonce_gap"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-10-03T06:44:19.357514903Z",
+      "LastSeenUTC": "2026-10-03T06:44:19.357514903Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "ebeac56a4d93ddf3e9c28a80294d5f4143b6193c177c207e7f9255bcf34ed6da",
+      "Node": "node-2",
+      "Transaction": "0x2ce96c02a9ae614f636bf65675afbfdec56cd93f35aa519227dab7b14d6b54c4",
+      "Kind": "purchase_attention",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "tracked_transaction_nonce_gap"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-10-03T06:44:19.357514903Z",
+      "LastSeenUTC": "2026-10-03T06:44:19.357514903Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    },
+    {
+      "ID": "f0282dcd9d106c13824c766b952a139ca6781dc71b87dc64cca1c52976ab1f8f",
+      "Node": "",
+      "Transaction": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "Kind": "branch_divergence",
+      "Status": "open",
+      "Observation": "present",
+      "Details": [
+        "different canonical hashes at height 25"
+      ],
+      "FirstSequence": 1,
+      "LastSequence": 1,
+      "FirstUTC": "2026-10-03T06:44:19.357514903Z",
+      "LastSeenUTC": "2026-10-03T06:44:19.357514903Z",
+      "Occurrences": 1,
+      "LastReview": null,
+      "LastReviewSequence": 0
+    }
+  ],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 25,
+        "Hash": "0xb219ac303a1b33a766407baf9ab189025eac6e2f372756585e098321bec5b72b"
+      },
+      "ObservedHead": {
+        "Number": 25,
+        "Hash": "0xb219ac303a1b33a766407baf9ab189025eac6e2f372756585e098321bec5b72b"
+      },
+      "CheckedUTC": "2026-10-03T06:44:20.505402833Z",
+      "Status": "complete_at_observation"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 25,
+        "Hash": "0xc8ae6bcc609f418d1e9d5ed6220100c0713b3b684c86be1c8f5de9d0684a3ad7"
+      },
+      "ObservedHead": {
+        "Number": 26,
+        "Hash": "0x858ae38ad4d839c35b86245a3ae621e2df00574ea31c626a98bf08d68bfc4cbf"
+      },
+      "CheckedUTC": "2026-10-03T06:44:22.929431922Z",
+      "Status": "batch_limit"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "tests": {
+    "windows": {
+      "passes_including_subtests": 142,
+      "race_detection": false,
+      "log_sha256": "12821fef00cb16c922114d014bcde4150a5c62f430857f10b208283830b3da60"
+    },
+    "linux": {
+      "passes_including_subtests": 142,
+      "race_detection": true,
+      "log_sha256": "50ebd77115ad538bff45c1aaadae03fd1ba57f29a60985ec54bde7424e6ddf57"
+    }
+  },
+  "exports": {
+    "inventory.json": "2e40228d60c671beb525dda2bb841e120f9764c0027c71b2b171658c1d00a084",
+    "timeline.json": "34cd3741cf648220ab177806094d1e4effbab68c5d1606cd56870110744e6b67",
+    "history.jsonl": "3fd99501a5e729d68fbbd2a2d6eaf5d2bfeb0bf3af9a2bd1cd7f696c456b8c35"
+  },
+  "services": {
+    "passed": true,
+    "unchanged_state_captures": 27,
+    "historical_transports": [
+      "IPC",
+      "HTTP"
+    ],
+    "empty_rpc_null": true,
+    "replacement_inventory_matches": true
+  },
+  "limitations": [
+    "controlled compact state only",
+    "not proof of remote state",
+    "no production historical-state or workload validation"
+  ]
+}

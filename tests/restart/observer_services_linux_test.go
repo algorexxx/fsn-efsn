@@ -41,6 +41,7 @@ func TestObserverNodeServices(t *testing.T) {
 	pair := seedDenseMinerPair(t)
 	first, second := pair.miners[0], pair.miners[1]
 	anchor := first.chain.CurrentBlock()
+	anchorInventory := captureObserverTruth(t, first, first.owner)
 	var prior *types.Transaction
 	for _, tx := range anchor.Transactions() {
 		owner, err := types.Sender(types.LatestSigner(first.chain.Config()), tx)
@@ -138,6 +139,9 @@ func TestObserverNodeServices(t *testing.T) {
 	if historyPath != "" {
 		requireServiceBackfill(t, binary, output, "backfill-http-partial", "http-divergence", historyPath, nodes, "node-2", remote, "batch_limit")
 		requireServiceBackfill(t, binary, output, "backfill-http-complete", "http-divergence", historyPath, nodes, "node-2", final, "complete_at_observation")
+		if os.Getenv("FUSION_RESTART_OBSERVER_ANCHOR") == "1" {
+			requireServiceAnchorInventory(t, binary, output, historyPath, nodes, config, httpConfig, anchorInventory, truth)
+		}
 	}
 	syncRecoveryNode(t, nodes[0], nodes[1], final)
 	truth[0] = truth[1]
@@ -150,6 +154,9 @@ func TestObserverNodeServices(t *testing.T) {
 		runServiceHistory(t, binary, output, "history-converged-snapshot", nodes, "--config", filepath.Join(output, "ipc-converged-config.json"), "--history", historyPath, "--timeout", "5s")
 		requireServiceBackfill(t, binary, output, "backfill-reorg-partial", "ipc-converged", historyPath, nodes, "node-1", remote, "batch_limit")
 		requireServiceBackfill(t, binary, output, "backfill-reorg-complete", "ipc-converged", historyPath, nodes, "node-1", final, "complete_at_observation")
+		if os.Getenv("FUSION_RESTART_OBSERVER_ANCHOR") == "1" {
+			requireServiceTicketTimeline(t, binary, output, "anchor-reorg-timeline", historyPath, nodes, "node-1", truth[0])
+		}
 		raw := runServiceHistory(t, binary, output, "history-export", nodes, "--history", historyPath, "--history-export")
 		for _, block := range []*types.Block{local, remote, final} {
 			encoded, err := rlp.EncodeToBytes(block)

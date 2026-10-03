@@ -41,6 +41,7 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	ticketNode := flags.String("ticket-timeline", "", "derive an offline ticket timeline for this history node's wallet")
 	ticketFrom := flags.Uint64("ticket-from", 0, "first timeline event height; defaults to anchor plus one; earlier inventory is replayed")
 	ticketBlocks := flags.Uint64("ticket-blocks", 0, "required timeline range bound, 1 through 128 blocks")
+	anchorNode := flags.String("anchor-inventory", "", "collect historical anchor tickets for this configured node into --history")
 	if err := flags.Parse(args); err != nil {
 		if err == flag.ErrHelp {
 			return nil
@@ -61,6 +62,9 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	}
 	if (*backfillNode != "" || *backfillBlocks != 0) && (operations != 0 || *historyPath == "" || *backfillNode == "" || *backfillBlocks == 0 || *backfillBlocks > 128) {
 		return fmt.Errorf("backfill requires --history, --backfill-node and --backfill-blocks from 1 through 128; offline history operations are separate")
+	}
+	if *anchorNode != "" && (operations != 0 || *historyPath == "" || *backfillNode != "" || *backfillBlocks != 0) {
+		return fmt.Errorf("anchor inventory requires --history and separate collection flags")
 	}
 	if operations > 0 {
 		if operations != 1 || *historyPath == "" || *timeout != 0 || !*initialize && *path != "" {
@@ -129,6 +133,13 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 			return err
 		}
 		return writeJSON(output, state)
+	}
+	if *anchorNode != "" {
+		report, err := history.CollectAnchorInventory(ctx, config, *anchorNode, *timeout, time.Now)
+		if err != nil {
+			return err
+		}
+		return writeJSON(output, report)
 	}
 	report, err := observe.Collect(ctx, config, *timeout, time.Now)
 	if err != nil {

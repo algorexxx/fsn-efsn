@@ -116,8 +116,10 @@ reconciled their own actual sequence, without fixing an expected winning schedul
 The subsequent [offline wallet ticket timeline](restart-observer-tickets.md)
 implements a scoped derivation from this retained anchor inventory and block
 evidence, with explicit baseline/unsupported gaps and rewind/replacement tests.
-It changes only the external observer. Historical baseline acquisition for a
-monitor first started after the anchor remains open. Review the
+It changes only the external observer. The [historical baseline follow-up](restart-observer-anchor.md)
+now handles a monitor first started after the anchor, with actual-service
+state comparisons and explicit unavailable/conflicting results. Production
+historical-state availability and acquisition cost remain open. Review the
 [P16 parser correction and narrowed validation scope](restart-snapshot-framing.md)
 separately. Collection during a live competing
 reorganization, representative backlog/storage/receipt-index availability,

@@ -188,3 +188,10 @@ retained anchor snapshots and the retained canonical branch, with explicit gaps
 and no new persisted accounting state. Review native outcomes, return labels,
 baseline provenance and unsupported intervals independently of node consensus.
 It adds no P17, RPC method or change to the normal node binary.
+
+The [historical anchor inventory follow-up](restart-observer-anchor.md) also stays
+inside the external observer. It reads existing historical RPCs, stores the
+observed baseline as an immutable event and keeps current status separate.
+Its service rehearsal exposed and corrected the observer's rejection of automatic
+time-lock maturity logs in ordinary receipts. That three-line correction affects
+only ticket report interpretation; it adds no node patch or financial rule.
