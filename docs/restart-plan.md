@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Actual efsn WSS](restart-dashboard-wss.md): RPC, PostgreSQL, HTTPS API and four browser checkpoints pass; 173 contracts and 13 socket tests pass; collector loss during mining remains | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Mining outage](restart-dashboard-mining-outage.md) passes; [Node 24 runtime review](restart-dashboard-runtime.md) passes compatibility, but public collector dependencies require correction | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -301,8 +301,16 @@ history. The investigation also exposed a queued old-head report after reconnect
 P17 changes two reporter lines to read the current canonical tip. It changes
 telemetry only and needs its own release review. The stationary browser regression
 and 173 contract / 13 socket tests also pass. This closes the bounded local
-process-loss item; runtime/dependency,
-supervision, public certificate and log lifecycle acceptance remain open.
+process-loss item. The [runtime/dependency review](restart-dashboard-runtime.md)
+now passes the same contracts, sockets, WSS/database/browser scenario and strict
+frontend build on Linux Node 24.21.0 with unchanged dependencies. It identifies
+ws 1.1.5 on the public collector path as a concrete launch blocker and records
+separate work for Primus, Lodash, Express, GeoIP, browser Axios, unused tools and
+the obsolete deployment workflow. Audit counts distinguish package findings from
+proven reachable issues. Update the transport pair first, then re-audit and
+validate the final pinned installation; runtime compatibility alone does not
+close dependency acceptance. Supervision, public certificates and log lifecycle
+acceptance also remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -361,11 +369,15 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: finish runtime/dependency review, service supervision, public certificate
-   acceptance/renewal and log lifecycle checks. Preserve receipt and transport
-   diagnostics and the same-host clock assumption. Review retry pacing and log
-   volume using the [passing mining-outage drill](restart-dashboard-mining-outage.md).
-   The actual WSS/database/API path and separate browser regression pass.
+1. G6: follow the [runtime/dependency worklist](restart-dashboard-runtime.md),
+   starting with the collector Primus/ws pair. The Node 24 compatibility check
+   passes; its unchanged dependency tree is not approved for public hosting.
+   Update active dependencies, prune unused ones, fix the separate API install
+   and obsolete deployment workflow, then validate a clean pinned installation.
+   Continue service supervision, public certificate acceptance/renewal and log
+   lifecycle checks. Preserve receipt/transport diagnostics and the same-host
+   clock assumption. Review retry pacing and log volume using the
+   [passing mining-outage drill](restart-dashboard-mining-outage.md).
    Approve the common deployment
    manifest before publishing. G6 remains open; eight enrolled nodes, 64 KiB
    heads and the 4/1/1 MiB limits remain an explicit tested candidate, with

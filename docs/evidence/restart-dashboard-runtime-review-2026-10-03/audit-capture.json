@@ -1,0 +1,107 @@
+{
+  "started_utc": "2026-10-03T18:51:20.450679+00:00",
+  "commands": [
+    {
+      "name": "backend",
+      "args": [
+        "audit",
+        "--package-lock-only",
+        "--ignore-scripts",
+        "--json",
+        "--registry=https://registry.npmjs.org"
+      ],
+      "exit": 1,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 5,
+          "moderate": 6,
+          "high": 21,
+          "critical": 12,
+          "total": 44
+        },
+        "dependencies": {
+          "prod": 330,
+          "dev": 0,
+          "optional": 2,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 331
+        }
+      },
+      "error": null
+    },
+    {
+      "name": "frontend",
+      "args": [
+        "audit",
+        "--package-lock-only",
+        "--ignore-scripts",
+        "--json",
+        "--registry=https://registry.npmjs.org"
+      ],
+      "exit": 1,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 3,
+          "moderate": 4,
+          "high": 69,
+          "critical": 0,
+          "total": 76
+        },
+        "dependencies": {
+          "prod": 1492,
+          "dev": 0,
+          "optional": 24,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 1515
+        }
+      },
+      "error": null
+    },
+    {
+      "name": "legacy-api",
+      "args": [
+        "audit",
+        "--package-lock-only",
+        "--ignore-scripts",
+        "--json",
+        "--registry=https://registry.npmjs.org"
+      ],
+      "exit": 1,
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 3,
+          "moderate": 0,
+          "high": 4,
+          "critical": 0,
+          "total": 7
+        },
+        "dependencies": {
+          "prod": 51,
+          "dev": 0,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 50
+        }
+      },
+      "error": null
+    }
+  ],
+  "inputs": {
+    "package.json": "d7a331baca932b33101af4d690a4b6ff704ee8bfa39190f269b43ea7498634eb",
+    "package-lock.json": "23ed12819a0f682ecbab74c971116ef01e921b956edf5f29e5870176c5b03ae0",
+    "react-frontend/package.json": "ac667da574d85fc49803775b21e75761f52a20dc360a1def538bfd8b9746258b",
+    "react-frontend/package-lock.json": "e27371e8985af9803e2d750b1abc064fc9acbf95c86244caacdc2121518608ea",
+    "api-server/package.json": "1f8e270d002b63fd33869e0f2d0dd59cc8de02843240e05f54d142fdb7dec2e0",
+    "api-server/package-lock.json": "883bfcb7850142dc47ed4943ef0332d887e8cf4f29214a5982177438f8f0e19d"
+  },
+  "dashboard_commit": "d70014342f1995807bccd26370a7b86379c89099",
+  "node_version": "v22.11.0",
+  "npm_version": "10.9.0",
+  "inputs_unchanged": true
+}

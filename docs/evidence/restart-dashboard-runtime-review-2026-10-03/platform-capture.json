@@ -1,0 +1,69 @@
+{
+  "commands": [
+    {
+      "name": "resolved-packages",
+      "command": [
+        "wsl",
+        "-d",
+        "FusionRehearsal",
+        "-u",
+        "rehearsal",
+        "--",
+        "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+        "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-runtime-review-2026-10-03/resolve.cjs"
+      ],
+      "exit": 0,
+      "sha256": "2f335a4dc1c0d155665ae11a1eb2222c8e115461b42f6b503b8700a496a0719d"
+    },
+    {
+      "name": "os-release",
+      "command": [
+        "wsl",
+        "-d",
+        "FusionRehearsal",
+        "-u",
+        "rehearsal",
+        "--",
+        "cat",
+        "/etc/os-release"
+      ],
+      "exit": 0,
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    {
+      "name": "nginx-linked-libraries",
+      "command": [
+        "wsl",
+        "-d",
+        "FusionRehearsal",
+        "-u",
+        "rehearsal",
+        "--",
+        "ldd",
+        "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-proxy-runtime/extracted/usr/sbin/nginx"
+      ],
+      "exit": 0,
+      "sha256": "ee95dc3783a578a94725ccbaa43e3d8bec91168e6bebc5a779c03908d0a17f0f"
+    },
+    {
+      "name": "host-library-packages",
+      "command": [
+        "wsl",
+        "-d",
+        "FusionRehearsal",
+        "-u",
+        "rehearsal",
+        "--",
+        "dpkg-query",
+        "-W",
+        "libc6",
+        "libssl3t64",
+        "libpcre2-8-0",
+        "zlib1g"
+      ],
+      "exit": 0,
+      "sha256": "ea00c6291d29419cc94d641ed2f029a6a0dab6675845dbc4e5a74e004f603473"
+    }
+  ],
+  "nginx_changelog_gzip_sha256": "d10dc56648109989599338b42d6837af7c7dbca7d1cca86d05701575eeaaa1a7"
+}

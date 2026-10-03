@@ -1,0 +1,117 @@
+From 539a0df782fbe123c5704e48708c5751bfe94cd3 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 21:15:09 +0200
+Subject: [PATCH] Document runtime compatibility and dependency launch blockers
+
+---
+ docs/build-validation.md          |  8 ++++
+ docs/deployment-configuration.md  |  7 +++-
+ docs/runtime-dependency-review.md | 68 +++++++++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+), 2 deletions(-)
+ create mode 100644 docs/runtime-dependency-review.md
+
+diff --git a/docs/build-validation.md b/docs/build-validation.md
+index 0143139..fb84880 100644
+--- a/docs/build-validation.md
++++ b/docs/build-validation.md
+@@ -58,3 +58,11 @@ This is local synthetic acceptance at a desktop viewport. Actual efsn telemetry,
+ per-node freshness, collector limits, full storage/browser/TLS integration,
+ production dependency review, service supervision and broader device/browser
+ coverage remain launch work. A successful build alone is not public readiness.
++
++## Runtime review follow-up
++
++The [runtime/dependency review](runtime-dependency-review.md) adds a passing
++Linux Node 24.21.0 build and backend/integration compatibility result. Its
++unchanged dependency locks still require correction before public hosting.
++Use that review for the current worklist; earlier open-item lists above record
++the scope at the time of their respective tests.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 2348daa..54df7bc 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -144,5 +144,8 @@ deployment checks. This local candidate does not approve public hosting.
+ 
+ [Actual node WSS acceptance](actual-wss-acceptance.md) now covers the real reporter,
+ PostgreSQL and compiled browser, with all timestamp-producing processes on one
+-Linux host. Collector loss during mining, runtime support and public certificate
+-issuance/renewal remain open.
++Linux host. [Collector loss during mining](mining-outage-acceptance.md) also
++passes. The [runtime/dependency review](runtime-dependency-review.md) establishes
++a Node 24 compatibility candidate and identifies required dependency updates
++before public hosting. Supervision and public certificate issuance/renewal
++remain open.
+diff --git a/docs/runtime-dependency-review.md b/docs/runtime-dependency-review.md
+new file mode 100644
+index 0000000..7a8eb15
+--- /dev/null
++++ b/docs/runtime-dependency-review.md
+@@ -0,0 +1,68 @@
++# Runtime and dependency review
++
++Reviewed 2026-10-03 from `d70014342f1995807bccd26370a7b86379c89099` without changing
++application code, package manifests or locks. This dashboard is not ready for
++public hosting with its current dependency tree.
++
++Linux Node 24.21.0 passes the 173 contract tests, 13 socket tests and the actual
++efsn WSS/PostgreSQL/HTTPS/compiled-browser scenario. The latter uses PostgreSQL
++16.15 and Ubuntu nginx `1.24.0-2ubuntu7.18`. Four browser checkpoints include
++writer loss, expiry and recovery. These results establish a runtime candidate,
++not a fresh-install or public deployment acceptance. The existing frontend build
++was used for that browser run. The chain was stationary.
++
++The separate `CI=true` Node 24 production build also succeeds in new scratch
++space. Its 547 files match the earlier build except for the JavaScript source
++map. The dependency warning `DEP0176` (`fs.F_OK`) is retained in the evidence.
++No dependency installation, legacy crypto option or lint bypass was used.
++
++Node 24 is [LTS](https://nodejs.org/en/about/previous-releases); select a reviewed
++current patch and npm version in the eventual release manifest. The older
++Node 22.11.0 remains only a recorded test baseline. PostgreSQL 16 is still a
++[supported major](https://www.postgresql.org/support/versioning/). Keep Ubuntu's
++nginx package revision and security backports in the review rather than judging
++only its upstream version; [USN-8563-5](https://ubuntu.com/security/notices/USN-8563-5)
++covers one correction present in the tested revision. Host libraries and future
++updates still need review at release.
++
++Read-only npm 10.9.0 lock audits returned 44 root/backend findings (12 critical,
++21 high, six moderate, five low), 76 frontend findings (69 high, four moderate,
++three low), and seven separate legacy API findings (four high, three low).
++These include dependency-level findings and are not unique CVE or reachable
++exploit counts. Build tools live in `dependencies`, so omitting devDependencies
++would not remove them. No automatic audit fix was used.
++
++Required follow-up, in order:
++
++1. Review and update Primus 6.1.0 and its resolved ws 1.1.5 together. The latter
++   falls within [GHSA-96hv-2xvq-fx4p](https://github.com/websockets/ws/security/advisories/GHSA-96hv-2xvq-fx4p).
++   Application message validation does not establish a fix for parser memory
++   accounting. The old Primus transformer uses `socket.upgradeReq`, so merely
++   replacing ws is not an established compatible change. Verify both plugins,
++   native efsn framing, authentication, limits and reconnects with ordinary tests.
++2. Review Lodash 3.10.1, Express 4.17.1 and geoip-lite 1.2.1, removing unused
++   legacy tools rather than blindly updating every installed package. Lodash's
++   old `pluck`/`sortByOrder` calls need explicit compatibility work. GeoIP's audit
++   finding is inherited through `unzip`; distinguish lookup from data installation.
++3. Consolidate API dependency installation. The tested API resolves root Express;
++   there is no local `api-server/node_modules`. Its separate legacy lock must not
++   silently override the tested root version in a deployment.
++4. Update or replace browser Axios 0.21.2 and review unused/build-only packages.
++   Axios is the only flagged package found among 41 package names represented
++   in the current compiled JavaScript maps; it uses XHR. This does not clear all
++   other assets or all Axios findings. Preserve freshness, cancellation and
++   timeout behavior. Review the [deprecated CRA build](https://react.dev/blog/2025/02/14/sunsetting-create-react-app)
++   separately from transport changes.
++5. Replace the inherited workflow before enabling deployment. It currently uses
++   Node 16, `npm install` and the foundation's S3 target. No workflow was run and
++   no public target was provisioned during this review.
++
++Repeat the audit and integration checks after these changes and a clean install
++with the final pinned Node/npm versions. Record dispositions for unresolved
++findings. Finish service supervision, certificates/renewal, retries/log retention
++and the coordinated deployment profile before public use.
++
++The accompanying efsn investigation retains the complete report in
++`docs/restart-dashboard-runtime.md` and exact locks, registry responses, source
++hashes and local test evidence under
++`docs/evidence/restart-dashboard-runtime-review-2026-10-03/`.
