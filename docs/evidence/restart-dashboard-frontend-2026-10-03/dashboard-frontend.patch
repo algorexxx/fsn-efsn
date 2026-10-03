@@ -1,0 +1,1286 @@
+From acd443ebae16251c76add282bd75a3877872a60d Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 23:40:30 +0200
+Subject: [PATCH] Update browser Axios and replace legacy deployment with
+ validation
+
+---
+ .github/workflows/deploy.yml        |  50 ---
+ .github/workflows/validate.yml      |  47 +++
+ README.md                           |   5 +
+ docs/build-validation.md            |  16 +-
+ docs/frontend-dependency-upgrade.md | 129 ++++++
+ docs/runtime-dependency-review.md   |  23 +-
+ react-frontend/README.md            |   7 +
+ react-frontend/package-lock.json    | 582 ++--------------------------
+ react-frontend/package.json         |  20 +-
+ 9 files changed, 244 insertions(+), 635 deletions(-)
+ delete mode 100644 .github/workflows/deploy.yml
+ create mode 100644 .github/workflows/validate.yml
+ create mode 100644 docs/frontend-dependency-upgrade.md
+
+diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
+deleted file mode 100644
+index f30b18f..0000000
+--- a/.github/workflows/deploy.yml
++++ /dev/null
+@@ -1,50 +0,0 @@
+-name: Build & deploy
+-
+-on:
+-  push:
+-    branches:
+-      - master
+-
+-jobs:
+-  deploy:
+-    runs-on: ubuntu-latest
+-    steps:
+-      # - uses: actions/checkout@v2
+-      # - name: Cache modules
+-      #   uses: actions/cache@v1
+-      #   id: yarn-cache
+-      #   with:
+-      #     path: node_modules
+-      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+-      #     restore-keys: ${{ runner.os }}-yarn-
+-
+-      - name: Configure AWS credentials
+-        uses: aws-actions/configure-aws-credentials@v1-node16
+-        with:
+-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+-          aws-region: us-east-2
+-
+-      - name: checkout
+-        uses: actions/checkout@v3
+-      - name: setup nodejs
+-        uses: actions/setup-node@v3
+-        with:
+-          node-version: 16
+-      - name: Install dependencies
+-        run: cd react-frontend && npm install
+-      - name: Build
+-        run: cd react-frontend && npm run build
+-      # - name: Deploy
+-      #   uses: jakejarvis/s3-sync-action@master
+-      #   with:
+-      #     args: --acl public-read --follow-symlinks --delete
+-      #   env:
+-      #     AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+-      #     AWS_REGION: ${{ secrets.AWS_REGION }}
+-      #     SOURCE_DIR: 'build'
+-
+-      - name: Deploy
+-        run: aws s3 sync ./react-frontend/build s3://stats.fusionnetwork.io/
+diff --git a/.github/workflows/validate.yml b/.github/workflows/validate.yml
+new file mode 100644
+index 0000000..1173e63
+--- /dev/null
++++ b/.github/workflows/validate.yml
+@@ -0,0 +1,47 @@
++name: Validate dashboard
++
++on:
++  pull_request:
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++jobs:
++  validate:
++    runs-on: ubuntu-24.04
++    timeout-minutes: 20
++    env:
++      CI: 'true'
++      REACT_APP_STATS_API_PATH: /stats-api
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
++        with:
++          persist-credentials: false
++      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
++        with:
++          node-version: 24.21.0
++          package-manager-cache: false
++      - name: Select npm
++        run: npm install --global npm@10.9.0 --ignore-scripts --no-audit --no-fund
++      - name: Install backend
++        run: npm ci --engine-strict --ignore-scripts --no-audit --no-fund
++      - name: Backend contracts
++        run: npm test
++      - name: Backend sockets
++        run: npm run test:wire
++      - name: Install frontend
++        working-directory: react-frontend
++        run: npm ci --engine-strict --ignore-scripts --no-audit --no-fund
++      - name: Frontend contracts
++        working-directory: react-frontend
++        env:
++          REACT_APP_STATS_POLL_INTERVAL_MS: '100'
++          REACT_APP_STATS_REQUEST_TIMEOUT_MS: '50'
++        run: npm test -- --watchAll=false --runInBand
++      - name: Build frontend
++        working-directory: react-frontend
++        env:
++          REACT_APP_STATS_POLL_INTERVAL_MS: '250'
++          REACT_APP_STATS_REQUEST_TIMEOUT_MS: '1000'
++        run: npm run build
+diff --git a/README.md b/README.md
+index 68d1108..d6dc6f4 100644
+--- a/README.md
++++ b/README.md
+@@ -17,6 +17,11 @@ native efsn/TLS integration and mining-outage checks. Remaining dependencies
+ and public deployment controls still need work. Provision the versioned schema
+ in the snapshot guide; do not use the historical database setup script.
+ 
++The [frontend dependency update](docs/frontend-dependency-upgrade.md) pins
++Axios 0.34.0, removes unused packages and replaces the Foundation deployment
++workflow with validation only. The rebuilt browser passes local acceptance;
++73 frontend build-tool dependency findings remain open.
++
+ The [GeoIP/diagnostics update](docs/geoip-dependency-upgrade.md) clears the
+ remaining backend advisories in the recorded audit. The backend now requires
+ Node 24 or newer; local acceptance uses Node 24.21.0 and npm 10.9.0. Public
+diff --git a/docs/build-validation.md b/docs/build-validation.md
+index fb84880..db5b62b 100644
+--- a/docs/build-validation.md
++++ b/docs/build-validation.md
+@@ -59,10 +59,14 @@ per-node freshness, collector limits, full storage/browser/TLS integration,
+ production dependency review, service supervision and broader device/browser
+ coverage remain launch work. A successful build alone is not public readiness.
+ 
+-## Runtime review follow-up
++## Runtime and dependency follow-up
+ 
+-The [runtime/dependency review](runtime-dependency-review.md) adds a passing
+-Linux Node 24.21.0 build and backend/integration compatibility result. Its
+-unchanged dependency locks still require correction before public hosting.
+-Use that review for the current worklist; earlier open-item lists above record
+-the scope at the time of their respective tests.
++The [runtime review](runtime-dependency-review.md) establishes Linux Node 24.21.0.
++The [frontend dependency update](frontend-dependency-upgrade.md) subsequently
++pins Axios 0.34.0, removes thirteen unused direct packages and passes a clean
++Linux Node 24.21.0/npm 10.9.0 installation, eight React DOM tests, the CI build,
++nine compiled-browser checkpoints and native efsn WSS/database/browser checks.
++The backend passes 178 contracts and 14 socket tests. The current frontend audit
++has 73 build-tool findings; the previous counts above describe earlier slices.
++The inherited deployment workflow has been replaced with validation only.
++Use the linked review for the remaining supported-toolchain and release work.
+diff --git a/docs/frontend-dependency-upgrade.md b/docs/frontend-dependency-upgrade.md
+new file mode 100644
+index 0000000..589ff58
+--- /dev/null
++++ b/docs/frontend-dependency-upgrade.md
+@@ -0,0 +1,129 @@
++# Dashboard frontend dependencies and validation workflow
++
++Local evidence date: 2026-10-03. Axios moves from 0.21.2 to an exact 0.34.0 pin,
++thirteen unused frontend dependencies are removed, and the inherited Foundation
++deployment workflow is replaced by validation only. Application JavaScript,
++test expectations, backend dependencies and all efsn Go/module sources remain
++unchanged. The rebuilt frontend passes both synthetic and native efsn browser
++acceptance. G6 remains open for build-tool dependencies and deployment controls.
++
++## Dependency selection and scope
++
++[Axios's support policy](https://github.com/axios/axios/security/policy) covers
++both 0.x and 1.x. The captured registry and [0.34.0 release](https://github.com/axios/axios/releases/tag/v0.34.0)
++identify 0.34.0, published 2026-09-13, as the current stable 0.x release.
++Retaining this supported line preserves the existing CommonJS/browser setup.
++The application still makes one same-origin GET request through Axios's XHR
++adapter; its own polling controller owns deadlines, retry scheduling and expiry.
++Its existing CancelToken integration remains functional, although Axios
++[deprecates that API](https://axios-http.com/docs/cancellation). A future major
++migration should use AbortController and repeat cancellation acceptance.
++
++The selected archive matches npm's SHA-512 integrity value and all 78 archive
++files match installation. A separate installation containing this exact Axios
++version passes `npm audit signatures`: 23 registry signatures and one provenance
++attestation verify. This checks package provenance, not absence of defects.
++No install lifecycle scripts are enabled.
++
++The removed direct declarations are `highcharts`, `highcharts-react-official`,
++`react-countdown-now`, `react-countup`, `react-custom-scrollbars`,
++`react-fontawesome`, `react-lazyload`, `react-loading-skeleton`, `react-reveal`,
++`react-toastify`, `react-tooltip`, `recharts` and `websocket`. Source imports and
++the previous production source maps reference none of them. Active map, flag,
++number-formatting, Bootstrap, Material UI, React and time-display packages are
++retained. Backend WebSockets use their separate unchanged installation.
++
++The frontend v1 lock goes from 1515 to 1445 paths: 72 removed, two added and one
++updated. Every changed path belongs to Axios's dependency tree or a removed
++package's tree. Axios gains private form-data 4.0.6 and proxy-from-env 1.1.0;
++only Axios changes version among retained paths. No blanket update, override or
++automatic audit fix is used. A clean Linux Node 24.21.0/npm 10.9.0 `npm ci`
++passes with engine checks enforced and lifecycle scripts disabled. The frontend
++now declares Node >=24. All 1425 installed packages match their locked versions;
++20 platform-specific optional paths are omitted on Linux x64. All 72 removed
++paths are absent. Root backend manifest and lock retain their accepted hashes.
++
++## Remaining advisory and maintenance work
++
++The frontend audit drops from 76 to 73 affected package names, clearing Axios,
++d3-color and Highcharts. No new names appear. The remaining counts are 66 high,
++four moderate and three low, with react-scripts the sole directly flagged
++dependency. Full details and dependency paths are retained in `audit-after.json`.
++These are package-level findings, not counts of demonstrated reachable exploits.
++
++Tracing every audited installed path finds one outside react-scripts:
++`node_modules/falafel/node_modules/acorn`, version 5.7.3, belongs to the legacy
++map package's Node/build dependency tree. The browser uses TopoJSON's packaged
++browser entrypoint. Acorn is absent from the compiled source maps, but a CRA
++replacement alone must not be assumed to remove that installed path. Retain
++its separate correction/review item with the map-library maintenance work.
++
++None of those 73 names appears in the rebuilt production JavaScript source
++maps. The maps confirm Axios's XHR adapter is included and its Node HTTP adapter
++is absent. This is evidence about the current bundle, not a general finding that
++the development/build environment is safe. Treat the remaining toolchain review
++as open; do not run its development server as the public dashboard or publish
++the installed frontend node_modules. Only the static build is served.
++
++The clean install also records deprecations, including the inherited Material
++UI v4, Popper v1 and build tools. A zero reported advisory is not a maintenance
++guarantee. Review the [deprecated Create React App toolchain](https://react.dev/blog/2025/02/14/sunsetting-create-react-app)
++next, choosing supported tooling while preserving the UI and explicit settings.
++Keep used UI-library maintenance decisions separate and record their disposition.
++The unchanged backend's last audit remains at zero known advisories.
++
++## Validation workflow
++
++`.github/workflows/deploy.yml` is gone. It previously ran Node 16, unlocked
++`npm install`, AWS credential configuration and an S3 sync to the Foundation
++bucket. `.github/workflows/validate.yml` has only pull-request and manual
++triggers, read-only contents permission, no retained checkout credentials and
++no deployment step or secret references.
++
++The new workflow selects Ubuntu 24.04, Node 24.21.0 and npm 10.9.0, pins checkout
++7.0.1 and setup-node 7.0.0 by full commit SHA, and disables automatic package
++caching. It runs locked installations, backend contracts/socket tests, frontend
++DOM tests and a production build. Its explicit API/timing values are local
++validation settings, not a chosen production profile. It parses successfully;
++the referenced action definitions and release pins are captured. No GitHub
++workflow has been run, no artifact published and no deployment target selected.
++Local Linux execution verifies the test/build commands, not hosted Actions setup.
++
++## Build and browser acceptance
++
++All 178 backend contract tests, 14 socket tests and eight existing React DOM
++tests pass. The production build passes with `CI=true`, without lint/preflight
++bypasses or legacy crypto options. The inherited `DEP0176` build warning is
++retained. The build still has 547 files: 542 are byte-identical; the main
++JavaScript bundle, its licence/source-map files, index and asset manifest change.
++The prior build is preserved in scratch; the rebuilt files are the active local
++browser fixture. Generated assets remain outside the Git patch and must be
++rebuilt from the exact source, lock, runtime and settings for a release.
++
++The compiled Edge browser passes nine checkpoints: populated rows, keyboard
++pinning, accessible map/two markers, empty data, storage failure, recovery,
++expired storage, request timeout and timeout recovery. There are no page errors,
++missing assets or foreign-origin requests. One aborted API request is expected
++from the deliberate deadline case. The map screenshot was also inspected.
++
++The real local efsn reporter then passes WSS -> nginx -> PostgreSQL -> HTTPS API
++-> the rebuilt browser, with matching head/fifty-block history. All four browser
++checkpoints pass, including writer expiry and recovery, with no writer/browser
++errors. The existing eight-reporter proxy and mining-outage results are retained
++for their unchanged code; those separate workloads were not repeated here.
++The original dashboard checkout and all 1007 efsn source/module hashes are
++preserved. Fixture processes are stopped and disposable credentials removed.
++
++## Next step and retained evidence
++
++Resolve the remaining build-tool findings and supported build/test matrix,
++then repeat clean installation and combined acceptance for that final package.
++Finish GeoIP dataset operations, service supervision, retry/log lifecycle,
++public TLS renewal and the common deployment manifest before public use.
++The replacement validation workflow is not deployment approval.
++
++The efsn investigation retains baseline inputs, registry/provenance records,
++dependency changes, audits, build hashes, browser captures, workflow checks,
++native telemetry evidence and the portable dashboard patch under
++`docs/evidence/restart-dashboard-frontend-2026-10-03/`.
++The accompanying efsn investigation's `docs/restart-plan.md` owns the launch gates.
+diff --git a/docs/runtime-dependency-review.md b/docs/runtime-dependency-review.md
+index 81bca15..3226ac6 100644
+--- a/docs/runtime-dependency-review.md
++++ b/docs/runtime-dependency-review.md
+@@ -42,15 +42,24 @@ reports zero known advisories. Earlier counts describe earlier trees.
+ Node >=24 is now required. A clean Linux Node 24.21.0/npm 10.9.0 installation
+ passes with engine checks enforced and lifecycle scripts disabled.
+ 
++The [frontend update](frontend-dependency-upgrade.md) pins Axios 0.34.0,
++removes thirteen unused direct dependencies and replaces the Foundation S3
++workflow with validation only. A clean Linux install, eight React DOM tests,
++CI build, nine compiled-browser checkpoints and native WSS/browser acceptance
++pass. Its audit falls from 76 to 73; no remaining audited name appears in the
++production source maps. The build/development toolchain still needs review.
++
+ Required follow-up, in order:
+ 
+-1. Update or replace browser Axios 0.21.2 and review unused/build-only packages.
+-   Preserve freshness, cancellation and timeout behavior. Review the
+-   [deprecated CRA build](https://react.dev/blog/2025/02/14/sunsetting-create-react-app)
+-   separately from the completed backend changes.
++1. Resolve the 73 remaining build-tool findings and supported build/test matrix,
++   including the [deprecated CRA build](https://react.dev/blog/2025/02/14/sunsetting-create-react-app).
++   Preserve the tested browser behavior. Review the used UI libraries'
++   maintenance separately; absence of an advisory is not a support guarantee.
++   Include the legacy map dependency tree's Acorn path; a CRA replacement
++   alone does not clear every installed dependency path.
+ 2. Select and verify the final Node/npm matrix and combined clean installation.
+-   Replace the inherited Node 16/`npm install`/foundation S3 workflow before
+-   enabling deployment. No workflow has been run for these changes.
++   The replacement validation workflow pins local test versions and has not
++   run on GitHub. Public deployment remains separate work.
+ 3. Select and record the GeoIP dataset and its terms/attribution. Accept the
+    protected update workflow, failure/recovery and refresh/deletion schedule
+    before public use; package compatibility does not establish fresh data.
+@@ -60,5 +69,5 @@ Required follow-up, in order:
+ 
+ The accompanying efsn investigation retains the original review in
+ `docs/restart-dashboard-runtime.md` and the latest follow-up in
+-`docs/restart-dashboard-geoip.md`, with exact package and local test evidence
++`docs/restart-dashboard-frontend.md`, with exact package and local test evidence
+ under their corresponding `docs/evidence/` directories.
+diff --git a/react-frontend/README.md b/react-frontend/README.md
+index 859d27a..12956c2 100644
+--- a/react-frontend/README.md
++++ b/react-frontend/README.md
+@@ -1,3 +1,10 @@
++The current recovery candidate requires Node >=24 and explicit API/polling
++settings. Start with [frontend dependency acceptance](../docs/frontend-dependency-upgrade.md)
++and [browser configuration](../docs/browser-freshness.md). Install with
++`npm ci --engine-strict --ignore-scripts --no-audit --no-fund`.
++The workflow validates only; public hosting and remaining toolchain findings
++are still open. The original Create React App usage reference follows.
++
+ This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ 
+ ## Available Scripts
+diff --git a/react-frontend/package-lock.json b/react-frontend/package-lock.json
+index eaac8ec..8df279f 100644
+--- a/react-frontend/package-lock.json
++++ b/react-frontend/package-lock.json
+@@ -1402,64 +1402,11 @@
+       "integrity": "sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==",
+       "requires": {}
+     },
+-    "@emotion/cache": {
+-      "version": "10.0.19",
+-      "resolved": "https://registry.npmjs.org/@emotion/cache/-/cache-10.0.19.tgz",
+-      "integrity": "sha512-BoiLlk4vEsGBg2dAqGSJu0vJl/PgVtCYLBFJaEO8RmQzPugXewQCXZJNXTDFaRlfCs0W+quesayav4fvaif5WQ==",
+-      "requires": {
+-        "@emotion/sheet": "0.9.3",
+-        "@emotion/stylis": "0.8.4",
+-        "@emotion/utils": "0.11.2",
+-        "@emotion/weak-memoize": "0.2.4"
+-      }
+-    },
+     "@emotion/hash": {
+       "version": "0.7.3",
+       "resolved": "https://registry.npmjs.org/@emotion/hash/-/hash-0.7.3.tgz",
+       "integrity": "sha512-14ZVlsB9akwvydAdaEnVnvqu6J2P6ySv39hYyl/aoB6w/V+bXX0tay8cF6paqbgZsN2n5Xh15uF4pE+GvE+itw=="
+     },
+-    "@emotion/memoize": {
+-      "version": "0.7.3",
+-      "resolved": "https://registry.npmjs.org/@emotion/memoize/-/memoize-0.7.3.tgz",
+-      "integrity": "sha512-2Md9mH6mvo+ygq1trTeVp2uzAKwE2P7In0cRpD/M9Q70aH8L+rxMLbb3JCN2JoSWsV2O+DdFjfbbXoMoLBczow=="
+-    },
+-    "@emotion/serialize": {
+-      "version": "0.11.11",
+-      "resolved": "https://registry.npmjs.org/@emotion/serialize/-/serialize-0.11.11.tgz",
+-      "integrity": "sha512-YG8wdCqoWtuoMxhHZCTA+egL0RSGdHEc+YCsmiSBPBEDNuVeMWtjEWtGrhUterSChxzwnWBXvzSxIFQI/3sHLw==",
+-      "requires": {
+-        "@emotion/hash": "0.7.3",
+-        "@emotion/memoize": "0.7.3",
+-        "@emotion/unitless": "0.7.4",
+-        "@emotion/utils": "0.11.2",
+-        "csstype": "^2.5.7"
+-      }
+-    },
+-    "@emotion/sheet": {
+-      "version": "0.9.3",
+-      "resolved": "https://registry.npmjs.org/@emotion/sheet/-/sheet-0.9.3.tgz",
+-      "integrity": "sha512-c3Q6V7Df7jfwSq5AzQWbXHa5soeE4F5cbqi40xn0CzXxWW9/6Mxq48WJEtqfWzbZtW9odZdnRAkwCQwN12ob4A=="
+-    },
+-    "@emotion/stylis": {
+-      "version": "0.8.4",
+-      "resolved": "https://registry.npmjs.org/@emotion/stylis/-/stylis-0.8.4.tgz",
+-      "integrity": "sha512-TLmkCVm8f8gH0oLv+HWKiu7e8xmBIaokhxcEKPh1m8pXiV/akCiq50FvYgOwY42rjejck8nsdQxZlXZ7pmyBUQ=="
+-    },
+-    "@emotion/unitless": {
+-      "version": "0.7.4",
+-      "resolved": "https://registry.npmjs.org/@emotion/unitless/-/unitless-0.7.4.tgz",
+-      "integrity": "sha512-kBa+cDHOR9jpRJ+kcGMsysrls0leukrm68DmFQoMIWQcXdr2cZvyvypWuGYT7U+9kAExUE7+T7r6G3C3A6L8MQ=="
+-    },
+-    "@emotion/utils": {
+-      "version": "0.11.2",
+-      "resolved": "https://registry.npmjs.org/@emotion/utils/-/utils-0.11.2.tgz",
+-      "integrity": "sha512-UHX2XklLl3sIaP6oiMmlVzT0J+2ATTVpf0dHQVyPJHTkOITvXfaSqnRk6mdDhV9pR8T/tHc3cex78IKXssmzrA=="
+-    },
+-    "@emotion/weak-memoize": {
+-      "version": "0.2.4",
+-      "resolved": "https://registry.npmjs.org/@emotion/weak-memoize/-/weak-memoize-0.2.4.tgz",
+-      "integrity": "sha512-6PYY5DVdAY1ifaQW6XYTnOMihmBVT27elqSjEoodchsGjzYlEsTQMcEhSud99kVawatyTZRTiVkJ/c6lwbQ7nA=="
+-    },
+     "@eslint-community/eslint-utils": {
+       "version": "4.10.1",
+       "resolved": "https://registry.npmjs.org/@eslint-community/eslint-utils/-/eslint-utils-4.10.1.tgz",
+@@ -3112,11 +3059,6 @@
+       "resolved": "https://registry.npmjs.org/acorn-walk/-/acorn-walk-7.2.0.tgz",
+       "integrity": "sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA=="
+     },
+-    "add-px-to-style": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/add-px-to-style/-/add-px-to-style-1.0.0.tgz",
+-      "integrity": "sha1-0ME1RB+oAUqBN5BFMQlvZ/KPJjo="
+-    },
+     "address": {
+       "version": "1.2.2",
+       "resolved": "https://registry.npmjs.org/address/-/address-1.2.2.tgz",
+@@ -3432,11 +3374,27 @@
+       "integrity": "sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A=="
+     },
+     "axios": {
+-      "version": "0.21.2",
+-      "resolved": "https://registry.npmjs.org/axios/-/axios-0.21.2.tgz",
+-      "integrity": "sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==",
++      "version": "0.34.0",
++      "resolved": "https://registry.npmjs.org/axios/-/axios-0.34.0.tgz",
++      "integrity": "sha512-CkOmqy7BaT4VC9+wRUmSM3LVwCkKK3UYc7koEqIHWRpOTJypwdNctaVOgnOjhHP3599Ubq2K8KqYwfC7c8NdPQ==",
+       "requires": {
+-        "follow-redirects": "^1.14.0"
++        "follow-redirects": "^1.15.4",
++        "form-data": "^4.0.4",
++        "proxy-from-env": "^1.1.0"
++      },
++      "dependencies": {
++        "form-data": {
++          "version": "4.0.6",
++          "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.6.tgz",
++          "integrity": "sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==",
++          "requires": {
++            "asynckit": "^0.4.0",
++            "combined-stream": "^1.0.8",
++            "es-set-tostringtag": "^2.1.0",
++            "hasown": "^2.0.4",
++            "mime-types": "^2.1.35"
++          }
++        }
+       }
+     },
+     "axobject-query": {
+@@ -3482,23 +3440,6 @@
+         }
+       }
+     },
+-    "babel-plugin-emotion": {
+-      "version": "10.0.21",
+-      "resolved": "https://registry.npmjs.org/babel-plugin-emotion/-/babel-plugin-emotion-10.0.21.tgz",
+-      "integrity": "sha512-03o+T6sfVAJhNDcSdLapgv4IeewcFPzxlvBUVdSf7o5PI57ZSxoDvmy+ZulVWSu+rOWAWkEejNcsb29TuzJHbg==",
+-      "requires": {
+-        "@babel/helper-module-imports": "^7.0.0",
+-        "@emotion/hash": "0.7.3",
+-        "@emotion/memoize": "0.7.3",
+-        "@emotion/serialize": "^0.11.11",
+-        "babel-plugin-macros": "^2.0.0",
+-        "babel-plugin-syntax-jsx": "^6.18.0",
+-        "convert-source-map": "^1.5.0",
+-        "escape-string-regexp": "^1.0.5",
+-        "find-root": "^1.1.0",
+-        "source-map": "^0.5.7"
+-      }
+-    },
+     "babel-plugin-istanbul": {
+       "version": "6.1.1",
+       "resolved": "https://registry.npmjs.org/babel-plugin-istanbul/-/babel-plugin-istanbul-6.1.1.tgz",
+@@ -3522,16 +3463,6 @@
+         "@types/babel__traverse": "^7.0.6"
+       }
+     },
+-    "babel-plugin-macros": {
+-      "version": "2.6.1",
+-      "resolved": "https://registry.npmjs.org/babel-plugin-macros/-/babel-plugin-macros-2.6.1.tgz",
+-      "integrity": "sha512-6W2nwiXme6j1n2erPOnmRiWfObUhWH7Qw1LMi9XZy8cj+KtESu3T6asZvtk5bMQQjX8te35o7CFueiSdL/2NmQ==",
+-      "requires": {
+-        "@babel/runtime": "^7.4.2",
+-        "cosmiconfig": "^5.2.0",
+-        "resolve": "^1.10.0"
+-      }
+-    },
+     "babel-plugin-named-asset-import": {
+       "version": "0.3.8",
+       "resolved": "https://registry.npmjs.org/babel-plugin-named-asset-import/-/babel-plugin-named-asset-import-0.3.8.tgz",
+@@ -3572,11 +3503,6 @@
+         "@babel/helper-define-polyfill-provider": "^0.6.8"
+       }
+     },
+-    "babel-plugin-syntax-jsx": {
+-      "version": "6.18.0",
+-      "resolved": "https://registry.npmjs.org/babel-plugin-syntax-jsx/-/babel-plugin-syntax-jsx-6.18.0.tgz",
+-      "integrity": "sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY="
+-    },
+     "babel-plugin-transform-react-remove-prop-types": {
+       "version": "0.4.24",
+       "resolved": "https://registry.npmjs.org/babel-plugin-transform-react-remove-prop-types/-/babel-plugin-transform-react-remove-prop-types-0.4.24.tgz",
+@@ -3897,27 +3823,6 @@
+         "get-intrinsic": "^1.3.0"
+       }
+     },
+-    "caller-callsite": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/caller-callsite/-/caller-callsite-2.0.0.tgz",
+-      "integrity": "sha1-hH4PzgoiN1CpoCfFSzNzGtMVQTQ=",
+-      "requires": {
+-        "callsites": "^2.0.0"
+-      }
+-    },
+-    "caller-path": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/caller-path/-/caller-path-2.0.0.tgz",
+-      "integrity": "sha1-Ro+DBE42mrIBD6xfBs7uFbsssfQ=",
+-      "requires": {
+-        "caller-callsite": "^2.0.0"
+-      }
+-    },
+-    "callsites": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/callsites/-/callsites-2.0.0.tgz",
+-      "integrity": "sha1-BuuE8A7qQT2oav/vrL/7Ngk7PFA="
+-    },
+     "camel-case": {
+       "version": "4.1.2",
+       "resolved": "https://registry.npmjs.org/camel-case/-/camel-case-4.1.2.tgz",
+@@ -4320,33 +4225,6 @@
+       "resolved": "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz",
+       "integrity": "sha1-tf1UIgqivFq1eqtxQMlAdUUDwac="
+     },
+-    "cosmiconfig": {
+-      "version": "5.2.1",
+-      "resolved": "https://registry.npmjs.org/cosmiconfig/-/cosmiconfig-5.2.1.tgz",
+-      "integrity": "sha512-H65gsXo1SKjf8zmrJ67eJk8aIRKV5ff2D4uKZIBZShbhGSpEmsQOPW/SKMKYhSTrqR7ufy6RP69rPogdaPh/kA==",
+-      "requires": {
+-        "import-fresh": "^2.0.0",
+-        "is-directory": "^0.3.1",
+-        "js-yaml": "^3.13.1",
+-        "parse-json": "^4.0.0"
+-      }
+-    },
+-    "countup.js": {
+-      "version": "1.9.3",
+-      "resolved": "https://registry.npmjs.org/countup.js/-/countup.js-1.9.3.tgz",
+-      "integrity": "sha1-zj5QzXFgRB5HjwfaMYle3MDxyd0="
+-    },
+-    "create-emotion": {
+-      "version": "10.0.14",
+-      "resolved": "https://registry.npmjs.org/create-emotion/-/create-emotion-10.0.14.tgz",
+-      "integrity": "sha512-5G4naKMxokOur+94eDz7iPKBfwzy4wa/+0isnPhxXyosIQHBq7yvBy4jjdZw/nnRm7G3PM7P9Ug8mUmtoqcaHg==",
+-      "requires": {
+-        "@emotion/cache": "^10.0.14",
+-        "@emotion/serialize": "^0.11.8",
+-        "@emotion/sheet": "0.9.3",
+-        "@emotion/utils": "0.11.2"
+-      }
+-    },
+     "cross-spawn": {
+       "version": "7.0.6",
+       "resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
+@@ -4593,26 +4471,6 @@
+       "resolved": "https://registry.npmjs.org/d3/-/d3-3.5.17.tgz",
+       "integrity": "sha1-vEZ0gAQ3iyGjYMn8fPUjF5B2L7g="
+     },
+-    "d3-array": {
+-      "version": "1.2.4",
+-      "resolved": "https://registry.npmjs.org/d3-array/-/d3-array-1.2.4.tgz",
+-      "integrity": "sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw=="
+-    },
+-    "d3-collection": {
+-      "version": "1.0.7",
+-      "resolved": "https://registry.npmjs.org/d3-collection/-/d3-collection-1.0.7.tgz",
+-      "integrity": "sha512-ii0/r5f4sjKNTfh84Di+DpztYwqKhEyUlKoPrzUFfeSkWxjW49xU2QzO9qrPrNkpdI0XJkfzvmTu8V2Zylln6A=="
+-    },
+-    "d3-color": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/d3-color/-/d3-color-1.4.0.tgz",
+-      "integrity": "sha512-TzNPeJy2+iEepfiL92LAAB7fvnp/dV2YwANPVHdDWmYMm23qIJBYww3qT8I8C1wXrmrg4UWs7BKc2tKIgyjzHg=="
+-    },
+-    "d3-format": {
+-      "version": "1.4.1",
+-      "resolved": "https://registry.npmjs.org/d3-format/-/d3-format-1.4.1.tgz",
+-      "integrity": "sha512-TUswGe6hfguUX1CtKxyG2nymO+1lyThbkS1ifLX0Sr+dOQtAD5gkrffpHnx+yHNKUZ0Bmg5T4AjUQwugPDrm0g=="
+-    },
+     "d3-geo-projection": {
+       "version": "0.2.16",
+       "resolved": "https://registry.npmjs.org/d3-geo-projection/-/d3-geo-projection-0.2.16.tgz",
+@@ -4621,58 +4479,11 @@
+         "brfs": "^1.3.0"
+       }
+     },
+-    "d3-interpolate": {
+-      "version": "1.3.2",
+-      "resolved": "https://registry.npmjs.org/d3-interpolate/-/d3-interpolate-1.3.2.tgz",
+-      "integrity": "sha512-NlNKGopqaz9qM1PXh9gBF1KSCVh+jSFErrSlD/4hybwoNX/gt1d8CDbDW+3i+5UOHhjC6s6nMvRxcuoMVNgL2w==",
+-      "requires": {
+-        "d3-color": "1"
+-      }
+-    },
+-    "d3-path": {
+-      "version": "1.0.8",
+-      "resolved": "https://registry.npmjs.org/d3-path/-/d3-path-1.0.8.tgz",
+-      "integrity": "sha512-J6EfUNwcMQ+aM5YPOB8ZbgAZu6wc82f/0WFxrxwV6Ll8wBwLaHLKCqQ5Imub02JriCVVdPjgI+6P3a4EWJCxAg=="
+-    },
+     "d3-queue": {
+       "version": "2.0.3",
+       "resolved": "https://registry.npmjs.org/d3-queue/-/d3-queue-2.0.3.tgz",
+       "integrity": "sha1-B/vaOsrlNYqcUpmq+ICt8JU+0sI="
+     },
+-    "d3-scale": {
+-      "version": "2.2.2",
+-      "resolved": "https://registry.npmjs.org/d3-scale/-/d3-scale-2.2.2.tgz",
+-      "integrity": "sha512-LbeEvGgIb8UMcAa0EATLNX0lelKWGYDQiPdHj+gLblGVhGLyNbaCn3EvrJf0A3Y/uOOU5aD6MTh5ZFCdEwGiCw==",
+-      "requires": {
+-        "d3-array": "^1.2.0",
+-        "d3-collection": "1",
+-        "d3-format": "1",
+-        "d3-interpolate": "1",
+-        "d3-time": "1",
+-        "d3-time-format": "2"
+-      }
+-    },
+-    "d3-shape": {
+-      "version": "1.3.5",
+-      "resolved": "https://registry.npmjs.org/d3-shape/-/d3-shape-1.3.5.tgz",
+-      "integrity": "sha512-VKazVR3phgD+MUCldapHD7P9kcrvPcexeX/PkMJmkUov4JM8IxsSg1DvbYoYich9AtdTsa5nNk2++ImPiDiSxg==",
+-      "requires": {
+-        "d3-path": "1"
+-      }
+-    },
+-    "d3-time": {
+-      "version": "1.1.0",
+-      "resolved": "https://registry.npmjs.org/d3-time/-/d3-time-1.1.0.tgz",
+-      "integrity": "sha512-Xh0isrZ5rPYYdqhAVk8VLnMEidhz5aP7htAADH6MfzgmmicPkTo8LhkLxci61/lCB7n7UmE3bN0leRt+qvkLxA=="
+-    },
+-    "d3-time-format": {
+-      "version": "2.1.3",
+-      "resolved": "https://registry.npmjs.org/d3-time-format/-/d3-time-format-2.1.3.tgz",
+-      "integrity": "sha512-6k0a2rZryzGm5Ihx+aFMuO1GgelgIz+7HhB4PH4OEndD5q2zGn1mDfRdNrulspOfR6JXkb2sThhDK41CSK85QA==",
+-      "requires": {
+-        "d3-time": "1"
+-      }
+-    },
+     "damerau-levenshtein": {
+       "version": "1.0.8",
+       "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz",
+@@ -4740,11 +4551,6 @@
+       "resolved": "https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz",
+       "integrity": "sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg=="
+     },
+-    "decimal.js-light": {
+-      "version": "2.5.0",
+-      "resolved": "https://registry.npmjs.org/decimal.js-light/-/decimal.js-light-2.5.0.tgz",
+-      "integrity": "sha512-b3VJCbd2hwUpeRGG3Toob+CRo8W22xplipNhP3tN7TSVB/cyMX71P1vM2Xjc9H74uV6dS2hDDmo/rHq8L87Upg=="
+-    },
+     "dedent": {
+       "version": "0.7.0",
+       "resolved": "https://registry.npmjs.org/dedent/-/dedent-0.7.0.tgz",
+@@ -4894,24 +4700,6 @@
+         "utila": "~0.4"
+       }
+     },
+-    "dom-css": {
+-      "version": "2.1.0",
+-      "resolved": "https://registry.npmjs.org/dom-css/-/dom-css-2.1.0.tgz",
+-      "integrity": "sha1-/bwtWgFdCj4YcuEUcrvQ57nmogI=",
+-      "requires": {
+-        "add-px-to-style": "1.0.0",
+-        "prefix-style": "2.0.1",
+-        "to-camel-case": "1.0.0"
+-      }
+-    },
+-    "dom-helpers": {
+-      "version": "3.4.0",
+-      "resolved": "https://registry.npmjs.org/dom-helpers/-/dom-helpers-3.4.0.tgz",
+-      "integrity": "sha512-LnuPJ+dwqKDIyotW1VzmOZ5TONUN7CwkCR5hrgawTUbkBGYdeoNLZo6nNfGkCrjtE1nXXaj7iMMpDa8/d9WoIA==",
+-      "requires": {
+-        "@babel/runtime": "^7.1.2"
+-      }
+-    },
+     "dom-serializer": {
+       "version": "1.4.1",
+       "resolved": "https://registry.npmjs.org/dom-serializer/-/dom-serializer-1.4.1.tgz",
+@@ -5059,15 +4847,6 @@
+       "resolved": "https://registry.npmjs.org/emojis-list/-/emojis-list-3.0.0.tgz",
+       "integrity": "sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q=="
+     },
+-    "emotion": {
+-      "version": "10.0.17",
+-      "resolved": "https://registry.npmjs.org/emotion/-/emotion-10.0.17.tgz",
+-      "integrity": "sha512-nShD/a7PKZ77hr517KfzKkHo1v26uPJBImRiYrl8IwIA4KRmI3vxVEA5pzw1TQTXD1iZl6YQtWhjOiiE+QPmTQ==",
+-      "requires": {
+-        "babel-plugin-emotion": "^10.0.17",
+-        "create-emotion": "^10.0.14"
+-      }
+-    },
+     "encodeurl": {
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/encodeurl/-/encodeurl-2.0.0.tgz",
+@@ -6076,11 +5855,6 @@
+         "pkg-dir": "^4.1.0"
+       }
+     },
+-    "find-root": {
+-      "version": "1.1.0",
+-      "resolved": "https://registry.npmjs.org/find-root/-/find-root-1.1.0.tgz",
+-      "integrity": "sha512-NKfW6bec6GfKc0SGx1e07QZY9PE99u0Bft/0rzSD5k3sO/vwkVUpDUKVm5Gpp5Ue3YfShPFTX2070tDs5kB9Ng=="
+-    },
+     "find-up": {
+       "version": "4.1.0",
+       "resolved": "https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz",
+@@ -6525,17 +6299,6 @@
+       "resolved": "https://registry.npmjs.org/he/-/he-1.2.0.tgz",
+       "integrity": "sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw=="
+     },
+-    "highcharts": {
+-      "version": "7.2.0",
+-      "resolved": "https://registry.npmjs.org/highcharts/-/highcharts-7.2.0.tgz",
+-      "integrity": "sha512-jOlMzj3oRuqNBoJg+rqHZI9vnlLHipwVfceJr00gAreXu8268UwahEh7yBGI/m1wa6Uc/XoBMIuzMpXUFMvFdg=="
+-    },
+-    "highcharts-react-official": {
+-      "version": "2.2.2",
+-      "resolved": "https://registry.npmjs.org/highcharts-react-official/-/highcharts-react-official-2.2.2.tgz",
+-      "integrity": "sha512-Xj9JOOL20Vmbl8gjgF2jN89Fx5zqbonjaK6SqwiM4vCjC/ZwtwXEquk+LkymzIVcd4H9Wb/9ASKhBJn5fNtN4g==",
+-      "requires": {}
+-    },
+     "hoist-non-react-statics": {
+       "version": "3.3.0",
+       "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.0.tgz",
+@@ -6749,15 +6512,6 @@
+       "resolved": "https://registry.npmjs.org/immer/-/immer-9.0.21.tgz",
+       "integrity": "sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA=="
+     },
+-    "import-fresh": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/import-fresh/-/import-fresh-2.0.0.tgz",
+-      "integrity": "sha1-2BNVwVYS04bGH53dOSLUMEgipUY=",
+-      "requires": {
+-        "caller-path": "^2.0.0",
+-        "resolve-from": "^3.0.0"
+-      }
+-    },
+     "import-local": {
+       "version": "3.2.0",
+       "resolved": "https://registry.npmjs.org/import-local/-/import-local-3.2.0.tgz",
+@@ -6898,11 +6652,6 @@
+         "has-tostringtag": "^1.0.2"
+       }
+     },
+-    "is-directory": {
+-      "version": "0.3.1",
+-      "resolved": "https://registry.npmjs.org/is-directory/-/is-directory-0.3.1.tgz",
+-      "integrity": "sha1-YTObbyR1/Hcv2cnYP1yFddwVSuE="
+-    },
+     "is-docker": {
+       "version": "2.2.1",
+       "resolved": "https://registry.npmjs.org/is-docker/-/is-docker-2.2.1.tgz",
+@@ -7939,11 +7688,6 @@
+       "resolved": "https://registry.npmjs.org/json-buffer/-/json-buffer-3.0.1.tgz",
+       "integrity": "sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ=="
+     },
+-    "json-parse-better-errors": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz",
+-      "integrity": "sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw=="
+-    },
+     "json-parse-even-better-errors": {
+       "version": "2.3.1",
+       "resolved": "https://registry.npmjs.org/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz",
+@@ -8180,11 +7924,6 @@
+       "resolved": "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz",
+       "integrity": "sha1-gteb/zCmfEAF/9XiUVMArZyk168="
+     },
+-    "lodash.isequal": {
+-      "version": "4.5.0",
+-      "resolved": "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz",
+-      "integrity": "sha1-QVxEePK8wwEgwizhDtMib30+GOA="
+-    },
+     "lodash.memoize": {
+       "version": "4.1.2",
+       "resolved": "https://registry.npmjs.org/lodash.memoize/-/lodash.memoize-4.1.2.tgz",
+@@ -8195,11 +7934,6 @@
+       "resolved": "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz",
+       "integrity": "sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ=="
+     },
+-    "lodash.throttle": {
+-      "version": "4.1.1",
+-      "resolved": "https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz",
+-      "integrity": "sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ="
+-    },
+     "lodash.uniq": {
+       "version": "4.5.0",
+       "resolved": "https://registry.npmjs.org/lodash.uniq/-/lodash.uniq-4.5.0.tgz",
+@@ -8260,11 +7994,6 @@
+         "tmpl": "1.0.5"
+       }
+     },
+-    "math-expression-evaluator": {
+-      "version": "1.2.17",
+-      "resolved": "https://registry.npmjs.org/math-expression-evaluator/-/math-expression-evaluator-1.2.17.tgz",
+-      "integrity": "sha1-3oGf282E3M2PrlnGrreWFbnSZqw="
+-    },
+     "math-intrinsics": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
+@@ -8418,11 +8147,6 @@
+         "thenify-all": "^1.0.0"
+       }
+     },
+-    "nan": {
+-      "version": "2.14.0",
+-      "resolved": "https://registry.npmjs.org/nan/-/nan-2.14.0.tgz",
+-      "integrity": "sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg=="
+-    },
+     "nanoid": {
+       "version": "3.3.19",
+       "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.19.tgz",
+@@ -8738,15 +8462,6 @@
+         }
+       }
+     },
+-    "parse-json": {
+-      "version": "4.0.0",
+-      "resolved": "https://registry.npmjs.org/parse-json/-/parse-json-4.0.0.tgz",
+-      "integrity": "sha1-vjX1Qlvh9/bHRxhPmKeIy5lHfuA=",
+-      "requires": {
+-        "error-ex": "^1.3.1",
+-        "json-parse-better-errors": "^1.0.1"
+-      }
+-    },
+     "parse5": {
+       "version": "6.0.1",
+       "resolved": "https://registry.npmjs.org/parse5/-/parse5-6.0.1.tgz",
+@@ -9585,11 +9300,6 @@
+       "resolved": "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz",
+       "integrity": "sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ=="
+     },
+-    "prefix-style": {
+-      "version": "2.0.1",
+-      "resolved": "https://registry.npmjs.org/prefix-style/-/prefix-style-2.0.1.tgz",
+-      "integrity": "sha1-ZrupqHDP2jCKXcIOhekSCTLJWgY="
+-    },
+     "prelude-ls": {
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz",
+@@ -9688,6 +9398,11 @@
+         }
+       }
+     },
++    "proxy-from-env": {
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz",
++      "integrity": "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="
++    },
+     "psl": {
+       "version": "1.15.0",
+       "resolved": "https://registry.npmjs.org/psl/-/psl-1.15.0.tgz",
+@@ -9840,41 +9555,12 @@
+         }
+       }
+     },
+-    "react-countdown-now": {
+-      "version": "2.1.1",
+-      "resolved": "https://registry.npmjs.org/react-countdown-now/-/react-countdown-now-2.1.1.tgz",
+-      "integrity": "sha512-DGSd/EGzigIsixQNzPQbk376zG49IVAyMCUkMgDEuIXlIRKQwB44Fg8uA3zrZ+aQVAuzsyb6fJWskPxIP56DYg==",
+-      "requires": {
+-        "lodash.isequal": "^4.5.0",
+-        "prop-types": "^15.7.2"
+-      }
+-    },
+     "react-country-flag": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/react-country-flag/-/react-country-flag-1.1.0.tgz",
+       "integrity": "sha512-Z6LW4U+qeH0X0d1o02aZUevRyk5Z4ZQmp1ResWkh/4z6kvjBqg9otYyxBAUtvElpgfQiP61cSZ2/XZ+pLjBPDw==",
+       "requires": {}
+     },
+-    "react-countup": {
+-      "version": "4.2.2",
+-      "resolved": "https://registry.npmjs.org/react-countup/-/react-countup-4.2.2.tgz",
+-      "integrity": "sha512-6mTJiXDt/x/K5odlKL2mAbQLYQLT9PyqmLcmLO6iCxeGy8yfcaRZTKw9BuzCR6qSHNsR6uzLAyJh6kjf0HvhcQ==",
+-      "requires": {
+-        "countup.js": "^1.9.3",
+-        "prop-types": "^15.6.2",
+-        "warning": "^4.0.2"
+-      }
+-    },
+-    "react-custom-scrollbars": {
+-      "version": "4.2.1",
+-      "resolved": "https://registry.npmjs.org/react-custom-scrollbars/-/react-custom-scrollbars-4.2.1.tgz",
+-      "integrity": "sha1-gw/ZUCkn6X6KeMIIaBOJmyqLZts=",
+-      "requires": {
+-        "dom-css": "^2.0.0",
+-        "prop-types": "^15.5.10",
+-        "raf": "^3.1.0"
+-      }
+-    },
+     "react-datamaps": {
+       "version": "0.4.1",
+       "resolved": "https://registry.npmjs.org/react-datamaps/-/react-datamaps-0.4.1.tgz",
+@@ -9976,38 +9662,16 @@
+       "resolved": "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.1.0.tgz",
+       "integrity": "sha512-SN/U6Ytxf1QGkw/9ve5Y+NxBbZM6Ht95tuXNMKs8EJyFa/Vy/+Co3stop3KBHARfn/giv+Lj1uUnTfOJ3moFEQ=="
+     },
+-    "react-fontawesome": {
+-      "version": "1.6.1",
+-      "resolved": "https://registry.npmjs.org/react-fontawesome/-/react-fontawesome-1.6.1.tgz",
+-      "integrity": "sha1-7dzhfn3HMaoJ/UoYZoimF5OhbFw=",
+-      "requires": {
+-        "prop-types": "^15.5.6"
+-      }
+-    },
+     "react-is": {
+       "version": "16.13.1",
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
+       "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
+     },
+-    "react-lazyload": {
+-      "version": "2.6.2",
+-      "resolved": "https://registry.npmjs.org/react-lazyload/-/react-lazyload-2.6.2.tgz",
+-      "integrity": "sha512-zbFiwI3H7W0/Qvb6T/ew2NiGe2wj+soYNW7vv5Dte1eZuJDvvyUOHo8GpYfEeWoP5x4Rree2Hwop+lCISalBwg==",
+-      "requires": {}
+-    },
+     "react-lifecycles-compat": {
+       "version": "3.0.4",
+       "resolved": "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz",
+       "integrity": "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
+     },
+-    "react-loading-skeleton": {
+-      "version": "1.2.0",
+-      "resolved": "https://registry.npmjs.org/react-loading-skeleton/-/react-loading-skeleton-1.2.0.tgz",
+-      "integrity": "sha512-peOUoseJtud1PXHu8maxsWA+ljH04IyW+UNNlGrAzUR9XzJ+w3OyAICP8qWv0FX0ae4UNenUknJWfrY50TTrTw==",
+-      "requires": {
+-        "emotion": "^10.0.17"
+-      }
+-    },
+     "react-number-format": {
+       "version": "4.3.0",
+       "resolved": "https://registry.npmjs.org/react-number-format/-/react-number-format-4.3.0.tgz",
+@@ -10052,25 +9716,6 @@
+       "resolved": "https://registry.npmjs.org/react-refresh/-/react-refresh-0.11.0.tgz",
+       "integrity": "sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A=="
+     },
+-    "react-resize-detector": {
+-      "version": "2.3.0",
+-      "resolved": "https://registry.npmjs.org/react-resize-detector/-/react-resize-detector-2.3.0.tgz",
+-      "integrity": "sha512-oCAddEWWeFWYH5FAcHdBYcZjAw9fMzRUK9sWSx6WvSSOPVRxcHd5zTIGy/mOus+AhN/u6T4TMiWxvq79PywnJQ==",
+-      "requires": {
+-        "lodash.debounce": "^4.0.8",
+-        "lodash.throttle": "^4.1.1",
+-        "prop-types": "^15.6.0",
+-        "resize-observer-polyfill": "^1.5.0"
+-      }
+-    },
+-    "react-reveal": {
+-      "version": "1.2.2",
+-      "resolved": "https://registry.npmjs.org/react-reveal/-/react-reveal-1.2.2.tgz",
+-      "integrity": "sha512-JCv3fAoU6Z+Lcd8U48bwzm4pMZ79qsedSXYwpwt6lJNtj/v5nKJYZZbw3yhaQPPgYePo3Y0NOCoYOq/jcsisuw==",
+-      "requires": {
+-        "prop-types": "^15.5.10"
+-      }
+-    },
+     "react-scripts": {
+       "version": "5.0.1",
+       "resolved": "https://registry.npmjs.org/react-scripts/-/react-scripts-5.0.1.tgz",
+@@ -10126,69 +9771,12 @@
+         "workbox-webpack-plugin": "^6.4.1"
+       }
+     },
+-    "react-smooth": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/react-smooth/-/react-smooth-1.0.2.tgz",
+-      "integrity": "sha512-pIGzL1g9VGAsRsdZQokIK0vrCkcdKtnOnS1gyB2rrowdLy69lNSWoIjCTWAfgbiYvria8tm5hEZqj+jwXMkV4A==",
+-      "requires": {
+-        "lodash": "~4.17.4",
+-        "prop-types": "^15.6.0",
+-        "raf": "^3.4.0",
+-        "react-transition-group": "^2.5.0"
+-      },
+-      "dependencies": {
+-        "react-transition-group": {
+-          "version": "2.9.0",
+-          "resolved": "https://registry.npmjs.org/react-transition-group/-/react-transition-group-2.9.0.tgz",
+-          "integrity": "sha512-+HzNTCHpeQyl4MJ/bdE0u6XRMe9+XG/+aL4mCxVN4DnPBQ0/5bfHWPDuOZUzYdMj94daZaZdCCc1Dzt9R/xSSg==",
+-          "requires": {
+-            "dom-helpers": "^3.4.0",
+-            "loose-envify": "^1.4.0",
+-            "prop-types": "^15.6.2",
+-            "react-lifecycles-compat": "^3.0.4"
+-          }
+-        }
+-      }
+-    },
+     "react-timeago": {
+       "version": "4.4.0",
+       "resolved": "https://registry.npmjs.org/react-timeago/-/react-timeago-4.4.0.tgz",
+       "integrity": "sha512-Zj8RchTqZEH27LAANemzMR2RpotbP2aMd+UIajfYMZ9KW4dMcViUVKzC7YmqfiqlFfz8B0bjDw2xUBjmcxDngA==",
+       "requires": {}
+     },
+-    "react-toastify": {
+-      "version": "5.4.0",
+-      "resolved": "https://registry.npmjs.org/react-toastify/-/react-toastify-5.4.0.tgz",
+-      "integrity": "sha512-0cdPq1gyxAcYu0KiDPOYp9nNiqIFDWoi7nyoaSw496DElUnNlcjhc7Aduz8CXrGTRugvjuXd3eplUvFaCeQMNA==",
+-      "requires": {
+-        "@babel/runtime": "^7.4.2",
+-        "classnames": "^2.2.6",
+-        "prop-types": "^15.7.2",
+-        "react-transition-group": "^2.6.1"
+-      },
+-      "dependencies": {
+-        "react-transition-group": {
+-          "version": "2.9.0",
+-          "resolved": "https://registry.npmjs.org/react-transition-group/-/react-transition-group-2.9.0.tgz",
+-          "integrity": "sha512-+HzNTCHpeQyl4MJ/bdE0u6XRMe9+XG/+aL4mCxVN4DnPBQ0/5bfHWPDuOZUzYdMj94daZaZdCCc1Dzt9R/xSSg==",
+-          "requires": {
+-            "dom-helpers": "^3.4.0",
+-            "loose-envify": "^1.4.0",
+-            "prop-types": "^15.6.2",
+-            "react-lifecycles-compat": "^3.0.4"
+-          }
+-        }
+-      }
+-    },
+-    "react-tooltip": {
+-      "version": "3.11.1",
+-      "resolved": "https://registry.npmjs.org/react-tooltip/-/react-tooltip-3.11.1.tgz",
+-      "integrity": "sha512-YCMVlEC2KuHIzOQhPplTK5jmBBwoL+PYJJdJKXj7M/h7oevupd/QSVq6z5U7/ehIGXyHsAqvwpdxexDfyQ0o3A==",
+-      "requires": {
+-        "classnames": "^2.2.5",
+-        "prop-types": "^15.6.0"
+-      }
+-    },
+     "react-transition-group": {
+       "version": "4.4.5",
+       "resolved": "https://registry.npmjs.org/react-transition-group/-/react-transition-group-4.4.5.tgz",
+@@ -10234,39 +9822,6 @@
+         "picomatch": "^2.2.1"
+       }
+     },
+-    "recharts": {
+-      "version": "1.7.1",
+-      "resolved": "https://registry.npmjs.org/recharts/-/recharts-1.7.1.tgz",
+-      "integrity": "sha512-i4vK/ZSICr+dXGmaijuNybc+xhctiX0464xnqauY+OvE6WvU5v+0GYciQvD/HJSObkKG4wY8aRtiuUL9YtXnHQ==",
+-      "requires": {
+-        "classnames": "^2.2.5",
+-        "core-js": "^2.5.1",
+-        "d3-interpolate": "^1.3.0",
+-        "d3-scale": "^2.1.0",
+-        "d3-shape": "^1.2.0",
+-        "lodash": "^4.17.5",
+-        "prop-types": "^15.6.0",
+-        "react-resize-detector": "^2.3.0",
+-        "react-smooth": "^1.0.0",
+-        "recharts-scale": "^0.4.2",
+-        "reduce-css-calc": "^1.3.0"
+-      },
+-      "dependencies": {
+-        "core-js": {
+-          "version": "2.6.9",
+-          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz",
+-          "integrity": "sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A=="
+-        }
+-      }
+-    },
+-    "recharts-scale": {
+-      "version": "0.4.2",
+-      "resolved": "https://registry.npmjs.org/recharts-scale/-/recharts-scale-0.4.2.tgz",
+-      "integrity": "sha512-p/cKt7j17D1CImLgX2f5+6IXLbRHGUQkogIp06VUoci/XkhOQiGSzUrsD1uRmiI7jha4u8XNFOjkHkzzBPivMg==",
+-      "requires": {
+-        "decimal.js-light": "^2.4.1"
+-      }
+-    },
+     "recursive-readdir": {
+       "version": "2.2.3",
+       "resolved": "https://registry.npmjs.org/recursive-readdir/-/recursive-readdir-2.2.3.tgz",
+@@ -10275,31 +9830,6 @@
+         "minimatch": "^3.0.5"
+       }
+     },
+-    "reduce-css-calc": {
+-      "version": "1.3.0",
+-      "resolved": "https://registry.npmjs.org/reduce-css-calc/-/reduce-css-calc-1.3.0.tgz",
+-      "integrity": "sha1-dHyRTgSWFKTJz7umKYca0dKSdxY=",
+-      "requires": {
+-        "balanced-match": "^0.4.2",
+-        "math-expression-evaluator": "^1.2.14",
+-        "reduce-function-call": "^1.0.1"
+-      },
+-      "dependencies": {
+-        "balanced-match": {
+-          "version": "0.4.2",
+-          "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-0.4.2.tgz",
+-          "integrity": "sha1-yz8+PHMtwPAe5wtAPzAuYddwmDg="
+-        }
+-      }
+-    },
+-    "reduce-function-call": {
+-      "version": "1.0.3",
+-      "resolved": "https://registry.npmjs.org/reduce-function-call/-/reduce-function-call-1.0.3.tgz",
+-      "integrity": "sha512-Hl/tuV2VDgWgCSEeWMLwxLZqX7OK59eU1guxXsRKTAyeYimivsKdtcV4fu3r710tpG5GmDKDhQ0HSZLExnNmyQ==",
+-      "requires": {
+-        "balanced-match": "^1.0.0"
+-      }
+-    },
+     "reflect.getprototypeof": {
+       "version": "1.0.10",
+       "resolved": "https://registry.npmjs.org/reflect.getprototypeof/-/reflect.getprototypeof-1.0.10.tgz",
+@@ -10409,11 +9939,6 @@
+       "resolved": "https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz",
+       "integrity": "sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ=="
+     },
+-    "resize-observer-polyfill": {
+-      "version": "1.5.1",
+-      "resolved": "https://registry.npmjs.org/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz",
+-      "integrity": "sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg=="
+-    },
+     "resolve": {
+       "version": "1.22.12",
+       "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.22.12.tgz",
+@@ -10440,11 +9965,6 @@
+         }
+       }
+     },
+-    "resolve-from": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/resolve-from/-/resolve-from-3.0.0.tgz",
+-      "integrity": "sha1-six699nWiBvItuZTM17rywoYh0g="
+-    },
+     "resolve-url-loader": {
+       "version": "4.0.0",
+       "resolved": "https://registry.npmjs.org/resolve-url-loader/-/resolve-url-loader-4.0.0.tgz",
+@@ -11734,19 +11254,6 @@
+       "resolved": "https://registry.npmjs.org/tmpl/-/tmpl-1.0.5.tgz",
+       "integrity": "sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw=="
+     },
+-    "to-camel-case": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/to-camel-case/-/to-camel-case-1.0.0.tgz",
+-      "integrity": "sha1-GlYFSy+daWKYzmamCJcyK29CPkY=",
+-      "requires": {
+-        "to-space-case": "^1.0.0"
+-      }
+-    },
+-    "to-no-case": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/to-no-case/-/to-no-case-1.0.2.tgz",
+-      "integrity": "sha1-xyKQcWTvaxeBMsjmmTAhLRtKoWo="
+-    },
+     "to-regex-range": {
+       "version": "5.0.1",
+       "resolved": "https://registry.npmjs.org/to-regex-range/-/to-regex-range-5.0.1.tgz",
+@@ -11755,14 +11262,6 @@
+         "is-number": "^7.0.0"
+       }
+     },
+-    "to-space-case": {
+-      "version": "1.0.0",
+-      "resolved": "https://registry.npmjs.org/to-space-case/-/to-space-case-1.0.0.tgz",
+-      "integrity": "sha1-sFLar7Gysp3HcM6gFj5ewOvJ/Bc=",
+-      "requires": {
+-        "to-no-case": "^1.0.0"
+-      }
+-    },
+     "toidentifier": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz",
+@@ -12333,32 +11832,6 @@
+       "resolved": "https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.6.0.tgz",
+       "integrity": "sha512-EIMmPVvNI0CYXyRPp34F2Qk7W37/BZVZIofS6LAUnrNjCVahS+hO4mxwFJDjQjODTGZDtVzLYoN2+1dYkhk9qA=="
+     },
+-    "websocket": {
+-      "version": "1.0.30",
+-      "resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.30.tgz",
+-      "integrity": "sha512-aO6klgaTdSMkhfl5VVJzD5fm+Srhh5jLYbS15+OiI1sN6h/RU/XW6WN9J1uVIpUKNmsTvT3Hs35XAFjn9NMfOw==",
+-      "requires": {
+-        "debug": "^2.2.0",
+-        "nan": "^2.14.0",
+-        "typedarray-to-buffer": "^3.1.5",
+-        "yaeti": "^0.0.6"
+-      },
+-      "dependencies": {
+-        "debug": {
+-          "version": "2.6.9",
+-          "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+-          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+-          "requires": {
+-            "ms": "2.0.0"
+-          }
+-        },
+-        "ms": {
+-          "version": "2.0.0",
+-          "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+-          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
+-        }
+-      }
+-    },
+     "websocket-driver": {
+       "version": "0.7.5",
+       "resolved": "https://registry.npmjs.org/websocket-driver/-/websocket-driver-0.7.5.tgz",
+@@ -12789,11 +12262,6 @@
+       "resolved": "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz",
+       "integrity": "sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA=="
+     },
+-    "yaeti": {
+-      "version": "0.0.6",
+-      "resolved": "https://registry.npmjs.org/yaeti/-/yaeti-0.0.6.tgz",
+-      "integrity": "sha1-8m9ITXJoTPQr7ft2lwqhYI+/lXc="
+-    },
+     "yallist": {
+       "version": "3.1.1",
+       "resolved": "https://registry.npmjs.org/yallist/-/yallist-3.1.1.tgz",
+diff --git a/react-frontend/package.json b/react-frontend/package.json
+index bb167d3..8a9e122 100644
+--- a/react-frontend/package.json
++++ b/react-frontend/package.json
+@@ -4,29 +4,16 @@
+   "private": true,
+   "dependencies": {
+     "@material-ui/core": "^4.5.1",
+-    "axios": "^0.21.2",
+-    "highcharts": "^7.2.0",
+-    "highcharts-react-official": "^2.2.2",
++    "axios": "0.34.0",
+     "prop-types": "^15.7.2",
+     "react": "^16.10.2",
+     "react-bootstrap": "1.6.8",
+-    "react-countdown-now": "^2.1.1",
+     "react-country-flag": "^1.1.0",
+-    "react-countup": "^4.2.2",
+-    "react-custom-scrollbars": "^4.2.1",
+     "react-datamaps": "^0.4.1",
+     "react-dom": "^16.10.2",
+-    "react-fontawesome": "^1.6.1",
+-    "react-lazyload": "^2.6.2",
+-    "react-loading-skeleton": "^1.2.0",
+     "react-number-format": "^4.3.0",
+-    "react-reveal": "^1.2.2",
+     "react-scripts": "5.0.1",
+-    "react-timeago": "^4.4.0",
+-    "react-toastify": "^5.4.0",
+-    "react-tooltip": "^3.11.1",
+-    "recharts": "^1.7.1",
+-    "websocket": "^1.0.30"
++    "react-timeago": "^4.4.0"
+   },
+   "scripts": {
+     "start": "react-scripts start",
+@@ -48,5 +35,8 @@
+       "last 1 firefox version",
+       "last 1 safari version"
+     ]
++  },
++  "engines": {
++    "node": ">=24.0.0"
+   }
+ }

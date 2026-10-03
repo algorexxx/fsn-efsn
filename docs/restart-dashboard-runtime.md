@@ -154,12 +154,21 @@ audit reports zero known advisories. Earlier counts describe earlier trees.
 The backend requires Node >=24 and passes a clean Linux Node 24.21.0/npm 10.9.0
 installation with engine checks enforced and lifecycle scripts disabled.
 
+The [frontend update](restart-dashboard-frontend.md) now pins Axios 0.34.0,
+removes thirteen unused direct packages and replaces the Foundation deployment
+workflow with validation only. A clean Linux install, eight React DOM tests,
+CI build, nine compiled-browser checkpoints and native WSS/browser acceptance
+pass. The frontend audit falls from 76 to 73; none of its remaining affected
+names appears in the production source maps. Build-tool review remains open.
+
 ## Work order and exit condition
 
-1. Update the browser HTTP client and review the build-only dependency set;
-   rebuild and check the actual compiled browser. Freeze the final Node/npm
-   package matrix, replacing the obsolete deployment workflow. Retest the
-   combined clean installation, including the frontend.
+1. Resolve the remaining frontend build-tool findings and supported build/test
+   matrix. Review maintenance of the used UI libraries separately. Preserve
+   the tested browser behavior, then repeat clean installation and combined
+   acceptance. The new validation workflow has not run on GitHub yet.
+   Include the legacy map dependency tree's Acorn path; a CRA replacement
+   alone does not clear every installed dependency path.
 2. Finish GeoIP dataset selection, applicable terms/attribution, protected
    updates, failure/recovery and refresh/deletion operations. The package
    update does not establish data freshness or accept its download workflow.
