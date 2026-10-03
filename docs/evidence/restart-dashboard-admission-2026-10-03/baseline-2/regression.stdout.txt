@@ -1,0 +1,768 @@
+TAP version 13
+# Subtest: registration projects the native metadata fields and collector identity before collection
+not ok 1 - registration projects the native metadata fields and collector identity before collection
+  ---
+  duration_ms: 10.2635
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\metadata-admission.test.cjs:6:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      {
+        api: 'No',
+        canUpdateHistory: true,
+        client: '0.1.1',
+    +   extension: {
+    +     notes: 'unused'
+    +   },
+    +   ip: 'reported-ip',
+        name: 'node-a',
+    ...
+        port: 30303,
+        protocol: 'efsn/66'
+      }
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    name: 'node-a'
+    node: 'efsn-test'
+    port: 30303
+    net: '99032659'
+    protocol: 'efsn/66'
+    api: 'No'
+    os: 'linux'
+    os_v: 'amd64'
+    client: '0.1.1'
+    canUpdateHistory: true
+  actual:
+    name: 'node-a'
+    node: 'efsn-test'
+    port: 30303
+    net: '99032659'
+    protocol: 'efsn/66'
+    api: 'No'
+    os: 'linux'
+    os_v: 'amd64'
+    client: '0.1.1'
+    canUpdateHistory: true
+    ip: 'reported-ip'
+    extension:
+      notes: 'unused'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\metadata-admission.test.cjs:13:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.start (node:internal/test_runner/test:833:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: registration rejects missing or malformed native fields before reserving the identity
+not ok 2 - registration rejects missing or malformed native fields before reserving the identity
+  ---
+  duration_ms: 35.2911
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\metadata-admission.test.cjs:18:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      [
+        {
+    +     before: [
+    +       'add'
+    +     ],
+    +     next: [],
+    +     rejected: false
+    +   },
+    +   {
+    +     before: [
+    +       'add'
+    +     ],
+    +     next: [],
+    +     rejected: false
+    +   },
+    +   {
+    +     before: [
+    +       'add'
+    -     before: [],
+    -     next: [
+    -       {
+    -         data: undefined,
+    -         name: 'ready'
+    -       }
+    -     ],
+    -     rejected: true
+    -   },
+    -   {
+    -     before: [],
+    -     next: [
+    -       {
+    -         data: undefined,
+    -         name: 'ready'
+    -       }
+          ],
+    +     next: [],
+    +     rejected: false
+    +   },
+    +   {
+    +     before: [
+    +       'add'
+    +     ],
+    +     next: [],
+    ...
+    -     rejected: true
+    -   },
+    -   {
+    -     before: [],
+    -     next: [
+    -       {
+    -         data: undefined,
+    -         name: 'ready'
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    1:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    2:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    3:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    4:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    5:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    6:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    7:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    8:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    9:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    10:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+    11:
+      rejected: true
+      before:
+      next:
+        0:
+          name: 'ready'
+  actual:
+    0:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    1:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    2:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    3:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    4:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    5:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    6:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    7:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    8:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    9:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    10:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+    11:
+      rejected: false
+      before:
+        0: 'add'
+      next:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\metadata-admission.test.cjs:31:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: registration accounts for UTF-8 and JSON escaping within its serialized metadata budget
+not ok 3 - registration accounts for UTF-8 and JSON escaping within its serialized metadata budget
+  ---
+  duration_ms: 9.0383
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\metadata-admission.test.cjs:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      [
+        {
+    +     calls: [
+    +       {
+    +         data: {
+    +           id: 'node-a',
+    +           info: {
+    +             api: 'No',
+    +             canUpdateHistory: true,
+    +             client: '0.1.1',
+    +             name: 'node-a',
+    +             net: '99032659',
+    +             node: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    +             os: 'linux',
+    +             os_v: 'amd64',
+    +             port: 30303,
+    +             protocol: 'efsn/66'
+    +           },
+    +           ip: '127.0.0.1',
+    +           latency: 0,
+    +           spark: 'session-a'
+    +         },
+    +         id: 'node-a',
+    +         method: 'add',
+    +         spark: 'session-a'
+    +       }
+    +     ],
+    +     emitted: [
+    +       {
+    +         data: undefined,
+    +         name: 'ready'
+    +       }
+    +     ],
+    +     ended: false
+    +   },
+    +   {
+    +     calls: [
+    +       {
+    ...
+    -     calls: [],
+    -     emitted: [],
+    -     ended: true
+    -   },
+    -   {
+    -     calls: [],
+    -     emitted: [],
+    -     ended: true
+    -   },
+    -   {
+    -     calls: [],
+    -     emitted: [],
+    -     ended: true
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      ended: true
+      calls:
+      emitted:
+    1: <Circular>
+    2: <Circular>
+  actual:
+    0:
+      ended: false
+      calls:
+        0:
+          method: 'add'
+          id: 'node-a'
+          spark: 'session-a'
+          data:
+            id: 'node-a'
+            info:
+              name: 'node-a'
+              node: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+              port: 30303
+              net: '99032659'
+              protocol: 'efsn/66'
+              api: 'No'
+              os: 'linux'
+              os_v: 'amd64'
+              client: '0.1.1'
+              canUpdateHistory: true
+            ip: '127.0.0.1'
+            spark: 'session-a'
+            latency: 0
+      emitted:
+        0:
+          name: 'ready'
+    1:
+      ended: false
+      calls:
+        0:
+          method: 'add'
+          id: 'node-a'
+          spark: 'session-a'
+          data:
+            id: 'node-a'
+            info:
+              name: 'node-a'
+              node: 'åååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååå'
+              port: 30303
+              net: '99032659'
+              protocol: 'efsn/66'
+              api: 'No'
+              os: 'linux'
+              os_v: 'amd64'
+              client: '0.1.1'
+              canUpdateHistory: true
+            ip: '127.0.0.1'
+            spark: 'session-a'
+            latency: 0
+      emitted:
+        0:
+          name: 'ready'
+    2:
+      ended: false
+      calls:
+        0:
+          method: 'add'
+          id: 'node-a'
+          spark: 'session-a'
+          data:
+            id: 'node-a'
+            info:
+              name: 'node-a'
+              node: '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+              port: 30303
+              net: '99032659'
+              protocol: 'efsn/66'
+              api: 'No'
+              os: 'linux'
+              os_v: 'amd64'
+              client: '0.1.1'
+              canUpdateHistory: true
+            ip: '127.0.0.1'
+            spark: 'session-a'
+            latency: 0
+      emitted:
+        0:
+          name: 'ready'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\metadata-admission.test.cjs:42:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: registration accepts the exact serialized metadata boundary and rejects one byte beyond
+not ok 4 - registration accepts the exact serialized metadata boundary and rejects one byte beyond
+  ---
+  duration_ms: 5.3538
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\metadata-admission.test.cjs:45:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      [
+        {
+    ...
+        },
+        {
+    +     ended: false,
+    +     registered: 1
+    -     ended: true,
+    -     registered: 0
+        }
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      ended: false
+      registered: 1
+    1:
+      ended: true
+      registered: 0
+  actual:
+    0:
+      ended: false
+      registered: 1
+    1:
+      ended: false
+      registered: 1
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\metadata-admission.test.cjs:56:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: native efsn timestamp strings and the exact ping boundary are echoed unchanged
+ok 5 - native efsn timestamp strings and the exact ping boundary are echoed unchanged
+  ---
+  duration_ms: 11.2278
+  ...
+# Subtest: invalid ping values end the telemetry session without echoing their contents
+not ok 6 - invalid ping values end the telemetry session without echoing their contents
+  ---
+  duration_ms: 23.3147
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\metadata-admission.test.cjs:73:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+      [
+        {
+    +     calls: [],
+    +     emitted: [
+    +       {
+    +         data: undefined,
+    +         name: 'ready'
+    +       },
+    +       {
+    +         data: {
+    +           clientTime: null,
+    +           serverTime: 1234
+    +         },
+    +         name: 'node-pong'
+    +       }
+    +     ],
+    +     ended: false
+    +   },
+    +   {
+    +     calls: [],
+    +     emitted: [
+    +       {
+    +         data: undefined,
+    +         name: 'ready'
+    +       },
+    +       {
+    +         data: {
+    ...
+    -     calls: [
+    -       {
+    -         method: 'inactive',
+    -         spark: 'session-a'
+    -       }
+    -     ],
+    -     emitted: [
+    -       {
+    -         data: undefined,
+    -         name: 'ready'
+    -       }
+    -     ],
+    -     ended: true
+    -   },
+    -   {
+    -     calls: [
+    -       {
+    -         method: 'inactive',
+    -         spark: 'session-a'
+    -       }
+    -     ],
+    -     emitted: [
+    -       {
+    -         data: undefined,
+    -         name: 'ready'
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    1:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    2:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    3:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    4:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    5:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    6:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    7:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    8:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+    9:
+      ended: true
+      emitted:
+        0:
+          name: 'ready'
+      calls:
+        0:
+          method: 'inactive'
+          spark: 'session-a'
+  actual:
+    0:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: ~
+            serverTime: 1234
+      calls:
+    1:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: ~
+            serverTime: 1234
+      calls:
+    2:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime:
+            serverTime: 1234
+      calls:
+    3:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime:
+            serverTime: 1234
+      calls:
+    4:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: 1
+            serverTime: 1234
+      calls:
+    5:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: true
+            serverTime: 1234
+      calls:
+    6:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: ''
+            serverTime: 1234
+      calls:
+    7:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+            serverTime: 1234
+      calls:
+    8:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: 'åååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååååå'
+            serverTime: 1234
+      calls:
+    9:
+      ended: false
+      emitted:
+        0:
+          name: 'ready'
+        1:
+          name: 'node-pong'
+          data:
+            clientTime: '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+            serverTime: 1234
+      calls:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\metadata-admission.test.cjs:84:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 1
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 179.3084

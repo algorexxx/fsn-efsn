@@ -1,0 +1,565 @@
+From ef473d792e38cfdf79e2abc798dd1045696fddf5 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 17:49:28 +0200
+Subject: [PATCH] Bound dashboard registration metadata and telemetry ping
+ values
+
+---
+ docs/deployment-configuration.md      |  5 ++
+ docs/metadata-admission.md            | 65 ++++++++++++++++++++
+ lib/telemetry-info.js                 | 20 +++++++
+ lib/telemetry-report.js               |  4 ++
+ package.json                          |  4 +-
+ server.js                             | 16 ++++-
+ test/collector-output-wire.test.cjs   | 15 +++--
+ test/efsn-telemetry.test.cjs          | 62 +++++++++++++++++--
+ test/fixtures/collector.cjs           |  5 +-
+ test/fixtures/telemetry-report.cjs    |  6 +-
+ test/fixtures/wire-client.cjs         |  3 +-
+ test/metadata-admission-wire.test.cjs | 49 +++++++++++++++
+ test/metadata-admission.test.cjs      | 85 +++++++++++++++++++++++++++
+ 13 files changed, 320 insertions(+), 19 deletions(-)
+ create mode 100644 docs/metadata-admission.md
+ create mode 100644 lib/telemetry-info.js
+ create mode 100644 test/metadata-admission-wire.test.cjs
+ create mode 100644 test/metadata-admission.test.cjs
+
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 4c7a85e..1087fd8 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -124,3 +124,8 @@ nodes and reconnects. The [browser freshness implementation](browser-freshness.m
+ checks, and [compiled browser acceptance](build-validation.md) now passes locally.
+ Complete actual efsn telemetry, production runtime/dependency review, remaining
+ resource limits and TLS/proxy acceptance before public use.
++
++Registration and telemetry ping fields now follow the bounded native efsn
++[admission contract](metadata-admission.md). Its metadata limit precedes the
++Primus-derived IP field; proxy forwarding headers and aggregate head/roster
++budgets still require review before choosing deployment limits.
+diff --git a/docs/metadata-admission.md b/docs/metadata-admission.md
+new file mode 100644
+index 0000000..447083e
+--- /dev/null
++++ b/docs/metadata-admission.md
+@@ -0,0 +1,65 @@
++# Registration and telemetry ping admission
++
++3 October 2026. The collector now projects the native efsn registration fields
++before storing or broadcasting them. Its credential ID supplies `name`; the
++reported name and unknown extensions are discarded. Required fields are:
++
++- Nonempty strings: `node`, `net`, `protocol`, `api`, `os`, `os_v`, `client`.
++- Integer `port` from 0 through 65535, including the disabled listener value 0.
++- Boolean `canUpdateHistory`.
++
++The projected object, including the credential-derived name, must serialize to
++at most **2048 UTF-8 JSON bytes**. This counts property names, punctuation and
++escaping, not JavaScript string length. Unknown extensions do not consume this
++retained budget; the existing whole-message transport cap still bounds input.
++Invalid registration closes the session before reserving its identity or changing
++the collection. Existing credential, duplicate-session and rotation rules apply.
++
++Authenticated `node-ping.clientTime` must be a nonempty string whose serialized
++JSON value occupies at most **128 UTF-8 bytes**, including quotes and escapes.
++The accepted string is echoed unchanged. Invalid values close that session and
++are not echoed. Pings do not refresh block, stats or pending-report receipts.
++This preserves the native efsn `time.Now().String()` report without parsing its
++timezone or trusting it as a collector timestamp. Numeric/custom ping formats
++are outside this candidate interface.
++
++These are dashboard interface limits, not consensus or block-size rules. The
++production change is confined to `server.js`, `lib/telemetry-info.js` and the
++ping case in `lib/telemetry-report.js`. Current-head transactions, history,
++snapshot storage, frontend, dependencies and efsn are unchanged.
++
++The 2 KiB bound excludes the IP subsequently attached by `Node.setGeo`. Primus
++derives that address from its connection/forwarding middleware; it is not proof
++of the original remote peer. Its inherited `forwarded-for` dependency accepts
++several proxy header names. The final proxy must normalize/remove untrusted
++forwarding headers, and the address must be included in aggregate size review.
++This change alone does not establish a maximum complete inventory.
++
++Validation: five new regression cases fail on the previous source; the candidate
++passes 167 contracts and 13 real loopback socket tests. Boundaries include UTF-8,
++JSON escapes, exact-size acceptance, one-byte overflow, metadata projection,
++session replacement and unchanged report receipts. The output-queue test now
++uses multiple bounded ordinary pings instead of a single 3000-character echo.
++
++An actual synthetic efsn node passes through collector, PostgreSQL, HTTP API and
++the unchanged compiled browser. Native metadata measures 201 bytes; timestamp
++values 57–58 bytes. Current-head hashes and fifty historical blocks match direct
++RPC, and all four browser checkpoints pass, including writer stop/expiry/recovery.
++No real wallet, backup or public endpoint is involved.
++
++The first two integration attempts reached the browser checkpoints but failed
++the zero-writer-error assertion. Added diagnostics locate two `ECONNREFUSED`
++errors before Windows could reach the already-listening WSL port. The fixture
++now performs a bounded Windows TCP readiness check and stops the writer before
++the server during cleanup. Final run: four refused readiness probes, a successful
++probe after 441 ms, then zero writer errors and normal closure on stop. Production
++retry behavior, deadlines and byte limits were not changed. Failed attempts are
++retained; this does not resolve the separately recorded older freshness failure.
++
++Evidence is retained in the node repository at
++`docs/evidence/restart-dashboard-admission-2026-10-03/`.
++Next: bound complete heads and their extensions while preserving required hashes;
++coordinate the credential roster, inactive rows and snapshot/output budgets.
++The eight-reporter 4/1/1 MiB profile remains measured test evidence rather than
++deployment defaults. Proxy/TLS, runtime review and collector loss during mining
++remain open.
+diff --git a/lib/telemetry-info.js b/lib/telemetry-info.js
+new file mode 100644
+index 0000000..88b823e
+--- /dev/null
++++ b/lib/telemetry-info.js
+@@ -0,0 +1,20 @@
++function projectTelemetryInfo(value, identity) {
++    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
++        return null;
++    }
++    var fields = ['node', 'net', 'protocol', 'api', 'os', 'os_v', 'client'];
++    if (!fields.every(field => typeof value[field] === 'string' && value[field].length > 0)
++        || !Number.isInteger(value.port) || value.port < 0 || value.port > 65535
++        || typeof value.canUpdateHistory !== 'boolean') {
++        return null;
++    }
++    var info = { name: identity };
++    fields.forEach(function (field) {
++        info[field] = value[field];
++    });
++    info.port = value.port;
++    info.canUpdateHistory = value.canUpdateHistory;
++    return Buffer.byteLength(JSON.stringify(info), 'utf8') <= 2048 ? info : null;
++}
++
++module.exports = projectTelemetryInfo;
+diff --git a/lib/telemetry-report.js b/lib/telemetry-report.js
+index aa5b119..5b7e243 100644
+--- a/lib/telemetry-report.js
++++ b/lib/telemetry-report.js
+@@ -46,6 +46,10 @@ function isTelemetryReport(kind, value) {
+     if (kind === 'pending') {
+         return count(value.pending);
+     }
++    if (kind === 'ping') {
++        return typeof value.clientTime === 'string' && value.clientTime.length > 0
++            && Buffer.byteLength(JSON.stringify(value.clientTime), 'utf8') <= 128;
++    }
+     return kind === 'stats' && ['active', 'mining', 'syncing'].every(field => typeof value[field] === 'boolean')
+         && ['peers', 'gasPrice', 'hashrate'].every(field => count(value[field]))
+         && Number.isFinite(value.uptime) && value.uptime >= 0 && value.uptime <= 100
+diff --git a/package.json b/package.json
+index 1970e15..52ecd59 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,8 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs",
+-    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs",
++    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs test/metadata-admission-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+     "start": "node server.js"
+diff --git a/server.js b/server.js
+index 48fc5b2..151a796 100644
+--- a/server.js
++++ b/server.js
+@@ -2,6 +2,8 @@ var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.
+ var listener = require('./lib/deployment-config').loadCollectorConfig(process.env);
+ var limitCollectorInput = require('./lib/collector-input');
+ var limitCollectorOutput = require('./lib/collector-output');
++var projectTelemetryInfo = require('./lib/telemetry-info');
++var isTelemetryReport = require('./lib/telemetry-report');
+ var _ = require('lodash');
+ var logger = require('./lib/utils/logger');
+ var chalk = require('chalk');
+@@ -141,11 +143,16 @@ api.on('connection', function (spark)
+             rejectTelemetry();
+             return;
+         }
++        var projectedInfo = projectTelemetryInfo(data.info, data.id);
++        if (projectedInfo === null) {
++            rejectTelemetry();
++            return;
++        }
+         identity = data.id;
+         telemetrySessions.set(identity, spark);
+         var registration = {
+             id: identity,
+-            info: Object.assign({}, data.info, { name: identity }),
++            info: projectedInfo,
+             ip: spark.address.ip,
+             spark: spark.id,
+             latency: spark.latency || 0
+@@ -322,10 +329,13 @@ api.on('connection', function (spark)
+ 
+     onTelemetry('node-ping', function (data)
+     {
+-        var start = (!_.isUndefined(data) && !_.isUndefined(data.clientTime) ? data.clientTime : null);
++        if (!isTelemetryReport('ping', data)) {
++            rejectTelemetry();
++            return;
++        }
+ 
+         spark.emit('node-pong', {
+-            clientTime: start,
++            clientTime: data.clientTime,
+             serverTime: _.now()
+         });
+ 
+diff --git a/test/collector-output-wire.test.cjs b/test/collector-output-wire.test.cjs
+index f6e9e15..8dbe581 100644
+--- a/test/collector-output-wire.test.cjs
++++ b/test/collector-output-wire.test.cjs
+@@ -23,13 +23,18 @@ test('held output disconnects only the slow telemetry session and its identity c
+     await login(owner, 'node-a', secretA);
+     const port = owner.socket._socket.localPort;
+     await server.command({ action: 'cork', port });
+-    for (let index = 0; index < 2; index++) {
+-        send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(3000) });
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(126) });
++    const first = await waitForWrites(server, port, 1);
++    assert.ok(first.queued > 128 && first.queued < 256);
++    const fitting = Math.floor(8192 / first.queued);
++    for (let index = 1; index < fitting; index++) {
++        send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(126) });
+     }
+-    const held = await waitForWrites(server, port, 2);
+-    assert.ok(held.queued > 6000 && held.queued <= 8192);
++    const held = await waitForWrites(server, port, fitting);
++    assert.equal(held.queued, fitting * first.queued);
++    assert.ok(held.queued <= 8192);
+     assert.equal(held.destroyed, false);
+-    send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(3000) });
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(126) });
+     assert.equal((await owner.closed)[0], 1006);
+     const stopped = await server.command({ action: 'inspect', port });
+     assert.equal(stopped.destroyed, true);
+diff --git a/test/efsn-telemetry.test.cjs b/test/efsn-telemetry.test.cjs
+index 850bb7b..51992be 100644
+--- a/test/efsn-telemetry.test.cjs
++++ b/test/efsn-telemetry.test.cjs
+@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
+ const { test } = require('node:test');
+ const { once } = require('node:events');
+ const { spawn } = require('node:child_process');
++const { createConnection } = require('node:net');
+ const { readFileSync, writeFileSync, existsSync, mkdtempSync, unlinkSync, rmdirSync } = require('node:fs');
+ const { join, resolve } = require('node:path');
+ const { tmpdir } = require('node:os');
+@@ -36,6 +37,25 @@ async function rpc(endpoint, method, params = []) {
+     return result.result;
+ }
+ 
++async function waitForCollectorPort(port, transport) {
++    await waitFor(() => new Promise(resolve => {
++        const probe = createConnection({ host: '127.0.0.1', port });
++        let finished = false;
++        function finish(ready, code) {
++            if (finished) {
++                return;
++            }
++            finished = true;
++            transport.push({ kind: 'windows-port-readiness', ready, code, time: Date.now() });
++            probe.destroy();
++            resolve(ready);
++        }
++        probe.once('connect', () => finish(true));
++        probe.once('error', error => finish(false, error.code));
++        probe.setTimeout(500, () => finish(false, 'TIMEOUT'));
++    }));
++}
++
+ function compareBlock(report, block) {
+     for (const [name, source] of Object.entries({ number: 'number', timestamp: 'timestamp', gasUsed: 'gasUsed', gasLimit: 'gasLimit', difficulty: 'difficulty', totalDifficulty: 'totalDifficulty' })) {
+         assert.equal(BigInt(report[name]), BigInt(block[source]), name);
+@@ -54,6 +74,16 @@ function linuxPath(path) {
+ 
+ test('busy efsn reports match RPC through storage, API and browser and expire during writer loss', { timeout: 65000 }, async t => {
+     assert.ok(process.env.EFSN_TELEMETRY_BINARY && process.env.EFSN_TELEMETRY_EVIDENCE && process.env.TEST_PG_PORT && process.env.TEST_PG_PASSWORD_FILE);
++    let phase = 'startup';
++    let collector;
++    const transport = [];
++    t.after(async () => {
++        phase = 'cleanup';
++        if (collector) {
++            await collector.stop();
++        }
++    });
++    t.after(() => writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'transport.json'), JSON.stringify(transport, null, 2) + '\n', 'utf8'));
+     const server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE, COLLECTOR_MAX_MESSAGE_BYTES: '131072' }, 'efsn-wsl-server.cjs');
+     const directory = mkdtempSync(join(tmpdir(), 'efsn-dashboard-'));
+     const settings = join(directory, 'settings.json');
+@@ -93,11 +123,23 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     const errors = [];
+     const collectionConfig = { url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 4000, maxBytes: 65536, maxNodes: 2 };
+     const collectionDependencies = {
+-        connect(url, maxBytes) { return new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }); },
+-        saveSnapshot: (payload, time) => populate.saveSnapshot(payload, time), now: () => new Date(), setTimeout, clearTimeout, onError: message => errors.push(message),
++        connect(url, maxBytes) {
++            const connection = new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes });
++            const id = transport.filter(event => event.kind === 'connect').length;
++            transport.push({ id, kind: 'connect', phase, time: Date.now() });
++            connection._client.on('connectFailed', error => transport.push({ id, kind: 'connectFailed', phase, time: Date.now(), code: error.code, syscall: error.syscall, address: error.address, port: error.port }));
++            connection.addEventListener('open', () => transport.push({ id, kind: 'open', phase, time: Date.now() }));
++            connection.addEventListener('close', event => transport.push({ id, kind: 'close', phase, time: Date.now(), code: event.code }));
++            return connection;
++        },
++        saveSnapshot: (payload, time) => populate.saveSnapshot(payload, time), now: () => new Date(), setTimeout, clearTimeout,
++        onError(message) {
++            errors.push(message);
++            transport.push({ kind: 'writer-error', phase, time: Date.now(), message });
++        },
+     };
+-    let collector = startSnapshotCollection(collectionConfig, collectionDependencies);
+-    t.after(() => collector.stop());
++    await waitForCollectorPort(server.port, transport);
++    collector = startSnapshotCollection(collectionConfig, collectionDependencies);
+     const snapshot = await waitFor(async () => {
+         const value = await retrieve.readSnapshot();
+         return value && value.payload.nodes.length === 1 && Object.values(value.payload.nodes[0].reports).every(time => time !== null) && value.payload.charts.height[0] === 21 && value.payload.charts.height[39] === 60 && value;
+@@ -143,6 +185,12 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     const captured = await server.command('capture');
+     writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'capture.json'), JSON.stringify(captured, null, 2) + '\n', 'utf8');
+     const incoming = captured.records.filter(record => record.direction === 'incoming' && record.message.emit);
++    const registration = incoming.find(record => record.message.emit[0] === 'hello').message.emit[1];
++    assert.deepEqual(node.info, { ...registration.info, name: 'node-a', ip: '127.0.0.1' });
++    assert.ok(Buffer.byteLength(JSON.stringify(registration.info)) <= 2048);
++    const pings = incoming.filter(record => record.message.emit[0] === 'node-ping');
++    assert.ok(pings.length > 0);
++    assert.ok(pings.every(record => Buffer.byteLength(JSON.stringify(record.message.emit[1].clientTime)) <= 128));
+     const history = incoming.find(record => record.message.emit[0] === 'history' && record.message.emit[1].history.length === 50);
+     assert.ok(history);
+     assert.ok(history.bytes > 65536 && history.bytes < 131072);
+@@ -155,13 +203,15 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     }
+     assert.deepEqual(history.message.emit[1].history.map(block => block.number), Array.from({ length: 50 }, (_, index) => 59 - index));
+     assert.deepEqual(JSON.parse(charts.body[0].charts).height, Array.from({ length: 40 }, (_, index) => 21 + index));
++    phase = 'browser';
+     const browser = await checkBrowser('http://127.0.0.1:' + api.address().port, truth.head, {
+-        stopCollection: () => collector.stop(),
+-        resumeCollection() { collector = startSnapshotCollection(collectionConfig, collectionDependencies); },
++        stopCollection() { phase = 'writer-stopped'; return collector.stop(); },
++        resumeCollection() { phase = 'writer-resumed'; collector = startSnapshotCollection(collectionConfig, collectionDependencies); },
+         readHead: () => rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false]),
+     });
+     assert.equal((await rpc(ready.rpc, 'eth_getBlockByNumber', ['latest', false])).hash, truth.head.hash);
+     assert.deepEqual(errors, []);
++    phase = 'complete';
+     await collector.stop();
+     writeFileSync(join(directory, 'stop'), '', 'utf8');
+     assert.deepEqual(await exited, [0, null]);
+diff --git a/test/fixtures/collector.cjs b/test/fixtures/collector.cjs
+index a72cffa..886d411 100644
+--- a/test/fixtures/collector.cjs
++++ b/test/fixtures/collector.cjs
+@@ -6,6 +6,7 @@ const vm = require('node:vm');
+ const { EventEmitter } = require('node:events');
+ const loadTelemetryCredentials = require('../../lib/telemetry-credentials');
+ const collectorEnvironment = require('./collector-environment.cjs');
++const { info } = require('./telemetry-report.cjs');
+ 
+ const secretA = 'synthetic-node-a-credential-00000000000001';
+ const secretB = 'synthetic-node-b-credential-00000000000002';
+@@ -68,6 +69,8 @@ function loadCollector(t, options = {}) {
+         './lib/deployment-config': require('../../lib/deployment-config'),
+         './lib/collector-input': require('../../lib/collector-input'),
+         './lib/collector-output': require('../../lib/collector-output'),
++        './lib/telemetry-info': require('../../lib/telemetry-info'),
++        './lib/telemetry-report': require('../../lib/telemetry-report'),
+         lodash: { isUndefined: value => value === undefined, now: () => 1234 },
+         './lib/utils/logger': {},
+         './lib/utils/config': { banned: options.banned || [] },
+@@ -112,7 +115,7 @@ function connectCollector(collector, id = 'session-a') {
+ }
+ 
+ function hello(spark, id = 'node-a', secret = secretA) {
+-    spark.handlers.get('hello')({ id, secret, info: { name: id, node: 'efsn-test', network: '99032659' } });
++    spark.handlers.get('hello')({ id, secret, info: info(id) });
+ }
+ 
+ module.exports = { credentialFile, loadCollector, connectCollector, hello, secretA, secretB, secretNext };
+diff --git a/test/fixtures/telemetry-report.cjs b/test/fixtures/telemetry-report.cjs
+index 6027dd0..ec8337a 100644
+--- a/test/fixtures/telemetry-report.cjs
++++ b/test/fixtures/telemetry-report.cjs
+@@ -23,4 +23,8 @@ function uncle() {
+     };
+ }
+ 
+-module.exports = { block, stats, uncle };
++function info(name = 'node-a') {
++    return { name, node: 'efsn-test', port: 30303, net: '99032659', protocol: 'efsn/66', api: 'No', os: 'linux', os_v: 'amd64', client: '0.1.1', canUpdateHistory: true };
++}
++
++module.exports = { block, stats, uncle, info };
+diff --git a/test/fixtures/wire-client.cjs b/test/fixtures/wire-client.cjs
+index ae7aa3d..4271297 100644
+--- a/test/fixtures/wire-client.cjs
++++ b/test/fixtures/wire-client.cjs
+@@ -1,5 +1,6 @@
+ const { once, EventEmitter } = require('node:events');
+ const WebSocket = require('ws');
++const { info } = require('./telemetry-report.cjs');
+ 
+ function connect(t, port, endpoint) {
+     const socket = new WebSocket(`ws://127.0.0.1:${port}/${endpoint}`);
+@@ -46,7 +47,7 @@ async function login(connection, id, secret, extraInfo = {}) {
+     await connection.opened;
+     send(connection, 'hello', {
+         id, secret,
+-        info: { name: id, node: 'efsn-test', port: 30303, net: '99032659', protocol: 'efsn/66', api: 'No', os: 'linux', os_v: 'amd64', client: '0.1.1', canUpdateHistory: true, ...extraInfo },
++        info: { ...info(id), ...extraInfo },
+     });
+     await waitMessage(connection, message => message.emit && message.emit[0] === 'ready');
+ }
+diff --git a/test/metadata-admission-wire.test.cjs b/test/metadata-admission-wire.test.cjs
+new file mode 100644
+index 0000000..a02909b
+--- /dev/null
++++ b/test/metadata-admission-wire.test.cjs
+@@ -0,0 +1,49 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const { info } = require('./fixtures/telemetry-report.cjs');
++const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
++
++test('real collector bounds registration and ping while retaining only native metadata across reconnect', { timeout: 15000 }, async t => {
++    const server = await startCollector(t);
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    const oversized = connect(t, server.port, 'api');
++    await oversized.opened;
++    send(oversized, 'hello', { id: 'node-a', secret: secretA, info: { ...info(), node: 'å'.repeat(1024) } });
++    await oversized.closed;
++    assert.deepEqual(await inventory(viewer), []);
++
++    const bounded = info();
++    bounded.node += 'x'.repeat(2048 - Buffer.byteLength(JSON.stringify(bounded)));
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA, { ...bounded, name: 'untrusted-label', ip: 'reported-ip', extension: { note: 'unused' } });
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'å'.repeat(63) });
++    const pong = await waitMessage(owner, message => message.emit && message.emit[0] === 'node-pong');
++    assert.equal(pong.emit[1].clientTime, 'å'.repeat(63));
++    assert.equal(Number.isSafeInteger(pong.emit[1].serverTime), true);
++    const [accepted] = await inventory(viewer);
++    assert.deepEqual(accepted.info, { ...bounded, ip: '127.0.0.1' });
++    assert.deepEqual(accepted.reports, { block: null, stats: null, pending: null });
++
++    const from = viewer.messages.length;
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'å'.repeat(64) });
++    await owner.closed;
++    await waitMessage(viewer, message => message.action === 'inactive', from);
++    assert.equal(owner.messages.filter(message => message.emit && message.emit[0] === 'node-pong').length, 1);
++    const [inactive] = await inventory(viewer);
++    assert.equal(inactive.uptime.lastStatus, false);
++    assert.deepEqual(inactive.info, accepted.info);
++    assert.deepEqual(inactive.reports, { block: null, stats: null, pending: null });
++
++    const replacement = connect(t, server.port, 'api');
++    await login(replacement, 'node-a', secretA);
++    const [reconnected] = await inventory(viewer);
++    assert.deepEqual(reconnected.info, { ...info(), ip: '127.0.0.1' });
++    assert.equal(reconnected.uptime.lastStatus, true);
++    viewer.socket.close();
++    replacement.socket.close();
++    await Promise.all([viewer.closed, replacement.closed]);
++    await server.stop();
++});
+diff --git a/test/metadata-admission.test.cjs b/test/metadata-admission.test.cjs
+new file mode 100644
+index 0000000..c6e47e1
+--- /dev/null
++++ b/test/metadata-admission.test.cjs
+@@ -0,0 +1,85 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { loadCollector, connectCollector, hello, secretA } = require('./fixtures/collector.cjs');
++const { info } = require('./fixtures/telemetry-report.cjs');
++
++test('registration projects the native metadata fields and collector identity before collection', t => {
++    const collector = loadCollector(t);
++    const spark = connectCollector(collector);
++    const input = { ...info(), name: 'different-label', ip: 'reported-ip', extension: { notes: 'unused' } };
++
++    spark.handlers.get('hello')({ id: 'node-a', secret: secretA, info: input });
++
++    assert.deepEqual(JSON.parse(JSON.stringify(collector.calls[0].data.info)), info());
++    assert.equal(collector.calls[0].data.ip, '127.0.0.1');
++    assert.equal(spark.ended, false);
++});
++
++test('registration rejects missing or malformed native fields before reserving the identity', t => {
++    const invalid = [{ node: undefined }, { node: '' }, { net: 99032659 }, { protocol: [] }, { api: {} }, { os: null }, { os_v: true }, { client: 1 }, { port: -1 }, { port: 65536 }, { port: 1.5 }, { canUpdateHistory: 'true' }];
++
++    const results = invalid.map(fields => {
++        const collector = loadCollector(t);
++        const rejected = connectCollector(collector);
++        rejected.handlers.get('hello')({ id: 'node-a', secret: secretA, info: { ...info(), ...fields } });
++        const before = collector.calls.map(call => call.method);
++        const next = connectCollector(collector, 'replacement');
++        hello(next);
++        return { rejected: rejected.ended, before, next: next.emitted };
++    });
++
++    assert.deepEqual(results, invalid.map(() => ({ rejected: true, before: [], next: [{ name: 'ready', data: undefined }] })));
++});
++
++test('registration accounts for UTF-8 and JSON escaping within its serialized metadata budget', t => {
++    const results = ['a'.repeat(2048), 'å'.repeat(1024), '\u0000'.repeat(342)].map(node => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        spark.handlers.get('hello')({ id: 'node-a', secret: secretA, info: { ...info(), node } });
++        return { ended: spark.ended, calls: collector.calls, emitted: spark.emitted };
++    });
++
++    assert.deepEqual(results, Array(3).fill({ ended: true, calls: [], emitted: [] }));
++});
++
++test('registration accepts the exact serialized metadata boundary and rejects one byte beyond', t => {
++    const bounded = info();
++    bounded.node += 'x'.repeat(2048 - Buffer.byteLength(JSON.stringify(bounded)));
++    const results = [bounded, { ...bounded, node: bounded.node + 'x' }].map(value => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        spark.handlers.get('hello')({ id: 'node-a', secret: secretA, info: value });
++        return { ended: spark.ended, registered: collector.calls.length };
++    });
++
++    assert.equal(Buffer.byteLength(JSON.stringify(bounded)), 2048);
++    assert.deepEqual(results, [{ ended: false, registered: 1 }, { ended: true, registered: 0 }]);
++});
++
++test('native efsn timestamp strings and the exact ping boundary are echoed unchanged', t => {
++    const values = ['2026-10-03 12:34:56.123456789 +0000 UTC m=+123456789.123456789', 'x'.repeat(126), 'å'.repeat(63), '\u0000'.repeat(21)];
++    const results = values.map(clientTime => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        hello(spark);
++        collector.calls.length = 0;
++        spark.handlers.get('node-ping')({ id: 'node-a', clientTime });
++        return { ended: spark.ended, pong: JSON.parse(JSON.stringify(spark.emitted[1])), calls: collector.calls };
++    });
++
++    assert.deepEqual(results, values.map(clientTime => ({ ended: false, pong: { name: 'node-pong', data: { clientTime, serverTime: 1234 } }, calls: [] })));
++});
++
++test('invalid ping values end the telemetry session without echoing their contents', t => {
++    const values = [undefined, null, {}, [], 1, true, '', 'x'.repeat(127), 'å'.repeat(64), '\u0000'.repeat(22)];
++    const results = values.map(clientTime => {
++        const collector = loadCollector(t);
++        const spark = connectCollector(collector);
++        hello(spark);
++        collector.calls.length = 0;
++        spark.handlers.get('node-ping')({ id: 'node-a', clientTime });
++        return { ended: spark.ended, emitted: spark.emitted, calls: collector.calls };
++    });
++
++    assert.deepEqual(results, values.map(() => ({ ended: true, emitted: [{ name: 'ready', data: undefined }], calls: [{ method: 'inactive', spark: 'session-a' }] })));
++});

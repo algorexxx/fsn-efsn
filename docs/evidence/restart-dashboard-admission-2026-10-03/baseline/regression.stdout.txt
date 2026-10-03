@@ -1,0 +1,37 @@
+TAP version 13
+# node:fs:2705
+#       const stats = binding.lstat(base, true, undefined, true /* throwIfNoEntry */);
+#                             ^
+# Error: EPERM: operation not permitted, lstat 'C:\\Users\\Peter'
+#     at Object.realpathSync (node:fs:2705:29)
+#     at toRealPath (node:internal/modules/helpers:65:13)
+#     at Function._findPath (node:internal/modules/cjs/loader:777:22)
+#     at resolveMainPath (node:internal/modules/run_main:39:23)
+#     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:162:20)
+#     at node:internal/main/run_main_module:36:49 {
+#   errno: -4048,
+#   code: 'EPERM',
+#   syscall: 'lstat',
+#   path: 'C:\\\\Users\\\\Peter'
+# }
+# Node.js v22.11.0
+# Subtest: test\\metadata-admission.test.cjs
+not ok 1 - test\\metadata-admission.test.cjs
+  ---
+  duration_ms: 59.942
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\metadata-admission.test.cjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 66.7486

@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Eight-reporter profile](restart-dashboard-profile.md): 161 contracts, 12 socket tests, six database scenarios and bounded 4/1/1 MiB profile pass; prior actual efsn/browser and compact-cache evidence retained | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Registration/ping admission](restart-dashboard-admission.md): 167 contracts, 13 socket tests and actual efsn/database/browser pass; prior eight-reporter profile, database and compact-cache evidence retained | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -260,6 +260,15 @@ writer correction reports previously silent transport closes/errors; 161
 contracts, 12 socket tests and six database scenarios pass. Registration/ping
 fields and current-head extensions still need explicit admission bounds before
 the measured profile can become a supported public deployment envelope.
+The [registration and ping follow-up](restart-dashboard-admission.md) now
+projects native registration fields into at most 2 KiB of UTF-8 JSON and accepts
+only timestamp strings occupying at most 128 serialized bytes. Five new
+regressions fail on prior source; 167 contracts, 13 socket tests and the actual
+efsn/database/API/browser check pass. Two initial integration failures exposed
+a Windows-to-WSL reachability delay; the fixture now checks bounded port readiness
+while retaining zero-writer-error assertions and transport diagnostics. Current
+heads, total enrollment/inactive rows and the Primus-derived IP still need
+aggregate bounds. Forwarded-header normalization belongs in proxy acceptance.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -318,14 +327,15 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: bound/project registration and ping fields, then establish an explicit
-   current-head/extension budget preserving required hashes. Check aggregate
-   maximum enrollment, including inactive rows, against inventory/output/snapshot
-   budgets before adopting the [measured eight-reporter profile](restart-dashboard-profile.md).
-   Preserve receipt diagnostics for timing failures; test selected proxy/TLS
-   limits and finish collector loss during mining, runtime/dependency review and
-   supervision. Prior actual efsn/browser acceptance is retained. G6 remains
-   open; the measured 4/1/1 MiB fixture limits are not deployment defaults.
+1. G6: establish an explicit current-head/extension budget preserving required
+   hashes. Check maximum enrollment, including inactive rows and collector-added
+   address/geo fields, against inventory/output/snapshot budgets before adopting
+   the [measured eight-reporter profile](restart-dashboard-profile.md). Registration
+   and telemetry ping admission now pass [their follow-up](restart-dashboard-admission.md).
+   Preserve receipt/transport diagnostics; test selected proxy/TLS limits and
+   forwarding-header normalization, then finish collector loss during mining,
+   runtime/dependency review and supervision. G6 remains open; the measured
+   4/1/1 MiB fixture limits are not deployment defaults.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;
