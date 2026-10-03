@@ -342,7 +342,12 @@ compiled-browser and native telemetry acceptance pass. A reproduced linter gap
 is covered by maintained ESLint's undefined-name check; the report records the
 remaining lint coverage differences. All active application-library versions
 and efsn sources are preserved. UI maintenance, GeoIP operations and hosting
-controls stay open.
+controls stay open. The [UI maintenance review](restart-dashboard-ui-maintenance.md)
+then identifies the map wrapper's React 16 peer limit and the separate
+tooltip/theme migration choices. It fixes reproduced saved-pin failures without
+changing dependencies: malformed or blocked browser storage no longer prevents
+live reports. Twenty-two frontend tests, seven storage browser scenarios, the
+existing nine browser checkpoints and native telemetry acceptance pass.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -406,8 +411,11 @@ Current technical order:
    The [toolchain replacement](restart-dashboard-toolchain.md) passes clean
    installation and acceptance on Linux Node 24/npm 10. Both package audits
    report zero known advisories; the separate map Acorn path is corrected.
-   Record dispositions for used UI-library maintenance, remaining lint-rule
-   differences and the intended browser matrix. Hosted validation is unrun.
+   The [UI review](restart-dashboard-ui-maintenance.md) records version/peer
+   gaps and closes the saved-pin storage defect. Its map/tooltip/React migration
+   or explicit legacy-stack acceptance remains a final release decision;
+   browser coverage and lint differences remain named limitations. Hosted
+   validation is unrun.
    Complete GeoIP dataset selection/attribution and update operations; public
    hosting is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log

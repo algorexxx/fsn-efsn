@@ -1,0 +1,429 @@
+From 8ec943b58b2fa9e65c1a23a7776a1cd2c4ba9607 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sun, 4 Oct 2026 00:56:19 +0200
+Subject: [PATCH] Keep dashboard usable when pin storage fails
+
+---
+ README.md                               |   3 +
+ docs/browser-freshness.md               |  25 +++--
+ docs/deployment-configuration.md        |   2 +-
+ docs/ui-maintenance.md                  | 117 ++++++++++++++++++++++++
+ react-frontend/README.md                |   2 +-
+ react-frontend/src/Components/Main.js   |  46 ++++------
+ react-frontend/src/pinned-nodes.js      |  21 +++++
+ react-frontend/src/pinned-nodes.test.js |  87 ++++++++++++++++++
+ 8 files changed, 267 insertions(+), 36 deletions(-)
+ create mode 100644 docs/ui-maintenance.md
+ create mode 100644 react-frontend/src/pinned-nodes.js
+ create mode 100644 react-frontend/src/pinned-nodes.test.js
+
+diff --git a/README.md b/README.md
+index ea8fec1..efe6ece 100644
+--- a/README.md
++++ b/README.md
+@@ -23,6 +23,9 @@ workflow with validation only. The [toolchain replacement](docs/toolchain-upgrad
+ then removes CRA and clears all remaining frontend advisories. Clean installation,
+ DOM/build/lint checks and compiled/native browser acceptance pass. Used UI-library
+ maintenance, lint coverage differences and public deployment controls remain open.
++The [UI review and saved-pin fix](docs/ui-maintenance.md) keep the dashboard
++usable with malformed or blocked browser storage and document the remaining
++library compatibility decisions.
+ 
+ The [GeoIP/diagnostics update](docs/geoip-dependency-upgrade.md) clears the
+ remaining backend advisories in the recorded audit. The backend now requires
+diff --git a/docs/browser-freshness.md b/docs/browser-freshness.md
+index 8c4be58..8ca56a3 100644
+--- a/docs/browser-freshness.md
++++ b/docs/browser-freshness.md
+@@ -27,7 +27,7 @@ Both durations are required positive integers at most 2147483647. There are no
+ production defaults. Select them with the ingestion interval and API age budget:
+ the next poll should normally complete before the displayed snapshot expires.
+ Tests use 100 ms and 50 ms respectively; those are test values, not launch advice.
+-Configuration validation runs when the browser module loads.
++Configuration validation runs before the production build and again when the browser module loads.
+ 
+ ## Failure and expiry behavior
+ 
+@@ -62,6 +62,17 @@ recent, stale, absent and disconnected reports. These do not prove chain
+ agreement, correct ticket funding, working auto-buy or advancing blocks. Actual
+ efsn/RPC comparison remains a separate requirement.
+ 
++## Pin preferences
++
++Pin preferences are loaded once into page state. Missing, malformed or blocked
++browser storage does not stop live reports. Invalid lists become empty; mixed
++lists keep unique nonempty string IDs. A failed save still changes the current
++page and shows a notice that the selection is temporary. Clearing the last pin
++also clears the hide-unpinned filter. Saved selections survive reload; other open
++tabs pick up saved changes when reloaded. See [UI maintenance](ui-maintenance.md)
++for the reproduced failures and acceptance. Pinning does not change enrollment
++or determine which chain is canonical.
++
+ ## Local checks and build validation
+ 
+ Root `npm test` includes the polling/projection contracts and API header checks.
+@@ -71,9 +82,9 @@ shell's environment syntax. These tests render the actual React component in
+ JSDOM with a controlled HTTP adapter and clock. They are not a deployed browser,
+ actual node, PostgreSQL or TLS test.
+ 
+-The inherited react-scripts 3.2.0 / webpack 4.41.0 build failed on Node 22.11.0.
+-The [reviewed build update](build-validation.md) now passes a strict production
+-build, seven React DOM checks and compiled Edge scenarios. It pins react-scripts
+-5.0.1 and React Bootstrap 1.6.8, also fixing map dialog accessibility and delayed
+-render cleanup. No legacy crypto option or edited dependency file is used.
+-Public TLS/real-node acceptance and production dependency review remain open.
++The [toolchain replacement](toolchain-upgrade.md) removes CRA and establishes
++the Linux Node 24.21.0 build/test pairing. The subsequent
++[pin recovery fix](ui-maintenance.md) passes eight DOM tests, fourteen storage
++contracts, compiled Edge scenarios and actual local efsn/WSS/database/browser
++acceptance. Public hosting, browser coverage and legacy UI maintenance decisions
++remain release requirements.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 54df7bc..de6a5a5 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -85,7 +85,7 @@ The proxy serves the compiled browser and forwards `/stats-api/` to the private
+ API, removing that prefix. Thus `/stats-api/nodes` reaches backend `/nodes`.
+ Configure `REACT_APP_STATS_API_PATH=/stats-api` when building the browser; it is
+ public configuration compiled into the bundle. Changing it requires rebuilding.
+-The validation executes when the browser module loads, not during the build.
++The existing validator now executes before compilation and when the browser module loads.
+ Only path segments containing letters, digits, underscores or hyphens are
+ accepted; one final slash is normalized away. A missing or invalid value stops
+ the UI rather than contacting an old foundation endpoint.
+diff --git a/docs/ui-maintenance.md b/docs/ui-maintenance.md
+new file mode 100644
+index 0000000..101293e
+--- /dev/null
++++ b/docs/ui-maintenance.md
+@@ -0,0 +1,117 @@
++# Dashboard UI maintenance and saved-pin recovery
++
++Local evidence date: 2026-10-04. The UI review found and fixed a dashboard
++availability defect in saved pin preferences. No dependencies, backend code,
++schema or efsn sources change. The legacy UI dependency decisions below remain
++separate from this small reliability correction and from launch approval.
++
++## Reproduced defect and correction
++
++The previous component parsed `localStorage.pinnedNodes` during every render,
++assumed the result was an array and wrote storage directly in click handlers.
++Malformed JSON or a denied storage getter threw during the initial render.
++A valid JSON object instead of an array also prevented node rows from rendering.
++The old compiled build reproduces all three failures against the same healthy
++local API. The object case does not emit a browser `pageerror`; missing rows are
++the observed failure, not an inferred error-event count.
++
++The new storage boundary reads once when the component is created. Missing,
++unreadable, malformed or non-array data becomes an empty pin list. Mixed arrays
++keep unique nonempty string IDs. Existing valid lists and the `pinnedNodes` key
++remain compatible. Invalid storage is not rewritten merely by loading the page.
++
++The component keeps pin selection in React state. Pin/unpin changes update the
++page even when saving throws, and a status message explains that those changes
++will last only until reload. A successful write clears that message. Clearing
++the final pin also disables the hide-unpinned filter, preventing an accidentally
++empty table. Saved changes survive reload; other open tabs pick up persisted
++changes when reloaded. No cross-tab synchronization guarantee is introduced.
++Pins are viewing preferences, not node identity, enrollment or consensus state.
++
++## Acceptance
++
++The unchanged eight React DOM tests and fourteen new storage-boundary tests
++pass on Linux Node 24.21.0 with the accepted Jest/Rsbuild toolchain. Lint reports
++zero warnings/errors. The production build passes; its scratch output location
++produces Rsbuild's existing warning that it will not automatically empty a
++directory outside the frontend root. That directory was new and the prior
++active build was retained before activation.
++
++Seven compiled Edge scenarios pass: malformed JSON, an object in place of the
++list, denied storage access, no saved value, mixed/duplicate entries, a full
++storage quota and a valid existing pin. All display both expected node rows,
++permit pin/unpin and have no page errors or foreign-origin requests. The normal
++storage case also verifies reload persistence and clearing the final pin while
++the hide-unpinned filter is active. The temporary-save notice was inspected.
++
++The existing nine compiled-browser checkpoints pass, including map, snapshot
++expiry, timeout and recovery. Two deliberate hanging API requests correspond
++to two aborted requests in the fixture ledger; no other request failure or
++missing asset appears. Native efsn -> WSS/nginx -> PostgreSQL -> HTTPS API ->
++browser also passes all four checkpoints, with the actual head and fifty-block
++history matching, plus writer expiry and recovery over TLS 1.3.
++
++The build still contains 546 files; 540 retain their previous bytes. Source maps
++include the new storage helper and exclude its tests. All manifests/locks,
++backend code and 1007 efsn source/module hashes are unchanged. The backend
++contract/socket suites and advisory audit from the prior accepted slice were
++not repeated for this browser-only change. Their results are retained, not
++claimed as new runs. Test services are stopped and disposable credentials removed.
++
++## Used-library review
++
++The official npm registry versions, dates, deprecation notices and peer ranges
++are captured in `ui-package-review.json`. A latest tag is not proof of support
++or security, and a newer version is not automatically a compatible replacement.
++The preceding locked-tree audit reports zero known advisories; it does not
++resolve these maintenance decisions.
++
++| Used package | Installed | Current latest tag | Disposition for this candidate |
++| --- | --- | --- | --- |
++| React / React DOM | 16.10.2 | 19.3.0 | Retain for this fix; major migration requires coordinated wrapper/test changes. React 16.14.0 is a possible compatibility step, not a substitute for a maintenance decision. |
++| Material UI core | 4.5.1 | 4.12.4 under the old package name | Only Tooltips are imported. The old family is deprecated; upgrading within it does not restore active development. Evaluate a maintained tooltip replacement or the current MUI package as a separate change. |
++| React Bootstrap | 1.6.8 | 2.10.10 | Retain the tested modal/layout pairing with the existing Bootstrap 4 theme. The current line targets Bootstrap 5 and needs CSS/modal regression acceptance. |
++| React DataMaps | 0.4.1 | 0.4.1 | Its published React peer range ends at 16. This is a concrete blocker for a supported modern React pairing, not something to bypass with forced peer installation. |
++| React country flag | 1.1.0 | 3.1.0 | A separately testable major upgrade; preserve the local flag URLs and verify unknown-country behavior. |
++| React number format | 4.3.0 | 5.4.5 | A separately testable major upgrade; preserve zero/unavailable values and formatting. |
++| React timeago | 4.4.0 | 8.3.0 | A separately testable major upgrade; preserve receipt-based age text and custom formatting. |
++| prop-types | 15.8.1 | 15.8.1 | No version gap in the captured latest tag. |
++| Axios | 0.34.0 | 1.20.0 | Retain the previously reviewed 0.x choice and tested cancellation contract. A major/API migration is not part of this fix. |
++
++[React's version archive](https://react.dev/versions) distinguishes the current
++19.3 documentation from legacy 16 documentation. The
++[React Bootstrap migration guide](https://react-bootstrap.github.io/docs/migrating/)
++describes its Bootstrap 5 transition. The
++[DataMaps wrapper's upstream repository](https://github.com/btmills/react-datamaps)
++and published package identify the legacy React pairing. The current
++`@mui/material` registry tag is 9.4.0 and requires React 17, 18 or 19; the old
++`@material-ui/core` tag must not be mistaken for the maintained successor.
++
++The map's installed transitive versions are DataMaps 0.4.4, D3 3.5.17 and
++TopoJSON 1.6.27. The captured latest tags are 0.5.10, 7.9.0 and 3.0.2 respectively;
++the existing wrapper's ranges do not provide a drop-in modern map stack.
++The map's bubble tooltip constructs HTML from its name. The current name is the
++collector-authenticated, character-restricted node ID, not arbitrary node text.
++Preserve that boundary or use text-safe rendering when replacing the wrapper.
++This source review is not a general security assessment of the map libraries.
++
++Do not label the entire UI stack maintained, or silently waive its release
++review. The bounded choices are a coordinated map/tooltip/React migration with
++acceptance, or an explicit documented decision about the pinned legacy stack
++at the final release review. No such risk acceptance has been granted here.
++
++## Remaining work
++
++Continue GeoIP dataset staging/update failure and recovery checks, then service
++supervision, retry/log lifecycle and public certificate renewal. The GeoIP
++account/source and actual public host remain unselected. No public download,
++update job or deployment was performed.
++
++The browser evidence currently covers desktop Edge. Record the intended support
++matrix and test its actual browsers/devices before advertising that coverage;
++Browserslist targets are compilation settings, not cross-browser acceptance.
++The two remaining lint coverage differences from the toolchain report also
++remain named review limitations. The efsn investigation restart plan owns these release gates.
++
++The efsn investigation retains evidence and the portable dashboard patch under
++`docs/evidence/restart-dashboard-pins-2026-10-04/`.
+diff --git a/react-frontend/README.md b/react-frontend/README.md
+index d59942b..75288de 100644
+--- a/react-frontend/README.md
++++ b/react-frontend/README.md
+@@ -6,7 +6,7 @@ The v3 lock belongs to npm 10; do not use the historical npm 6 wrapper.
+ 
+ Rsbuild compiles the existing React 16 application. `npm run build` first runs
+ lint, then writes static assets to `build`. `npm test -- --watchAll=false
+---runInBand` runs the eight Jest DOM tests. The validation workflow performs
++--runInBand` runs the Jest DOM and pin-storage tests. The validation workflow performs
+ both, plus the backend checks, without deploying anything.
+ 
+ Three explicit build settings are required: `REACT_APP_STATS_API_PATH`,
+diff --git a/react-frontend/src/Components/Main.js b/react-frontend/src/Components/Main.js
+index 29ef91a..32c57ba 100644
+--- a/react-frontend/src/Components/Main.js
++++ b/react-frontend/src/Components/Main.js
+@@ -14,6 +14,7 @@ import AttentionWarning from './AttentionWarning';
+ import FusionLogo from '../img/Fusion_White.svg';
+ import loadApiPath, {loadPollingConfig} from '../config';
+ import startSnapshotPolling from '../snapshot-polling';
++import {readPinnedNodes, writePinnedNodes} from '../pinned-nodes';
+ 
+ const statsApiPath = loadApiPath(process.env.REACT_APP_STATS_API_PATH);
+ 
+@@ -26,6 +27,9 @@ const pollingConfig = loadPollingConfig(
+ class Main extends React.Component {
+     state = {
+         status: 'loading',
++        pinnedNodes: readPinnedNodes(),
++        pinStorageFailed: false,
++        hideNonPinned: false,
+         observedAt: null,
+         nodesList: [],
+         geoCharts: [],
+@@ -70,35 +74,20 @@ class Main extends React.Component {
+         this.polling.stop();
+     }
+ 
+-    render() {
+-
+-        let pinnedNodes = JSON.parse(localStorage.getItem('pinnedNodes')) === null ? [] : JSON.parse(localStorage.getItem('pinnedNodes'));
+-        const setPinnedNode = (nodename) => {
+-            let data = JSON.parse(localStorage.getItem('pinnedNodes'));
+-            let u = [];
+-            if (!Array.isArray(data)) {
+-                u.push(nodename);
+-                localStorage.setItem('pinnedNodes', JSON.stringify(u));
+-            } else {
+-                let data = JSON.parse(localStorage.getItem('pinnedNodes'));
+-                data.push(nodename);
+-                localStorage.setItem('pinnedNodes', JSON.stringify(data));
+-            }
+-            this.forceUpdate();
+-        }
++    updatePinnedNodes = pinnedNodes => {
++        const saved = writePinnedNodes(pinnedNodes);
++        this.setState({
++            pinnedNodes,
++            pinStorageFailed: !saved,
++            hideNonPinned: pinnedNodes.length > 0 && this.state.hideNonPinned
++        });
++    };
+ 
+-        const removePinnedNode = (nodename) => {
+-            let data = JSON.parse(localStorage.getItem('pinnedNodes'));
+-            const filteredItems = data.filter(item => item !== nodename);
+-            localStorage.setItem('pinnedNodes', JSON.stringify(filteredItems));
+-            if (filteredItems.length === 0) {
+-                this.setState({
+-                    hideNonPinned: false
+-                })
+-            }
++    render() {
+ 
+-            this.forceUpdate();
+-        }
++        const pinnedNodes = this.state.pinnedNodes;
++        const setPinnedNode = id => this.updatePinnedNodes([...pinnedNodes, id]);
++        const removePinnedNode = id => this.updatePinnedNodes(pinnedNodes.filter(pinned => pinned !== id));
+ 
+         const getVersionNumber = (string) => {
+             const match = string.match(/(?:^|\/)v?([0-9]+\.[0-9]+\.[0-9]+)/);
+@@ -364,6 +353,9 @@ class Main extends React.Component {
+                         </div>
+                     </div>
+                 </div>
++                {this.state.pinStorageFailed ? <p role="status" className="col-md-12 text-stats">
++                    Pin changes cannot be saved in this browser. They will last until this page is reloaded.
++                </p> : null}
+                 <div className={'col-md-12'}>
+                     <div className={'table-responsive pt-3'}>
+                         <Table className={'table table-sm table-nowrap card-table'} borderless variant="">
+diff --git a/react-frontend/src/pinned-nodes.js b/react-frontend/src/pinned-nodes.js
+new file mode 100644
+index 0000000..b6036a4
+--- /dev/null
++++ b/react-frontend/src/pinned-nodes.js
+@@ -0,0 +1,21 @@
++const storageKey = 'pinnedNodes';
++
++function readPinnedNodes() {
++    try {
++        const stored = JSON.parse(window.localStorage.getItem(storageKey));
++        return Array.isArray(stored) ? [...new Set(stored.filter(id => typeof id === 'string' && id.length > 0))] : [];
++    } catch (_) {
++        return [];
++    }
++}
++
++function writePinnedNodes(ids) {
++    try {
++        window.localStorage.setItem(storageKey, JSON.stringify(ids));
++        return true;
++    } catch (_) {
++        return false;
++    }
++}
++
++module.exports = {readPinnedNodes, writePinnedNodes};
+diff --git a/react-frontend/src/pinned-nodes.test.js b/react-frontend/src/pinned-nodes.test.js
+new file mode 100644
+index 0000000..8c03854
+--- /dev/null
++++ b/react-frontend/src/pinned-nodes.test.js
+@@ -0,0 +1,87 @@
++const {readPinnedNodes, writePinnedNodes} = require('./pinned-nodes');
++
++afterEach(() => {
++    jest.restoreAllMocks();
++    localStorage.clear();
++});
++
++it.each([null, '{broken', '{}', '"alpha"', '17', 'false', 'null'])(
++    'returns no pins for a missing or invalid stored list: %s', value => {
++        const expected = [];
++        jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(value);
++
++        const result = readPinnedNodes();
++
++        expect(result).toEqual(expected);
++    }
++);
++
++it('keeps unique nonempty string IDs from stored pins', () => {
++    const value = '["alpha",17,null,"beta","alpha","",{"id":"gamma"}]';
++    const expected = ['alpha', 'beta'];
++    jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(value);
++
++    const result = readPinnedNodes();
++
++    expect(result).toEqual(expected);
++});
++
++it('returns no pins when browser storage access is denied', () => {
++    const expected = [];
++    jest.spyOn(window, 'localStorage', 'get').mockImplementation(() => { throw new DOMException('Denied', 'SecurityError'); });
++
++    const result = readPinnedNodes();
++
++    expect(result).toEqual(expected);
++});
++
++it('returns no pins when reading browser storage fails', () => {
++    const expected = [];
++    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('Cannot read'); });
++
++    const result = readPinnedNodes();
++
++    expect(result).toEqual(expected);
++});
++
++it('writes the selected IDs under the existing preference key', () => {
++    const value = ['alpha', 'beta'];
++    const expected = {saved: true, calls: [['pinnedNodes', '["alpha","beta"]']]};
++    const write = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
++
++    const saved = writePinnedNodes(value);
++    const result = {saved, calls: write.mock.calls};
++
++    expect(result).toEqual(expected);
++});
++
++it('writes an empty list after clearing the last pin', () => {
++    const value = [];
++    const expected = {saved: true, calls: [['pinnedNodes', '[]']]};
++    const write = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
++
++    const saved = writePinnedNodes(value);
++    const result = {saved, calls: write.mock.calls};
++
++    expect(result).toEqual(expected);
++});
++
++it('reports an unsaved change when the browser storage getter is denied', () => {
++    const value = ['alpha'];
++    const expected = false;
++    jest.spyOn(window, 'localStorage', 'get').mockImplementation(() => { throw new DOMException('Denied', 'SecurityError'); });
++
++    const result = writePinnedNodes(value);
++
++    expect(result).toEqual(expected);
++});
++
++it('reports an unsaved change when the browser quota is exceeded', () => {
++    const value = ['alpha'];
++    const expected = false;
++    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new DOMException('Full', 'QuotaExceededError'); });
++
++    const result = writePinnedNodes(value);
++
++    expect(result).toEqual(expected);
++});

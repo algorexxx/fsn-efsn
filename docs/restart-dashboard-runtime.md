@@ -168,10 +168,12 @@ report records lint coverage differences and remaining maintenance work.
 
 ## Work order and exit condition
 
-1. Review maintenance of the used UI libraries, the toolchain report's lint
-   coverage differences and the intended browser matrix. Frontend/backend
-   audits now report zero known advisories, with local acceptance complete
-   for Linux Node 24.21.0/npm 10.9.0 and Edge. Hosted validation is unrun.
+1. Use the [UI maintenance review](restart-dashboard-ui-maintenance.md) for
+   the recorded version/peer gaps and the accepted saved-pin recovery fix.
+   Decide the coordinated map/tooltip/React migration or explicit legacy-stack
+   disposition at release review. Keep lint differences and the intended
+   browser matrix explicit. Hosted validation remains unrun; the current
+   dependency locks retain the prior zero-advisory results.
 2. Finish GeoIP dataset selection, applicable terms/attribution, protected
    updates, failure/recovery and refresh/deletion operations. The package
    update does not establish data freshness or accept its download workflow.
