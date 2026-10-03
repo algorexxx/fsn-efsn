@@ -1,0 +1,359 @@
+{
+  "profile": {
+    "nodes": 2,
+    "inputBytes": 4194304,
+    "outputBytes": 1048576,
+    "snapshotBytes": 65536,
+    "succeeds": false
+  },
+  "scope": "Synthetic telemetry only; no efsn process, executed transactions, chain database or real key. Eight-report concurrency is a bounded fixture, not a production capacity promise.",
+  "batches": [
+    {
+      "number": 1000,
+      "historyBlocksPerReporter": 50,
+      "acknowledgementMs": 92.70150000000001
+    }
+  ],
+  "errors": [],
+  "closes": [
+    {
+      "code": 1009,
+      "reason": "Frame size of 114210 bytes exceeds maximum accepted frame size"
+    }
+  ],
+  "saves": [],
+  "beforeSnapshot": {
+    "records": [
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "hello",
+        "bytes": 288
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "ready",
+        "bytes": 18
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "hello",
+        "bytes": 288
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "ready",
+        "bytes": 18
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "block",
+        "bytes": 56283
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "stats",
+        "bytes": 176
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "pending",
+        "bytes": 61
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "history",
+        "bytes": 2811901
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "node-ping",
+        "bytes": 67
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "node-pong",
+        "bytes": 77
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "block",
+        "bytes": 56283
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "stats",
+        "bytes": 176
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "pending",
+        "bytes": 61
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "history",
+        "bytes": 2811901
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "node-ping",
+        "bytes": 67
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "node-pong",
+        "bytes": 77
+      }
+    ],
+    "samples": 30,
+    "baseline": {
+      "rss": 130899968,
+      "heapTotal": 18317312,
+      "heapUsed": 11606024,
+      "external": 83350069,
+      "arrayBuffers": 81259365
+    },
+    "sampledPeaks": {
+      "rss": 163491840,
+      "heapUsed": 26032744,
+      "external": 99806891,
+      "arrayBuffers": 90476279
+    },
+    "current": {
+      "rss": 163491840,
+      "heapTotal": 53641216,
+      "heapUsed": 26035744,
+      "external": 92568259,
+      "arrayBuffers": 90476279
+    },
+    "largestWrite": 129,
+    "rejectedWrites": 0,
+    "eventLoopDelayMs": {
+      "mean": 31.398570666666668,
+      "max": 39.354367,
+      "p99": 39.354367
+    },
+    "cache": {
+      "heights": 51,
+      "variants": 51,
+      "retainedArrays": 0
+    },
+    "nodes": [
+      {
+        "id": "profile-0",
+        "height": 1000,
+        "transactions": 714,
+        "reports": {
+          "block": 1791039930427,
+          "stats": 1791039930428,
+          "pending": 1791039930428
+        },
+        "connected": true
+      },
+      {
+        "id": "profile-1",
+        "height": 1000,
+        "transactions": 714,
+        "reports": {
+          "block": 1791039930483,
+          "stats": 1791039930483,
+          "pending": 1791039930483
+        },
+        "connected": true
+      }
+    ]
+  },
+  "unavailableStatus": 503,
+  "collector": {
+    "records": [
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "hello",
+        "bytes": 288
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "ready",
+        "bytes": 18
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "hello",
+        "bytes": 288
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "ready",
+        "bytes": 18
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "block",
+        "bytes": 56283
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "stats",
+        "bytes": 176
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "pending",
+        "bytes": 61
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "history",
+        "bytes": 2811901
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "node-ping",
+        "bytes": 67
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "node-pong",
+        "bytes": 77
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "block",
+        "bytes": 56283
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "stats",
+        "bytes": 176
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "pending",
+        "bytes": 61
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "history",
+        "bytes": 2811901
+      },
+      {
+        "direction": "incoming",
+        "path": "/api",
+        "event": "node-ping",
+        "bytes": 67
+      },
+      {
+        "direction": "outgoing",
+        "path": "/api",
+        "event": "node-pong",
+        "bytes": 77
+      },
+      {
+        "direction": "incoming",
+        "path": "/primus",
+        "event": "ready",
+        "bytes": 21
+      },
+      {
+        "direction": "outgoing",
+        "path": "/primus",
+        "event": "init",
+        "bytes": 114210
+      }
+    ],
+    "samples": 39,
+    "baseline": {
+      "rss": 130899968,
+      "heapTotal": 18317312,
+      "heapUsed": 11606024,
+      "external": 83350069,
+      "arrayBuffers": 81259365
+    },
+    "sampledPeaks": {
+      "rss": 164315136,
+      "heapUsed": 26724680,
+      "external": 99806891,
+      "arrayBuffers": 90593018
+    },
+    "current": {
+      "rss": 164315136,
+      "heapTotal": 53903360,
+      "heapUsed": 26725416,
+      "external": 92684998,
+      "arrayBuffers": 90593018
+    },
+    "largestWrite": 114210,
+    "rejectedWrites": 0,
+    "eventLoopDelayMs": {
+      "mean": 30.9504,
+      "max": 39.354367,
+      "p99": 39.354367
+    },
+    "cache": {
+      "heights": 51,
+      "variants": 51,
+      "retainedArrays": 0
+    },
+    "nodes": [
+      {
+        "id": "profile-0",
+        "height": 1000,
+        "transactions": 714,
+        "reports": {
+          "block": 1791039930427,
+          "stats": 1791039930428,
+          "pending": 1791039930428
+        },
+        "connected": true
+      },
+      {
+        "id": "profile-1",
+        "height": 1000,
+        "transactions": 714,
+        "reports": {
+          "block": 1791039930483,
+          "stats": 1791039930483,
+          "pending": 1791039930483
+        },
+        "connected": true
+      }
+    ]
+  },
+  "driverMemory": {
+    "rss": 93159424,
+    "heapTotal": 65134592,
+    "heapUsed": 30811640,
+    "external": 8457838,
+    "arrayBuffers": 5761677
+  }
+}

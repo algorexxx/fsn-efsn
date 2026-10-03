@@ -1,0 +1,505 @@
+From 9565d89e48110b68899053f6ffe09814d05ec74a Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 17:19:41 +0200
+Subject: [PATCH] Report snapshot transport failures and measure eight-node
+ profile
+
+---
+ docs/dashboard-profile.md             |  93 ++++++++++++++
+ docs/deployment-configuration.md      |   3 +
+ test/dashboard-profile.test.cjs       | 170 ++++++++++++++++++++++++++
+ test/fixtures/collector-wire.cjs      |   6 +-
+ test/fixtures/profile-wire-server.cjs |  85 +++++++++++++
+ test/persistence.test.cjs             |   2 +-
+ test/snapshot-collector.test.cjs      |  31 +++++
+ wsclient/collect-snapshots.js         |  10 +-
+ 8 files changed, 395 insertions(+), 5 deletions(-)
+ create mode 100644 docs/dashboard-profile.md
+ create mode 100644 test/dashboard-profile.test.cjs
+ create mode 100644 test/fixtures/profile-wire-server.cjs
+
+diff --git a/docs/dashboard-profile.md b/docs/dashboard-profile.md
+new file mode 100644
+index 0000000..7f742ee
+--- /dev/null
++++ b/docs/dashboard-profile.md
+@@ -0,0 +1,93 @@
++# Bounded larger-report and multiple-node profile
++
++3 October 2026. A local synthetic telemetry profile passes through the real
++collector, PostgreSQL and HTTP API with eight authenticated identities, each
++reporting a 714-transaction head and fifty-block history. This tests dashboard
++transport/storage, not executed blocks, independent operators or chain throughput.
++
++The final profile sends two eight-node history batches, one before and one during
++snapshot persistence, then advances every head through heights 1000–1003. Each
++history reply is 2,811,901–2,811,902 application bytes; head reports reach 56,283
++bytes. Distinct versions, peer/pending counts, current-head hashes and forty
++aligned transaction-count chart entries survive storage/API. The current-head
++transaction lists remain complete on both `/nodes` and `/blocks`.
++
++| Fixture setting | Value | Scope |
++| --- | ---: | --- |
++| Collector input | 4,194,304 bytes | Strict incoming message threshold |
++| Collector pending output | 1,048,576 bytes | Per TCP connection |
++| Snapshot frame/message | 1,048,576 bytes | Persistence receiver |
++| Snapshot node count | 8 | Exact enrolled test roster |
++| Collector connections | 16 | Shared across paths; not the enrollment count |
++| Telemetry rate | 100 messages/s | Per application connection |
++| Registration deadline | 5,000 ms | Fixture |
++| Snapshot interval / deadline | 250 / 1,500 ms | Fixture |
++| Snapshot / node-report lifetime | 5,000 / 30,000 ms | Fixture |
++
++These values are a measured candidate profile, not deployment defaults. All
++services are loopback-only. The final run samples about 238.5 MiB collector RSS
++at its highest observed point, with startup already about 126.9 MiB. Sampling
++includes message hooks and a 25 ms timer, not continuous peak measurement. The
++fixture parses messages for size/event instrumentation and adds overhead. No
++production RAM budget can be inferred from this short run or by summing sampled
++component maxima. PostgreSQL, driver and browser memory are separate.
++
++Two controlled cases establish why budgets must be coordinated:
++
++- With two busy identities, a 114,210-byte inventory exceeds the 64 KiB receiver
++  budget and closes with code 1009. Nothing is saved; HTTP returns 503.
++- With eight, a roughly 457 kB inventory exceeds the 256 KiB collector output
++  budget. The guarded write closes the connection (client code 1006). Again,
++  nothing is saved; HTTP returns 503.
++
++The successful run's largest inventory is 457,084 bytes, stored snapshot JSON
++461,205 bytes and `/nodes` response 483,281 bytes. `/blocks` is 474,540 bytes and
++`/charts` 5,700 bytes. Four successful saves take 12.7–17.1 ms in this run.
++Both large history batches finish their telemetry acknowledgements within
++292 ms; later head-only batches within 24 ms. These are observed local timings,
++not guarantees. Controlled clock advancement after stopping ingestion verifies
++HTTP expiry; it is not a real-time outage or mining-continuity experiment.
++
++The profile exposed silent transport failures: the receiver can close before
++the application sees a payload, without calling the writer's `onError`. The
++small production change in `wsclient/collect-snapshots.js` reports unexpected
++closes and socket errors through that existing callback. `wsclient.js` already
++logs it. Repeated callbacks and error-then-close produce one diagnostic; explicit
++stop and previously reported failures do not add a second message. Raw close
++reasons/exception messages are not logged. Reconnection, storage and freshness
++rules stay unchanged. External alert routing is still separate G4 work.
++
++The two new diagnostic regressions fail on the preceding production source.
++The candidate passes 161 contracts, 12 socket tests, six database scenarios,
++both constrained profile cases and the final eight-node profile. The earlier
++profile attempt waited for an error callback that did not exist; its preserved
++failure led to the close-event diagnostics and this correction.
++
++## Admission and deployment review
++
++Current source still accepts arbitrary object-shaped `hello.info` metadata and
++copies unknown current-head extensions. `node-ping.clientTime` is echoed without
++a separate type/byte bound. All remain subject to transport/output guards, but
++4 MiB transport input does not promise that eight accepted heads plus metadata
++will fit a 1 MiB snapshot. The node cap is checked by persistence after receipt;
++TCP connection limits do not bound enrolled identities or retained inactive nodes.
++
++Before adopting a deployment profile, bound/project registration fields and ping
++values, and choose a documented per-head/extension policy while retaining the
++required transaction hashes. Calculate and test aggregate inventory size at the
++maximum roster, including inactive nodes, stats/history envelopes, serialization
++and chart/output headroom. Coordinate credential enrollment and snapshot node
++limits. Then test the selected proxy/TLS route with the same workload and choose
++memory, retry, polling and alert thresholds. Keep `/primus` persistence access
++private as required by the deployment design.
++
++This profile uses common reported history: 54 retained heights/variants after
++advancement. Combine its scope with the separate 18,000-variant offline cache
++experiment; neither is a soak, slow-public-network or public-user fan-out test.
++No efsn, consensus, schema, dependency or frontend changes are included.
++
++Review artifacts: node repository `docs/evidence/restart-dashboard-profile-2026-10-03/`.
++Run `node --test test/dashboard-profile.test.cjs` only with an explicit
++`DASHBOARD_PROFILE`, `DASHBOARD_PROFILE_EVIDENCE`, `TEST_PG_PORT` and
++`TEST_PG_PASSWORD_FILE` for a fresh disposable database. Profiles are
++`small-snapshot`, `small-output` and `aligned`.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 680432c..4c7a85e 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -10,6 +10,9 @@ The snapshot persistence/schema and HTTP API now have local acceptance coverage.
+ The runtime dependencies and complete browser/TLS path still need review and
+ acceptance. These settings are not a production launch approval.
+ 
++The [bounded eight-node profile](dashboard-profile.md) measures coordinated
++input/output/snapshot budgets and records the remaining admission limits.
++
+ ## Required settings
+ 
+ | Process | Setting | Meaning |
+diff --git a/test/dashboard-profile.test.cjs b/test/dashboard-profile.test.cjs
+new file mode 100644
+index 0000000..924116e
+--- /dev/null
++++ b/test/dashboard-profile.test.cjs
+@@ -0,0 +1,170 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { readFileSync, writeFileSync } = require('node:fs');
++const { join } = require('node:path');
++const { once } = require('node:events');
++const { performance } = require('node:perf_hooks');
++const { Pool } = require('pg');
++const WebSocket = require('websocket').w3cwebsocket;
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { connect, login, send, waitMessage } = require('./fixtures/wire-client.cjs');
++const { block, stats } = require('./fixtures/telemetry-report.cjs');
++const request = require('./fixtures/http.cjs');
++const Populate = require('../db_methods/populate');
++const Retrieve = require('../db_methods/retrieve');
++const startSnapshotCollection = require('../wsclient/collect-snapshots');
++const createApp = require('../api-server/app');
++
++const profiles = {
++    'small-snapshot': { nodes: 2, inputBytes: 4194304, outputBytes: 1048576, snapshotBytes: 65536, succeeds: false },
++    'small-output': { nodes: 8, inputBytes: 4194304, outputBytes: 262144, snapshotBytes: 1048576, succeeds: false },
++    'aligned': { nodes: 8, inputBytes: 4194304, outputBytes: 1048576, snapshotBytes: 1048576, succeeds: true },
++};
++const profile = profiles[process.env.DASHBOARD_PROFILE];
++if (!profile || !process.env.DASHBOARD_PROFILE_EVIDENCE || !process.env.TEST_PG_PORT || !process.env.TEST_PG_PASSWORD_FILE) {
++    throw new Error('Explicit profile, evidence path and disposable database settings required');
++}
++
++function busyBlock(number) {
++    return { ...block(number), timestamp: 1700000000 + number * 120, miner: '0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf', difficulty: '3', totalDifficulty: String(number * 3), gasLimit: 15000000, gasUsed: 14994000, ticketNumber: 2, myTicketNumber: undefined, transactions: Array.from({ length: 714 }, (_, index) => ({ hash: '0x' + (number * 1000 + index).toString(16).padStart(64, '0') })) };
++}
++
++async function waitFor(read, predicate) {
++    const deadline = Date.now() + 6000;
++    while (Date.now() < deadline) {
++        const result = await read();
++        if (predicate(result)) {
++            return result;
++        }
++        await new Promise(resolve => setTimeout(resolve, 50));
++    }
++    throw new Error('Expected bounded profile state did not arrive');
++}
++
++test('bounded dashboard profile: ' + process.env.DASHBOARD_PROFILE, { timeout: 40000 }, async t => {
++    const credentials = Object.fromEntries(Array.from({ length: profile.nodes }, (_, index) => ['profile-' + index, 'synthetic-profile-credential-' + String(index).padStart(16, '0')]));
++    const server = await startCollector(t, { COLLECTOR_MAX_MESSAGE_BYTES: String(profile.inputBytes), COLLECTOR_MAX_BUFFERED_BYTES: String(profile.outputBytes), COLLECTOR_HELLO_TIMEOUT_MS: '5000' }, 'profile-wire-server.cjs', credentials);
++    const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
++    t.after(() => pool.end());
++    await pool.query(readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8'));
++    const populate = new Populate(pool);
++    const retrieve = new Retrieve(pool);
++    const reporters = await Promise.all(Object.entries(credentials).map(async ([id, secret]) => {
++        const connection = connect(t, server.port, 'api');
++        await login(connection, id, secret, { node: 'profile-version-' + id });
++        return { id, connection };
++    }));
++    const errors = [];
++    const closes = [];
++    const saves = [];
++    const config = { url: `ws://127.0.0.1:${server.port}/primus`, intervalMs: 250, timeoutMs: 1500, maxBytes: profile.snapshotBytes, maxNodes: profile.nodes };
++    let collector;
++    t.after(() => collector && collector.stop());
++    let apiTime;
++    const api = createApp(retrieve, () => apiTime === undefined ? Date.now() : apiTime, 5000, 30000).listen(0, '127.0.0.1');
++    t.after(() => new Promise(resolve => api.close(resolve)));
++    await once(api, 'listening');
++    const evidence = { profile, scope: 'Synthetic telemetry only; no efsn process, executed transactions, chain database or real key. Eight-report concurrency is a bounded fixture, not a production capacity promise.', batches: [], errors, closes, saves };
++    t.after(() => writeFileSync(join(process.env.DASHBOARD_PROFILE_EVIDENCE, 'profile.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8'));
++
++    async function report(number, history) {
++        const head = busyBlock(number);
++        const started = performance.now();
++        await Promise.all(reporters.map(async ({ id, connection }, index) => {
++            const from = connection.messages.length;
++            send(connection, 'block', { id, block: head });
++            send(connection, 'stats', { id, stats: { ...stats(), peers: index, ticketNumber: 2, myTicketNumber: 1 } });
++            send(connection, 'pending', { id, stats: { pending: index } });
++            if (history) {
++                send(connection, 'history', { id, history });
++            }
++            send(connection, 'node-ping', { id, clientTime: 'batch-' + number });
++            await waitMessage(connection, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'batch-' + number, from);
++        }));
++        evidence.batches.push({ number, historyBlocksPerReporter: history ? history.length : 0, acknowledgementMs: performance.now() - started });
++    }
++
++    await report(1000, Array.from({ length: 50 }, (_, index) => busyBlock(999 - index)));
++    evidence.beforeSnapshot = await server.command('inspect');
++    collector = startSnapshotCollection(config, {
++        connect(url, maxBytes) {
++            const socket = new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes });
++            socket.addEventListener('close', event => closes.push({ code: event.code, reason: event.reason }));
++            return socket;
++        },
++        async saveSnapshot(payload, observedAt) {
++            const started = performance.now();
++            await populate.saveSnapshot(payload, observedAt);
++            saves.push({ bytes: Buffer.byteLength(JSON.stringify(payload)), elapsedMs: performance.now() - started, heights: payload.nodes.map(node => node.stats.block.number) });
++        },
++        now: () => new Date(), setTimeout, clearTimeout, onError: message => errors.push(message),
++    });
++    if (!profile.succeeds) {
++        await waitFor(() => closes, values => values.length > 0);
++        await collector.stop();
++        assert.equal(await retrieve.readSnapshot(), null);
++        const response = await request(api.address().port, '/nodes');
++        assert.equal(response.status, 503);
++        assert.deepEqual(saves, []);
++        assert.deepEqual(errors, ['Collector connection closed unexpectedly']);
++        evidence.unavailableStatus = response.status;
++    } else {
++        for (const number of [1000, 1001, 1002, 1003]) {
++            if (number > 1000) {
++                await report(number, number === 1001 ? Array.from({ length: 50 }, (_, index) => busyBlock(1000 - index)) : undefined);
++            }
++            const snapshot = await waitFor(() => retrieve.readSnapshot(), value => value && value.payload.nodes.length === profile.nodes && value.payload.nodes.every(node => node.stats.block.number === number));
++            assert.deepEqual(snapshot.payload.charts.transactions, Array(40).fill(714));
++            assert.deepEqual(snapshot.payload.charts.height, Array.from({ length: 40 }, (_, index) => number - 39 + index));
++        }
++        const responses = {};
++        for (const path of ['/nodes', '/blocks', '/charts']) {
++            const started = performance.now();
++            const response = await request(api.address().port, path);
++            assert.equal(response.status, 200);
++            responses[path] = { bytes: Number(response.headers['content-length']), elapsedMs: performance.now() - started };
++            assert.equal(responses[path].bytes, Buffer.byteLength(JSON.stringify(response.body)));
++            if (path === '/nodes') {
++                for (const [index, reporter] of reporters.entries()) {
++                    const row = response.body.find(value => value.id === reporter.id);
++                    const node = JSON.parse(row.stats);
++                    assert.equal(node.info.node, 'profile-version-' + reporter.id);
++                    assert.equal(node.stats.peers, index);
++                    assert.equal(node.stats.pending, index);
++                    assert.deepEqual(node.stats.block.transactions, busyBlock(1003).transactions);
++                    assert.equal(Object.values(row.reportValidForMs).every(value => value > 0), true);
++                }
++            }
++            if (path === '/blocks') {
++                assert.equal(response.body.length, profile.nodes);
++                for (const row of response.body) {
++                    assert.deepEqual(JSON.parse(row.blocks).transactions, busyBlock(1003).transactions);
++                }
++            }
++        }
++        evidence.http = responses;
++        assert.deepEqual(closes, []);
++        await collector.stop();
++        const snapshot = await retrieve.readSnapshot();
++        apiTime = snapshot.observed_at.getTime() + 5001;
++        const expired = await request(api.address().port, '/nodes');
++        assert.equal(expired.status, 503);
++        evidence.expiredStatus = expired.status;
++        assert.deepEqual(errors, []);
++        assert.ok(saves.length >= 4);
++    }
++    evidence.collector = await server.command('inspect');
++    assert.equal(evidence.collector.nodes.length, profile.nodes);
++    assert.equal(evidence.collector.nodes.every(node => node.connected && node.transactions === 714 && Object.values(node.reports).every(value => Number.isSafeInteger(value))), true);
++    assert.equal(evidence.collector.cache.retainedArrays, 0);
++    const histories = evidence.collector.records.filter(record => record.direction === 'incoming' && record.event === 'history');
++    assert.equal(histories.length, profile.nodes * (profile.succeeds ? 2 : 1));
++    assert.equal(histories.every(record => record.bytes > 2 * 1024 * 1024 && record.bytes < profile.inputBytes), true);
++    assert.equal(evidence.collector.rejectedWrites > 0, process.env.DASHBOARD_PROFILE === 'small-output');
++    evidence.driverMemory = process.memoryUsage();
++    for (const { connection } of reporters) {
++        connection.socket.close();
++    }
++    await Promise.all(reporters.map(({ connection }) => connection.closed));
++    await server.stop();
++});
+diff --git a/test/fixtures/collector-wire.cjs b/test/fixtures/collector-wire.cjs
+index e8f4655..18fe54a 100644
+--- a/test/fixtures/collector-wire.cjs
++++ b/test/fixtures/collector-wire.cjs
+@@ -5,8 +5,8 @@ const { join } = require('node:path');
+ const environment = require('./collector-environment.cjs');
+ const { credentialFile, secretA, secretB } = require('./collector.cjs');
+ 
+-async function startCollector(t, settings = {}, fixture = 'wire-server.cjs') {
+-    const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
++async function startCollector(t, settings = {}, fixture = 'wire-server.cjs', credentials = { 'node-a': secretA, 'node-b': secretB }) {
++    const file = credentialFile(t, credentials);
+     const child = fork(join(__dirname, fixture), [], {
+         env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', VERBOSITY: '2', WS_CREDENTIALS_FILE: file, ...environment, ...settings },
+         stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+@@ -20,7 +20,7 @@ async function startCollector(t, settings = {}, fixture = 'wire-server.cjs') {
+             child.kill();
+         }
+         await exited;
+-        assert.equal(logs.includes(secretA) || logs.includes(secretB), false);
++        assert.equal(Object.values(credentials).flat().some(secret => logs.includes(secret)), false);
+     });
+     const [address] = await Promise.race([once(child, 'message'), exited.then(() => { throw new Error(`Collector startup failed: ${logs}`); })]);
+     assert.equal(address.address, '127.0.0.1');
+diff --git a/test/fixtures/profile-wire-server.cjs b/test/fixtures/profile-wire-server.cjs
+new file mode 100644
+index 0000000..8117fc7
+--- /dev/null
++++ b/test/fixtures/profile-wire-server.cjs
+@@ -0,0 +1,85 @@
++const { monitorEventLoopDelay } = require('node:perf_hooks');
++const WebSocket = require('ws');
++const Collection = require('../../lib/collection');
++
++let collection;
++const add = Collection.prototype.add;
++Collection.prototype.add = function (...args) {
++    collection = this;
++    return add.apply(this, args);
++};
++
++const records = [];
++const peaks = { rss: 0, heapUsed: 0, external: 0, arrayBuffers: 0 };
++const loop = monitorEventLoopDelay({ resolution: 20 });
++let samples = 0;
++let rejectedWrites = 0;
++let largestWrite = 0;
++let baseline;
++loop.enable();
++
++function sample() {
++    const memory = process.memoryUsage();
++    samples++;
++    for (const key of Object.keys(peaks)) {
++        peaks[key] = Math.max(peaks[key], memory[key]);
++    }
++}
++
++function capture(direction, path, raw) {
++    if (records.length >= 1000) {
++        throw new Error('Profile fixture message limit exceeded');
++    }
++    const message = JSON.parse(raw.toString());
++    const event = typeof message === 'string' ? 'control' : (message.emit ? message.emit[0] : message.action);
++    records.push({ direction, path, event, bytes: Buffer.byteLength(raw) });
++    sample();
++}
++
++const upgrade = WebSocket.Server.prototype.handleUpgrade;
++WebSocket.Server.prototype.handleUpgrade = function (request, connection, head, complete) {
++    return upgrade.call(this, request, connection, head, socket => {
++        socket.on('message', raw => capture('incoming', request.url, raw));
++        const send = socket.send;
++        socket.send = function (data, ...options) {
++            capture('outgoing', request.url, data);
++            return send.call(this, data, ...options);
++        };
++        complete(socket);
++    });
++};
++
++const server = require('../../server');
++server.on('connection', socket => {
++    const write = socket.write;
++    socket.write = function (data, ...options) {
++        largestWrite = Math.max(largestWrite, Buffer.byteLength(data));
++        const wasDestroyed = socket.destroyed;
++        const result = write.call(this, data, ...options);
++        if (!wasDestroyed && socket.destroyed) {
++            rejectedWrites++;
++        }
++        sample();
++        return result;
++    };
++});
++server.on('listening', () => {
++    baseline = process.memoryUsage();
++    loop.reset();
++    sample();
++    process.send(server.address());
++});
++const timer = setInterval(sample, 25);
++process.on('message', message => {
++    if (message === 'stop') {
++        clearInterval(timer);
++        loop.disable();
++        server.close(() => process.exit(0));
++    }
++    if (message === 'inspect') {
++        const items = collection.getHistory()._items;
++        sample();
++        process.send({ records, samples, baseline, sampledPeaks: peaks, current: process.memoryUsage(), largestWrite, rejectedWrites, eventLoopDelayMs: { mean: loop.mean / 1e6, max: loop.max / 1e6, p99: loop.percentile(99) / 1e6 }, cache: { heights: items.length, variants: items.reduce((sum, item) => sum + item.forks.length, 0), retainedArrays: items.reduce((sum, item) => sum + item.forks.filter(fork => fork.transactions || fork.uncles).length, 0) }, nodes: collection.all().map(node => ({ id: node.id, height: node.stats.block.number, transactions: node.stats.block.transactions.length, reports: node.reports, connected: node.uptime.lastStatus })) });
++    }
++});
++setTimeout(() => process.exit(2), 45000).unref();
+diff --git a/test/persistence.test.cjs b/test/persistence.test.cjs
+index 21f21a2..37c74f3 100644
+--- a/test/persistence.test.cjs
++++ b/test/persistence.test.cjs
+@@ -167,7 +167,7 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+         assert.deepEqual(await retrieve.readSnapshot(), stored);
+         assert.deepEqual((await admin.query('SELECT count(*)::int AS count FROM dashboard_v1.snapshot')).rows, [{ count: 1 }]);
+     });
+-    assert.deepEqual(errors, []);
++    assert.deepEqual(errors, ['Collector connection closed unexpectedly']);
+     assert.equal(logs.includes(secretA) || logs.includes(secretB), false);
+     viewer.socket.close();
+     b.socket.close();
+diff --git a/test/snapshot-collector.test.cjs b/test/snapshot-collector.test.cjs
+index 252feec..b0f5267 100644
+--- a/test/snapshot-collector.test.cjs
++++ b/test/snapshot-collector.test.cjs
+@@ -193,4 +193,35 @@ test('stop drains a pending write and prevents further timers or reconnects', as
+     assert.equal(fixture.timers.size, 0);
+     assert.equal(fixture.connections.length, 1);
+     assert.equal(fixture.writes.length, 1);
++    assert.deepEqual(fixture.errors, []);
++});
++
++test('unexpected transport close is reported once without raw reason data and still reconnects', t => {
++    const fixture = setup(t);
++    const old = fixture.connections[0];
++    old.onopen();
++
++    old.onclose({ code: 1009, reason: 'private transport detail' });
++    old.onclose({ code: 1009, reason: 'private transport detail' });
++    fixture.tick();
++
++    assert.deepEqual(fixture.errors, ['Collector connection closed unexpectedly']);
++    assert.deepEqual(fixture.writes, []);
++    assert.equal(fixture.connections.length, 2);
++    assert.equal(fixture.timers.size, 1);
++});
++
++test('transport error is reported once and its subsequent close is not reported twice', t => {
++    const fixture = setup(t);
++    const old = fixture.connections[0];
++    old.onopen();
++
++    old.onerror(new Error('private transport detail'));
++    old.onerror(new Error('private transport detail'));
++    old.onclose();
++
++    assert.deepEqual(fixture.errors, ['Collector connection failed']);
++    assert.deepEqual(fixture.writes, []);
++    assert.equal(old.closed, true);
++    assert.deepEqual([...fixture.timers.values()].map(timer => timer.delay), [100]);
+ });
+diff --git a/wsclient/collect-snapshots.js b/wsclient/collect-snapshots.js
+index 77a2d0e..dc43390 100644
+--- a/wsclient/collect-snapshots.js
++++ b/wsclient/collect-snapshots.js
+@@ -62,6 +62,9 @@ function startSnapshotCollection(config, dependencies) {
+         if (socket !== connection) {
+             return;
+         }
++        if (!stopped && !closing) {
++            dependencies.onError('Collector connection closed unexpectedly');
++        }
+         socket = null;
+         closing = false;
+         awaitingSnapshot = false;
+@@ -159,7 +162,12 @@ function startSnapshotCollection(config, dependencies) {
+             connection.onopen = () => requestSnapshot(connection);
+             connection.onmessage = event => receiveMessage(connection, event.data);
+             connection.onclose = () => connectionClosed(connection);
+-            connection.onerror = () => disconnect(connection);
++            connection.onerror = () => {
++                if (!stopped && !closing && socket === connection) {
++                    dependencies.onError('Collector connection failed');
++                    disconnect(connection);
++                }
++            };
+             schedule(() => expireConnection(connection), config.timeoutMs);
+         } catch (_) {
+             dependencies.onError('Collector connection failed');

@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Compact retention](restart-dashboard-retention.md): 159 contracts, 12 socket tests, six database scenarios and actual efsn/browser integration pass; 18,000 compact variants measured offline | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Eight-reporter profile](restart-dashboard-profile.md): 161 contracts, 12 socket tests, six database scenarios and bounded 4/1/1 MiB profile pass; prior actual efsn/browser and compact-cache evidence retained | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -250,6 +250,16 @@ the successful run adds complete-report readiness and receipt diagnostics withou
 widening limits. Metadata/ping field review, production payload/resource sizing,
 collector loss during mining, runtime review and proxy/TLS/deployment controls
 remain open.
+The [larger-report/multiple-node profile](restart-dashboard-profile.md) now
+passes with eight simulated reporters, 714 hashes per block, two batches of
+fifty-block history replies and four saved advancing heads. It independently
+demonstrates 64 KiB snapshot and 256 KiB output failures. A 4 MiB input / 1 MiB
+pending-output / 1 MiB snapshot candidate succeeds; highest sampled collector
+RSS is 238.5 MiB, not a continuous peak or deployment allocation. The small
+writer correction reports previously silent transport closes/errors; 161
+contracts, 12 socket tests and six database scenarios pass. Registration/ping
+fields and current-head extensions still need explicit admission bounds before
+the measured profile can become a supported public deployment envelope.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -308,14 +318,14 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: measure a bounded larger-report/multiple-node profile and align input,
-   output, snapshot, identity-count and proxy budgets; include metadata/ping field
-   review and preserve receipt diagnostics to investigate timing failures.
-   [Compact retention and known report validation](restart-dashboard-retention.md)
-   now pass the actual efsn/database/API/compiled-browser flow. Collector loss
-   during mining, runtime/dependency review and TLS/deployment controls remain
-   open. The public dashboard gate remains open; fixture limits are not
-   deployment defaults.
+1. G6: bound/project registration and ping fields, then establish an explicit
+   current-head/extension budget preserving required hashes. Check aggregate
+   maximum enrollment, including inactive rows, against inventory/output/snapshot
+   budgets before adopting the [measured eight-reporter profile](restart-dashboard-profile.md).
+   Preserve receipt diagnostics for timing failures; test selected proxy/TLS
+   limits and finish collector loss during mining, runtime/dependency review and
+   supervision. Prior actual efsn/browser acceptance is retained. G6 remains
+   open; the measured 4/1/1 MiB fixture limits are not deployment defaults.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

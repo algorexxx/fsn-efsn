@@ -1,0 +1,38 @@
+2026-10-03 17:11:03.838 CEST [43724] LOG:  starting PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit
+2026-10-03 17:11:03.839 CEST [43724] LOG:  listening on IPv4 address "127.0.0.1", port 59531
+2026-10-03 17:11:03.931 CEST [51160] LOG:  database system was shut down at 2026-10-03 17:10:58 CEST
+2026-10-03 17:11:03.951 CEST [43724] LOG:  database system is ready to accept connections
+2026-10-03 17:11:04.503 CEST [41196] ERROR:  schema "dashboard_v1" already exists
+2026-10-03 17:11:04.503 CEST [41196] STATEMENT:  BEGIN;
+	CREATE SCHEMA dashboard_v1;
+	CREATE TABLE dashboard_v1.snapshot (
+	    singleton boolean PRIMARY KEY CHECK (singleton),
+	    observed_at timestamptz NOT NULL CHECK (isfinite(observed_at)),
+	    payload jsonb NOT NULL CHECK (
+	        (jsonb_typeof(payload) = 'object'
+	         AND jsonb_typeof(payload->'nodes') = 'array'
+	         AND jsonb_typeof(payload->'charts') = 'object') IS TRUE
+	    )
+	);
+	COMMIT;
+	
+2026-10-03 17:11:04.587 CEST [59824] ERROR:  new row for relation "snapshot" violates check constraint "snapshot_payload_check"
+2026-10-03 17:11:04.587 CEST [59824] DETAIL:  Failing row contains (t, 2026-01-02 01:00:00+01, {}).
+2026-10-03 17:11:04.587 CEST [59824] STATEMENT:  INSERT INTO dashboard_v1.snapshot (singleton, observed_at, payload)
+	             VALUES (true, $1, $2::jsonb)
+	             ON CONFLICT (singleton) DO UPDATE
+	             SET observed_at = EXCLUDED.observed_at, payload = EXCLUDED.payload
+	             WHERE EXCLUDED.observed_at >= dashboard_v1.snapshot.observed_at
+2026-10-03 17:11:04.622 CEST [32816] ERROR:  permission denied for table snapshot
+2026-10-03 17:11:04.622 CEST [32816] STATEMENT:  DELETE FROM dashboard_v1.snapshot
+2026-10-03 17:11:04.654 CEST [38980] ERROR:  permission denied for table snapshot
+2026-10-03 17:11:04.654 CEST [38980] STATEMENT:  DELETE FROM dashboard_v1.snapshot
+2026-10-03 17:11:04.688 CEST [57776] ERROR:  permission denied for schema dashboard_v1 at character 14
+2026-10-03 17:11:04.688 CEST [57776] STATEMENT:  CREATE TABLE dashboard_v1.unexpected (id int)
+2026-10-03 17:11:09.589 CEST [43724] LOG:  received fast shutdown request
+2026-10-03 17:11:09.595 CEST [43724] LOG:  aborting any active transactions
+2026-10-03 17:11:09.602 CEST [43724] LOG:  background worker "logical replication launcher" (PID 54664) exited with exit code 1
+2026-10-03 17:11:09.602 CEST [57100] LOG:  shutting down
+2026-10-03 17:11:09.606 CEST [57100] LOG:  checkpoint starting: shutdown immediate
+2026-10-03 17:11:09.813 CEST [57100] LOG:  checkpoint complete: wrote 63 buffers (3.1%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.011 s, sync=0.174 s, total=0.211 s; sync files=51, longest=0.006 s, average=0.004 s; distance=298 kB, estimate=298 kB; lsn=0/183DD20, redo lsn=0/183DD20
+2026-10-03 17:11:09.919 CEST [43724] LOG:  database system is shut down
