@@ -1,0 +1,2004 @@
+From a2e9f1b0b486bff2c4f90a6c1a65492183af9fc4 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 12:11:20 +0200
+Subject: [PATCH] Persist complete dashboard snapshots with bounded collection
+ and stale reads
+
+---
+ README.md                        |  14 +-
+ api-server/app.js                |  31 +++
+ api-server/server.js             |  79 +-------
+ db/index.js                      |  19 +-
+ db/schema/001-dashboard.sql      |  12 ++
+ db_methods/populate.js           | 317 ++-----------------------------
+ db_methods/retrieve.js           |  98 +---------
+ docs/deployment-configuration.md |  47 ++---
+ docs/postgres-validation.md      |   8 +-
+ docs/snapshot-storage.md         | 120 ++++++++++++
+ lib/deployment-config.js         |  29 ++-
+ package.json                     |   3 +-
+ test/deployment-wiring.test.cjs  |  38 ++--
+ test/fixtures/http.cjs           |  22 +++
+ test/fixtures/wire-client.cjs    |  61 ++++++
+ test/persistence.test.cjs        | 145 ++++++++++++++
+ test/snapshot-api.test.cjs       |  53 ++++++
+ test/snapshot-collector.test.cjs | 196 +++++++++++++++++++
+ test/telemetry-wire.test.cjs     |  60 +-----
+ wsclient/collect-snapshots.js    | 180 ++++++++++++++++++
+ wsclient/wsclient.js             | 202 +++-----------------
+ 21 files changed, 951 insertions(+), 783 deletions(-)
+ create mode 100644 api-server/app.js
+ create mode 100644 db/schema/001-dashboard.sql
+ create mode 100644 docs/snapshot-storage.md
+ create mode 100644 test/fixtures/http.cjs
+ create mode 100644 test/fixtures/wire-client.cjs
+ create mode 100644 test/persistence.test.cjs
+ create mode 100644 test/snapshot-api.test.cjs
+ create mode 100644 test/snapshot-collector.test.cjs
+ create mode 100644 wsclient/collect-snapshots.js
+
+diff --git a/README.md b/README.md
+index 00fe4fd..74e1090 100644
+--- a/README.md
++++ b/README.md
+@@ -6,11 +6,11 @@ This recovery candidate requires explicit deployment settings and per-node
+ telemetry credentials. Start with [deployment configuration](docs/deployment-configuration.md)
+ and [node enrollment](docs/telemetry-enrollment.md).
+ 
+-The collector authentication and configuration have local test coverage.
+-Persistence, database provisioning, dependency/runtime review and the complete
+-browser/TLS deployment still need work. See the deployment document's concrete
+-blockers before running the legacy persistence client. The old database setup
+-script is historical and must not be used as the new provisioning procedure.
++The collector and [snapshot storage/API](docs/snapshot-storage.md) have local
++acceptance coverage, including real PostgreSQL and two synthetic nodes. Browser
++freshness/error handling, runtime/dependency review and the complete TLS deployment
++still need work. Provision the versioned schema in the snapshot guide; do not use
++the historical database setup script.
+ 
+ Run `npm test` for configuration, identity and startup checks, including an HTTP
+ API test with stubbed storage. Run `npm run test:wire` for the real loopback
+@@ -19,8 +19,8 @@ collector WebSocket check. Install dependencies from the existing lock with
+ not constitute a dependency advisory review or production runtime selection.
+ 
+ The pinned PostgreSQL driver has [real database validation](docs/postgres-validation.md).
+-That optional suite requires a disposable cluster and does not validate the
+-legacy persistence pipeline. Database processes now also require `DB_TIMEOUT_MS`.
++That optional suite requires a disposable cluster. The separate
++`npm run test:persistence` suite tests snapshot ingestion and the read API. Database processes now also require `DB_TIMEOUT_MS`.
+ 
+ No validator signing keys are required by this dashboard. Telemetry enrollment
+ is independent of participation in block production.
+diff --git a/api-server/app.js b/api-server/app.js
+new file mode 100644
+index 0000000..9649153
+--- /dev/null
++++ b/api-server/app.js
+@@ -0,0 +1,31 @@
++const express = require('express');
++
++function createApp(retrieve, now, maximumAgeMs) {
++    const app = express();
++    const views = {
++        '/nodes': snapshot => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, block: node.stats.block.number, stats: JSON.stringify(node), info: JSON.stringify(node.info) })),
++        '/blocks': snapshot => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, blocks: JSON.stringify(node.stats.block) })),
++        '/info': snapshot => snapshot.payload.nodes.map(node => ({ id: node.id, utctime: snapshot.observed_at, info: JSON.stringify(node.info) })),
++        '/charts': snapshot => [{ utctime: snapshot.observed_at, charts: JSON.stringify(snapshot.payload.charts) }],
++    };
++    for (const [path, project] of Object.entries(views)) {
++        app.get(path, async (request, response) => {
++            response.set('Cache-Control', 'no-store');
++            try {
++                const snapshot = await retrieve.readSnapshot();
++                const age = snapshot ? now() - snapshot.observed_at.getTime() : NaN;
++                if (!Number.isFinite(age) || age < 0 || age > maximumAgeMs) {
++                    response.status(503).json({ error: 'snapshot_unavailable' });
++                    return;
++                }
++                response.set('X-Dashboard-Observed-At', snapshot.observed_at.toISOString());
++                response.json(project(snapshot));
++            } catch (_) {
++                response.status(503).json({ error: 'snapshot_unavailable' });
++            }
++        });
++    }
++    return app;
++}
++
++module.exports = createApp;
+diff --git a/api-server/server.js b/api-server/server.js
+index 296d7ba..34b3bab 100644
+--- a/api-server/server.js
++++ b/api-server/server.js
+@@ -1,77 +1,8 @@
+-const listener = require('../lib/deployment-config').loadListenerConfig(process.env, 'API');
+-const express = require('express');
+-const app = express();
+-
++const config = require('../lib/deployment-config').loadApiConfig(process.env);
++const database = require('../db');
+ const Retrieve = require('../db_methods/retrieve');
++const createApp = require('./app');
++const app = createApp(new Retrieve(database), () => Date.now(), config.maxAgeMs);
++const server = app.listen(config.port, config.host, () => console.log('Dashboard API listening'));
+ 
+-const ret = new Retrieve();
+-
+-
+-let server;
+-
+-app.get('/nodes', (req, res, next) => {
+-    //res.send('Return all nodes!');
+-
+-    ret.nodeGetAllDb()
+-    .then(ret => {
+-        console.log(ret);
+-        res.send(ret);
+-    })
+-    .catch(ex => {
+-        next(ex);  // express error handler invoked
+-    })
+-
+-});
+-
+-app.get('/blocks', (req, res, next) => {
+-    //res.send('Return all nodes!');
+-
+-    ret.blocksGetAllDb()
+-    .then(ret => {
+-        console.log(ret);
+-        res.send(ret);
+-    })
+-    .catch(ex => {
+-        next(ex);  // express error handler invoked
+-    })
+-
+-});
+-
+-
+-app.get('/charts', (req, res, next) => {
+-    //res.send('Return all nodes!');
+-
+-    ret.chartsGetAllDb()
+-    .then(ret => {
+-        console.log(ret);
+-        res.send(ret);
+-    })
+-    .catch(ex => {
+-        next(ex);  // express error handler invoked
+-    })
+-
+-});
+-
+-
+-app.get('/info', (req, res, next) => {
+-    //res.send('Return all nodes!');
+-
+-    ret.infoGetAllDb()
+-    .then(ret => {
+-        console.log(ret);
+-        res.send(ret);
+-    })
+-    .catch(ex => {
+-        next(ex);  // express error handler invoked
+-    })
+-
+-});
+-
+-// setTimeout(() => {
+-//             console.log(`Closing express server now`);
+-//             server.close();
+-// }, 60000);
+-
+-server = app.listen(listener.port, listener.host, () => console.log('Dashboard API listening'));
+ module.exports = server;
+-
+diff --git a/db/index.js b/db/index.js
+index a892b71..cdcf5bd 100644
+--- a/db/index.js
++++ b/db/index.js
+@@ -1,18 +1,9 @@
+ const config = require('../lib/deployment-config').loadDatabaseConfig(process.env);
+-const { Pool } = require('pg')
+-
++const { Pool } = require('pg');
+ const pool = new Pool(config);
+ pool.on('error', () => console.error('Dashboard database pool connection failed'));
+ 
+-
+- module.exports = {
+-     close: () => pool.end(),
+-     query: (text, params, callback) => {
+-         return pool.query(text, params, callback)
+-     },
+-     getClient: (callback) => {
+-        pool.connect((err, client, done) => {
+-            callback(err, client, done)
+-        })
+-     }
+- }
++module.exports = {
++    query: (text, params) => pool.query(text, params),
++    close: () => pool.end(),
++};
+diff --git a/db/schema/001-dashboard.sql b/db/schema/001-dashboard.sql
+new file mode 100644
+index 0000000..4ced315
+--- /dev/null
++++ b/db/schema/001-dashboard.sql
+@@ -0,0 +1,12 @@
++BEGIN;
++CREATE SCHEMA dashboard_v1;
++CREATE TABLE dashboard_v1.snapshot (
++    singleton boolean PRIMARY KEY CHECK (singleton),
++    observed_at timestamptz NOT NULL CHECK (isfinite(observed_at)),
++    payload jsonb NOT NULL CHECK (
++        (jsonb_typeof(payload) = 'object'
++         AND jsonb_typeof(payload->'nodes') = 'array'
++         AND jsonb_typeof(payload->'charts') = 'object') IS TRUE
++    )
++);
++COMMIT;
+diff --git a/db_methods/populate.js b/db_methods/populate.js
+index b8f0a42..8d7271b 100644
+--- a/db_methods/populate.js
++++ b/db_methods/populate.js
+@@ -1,305 +1,20 @@
+-'use strict'
+-
+-const db = require('../db');
+-
+-
+-
+-class Populate  {
+-    constructor() {
+-        //this.nodeUpdateDb = nodeUpdateDb;
+-    }
+-
+-
+-    nodeGetDb(id) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    const query = `SELECT * FROM nodes WHERE id = '${id}'`;
+-                    client.query(query)
+-                        .then(res => {
+-                            client.release();
+-                            if (res.rowCount === 0) {
+-                                resolve(res.rowCount)
+-                            }
+-                            else {
+-                                //console.log(res);
+-                                resolve(res.rows[0]);
+-                            }
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query SELECT node: FAIL ${err}`);
+-                             reject(err);
+-                        });
+-                }
+-            });
+-        });
+-    }
+-
+-
+-    nodePostDb(record) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                    return;
+-                }
+-                else {
+-                    const node_text = 'nodes(id, utctime, block, stats, info) VALUES($1, $2, $3, $4, $5)';
+-                    let query = {
+-                        text: `INSERT INTO ${node_text}`,
+-                        values: record
+-                    }
+-                    //console.log(record);
+-                    console.log(`Inserting ${record[0]}...`);
+-                    client.query(query)
+-                    .then(res => {
+-                        console.log(`Inserted`);
+-                        client.release();
+-                        resolve(1);
+-                        return;
+-                    })
+-                    .catch(err => {
+-                        client.release();
+-                        console.error(`Query INSERT INTO node: FAIL ${err}`);
+-                        reject(err);
+-                        return;
+-                    });
+-                }
+-            });
+-        });
+-    }
+-
+-    nodeUpdateDb(record) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                    return;
+-                }
+-                else {
+-                    record[1] = record[1].replace('T',' ');
+-                    record[1] = record[1].replace('Z','');
+-                    record[1] = record[1].replace('.0','+');
+-                    //console.log(record[1]);
+-                    const query =
+-                         `UPDATE nodes SET utctime     = '${record[1]}', block = ${record[2]}, stats = '${record[3]}', info = '${record[4]}' WHERE id = '${record[0]}'`;
+-                    //console.log(query);
+-                    client.query(query)
+-                        .then(res => {
+-                            console.log(`Updated ${record[0]}`);
+-                            client.release();
+-                            resolve(res);
+-                            return;
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query UPDATE node: FAIL ${err}`);
+-                             reject(err);
+-                             return;
+-                        });
+-                }
+-            });
+-        });
+-    }
+-
+-    nodeDeleteDb(id) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    let query = `DELETE FROM nodes WHERE id = '${id}'`;
+-                    //console.log(query);
+-                    client.query(query)
+-                        .then(res => {
+-                            client.release();
+-                            resolve(res.rows[0]);
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query DELETE node: FAIL ${err}`);
+-                             reject(err);
+-                        });
+-                }
+-            });
+-        });
+-    }
+-
+-    nodeDeleteOldNodes(olderThanHours) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    const query = `DELETE FROM nodes WHERE id IN 
+-                    (SELECT id FROM nodes WHERE utctime < now() - INTERVAL '${olderThanHours} hours')`;
+-                    //console.log(query);
+-                    client.query(query)
+-                        .then(res => {
+-                            client.release();
+-                            resolve(res.rows);
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query DELETE old nodes : FAIL ${err}`);
+-                             reject(err);
+-                        });
+-                }
+-            });
+-        });
++class Populate {
++    constructor(database) {
++        this.database = database;
++    }
++
++    async saveSnapshot(payload, observedAt) {
++        const result = await this.database.query(
++            `INSERT INTO dashboard_v1.snapshot (singleton, observed_at, payload)
++             VALUES (true, $1, $2::jsonb)
++             ON CONFLICT (singleton) DO UPDATE
++             SET observed_at = EXCLUDED.observed_at, payload = EXCLUDED.payload
++             WHERE EXCLUDED.observed_at >= dashboard_v1.snapshot.observed_at`,
++            [observedAt, JSON.stringify(payload)]);
++        if (result.rowCount !== 1) {
++            throw new Error('A newer dashboard snapshot is already stored');
++        }
+     }
+-
+-    blockPostDb(record) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    let block_text ='blocks(utctime, blocks) VALUES($1, $2)';
+-
+-                    let query = `DELETE FROM blocks`;
+-                    client.query(query)
+-                        .then(res => {
+-                            //console.log('Overwriting old block database');
+-                            query = {
+-                                text: `INSERT INTO ${block_text}`,
+-                                values: record
+-                            }
+-                      //      console.log(`Inserting blocks...`);
+-                            client.query(query)
+-                            .then(res => {
+-                                console.log(`Inserted`);
+-                                client.release();
+-                                resolve(1);
+-                                return;
+-                            })
+-                            .catch(err => {
+-                                client.release();
+-                                console.error(`Query INSERT INTO blocks: FAIL ${err}`);
+-                                reject(err);
+-                                return;
+-                            });
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query DELETE blocks:  FAIL ${err}`);
+-                             reject(err);
+-                        });
+-
+-
+-                }
+-            });
+-        });
+-    }
+-
+-    chartPostDb(record) {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-
+-                    let query = `DELETE FROM charts`;
+-                    client.query(query)
+-                    .then(res => {
+-                        //console.log('Overwriting old block database');
+-                        let chart_text ='charts(utctime, charts) VALUES($1, $2)';
+-
+-                        query = {
+-                            text: `INSERT INTO ${chart_text}`,
+-                            values: record
+-                        }
+-                      //  console.log(`Inserting charts...`);
+-                        client.query(query)
+-                        .then(res => {
+-                            console.log(`Inserted`);
+-                            client.release();
+-                            resolve(1);
+-                            return;
+-                        })
+-                        .catch(err => {
+-                            client.release();
+-                            console.error(`Query INSERT INTO charts: FAIL ${err}`);
+-                            reject(err);
+-                            return;
+-                        });
+-                    })
+-                    .catch(err => {
+-                        client.release();
+-                        console.error(`Query DELETE charts:  FAIL ${err}`);
+-                        reject(err);
+-                    })
+-                }
+-            })
+-        });
+-    }
+-
+-    initDbAndTables() {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-
+-                    let query = `DELETE FROM charts`;
+-
+-                    client.query(query)
+-                        .then(res => {
+-                            //console.log('Overwriting old block database');
+-                            let chart_text ='charts(utctime, charts) VALUES($1, $2)';
+-
+-                            query = {
+-                                text: `INSERT INTO ${chart_text}`,
+-                                values: record
+-                            }
+-                           // console.log(`Inserting charts...`);
+-                            client.query(query)
+-                                .then(res => {
+-                              //      console.log(`Inserted`);
+-                                    client.release();
+-                                    resolve(1);
+-                                    return;
+-                                })
+-                                .catch(err => {
+-                                    client.release();
+-                                    console.error(`Query INSERT INTO charts: FAIL ${err}`);
+-                                    reject(err);
+-                                    return;
+-                                });
+-                        })
+-                        .catch(err => {
+-                            client.release();
+-                            console.error(`Query DELETE charts:  FAIL ${err}`);
+-                            reject(err);
+-                        })
+-                }
+-            })
+-        });
+-    }
+-
+ }
+ 
+ module.exports = Populate;
+diff --git a/db_methods/retrieve.js b/db_methods/retrieve.js
+index 640a34b..e0784ae 100644
+--- a/db_methods/retrieve.js
++++ b/db_methods/retrieve.js
+@@ -1,98 +1,12 @@
+-'use strict'
+-
+-const db = require('../db');
+-
+-//const node_text = 'nodes(id, datetime, block, mining, syncing, peers, uptime, latency, tickets) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+-
+-
+-
+-
+-class Retrieve  {
+-    constructor() {
+-
+-        
++class Retrieve {
++    constructor(database) {
++        this.database = database;
+     }
+ 
+-    
+-    nodeGetAllDb() {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    const query = `SELECT id, utctime, block, stats, info FROM nodes`;
+-                    client.query(query)
+-                        .then(res => {
+-                            client.release();
+-                            let json_data = JSON.stringify(res.rows);
+-                            resolve(json_data)
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query SELECT nodeGetAllDb: Postgres failed`);
+-                             reject(err);
+-                        });
+-                }
+-            });
+-        });
+-    }
+-    
+-    blocksGetAllDb() {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    const query = `SELECT utctime, blocks FROM blocks`;
+-                    client.query(query)
+-                        .then(res => {
+-                            client.release();
+-                            let json_data = JSON.stringify(res.rows);
+-                            resolve(json_data)
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query SELECT blocksGetAllDb: Postgres failed`);
+-                             reject(err);
+-                        });
+-                }
+-            });
+-        });
+-    }
+-    
+-    chartsGetAllDb() {
+-        return new Promise(function(resolve, reject) {
+-            db.getClient((err,client,done) => {
+-                if (err) {
+-                    console.log(err.stack);
+-                    console.error('Could not connect to postgres', err);
+-                    reject(err);
+-                }
+-                else {
+-                    const query = `SELECT utctime, charts FROM charts`;
+-                    client.query(query)
+-                        .then(res => {
+-                            client.release();
+-                            let json_data = JSON.stringify(res.rows);
+-                            resolve(json_data)
+-                        })
+-                        .catch(err => {
+-                             client.release();
+-                             console.error(`Query SELECT chartsGetAllDb: Postgres failed`);
+-                             reject(err);
+-                        });
+-                }
+-            });
+-        });
++    async readSnapshot() {
++        const result = await this.database.query('SELECT observed_at, payload FROM dashboard_v1.snapshot WHERE singleton = true');
++        return result.rows[0] || null;
+     }
+-    
+-    
+ }
+ 
+ module.exports = Retrieve;
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index 8897a58..8e67b26 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -6,8 +6,9 @@ telemetry over WSS. The persistence client can use local WS or remote WSS.
+ Backend settings are read at process startup. Invalid or missing settings stop
+ startup before listening or opening the relevant database/WebSocket connection.
+ 
+-The persistence, schema, runtime dependencies and complete browser path still
+-need acceptance work. These settings are not a production launch approval.
++The snapshot persistence/schema and HTTP API now have local acceptance coverage.
++The runtime dependencies and complete browser/TLS path still need review and
++acceptance. These settings are not a production launch approval.
+ 
+ ## Required settings
+ 
+@@ -51,8 +52,8 @@ rules; those need an actual database acceptance test.
+ passed to the driver's connection timeout, server statement timeout and client
+ query timeout. Tests use 1000 ms; choose the deployed value using measured query
+ latency. A timeout returns an error; it does not automatically retry a write or
+-prove a write was rolled back. The persistence rewrite must recover from a fresh
+-collector snapshot and define write retry behavior.
++prove a write was rolled back. The snapshot writer recovers from a fresh
++collector snapshot after failed writes; see its documented retry limits.
+ 
+ The driver is pinned to `pg` 8.23.1. The inherited 7.12.1 driver failed the Node
+ 22.11.0 connection check against a disposable PostgreSQL 18.6 server that native
+@@ -95,29 +96,15 @@ NODE_ENV=production COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 WS_CREDENTIALS_
+ Use protected service environments to set each process's required values.
+ No production domain, database or role is provisioned by this change.
+ 
+-## Persistence blockers to resolve before integration
+-
+-Source review found the following inherited behavior. Configuration tests stub
+-the storage layer and do not claim these paths work:
+-
+-- `wsclient/wsclient.js` starts cleanup/keepalive timers on every reconnect but
+-  does not cancel them on close. The cleanup callback loses its interval value.
+-- The same file shares initialization metadata and block/time fields across
+-  nodes, reads `myData.data.id` without checking the envelope, and does not request
+-  the initial viewer snapshot or handle Primus heartbeats explicitly.
+-- Its startup call to `Populate.initDbAndTables()` deletes charts, then refers
+-  to an undefined `record`; the caller does not await or catch that initialization.
+-- `db_methods/populate.js` interpolates node report values into several SQL
+-  statements. Use parameterized statements and verify ordinary quoted text
+-  survives round trips before enabling persistence.
+-- `POSTGRESQL_Setup.sh` starts by dropping a database, does not switch its
+-  connection to the newly created database, and declares `utctime` as time of
+-  day rather than a full timestamp. It also omits the API's `blocks` table.
+-  Do not use this historical script as the new provisioning procedure.
+-- API `/info` calls a missing retrieval method. API query bounds, error output,
+-  stale-data labeling and actual frontend payload compatibility remain unverified.
+-
+-Resolve these with a small persistence correction and versioned, nondestructive
+-schema setup, then test collector → storage → API → browser with distinct nodes,
+-disconnect/reconnect, stale observations and dashboard loss. Complete runtime,
+-dependency, TLS and resource-limit review before public use.
++## Snapshot storage and remaining integration
++
++Use [snapshot storage](snapshot-storage.md) for the versioned schema, reader/writer
++grants, additional required sampling/freshness settings, lifecycle behavior and
++acceptance scope. The legacy partial-event writer and interpolated SQL paths have
++been replaced. The old database setup script remains historical and must not be
++used to provision this candidate.
++
++Real collector → PostgreSQL → HTTP API checks now pass with distinct synthetic
++nodes and reconnects. Complete browser freshness/error handling, actual efsn
++telemetry, production runtime/dependency review, resource limits and TLS/proxy
++acceptance before public use.
+diff --git a/docs/postgres-validation.md b/docs/postgres-validation.md
+index 8792532..2742843 100644
+--- a/docs/postgres-validation.md
++++ b/docs/postgres-validation.md
+@@ -40,7 +40,7 @@ The 86 configuration/authentication/wiring contracts and real collector wire
+ check also pass. `db.close()` permits explicit pool cleanup; idle pool errors
+ have a fixed log message that omits connection credentials and server detail.
+ 
+-These tests exercise the generic database adapter. They do not exercise the
+-legacy `Populate` SQL, persistence client, historical schema or full browser
+-pipeline. Those documented blockers still need correction. Do not interpret
+-driver success as permission to run `POSTGRESQL_Setup.sh` or public deployment.
++These driver tests exercise the generic database adapter. The separate
++[snapshot suite](snapshot-storage.md) covers the replacement persistence/schema
++and HTTP API path. Neither suite validates the full browser/TLS deployment.
++Do not run the historical `POSTGRESQL_Setup.sh`.
+diff --git a/docs/snapshot-storage.md b/docs/snapshot-storage.md
+new file mode 100644
+index 0000000..a87f359
+--- /dev/null
++++ b/docs/snapshot-storage.md
+@@ -0,0 +1,120 @@
++# Snapshot persistence and read API
++
++The persistence service requests complete collector snapshots instead of merging
++partial node events. It stores one current document in PostgreSQL, atomically.
++The document contains `nodes` and `charts`; `observed_at` records when its node
++response reached the writer. This is dashboard observation data, not chain
++finality or a claim that every node recently sent a report.
++
++## Provisioning
++
++Create a separate database and service roles through your normal PostgreSQL
++administration procedure. Connect explicitly to that database as its schema
++administrator and apply:
++
++```sh
++psql --dbname='<explicit-dashboard-database>' -X -v ON_ERROR_STOP=1 -f db/schema/001-dashboard.sql
++```
++
++This transaction creates `dashboard_v1.snapshot`; it neither drops nor rewrites
++existing tables. The schema name records this first storage version. Reapplying
++the script fails at the existing schema and rolls back; it does not silently
++accept a different schema layout. Future migrations need their own reviewed
++versioned scripts. Do not run the historical `POSTGRESQL_Setup.sh`.
++
++Grant the writer role `USAGE` on `dashboard_v1` and `SELECT, INSERT, UPDATE` on
++`dashboard_v1.snapshot`. Grant the API role `USAGE` on the schema and `SELECT` on
++the table. Neither needs schema ownership, schema creation, DELETE or access to
++historical tables. Provision passwords in protected files using the required
++`DB_*` settings. The applications do not create databases, schemas or roles.
++
++There is one row, enforced by its boolean primary key and constraint. Its full
++timestamp must be finite, and its JSON must contain a node array and chart object.
++API block and information fields are derived when reading; there are no separate
++block/info columns or a second copy of each node's report. This store is a current
++view, not an append-only history service.
++
++## Required sampling settings
++
++| Process | Setting | Meaning |
++| --- | --- | --- |
++| Persistence | `COLLECTOR_WS_URL` | Configured collector viewer URL ending in `/primus` |
++| Persistence | `SNAPSHOT_INTERVAL_MS` | Delay after a completed write or closed connection before the next sample/attempt |
++| Persistence | `SNAPSHOT_TIMEOUT_MS` | Deadline for connecting, or for receiving the requested node snapshot and a following chart message |
++| Persistence | `SNAPSHOT_MAX_BYTES` | Maximum bytes per incoming WebSocket frame/message |
++| Persistence | `SNAPSHOT_MAX_NODES` | Maximum distinct nodes in a snapshot |
++| API | `SNAPSHOT_MAX_AGE_MS` | Maximum age of the node observation before the API returns unavailable |
++
++All numeric settings are explicit positive integers up to 2147483647. There are
++no production defaults. Select bounded values for the deployment: the collector
++debounces chart generation, so the response deadline must allow that delay plus
++transport latency. The API age budget must allow the sample interval, chart wait,
++database write and tolerable outages. The local acceptance test uses 100 ms
++between samples, a 6000 ms response deadline, 65536 bytes/message, ten nodes and
++a 10000 ms API age limit; these are test settings, not a production profile.
++
++Each sampling cycle sends `emit: ["ready", {}]`, accepts its complete
++`emit: ["init", {nodes: ...}]`, then takes the first following chart message.
++Charts broadcast before the node reply and partial node events are ignored.
++Missing or invalid components discard the whole sample. Nodes and charts are
++separate collector messages; their contents do not represent an atomic chain
++state. Failure to receive charts prevents the node snapshot from becoming fresh.
++
++The writer handles Primus ping/pong messages. It retains at most one incoming
++node snapshot and one write, with no write queue. Both node and chart messages
++are individually size-limited, so the combined document can approach twice the
++per-message bound. Node IDs must be distinct and match the collector's permitted
++format; basic object/array validation is applied. Collector admission, field
++schemas, global connection/rate limits and deep payload review remain separate
++launch requirements.
++
++## Reconnect, writes and shutdown
++
++There is one sampling/deadline/retry timer. A new connection waits for the old
++socket's close event and any pending write to finish. Late messages from an old
++socket cannot affect a new connection. A slow database stops sampling instead
++of accumulating writes. SIGINT/SIGTERM stop sampling, close the socket, drain the
++pending write and close the pool; the WebSocket library completes its close
++handshake separately, using its bounded close timeout.
++
++Writes use SQL parameters and one `INSERT ... ON CONFLICT ... UPDATE`. An older
++observation cannot overwrite a newer row. If a database call fails, the writer
++closes the connection and requests a new complete snapshot after reconnecting.
++It does not replay the uncertain write. A delayed older commit is guarded by the
++stored observation timestamp. Run one writer against one collector/database;
++multi-writer election or clock coordination is not implemented. A backwards
++clock can prevent fresh writes, and future observations make the API unavailable;
++repair the clock rather than resetting stored history automatically.
++
++## Read API and freshness
++
++`/nodes` preserves the browser's array of rows with `id`, `utctime`, `block`,
++serialized `stats` and serialized `info`. These values come from the same
++stored document. `/blocks` and `/info` expose each node's reported block/info;
++they do not choose a canonical chain. `/charts` exposes the stored chart object.
++
++All four routes set `Cache-Control: no-store`. Successful responses include
++`X-Dashboard-Observed-At`. A missing, old or future snapshot, or a read failure,
++returns HTTP 503 with `{"error":"snapshot_unavailable"}` and no old payload or
++database error detail. The last stored snapshot is retained. A fresh empty
++collector snapshot returns empty nodes normally.
++
++The frontend still needs explicit stale/error rendering and removal of previously
++displayed cached nodes. An API freshness check does not by itself fix browser
++behavior or establish per-node freshness. The collector's `active` field is its
++cached status, not proof of recent transactions, block agreement or ticket health.
++
++## Acceptance scope
++
++`npm test` covers authentication, configuration, sampling lifecycle and all API
++views. `npm run test:persistence` requires the same fresh disposable PostgreSQL
++test environment as [database validation](postgres-validation.md). It creates
++the new schema and test roles, runs a real loopback collector, reports two
++distinct synthetic nodes, and exercises storage/API agreement, reconnect,
++disconnect, restricted grants, rejected older/invalid writes, and stale API
++behavior using an advanced test clock. It confirms existing sentinel data survives
++schema application and reapplication.
++
++No real efsn process, production database, validator key, browser build or TLS
++proxy is involved. Runtime/dependency review, collector resource limits, actual
++service supervision and complete browser/TLS acceptance remain open.
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index b4baa41..b926057 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -36,10 +36,7 @@ function loadDatabaseConfig(environment) {
+     if (environment.SQLHOST !== undefined || environment.SQLPASS !== undefined) {
+         throw new Error('SQLHOST and SQLPASS are unsupported; configure DB_* settings');
+     }
+-    const timeout = requiredSetting(environment, 'DB_TIMEOUT_MS');
+-    if (!/^[1-9][0-9]{0,9}$/.test(timeout) || Number(timeout) > 2147483647) {
+-        throw new Error('DB_TIMEOUT_MS must be an integer from 1 to 2147483647');
+-    }
++    const timeout = positiveInteger(environment, 'DB_TIMEOUT_MS');
+     const config = {
+         host: loopbackHost(environment, 'DB_HOST'),
+         port: portNumber(environment, 'DB_PORT', 1),
+@@ -84,4 +81,26 @@ function loadPersistenceUrl(environment) {
+     return url.href;
+ }
+ 
+-module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl };
++function positiveInteger(environment, name) {
++    const value = requiredSetting(environment, name);
++    if (!/^[1-9][0-9]{0,9}$/.test(value) || Number(value) > 2147483647) {
++        throw new Error(`${name} must be an integer from 1 to 2147483647`);
++    }
++    return Number(value);
++}
++
++function loadPersistenceConfig(environment) {
++    return {
++        url: loadPersistenceUrl(environment),
++        intervalMs: positiveInteger(environment, 'SNAPSHOT_INTERVAL_MS'),
++        timeoutMs: positiveInteger(environment, 'SNAPSHOT_TIMEOUT_MS'),
++        maxBytes: positiveInteger(environment, 'SNAPSHOT_MAX_BYTES'),
++        maxNodes: positiveInteger(environment, 'SNAPSHOT_MAX_NODES'),
++    };
++}
++
++function loadApiConfig(environment) {
++    return { ...loadListenerConfig(environment, 'API'), maxAgeMs: positiveInteger(environment, 'SNAPSHOT_MAX_AGE_MS') };
++}
++
++module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl, loadPersistenceConfig, loadApiConfig };
+diff --git a/package.json b/package.json
+index 1c96fcf..6a87ea5 100644
+--- a/package.json
++++ b/package.json
+@@ -4,9 +4,10 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs",
++    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
++    "test:persistence": "node --test test/persistence.test.cjs",
+     "start": "node server.js"
+   },
+   "repository": {
+diff --git a/test/deployment-wiring.test.cjs b/test/deployment-wiring.test.cjs
+index ea38432..b340ff5 100644
+--- a/test/deployment-wiring.test.cjs
++++ b/test/deployment-wiring.test.cjs
+@@ -5,14 +5,14 @@ const { join } = require('node:path');
+ const { once } = require('node:events');
+ const http = require('node:http');
+ const vm = require('node:vm');
+-const express = require('express');
++const createApp = require('../api-server/app');
+ const config = require('../lib/deployment-config');
+ const { credentialFile, loadCollector } = require('./fixtures/collector.cjs');
+ 
+ function evaluate(file, environment, requireDependency, globals = {}) {
+     const module = { exports: {} };
+     vm.runInNewContext(readFileSync(join(__dirname, '..', file), 'utf8'), {
+-        process: { env: environment }, module, require: requireDependency,
++        process: { env: environment, once() {} }, module, require: requireDependency,
+         console: { log() {}, error() {} }, ...globals,
+     }, { filename: file, timeout: 1000 });
+     return module.exports;
+@@ -72,13 +72,15 @@ test('API listener validation happens before loading Express or the database', (
+ });
+ 
+ test('real HTTP API binds to configured loopback and serves data without wildcard CORS', { timeout: 5000 }, async t => {
+-    class Retrieve { nodeGetAllDb() { return Promise.resolve('[{"id":"synthetic-node"}]'); } }
+-    const server = evaluate('api-server/server.js', { API_HOST: '127.0.0.1', API_PORT: '0' }, name => {
++    const observedAt = new Date('2026-10-03T12:00:00.000Z');
++    class Retrieve { readSnapshot() { return Promise.resolve({ observed_at: observedAt, payload: { nodes: [], charts: {} } }); } }
++    const server = evaluate('api-server/server.js', { API_HOST: '127.0.0.1', API_PORT: '0', SNAPSHOT_MAX_AGE_MS: '1000' }, name => {
+         if (name === '../lib/deployment-config') return config;
+         if (name === '../db_methods/retrieve') return Retrieve;
+-        assert.equal(name, 'express');
+-        return express;
+-    });
++        if (name === '../db') return {};
++        assert.equal(name, './app');
++        return createApp;
++    }, { Date: { now: () => observedAt.getTime() } });
+     t.after(() => new Promise(resolve => server.close(resolve)));
+     await once(server, 'listening');
+     assert.equal(server.address().address, '127.0.0.1');
+@@ -92,29 +94,27 @@ test('real HTTP API binds to configured loopback and serves data without wildcar
+         });
+         request.on('error', reject);
+     });
+-    assert.deepEqual(response, { status: 200, body: '[{"id":"synthetic-node"}]', origin: undefined });
++    assert.deepEqual(response, { status: 200, body: '[]', origin: undefined });
+ });
+ 
+ test('persistence uses the configured URL and validates database settings before connecting', t => {
+-    const environment = { ...databaseEnvironment(t), COLLECTOR_WS_URL: 'ws://127.0.0.1:3100/primus' };
++    const environment = { ...databaseEnvironment(t), COLLECTOR_WS_URL: 'ws://127.0.0.1:3100/primus', SNAPSHOT_INTERVAL_MS: '1000', SNAPSHOT_TIMEOUT_MS: '5000', SNAPSHOT_MAX_BYTES: '65536', SNAPSHOT_MAX_NODES: '10' };
+     const connections = [];
+-    let initializations = 0;
+-    class Populate { initDbAndTables() { initializations++; } }
+-    class WebSocket { constructor(url) { this.readyState = 0; this.OPEN = 1; connections.push(url); } }
+-    class Pool { on() {} }
++    class Populate { saveSnapshot() {} }
++    class WebSocket { constructor(url) { connections.push(url); } close() {} }
++    class Pool { on() {} end() { return Promise.resolve(); } }
+     const requireDependency = name => {
+         if (name === '../lib/deployment-config') return config;
+-        if (name === '../db_methods/populate') {
+-            loadDatabase(environment, Pool);
+-            return Populate;
+-        }
++        if (name === '../db') return loadDatabase(environment, Pool);
++        if (name === '../db_methods/populate') return Populate;
++        if (name === './collect-snapshots') return require('../wsclient/collect-snapshots');
+         assert.equal(name, 'websocket');
+         return { w3cwebsocket: WebSocket };
+     };
+ 
+-    evaluate('wsclient/wsclient.js', environment, requireDependency, { setTimeout() { return 0; } });
++    const service = evaluate('wsclient/wsclient.js', environment, requireDependency, { setTimeout() { return 0; }, clearTimeout() {} });
++    t.after(() => service.stop());
+     assert.deepEqual(connections, ['ws://127.0.0.1:3100/primus']);
+-    assert.equal(initializations, 1);
+     delete environment.DB_PASSWORD_FILE;
+     assert.throws(() => evaluate('wsclient/wsclient.js', environment, requireDependency), /DB_PASSWORD_FILE/);
+     assert.deepEqual(connections, ['ws://127.0.0.1:3100/primus']);
+diff --git a/test/fixtures/http.cjs b/test/fixtures/http.cjs
+new file mode 100644
+index 0000000..8ce57ad
+--- /dev/null
++++ b/test/fixtures/http.cjs
+@@ -0,0 +1,22 @@
++const http = require('node:http');
++
++function request(port, path) {
++    return new Promise((resolve, reject) => {
++        const req = http.get({ host: '127.0.0.1', port, path, agent: false }, response => {
++            let body = '';
++            response.setEncoding('utf8');
++            response.on('data', data => { body += data; });
++            response.on('error', reject);
++            response.on('end', () => {
++                try {
++                    resolve({ status: response.statusCode, body: JSON.parse(body), headers: response.headers });
++                } catch (error) {
++                    reject(error);
++                }
++            });
++        });
++        req.on('error', reject);
++    });
++}
++
++module.exports = request;
+diff --git a/test/fixtures/wire-client.cjs b/test/fixtures/wire-client.cjs
+new file mode 100644
+index 0000000..ae7aa3d
+--- /dev/null
++++ b/test/fixtures/wire-client.cjs
+@@ -0,0 +1,61 @@
++const { once, EventEmitter } = require('node:events');
++const WebSocket = require('ws');
++
++function connect(t, port, endpoint) {
++    const socket = new WebSocket(`ws://127.0.0.1:${port}/${endpoint}`);
++    const connection = { socket, messages: [], changed: new EventEmitter() };
++    socket.on('message', raw => {
++        const message = JSON.parse(raw.toString());
++        if (typeof message === 'string' && message.startsWith('primus::ping::')) {
++            socket.send(JSON.stringify(message.replace('primus::ping::', 'primus::pong::')));
++            return;
++        }
++        connection.messages.push(message);
++        connection.changed.emit('message');
++    });
++    socket.on('error', () => {});
++    connection.closed = once(socket, 'close');
++    t.after(() => socket.terminate());
++    connection.opened = once(socket, 'open');
++    return connection;
++}
++
++function waitMessage(connection, predicate, from = 0) {
++    return new Promise((resolve, reject) => {
++        const timer = setTimeout(() => {
++            connection.changed.off('message', check);
++            reject(new Error('Expected collector message did not arrive'));
++        }, 3000);
++        function check() {
++            const message = connection.messages.slice(from).find(predicate);
++            if (!message) return;
++            clearTimeout(timer);
++            connection.changed.off('message', check);
++            resolve(message);
++        }
++        connection.changed.on('message', check);
++        check();
++    });
++}
++
++function send(connection, event, payload) {
++    connection.socket.send(JSON.stringify({ emit: [event, payload] }));
++}
++
++async function login(connection, id, secret, extraInfo = {}) {
++    await connection.opened;
++    send(connection, 'hello', {
++        id, secret,
++        info: { name: id, node: 'efsn-test', port: 30303, net: '99032659', protocol: 'efsn/66', api: 'No', os: 'linux', os_v: 'amd64', client: '0.1.1', canUpdateHistory: true, ...extraInfo },
++    });
++    await waitMessage(connection, message => message.emit && message.emit[0] === 'ready');
++}
++
++async function inventory(viewer) {
++    const from = viewer.messages.length;
++    send(viewer, 'ready', {});
++    const response = await waitMessage(viewer, message => message.emit && message.emit[0] === 'init', from);
++    return response.emit[1].nodes;
++}
++
++module.exports = { connect, waitMessage, send, login, inventory };
+diff --git a/test/persistence.test.cjs b/test/persistence.test.cjs
+new file mode 100644
+index 0000000..b8ba14e
+--- /dev/null
++++ b/test/persistence.test.cjs
+@@ -0,0 +1,145 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { readFileSync } = require('node:fs');
++const { join } = require('node:path');
++const { fork } = require('node:child_process');
++const { once } = require('node:events');
++const { Pool } = require('pg');
++const WebSocket = require('websocket').w3cwebsocket;
++const Populate = require('../db_methods/populate');
++const Retrieve = require('../db_methods/retrieve');
++const createApp = require('../api-server/app');
++const startSnapshotCollection = require('../wsclient/collect-snapshots');
++const { credentialFile, secretA, secretB } = require('./fixtures/collector.cjs');
++const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
++const request = require('./fixtures/http.cjs');
++
++if (!process.env.TEST_PG_PORT || !process.env.TEST_PG_PASSWORD_FILE) {
++    throw new Error('Disposable TEST_PG_PORT and TEST_PG_PASSWORD_FILE required');
++}
++const config = { host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 };
++
++async function waitForSnapshot(retrieve, predicate) {
++    const deadline = Date.now() + 8000;
++    while (Date.now() < deadline) {
++        const snapshot = await retrieve.readSnapshot();
++        if (snapshot && predicate(snapshot.payload.nodes)) {
++            return snapshot;
++        }
++        await new Promise(resolve => setTimeout(resolve, 50));
++    }
++    throw new Error('Expected stored collector snapshot did not arrive');
++}
++
++test('real collector, snapshot storage and HTTP API preserve node identity and recover', { timeout: 40000 }, async t => {
++    const admin = new Pool(config);
++    t.after(() => admin.end());
++    await admin.query('CREATE TABLE legacy_snapshot_sentinel (value text)');
++    await admin.query("INSERT INTO legacy_snapshot_sentinel VALUES ('preserve historical data')");
++    const sql = readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8');
++    await admin.query(sql);
++    const client = await admin.connect();
++    try {
++        await assert.rejects(client.query(sql), { code: '42P06' });
++        await client.query('ROLLBACK');
++    } finally {
++        client.release();
++    }
++    assert.deepEqual((await admin.query('SELECT value FROM legacy_snapshot_sentinel')).rows, [{ value: 'preserve historical data' }]);
++    await admin.query("CREATE ROLE snapshot_test_writer LOGIN PASSWORD 'synthetic-writer-password'");
++    await admin.query("CREATE ROLE snapshot_test_reader LOGIN PASSWORD 'synthetic-reader-password'");
++    await admin.query('GRANT USAGE ON SCHEMA dashboard_v1 TO snapshot_test_writer, snapshot_test_reader');
++    await admin.query('GRANT SELECT, INSERT, UPDATE ON dashboard_v1.snapshot TO snapshot_test_writer');
++    await admin.query('GRANT SELECT ON dashboard_v1.snapshot TO snapshot_test_reader');
++    const writer = new Pool({ ...config, user: 'snapshot_test_writer', password: 'synthetic-writer-password' });
++    const reader = new Pool({ ...config, user: 'snapshot_test_reader', password: 'synthetic-reader-password' });
++    t.after(async () => { await writer.end(); await reader.end(); });
++    const populate = new Populate(writer);
++    const retrieve = new Retrieve(reader);
++
++    await t.test('schema is nondestructive, roles are restricted and older/invalid writes cannot replace a snapshot', async () => {
++        const payload = { nodes: [{ id: 'node-a', info: { name: "Peter's node — Å" } }], charts: {} };
++        await populate.saveSnapshot(payload, new Date('2026-01-01T00:00:01.456Z'));
++        await assert.rejects(populate.saveSnapshot({ nodes: [], charts: {} }, new Date('2025-12-31T23:59:59.123Z')), /newer dashboard snapshot/);
++        await assert.rejects(populate.saveSnapshot({}, new Date('2026-01-02T00:00:00.000Z')), { code: '23514' });
++        await assert.rejects(reader.query('DELETE FROM dashboard_v1.snapshot'), { code: '42501' });
++        await assert.rejects(writer.query('DELETE FROM dashboard_v1.snapshot'), { code: '42501' });
++        await assert.rejects(writer.query('CREATE TABLE dashboard_v1.unexpected (id int)'), { code: '42501' });
++        assert.deepEqual(await retrieve.readSnapshot(), { observed_at: new Date('2026-01-01T00:00:01.456Z'), payload });
++    });
++
++    const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
++    const child = fork(join(__dirname, 'fixtures/wire-server.cjs'), [], { env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0', VERBOSITY: '2' }, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
++    let logs = '';
++    child.stdout.on('data', chunk => { logs += chunk; });
++    child.stderr.on('data', chunk => { logs += chunk; });
++    const exited = once(child, 'exit');
++    t.after(async () => { if (child.exitCode === null && child.signalCode === null) child.kill(); await exited; });
++    const [address] = await Promise.race([once(child, 'message'), exited.then(() => { throw new Error(`Collector exited before listening: ${logs}`); })]);
++    assert.equal(address.address, '127.0.0.1');
++    const viewer = connect(t, address.port, 'primus');
++    await viewer.opened;
++    const a = connect(t, address.port, 'api');
++    const b = connect(t, address.port, 'api');
++    await login(a, 'node-a', secretA, { node: "efsn-A's — Å" });
++    await login(b, 'node-b', secretB, { node: 'efsn-B' });
++    for (const [connection, id, number, peers] of [[a, 'node-a', 101, 1], [b, 'node-b', 102, 2]]) {
++        send(connection, 'block', { id, block: { number, hash: '0x' + String(number).padStart(64, '0'), parentHash: '0x' + '0'.repeat(64), difficulty: 1, totalDifficulty: 1, gasLimit: 1000000, gasUsed: 0, timestamp: 1704067200 + number, miner: id, transactions: [], uncles: [] } });
++        send(connection, 'stats', { id, stats: { active: true, mining: true, syncing: false, peers, ticketNumber: 2, myTicketNumber: 1, hashrate: 0, gasPrice: 1, uptime: 100 } });
++    }
++    await waitMessage(viewer, message => message.action === 'stats' && message.data.id === 'node-b');
++    const errors = [];
++    const sockets = [];
++    const collector = startSnapshotCollection({ url: `ws://127.0.0.1:${address.port}/primus`, intervalMs: 100, timeoutMs: 6000, maxBytes: 65536, maxNodes: 10 }, {
++        connect(url, maxBytes) { const socket = new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }); sockets.push(socket); return socket; },
++        saveSnapshot: (payload, time) => populate.saveSnapshot(payload, time), now: () => new Date(), setTimeout, clearTimeout, onError: message => errors.push(message),
++    });
++    t.after(() => collector.stop());
++    let apiTime = null;
++    const server = createApp(retrieve, () => apiTime === null ? Date.now() : apiTime, 10000).listen(0, '127.0.0.1');
++    t.after(() => new Promise(resolve => server.close(resolve)));
++    await once(server, 'listening');
++
++    await t.test('distinct reports reach PostgreSQL and the HTTP API without cross-node metadata', async () => {
++        const snapshot = await waitForSnapshot(retrieve, nodes => nodes.length === 2 && nodes[0].stats && nodes[0].stats.block.number === 101);
++        assert.deepEqual(snapshot.payload.nodes.map(node => ({ id: node.id, version: node.info.node, height: node.stats.block.number, peers: node.stats.peers })), [{ id: 'node-a', version: "efsn-A's — Å", height: 101, peers: 1 }, { id: 'node-b', version: 'efsn-B', height: 102, peers: 2 }]);
++        assert.deepEqual(snapshot.payload.nodes, (await inventory(viewer)).map(node => ({ id: node.id, info: node.info, stats: node.stats, history: node.history, geo: node.geo })));
++        const response = await request(server.address().port, '/nodes');
++        assert.equal(response.status, 200);
++        assert.deepEqual(response.body.map(row => ({ id: row.id, block: row.block, version: JSON.parse(row.stats).info.node })), [{ id: 'node-a', block: 101, version: "efsn-A's — Å" }, { id: 'node-b', block: 102, version: 'efsn-B' }]);
++        assert.equal((await request(server.address().port, '/charts')).status, 200);
++    });
++
++    await t.test('writer reconnect and node disconnect replace the snapshot with fresh complete reports', async () => {
++        sockets[0].close();
++        a.socket.close();
++        await a.closed;
++        await waitForSnapshot(retrieve, nodes => nodes.length === 2 && nodes.find(node => node.id === 'node-a').stats.active === false);
++        const reconnected = connect(t, address.port, 'api');
++        await login(reconnected, 'node-a', secretA, { node: 'efsn-A-reconnected' });
++        await waitForSnapshot(retrieve, nodes => nodes.find(node => node.id === 'node-a').info.node === 'efsn-A-reconnected' && nodes.find(node => node.id === 'node-a').stats.active === true);
++        assert.ok(sockets.length >= 2);
++        reconnected.socket.close();
++        await reconnected.closed;
++    });
++
++    await t.test('stopped ingestion becomes unavailable without clearing the last stored snapshot', async () => {
++        await collector.stop();
++        const stored = await retrieve.readSnapshot();
++        apiTime = stored.observed_at.getTime() + 10001;
++        const response = await request(server.address().port, '/nodes');
++        assert.equal(response.status, 503);
++        assert.deepEqual(response.body, { error: 'snapshot_unavailable' });
++        assert.deepEqual(await retrieve.readSnapshot(), stored);
++        assert.deepEqual((await admin.query('SELECT count(*)::int AS count FROM dashboard_v1.snapshot')).rows, [{ count: 1 }]);
++    });
++    assert.deepEqual(errors, []);
++    assert.equal(logs.includes(secretA) || logs.includes(secretB), false);
++    viewer.socket.close();
++    b.socket.close();
++    await Promise.all([viewer.closed, b.closed]);
++    child.send('stop');
++    const [code, signal] = await exited;
++    assert.equal(code, 0);
++    assert.equal(signal, null);
++});
+diff --git a/test/snapshot-api.test.cjs b/test/snapshot-api.test.cjs
+new file mode 100644
+index 0000000..6a638ed
+--- /dev/null
++++ b/test/snapshot-api.test.cjs
+@@ -0,0 +1,53 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { once } = require('node:events');
++const createApp = require('../api-server/app');
++const request = require('./fixtures/http.cjs');
++
++const observedAt = new Date('2026-10-03T12:00:00.000Z');
++const node = { id: 'node-a', info: { name: 'Node A' }, stats: { block: { number: 42 } } };
++
++async function serve(t, readSnapshot, time = observedAt.getTime()) {
++    const server = createApp({ readSnapshot }, () => time, 1000).listen(0, '127.0.0.1');
++    t.after(() => new Promise(resolve => server.close(resolve)));
++    await once(server, 'listening');
++    return path => request(server.address().port, path);
++}
++
++test('all four views derive their data from one snapshot without redundant database fields', async t => {
++    const get = await serve(t, async () => ({ observed_at: observedAt, payload: { nodes: [node], charts: { height: [42] } } }));
++    const nodes = await get('/nodes');
++    assert.deepEqual(nodes.body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', block: 42, stats: '{"id":"node-a","info":{"name":"Node A"},"stats":{"block":{"number":42}}}', info: '{"name":"Node A"}' }]);
++    assert.deepEqual((await get('/blocks')).body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', blocks: '{"number":42}' }]);
++    assert.deepEqual((await get('/info')).body, [{ id: 'node-a', utctime: '2026-10-03T12:00:00.000Z', info: '{"name":"Node A"}' }]);
++    assert.deepEqual((await get('/charts')).body, [{ utctime: '2026-10-03T12:00:00.000Z', charts: '{"height":[42]}' }]);
++    assert.equal(nodes.status, 200);
++    assert.equal(nodes.headers['cache-control'], 'no-store');
++    assert.equal(nodes.headers['x-dashboard-observed-at'], '2026-10-03T12:00:00.000Z');
++});
++
++test('missing, stale, future and failed reads are unavailable without stale payload or database details', async t => {
++    const cases = [
++        { read: async () => null, time: observedAt.getTime() },
++        { read: async () => ({ observed_at: observedAt, payload: {} }), time: observedAt.getTime() + 1001 },
++        { read: async () => ({ observed_at: observedAt, payload: {} }), time: observedAt.getTime() - 1 },
++        { read: async () => { throw new Error('private database detail'); }, time: observedAt.getTime() },
++    ];
++    for (const value of cases) {
++        const get = await serve(t, value.read, value.time);
++        for (const route of ['/nodes', '/blocks', '/info', '/charts']) {
++            const response = await get(route);
++            assert.equal(response.status, 503);
++            assert.deepEqual(response.body, { error: 'snapshot_unavailable' });
++            assert.equal(response.headers['cache-control'], 'no-store');
++            assert.equal(response.headers['x-dashboard-observed-at'], undefined);
++        }
++    }
++});
++
++test('fresh empty snapshots stay valid through the exact age boundary', async t => {
++    const get = await serve(t, async () => ({ observed_at: observedAt, payload: { nodes: [], charts: {} } }), observedAt.getTime() + 1000);
++    const response = await get('/nodes');
++    assert.equal(response.status, 200);
++    assert.deepEqual(response.body, []);
++});
+diff --git a/test/snapshot-collector.test.cjs b/test/snapshot-collector.test.cjs
+new file mode 100644
+index 0000000..958bfd9
+--- /dev/null
++++ b/test/snapshot-collector.test.cjs
+@@ -0,0 +1,196 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const startSnapshotCollection = require('../wsclient/collect-snapshots');
++const { loadPersistenceConfig, loadApiConfig } = require('../lib/deployment-config');
++
++const observedAt = new Date('2026-10-03T12:00:00.000Z');
++const nodeA = { id: 'node-a', info: { name: "Peter's node", node: 'efsn-test' }, stats: { active: true, block: { number: 10, hash: 'block-a' }, peers: 1 }, history: [], geo: null };
++const nodeB = { id: 'node-b', info: { name: 'Node B', node: 'efsn-test' }, stats: { active: true, block: { number: 20, hash: 'block-b' }, peers: 2 }, history: [], geo: null };
++const charts = { height: [10, 20] };
++const flush = () => new Promise(resolve => setImmediate(resolve));
++
++function setup(t, save) {
++    const timers = new Map();
++    const connections = [];
++    const writes = [];
++    const errors = [];
++    let nextTimer = 0;
++    const collector = startSnapshotCollection({ url: 'ws://127.0.0.1:3000/primus', intervalMs: 100, timeoutMs: 500, maxBytes: 4096, maxNodes: 2 }, {
++        connect(url, maxBytes) {
++            const connection = { url, maxBytes, sent: [], closed: false, send(value) { this.sent.push(JSON.parse(value)); }, close() { this.closed = true; if (this.onclose) this.onclose(); } };
++            connections.push(connection);
++            return connection;
++        },
++        saveSnapshot: (payload, time) => { writes.push({ payload, time }); return save ? save(payload, time) : Promise.resolve(); },
++        now: () => observedAt,
++        setTimeout: (action, delay) => { timers.set(++nextTimer, { action, delay }); return nextTimer; },
++        clearTimeout: timer => timers.delete(timer),
++        onError: message => errors.push(message),
++    });
++    t.after(() => collector.stop());
++    function tick() {
++        assert.equal(timers.size, 1);
++        const [id, timer] = [...timers.entries()][0];
++        timers.delete(id);
++        timer.action();
++    }
++    return { collector, timers, connections, writes, errors, tick };
++}
++
++function deliver(connection, message) {
++    connection.onmessage({ data: JSON.stringify(message) });
++}
++
++function snapshot(connection, nodes = [nodeA, nodeB]) {
++    deliver(connection, { emit: ['init', { nodes }] });
++    deliver(connection, { action: 'charts', data: charts });
++}
++
++test('requires explicit positive sampling, deadline, size, node and freshness settings', () => {
++    const environment = { COLLECTOR_WS_URL: 'ws://127.0.0.1:3000/primus', SNAPSHOT_INTERVAL_MS: '100', SNAPSHOT_TIMEOUT_MS: '500', SNAPSHOT_MAX_BYTES: '4096', SNAPSHOT_MAX_NODES: '2' };
++    assert.deepEqual(loadPersistenceConfig(environment), { url: 'ws://127.0.0.1:3000/primus', intervalMs: 100, timeoutMs: 500, maxBytes: 4096, maxNodes: 2 });
++    for (const name of Object.keys(environment).filter(name => name.startsWith('SNAPSHOT_'))) {
++        for (const value of [undefined, '0', '-1', '1.5', '2147483648']) {
++            assert.throws(() => loadPersistenceConfig({ ...environment, [name]: value }), new RegExp(name));
++        }
++    }
++    assert.throws(() => loadApiConfig({ API_HOST: '127.0.0.1', API_PORT: '3002' }), /SNAPSHOT_MAX_AGE_MS/);
++});
++
++test('stores two complete nodes with their own metadata and block after charts arrive', async t => {
++    const fixture = setup(t);
++    const connection = fixture.connections[0];
++    connection.onopen();
++    deliver(connection, { action: 'charts', data: { early: true } });
++    deliver(connection, { action: 'stats', data: { id: 'node-a', stats: { peers: 999 } } });
++    snapshot(connection, [{ ...nodeA, spark: 'private-session', uptime: { internal: true } }, nodeB]);
++    await flush();
++    assert.deepEqual(connection.sent, [{ emit: ['ready', {}] }]);
++    assert.deepEqual(fixture.writes, [{ payload: { nodes: [nodeA, nodeB], charts }, time: observedAt }]);
++    assert.deepEqual([...fixture.timers.values()].map(timer => timer.delay), [100]);
++});
++
++test('answers Primus heartbeats while idle without writing or adding timers', async t => {
++    const fixture = setup(t);
++    const connection = fixture.connections[0];
++    connection.onopen();
++    deliver(connection, 'primus::ping::12345');
++    await flush();
++    assert.deepEqual(connection.sent, [{ emit: ['ready', {}] }, 'primus::pong::12345']);
++    assert.deepEqual(fixture.writes, []);
++    assert.deepEqual([...fixture.timers.values()].map(timer => timer.delay), [500]);
++});
++
++test('database backpressure permits only one write and no queued snapshots', async t => {
++    let release;
++    const fixture = setup(t, () => new Promise(resolve => { release = resolve; }));
++    const connection = fixture.connections[0];
++    connection.onopen();
++    snapshot(connection);
++    await flush();
++    snapshot(connection, []);
++    deliver(connection, 'primus::ping::1');
++    assert.deepEqual(fixture.writes, [{ payload: { nodes: [nodeA, nodeB], charts }, time: observedAt }]);
++    assert.equal(fixture.timers.size, 0);
++    release();
++    await flush();
++    assert.deepEqual([...fixture.timers.values()].map(timer => timer.delay), [100]);
++});
++
++test('disconnect while writing waits for completion and ignores late old callbacks', async t => {
++    let release;
++    const fixture = setup(t, () => new Promise(resolve => { release = resolve; }));
++    const old = fixture.connections[0];
++    old.onopen();
++    snapshot(old);
++    await flush();
++    old.onclose();
++    assert.equal(fixture.timers.size, 0);
++    release();
++    await flush();
++    fixture.tick();
++    const current = fixture.connections[1];
++    old.onopen();
++    old.onclose();
++    snapshot(old, []);
++    current.onopen();
++    assert.equal(current.closed, false);
++    assert.deepEqual(current.sent, [{ emit: ['ready', {}] }]);
++    assert.equal(fixture.writes.length, 1);
++    assert.equal(fixture.timers.size, 1);
++});
++
++test('uncertain write failure reconnects for a fresh snapshot without replaying the old write', async t => {
++    const fixture = setup(t, () => Promise.reject(new Error('private database detail')));
++    const old = fixture.connections[0];
++    old.onopen();
++    snapshot(old);
++    await flush();
++    fixture.tick();
++    fixture.connections[1].onopen();
++    assert.equal(old.closed, true);
++    assert.equal(fixture.writes.length, 1);
++    assert.deepEqual(fixture.errors, ['Dashboard snapshot write failed']);
++    assert.deepEqual(fixture.connections[1].sent, [{ emit: ['ready', {}] }]);
++});
++
++test('missing charts expire the whole sample and reconnect with one timer', t => {
++    const fixture = setup(t);
++    const connection = fixture.connections[0];
++    connection.onopen();
++    deliver(connection, { emit: ['init', { nodes: [nodeA] }] });
++    fixture.tick();
++    connection.onclose();
++    assert.deepEqual(fixture.writes, []);
++    assert.equal(connection.closed, true);
++    assert.deepEqual([...fixture.timers.values()].map(timer => timer.delay), [100]);
++});
++
++test('a socket still closing cannot overlap with a new connection or another database write', async t => {
++    const fixture = setup(t);
++    const connection = fixture.connections[0];
++    connection.close = () => { connection.closed = true; };
++    connection.onopen();
++    fixture.tick();
++    connection.onopen();
++    snapshot(connection);
++    await flush();
++    assert.equal(fixture.timers.size, 0);
++    assert.equal(fixture.connections.length, 1);
++    assert.deepEqual(fixture.writes, []);
++    connection.onclose();
++    fixture.tick();
++    assert.equal(fixture.connections.length, 2);
++    assert.equal(fixture.timers.size, 1);
++});
++
++test('invalid or oversized snapshots retain the last database state and redact errors', async t => {
++    for (const data of ['private-invalid-json', JSON.stringify({ emit: ['init', { nodes: [nodeA, nodeA] }] }), JSON.stringify({ emit: ['init', { nodes: [nodeA, nodeB, { ...nodeA, id: 'node-c' }] }] }), JSON.stringify({ emit: ['init', { nodes: [{ ...nodeA, stats: null }] }] }), 'x'.repeat(4097)]) {
++        const fixture = setup(t);
++        fixture.connections[0].onopen();
++        fixture.connections[0].onmessage({ data });
++        await flush();
++        assert.deepEqual(fixture.writes, []);
++        assert.deepEqual(fixture.errors, ['Collector snapshot rejected']);
++        assert.equal(fixture.connections[0].closed, true);
++        await fixture.collector.stop();
++    }
++});
++
++test('stop drains a pending write and prevents further timers or reconnects', async t => {
++    let release;
++    const fixture = setup(t, () => new Promise(resolve => { release = resolve; }));
++    const connection = fixture.connections[0];
++    connection.onopen();
++    snapshot(connection);
++    await flush();
++    const stopping = fixture.collector.stop();
++    connection.onopen();
++    snapshot(connection, []);
++    release();
++    await stopping;
++    assert.equal(connection.closed, true);
++    assert.equal(fixture.timers.size, 0);
++    assert.equal(fixture.connections.length, 1);
++    assert.equal(fixture.writes.length, 1);
++});
+diff --git a/test/telemetry-wire.test.cjs b/test/telemetry-wire.test.cjs
+index 924f47d..be01409 100644
+--- a/test/telemetry-wire.test.cjs
++++ b/test/telemetry-wire.test.cjs
+@@ -2,66 +2,10 @@ const assert = require('node:assert/strict');
+ const { test } = require('node:test');
+ const { fork } = require('node:child_process');
+ const { join } = require('node:path');
+-const { once, EventEmitter } = require('node:events');
+-const WebSocket = require('ws');
++const { once } = require('node:events');
+ const { credentialFile, secretA, secretB, secretNext } = require('./fixtures/collector.cjs');
+ 
+-function connect(t, port, endpoint) {
+-    const socket = new WebSocket(`ws://127.0.0.1:${port}/${endpoint}`);
+-    const connection = { socket, messages: [], changed: new EventEmitter() };
+-    socket.on('message', raw => {
+-        const message = JSON.parse(raw.toString());
+-        if (typeof message === 'string' && message.startsWith('primus::ping::')) {
+-            socket.send(JSON.stringify(message.replace('primus::ping::', 'primus::pong::')));
+-            return;
+-        }
+-        connection.messages.push(message);
+-        connection.changed.emit('message');
+-    });
+-    socket.on('error', () => {});
+-    connection.closed = once(socket, 'close');
+-    t.after(() => socket.terminate());
+-    connection.opened = once(socket, 'open');
+-    return connection;
+-}
+-
+-function waitMessage(connection, predicate, from = 0) {
+-    return new Promise((resolve, reject) => {
+-        const timer = setTimeout(() => {
+-            connection.changed.off('message', check);
+-            reject(new Error('Expected collector message did not arrive'));
+-        }, 3000);
+-        function check() {
+-            const message = connection.messages.slice(from).find(predicate);
+-            if (!message) return;
+-            clearTimeout(timer);
+-            connection.changed.off('message', check);
+-            resolve(message);
+-        }
+-        connection.changed.on('message', check);
+-        check();
+-    });
+-}
+-
+-function send(connection, event, payload) {
+-    connection.socket.send(JSON.stringify({ emit: [event, payload] }));
+-}
+-
+-async function login(connection, id, secret) {
+-    await connection.opened;
+-    send(connection, 'hello', {
+-        id, secret,
+-        info: { name: id, node: 'efsn-test', port: 30303, net: '99032659', protocol: 'efsn/66', api: 'No', os: 'linux', os_v: 'amd64', client: '0.1.1', canUpdateHistory: true },
+-    });
+-    await waitMessage(connection, message => message.emit && message.emit[0] === 'ready');
+-}
+-
+-async function inventory(viewer) {
+-    const from = viewer.messages.length;
+-    send(viewer, 'ready', {});
+-    const response = await waitMessage(viewer, message => message.emit && message.emit[0] === 'init', from);
+-    return response.emit[1].nodes;
+-}
++const { connect, waitMessage, send, login, inventory } = require('./fixtures/wire-client.cjs');
+ 
+ test('real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect', { timeout: 15000 }, async t => {
+     const file = credentialFile(t, { 'node-a': [secretA, secretNext], 'node-b': secretB });
+diff --git a/wsclient/collect-snapshots.js b/wsclient/collect-snapshots.js
+new file mode 100644
+index 0000000..4afbd3b
+--- /dev/null
++++ b/wsclient/collect-snapshots.js
+@@ -0,0 +1,180 @@
++function isObject(value) {
++    return value !== null && typeof value === 'object' && !Array.isArray(value);
++}
++
++function projectNodes(nodes, maximum) {
++    if (!Array.isArray(nodes) || nodes.length > maximum) {
++        throw new Error('Invalid node snapshot');
++    }
++    const identities = new Set();
++    return nodes.map(node => {
++        if (!isObject(node) || typeof node.id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$/.test(node.id) || identities.has(node.id) || !isObject(node.info) || !isObject(node.stats) || !isObject(node.stats.block) || !Array.isArray(node.history) || !(node.geo === null || isObject(node.geo))) {
++            throw new Error('Invalid node snapshot');
++        }
++        identities.add(node.id);
++        return { id: node.id, info: node.info, stats: node.stats, history: node.history, geo: node.geo };
++    });
++}
++
++function startSnapshotCollection(config, dependencies) {
++    let stopped = false;
++    let socket = null;
++    let closing = false;
++    let timer = null;
++    let pendingWrite = null;
++    let awaitingSnapshot = false;
++    let nodes = null;
++    let observedAt = null;
++
++    function clearTimer() {
++        if (timer !== null) {
++            dependencies.clearTimeout(timer);
++            timer = null;
++        }
++    }
++
++    function schedule(action, delay) {
++        clearTimer();
++        if (!stopped) {
++            timer = dependencies.setTimeout(() => { timer = null; action(); }, delay);
++        }
++    }
++
++    function disconnect(connection) {
++        if (socket !== connection || closing) {
++            return;
++        }
++        closing = true;
++        awaitingSnapshot = false;
++        nodes = null;
++        clearTimer();
++        try {
++            connection.close();
++        } catch (_) {
++            dependencies.onError('Collector socket close failed');
++        }
++    }
++
++    function connectionClosed(connection) {
++        if (socket !== connection) {
++            return;
++        }
++        socket = null;
++        closing = false;
++        awaitingSnapshot = false;
++        nodes = null;
++        clearTimer();
++        if (pendingWrite === null) {
++            schedule(connectCollector, config.intervalMs);
++        }
++    }
++
++    function expireConnection(connection) {
++        dependencies.onError('Collector snapshot deadline exceeded');
++        disconnect(connection);
++    }
++
++    function requestSnapshot(connection) {
++        if (stopped || closing || socket !== connection) {
++            return;
++        }
++        nodes = null;
++        awaitingSnapshot = true;
++        schedule(() => expireConnection(connection), config.timeoutMs);
++        try {
++            connection.send(JSON.stringify({ emit: ['ready', {}] }));
++        } catch (_) {
++            dependencies.onError('Collector snapshot request failed');
++            disconnect(connection);
++        }
++    }
++
++    function saveSnapshot(connection, charts) {
++        const payload = { nodes, charts };
++        const receivedAt = observedAt;
++        awaitingSnapshot = false;
++        nodes = null;
++        clearTimer();
++        pendingWrite = Promise.resolve().then(() => dependencies.saveSnapshot(payload, receivedAt))
++            .catch(() => {
++                dependencies.onError('Dashboard snapshot write failed');
++                disconnect(connection);
++            }).finally(() => {
++                pendingWrite = null;
++                if (socket === null) {
++                    schedule(connectCollector, config.intervalMs);
++                } else if (!closing && socket === connection) {
++                    schedule(() => requestSnapshot(connection), config.intervalMs);
++                }
++            });
++    }
++
++    function receiveMessage(connection, data) {
++        if (stopped || closing || socket !== connection) {
++            return;
++        }
++        try {
++            if (typeof data !== 'string' || Buffer.byteLength(data, 'utf8') > config.maxBytes) {
++                throw new Error('Invalid collector message');
++            }
++            const message = JSON.parse(data);
++            if (typeof message === 'string' && message.startsWith('primus::ping::')) {
++                connection.send(JSON.stringify(message.replace('primus::ping::', 'primus::pong::')));
++                return;
++            }
++            if (!awaitingSnapshot || !isObject(message)) {
++                return;
++            }
++            if (Array.isArray(message.emit) && message.emit[0] === 'init') {
++                if (nodes !== null || !isObject(message.emit[1])) {
++                    throw new Error('Invalid collector snapshot');
++                }
++                nodes = projectNodes(message.emit[1].nodes, config.maxNodes);
++                observedAt = dependencies.now();
++                return;
++            }
++            if (message.action === 'charts' && nodes !== null) {
++                if (!isObject(message.data)) {
++                    throw new Error('Invalid collector charts');
++                }
++                saveSnapshot(connection, message.data);
++            }
++        } catch (_) {
++            dependencies.onError('Collector snapshot rejected');
++            disconnect(connection);
++        }
++    }
++
++    function connectCollector() {
++        if (stopped || socket !== null) {
++            return;
++        }
++        try {
++            const connection = dependencies.connect(config.url, config.maxBytes);
++            socket = connection;
++            closing = false;
++            connection.onopen = () => requestSnapshot(connection);
++            connection.onmessage = event => receiveMessage(connection, event.data);
++            connection.onclose = () => connectionClosed(connection);
++            connection.onerror = () => disconnect(connection);
++            schedule(() => expireConnection(connection), config.timeoutMs);
++        } catch (_) {
++            dependencies.onError('Collector connection failed');
++            schedule(connectCollector, config.intervalMs);
++        }
++    }
++
++    connectCollector();
++    return {
++        stop() {
++            stopped = true;
++            clearTimer();
++            if (socket !== null) {
++                disconnect(socket);
++            }
++            return pendingWrite || Promise.resolve();
++        },
++    };
++}
++
++module.exports = startSnapshotCollection;
+diff --git a/wsclient/wsclient.js b/wsclient/wsclient.js
+index 35fc3bf..80a5b4d 100644
+--- a/wsclient/wsclient.js
++++ b/wsclient/wsclient.js
+@@ -1,180 +1,26 @@
+-const collectorUrl = require('../lib/deployment-config').loadPersistenceUrl(process.env);
++const config = require('../lib/deployment-config').loadPersistenceConfig(process.env);
++const database = require('../db');
+ const Populate = require('../db_methods/populate');
+-
+-const pop = new Populate();
+-
+-
+-let WebSocketClient = require('websocket').w3cwebsocket;
+-
+-var reconnectInterval = 1000 * 10;
+-
+-let info = null;
+-
+-var connect = function(){
+-
+-    
+-    const wsclient = new WebSocketClient(collectorUrl);
+-
+-    olderThanHours = 3;    // Remove nodes inactive for olderThanHours hours
+-    let timerId = 0;
+-    let blockNo = -1;
+-    let timestamp = 0;
+-    let epoch0time = new Date(0);
+-    utctime = epoch0time.toISOString();
+-    pop.initDbAndTables();
+-
+-
+-
+-    wsclient.onopen = () => {
+-        // console.log(new Date(), ` WebSocket Client Connected`);
+-    };
+-
+-
+-    wsclient.onerror = function() {
+-        // console.log(new Date(),` Connection Error`);
+-    };
+-
+-    wsclient.onmessage = async(data) => {
+-
+-        // //console.log(data.data);
+-
+-        now = new Date();
+-
+-        // console.log(now, ` Received:  ${data.data.length} bytes`);
+-        let myData = JSON.parse(data.data);
+-        let currentAction = myData.action;
+-        // console.log(`Current action is => ${currentAction}`);
+-
+-
+-        if (currentAction === 'init') {
+-            // console.log(`Init. => ${myData.data[0]}`);
+-            info = JSON.stringify(myData.data[0]);
+-        };
+-
+-        if (myData.data.id && currentAction === 'block') {
+-            // console.log(`Block No. => ${myData.data.block.number}`);
+-            blockNo = myData.data.block.number;
+-            timestamp = myData.data.block.timestamp;
+-            utctime = new Date(timestamp*1000).toISOString();    // UTC
+-
+-            blockdata = JSON.stringify(myData.data.block);
+-
+-            // //console.log(`Height => ${myData.data.height}`);
+-            let recordBlock = [
+-                utctime,
+-                blockdata
+-            ]
+-            /*pop.blockPostDb(recordBlock)
+-            .then( res => {
+-                if (res == 0) {
+-                    // console.log(`Block data write finished`);
+-                }
+-            })
+-            .catch( err => {
+-                // console.log(err.stack);
+-            })*/
+-
+-        }  // End of currentAction === 'blocks'
+-
+-
+-        if (myData.data.id && currentAction === 'stats') {
+-            // console.log(`User ID => ${myData.data.id}`);
+-            let statdata = JSON.stringify(myData.data);
+-            let recordStats = [
+-                myData.data.id,
+-                utctime,
+-                blockNo,
+-                statdata,
+-                info
+-            ];
+-            // //console.log(recordStats);
+-
+-
+-            //await pop.nodeDeleteDb(recordStats[0])
+-            pop.nodeUpdateDb(recordStats)
+-            .then((res) => {
+-                // //console.log(res);
+-                if (res.rowCount == 0) {
+-                    pop.nodePostDb(recordStats)
+-                    .then( res => {
+-                        if (res == 1) {
+-                            // //console.log(`Posted`);
+-                        }
+-                        else {
+-                            // console.log(`Unidentified return from nodePostDb = ${res}`);
+-                        }
+-                    })
+-                    .catch( err => {
+-                        // //console.log(err.stack);
+-                        // console.log(err.detail);
+-                        return;
+-                    })
+-                }
+-            })
+-            .catch( err => {
+-                // //console.log(err);
+-                console.error(err.stack);
+-            })
+-
+-        }    // End of currentAction === 'stats'
+-
+-        else if (currentAction === 'charts') {
+-            let chartdata = JSON.stringify(myData.data);
+-
+-            let recordCharts = [
+-                utctime,
+-                chartdata
+-            ]
+-            pop.chartPostDb(recordCharts)
+-            .then( res => {
+-                if (res == 0) {
+-                    // console.log(`Chart data write finished`);
+-                }
+-            })
+-            .catch( err => {
+-                // console.log(err.stack);
+-            })
+-        }
+-
+-    };
+-
+-    function removeOldNodes(olderThanHours) {
+-        var checkTime = 1*60*1000;    // 1 minute
+-        setTimeout((olderThanHours) => {
+-            removeOldNodes(olderThanHours);
+-            pop.nodeDeleteOldNodes(this.olderThanHours)
+-            .then( res => {
+-                // console.log(`Removed old nodes ${res}`);
+-            })
+-            .catch( err => {
+-                // console.log(err.stack);
+-            })
+-        }, checkTime)
++const WebSocket = require('websocket').w3cwebsocket;
++const startSnapshotCollection = require('./collect-snapshots');
++const populate = new Populate(database);
++const collector = startSnapshotCollection(config, {
++    connect: (url, maxBytes) => new WebSocket(url, undefined, undefined, undefined, undefined, { maxReceivedFrameSize: maxBytes, maxReceivedMessageSize: maxBytes }),
++    saveSnapshot: (payload, observedAt) => populate.saveSnapshot(payload, observedAt),
++    now: () => new Date(),
++    setTimeout,
++    clearTimeout,
++    onError: message => console.error(message),
++});
++
++let shutdown = null;
++function stop() {
++    if (shutdown === null) {
++        shutdown = collector.stop().then(() => database.close());
+     }
+-
+-    function keepAlive() {
+-        var timeout = 10000;
+-        if (wsclient.readyState == wsclient.OPEN) {
+-            // //console.log('Keep alive');
+-            wsclient.send('');
+-        }
+-        timerId = setTimeout(keepAlive, timeout);
+-    }
+-
+-    wsclient.onclose = function() {
+-        // console.log(new Date(), ' Client closed, attempting to restart after a delay');
+-        setTimeout(connect, reconnectInterval);
+-        // console.log(new Date(), ' Websocket will attempt to reopen in ',reconnectInterval/1000,' seconds');
+-    };
+-
+-    function cancelKeepAlive() {
+-        if (timerId) {
+-            clearTimeout(timerId);
+-        }
+-    }
+-
+-    removeOldNodes(olderThanHours);
+-    keepAlive();
+-};
+-
+-connect();
++    return shutdown;
++}
++for (const signal of ['SIGINT', 'SIGTERM']) {
++    process.once(signal, () => stop().catch(() => { console.error('Dashboard persistence shutdown failed'); process.exitCode = 1; }));
++}
++module.exports = { stop };

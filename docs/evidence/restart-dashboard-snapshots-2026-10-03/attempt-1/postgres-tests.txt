@@ -1,0 +1,41 @@
+TAP version 13
+# Subtest: configured database adapter works against disposable SCRAM PostgreSQL
+    # Subtest: parameterized JSON and full UTC timestamps survive insert, upsert and read
+    ok 1 - parameterized JSON and full UTC timestamps survive insert, upsert and read
+      ---
+      duration_ms: 46.7087
+      ...
+    # Subtest: reader role can read but cannot write or alter the table
+    ok 2 - reader role can read but cannot write or alter the table
+      ---
+      duration_ms: 67.3695
+      ...
+    # Subtest: statement timeout cancels a slow query and leaves the pool usable
+    ok 3 - statement timeout cancels a slow query and leaves the pool usable
+      ---
+      duration_ms: 1039.663
+      ...
+    # Subtest: connection timeout bounds a peer that accepts TCP but never authenticates
+    ok 4 - connection timeout bounds a peer that accepts TCP but never authenticates
+      ---
+      duration_ms: 1019.7459
+      ...
+    # Subtest: rejected SQL does not exhaust the pool or change the stored report
+    ok 5 - rejected SQL does not exhaust the pool or change the stored report
+      ---
+      duration_ms: 32.6747
+      ...
+    1..5
+ok 1 - configured database adapter works against disposable SCRAM PostgreSQL
+  ---
+  duration_ms: 2207.881
+  ...
+1..1
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2765.9484

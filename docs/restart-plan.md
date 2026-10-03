@@ -200,12 +200,15 @@ real loopback collector test passed with unchanged locked dependencies. The
 to 86 passing contracts and one real collector wire test, including a real HTTP
 API check with stubbed storage. Endpoints, loopback listeners and database
 credentials now require explicit configuration. Inherited persistence, timer,
-SQL and schema problems are recorded as the next blockers. A
+SQL and schema problems were recorded as the next blockers. A
 [real PostgreSQL compatibility check](restart-dashboard-postgres.md) then exposed
 and corrected the old driver's connection failure on Node 22.11.0. The pinned
-replacement and explicit database timeouts pass five real database scenarios;
-the legacy persistence path remains untested. Full
-storage/API/browser/TLS integration, resource limits and deployment remain open.
+replacement and explicit database timeouts pass five real database scenarios.
+The [snapshot persistence replacement](restart-dashboard-snapshots.md) now passes
+99 contracts and real collector/PostgreSQL/HTTP checks with two synthetic nodes,
+including reconnects and stale API responses. Browser stale/error behavior,
+actual efsn/RPC comparison, resource limits, runtime review and TLS/deployment
+remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -264,11 +267,10 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: correct the [documented persistence/schema blockers](restart-dashboard-config.md#next-persistence-correctness-before-integration),
-   then complete input/resource limits, a reviewed runtime/dependency build and
-   the storage/API/browser/TLS acceptance path. Authentication and explicit
-   deployment configuration now pass local contracts plus real loopback
-   collector/API checks; these remain separately reviewed dashboard changes.
+1. G6: finish browser freshness/error handling and its build, then collector
+   input/resource limits, actual efsn/RPC comparison, reviewed runtime/dependencies
+   and TLS/deployment acceptance. The [snapshot writer/schema and HTTP API](restart-dashboard-snapshots.md)
+   now pass real local persistence acceptance; the public browser path is next.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;
