@@ -16,6 +16,8 @@ P15 excludes the node's own identity from discovery admission, from baseline
 `27b1186`, with deterministic and signed-UDP before/after evidence.
 P16 rejects truncated snapshot counts before slicing, from baseline `96ff3b4`,
 with local parser regression evidence and valid-header compatibility checks.
+P17 reads the current canonical head for queued telemetry notifications, from
+baseline `9f65cf29`, with collector-outage evidence of an obsolete queued report.
 This is the review inventory, not
 an approved release. Later test/document changes do not approve these patches.
 
@@ -62,6 +64,7 @@ source or a universal reserve.
 | P14 | Transfer discovery subnet reservations when endpoints change, reuse replacement reservations on promotion, start promotion maturity, and ignore probe/deletion results for superseded entries. | Corrects reproduced quota bypass/leaks, stale-endpoint overwrite/eviction and premature replacement persistence. Review with P11–P13. | Local discovery behavior after startup and recovery; no consensus, economic, wire-format or limit-policy change. One runtime file, 63 added/23 removed lines. See [address-move evidence](restart-peer-addresses.md), including deterministic before/after cases and a signed UDP move in an isolated namespace. |
 | P15 | Reject the local node ID at the common discovery-table admission entry point. | Prevents self-contacts from occupying active/replacement entries and address reservations, and from suppressing empty-table refresh after real contacts disappear. | Three added runtime lines in `Table.add`. No timer, record format, wire protocol, ticket, fork-choice or consensus change. See [partition/self-contact evidence](restart-network-partitions.md), including four deterministic failures and a real signed-UDP admission failure before correction. |
 | P16 | Reject a snapshot payload shorter than four count bytes plus its checksum before slicing. | Fixes eight locally reproduced slice-bounds panics for truncated input. | Three added runtime lines in `snapshot.SetBytes`; inputs of at least five bytes use the unchanged decoder. No valid encoding, ticket-economics or fork-choice change. See [framing correction and validation scope](restart-snapshot-framing.md). Network-level exploitability and process effects have not been tested. |
+| P17 | On a queued head notification, report the current canonical tip through the existing reporter lookup. | Fixes the observed reconnect sequence that reports height 73 and then obsolete height 62, briefly making the collector show 62. Required for accurate dashboard recovery in this scenario; not required to mine blocks. | Two changed lines in the telemetry loop. Reporting only: no block, transaction, ticket, fork-choice or database mutation. Genuine lower-height reorganizations still report the current tip. Review [collector outage and recovery](restart-dashboard-mining-outage.md), retained baseline wire data and corrected live mining evidence. |
 
 ## Source boundaries
 
@@ -88,6 +91,7 @@ Tests and evidence must accompany any extracted patch.
 | P14 | `p2p/discover/table.go`: `findnode`, `doRevalidate`, `updateIP`, `addReplacement`, `replace`, `bumpOrAdd`, `deleteInBucket`, shared `findNode`; extend `loadSeedNodes` preservation to replacements. |
 | P15 | `p2p/discover/table.go`: three-line local-ID check at the start of `Table.add`, before locking or changing address reservations. |
 | P16 | `consensus/datong/snapshot.go`: three-line minimum-size guard after the existing empty-input check in `snapshot.SetBytes`. |
+| P17 | `ethstats/ethstats.go`: receive the head notification without retaining its old payload, then call `reportBlock(conn, nil)` in `Service.loop`, using the existing current-head lookup. |
 | O1 | `cmd/utils/flags.go`: trim/filter explicit bootstrap lists. Inherited gateway usability fix; optional for the restart protocol. Does not create DNS discovery. Review independently if retained. |
 
 P1, P5, P6, P7 and P9 overlap in chain/header code. Extract and test them in a defined
@@ -118,7 +122,7 @@ not claim those are implemented or that the candidate node is ready to launch.
 The [operator network-profile follow-up](restart-network-profile.md) adds no
 runtime patch. It records tested configuration workarounds for inherited NAT,
 diagnostic dump, discovery-flag and restored-peer-list behavior, plus the remaining
-release endpoint/image changes. The current inventory is P1–P16.
+release endpoint/image changes. The current inventory is P1–P17.
 
 The [packet-loss follow-up](restart-network-partitions.md) adds P15 after
 reproducing self-contact admission and suppressed refresh. It exercises timeout,

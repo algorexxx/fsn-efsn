@@ -90,7 +90,7 @@ space/path checks. Full execution beyond 3,000,000 is not currently running.
 ## G2 — Client and supported operation
 
 - [ ] Select every production hunk against upstream from the
-  [P1–P16 inventory](restart-node-patch-review.md); separate node changes,
+  [P1–P17 inventory](restart-node-patch-review.md); separate node changes,
   recovery tooling, observer, packaging and inherited explorer settings.
 - [ ] Freeze a bounded final regression matrix for supported Linux deployment:
   anchor/startup/import/rewind, ordinary purchase/mining/restart, compatible
@@ -293,7 +293,16 @@ timestamp-ordering failure led to placing collector, writer and API together
 on Linux, preserving strict freshness rules. Browser trust is pinned only to
 the temporary test certificate; public PKI and renewal remain open. All 173
 contracts, 13 socket tests and the original plain-loopback integration pass.
-Only fixtures changed. The chain is stationary; mining-outage acceptance is next.
+Only fixtures changed. That chain is stationary. The subsequent
+[collector-loss mining drill](restart-dashboard-mining-outage.md) now passes:
+twelve ordinary blocks and ticket purchases while the collector process is
+absent, stale API refusal, automatic WSS recovery and verified outage-block
+history. The investigation also exposed a queued old-head report after reconnect;
+P17 changes two reporter lines to read the current canonical tip. It changes
+telemetry only and needs its own release review. The stationary browser regression
+and 173 contract / 13 socket tests also pass. This closes the bounded local
+process-loss item; runtime/dependency,
+supervision, public certificate and log lifecycle acceptance remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -352,11 +361,12 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: drill collector loss during actual mining now that the
-   [actual WSS/database/browser path](restart-dashboard-wss.md) passes. Then
-   finish runtime/dependency review, service supervision, public certificate
+1. G6: finish runtime/dependency review, service supervision, public certificate
    acceptance/renewal and log lifecycle checks. Preserve receipt and transport
-   diagnostics and the same-host clock assumption. Approve the common deployment
+   diagnostics and the same-host clock assumption. Review retry pacing and log
+   volume using the [passing mining-outage drill](restart-dashboard-mining-outage.md).
+   The actual WSS/database/API path and separate browser regression pass.
+   Approve the common deployment
    manifest before publishing. G6 remains open; eight enrolled nodes, 64 KiB
    heads and the 4/1/1 MiB limits remain an explicit tested candidate, with
    sizing review required for growth.

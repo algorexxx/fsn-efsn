@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FusionFoundation/efsn/v5/accounts/keystore"
 	"github.com/FusionFoundation/efsn/v5/common"
 	"github.com/FusionFoundation/efsn/v5/consensus/datong"
 	"github.com/FusionFoundation/efsn/v5/core"
@@ -18,6 +19,7 @@ import (
 	"github.com/FusionFoundation/efsn/v5/eth/downloader"
 	"github.com/FusionFoundation/efsn/v5/eth/ethconfig"
 	"github.com/FusionFoundation/efsn/v5/ethstats"
+	"github.com/FusionFoundation/efsn/v5/internal/ethapi"
 	"github.com/FusionFoundation/efsn/v5/node"
 	"github.com/FusionFoundation/efsn/v5/p2p"
 	"github.com/FusionFoundation/efsn/v5/params"
@@ -32,6 +34,7 @@ func TestDashboardTelemetryNode(t *testing.T) {
 		Collector            string
 		Secret               string
 		TransactionsPerBlock int
+		Mining               bool
 	}
 	data, err := os.ReadFile(filepath.Join(path, "settings.json"))
 	requireNoError(t, err)
@@ -58,12 +61,27 @@ func TestDashboardTelemetryNode(t *testing.T) {
 	chainConfig.BerlinBlock, chainConfig.LondonBlock, chainConfig.EcoBlock = common.Big0, common.Big0, common.Big0
 	genesis := &core.Genesis{Config: &chainConfig, GasLimit: 15000000, Difficulty: big.NewInt(1), Timestamp: 1700000000, Alloc: core.GenesisAlloc{owner: {Balance: decimal(t, "1000000000000000000000000")}}}
 	genesis.TicketCreateInfo = &core.TicketsCreate{Owner: owner, Count: 2, Time: genesis.Timestamp}
+	if settings.Mining {
+		if settings.TransactionsPerBlock != 1 {
+			t.Fatal("mining fixture requires one seeded purchase per block")
+		}
+		genesis.Timestamp = uint64(time.Now().Unix()) - 9000
+		genesis.TicketCreateInfo.Time = genesis.Timestamp
+	}
 	stack, err := node.New(&node.Config{
 		Name: "dashboard-fixture", HTTPHost: "127.0.0.1", HTTPModules: []string{"eth", "fsn", "net", "txpool"},
 		P2P: p2p.Config{NoDiscovery: true, NoDial: true},
 	})
 	requireNoError(t, err)
 	t.Cleanup(func() { requireNoError(t, stack.Close()) })
+	if settings.Mining {
+		keys := keystore.NewKeyStore(t.TempDir(), keystore.LightScryptN, keystore.LightScryptP)
+		stack.AccountManager().AddBackend(keys)
+		account, err := keys.ImportECDSA(key, "public-synthetic-key")
+		requireNoError(t, err)
+		requireNoError(t, keys.Unlock(account, "public-synthetic-key"))
+		stack.RegisterLifecycle(ethapi.NewTicketBuyer(true))
+	}
 	config := ethconfig.Defaults
 	config.Genesis, config.NetworkId, config.SyncMode = genesis, 99032659, downloader.FullSync
 	config.NoPruning = true
@@ -71,6 +89,7 @@ func TestDashboardTelemetryNode(t *testing.T) {
 	config.TrieCleanCache, config.TrieDirtyCache = 16, 0
 	config.LightPeers = 0
 	config.TxPool.Journal = ""
+	config.Miner.GasCeil, config.Miner.GasPrice, config.Miner.Recommit = genesis.GasLimit, big.NewInt(1), time.Second
 	service, err := eth.New(stack, &config)
 	requireNoError(t, err)
 	service.SetEtherbase(owner)
@@ -92,8 +111,20 @@ func TestDashboardTelemetryNode(t *testing.T) {
 	requireNoError(t, err)
 	requireNoError(t, os.WriteFile(filepath.Join(path, "ready.json"), ready, 0600))
 	deadline := time.Now().Add(60 * time.Second)
+	if settings.Mining {
+		requireNoError(t, service.StartMining(1))
+		deadline = time.Now().Add(360 * time.Second)
+	}
 	for time.Now().Before(deadline) {
 		if _, err := os.Stat(filepath.Join(path, "stop")); err == nil {
+			if settings.Mining {
+				if !service.IsMining() || !common.IsAutoBuyTicketEnabled() || stack.Server().PeerCount() != 0 || f.chain.CurrentBlock().NumberU64() < 74 {
+					t.Fatal("live fixture did not retain mining, auto-buy and isolated block production")
+				}
+				service.StopMining()
+				common.SetAutoBuyTicketEnabled(false)
+				return
+			}
 			if service.IsMining() || stack.Server().PeerCount() != 0 || f.chain.CurrentBlock().NumberU64() != 60 {
 				t.Fatal("stationary fixture changed unexpectedly")
 			}

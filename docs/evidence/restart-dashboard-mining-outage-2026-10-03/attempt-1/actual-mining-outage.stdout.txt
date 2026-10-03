@@ -1,0 +1,31 @@
+TAP version 13
+# Subtest: ordinary mining and purchases continue through collector process loss and WSS recovery
+not ok 1 - ordinary mining and purchases continue through collector process loss and WSS recovery
+  ---
+  duration_ms: 163325.317943
+  location: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/efsn-mining-outage.test.cjs:44:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(history)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/efsn-mining-outage.test.cjs:186:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:935:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 168548.215406

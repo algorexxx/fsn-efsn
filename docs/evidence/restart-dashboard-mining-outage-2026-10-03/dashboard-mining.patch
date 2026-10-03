@@ -1,0 +1,373 @@
+From d70014342f1995807bccd26370a7b86379c89099 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 20:33:48 +0200
+Subject: [PATCH] Verify collector loss during actual efsn mining
+
+---
+ docs/mining-outage-acceptance.md |  92 ++++++++++++
+ test/efsn-mining-outage.test.cjs | 233 +++++++++++++++++++++++++++++++
+ test/fixtures/collector-wire.cjs |   5 +
+ 3 files changed, 330 insertions(+)
+ create mode 100644 docs/mining-outage-acceptance.md
+ create mode 100644 test/efsn-mining-outage.test.cjs
+
+diff --git a/docs/mining-outage-acceptance.md b/docs/mining-outage-acceptance.md
+new file mode 100644
+index 0000000..a0dc04f
+--- /dev/null
++++ b/docs/mining-outage-acceptance.md
+@@ -0,0 +1,92 @@
++# Collector loss during actual mining
++
++2026-10-03. The bounded local acceptance test passes with actual efsn mining,
++automatic ticket purchases, nginx WSS, the collector, PostgreSQL and HTTPS API.
++Only dashboard test code changes in this slice. Dashboard application code, dependencies, schema,
++compiled frontend and nginx configuration remain unchanged.
++The efsn node has a separate two-line reporting correction, P17: queued head
++notifications now read the current canonical tip. The baseline reported height
++73 followed by obsolete queued height 62; collector snapshots briefly showed 62.
++This changes telemetry only, including after recovery; chain state, mining,
++tickets and consensus are unchanged. Genuine reorganizations still report their
++actual tip, even if height decreases. The final test rejects the old report and
++checks the persisted contiguous forty-block chart after history recovery.
++
++`test/efsn-mining-outage.test.cjs` runs on Linux. It starts the collector separately
++from the proxy, writer and API, then terminates only the collector process. The
++same efsn process stays alive with mining and automatic purchases enabled. After
++twelve further blocks it starts a fresh collector on the original port with the
++same synthetic credential. Neither the node nor writer is restarted or manually
++reconnected. The independent processes use one Linux clock.
++
++The corrected run records:
++
++- Height 61 before loss, height 73 before restoration, height 74 after recovery.
++  The account nonce advances 61 → 73 → 74 and retains two tickets. All thirteen
++  intervening canonical blocks contain one successful ticket purchase by the
++  public test account, with consecutive nonces and native purchase receipts.
++- The collector port refuses connections throughout the measured outage. The
++  stored snapshot stops changing; all four API views return HTTP 503 after the
++  ten-second snapshot budget. Mining and automatic purchases stay enabled.
++- The outage lasts 141.949 seconds. A fresh authenticated report covering the
++  next mined block reaches HTTPS in 12.267 seconds after collector restoration.
++  The normal history request subsequently supplies fifty missing blocks. Together
++  with individual head reports, these cover all twelve outage blocks. Head/history hashes and transaction hashes
++  agree with direct RPC at those specific heights.
++- Twenty-seven snapshots are saved, at most 6,166 bytes. The test writer retries
++  every 250 ms and records 544 expected connection-loss/failure messages. It
++  reports no other error category and no new errors after recovery. This short
++  test interval is not a public retry/log-volume recommendation.
++- The corrected reconnect head sequence is 73, 73, 74, 74. Every captured
++  nonempty collector snapshot stays at or above 73. The recovered persisted
++  chart contains heights 35–74 with exactly one transaction per block.
++
++The first attempt passed block production, stale API and head recovery checks,
++then asserted the presence of history before the next normal latency report.
++The final test waits, bounded to 25 seconds, for that existing history cycle.
++The second run passes liveness but exposes the queued-head reporting defect
++during the subsequent evidence audit. The corrected third run adds the head
++ordering and chart recovery assertions. All attempts and shutdowns are retained;
++no freshness or consensus rule is relaxed.
++
++The stationary WSS/PostgreSQL/Edge integration also passes its original four
++browser checkpoints with the updated Go fixture; 173 contract and 13 socket
++tests pass. That browser run is separate from the live outage drill. Public
++certificate acceptance and renewal are still untested; local certificates are
++verified against a temporary test CA, and the separate Edge fixture uses its
++existing temporary leaf-SPKI exception.
++
++## Reproduction
++
++Build the existing efsn `tests/restart` package with Go 1.21.3 and CGO enabled.
++The opt-in `TestDashboardTelemetryNode` supports `Mining: true` in its fixture
++settings, public key 1 only, a numeric loopback collector, and no backup input.
++It seeds sixty synthetic blocks before starting the ordinary miner and ticket
++buyer; it does not import manufactured blocks during the outage. The test uses
++the existing development-chain rules and leaves the block period unchanged.
++
++Run the new test with Node 22.11.0 on Linux:
++
++```text
++node --test --test-reporter=tap test/efsn-mining-outage.test.cjs
++```
++
++Supply absolute paths through `EFSN_TELEMETRY_BINARY`,
++`EFSN_TELEMETRY_EVIDENCE`, `EFSN_TLS_CA`, `EFSN_TLS_CERT`, `EFSN_TLS_KEY`,
++`EFSN_TLS_OUTPUT` and `TEST_NGINX`; set `TEST_PG_PORT` and
++`TEST_PG_PASSWORD_FILE` for a fresh loopback PostgreSQL database. The API/writer
++fixture creates its schema there. It uses the same extracted nginx and Linux
++PostgreSQL runtimes as the previous actual-WSS acceptance.
++
++The efsn repository's
++`docs/evidence/restart-dashboard-mining-outage-2026-10-03/run.py` creates the
++temporary certificates/database, captures runtime/source/build hashes and runs
++this test. `run-stationary.py` and `run-contracts.py` retain the regression
++results. `run-fixed.py` and `run-stationary-fixed.py` use the corrected efsn binary.
++`verify.py` ties the results to the committed patch and P17 source, while checking
++all other production sources remain unchanged. All five databases are stopped, temporary private files
++are removed and no matching test processes remain.
++
++This covers collector process loss and return with valid ordinary telemetry.
++It does not establish host supervision, certificate renewal, a supported public
++runtime matrix, production retry/log policy, or long-duration availability.
+diff --git a/test/efsn-mining-outage.test.cjs b/test/efsn-mining-outage.test.cjs
+new file mode 100644
+index 0000000..f0c30cd
+--- /dev/null
++++ b/test/efsn-mining-outage.test.cjs
+@@ -0,0 +1,233 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { once } = require('node:events');
++const { spawn } = require('node:child_process');
++const { readFileSync, writeFileSync, existsSync, mkdtempSync, unlinkSync, rmdirSync } = require('node:fs');
++const { join } = require('node:path');
++const { tmpdir } = require('node:os');
++const { createConnection } = require('node:net');
++const { Pool } = require('pg');
++const Retrieve = require('../db_methods/retrieve');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const startTlsApi = require('./fixtures/efsn-tls-api.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const request = require('./fixtures/http.cjs');
++
++async function waitFor(predicate, timeout = 25000) {
++    const deadline = Date.now() + timeout;
++    while (Date.now() < deadline) {
++        const result = await predicate();
++        if (result) {
++            return result;
++        }
++        await new Promise(resolve => setTimeout(resolve, 250));
++    }
++    throw new Error('Live mining observation deadline exceeded');
++}
++
++async function rpc(endpoint, method, params = []) {
++    const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }), signal: AbortSignal.timeout(3000) });
++    const result = await response.json();
++    assert.equal(result.error, undefined, method);
++    return result.result;
++}
++
++function refusedPort(port) {
++    return new Promise(resolve => {
++        const socket = createConnection({ host: '127.0.0.1', port });
++        socket.once('connect', () => { socket.destroy(); resolve(false); });
++        socket.once('error', error => { socket.destroy(); resolve(error.code === 'ECONNREFUSED'); });
++        socket.setTimeout(500, () => { socket.destroy(); resolve(false); });
++    });
++}
++
++test('ordinary mining and purchases continue through collector process loss and WSS recovery', { timeout: 340000 }, async t => {
++    assert.equal(process.platform, 'linux');
++    for (const name of ['EFSN_TELEMETRY_BINARY', 'EFSN_TELEMETRY_EVIDENCE', 'TEST_PG_PORT', 'TEST_PG_PASSWORD_FILE', 'EFSN_TLS_CA', 'EFSN_TLS_CERT', 'EFSN_TLS_KEY', 'EFSN_TLS_OUTPUT', 'TEST_NGINX']) {
++        assert.ok(process.env[name], name);
++    }
++    const output = process.env.EFSN_TELEMETRY_EVIDENCE;
++    const ca = readFileSync(process.env.EFSN_TLS_CA);
++    const evidence = { phases: [], purchases: [], passed: false };
++    const save = (name, value) => writeFileSync(join(output, name + '.json'), JSON.stringify(value, null, 2) + '\n', 'utf8');
++    const cleanup = [];
++    let node;
++    let nodeExit;
++    let logs = '';
++    let server;
++    let tls;
++    let directory;
++    t.after(async () => {
++        try {
++            if (node && node.exitCode === null && node.signalCode === null) {
++                writeFileSync(join(directory, 'stop'), '', 'utf8');
++                await Promise.race([nodeExit, new Promise(resolve => setTimeout(() => { node.kill('SIGTERM'); resolve(); }, 8000).unref())]);
++            }
++            if (nodeExit) {
++                evidence.nodeExit = await nodeExit;
++            }
++            for (const close of cleanup.reverse()) {
++                await close();
++            }
++        } finally {
++            assert.equal(logs.includes(secretA), false);
++            writeFileSync(join(output, 'efsn.txt'), logs, 'utf8');
++            save('result-mining', { ...evidence, writer: tls && tls.state });
++            if (directory) {
++                for (const name of ['settings.json', 'ready.json', 'stop']) {
++                    if (existsSync(join(directory, name))) {
++                        unlinkSync(join(directory, name));
++                    }
++                }
++                rmdirSync(directory);
++            }
++        }
++    });
++    const settings = { COLLECTOR_MAX_MESSAGE_BYTES: '4194304', COLLECTOR_MAX_HEAD_BYTES: '65536', COLLECTOR_MAX_BUFFERED_BYTES: '1048576' };
++    server = await startCollector(t, settings, 'efsn-wire-server.cjs', { 'node-a': secretA });
++    const port = server.port;
++    const pool = new Pool({ host: '127.0.0.1', port: Number(process.env.TEST_PG_PORT), database: 'postgres', user: 'dashboard_test_admin', password: readFileSync(process.env.TEST_PG_PASSWORD_FILE, 'utf8'), connectionTimeoutMillis: 2000, statement_timeout: 2000, query_timeout: 2000 });
++    cleanup.push(() => pool.end());
++    await pool.query(readFileSync(join(__dirname, '../db/schema/001-dashboard.sql'), 'utf8'));
++    const retrieve = new Retrieve(pool);
++    tls = await startTlsApi(port, cleanup);
++    tls.startCollection();
++    directory = mkdtempSync(join(tmpdir(), 'efsn-mining-dashboard-'));
++    writeFileSync(join(directory, 'settings.json'), JSON.stringify({ Collector: `wss://127.0.0.1:${tls.address.tlsPort}`, Secret: secretA, TransactionsPerBlock: 1, Mining: true }), { encoding: 'utf8', mode: 0o600 });
++    node = spawn(process.env.EFSN_TELEMETRY_BINARY, ['-test.run=^TestDashboardTelemetryNode$', '-test.v', '-test.timeout=370s'], { env: { ...process.env, GOMAXPROCS: '2', SSL_CERT_FILE: process.env.EFSN_TLS_CA, FUSION_DASHBOARD_FIXTURE: directory, FUSION_RESTART_CHAINDATA: '' }, stdio: ['ignore', 'pipe', 'pipe'] });
++    nodeExit = once(node, 'exit');
++    node.stdout.on('data', data => { logs += data; });
++    node.stderr.on('data', data => { logs += data; });
++    const ready = await waitFor(() => {
++        assert.equal(node.exitCode, null, logs);
++        return existsSync(join(directory, 'ready.json')) && JSON.parse(readFileSync(join(directory, 'ready.json'), 'utf8'));
++    });
++    evidence.ready = ready;
++    const read = (method, params) => rpc(ready.rpc, method, params);
++    async function observe(label) {
++        const head = await read('eth_getBlockByNumber', ['latest', false]);
++        const number = Number(BigInt(head.number));
++        const observation = { label, time: Date.now(), head, number,
++            mining: await read('eth_mining'), autoBuy: await read('fsn_isAutoBuyTicket'), peers: await read('net_peerCount'),
++            nonce: await read('eth_getTransactionCount', [ready.owner, head.number]),
++            tickets: await read('fsn_totalNumberOfTicketsByAddress', [ready.owner, head.number]) };
++        assert.equal(observation.mining, true);
++        assert.equal(observation.autoBuy, true);
++        assert.equal(BigInt(observation.peers), 0n);
++        assert.ok(observation.tickets > 0);
++        evidence.phases.push(observation);
++        return observation;
++    }
++    async function freshSnapshot(minimum) {
++        return waitFor(async () => {
++            const response = await request(tls.address.tlsPort, '/stats-api/nodes', ca);
++            assert.equal(response.tls.authorized, true);
++            if (response.status !== 200 || response.body.length !== 1) {
++                return false;
++            }
++            const value = JSON.parse(response.body[0].stats);
++            if (!value.connected || !value.stats.mining || value.stats.block.number < minimum || !Object.values(response.body[0].reportValidForMs).every(age => age > 0)) {
++                return false;
++            }
++            const block = await read('eth_getBlockByNumber', ['0x' + value.stats.block.number.toString(16), false]);
++            assert.equal(value.stats.block.hash, block.hash);
++            assert.equal(value.stats.block.parentHash, block.parentHash);
++            assert.deepEqual(value.stats.block.transactions.map(tx => tx.hash), block.transactions);
++            return { response, block, snapshot: await retrieve.readSnapshot() };
++        });
++    }
++    await freshSnapshot(61);
++    const before = await observe('before-outage');
++    save('collector-before', await server.command('capture'));
++    assert.deepEqual(tls.state.errors, []);
++    evidence.initialCollectorPid = server.pid;
++    await server.terminate();
++    evidence.outageStarted = Date.now();
++    assert.equal(await refusedPort(port), true);
++    const outageStart = await observe('collector-stopped');
++    const expired = await waitFor(async () => {
++        const response = await request(tls.address.tlsPort, '/stats-api/nodes', ca);
++        return response.status === 503 && response;
++    }, 16000);
++    assert.deepEqual(expired.body, { error: 'snapshot_unavailable' });
++    evidence.expired = { response: expired, time: Date.now() };
++    const stoppedSnapshot = await retrieve.readSnapshot();
++    await waitFor(async () => {
++        assert.equal(node.exitCode, null, logs);
++        return Number(BigInt(await read('eth_blockNumber'))) >= outageStart.number + 12;
++    }, 240000);
++    const during = await observe('twelve-blocks-without-collector');
++    assert.equal(await refusedPort(port), true);
++    assert.ok(during.number - outageStart.number >= 12);
++    assert.ok(BigInt(during.nonce) - BigInt(outageStart.nonce) >= 12n);
++    const retained = await retrieve.readSnapshot();
++    assert.deepEqual(retained, stoppedSnapshot);
++    for (const path of ['nodes', 'blocks', 'charts', 'info']) {
++        const response = await request(tls.address.tlsPort, '/stats-api/' + path, ca);
++        assert.equal(response.status, 503);
++        assert.deepEqual(response.body, { error: 'snapshot_unavailable' });
++    }
++    save('snapshot-retained-during-outage', retained);
++    server = await startCollector(t, { ...settings, COLLECTOR_PORT: String(port) }, 'efsn-wire-server.cjs', { 'node-a': secretA });
++    evidence.restoredAt = Date.now();
++    evidence.restoredCollectorPid = server.pid;
++    assert.equal(server.port, port);
++    assert.notEqual(server.pid, evidence.initialCollectorPid);
++    evidence.recoveredSnapshot = await freshSnapshot(during.number + 1);
++    evidence.recoveredAt = Date.now();
++    const captured = await waitFor(async () => {
++        const value = await server.command('capture');
++        return value.records.some(record => record.direction === 'incoming' && record.message.emit && record.message.emit[0] === 'history' && record.message.emit[1].history.length === 50) && value;
++    });
++    const after = await observe('recovered-with-next-mined-block');
++    assert.ok(after.number > during.number);
++    assert.ok(BigInt(after.nonce) > BigInt(during.nonce));
++    save('collector-after', captured);
++    const incoming = captured.records.filter(record => record.direction === 'incoming').map(record => record.message.emit).filter(Boolean);
++    assert.equal(incoming.filter(message => message[0] === 'hello').length, 1);
++    const history = incoming.find(message => message[0] === 'history' && message[1].history.length === 50);
++    assert.ok(history);
++    const liveBlocks = incoming.filter(message => message[0] === 'block').map(message => message[1].block);
++    assert.ok(liveBlocks.length > 0);
++    assert.ok(liveBlocks.every(block => block.number >= during.number));
++    evidence.recoveredHistorySnapshot = await waitFor(async () => {
++        const value = await freshSnapshot(after.number);
++        const heights = value.snapshot.payload.charts.height;
++        const latest = heights[heights.length - 1];
++        return heights.length === 40 && latest >= after.number && heights.every((height, index) => height === latest - 39 + index) && value;
++    });
++    for (const report of history[1].history) {
++        const block = await read('eth_getBlockByNumber', ['0x' + report.number.toString(16), false]);
++        assert.equal(report.hash, block.hash);
++        assert.equal(report.parentHash, block.parentHash);
++        assert.deepEqual(report.transactions.map(tx => tx.hash), block.transactions);
++    }
++    for (let number = before.number + 1; number <= after.number; number++) {
++        const block = await read('eth_getBlockByNumber', ['0x' + number.toString(16), true]);
++        const parent = await read('eth_getBlockByNumber', ['0x' + (number - 1).toString(16), false]);
++        assert.equal(block.parentHash, parent.hash);
++        assert.equal(block.miner.toLowerCase(), ready.owner.toLowerCase());
++        assert.equal(block.transactions.length, 1);
++        const tx = block.transactions[0];
++        assert.equal(tx.from.toLowerCase(), ready.owner.toLowerCase());
++        const receipt = await read('eth_getTransactionReceipt', [tx.hash]);
++        assert.equal(receipt.blockHash, block.hash);
++        assert.equal(receipt.status, '0x1');
++        const purchase = receipt.logs.map(log => {
++            try { return JSON.parse(Buffer.from(log.data.slice(2), 'hex').toString('utf8')); } catch (_) { return null; }
++        }).find(value => value && value.TicketID && value.TicketOwner);
++        assert.ok(purchase);
++        assert.equal(purchase.Error || '', '');
++        assert.equal(purchase.TicketOwner.toLowerCase(), ready.owner.toLowerCase());
++        evidence.purchases.push({ block, receipt, purchase });
++    }
++    const allowedErrors = new Set(['Collector connection closed unexpectedly', 'Collector connection failed']);
++    assert.ok(tls.state.errors.length > 0);
++    assert.ok(tls.state.errors.every(message => allowedErrors.has(message)), JSON.stringify([...new Set(tls.state.errors)]));
++    evidence.writerErrorsAfterRecovery = tls.state.errors.length;
++    await freshSnapshot(after.number);
++    assert.equal(tls.state.errors.length, evidence.writerErrorsAfterRecovery);
++    writeFileSync(join(directory, 'stop'), '', 'utf8');
++    assert.deepEqual(await nodeExit, [0, null]);
++    evidence.passed = true;
++});
+diff --git a/test/fixtures/collector-wire.cjs b/test/fixtures/collector-wire.cjs
+index e0970a3..3648179 100644
+--- a/test/fixtures/collector-wire.cjs
++++ b/test/fixtures/collector-wire.cjs
+@@ -25,6 +25,7 @@ async function startCollector(t, settings = {}, fixture = 'wire-server.cjs', cre
+     const [address] = await Promise.race([once(child, 'message'), exited.then(() => { throw new Error(`Collector startup failed: ${logs}`); })]);
+     assert.equal(address.address, '127.0.0.1');
+     return {
++        pid: child.pid,
+         port: address.port,
+         tlsPort: address.tlsPort,
+         apiPort: address.apiPort,
+@@ -49,6 +50,10 @@ async function startCollector(t, settings = {}, fixture = 'wire-server.cjs', cre
+             child.send('stop');
+             assert.deepEqual(await exited, [0, null]);
+         },
++        async terminate() {
++            child.kill('SIGTERM');
++            assert.deepEqual(await exited, [null, 'SIGTERM']);
++        },
+     };
+ }
+ 

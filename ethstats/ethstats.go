@@ -333,8 +333,8 @@ func (s *Service) loop(chainHeadCh chan core.ChainHeadEvent, txEventCh chan core
 					if err = s.reportHistory(conn, list); err != nil {
 						log.Warn("Requested history report failed", "err", err)
 					}
-				case head := <-headCh:
-					if err = s.reportBlock(conn, head); err != nil {
+				case <-headCh:
+					if err = s.reportBlock(conn, nil); err != nil {
 						log.Warn("Block stats report failed", "err", err)
 					}
 					if err = s.reportPending(conn); err != nil {
