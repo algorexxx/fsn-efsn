@@ -68,11 +68,13 @@ local work. Increasing the byte budget alone does not establish sustainable
 collection. No cache, index, pruning, rotation or new history format is introduced
 by this investigation.
 
-The next bounded experiment should combine advancing block/receipt batches with
-snapshots, measure the actual command's acquisition and replay cost, and test
-exhaustion and reopening at the chosen test budget. Use explicit event/byte/time
-caps and compact synthetic state. Compare a single replay per command with the
-current implementation before considering a persistent derived-state cache.
+The [mixed-workload follow-up](restart-observer-mixed-workload.md) now combines
+advancing block/receipt batches with snapshots through actual IPC/HTTP commands.
+Both ordinary and race builds pass a deliberately small 512 KiB exhaustion and
+offline reopening check, preserving status, exports and ticket inventories.
+Its small-history timings do not remove the larger replay-cost finding here.
+Next compare a single replay per command with the current implementation before
+considering a persistent derived-state cache, and measure longer ancestry.
 Any eventual retention scheme must preserve anchor baselines, unresolved incidents,
 review identity and displaced evidence across history boundaries; starting an
 empty history is not an accepted workaround. Cadence, retention and notification

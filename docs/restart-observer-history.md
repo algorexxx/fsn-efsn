@@ -130,9 +130,12 @@ Each operation reconstructs status from the bounded event history. The RPC
 timeout does not bound this local replay. A [bounded local measurement](restart-observer-history-cost.md)
 now finds 0.69-second status replay and 1.45-second reopen/status at 1,000 repeated
 two-node snapshots, with about 27 MiB logical data. The 64 MiB example budget is
-not a deployment retention recommendation. Mixed block/snapshot cost and a
-preservation-aware retention procedure remain to validate; sustained-load readiness
-is not established. The same follow-up corrects hexadecimal hash display in
+not a deployment retention recommendation. A [mixed actual-command workload](restart-observer-mixed-workload.md)
+now passes six advancing IPC/HTTP rounds and a 512 KiB logical-budget exhaustion
+check with both ordinary and race builds. Rejected writes preserve evidence and
+offline ticket inventories. Longer ancestry and a retention procedure that
+preserves baselines and incidents remain to validate; sustained-load readiness
+is not established. The history-cost follow-up also corrects hexadecimal hash display in
 canonical-change incidents without changing retained events or node behavior.
 Sync-acknowledged writes survive the tested abrupt process exit;
 power-loss/filesystem durability has not been demonstrated. No external signed

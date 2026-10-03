@@ -1,0 +1,55 @@
+{
+  "Version": 1,
+  "Scope": {
+    "ChainID": "55555",
+    "NetworkID": "99032659",
+    "Genesis": "0x297c8abd5d554bf943170fe1f91aa5b5426aaa4b7f890691bfa60e6e1df45aa1",
+    "AnchorNumber": 24,
+    "AnchorHash": "0x30226e918205c290ebdf7202432a5a7689f2732f3accd1a3e1a965e48e19eaf8",
+    "Wallets": {
+      "node-1": "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf",
+      "node-2": "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf"
+    }
+  },
+  "Sequence": 21,
+  "LastEventUTC": "2026-10-03T08:16:26.197378614Z",
+  "LastReportUTC": "2026-10-03T08:15:32.086275703Z",
+  "LogicalBytes": 235353,
+  "MaxBytes": 524288,
+  "Coverage": "bounded_block_history_see_nodes",
+  "Incidents": [],
+  "Limitations": [
+    "observed conditions, not timed alerts or a health verdict; saved intent remains unknown",
+    "operator acknowledgement is not resolution; resolution is a recorded review, not automatic verification of recovery",
+    "missing data or untracked transactions leave prior incidents unknown rather than clearing them",
+    "block coverage is per node since the anchor at recorded times; no state execution, finality or automatic native outcome/selection accounting"
+  ],
+  "Blocks": [
+    {
+      "Node": "node-1",
+      "StoredThrough": {
+        "Number": 31,
+        "Hash": "0x0c9115bb6ebf0931958e36f72a5e4036f5c57af261798cd172186c42e5cd9daa"
+      },
+      "ObservedHead": {
+        "Number": 31,
+        "Hash": "0x0c9115bb6ebf0931958e36f72a5e4036f5c57af261798cd172186c42e5cd9daa"
+      },
+      "CheckedUTC": "2026-10-03T08:16:26.197378614Z",
+      "Status": "complete_at_observation"
+    },
+    {
+      "Node": "node-2",
+      "StoredThrough": {
+        "Number": 30,
+        "Hash": "0x3cae54c25039b503b694c28d71e5d6389f87f535ed86f1661b0e21e6a6755c21"
+      },
+      "ObservedHead": {
+        "Number": 30,
+        "Hash": "0x3cae54c25039b503b694c28d71e5d6389f87f535ed86f1661b0e21e6a6755c21"
+      },
+      "CheckedUTC": "2026-10-03T08:15:32.249393974Z",
+      "Status": "complete_at_observation"
+    }
+  ]
+}
