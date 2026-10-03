@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Transport upgrade](restart-dashboard-transport.md) passes native WSS, proxy and mining-outage checks on Node 24; remaining dependencies and public deployment controls are open | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Backend cleanup](restart-dashboard-backend.md) passes native WSS/mining checks; 18 root dependency findings and public deployment controls remain open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -317,6 +317,13 @@ proxy and the mining-outage drill pass on Node 24. The byte maximum is explicitl
 inclusive after the upgrade. A fresh audit clears the three targeted package
 findings; 41 other root findings remain for disposition. Continue the remaining
 dependency work before public deployment acceptance.
+
+The [backend cleanup](restart-dashboard-backend.md) subsequently removes twelve
+unused direct dependencies and the unserved legacy adapter, and migrates Lodash
+to 4.18.1. All 178 contract/14 socket tests and actual WSS/mining checks pass.
+The root audit now has 18 affected names; Express/GeoIP, remaining transitives,
+the separate API install and frontend work remain open. Node sources are unchanged.
+
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -376,11 +383,12 @@ The last two items are post-bootstrap milestones; the first two precede release.
 Current technical order:
 
 1. G6: continue the [runtime/dependency worklist](restart-dashboard-runtime.md).
-   The [Primus/ws correction](restart-dashboard-transport.md) passes on Node 24.
-   Next update active Lodash/Express/GeoIP as needed, prune unused dependencies,
-   consolidate the separate API install, address browser Axios and replace the
-   obsolete deployment workflow. Review remaining findings and validate a clean
-   pinned installation; public hosting is not approved yet.
+   The [backend cleanup](restart-dashboard-backend.md) passes on Node 24 with
+   unused tools removed and Lodash migrated. Next update Express/GeoIP and the
+   remaining transitive dependencies, consolidate the separate API install,
+   address browser Axios and replace the obsolete deployment workflow. Review
+   remaining findings and validate a clean pinned installation; public hosting
+   is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log
    lifecycle checks. Preserve receipt/transport diagnostics and the same-host
    clock assumption. Review retry pacing and log volume using the

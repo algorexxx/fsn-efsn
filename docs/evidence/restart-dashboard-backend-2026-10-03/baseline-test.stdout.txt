@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: a partly filled cache accepts advancing heads and out-of-order reports
+ok 1 - a partly filled cache accepts advancing heads and out-of-order reports
+  ---
+  duration_ms: 6.73891
+  type: 'test'
+  ...
+# Subtest: charts take the newest forty heights before reversing and keep every series aligned
+ok 2 - charts take the newest forty heights before reversing and keep every series aligned
+  ---
+  duration_ms: 3.839243
+  type: 'test'
+  ...
+# Subtest: a moving two-thousand-height window evicts old reports and rejects later backfill below its floor
+ok 3 - a moving two-thousand-height window evicts old reports and rejects later backfill below its floor
+  ---
+  duration_ms: 0.281657
+  type: 'test'
+  ...
+# Subtest: full cache retains exactly the two thousand most recent positive heights
+ok 4 - full cache retains exactly the two thousand most recent positive heights
+  ---
+  duration_ms: 297.207303
+  type: 'test'
+  ...
+# Subtest: history requests contain the newest fifty missing positive heights in ascending order
+ok 5 - history requests contain the newest fifty missing positive heights in ascending order
+  ---
+  duration_ms: 0.597375
+  type: 'test'
+  ...
+# Subtest: history request completion handles empty, genesis-only and contiguous short histories
+ok 6 - history request completion handles empty, genesis-only and contiguous short histories
+  ---
+  duration_ms: 0.248837
+  type: 'test'
+  ...
+# Subtest: changing one node report releases unused forks while preserving the representative
+ok 7 - changing one node report releases unused forks while preserving the representative
+  ---
+  duration_ms: 1.182082
+  type: 'test'
+  ...
+# Subtest: two reporting nodes keep their distinct forks and indices remain consistent when one switches
+ok 8 - two reporting nodes keep their distinct forks and indices remain consistent when one switches
+  ---
+  duration_ms: 0.299167
+  type: 'test'
+  ...
+# Subtest: trusted representative selection is preserved while abandoned forks are reclaimed
+ok 9 - trusted representative selection is preserved while abandoned forks are reclaimed
+  ---
+  duration_ms: 0.576614
+  type: 'test'
+  ...
+# Subtest: duplicate reports preserve propagation timing but a changed fork receives a new receipt
+ok 10 - duplicate reports preserve propagation timing but a changed fork receives a new receipt
+  ---
+  duration_ms: 0.522106
+  type: 'test'
+  ...
+# Subtest: ticket charts preserve zero and missing values at their original heights
+ok 11 - ticket charts preserve zero and missing values at their original heights
+  ---
+  duration_ms: 1.415564
+  type: 'test'
+  ...
+# Subtest: malformed history reports cannot partially mutate the cache or leave their callback pending
+ok 12 - malformed history reports cannot partially mutate the cache or leave their callback pending
+  ---
+  duration_ms: 1.741176
+  type: 'test'
+  ...
+# Subtest: valid history completes once, does not reorder caller data and shares the injected receipt clock
+ok 13 - valid history completes once, does not reorder caller data and shares the injected receipt clock
+  ---
+  duration_ms: 2.385795
+  type: 'test'
+  ...
+# Subtest: empty history has zero best and worst heights
+ok 14 - empty history has zero best and worst heights
+  ---
+  duration_ms: 0.194882
+  type: 'test'
+  ...
+# Subtest: history extrema use numeric height after unordered reports
+ok 15 - history extrema use numeric height after unordered reports
+  ---
+  duration_ms: 0.261923
+  type: 'test'
+  ...
+# Subtest: propagation matches each node and keeps missing-height positions
+ok 16 - propagation matches each node and keeps missing-height positions
+  ---
+  duration_ms: 0.645033
+  type: 'test'
+  ...
+# Subtest: an empty collection has no best reported block
+ok 17 - an empty collection has no best reported block
+  ---
+  duration_ms: 0.228921
+  type: 'test'
+  ...
+# Subtest: collection best block includes the highest node head
+ok 18 - collection best block includes the highest node head
+  ---
+  duration_ms: 0.419479
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1714.03211

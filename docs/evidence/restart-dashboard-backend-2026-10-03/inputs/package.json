@@ -1,0 +1,48 @@
+{
+  "name": "fsn-stats",
+  "version": "1.0.0",
+  "description": "Fusion's node monitor",
+  "main": "server.js",
+  "scripts": {
+    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs test/head-budget.test.cjs",
+    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs test/metadata-admission-wire.test.cjs",
+    "test:postgres": "node --test test/postgres.test.cjs",
+    "test:persistence": "node --test test/persistence.test.cjs",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FUSIONFoundation/fsn-stats.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FUSIONFoundation/fsn-stats/issues"
+  },
+  "homepage": "https://github.com/FUSIONFoundation/fsn-stats#readme",
+  "dependencies": {
+    "auto-bind": "^2.1.1",
+    "body-parser": "^1.18.3",
+    "chalk": "1.1.1",
+    "d3": "3.5.6",
+    "debug": "2.2.0",
+    "express": "^4.17.1",
+    "geoip-lite": "1.2.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-cssmin": "^0.12.3",
+    "grunt-contrib-jade": "^0.14.1",
+    "grunt-contrib-uglify": "^0.9.1",
+    "http2": "^3.3.7",
+    "jade": "1.11.0",
+    "lodash": "3.10.1",
+    "pg": "8.23.1",
+    "primus": "8.0.9",
+    "primus-emit": "^1.0.0",
+    "primus-spark-latency": "^0.1.1",
+    "websocket": "^1.0.30",
+    "ws": "8.22.0"
+  }
+}

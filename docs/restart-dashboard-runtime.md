@@ -148,6 +148,13 @@ locally: Primus 8.0.9/ws 8.22.0 pass the native WSS, proxy and mining-outage
 checks without application or node source changes. The audit clears ws, Primus
 and setheader; 41 other root findings remain. Continue from item 2 below.
 
+The [backend cleanup](restart-dashboard-backend.md) now completes
+unused dependency removal and Lodash compatibility: twelve direct dependencies and the unserved legacy adapter
+are removed; Lodash 4.18.1 passes 178 contract/14 socket tests plus the native
+WSS and mining-outage fixtures. The root audit is down to 18 affected package
+names. Express/GeoIP, the remaining transitive findings and separate API install
+are still open. Earlier versions/counts below describe the original review.
+
 ## Work order and exit condition
 
 1. Correct the Primus/ws pair with the smallest compatible dashboard change;
