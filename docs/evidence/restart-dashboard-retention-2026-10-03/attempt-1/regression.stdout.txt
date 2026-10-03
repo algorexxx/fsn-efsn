@@ -1,0 +1,484 @@
+TAP version 13
+# Subtest: complete efsn reports accept decimal difficulty, zero counters and unavailable ticket counts
+not ok 1 - complete efsn reports accept decimal difficulty, zero counters and unavailable ticket counts
+  ---
+  duration_ms: 1.8402
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:23:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.start (node:internal/test_runner/test:833:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: missing and malformed block fields are rejected before arithmetic or chart retention
+not ok 2 - missing and malformed block fields are rejected before arithmetic or chart retention
+  ---
+  duration_ms: 1.0215
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:26:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected ... Lines skipped
+    
+    + [
+    +   {
+    +     parentHash: undefined
+    +   },
+    +   {
+    +     parentHash: '0x1'
+    +   },
+    +   {
+    +     transactionsRoot: null
+    +   },
+    +   {
+    +     stateRoot: []
+    +   },
+    +   {
+    +     miner: 'miner-a'
+    +   },
+    +   {
+    +     timestamp: undefined
+    +   },
+    +   {
+    +     timestamp: 9007199254740991
+    +   },
+    +   {
+    +     gasLimit: -1
+    +   },
+    +   {
+    +     gasUsed: 101
+    +   },
+    +   {
+    +     gasUsed: 0.5
+    +   },
+    +   {
+    +     gasUsed: 9007199254740992
+    +   },
+    +   {
+    +     difficulty: {}
+    +   },
+    +   {
+    +     difficulty: '1e3'
+    +   },
+    +   {
+    +     difficulty: '01'
+    +   },
+    +   {
+    +     difficulty: '9999999999999999999999999999999999999999999999999999999999999999999999999999999'
+    +   },
+    +   {
+    +     totalDifficulty: undefined
+    +   },
+    +   {
+    ...
+    - []
+    ...
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+    1:
+      parentHash: '0x1'
+    2:
+      transactionsRoot: ~
+    3:
+      stateRoot:
+    4:
+      miner: 'miner-a'
+    5:
+    6:
+      timestamp: 9007199254740991
+    7:
+      gasLimit: -1
+    8:
+      gasUsed: 101
+    9:
+      gasUsed: 0.5
+    10:
+      gasUsed: 9007199254740992
+    11:
+      difficulty:
+    12:
+      difficulty: '1e3'
+    13:
+      difficulty: '01'
+    14:
+      difficulty: '9999999999999999999999999999999999999999999999999999999999999999999999999999999'
+    15:
+    16:
+      totalDifficulty: Infinity
+    17:
+      totalDifficulty: '-1'
+    18:
+      transactions:
+        0: ~
+    19:
+      transactions:
+        0:
+          hash: '0x1'
+    20:
+      transactions:
+        0: '0x1111111111111111111111111111111111111111111111111111111111111111'
+    21:
+      ticketNumber: '1'
+    22:
+      myTicketNumber: -1
+    23:
+      sha3Uncles:
+    24:
+      uncles:
+        0: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:39:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: uncle headers validate their retained wire fields without assuming Fusion uncles are impossible
+not ok 3 - uncle headers validate their retained wire fields without assuming Fusion uncles are impossible
+  ---
+  duration_ms: 0.2863
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:42:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   {
+    +     hash: undefined
+    +   },
+    +   {
+    +     logsBloom: '0x'
+    +   },
+    +   {
+    +     difficulty: {}
+    +   },
+    +   {
+    +     number: '0x01'
+    +   },
+    +   {
+    +     timestamp: '0x'
+    +   },
+    +   {
+    +     gasLimit: '0x11111111111111111'
+    +   },
+    +   {
+    +     extraData: '0x1'
+    +   },
+    +   {
+    +     nonce: null
+    +   },
+    +   {
+    +     baseFeePerGas: -1
+    +   }
+    + ]
+    - []
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+    1:
+      logsBloom: '0x'
+    2:
+      difficulty:
+    3:
+      number: '0x01'
+    4:
+      timestamp: '0x'
+    5:
+      gasLimit: '0x11111111111111111'
+    6:
+      extraData: '0x1'
+    7:
+      nonce: ~
+    8:
+      baseFeePerGas: -1
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:47:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: stats require every numeric field that the dashboard stores
+not ok 4 - stats require every numeric field that the dashboard stores
+  ---
+  duration_ms: 0.2717
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:50:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   {
+    +     gasPrice: undefined
+    +   },
+    +   {
+    +     gasPrice: {}
+    +   },
+    +   {
+    +     gasPrice: -1
+    +   },
+    +   {
+    +     hashrate: undefined
+    +   },
+    +   {
+    +     hashrate: '0'
+    +   },
+    +   {
+    +     hashrate: Infinity
+    +   }
+    + ]
+    - []
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0:
+    1:
+      gasPrice:
+    2:
+      gasPrice: -1
+    3:
+    4:
+      hashrate: '0'
+    5:
+      hashrate: Infinity
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:55:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: invalid complete and combined reports leave all accepted state and receipts unchanged
+not ok 5 - invalid complete and combined reports leave all accepted state and receipts unchanged
+  ---
+  duration_ms: 3.8918
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:58:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   null,
+    +   null,
+    +   null
+    -   'Invalid block report',
+    -   'Invalid stats report',
+    -   'Invalid combined report'
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'Invalid block report'
+    1: 'Invalid stats report'
+    2: 'Invalid combined report'
+  actual:
+    0: ~
+    1: ~
+    2: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:68:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: invalid or oversized history batches cannot clear the outstanding request or partially populate history
+not ok 6 - invalid or oversized history batches cannot clear the outstanding request or partially populate history
+  ---
+  duration_ms: 2.187
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:72:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   null,
+    +   null
+    -   'Invalid history report',
+    -   'Invalid history report'
+      ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'Invalid history report'
+    1: 'Invalid history report'
+  actual:
+    0: ~
+    1: ~
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:80:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: chart records retain counts and fixed scalar fields while the current head keeps transaction hashes and timing
+not ok 7 - chart records retain counts and fixed scalar fields while the current head keeps transaction hashes and timing
+  ---
+  duration_ms: 2.4809
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:85:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        arrays: [
+    +     [
+    +       {
+    +         hash: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    +       },
+    +       {
+    +         hash: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+    +       }
+    +     ],
+    +     [
+    +       {
+    +         baseFeePerGas: null,
+    +         difficulty: '0x1',
+    +         extraData: '0x',
+    +         gasLimit: '0x100',
+    +         gasUsed: '0x0',
+    +         hash: '0x1111111111111111111111111111111111111111111111111111111111111111',
+    +         logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+    +         miner: '0x4444444444444444444444444444444444444444',
+    +         mixHash: '0x8888888888888888888888888888888888888888888888888888888888888888',
+    +         nonce: '0x0000000000000000',
+    +         number: '0x1',
+    +         parentHash: '0x2222222222222222222222222222222222222222222222222222222222222222',
+    +         receiptsRoot: '0x7777777777777777777777777777777777777777777777777777777777777777',
+    +         sha3Uncles: '0x3333333333333333333333333333333333333333333333333333333333333333',
+    +         stateRoot: '0x5555555555555555555555555555555555555555555555555555555555555555',
+    +         timestamp: '0x1',
+    +         transactionsRoot: '0x6666666666666666666666666666666666666666666666666666666666666666'
+    +       }
+    +     ]
+    +   ],
+    +   extension: {
+    +     value: 'unneeded chart data'
+    +   },
+    +   transactions: undefined,
+    +   uncles: undefined
+    -     undefined,
+    -     undefined
+    -   ],
+    -   extension: undefined,
+    -   transactions: 2,
+    -   uncles: 1
+      }
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    transactions: 2
+    uncles: 1
+    arrays:
+  actual:
+    arrays:
+      0:
+        0:
+          hash: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        1:
+          hash: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+      1:
+        0:
+          hash: '0x1111111111111111111111111111111111111111111111111111111111111111'
+          parentHash: '0x2222222222222222222222222222222222222222222222222222222222222222'
+          sha3Uncles: '0x3333333333333333333333333333333333333333333333333333333333333333'
+          miner: '0x4444444444444444444444444444444444444444'
+          stateRoot: '0x5555555555555555555555555555555555555555555555555555555555555555'
+          transactionsRoot: '0x6666666666666666666666666666666666666666666666666666666666666666'
+          receiptsRoot: '0x7777777777777777777777777777777777777777777777777777777777777777'
+          logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+          difficulty: '0x1'
+          number: '0x1'
+          gasLimit: '0x100'
+          gasUsed: '0x0'
+          timestamp: '0x1'
+          extraData: '0x'
+          mixHash: '0x8888888888888888888888888888888888888888888888888888888888888888'
+          nonce: '0x0000000000000000'
+          baseFeePerGas: ~
+    extension:
+      value: 'unneeded chart data'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:97:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+# Subtest: mutating a caller report after ingestion cannot alter cached fork identity or counts
+not ok 8 - mutating a caller report after ingestion cannot alter cached fork identity or counts
+  ---
+  duration_ms: 0.2932
+  location: 'C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth\\test\\telemetry-report.test.cjs:105:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '[{"height":100,"block":{"number":100,"hash":"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},{"hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0},"forks":[{"number":100,"hash":"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},{"hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0}],"propagTimes":[{"node":"node-a","trusted":true,"fork":0,"received":1000,"propagation":0}]}]'
+    - '[{"height":100,"block":{"number":100,"hash":"0x0000000000000000000000000000000000000000000000000000000000002710","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0},"forks":[{"number":100,"hash":"0x0000000000000000000000000000000000000000000000000000000000002710","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0}],"propagTimes":[{"node":"node-a","trusted":true,"fork":0,"received":1000,"propagation":0}]}]'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '[{"height":100,"block":{"number":100,"hash":"0x0000000000000000000000000000000000000000000000000000000000002710","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0},"forks":[{"number":100,"hash":"0x0000000000000000000000000000000000000000000000000000000000002710","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0}],"propagTimes":[{"node":"node-a","trusted":true,"fork":0,"received":1000,"propagation":0}]}]'
+  actual: '[{"height":100,"block":{"number":100,"hash":"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},{"hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0},"forks":[{"number":100,"hash":"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000","miner":"0x1111111111111111111111111111111111111111","transactionsRoot":"0x2222222222222222222222222222222222222222222222222222222222222222","stateRoot":"0x3333333333333333333333333333333333333333333333333333333333333333","timestamp":1000,"difficulty":"100","totalDifficulty":"200","gasLimit":100,"gasUsed":100,"ticketNumber":100,"myTicketNumber":100,"transactions":[{"hash":"0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},{"hash":"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}],"uncles":[],"trusted":true,"arrived":1000,"received":1000,"propagation":0,"fork":0,"time":0}],"propagTimes":[{"node":"node-a","trusted":true,"fork":0,"received":1000,"propagation":0}]}]'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (C:\Users\Peter\Documents\CODING\fsn-efsn\tmp\fsn-stats-auth\test\telemetry-report.test.cjs:114:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:934:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:633:18)
+    Test.postRun (node:internal/test_runner/test:1045:19)
+    Test.run (node:internal/test_runner/test:973:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:633:7)
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 0
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 619.7064

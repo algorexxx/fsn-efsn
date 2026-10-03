@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Output limits](restart-dashboard-output.md): 151 contracts, 12 socket tests and six database scenarios pass; pending collector writes bounded per connection. Earlier browser acceptance retained | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Compact retention](restart-dashboard-retention.md): 159 contracts, 12 socket tests, six database scenarios and actual efsn/browser integration pass; 18,000 compact variants measured offline | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -238,9 +238,18 @@ pipeline, including snapshot-writer loss and recovery. Sixty blocks with ten
 transactions each produce a measured 66,076-byte history reply, accepted with an
 explicit 128 KiB fixture limit. An offline model and source review identify
 transaction-hash retention as the next memory issue; those test limits are not
-deployment defaults. Complete report validation, compact chart retention,
-production payload/resource sizing, collector loss during mining, runtime
-review and proxy/TLS/deployment controls remain open.
+deployment defaults. The [validation and retention follow-up](restart-dashboard-retention.md)
+now validates known block/stats/pending fields and retains only scalar chart
+records and transaction/uncle counts. Current-head hashes remain in both API
+routes and match direct RPC. All 159 contracts, 12 socket tests, six database
+scenarios and four actual-node/browser checkpoints pass. An offline eight-identity,
+2,000-height, 18,000-variant run measures about 13–14 MiB retained heap growth
+for both one and 714 transactions per block; this is not concurrent load or peak
+RAM. An earlier freshness assertion failure is preserved with its cause unproven;
+the successful run adds complete-report readiness and receipt diagnostics without
+widening limits. Metadata/ping field review, production payload/resource sizing,
+collector loss during mining, runtime review and proxy/TLS/deployment controls
+remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -299,12 +308,14 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: validate complete report fields and compact chart retention, then measure
-   a bounded larger-report/multiple-node profile and align deployment budgets.
-   The [compiled browser acceptance](restart-dashboard-presentation.md) passes
-   with actual efsn data and writer expiry/recovery; collector loss during mining,
-   runtime/dependency review and TLS/deployment controls remain open. The public
-   dashboard gate remains open; fixture limits are not deployment defaults.
+1. G6: measure a bounded larger-report/multiple-node profile and align input,
+   output, snapshot, identity-count and proxy budgets; include metadata/ping field
+   review and preserve receipt diagnostics to investigate timing failures.
+   [Compact retention and known report validation](restart-dashboard-retention.md)
+   now pass the actual efsn/database/API/compiled-browser flow. Collector loss
+   during mining, runtime/dependency review and TLS/deployment controls remain
+   open. The public dashboard gate remains open; fixture limits are not
+   deployment defaults.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

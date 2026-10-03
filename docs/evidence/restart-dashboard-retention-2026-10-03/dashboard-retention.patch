@@ -1,0 +1,604 @@
+From 10c780ddeb15ffdeec4d671b58d9c85d7db2ca5b Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 16:48:29 +0200
+Subject: [PATCH] Validate telemetry fields and compact retained chart blocks
+
+---
+ docs/report-validation-and-retention.md |  63 +++++++++++++
+ lib/chart-block.js                      |  22 +++++
+ lib/collection.js                       |  10 +-
+ lib/history.js                          |  10 +-
+ lib/telemetry-report.js                 |  38 +++++++-
+ package.json                            |   2 +-
+ test/collector-input-wire.test.cjs      |   2 +-
+ test/efsn-telemetry.test.cjs            |  11 ++-
+ test/fixtures/telemetry-report.cjs      |  26 ++++++
+ test/history-wire.test.cjs              |   4 +-
+ test/history.test.cjs                   |   4 +-
+ test/persistence.test.cjs               |   5 +-
+ test/report-freshness-wire.test.cjs     |   5 +-
+ test/report-freshness.test.cjs          |   4 +-
+ test/telemetry-report.test.cjs          | 116 ++++++++++++++++++++++++
+ 15 files changed, 296 insertions(+), 26 deletions(-)
+ create mode 100644 docs/report-validation-and-retention.md
+ create mode 100644 lib/chart-block.js
+ create mode 100644 test/fixtures/telemetry-report.cjs
+ create mode 100644 test/telemetry-report.test.cjs
+
+diff --git a/docs/report-validation-and-retention.md b/docs/report-validation-and-retention.md
+new file mode 100644
+index 0000000..3670831
+--- /dev/null
++++ b/docs/report-validation-and-retention.md
+@@ -0,0 +1,63 @@
++# Report validation and compact chart retention
++
++3 October 2026. The collector validates the known block, stats and pending
++fields before changing node values, receipt timestamps or chart history.
++Invalid history batches are rejected together and no longer clear a pending
++history request. The existing fifty-block reply cap also applies at collection.
++
++Block reports require hashes/roots, producer address, timestamp, gas fields,
++difficulty/total difficulty, transaction hash objects and an uncle array.
++Optional ticket counts preserve null/missing versus zero. Stats also require
++numeric gas price and hashrate. Unknown report kinds are rejected.
++
++This is a dashboard wire profile, not block or consensus verification. Numeric
++counters must be nonnegative JavaScript safe integers. Timestamps must remain
++safe after conversion to milliseconds. Difficulty accepts a safe integer or
++canonical nonnegative decimal text of up to 78 digits. Header quantities in
++nonempty uncle arrays use canonical hexadecimal, up to 64 digits for big
++integers and 16 for uint64 fields; byte fields follow efsn's header JSON shape.
++Gas used cannot exceed gas limit. These limits must be included in deployment
++compatibility review; they neither impose chain rules nor prove a report true.
++
++The chart cache retains a new record containing only the scalar fields used
++for charts, fork comparison and propagation, plus transaction/uncle counts.
++It retains neither transaction hashes, uncle header objects nor extensions.
++Mutating the original report cannot alter a cached record. The existing
++2,000-height window and per-identity fork retention/representative policy stay
++in place. Counts are derived once when discarding the arrays, not stored as
++additional copies beside those arrays.
++
++Current node snapshots and the `/blocks` API still contain the validated head's
++transaction hashes, uncle headers and receipt/propagation metadata. Unrecognized
++extensions remain in the current-head report for compatibility, bounded by the
++configured message budget; they are not admitted to the chart cache. Node
++registration metadata and ping payloads retain their existing handling and
++need separate field/byte-budget review before public deployment.
++
++Evidence: eight new regressions fail against the previous production sources.
++The candidate passes 159 contract tests, 12 loopback socket tests, six database
++scenarios and actual synthetic efsn/PG/API/compiled-browser integration. The
++actual fixture imports 60 blocks with ten transactions each; the current head
++and 50 historical reports match direct RPC. Both API routes preserve current
++transaction hashes, all forty chart counts remain ten, and four browser
++checkpoints cover normal/pinned/expired/recovered views.
++
++An offline measurement retains 2,000 heights, eight identities and nine variants
++at each height: 18,000 compact fork records. Heap growth after explicit GC is
++about 13–14 MiB for both one and 714 transactions per block. Full cache JSON is
++14,195,884 and 14,235,884 bytes respectively; the difference is the count's two
++extra decimal digits at each serialized record/reference. Advancing beyond the
++window releases old records. This is not peak RSS, concurrent collector load or
++a production budget. Larger input, current-head output/snapshot sizes, enrollment
++counts and proxy limits still require an aligned measured profile.
++
++The first actual integration attempt failed its freshness assertion without
++recording the receipt values. Readiness now waits for all three report kinds
++and saves initial payloads and timestamps. The subsequent run passes without
++widening freshness limits. The original failure's exact cause is unproven;
++do not treat this as a soak or timing-stability proof.
++
++No production efsn, consensus, database schema, dependency or frontend changes
++are included. The prior compiled frontend is reused with its build/source hashes
++checked. Review artifacts and raw attempts are preserved in the node repository's
++`docs/evidence/restart-dashboard-retention-2026-10-03/` bundle.
+diff --git a/lib/chart-block.js b/lib/chart-block.js
+new file mode 100644
+index 0000000..13a56e1
+--- /dev/null
++++ b/lib/chart-block.js
+@@ -0,0 +1,22 @@
++function chartBlock(block) {
++    return {
++        number: block.number,
++        hash: block.hash,
++        parentHash: block.parentHash,
++        sha3Uncles: block.sha3Uncles,
++        transactionsRoot: block.transactionsRoot,
++        stateRoot: block.stateRoot,
++        miner: block.miner,
++        timestamp: block.timestamp,
++        difficulty: block.difficulty,
++        totalDifficulty: block.totalDifficulty,
++        gasLimit: block.gasLimit,
++        gasUsed: block.gasUsed,
++        ticketNumber: block.ticketNumber,
++        myTicketNumber: block.myTicketNumber,
++        transactionCount: block.transactions.length,
++        uncleCount: block.uncles.length,
++    };
++}
++
++module.exports = chartBlock;
+diff --git a/lib/collection.js b/lib/collection.js
+index 01eb7b0..f1fca28 100644
+--- a/lib/collection.js
++++ b/lib/collection.js
+@@ -66,6 +66,9 @@ Collection.prototype.update = function(id, stats, callback)
+ 			stats.block.arrived = block.block.arrived;
+ 			stats.block.received = block.block.received;
+ 			stats.block.propagation = block.block.propagation;
++			stats.block.time = block.block.time;
++			stats.block.trusted = block.block.trusted;
++			stats.block.fork = block.block.fork;
+ 
+             var receivedAt = this._now();
+             node.reports = { block: receivedAt, stats: receivedAt, pending: receivedAt };
+@@ -103,6 +106,9 @@ Collection.prototype.addBlock = function(id, stats, callback)
+ 			stats.arrived = block.block.arrived;
+ 			stats.received = block.block.received;
+ 			stats.propagation = block.block.propagation;
++			stats.time = block.block.time;
++			stats.trusted = block.block.trusted;
++			stats.fork = block.block.fork;
+ 
+ 			if(block.block.number > this._highestBlock)
+ 			{
+@@ -156,15 +162,15 @@ Collection.prototype.updateStats = function(id, stats, callback)
+ Collection.prototype.addHistory = function(id, blocks, callback)
+ {
+ 	var node = this.getNode({ id: id });
+-	this.askedForHistory(false);
+ 	if (!node) {
+ 		callback('Node not found', null);
+ 		return;
+ 	}
+-	if (!Array.isArray(blocks) || !blocks.every(function (block) { return isTelemetryReport('block', block); })) {
++	if (!Array.isArray(blocks) || blocks.length > 50 || !blocks.every(function (block) { return isTelemetryReport('block', block); })) {
+ 		callback('Invalid history report', null);
+ 		return;
+ 	}
++	this.askedForHistory(false);
+ 	var history = this._blockchain;
+ 	blocks.slice().reverse().forEach(function (block) { history.add(block, id, node.trusted, true); });
+ 	this.getCharts();
+diff --git a/lib/history.js b/lib/history.js
+index f3952fb..2424c31 100644
+--- a/lib/history.js
++++ b/lib/history.js
+@@ -1,6 +1,7 @@
+ var _ = require('lodash');
+ var d3 = require('d3');
+ var isTelemetryReport = require('./telemetry-report');
++var chartBlock = require('./chart-block');
+ 
+ var MAX_HISTORY = 2000;
+ 
+@@ -25,6 +26,7 @@ History.prototype.add = function(block, id, trusted, addingHistory)
+ 
+ 	if( isTelemetryReport('block', block) && block.number > 0 )
+ 	{
++		block = chartBlock(block);
+ 		trusted = (process.env.LITE === 'true' ? true : trusted);
+ 		var historyBlock = this.search(block.number);
+ 		var forkIndex = -1;
+@@ -423,7 +425,7 @@ History.prototype.getUncleCount = function()
+ 		.slice(0, MAX_UNCLES)
+ 		.map(function (item)
+ 		{
+-			return item.block.uncles.length;
++			return item.block.uncleCount;
+ 		})
+ 		.value();
+ 
+@@ -528,7 +530,7 @@ History.prototype.getTransactionsCount = function()
+ 		.thru(reverseItems)
+ 		.map(function (item)
+ 		{
+-			return item.block.transactions.length;
++			return item.block.transactionCount;
+ 		})
+ 		.value();
+ 
+@@ -659,8 +661,8 @@ History.prototype.getCharts = function()
+ 					height: item.height,
+ 					blocktime: item.block.time / 1000,
+ 					difficulty: item.block.difficulty,
+-					uncles: item.block.uncles.length,
+-					transactions: item.block.transactions.length,
++					uncles: item.block.uncleCount,
++					transactions: item.block.transactionCount,
+ 					gasSpending: item.block.gasUsed,
+ 					gasLimit: item.block.gasLimit,
+ 					ticketNumber: item.block.ticketNumber,
+diff --git a/lib/telemetry-report.js b/lib/telemetry-report.js
+index 2406047..aa5b119 100644
+--- a/lib/telemetry-report.js
++++ b/lib/telemetry-report.js
+@@ -6,19 +6,49 @@ function count(value) {
+     return Number.isSafeInteger(value) && value >= 0;
+ }
+ 
++function hex(value, digits) {
++    return typeof value === 'string' && value.length === digits + 2 && /^0x[0-9a-fA-F]+$/.test(value);
++}
++
++function difficulty(value) {
++    return count(value) || (typeof value === 'string' && value.length <= 78 && /^(0|[1-9][0-9]*)$/.test(value));
++}
++
++function quantity(value, digits) {
++    return typeof value === 'string' && value.length <= digits + 2 && /^0x(0|[1-9a-fA-F][0-9a-fA-F]*)$/.test(value);
++}
++
++function uncle(value) {
++    return object(value)
++        && ['hash', 'parentHash', 'sha3Uncles', 'stateRoot', 'transactionsRoot', 'receiptsRoot', 'mixHash'].every(field => hex(value[field], 64))
++        && hex(value.miner, 40) && hex(value.logsBloom, 512) && hex(value.nonce, 16)
++        && ['difficulty', 'number'].every(field => quantity(value[field], 64))
++        && ['gasLimit', 'gasUsed', 'timestamp'].every(field => quantity(value[field], 16))
++        && BigInt(value.gasUsed) <= BigInt(value.gasLimit)
++        && typeof value.extraData === 'string' && /^0x([0-9a-fA-F]{2})*$/.test(value.extraData)
++        && (value.baseFeePerGas == null || quantity(value.baseFeePerGas, 64));
++}
++
+ function isTelemetryReport(kind, value) {
+     if (!object(value)) {
+         return false;
+     }
+     if (kind === 'block') {
+-        return count(value.number) && typeof value.hash === 'string' && /^0x[0-9a-fA-F]{64}$/.test(value.hash)
+-            && Array.isArray(value.transactions) && Array.isArray(value.uncles) && value.difficulty !== undefined;
++        return count(value.number) && count(value.timestamp) && value.timestamp <= Math.floor(Number.MAX_SAFE_INTEGER / 1000)
++            && ['hash', 'parentHash', 'transactionsRoot', 'stateRoot'].every(field => hex(value[field], 64))
++            && (value.sha3Uncles === undefined || hex(value.sha3Uncles, 64)) && hex(value.miner, 40)
++            && count(value.gasLimit) && count(value.gasUsed) && value.gasUsed <= value.gasLimit
++            && difficulty(value.difficulty) && difficulty(value.totalDifficulty)
++            && ['ticketNumber', 'myTicketNumber'].every(field => value[field] == null || count(value[field]))
++            && Array.isArray(value.transactions) && value.transactions.every(tx => object(tx) && hex(tx.hash, 64))
++            && Array.isArray(value.uncles) && value.uncles.every(uncle);
+     }
+     if (kind === 'pending') {
+         return count(value.pending);
+     }
+-    return ['active', 'mining', 'syncing'].every(field => typeof value[field] === 'boolean')
+-        && count(value.peers) && Number.isFinite(value.uptime) && value.uptime >= 0 && value.uptime <= 100
++    return kind === 'stats' && ['active', 'mining', 'syncing'].every(field => typeof value[field] === 'boolean')
++        && ['peers', 'gasPrice', 'hashrate'].every(field => count(value[field]))
++        && Number.isFinite(value.uptime) && value.uptime >= 0 && value.uptime <= 100
+         && ['ticketNumber', 'myTicketNumber'].every(field => value[field] == null || count(value[field]));
+ }
+ 
+diff --git a/package.json b/package.json
+index 3deb7c0..1970e15 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+diff --git a/test/collector-input-wire.test.cjs b/test/collector-input-wire.test.cjs
+index fa9620b..3697e9d 100644
+--- a/test/collector-input-wire.test.cjs
++++ b/test/collector-input-wire.test.cjs
+@@ -128,7 +128,7 @@ test('efsn-sized history reaches collection and an extra entry closes the report
+     await login(owner, 'node-a', secretA);
+     const viewer = connect(t, server.port, 'primus');
+     await viewer.opened;
+-    const history = Array.from({ length: 50 }, (_, index) => ({ number: 100 - index, hash: `0x${(100 - index).toString(16).padStart(64, '0')}`, parentHash: '0x' + '0'.repeat(64), difficulty: '1', totalDifficulty: '1', timestamp: 1704067200, gasLimit: 1000000, gasUsed: 0, transactions: [], uncles: [], miner: '0x' + '0'.repeat(40) }));
++    const history = Array.from({ length: 50 }, (_, index) => ({ number: 100 - index, hash: `0x${(100 - index).toString(16).padStart(64, '0')}`, parentHash: '0x' + '0'.repeat(64), difficulty: '1', totalDifficulty: '1', timestamp: 1704067200, gasLimit: 1000000, gasUsed: 0, transactions: [], uncles: [], miner: '0x' + '0'.repeat(40), transactionsRoot: '0x' + '1'.repeat(64), stateRoot: '0x' + '2'.repeat(64) }));
+     send(owner, 'block', { id: 'node-a', block: history[0] });
+     send(owner, 'history', { id: 'node-a', history });
+     send(owner, 'node-ping', { id: 'node-a', clientTime: 'synthetic-time' });
+diff --git a/test/efsn-telemetry.test.cjs b/test/efsn-telemetry.test.cjs
+index f13190a..850bb7b 100644
+--- a/test/efsn-telemetry.test.cjs
++++ b/test/efsn-telemetry.test.cjs
+@@ -100,7 +100,7 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     t.after(() => collector.stop());
+     const snapshot = await waitFor(async () => {
+         const value = await retrieve.readSnapshot();
+-        return value && value.payload.nodes.length === 1 && value.payload.nodes[0].reports.stats !== null && value.payload.charts.height[0] === 21 && value.payload.charts.height[39] === 60 && value;
++        return value && value.payload.nodes.length === 1 && Object.values(value.payload.nodes[0].reports).every(time => time !== null) && value.payload.charts.height[0] === 21 && value.payload.charts.height[39] === 60 && value;
+     });
+     const application = express();
+     const apiView = createApp(retrieve, Date.now, 10000, 30000);
+@@ -111,8 +111,11 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     t.after(() => new Promise(resolve => api.close(resolve)));
+     await once(api, 'listening');
+     const nodes = await request(api.address().port, '/nodes');
++    const blocks = await request(api.address().port, '/blocks');
+     const charts = await request(api.address().port, '/charts');
++    writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'api-initial.json'), JSON.stringify({ snapshot, nodes, blocks, charts, captured: await server.command('capture'), time: Date.now() }, null, 2) + '\n', 'utf8');
+     assert.equal(nodes.status, 200);
++    assert.equal(blocks.status, 200);
+     assert.equal(charts.status, 200);
+     const node = JSON.parse(nodes.body[0].stats);
+     const truth = {};
+@@ -124,6 +127,8 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+         truth[name] = await rpc(ready.rpc, method, params);
+     }
+     compareBlock(node.stats.block, truth.head);
++    compareBlock(JSON.parse(blocks.body[0].blocks), truth.head);
++    assert.deepEqual(JSON.parse(charts.body[0].charts).transactions, Array(40).fill(10));
+     assert.equal(node.stats.block.hash, ready.head);
+     assert.equal(node.stats.mining, truth.mining);
+     assert.equal(node.stats.peers, Number(BigInt(truth.peers)));
+@@ -131,7 +136,7 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     assert.equal(node.stats.ticketNumber, truth.tickets);
+     assert.equal(node.stats.myTicketNumber, truth.ownTickets);
+     assert.equal(node.connected, true);
+-    assert.equal(Object.values(nodes.body[0].reportValidForMs).every(value => value > 0), true);
++    assert.equal(Object.values(nodes.body[0].reportValidForMs).every(value => value > 0), true, JSON.stringify({ receipts: node.reports, budgets: nodes.body[0].reportValidForMs, observedAt: nodes.body[0].utctime }));
+     assert.equal(truth.syncing, false);
+     assert.equal(node.stats.syncing, true);
+     assert.equal(node.stats.uptime, 100);
+@@ -160,7 +165,7 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     await collector.stop();
+     writeFileSync(join(directory, 'stop'), '', 'utf8');
+     assert.deepEqual(await exited, [0, null]);
+-    const evidence = { ready, truth, snapshot, nodes, charts, captured, browser, limits: { messageBytes: 131072, bufferedBytes: 262144, messagesPerSecond: 100, snapshotBytes: 65536 }, errors, testMemory: process.memoryUsage() };
++    const evidence = { ready, truth, snapshot, nodes, blocks, charts, captured, browser, limits: { messageBytes: 131072, bufferedBytes: 262144, messagesPerSecond: 100, snapshotBytes: 65536 }, errors, testMemory: process.memoryUsage() };
+     writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'comparison.json'), JSON.stringify(evidence, null, 2) + '\n', 'utf8');
+     await server.stop();
+ });
+diff --git a/test/fixtures/telemetry-report.cjs b/test/fixtures/telemetry-report.cjs
+new file mode 100644
+index 0000000..6027dd0
+--- /dev/null
++++ b/test/fixtures/telemetry-report.cjs
+@@ -0,0 +1,26 @@
++function block(number = 100, fork = 0) {
++    return {
++        number, hash: '0x' + (number * 100 + fork).toString(16).padStart(64, '0'),
++        parentHash: '0x' + '0'.repeat(64), miner: '0x' + '1'.repeat(40),
++        transactionsRoot: '0x' + '2'.repeat(64), stateRoot: '0x' + '3'.repeat(64),
++        timestamp: number * 10, difficulty: String(number), totalDifficulty: String(number * 2),
++        gasLimit: number, gasUsed: number, ticketNumber: number, myTicketNumber: number,
++        transactions: [], uncles: [],
++    };
++}
++
++function stats() {
++    return { active: true, mining: true, syncing: false, peers: 1, uptime: 100, ticketNumber: null, myTicketNumber: null, gasPrice: 0, hashrate: 0 };
++}
++
++function uncle() {
++    return {
++        hash: '0x' + '1'.repeat(64), parentHash: '0x' + '2'.repeat(64), sha3Uncles: '0x' + '3'.repeat(64),
++        miner: '0x' + '4'.repeat(40), stateRoot: '0x' + '5'.repeat(64), transactionsRoot: '0x' + '6'.repeat(64),
++        receiptsRoot: '0x' + '7'.repeat(64), logsBloom: '0x' + '0'.repeat(512),
++        difficulty: '0x1', number: '0x1', gasLimit: '0x100', gasUsed: '0x0', timestamp: '0x1',
++        extraData: '0x', mixHash: '0x' + '8'.repeat(64), nonce: '0x' + '0'.repeat(16), baseFeePerGas: null,
++    };
++}
++
++module.exports = { block, stats, uncle };
+diff --git a/test/history-wire.test.cjs b/test/history-wire.test.cjs
+index cdf3b49..4defb33 100644
+--- a/test/history-wire.test.cjs
++++ b/test/history-wire.test.cjs
+@@ -4,8 +4,10 @@ const startCollector = require('./fixtures/collector-wire.cjs');
+ const { secretA } = require('./fixtures/collector.cjs');
+ const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
+ 
++const { block: reportBlock } = require('./fixtures/telemetry-report.cjs');
++
+ function block(number) {
+-    return { number, hash: '0x' + number.toString(16).padStart(64, '0'), difficulty: '1', totalDifficulty: '2', timestamp: number * 10, transactions: [], uncles: [], ticketNumber: 0 };
++    return { ...reportBlock(number), ticketNumber: 0 };
+ }
+ 
+ test('collector backfills requested gaps and broadcasts the newest forty heights as heads advance', { timeout: 15000 }, async t => {
+diff --git a/test/history.test.cjs b/test/history.test.cjs
+index 718af4e..106aedf 100644
+--- a/test/history.test.cjs
++++ b/test/history.test.cjs
+@@ -3,9 +3,7 @@ const { test } = require('node:test');
+ const History = require('../lib/history');
+ const Collection = require('../lib/collection');
+ 
+-function block(number, fork = 0) {
+-    return { number, hash: '0x' + (number * 100 + fork).toString(16).padStart(64, '0'), parentHash: '0x' + '0'.repeat(64), difficulty: String(number), totalDifficulty: String(number * 2), timestamp: number * 10, miner: 'miner-a', transactions: [], uncles: [], gasLimit: number, gasUsed: number, ticketNumber: number, myTicketNumber: number };
+-}
++const { block } = require('./fixtures/telemetry-report.cjs');
+ 
+ function charts(history) {
+     let result;
+diff --git a/test/persistence.test.cjs b/test/persistence.test.cjs
+index ee2dad2..21f21a2 100644
+--- a/test/persistence.test.cjs
++++ b/test/persistence.test.cjs
+@@ -1,4 +1,5 @@
+ const assert = require('node:assert/strict');
++const { block: reportBlock } = require('./fixtures/telemetry-report.cjs');
+ const { test } = require('node:test');
+ const { readFileSync } = require('node:fs');
+ const { join } = require('node:path');
+@@ -84,7 +85,7 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+     await login(a, 'node-a', secretA, { node: "efsn-A's — Å" });
+     await login(b, 'node-b', secretB, { node: 'efsn-B' });
+     for (const [connection, id, number, peers] of [[a, 'node-a', 101, 1], [b, 'node-b', 102, 2]]) {
+-        send(connection, 'block', { id, block: { number, hash: '0x' + String(number).padStart(64, '0'), parentHash: '0x' + '0'.repeat(64), difficulty: 1, totalDifficulty: 1, gasLimit: 1000000, gasUsed: 0, timestamp: 1704067200 + number, miner: id, transactions: [], uncles: [] } });
++        send(connection, 'block', { id, block: { ...reportBlock(number), number, hash: '0x' + String(number).padStart(64, '0'), parentHash: '0x' + '0'.repeat(64), difficulty: 1, totalDifficulty: 1, gasLimit: 1000000, gasUsed: 0, timestamp: 1704067200 + number, miner: '0x' + '1'.repeat(40), transactions: [], uncles: [] } });
+         send(connection, 'stats', { id, stats: { active: true, mining: true, syncing: false, peers, ticketNumber: 2, myTicketNumber: 1, hashrate: 0, gasPrice: 1, uptime: 100 } });
+         send(connection, 'pending', { id, stats: { pending: 0 } });
+         send(connection, 'latency', { id, latency: '12' });
+@@ -132,7 +133,7 @@ test('real collector, snapshot storage and HTTP API preserve node identity and r
+     await t.test('advancing chart heights survive the collector, PostgreSQL snapshot and HTTP API', async () => {
+         const history = Array.from({ length: 50 }, (_, index) => {
+             const number = 102 - index;
+-            return { number, hash: '0x' + String(number).padStart(64, '0'), difficulty: 1, totalDifficulty: 1, timestamp: 1704067200 + number, transactions: [], uncles: [], ticketNumber: 0 };
++            return { ...reportBlock(number), number, hash: '0x' + String(number).padStart(64, '0'), difficulty: 1, totalDifficulty: 1, timestamp: 1704067200 + number, transactions: [], uncles: [], ticketNumber: 0 };
+         });
+         send(a, 'history', { id: 'node-a', history });
+         send(a, 'block', { id: 'node-a', block: { ...history[0], number: 103, hash: '0x' + '103'.padStart(64, '0') } });
+diff --git a/test/report-freshness-wire.test.cjs b/test/report-freshness-wire.test.cjs
+index 5a933ef..1c372f5 100644
+--- a/test/report-freshness-wire.test.cjs
++++ b/test/report-freshness-wire.test.cjs
+@@ -1,6 +1,7 @@
+ const assert = require('node:assert/strict');
+ const { test } = require('node:test');
+ const startCollector = require('./fixtures/collector-wire.cjs');
++const { block: reportBlock } = require('./fixtures/telemetry-report.cjs');
+ const { secretA } = require('./fixtures/collector.cjs');
+ const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
+ 
+@@ -11,10 +12,10 @@ test('real collector timestamps reports, ignores ping/history for freshness and
+     const owner = connect(t, server.port, 'api');
+     await login(owner, 'node-a', secretA);
+     assert.deepEqual((await inventory(viewer))[0].reports, { block: null, stats: null, pending: null });
+-    const block = { number: 100, hash: '0x' + '1'.repeat(64), difficulty: '1', totalDifficulty: '2', timestamp: 100, transactions: [], uncles: [], received: 1 };
++    const block = { ...reportBlock(100), number: 100, hash: '0x' + '1'.repeat(64), difficulty: '1', totalDifficulty: '2', timestamp: 100, transactions: [], uncles: [], received: 1 };
+     const startedAt = Date.now();
+     send(owner, 'block', { id: 'node-a', block, reports: { block: 1 } });
+-    send(owner, 'stats', { id: 'node-a', stats: { active: false, mining: false, syncing: false, peers: 1, uptime: 100, myTicketNumber: null } });
++    send(owner, 'stats', { id: 'node-a', stats: { active: false, mining: false, syncing: false, peers: 1, uptime: 100, myTicketNumber: null, hashrate: 0, gasPrice: 0 } });
+     send(owner, 'pending', { id: 'node-a', stats: { pending: 0 } });
+     send(owner, 'node-ping', { id: 'node-a', clientTime: 'reports-sent' });
+     await waitMessage(owner, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'reports-sent');
+diff --git a/test/report-freshness.test.cjs b/test/report-freshness.test.cjs
+index 4890b90..6e1616a 100644
+--- a/test/report-freshness.test.cjs
++++ b/test/report-freshness.test.cjs
+@@ -4,9 +4,7 @@ const Collection = require('../lib/collection');
+ const reportFreshness = require('../api-server/report-freshness');
+ const { loadApiConfig } = require('../lib/deployment-config');
+ 
+-function block(number = 100) {
+-    return { number, hash: '0x' + '1'.repeat(64), difficulty: '1', totalDifficulty: '2', timestamp: 100, transactions: [], uncles: [] };
+-}
++const { block } = require('./fixtures/telemetry-report.cjs');
+ 
+ function stats() {
+     return { active: true, mining: true, syncing: false, peers: 1, uptime: 100, ticketNumber: null, myTicketNumber: null, gasPrice: 0, hashrate: 0 };
+diff --git a/test/telemetry-report.test.cjs b/test/telemetry-report.test.cjs
+new file mode 100644
+index 0000000..eb8fcc1
+--- /dev/null
++++ b/test/telemetry-report.test.cjs
+@@ -0,0 +1,116 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const isTelemetryReport = require('../lib/telemetry-report');
++const History = require('../lib/history');
++const Collection = require('../lib/collection');
++const { block, stats, uncle } = require('./fixtures/telemetry-report.cjs');
++
++function collection(t) {
++    const value = new Collection({ write() {} }, () => 1000);
++    value.add({ id: 'node-a', info: {}, ip: '127.0.0.1', spark: 'a' }, () => {});
++    t.after(() => { if (value._debounced) { value._debounced.cancel(); } });
++    return value;
++}
++
++test('complete efsn reports accept decimal difficulty, zero counters and unavailable ticket counts', () => {
++    const reports = [block(0), block(), { ...block(), difficulty: 1, totalDifficulty: 2 }, { ...block(), difficulty: '9'.repeat(78), totalDifficulty: '9'.repeat(78), ticketNumber: null, myTicketNumber: undefined }, { ...block(), uncles: [uncle()] }];
++
++    const result = reports.map(value => isTelemetryReport('block', value));
++
++    assert.deepEqual(result, [true, true, true, true, true]);
++    assert.equal(isTelemetryReport('stats', stats()), true);
++    assert.equal(isTelemetryReport('pending', { pending: 0 }), true);
++    assert.equal(isTelemetryReport('unknown', stats()), false);
++});
++
++test('missing and malformed block fields are rejected before arithmetic or chart retention', () => {
++    const invalid = [
++        { parentHash: undefined }, { parentHash: '0x1' }, { transactionsRoot: null }, { stateRoot: [] },
++        { miner: 'miner-a' }, { timestamp: undefined }, { timestamp: Number.MAX_SAFE_INTEGER },
++        { gasLimit: -1 }, { gasUsed: 101 }, { gasUsed: 0.5 }, { gasUsed: Number.MAX_SAFE_INTEGER + 1 },
++        { difficulty: {} }, { difficulty: '1e3' }, { difficulty: '01' }, { difficulty: '9'.repeat(79) },
++        { totalDifficulty: undefined }, { totalDifficulty: Infinity }, { totalDifficulty: '-1' },
++        { transactions: [null] }, { transactions: [{ hash: '0x1' }] }, { transactions: ['0x' + '1'.repeat(64)] },
++        { ticketNumber: '1' }, { myTicketNumber: -1 }, { sha3Uncles: {} }, { uncles: [null] },
++    ];
++
++    const accepted = invalid.filter(fields => isTelemetryReport('block', { ...block(), ...fields }));
++
++    assert.deepEqual(accepted, []);
++});
++
++test('uncle headers validate their retained wire fields without assuming Fusion uncles are impossible', () => {
++    const invalid = [{ hash: undefined }, { logsBloom: '0x' }, { difficulty: {} }, { number: '0x01' }, { timestamp: '0x' }, { gasLimit: '0x' + '1'.repeat(17) }, { extraData: '0x1' }, { nonce: null }, { baseFeePerGas: -1 }];
++
++    const accepted = invalid.filter(fields => isTelemetryReport('block', { ...block(), uncles: [{ ...uncle(), ...fields }] }));
++
++    assert.deepEqual(accepted, []);
++});
++
++test('stats require every numeric field that the dashboard stores', () => {
++    const invalid = [{ gasPrice: undefined }, { gasPrice: {} }, { gasPrice: -1 }, { hashrate: undefined }, { hashrate: '0' }, { hashrate: Infinity }, { peers: Number.MAX_SAFE_INTEGER + 1 }, { myTicketNumber: 1.1 }, { uptime: NaN }];
++
++    const accepted = invalid.filter(fields => isTelemetryReport('stats', { ...stats(), ...fields }));
++
++    assert.deepEqual(accepted, []);
++});
++
++test('invalid complete and combined reports leave all accepted state and receipts unchanged', t => {
++    const value = collection(t);
++    value.update('node-a', { ...stats(), block: block(), pending: 0 }, () => {});
++    const before = JSON.stringify({ nodes: value._items, cache: value.getHistory()._items });
++    const errors = [];
++
++    value.addBlock('node-a', { ...block(101), gasUsed: {} }, error => errors.push(error));
++    value.updateStats('node-a', { ...stats(), hashrate: {} }, error => errors.push(error));
++    value.update('node-a', { ...stats(), gasPrice: {}, block: block(101), pending: 1 }, error => errors.push(error));
++
++    assert.deepEqual(errors, ['Invalid block report', 'Invalid stats report', 'Invalid combined report']);
++    assert.equal(JSON.stringify({ nodes: value._items, cache: value.getHistory()._items }), before);
++});
++
++test('invalid or oversized history batches cannot clear the outstanding request or partially populate history', t => {
++    const value = collection(t);
++    const errors = [];
++    value.askedForHistory(true);
++
++    value.addHistory('node-a', [block(100), { ...block(99), timestamp: {} }], error => errors.push(error));
++    value.addHistory('node-a', Array.from({ length: 51 }, (_, index) => block(index + 1)), error => errors.push(error));
++
++    assert.deepEqual(errors, ['Invalid history report', 'Invalid history report']);
++    assert.deepEqual(value.getHistory()._items, []);
++    assert.equal(value._askedForHistory, true);
++});
++
++test('chart records retain counts and fixed scalar fields while the current head keeps transaction hashes and timing', t => {
++    const value = collection(t);
++    const input = { ...block(), transactions: [{ hash: '0x' + 'a'.repeat(64) }, { hash: '0x' + 'b'.repeat(64) }], uncles: [uncle()], extension: { value: 'unneeded chart data' } };
++    let charts;
++    value.getHistory().setCallback((error, result) => { charts = result; });
++
++    value.addBlock('node-a', input, () => {});
++    value.getHistory().getCharts();
++    const cached = value.getHistory().search(100).block;
++    const current = value.getNode({ id: 'node-a' }).stats.block;
++
++    assert.deepEqual({ transactions: charts.transactions, uncles: charts.uncles }, { transactions: [2], uncles: [1] });
++    assert.deepEqual({ transactions: cached.transactionCount, uncles: cached.uncleCount, arrays: [cached.transactions, cached.uncles], extension: cached.extension }, { transactions: 2, uncles: 1, arrays: [undefined, undefined], extension: undefined });
++    assert.equal(Object.values(cached).every(item => item === undefined || item === null || ['number', 'string', 'boolean'].includes(typeof item)), true);
++    assert.deepEqual(current.transactions, [{ hash: '0x' + 'a'.repeat(64) }, { hash: '0x' + 'b'.repeat(64) }]);
++    assert.deepEqual(current.uncles, [uncle()]);
++    assert.deepEqual({ arrived: current.arrived, received: current.received, propagation: current.propagation, time: current.time, trusted: current.trusted, fork: current.fork }, { arrived: 1000, received: 1000, propagation: 0, time: 0, trusted: false, fork: 0 });
++    assert.notEqual(cached, current);
++});
++
++test('mutating a caller report after ingestion cannot alter cached fork identity or counts', () => {
++    const history = new History(() => 1000);
++    const input = { ...block(), transactions: [{ hash: '0x' + 'a'.repeat(64) }] };
++    history.add(input, 'node-a', true);
++    const before = JSON.stringify(history._items);
++
++    input.hash = '0x' + 'f'.repeat(64);
++    input.transactions.push({ hash: '0x' + 'b'.repeat(64) });
++
++    assert.equal(JSON.stringify(history._items), before);
++    assert.deepEqual(history.getTransactionsCount(), [1]);
++});
