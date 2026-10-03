@@ -1,0 +1,797 @@
+From 31a13524e03b29dc3e7fe22ed9132699c906bc00 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 11:18:40 +0200
+Subject: [PATCH] Require explicit private dashboard deployment settings
+
+---
+ README.md                             | 121 ++++-------------------
+ api-server/server.js                  |  13 +--
+ db/index.js                           |  10 +-
+ docs/deployment-configuration.md      | 109 +++++++++++++++++++++
+ docs/telemetry-enrollment.md          |   7 +-
+ lib/deployment-config.js              |  80 ++++++++++++++++
+ package.json                          |   2 +-
+ react-frontend/src/Components/Main.js |   5 +-
+ react-frontend/src/config.js          |   8 ++
+ server.js                             |   3 +-
+ test/deployment-config.test.cjs       |  77 +++++++++++++++
+ test/deployment-wiring.test.cjs       | 132 ++++++++++++++++++++++++++
+ test/fixtures/collector.cjs           |   5 +-
+ test/fixtures/wire-server.cjs         |   5 -
+ test/telemetry-wire.test.cjs          |   2 +-
+ wsclient/wsclient.js                  |   4 +-
+ 16 files changed, 448 insertions(+), 135 deletions(-)
+ create mode 100644 docs/deployment-configuration.md
+ create mode 100644 lib/deployment-config.js
+ create mode 100644 react-frontend/src/config.js
+ create mode 100644 test/deployment-config.test.cjs
+ create mode 100644 test/deployment-wiring.test.cjs
+
+diff --git a/README.md b/README.md
+index a7ece28..2d39c75 100644
+--- a/README.md
++++ b/README.md
+@@ -1,103 +1,22 @@
+ # fsn-stats
+ 
+-Fusion's node monitor
+-
+-The collector now requires per-node credentials. Read
+-[telemetry enrollment](docs/telemetry-enrollment.md) before starting it. The
+-historical PostgreSQL and public-endpoint setup below is not a production launch
+-configuration; database credentials, private access, endpoints and TLS still
+-need deployment work.
+-
+-Collector checks: `npm test` for local contracts and `npm run test:wire` for the
+-real loopback WebSocket check after installing the locked dependencies.
+-
+-
+-#Install postgreSQL
+-
+-For Ubuntu/Debian :-
+-
+-sudo apt install postgresql postgresql-common postgresql-client
+-
+-The current version of postgreSQL is 12. The configuration should be changed to some defaults :-
+-
+-cd /etc/postgresql/12/main/
+-
+-sudo nano postgresql.conf 
+-
+-Change the Connection Settings to 
+-
+-listen_addresses = '*'          # what IP address(es) to listen on. Can be more restrictive than this, since we only need 127.0.0.1
+-
+-port = 5432                             # (change requires restart)
+-
+-Save these changes and edit the file pg_hba.conf :-
+-
+-sudo nano pg_hba.conf
+-
+-Add this line :-
+-
+-host all all 0.0.0.0/0 md5
+-
+-Save the change and then restart the postgreSQL server :-
+-
+-sudo /etc/init.d/postgresql restart
+-
+-
+-
+-The installation creates a user postgres. Ensure it has the password postgres and then log in :-
+-
+-sudo passwd postgres   <set password to postgres>
+-
+-su - postgres
+-
+-Then try to enter the psql shell :-
+-
+-psql
+-
+-Now change the password to postgres :-
+-
+-\password  <enter password>
+-
+-Now quit :-
+-
+-\q
+-
+-The database and all necessary tables are created as user postgres with the standard server :-
+-
+-psql -f POSTGRESQL_Setup.sh
+-
+-
+-
+-If you want to test the installation using a local efsn node, then this can be done as follows :-
+-
+-#SHELL 1  (download the Fusion efsn source from github and build according the instructions)
+-
+-efsn --ethstats '<configured-node-name>:<its-generated-credential>@ws://127.0.0.1:3000'  # Local test only; use explicit WSS for public hosting
+-
+-Set the WebSocket client in wsclient.js to be :-
+-
+-const wsclient = new WebSocketClient('ws://127.0.0.1:3000/primus');
+-
+-Alternatively, the default is to use the WebSocket client 'wss://node.fusionnetwork.io/primus' and you do not need to run efsn locally.
+-
+-
+-#SHELL 2  Start the server.js script which fires on the spark signals from the nodes in the network :-
+-
+-WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json NODE_ENV=production PORT=3000 npm start
+-
+-#SHELL 3 Set some environmental variables and start the WebSocket client :-
+-
+-export SQLHOST=localhost     #  For a local PostgreSQL database
+-
+-export SQLPASS=postgres      # Corresponds to the postgres server password
+-
+-node ./wsclient/wsclient.js  #  Instantiates a WebSocket connection to fsn-stats and logs node data to the PostgreSQL database myfusiondatabase and serves the data via Express for the React frontend.
+-
+-#SHELL 4 Start the React frontend for the Node Monitor :-
+-
+-cd react-frontend
+-
+-npm start
+-
+-
+-
++Fusion's node monitor.
++
++This recovery candidate requires explicit deployment settings and per-node
++telemetry credentials. Start with [deployment configuration](docs/deployment-configuration.md)
++and [node enrollment](docs/telemetry-enrollment.md).
++
++The collector authentication and configuration have local test coverage.
++Persistence, database provisioning, dependency/runtime review and the complete
++browser/TLS deployment still need work. See the deployment document's concrete
++blockers before running the legacy persistence client. The old database setup
++script is historical and must not be used as the new provisioning procedure.
++
++Run `npm test` for configuration, identity and startup checks, including an HTTP
++API test with stubbed storage. Run `npm run test:wire` for the real loopback
++collector WebSocket check. Install dependencies from the existing lock with
++`npm ci --ignore-scripts --no-audit --no-fund` for these local checks; this does
++not constitute a dependency advisory review or production runtime selection.
++
++No validator signing keys are required by this dashboard. Telemetry enrollment
++is independent of participation in block production.
+diff --git a/api-server/server.js b/api-server/server.js
+index 68bdfa1..296d7ba 100644
+--- a/api-server/server.js
++++ b/api-server/server.js
+@@ -1,6 +1,6 @@
++const listener = require('../lib/deployment-config').loadListenerConfig(process.env, 'API');
+ const express = require('express');
+ const app = express();
+-const port = 3002;
+ 
+ const Retrieve = require('../db_methods/retrieve');
+ 
+@@ -9,14 +9,6 @@ const ret = new Retrieve();
+ 
+ let server;
+ 
+-app.use(function(req, res, next) {
+-    res.header("Access-Control-Allow-Origin", "*");
+-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, X-Content-Type-Options, Content-Type, Accept, Authorization");
+-    // Pass to next layer of middleware
+-    next();
+-});
+-
+ app.get('/nodes', (req, res, next) => {
+     //res.send('Return all nodes!');
+ 
+@@ -80,5 +72,6 @@ app.get('/info', (req, res, next) => {
+ //             server.close();
+ // }, 60000);
+ 
+-server = app.listen(port, () => console.log(`App listening on port ${port}!`))
++server = app.listen(listener.port, listener.host, () => console.log('Dashboard API listening'));
++module.exports = server;
+ 
+diff --git a/db/index.js b/db/index.js
+index 7909a50..4106376 100644
+--- a/db/index.js
++++ b/db/index.js
+@@ -1,13 +1,7 @@
++const config = require('../lib/deployment-config').loadDatabaseConfig(process.env);
+ const { Pool } = require('pg')
+ 
+-const pool = new Pool({
+-    user:       'postgres',
+-    host:       process.env.SQLHOST || 'localhost',
+-    port:       5432,
+-    database:   'myfusiondatabase',
+-    password:   process.env.SQLPASS || 'postgres',
+-    max:        5
+-});
++const pool = new Pool(config);
+ 
+ 
+  module.exports = {
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+new file mode 100644
+index 0000000..a7fb8b1
+--- /dev/null
++++ b/docs/deployment-configuration.md
+@@ -0,0 +1,109 @@
++# Dashboard deployment configuration
++
++This candidate supports one host: collector, HTTP API and PostgreSQL bind to
++loopback, with a local reverse proxy serving the browser over HTTPS and node
++telemetry over WSS. The persistence client can use local WS or remote WSS.
++Backend settings are read at process startup. Invalid or missing settings stop
++startup before listening or opening the relevant database/WebSocket connection.
++
++The persistence, schema, runtime dependencies and complete browser path still
++need acceptance work. These settings are not a production launch approval.
++
++## Required settings
++
++| Process | Setting | Meaning |
++| --- | --- | --- |
++| Collector | `COLLECTOR_HOST` | `127.0.0.1` or `::1` |
++| Collector | `COLLECTOR_PORT` | Explicit listener port |
++| Collector | `WS_CREDENTIALS_FILE` | Absolute private JSON file; see [enrollment](telemetry-enrollment.md) |
++| Persistence | `COLLECTOR_WS_URL` | Explicit URL ending in `/primus`; local WS or WSS |
++| API | `API_HOST` | `127.0.0.1` or `::1` |
++| API | `API_PORT` | Explicit listener port |
++| Persistence and API | `DB_HOST` | `127.0.0.1` or `::1` |
++| Persistence and API | `DB_PORT` | Database port, 1–65535 |
++| Persistence and API | `DB_NAME` | Provisioned database name |
++| Persistence and API | `DB_USER` | Provisioned role for this process |
++| Persistence and API | `DB_PASSWORD_FILE` | Absolute path to a private UTF-8 password file |
++| Browser build | `REACT_APP_STATS_API_PATH` | Same-origin API prefix, such as `/stats-api` |
++
++Listeners accept 0 for disposable ephemeral-port tests. Deployed services need
++fixed ports from 1–65535 so the proxy and persistence client can find them.
++There are no endpoint, database-name, user or password defaults. The old `PORT`
++does not configure either listener. `SQLHOST`/`SQLPASS` are rejected rather than
++silently retaining legacy database settings. `WS_SECRET` remains unsupported.
++
++The database password file contains one nonempty line, with an optional final
++LF or CRLF. Other whitespace belongs to the password and is preserved. Read
++errors do not include file paths or contents. Store this and the collector
++credential file outside the checkout; restrict access to the relevant service
++account and administrator. Do not put real secrets in examples or Git.
++
++Database transport is explicitly local plaintext (`ssl: false`). Remote database
++hosting and container port publication are outside this configuration. The
++existing five-connection pool limit is retained. Use separate database roles:
++the API reads only; persistence writes only its necessary tables. Database
++ownership, schema creation and migrations belong to a separate administrative
++role. Configuration validation cannot verify PostgreSQL grants or host access
++rules; those need an actual database acceptance test.
++
++`COLLECTOR_WS_URL` permits WS only to the numeric loopback addresses, or WSS to
++a configured host. Credentials in the URL, query strings, fragments and other
++paths are refused. Persistence consumes the viewer stream; it does not receive
++validator keys or use a node's telemetry credential.
++
++## Proxy and browser routing
++
++The proxy serves the compiled browser and forwards `/stats-api/` to the private
++API, removing that prefix. Thus `/stats-api/nodes` reaches backend `/nodes`.
++Configure `REACT_APP_STATS_API_PATH=/stats-api` when building the browser; it is
++public configuration compiled into the bundle. Changing it requires rebuilding.
++The validation executes when the browser module loads, not during the build.
++Only path segments containing letters, digits, underscores or hyphens are
++accepted; one final slash is normalized away. A missing or invalid value stops
++the UI rather than contacting an old foundation endpoint.
++
++The API no longer adds wildcard CORS headers. Browser/API hosting on unrelated
++origins is not supported by this candidate. CORS is not API authentication;
++public dashboard data remains public through the chosen proxy routes.
++
++Forward the collector's `/api` WebSocket path for efsn telemetry. Keep `/primus`
++local if only the same-host persistence process needs it. Do not expose the
++legacy `/external` stream automatically. The final proxy must provide certificates,
++WebSocket upgrade handling, suitable timeouts and bounded requests/connections.
++Those deployment settings and loss/reconnect behavior still need testing.
++
++For a local collector test after installing the locked dependencies:
++
++```sh
++NODE_ENV=production COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json npm start
++```
++
++Use protected service environments to set each process's required values.
++No production domain, database or role is provisioned by this change.
++
++## Persistence blockers to resolve before integration
++
++Source review found the following inherited behavior. Configuration tests stub
++the storage layer and do not claim these paths work:
++
++- `wsclient/wsclient.js` starts cleanup/keepalive timers on every reconnect but
++  does not cancel them on close. The cleanup callback loses its interval value.
++- The same file shares initialization metadata and block/time fields across
++  nodes, reads `myData.data.id` without checking the envelope, and does not request
++  the initial viewer snapshot or handle Primus heartbeats explicitly.
++- Its startup call to `Populate.initDbAndTables()` deletes charts, then refers
++  to an undefined `record`; the caller does not await or catch that initialization.
++- `db_methods/populate.js` interpolates node report values into several SQL
++  statements. Use parameterized statements and verify ordinary quoted text
++  survives round trips before enabling persistence.
++- `POSTGRESQL_Setup.sh` starts by dropping a database, does not switch its
++  connection to the newly created database, and declares `utctime` as time of
++  day rather than a full timestamp. It also omits the API's `blocks` table.
++  Do not use this historical script as the new provisioning procedure.
++- API `/info` calls a missing retrieval method. API query bounds, error output,
++  stale-data labeling and actual frontend payload compatibility remain unverified.
++
++Resolve these with a small persistence correction and versioned, nondestructive
++schema setup, then test collector → storage → API → browser with distinct nodes,
++disconnect/reconnect, stale observations and dashboard loss. Complete runtime,
++dependency, TLS and resource-limit review before public use.
+diff --git a/docs/telemetry-enrollment.md b/docs/telemetry-enrollment.md
+index 9084616..cade3d6 100644
+--- a/docs/telemetry-enrollment.md
++++ b/docs/telemetry-enrollment.md
+@@ -30,11 +30,12 @@ credential or populated deployment configuration belongs in Git.
+ For a Unix service with its environment already protected, the collector uses:
+ 
+ ```sh
+-WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json NODE_ENV=production PORT=3000 npm start
++WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json NODE_ENV=production COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 npm start
+ ```
+ 
+-The existing listener is HTTP; public hosting still needs a private bind/proxy
+-arrangement and TLS. Configure nodes with explicit WSS through that deployment:
++The collector listens on configured loopback HTTP. Public hosting needs the
++local reverse proxy and TLS described in [deployment configuration](deployment-configuration.md).
++Configure nodes with explicit WSS through that deployment:
+ 
+ ```text
+ --ethstats <node-name>:<that-node-credential>@wss://<telemetry-host>
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+new file mode 100644
+index 0000000..342d12d
+--- /dev/null
++++ b/lib/deployment-config.js
+@@ -0,0 +1,80 @@
++const { readFileSync } = require('fs');
++const { isAbsolute } = require('path');
++
++function requiredSetting(environment, name) {
++    const value = environment[name];
++    if (typeof value !== 'string' || value.length === 0 || value.trim() !== value) {
++        throw new Error(`${name} must be explicitly configured`);
++    }
++    return value;
++}
++
++function loopbackHost(environment, name) {
++    const value = requiredSetting(environment, name);
++    if (value !== '127.0.0.1' && value !== '::1') {
++        throw new Error(`${name} must be 127.0.0.1 or ::1; use a local reverse proxy for public access`);
++    }
++    return value;
++}
++
++function portNumber(environment, name, minimum) {
++    const value = requiredSetting(environment, name);
++    if (!/^(0|[1-9][0-9]{0,4})$/.test(value) || Number(value) < minimum || Number(value) > 65535) {
++        throw new Error(`${name} must be an integer from ${minimum} to 65535`);
++    }
++    return Number(value);
++}
++
++function loadListenerConfig(environment, prefix) {
++    return {
++        host: loopbackHost(environment, `${prefix}_HOST`),
++        port: portNumber(environment, `${prefix}_PORT`, 0),
++    };
++}
++
++function loadDatabaseConfig(environment) {
++    if (environment.SQLHOST !== undefined || environment.SQLPASS !== undefined) {
++        throw new Error('SQLHOST and SQLPASS are unsupported; configure DB_* settings');
++    }
++    const config = {
++        host: loopbackHost(environment, 'DB_HOST'),
++        port: portNumber(environment, 'DB_PORT', 1),
++        database: requiredSetting(environment, 'DB_NAME'),
++        user: requiredSetting(environment, 'DB_USER'),
++        ssl: false,
++        max: 5,
++    };
++    const file = requiredSetting(environment, 'DB_PASSWORD_FILE');
++    if (!isAbsolute(file)) {
++        throw new Error('DB_PASSWORD_FILE must be an absolute path');
++    }
++    let password;
++    try {
++        password = readFileSync(file, 'utf8').replace(/\r?\n$/, '');
++    } catch (_) {
++        throw new Error('DB_PASSWORD_FILE could not be read');
++    }
++    if (!password || /[\r\n\0]/.test(password)) {
++        throw new Error('DB_PASSWORD_FILE must contain one nonempty password line');
++    }
++    config.password = password;
++    return config;
++}
++
++function loadPersistenceUrl(environment) {
++    const value = requiredSetting(environment, 'COLLECTOR_WS_URL');
++    let url;
++    try {
++        url = new URL(value);
++    } catch (_) {
++        throw new Error('COLLECTOR_WS_URL must be a WebSocket URL ending in /primus');
++    }
++    const local = url.hostname === '127.0.0.1' || url.hostname === '[::1]';
++    const transportAllowed = url.protocol === 'wss:' || (url.protocol === 'ws:' && local);
++    if (!transportAllowed || url.username || url.password || url.search || url.hash || url.pathname !== '/primus') {
++        throw new Error('COLLECTOR_WS_URL requires WSS or loopback WS, path /primus and no credentials, query or fragment');
++    }
++    return url.href;
++}
++
++module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl };
+diff --git a/package.json b/package.json
+index 96fa1ea..a5c8703 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs",
++    "test": "node --test test/collector.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs",
+     "start": "node server.js"
+   },
+diff --git a/react-frontend/src/Components/Main.js b/react-frontend/src/Components/Main.js
+index 0903caa..ef3a5dd 100644
+--- a/react-frontend/src/Components/Main.js
++++ b/react-frontend/src/Components/Main.js
+@@ -13,13 +13,16 @@ import buildFormatter from 'react-timeago/lib/formatters/buildFormatter'
+ import Spinner from './Spinner';
+ import AttentionWarning from './AttentionWarning';
+ import FusionLogo from '../img/Fusion_White.svg';
++import loadApiPath from '../config';
++
++const statsApiPath = loadApiPath(process.env.REACT_APP_STATS_API_PATH);
+ 
+ 
+ class Main extends React.Component {
+     constructor(props) {
+         super(props);
+ 
+-        let URL = 'https://api-stats.fusionnetwork.io';
++        let URL = statsApiPath;
+         let allNodes = [];
+         let identifiers = [];
+ 
+diff --git a/react-frontend/src/config.js b/react-frontend/src/config.js
+new file mode 100644
+index 0000000..e033e62
+--- /dev/null
++++ b/react-frontend/src/config.js
+@@ -0,0 +1,8 @@
++function loadApiPath(value) {
++    if (typeof value !== 'string' || !/^(?:\/[A-Za-z0-9_-]+)+\/?$/.test(value)) {
++        throw new Error('REACT_APP_STATS_API_PATH must be a same-origin path such as /stats-api');
++    }
++    return value.replace(/\/$/, '');
++}
++
++module.exports = loadApiPath;
+diff --git a/server.js b/server.js
+index ce7b1a6..6917a11 100644
+--- a/server.js
++++ b/server.js
+@@ -1,4 +1,5 @@
+ var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env);
++var listener = require('./lib/deployment-config').loadListenerConfig(process.env, 'COLLECTOR');
+ var _ = require('lodash');
+ var logger = require('./lib/utils/logger');
+ var chalk = require('chalk');
+@@ -410,7 +411,7 @@ var nodeCleanupTimeout = setInterval( function ()
+ 
+ 
+ //console.log('SERVER = ',server);
+-server.listen(process.env.PORT || 3000);
++server.listen(listener.port, listener.host);
+ 
+ module.exports = server;
+ 
+diff --git a/test/deployment-config.test.cjs b/test/deployment-config.test.cjs
+new file mode 100644
+index 0000000..c73d914
+--- /dev/null
++++ b/test/deployment-config.test.cjs
+@@ -0,0 +1,77 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { join } = require('node:path');
++const { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl } = require('../lib/deployment-config');
++const loadApiPath = require('../react-frontend/src/config');
++const { credentialFile } = require('./fixtures/collector.cjs');
++
++function databaseEnvironment(t, password = 'synthetic database password') {
++    return {
++        DB_HOST: '127.0.0.1', DB_PORT: '5439', DB_NAME: 'stats_test', DB_USER: 'stats_writer',
++        DB_PASSWORD_FILE: credentialFile(t, password, true),
++    };
++}
++
++test('listeners accept explicit loopback addresses and ephemeral or fixed ports', () => {
++    assert.deepEqual(loadListenerConfig({ COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0' }, 'COLLECTOR'), { host: '127.0.0.1', port: 0 });
++    assert.deepEqual(loadListenerConfig({ API_HOST: '::1', API_PORT: '3002' }, 'API'), { host: '::1', port: 3002 });
++});
++
++test('listener configuration never falls back to an implicit or public bind', () => {
++    for (const host of [undefined, '', ' ', 'localhost', '0.0.0.0', '::', '192.0.2.1']) {
++        assert.throws(() => loadListenerConfig({ COLLECTOR_HOST: host, COLLECTOR_PORT: '3000' }, 'COLLECTOR'), /COLLECTOR_HOST/);
++    }
++    for (const port of [undefined, '', ' 3000', '3000x', '1.5', '-1', '65536', '0001']) {
++        assert.throws(() => loadListenerConfig({ COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: port, PORT: '3000' }, 'COLLECTOR'), /COLLECTOR_PORT/);
++    }
++});
++
++test('database settings use explicit values and preserve password whitespace', t => {
++    const environment = databaseEnvironment(t, ' synthetic database password \r\n');
++
++    const result = loadDatabaseConfig(environment);
++
++    assert.deepEqual(result, { host: '127.0.0.1', port: 5439, database: 'stats_test', user: 'stats_writer', password: ' synthetic database password ', max: 5, ssl: false });
++});
++
++test('all database settings are required and legacy defaults cannot reappear', t => {
++    const environment = databaseEnvironment(t);
++    for (const name of Object.keys(environment)) {
++        assert.throws(() => loadDatabaseConfig({ ...environment, [name]: undefined }), new RegExp(name));
++        assert.throws(() => loadDatabaseConfig({ ...environment, [name]: '' }), new RegExp(name));
++    }
++    assert.throws(() => loadDatabaseConfig({ ...environment, SQLHOST: 'localhost' }), /SQLHOST and SQLPASS/);
++    assert.throws(() => loadDatabaseConfig({ ...environment, SQLPASS: 'private-value' }), { message: 'SQLHOST and SQLPASS are unsupported; configure DB_* settings' });
++    assert.throws(() => loadDatabaseConfig({ ...environment, DB_HOST: '192.0.2.10' }), /DB_HOST/);
++    assert.throws(() => loadDatabaseConfig({ ...environment, DB_PORT: '0' }), /DB_PORT/);
++});
++
++test('database password read errors omit paths and password contents', t => {
++    const environment = databaseEnvironment(t);
++    assert.throws(() => loadDatabaseConfig({ ...environment, DB_PASSWORD_FILE: 'private-path' }), { message: 'DB_PASSWORD_FILE must be an absolute path' });
++    assert.throws(() => loadDatabaseConfig({ ...environment, DB_PASSWORD_FILE: join(environment.DB_PASSWORD_FILE, 'private-path') }), { message: 'DB_PASSWORD_FILE could not be read' });
++    for (const password of ['', '\n', 'private-value\nsecond-line', 'private-value\0']) {
++        const file = credentialFile(t, password, true);
++        assert.throws(() => loadDatabaseConfig({ ...environment, DB_PASSWORD_FILE: file }), { message: 'DB_PASSWORD_FILE must contain one nonempty password line' });
++    }
++});
++
++test('persistence accepts explicit loopback WS or encrypted remote WSS', () => {
++    for (const url of ['ws://127.0.0.1:3000/primus', 'ws://[::1]:3000/primus', 'wss://stats.example/primus']) {
++        assert.equal(loadPersistenceUrl({ COLLECTOR_WS_URL: url }), url);
++    }
++});
++
++test('persistence rejects missing, plaintext remote, credential-bearing and wrong-path URLs', () => {
++    for (const url of [undefined, '', 'invalid-private-value', 'ws://stats.example/primus', 'https://stats.example/primus', 'wss://user:private-value@stats.example/primus', 'wss://stats.example/api', 'wss://stats.example/primus?key=private-value', 'wss://stats.example/primus#private-value']) {
++        assert.throws(() => loadPersistenceUrl({ COLLECTOR_WS_URL: url }), error => error.message.startsWith('COLLECTOR_WS_URL') && !error.message.includes('private-value'));
++    }
++});
++
++test('browser API paths stay on the current origin and normalize one trailing slash', () => {
++    assert.equal(loadApiPath('/stats-api'), '/stats-api');
++    assert.equal(loadApiPath('/monitor/stats-api/'), '/monitor/stats-api');
++    for (const path of [undefined, '', '/', '//stats.example', 'https://stats.example', '/stats-api?x=1', '/stats-api#x', '/a/../b', '/a//b', '/a\\b', '/%2fexample', ' /stats-api']) {
++        assert.throws(() => loadApiPath(path), /REACT_APP_STATS_API_PATH/);
++    }
++});
+diff --git a/test/deployment-wiring.test.cjs b/test/deployment-wiring.test.cjs
+new file mode 100644
+index 0000000..dd99341
+--- /dev/null
++++ b/test/deployment-wiring.test.cjs
+@@ -0,0 +1,132 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { readFileSync } = require('node:fs');
++const { join } = require('node:path');
++const { once } = require('node:events');
++const http = require('node:http');
++const vm = require('node:vm');
++const express = require('express');
++const config = require('../lib/deployment-config');
++const { credentialFile, loadCollector } = require('./fixtures/collector.cjs');
++
++function evaluate(file, environment, requireDependency, globals = {}) {
++    const module = { exports: {} };
++    vm.runInNewContext(readFileSync(join(__dirname, '..', file), 'utf8'), {
++        process: { env: environment }, module, require: requireDependency,
++        console: { log() {}, error() {} }, ...globals,
++    }, { filename: file, timeout: 1000 });
++    return module.exports;
++}
++
++function loadDatabase(environment, Pool) {
++    return evaluate('db/index.js', environment, name => {
++        if (name === '../lib/deployment-config') return config;
++        assert.equal(name, 'pg');
++        return { Pool };
++    });
++}
++
++function databaseEnvironment(t) {
++    return { DB_HOST: '127.0.0.1', DB_PORT: '5439', DB_NAME: 'stats_test', DB_USER: 'stats_reader', DB_PASSWORD_FILE: credentialFile(t, 'synthetic-password', true) };
++}
++
++test('collector passes explicit settings to listen and refuses missing or public binds', t => {
++    const collector = loadCollector(t, { environment: { COLLECTOR_PORT: '3100' } });
++    assert.equal(collector.startupError, undefined);
++    assert.deepEqual(collector.listener, { port: 3100, host: '127.0.0.1' });
++    for (const environment of [{ COLLECTOR_PORT: undefined }, { COLLECTOR_HOST: '0.0.0.0' }]) {
++        const invalid = loadCollector(t, { environment });
++        assert.match(invalid.startupError.message, /COLLECTOR_/);
++        assert.equal(invalid.listening, false);
++        assert.equal(invalid.sockets.size, 0);
++    }
++});
++
++test('database pool receives configured credentials without inherited defaults', t => {
++    const environment = databaseEnvironment(t);
++    let actual;
++    class Pool { constructor(settings) { actual = settings; } }
++
++    loadDatabase(environment, Pool);
++
++    assert.deepEqual(actual, { host: '127.0.0.1', port: 5439, database: 'stats_test', user: 'stats_reader', password: 'synthetic-password', max: 5, ssl: false });
++});
++
++test('invalid database configuration stops before constructing a pool', () => {
++    let constructions = 0;
++    class Pool { constructor() { constructions++; } }
++
++    assert.throws(() => loadDatabase({}, Pool), /DB_HOST/);
++    assert.equal(constructions, 0);
++});
++
++test('API listener validation happens before loading Express or the database', () => {
++    const dependencies = [];
++
++    assert.throws(() => evaluate('api-server/server.js', { API_HOST: '0.0.0.0', API_PORT: '3002' }, name => {
++        dependencies.push(name);
++        if (name === '../lib/deployment-config') return config;
++        throw new Error('Unexpected dependency');
++    }), /API_HOST/);
++    assert.deepEqual(dependencies, ['../lib/deployment-config']);
++});
++
++test('real HTTP API binds to configured loopback and serves data without wildcard CORS', { timeout: 5000 }, async t => {
++    class Retrieve { nodeGetAllDb() { return Promise.resolve('[{"id":"synthetic-node"}]'); } }
++    const server = evaluate('api-server/server.js', { API_HOST: '127.0.0.1', API_PORT: '0' }, name => {
++        if (name === '../lib/deployment-config') return config;
++        if (name === '../db_methods/retrieve') return Retrieve;
++        assert.equal(name, 'express');
++        return express;
++    });
++    t.after(() => new Promise(resolve => server.close(resolve)));
++    await once(server, 'listening');
++    assert.equal(server.address().address, '127.0.0.1');
++    const response = await new Promise((resolve, reject) => {
++        const request = http.get({ host: '127.0.0.1', port: server.address().port, path: '/nodes', agent: false, headers: { Origin: 'https://unrelated.example' } }, res => {
++            let body = '';
++            res.setEncoding('utf8');
++            res.on('data', chunk => { body += chunk; });
++            res.on('end', () => resolve({ status: res.statusCode, body, origin: res.headers['access-control-allow-origin'] }));
++            res.on('error', reject);
++        });
++        request.on('error', reject);
++    });
++    assert.deepEqual(response, { status: 200, body: '[{"id":"synthetic-node"}]', origin: undefined });
++});
++
++test('persistence uses the configured URL and validates database settings before connecting', t => {
++    const environment = { ...databaseEnvironment(t), COLLECTOR_WS_URL: 'ws://127.0.0.1:3100/primus' };
++    const connections = [];
++    let initializations = 0;
++    class Populate { initDbAndTables() { initializations++; } }
++    class WebSocket { constructor(url) { this.readyState = 0; this.OPEN = 1; connections.push(url); } }
++    class Pool {}
++    const requireDependency = name => {
++        if (name === '../lib/deployment-config') return config;
++        if (name === '../db_methods/populate') {
++            loadDatabase(environment, Pool);
++            return Populate;
++        }
++        assert.equal(name, 'websocket');
++        return { w3cwebsocket: WebSocket };
++    };
++
++    evaluate('wsclient/wsclient.js', environment, requireDependency, { setTimeout() { return 0; } });
++    assert.deepEqual(connections, ['ws://127.0.0.1:3100/primus']);
++    assert.equal(initializations, 1);
++    delete environment.DB_PASSWORD_FILE;
++    assert.throws(() => evaluate('wsclient/wsclient.js', environment, requireDependency), /DB_PASSWORD_FILE/);
++    assert.deepEqual(connections, ['ws://127.0.0.1:3100/primus']);
++});
++
++test('missing persistence URL stops before loading the database or opening a socket', () => {
++    const dependencies = [];
++
++    assert.throws(() => evaluate('wsclient/wsclient.js', {}, name => {
++        dependencies.push(name);
++        if (name === '../lib/deployment-config') return config;
++        throw new Error('Unexpected dependency');
++    }), /COLLECTOR_WS_URL/);
++    assert.deepEqual(dependencies, ['../lib/deployment-config']);
++});
+diff --git a/test/fixtures/collector.cjs b/test/fixtures/collector.cjs
+index 649efc2..e2fbbdb 100644
+--- a/test/fixtures/collector.cjs
++++ b/test/fixtures/collector.cjs
+@@ -20,7 +20,7 @@ function credentialFile(t, value, raw = false) {
+ function loadCollector(t, options = {}) {
+     const file = credentialFile(t, options.credentials || { 'node-a': secretA, 'node-b': secretB });
+     const result = { calls: [], logs: [], sockets: new Map(), listening: false, registrations: [] };
+-    const server = { listen() { result.listening = true; } };
++    const server = { listen(port, host) { result.listening = true; result.listener = { port, host }; } };
+     class Primus {
+         constructor(_, config) {
+             this.handlers = new Map();
+@@ -56,6 +56,7 @@ function loadCollector(t, options = {}) {
+     }
+     const modules = {
+         './lib/telemetry-credentials': loadTelemetryCredentials,
++        './lib/deployment-config': require('../../lib/deployment-config'),
+         lodash: { isUndefined: value => value === undefined, now: () => 1234 },
+         './lib/utils/logger': {},
+         './lib/utils/config': { banned: options.banned || [] },
+@@ -72,7 +73,7 @@ function loadCollector(t, options = {}) {
+             if (!Object.hasOwn(modules, name)) throw new Error(`Unexpected dependency: ${name}`);
+             return modules[name];
+         },
+-        process: { env: { NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, ...options.environment } },
++        process: { env: { NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0', ...options.environment } },
+         console: consoleStub,
+         setInterval: () => 0,
+         module: { exports: {} },
+diff --git a/test/fixtures/wire-server.cjs b/test/fixtures/wire-server.cjs
+index 17d7be6..ee09cfd 100644
+--- a/test/fixtures/wire-server.cjs
++++ b/test/fixtures/wire-server.cjs
+@@ -1,8 +1,3 @@
+-const http = require('node:http');
+-const listen = http.Server.prototype.listen;
+-http.Server.prototype.listen = function () {
+-    return listen.call(this, 0, '127.0.0.1');
+-};
+ const server = require('../../server');
+ server.on('listening', () => process.send(server.address()));
+ process.on('message', message => {
+diff --git a/test/telemetry-wire.test.cjs b/test/telemetry-wire.test.cjs
+index 2cdf4fb..924f47d 100644
+--- a/test/telemetry-wire.test.cjs
++++ b/test/telemetry-wire.test.cjs
+@@ -66,7 +66,7 @@ async function inventory(viewer) {
+ test('real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect', { timeout: 15000 }, async t => {
+     const file = credentialFile(t, { 'node-a': [secretA, secretNext], 'node-b': secretB });
+     const child = fork(join(__dirname, 'fixtures/wire-server.cjs'), [], {
+-        env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, VERBOSITY: '2' },
++        env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', WS_CREDENTIALS_FILE: file, COLLECTOR_HOST: '127.0.0.1', COLLECTOR_PORT: '0', VERBOSITY: '2' },
+         stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+     });
+     let logs = '';
+diff --git a/wsclient/wsclient.js b/wsclient/wsclient.js
+index 428c8ce..35fc3bf 100644
+--- a/wsclient/wsclient.js
++++ b/wsclient/wsclient.js
+@@ -1,3 +1,4 @@
++const collectorUrl = require('../lib/deployment-config').loadPersistenceUrl(process.env);
+ const Populate = require('../db_methods/populate');
+ 
+ const pop = new Populate();
+@@ -12,8 +13,7 @@ let info = null;
+ var connect = function(){
+ 
+     
+-    //const wsclient = new WebSocketClient('ws://127.0.0.1:3000/primus');
+-    const wsclient = new WebSocketClient('wss://node.fusionnetwork.io/primus');
++    const wsclient = new WebSocketClient(collectorUrl);
+ 
+     olderThanHours = 3;    // Remove nodes inactive for olderThanHours hours
+     let timerId = 0;

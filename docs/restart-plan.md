@@ -195,7 +195,12 @@ must continue if it is unavailable.
 
 The [authentication correction](restart-dashboard-auth.md) now addresses the
 five baseline failures in a separate dashboard branch: 71 contracts and one
-real loopback collector test pass with unchanged locked dependencies. Full
+real loopback collector test passed with unchanged locked dependencies. The
+[deployment configuration follow-up](restart-dashboard-config.md) expands this
+to 86 passing contracts and one real collector wire test, including a real HTTP
+API check with stubbed storage. Endpoints, loopback listeners and database
+credentials now require explicit configuration. Inherited persistence, timer,
+SQL and schema problems are recorded as the next blockers. Full
 storage/API/browser/TLS integration, resource limits and deployment remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -255,11 +260,11 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: complete explicit endpoint/database configuration, input/resource limits
-   and a reviewed runtime/dependency build, then the storage/API/browser/TLS
-   acceptance path. The [per-identity authentication patch](restart-dashboard-auth.md)
-   now passes local contracts and a real loopback collector check; it remains a
-   separately reviewed dashboard change.
+1. G6: correct the [documented persistence/schema blockers](restart-dashboard-config.md#next-persistence-correctness-before-integration),
+   then complete input/resource limits, a reviewed runtime/dependency build and
+   the storage/API/browser/TLS acceptance path. Authentication and explicit
+   deployment configuration now pass local contracts plus real loopback
+   collector/API checks; these remain separately reviewed dashboard changes.
 2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
 3. G1: resume bounded historical execution only after fresh capacity/path checks;

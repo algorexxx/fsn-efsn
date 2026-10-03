@@ -1,0 +1,121 @@
+{
+  "dashboard_worktree": "C:\\Users\\Peter\\Documents\\CODING\\fsn-efsn\\tmp\\fsn-stats-auth",
+  "dashboard_base": "497b0831a148d67624974748c0ee609b4e815a08",
+  "dashboard_branch": "codex/dashboard-telemetry-auth",
+  "efsn_head": "5a5d4f0580a1fc5fff27ce8305f76d75560bcb3b",
+  "node_version": "v22.11.0",
+  "dependency_versions": {
+    "primus": "6.1.0",
+    "primus-emit": "1.0.0",
+    "primus-spark-latency": "0.1.1",
+    "ws": "1.1.5",
+    "websocket": "1.0.30",
+    "express": "4.17.1",
+    "pg": "7.12.1",
+    "lodash": "3.10.1",
+    "geoip-lite": "1.2.1"
+  },
+  "source_sha256": {
+    "server.js": "540c04c732dc3d929e1cfea3bed422544324c59b2a358b252cae4ce1601d4b48",
+    "lib/deployment-config.js": "ee3d03f3b4c9a54b96efc97c92e62a0d5aa59c22c576ca4f743e5887f80114d5",
+    "lib/telemetry-credentials.js": "658711cace5b3b3526329877edd8394d74d5766987823fafa4684faea4989804",
+    "db/index.js": "460114bc95969edd267c2d68afc2aa8261da46309170cce6d5346b2a27b02eb2",
+    "api-server/server.js": "b12f0723b83e49df823f43e2c6c576f24cb9e47615f398a7ad634987dc81ce99",
+    "wsclient/wsclient.js": "dbbbb35d08d0f6ae5968f07d5b5a13ae9c5d710f981bded09ad32f0caa529b04",
+    "react-frontend/src/config.js": "2c40a18267115192fa3308454eeba6c932c63962f43aba38b99190befc548ec4",
+    "react-frontend/src/Components/Main.js": "1949fc3e83cf908ef49f828b97244b9b97af2dae6e67c28fd5187ad37b3f4dc4",
+    "package.json": "bedc5f20d3c820f2ff505b7c7c368197b124ed3ce144cb4c1b67282de7940e6a",
+    "package-lock.json": "3e911183e108ace38bbab66670cfc921b49c402c5b136d5c80b9bcbc5e993c18",
+    "react-frontend/package-lock.json": "7d678ee38b5bf2eddc953672b2afa2ffeacfe9146e13668182ac42564f24a465",
+    "test/collector.test.cjs": "7caec372d1c4ca829ef19aae150f8ec8181a6ea5003333df54f873d84382079b",
+    "test/telemetry-credentials.test.cjs": "d2ffe85dc53aa7266d3cf36f53a16635b884dd3e8c72abcdf9d4c1cfa04ec9bd",
+    "test/telemetry-wire.test.cjs": "a851d2d9643f1ae08e3efbf29c7b8f05befe78596293f213b3c5ddececcbf6a9",
+    "test/deployment-config.test.cjs": "9756fe6b3b400407de3c5a993a50114199bd0885ac488d9fa59bca37fde09fbf",
+    "test/deployment-wiring.test.cjs": "3c057aa818b1b151ce2e0d401c7d77257c9ff29c99918999ddf538c95f489686",
+    "test/fixtures/collector.cjs": "6580f6c0a02a30d5e1a610acc274c41e7fb7e619e4b718db068a68a9c3dc1eb5",
+    "test/fixtures/wire-server.cjs": "d3d9c53db56d0286577b9f55657b695eb4951279c7422714c6bbd782502910dd"
+  },
+  "commands": [
+    {
+      "name": "syntax-1",
+      "command": [
+        "node",
+        "--check",
+        "server.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "syntax-2",
+      "command": [
+        "node",
+        "--check",
+        "lib/deployment-config.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "syntax-3",
+      "command": [
+        "node",
+        "--check",
+        "db/index.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "syntax-4",
+      "command": [
+        "node",
+        "--check",
+        "api-server/server.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "syntax-5",
+      "command": [
+        "node",
+        "--check",
+        "wsclient/wsclient.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "syntax-6",
+      "command": [
+        "node",
+        "--check",
+        "react-frontend/src/config.js"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "contracts",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "test/collector.test.cjs",
+        "test/telemetry-credentials.test.cjs",
+        "test/deployment-config.test.cjs",
+        "test/deployment-wiring.test.cjs"
+      ],
+      "exit": 1
+    },
+    {
+      "name": "wire",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "test/telemetry-wire.test.cjs"
+      ],
+      "exit": 0
+    }
+  ],
+  "original_source_and_status_unchanged": true,
+  "candidate_sources_unchanged_by_tests": true,
+  "all_exits_zero": false,
+  "scope": "Local configuration and startup wiring; real collector WebSocket and Express HTTP listeners on configured loopback ephemeral ports. Synthetic telemetry and stubbed API storage. No PostgreSQL server, full browser build, proxy/TLS, real chain node or public deployment."
+}
