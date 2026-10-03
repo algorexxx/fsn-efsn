@@ -1,0 +1,48 @@
+TAP version 13
+# Subtest: real collector, snapshot storage and HTTP API preserve node identity and recover
+    # Subtest: schema is nondestructive, roles are restricted and older/invalid writes cannot replace a snapshot
+    ok 1 - schema is nondestructive, roles are restricted and older/invalid writes cannot replace a snapshot
+      ---
+      duration_ms: 181.1471
+      ...
+# (node:36128) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+    # Subtest: distinct reports reach PostgreSQL and the HTTP API without cross-node metadata
+    ok 2 - distinct reports reach PostgreSQL and the HTTP API without cross-node metadata
+      ---
+      duration_ms: 1120.6488
+      ...
+    # Subtest: stored receipts survive projection and expire independently of a fresh database snapshot
+    ok 3 - stored receipts survive projection and expire independently of a fresh database snapshot
+      ---
+      duration_ms: 4.9117
+      ...
+    # Subtest: advancing chart heights survive the collector, PostgreSQL snapshot and HTTP API
+    ok 4 - advancing chart heights survive the collector, PostgreSQL snapshot and HTTP API
+      ---
+      duration_ms: 1056.8233
+      ...
+    # Subtest: writer reconnect and node disconnect replace the snapshot with fresh complete reports
+    ok 5 - writer reconnect and node disconnect replace the snapshot with fresh complete reports
+      ---
+      duration_ms: 2261.2767
+      ...
+    # Subtest: stopped ingestion becomes unavailable without clearing the last stored snapshot
+    ok 6 - stopped ingestion becomes unavailable without clearing the last stored snapshot
+      ---
+      duration_ms: 9.3365
+      ...
+    1..6
+ok 1 - real collector, snapshot storage and HTTP API preserve node identity and recover
+  ---
+  duration_ms: 5018.5349
+  ...
+1..1
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6048.1087

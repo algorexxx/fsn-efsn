@@ -63,7 +63,7 @@ can be waived merely to meet a date.
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
-| G6 Public dashboard | [Chart cache](restart-dashboard-history.md): 145 contracts, 10 socket tests and six database scenarios pass; corrected history windows and bounded forks. Earlier browser acceptance retained | Working public dashboard before public-use announcement |
+| G6 Public dashboard | [Output limits](restart-dashboard-output.md): 151 contracts, 12 socket tests and six database scenarios pass; pending collector writes bounded per connection. Earlier browser acceptance retained | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
@@ -223,8 +223,11 @@ only missing heights and reclaim abandoned forks within the 2,000-height window.
 145 contracts, 10 socket tests and six database pipeline scenarios pass.
 Retained forks are bounded by configured node identities plus the existing
 representative; this remains diagnostic
-telemetry, not chain selection. Remaining resource limits, actual efsn/RPC
-comparison, runtime review and TLS/deployment remain open.
+telemetry, not chain selection. [Output limits](restart-dashboard-output.md) now
+bound pending collector socket writes across telemetry, viewer and control
+replies: 151 contracts, 12 socket tests and six database scenarios pass.
+Actual efsn/RPC comparison, production payload/resource sizing, complete report
+validation, runtime review and proxy/TLS/deployment controls remain open.
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
 
@@ -283,8 +286,8 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order:
 
-1. G6: remaining resource limits (especially outgoing queues/slow consumers), then
-   actual efsn/RPC comparison, reviewed runtime/dependencies and TLS/deployment
+1. G6: actual efsn/RPC comparison and payload/resource sizing, then
+   complete report validation, reviewed runtime/dependencies and TLS/deployment
    acceptance. [Per-node freshness](restart-dashboard-node-freshness.md) now passes
    across the collector, stored snapshot, API and browser; the public dashboard
    gate remains open.

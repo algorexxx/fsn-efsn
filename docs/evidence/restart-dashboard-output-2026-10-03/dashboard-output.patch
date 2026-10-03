@@ -1,0 +1,533 @@
+From 57d77791acc3af21160697efb45aa854f0e66066 Mon Sep 17 00:00:00 2001
+From: Alg Ore <hyperionxxx@gmail.com>
+Date: Sat, 3 Oct 2026 15:24:50 +0200
+Subject: [PATCH] Bound collector socket output and isolate slow connections
+
+---
+ docs/chart-history.md                   |   7 +-
+ docs/collector-input-limits.md          |   5 ++
+ docs/collector-output-limits.md         |  62 +++++++++++++++
+ docs/deployment-configuration.md        |   8 +-
+ lib/collector-output.js                 |  19 +++++
+ lib/deployment-config.js                |   1 +
+ package.json                            |   4 +-
+ server.js                               |   2 +
+ test/collector-input.test.cjs           |   2 +-
+ test/collector-output-wire.test.cjs     |  75 ++++++++++++++++++
+ test/collector-output.test.cjs          | 101 ++++++++++++++++++++++++
+ test/fixtures/collector-environment.cjs |   1 +
+ test/fixtures/collector-wire.cjs        |   9 ++-
+ test/fixtures/collector.cjs             |   4 +-
+ test/fixtures/output-wire-server.cjs    |  31 ++++++++
+ 15 files changed, 319 insertions(+), 12 deletions(-)
+ create mode 100644 docs/collector-output-limits.md
+ create mode 100644 lib/collector-output.js
+ create mode 100644 test/collector-output-wire.test.cjs
+ create mode 100644 test/collector-output.test.cjs
+ create mode 100644 test/fixtures/output-wire-server.cjs
+
+diff --git a/docs/chart-history.md b/docs/chart-history.md
+index faaf8fa..9fe7f02 100644
+--- a/docs/chart-history.md
++++ b/docs/chart-history.md
+@@ -47,9 +47,10 @@ not the separate per-node freshness receipts documented in
+ [node-report-freshness.md](node-report-freshness.md).
+ 
+ This bound is not a production memory budget. N and the configured message byte
+-limit still determine possible retained size. Slow consumers, outgoing queues,
+-connection churn, HTTP/control traffic and the complete telemetry schema need
+-separate review. Legacy arrival-based block times and hashrate estimates also
++limit still determine possible retained size. Pending transport writes now have
++[an output budget](collector-output-limits.md). Connection churn, HTTP/control
++traffic rates and the complete telemetry schema need separate review.
++Legacy arrival-based block times and hashrate estimates also
+ remain diagnostic; recent reports alone do not establish chain progress.
+ 
+ Run `npm test`, `npm run test:wire` and, with an explicitly disposable PostgreSQL
+diff --git a/docs/collector-input-limits.md b/docs/collector-input-limits.md
+index 7c05a31..9e71aac 100644
+--- a/docs/collector-input-limits.md
++++ b/docs/collector-input-limits.md
+@@ -43,6 +43,11 @@ they are not a source-address quota or protection against many reconnects.
+ 
+ ## Acceptance and outstanding work
+ 
++This section records the initial ingress acceptance. Later corrections cover
++[per-node freshness](node-report-freshness.md), [chart retention](chart-history.md)
++and [pending output limits](collector-output-limits.md). Production sizing and
++proxy/deployment controls still require acceptance.
++
+ Node 22.11.0 passes 120 contracts and eight real loopback socket scenarios with
+ synthetic credentials. Tests cover login expiry, late-registration rejection,
+ input/rate/connection limits, fragmented messages, invalid envelopes, reconnects,
+diff --git a/docs/collector-output-limits.md b/docs/collector-output-limits.md
+new file mode 100644
+index 0000000..1c1a440
+--- /dev/null
++++ b/docs/collector-output-limits.md
+@@ -0,0 +1,62 @@
++# Collector output limits
++
++`COLLECTOR_MAX_BUFFERED_BYTES` is a required positive integer from 1 to
++2147483647. It caps pending bytes submitted through each collector TCP socket's
++`write` method. A write is accepted when its bytes plus `writableLength` are at
++or below the limit. A write that would exceed the limit is refused before it
++enters the queue, and that socket is destroyed. Other connections keep running.
++
++The guard is installed at TCP connection creation, before WebSocket upgrades.
++Strings are encoded into buffers first so multibyte text counts as bytes.
++Accepted writes preserve native return values, callbacks and backpressure.
++Refused writes return false and asynchronously report an error if a callback
++was supplied. Draining the queue restores capacity; this is not a lifetime or
++message-rate quota. There is no additional application queue or retry timer.
++
++In the pinned Primus 6.1.0 / ws 1.1.5 path, compression is disabled and outgoing
++JSON is encoded synchronously. Data frames, Primus replies, WebSocket control
++replies and close frames all use the guarded socket writes. This covers `/api`,
++`/primus` and `/external`, including replies that bypass the application event
++limiter. Large frames can use separate header and payload writes: if their
++payload cannot fit, the connection closes even if a header has already left.
++
++Peers observe abnormal closure code 1006. This deliberately avoids relying on
++the old library's close-handshake timeout while output is stuck. A producer's
++disconnect releases its telemetry identity and marks it disconnected. After
++reconnecting it must authenticate and send fresh reports. The snapshot writer
++uses its existing reconnect path; there is no attempt to replay queued data.
++None of this changes blockchain peer connections, keys, mining or consensus.
++
++## Sizing and scope
++
++The ordinary local fixtures use 262144 bytes. Boundary tests use smaller
++explicit budgets; these are not production recommendations. Measure the largest
++legitimate node update, complete node inventory, chart response and expected
++burst before choosing the deployed value. Account for JSON encoding and
++WebSocket framing; incoming message and snapshot-reader byte limits are separate.
++A legitimate message or snapshot too large for the budget also disconnects.
++
++This bounds the pending byte payload at the socket-write layer, not total
++process memory. Serialization and frame construction happen before the check;
++JavaScript objects, callback overhead, operating-system buffers and a reverse
++proxy have separate costs. There is no new drain deadline or connection-rate
++quota. HTTP request handling, any output path that bypasses `socket.write`,
++proxy/TLS buffers and CPU budgets require their own deployment controls. This
++claim depends on the inspected synchronous, uncompressed transport path; a
++future transport, compression or streaming change needs renewed acceptance.
++
++## Local acceptance
++
++`npm test` covers exact byte limits, multibyte strings, byte views, native
++backpressure, draining, callback behavior and startup wiring. `npm run test:wire`
++uses the real collector with a test-only corked socket to hold output
++deterministically. Two normal replies queue 6142 bytes under an 8192-byte budget;
++the next reply closes that connection without raising the observed peak. The
++healthy viewer remains usable and the producer identity reconnects.
++
++On each of the three WebSocket paths, a Primus reply followed by three ordinary
++125-byte ping payloads queues 404 bytes under a 512-byte budget. A fourth ping
++closes the connection with no increase in retained queued bytes. These tests
++use only a handful of synthetic local messages; they are not throughput tests
++or measurements of a physically slow internet connection. The corking and
++inspection controls exist only in the test fixture, not the collector.
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index e127cf8..680432c 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -20,6 +20,7 @@ acceptance. These settings are not a production launch approval.
+ | Collector | `COLLECTOR_MAX_CONNECTIONS` | Shared TCP connection cap for all collector paths |
+ | Collector | `COLLECTOR_HELLO_TIMEOUT_MS` | Maximum wait for completed telemetry registration after WebSocket connection |
+ | Collector | `COLLECTOR_MESSAGES_PER_SECOND` | Per-connection application-message refill rate and initial burst allowance |
++| Collector | `COLLECTOR_MAX_BUFFERED_BYTES` | Per-connection pending output byte budget; see [output limits](collector-output-limits.md) |
+ | Collector | `WS_CREDENTIALS_FILE` | Absolute private JSON file; see [enrollment](telemetry-enrollment.md) |
+ | Persistence | `COLLECTOR_WS_URL` | Explicit URL ending in `/primus`; local WS or WSS |
+ | API | `API_HOST` | `127.0.0.1` or `::1` |
+@@ -94,9 +95,10 @@ legacy `/external` stream automatically. The final proxy must provide certificat
+ WebSocket upgrade handling, suitable timeouts and bounded requests/connections.
+ Those deployment settings and loss/reconnect behavior still need testing.
+ 
+-Set the four collector limits in the protected environment before starting it;
+-see [collector input limits](collector-input-limits.md) for tested behavior and
+-the remaining resource limits. For a local collector test after installing the
++Set the collector input and output limits in the protected environment before
++starting it; see [collector input limits](collector-input-limits.md) and
++[output limits](collector-output-limits.md) for tested behavior and scope.
++For a local collector test after installing the
+ locked dependencies:
+ 
+ ```sh
+diff --git a/lib/collector-output.js b/lib/collector-output.js
+new file mode 100644
+index 0000000..c316f41
+--- /dev/null
++++ b/lib/collector-output.js
+@@ -0,0 +1,19 @@
++function limitCollectorOutput(server, maxBufferedBytes) {
++    server.on('connection', function (socket) {
++        const write = socket.write;
++        socket.write = function (data, encoding, callback) {
++            const chunk = typeof data === 'string' ? Buffer.from(data, typeof encoding === 'string' ? encoding : undefined) : data;
++            if (!socket.destroyed && socket.writableLength + chunk.byteLength > maxBufferedBytes) {
++                socket.destroy();
++                const complete = typeof encoding === 'function' ? encoding : callback;
++                if (typeof complete === 'function') {
++                    process.nextTick(complete, new Error('Collector output buffer limit exceeded'));
++                }
++                return false;
++            }
++            return write.call(this, chunk, encoding, callback);
++        };
++    });
++}
++
++module.exports = limitCollectorOutput;
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index 789e3ff..fb05743 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -110,6 +110,7 @@ function loadCollectorConfig(environment) {
+         maxConnections: positiveInteger(environment, 'COLLECTOR_MAX_CONNECTIONS'),
+         helloTimeoutMs: positiveInteger(environment, 'COLLECTOR_HELLO_TIMEOUT_MS'),
+         messagesPerSecond: positiveInteger(environment, 'COLLECTOR_MESSAGES_PER_SECOND'),
++        maxBufferedBytes: positiveInteger(environment, 'COLLECTOR_MAX_BUFFERED_BYTES'),
+     };
+ }
+ 
+diff --git a/package.json b/package.json
+index ef8f29b..3deb7c0 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,8 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs",
+-    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs",
++    "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+     "start": "node server.js"
+diff --git a/server.js b/server.js
+index 5ee301b..48fc5b2 100644
+--- a/server.js
++++ b/server.js
+@@ -1,6 +1,7 @@
+ var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env);
+ var listener = require('./lib/deployment-config').loadCollectorConfig(process.env);
+ var limitCollectorInput = require('./lib/collector-input');
++var limitCollectorOutput = require('./lib/collector-output');
+ var _ = require('lodash');
+ var logger = require('./lib/utils/logger');
+ var chalk = require('chalk');
+@@ -18,6 +19,7 @@ else
+     server = http.createServer();
+ 
+ server.maxConnections = listener.maxConnections;
++limitCollectorOutput(server, listener.maxBufferedBytes);
+ 
+ // Init socket vars
+ var Primus = require('primus');
+diff --git a/test/collector-input.test.cjs b/test/collector-input.test.cjs
+index d7904d4..32b7dc9 100644
+--- a/test/collector-input.test.cjs
++++ b/test/collector-input.test.cjs
+@@ -17,7 +17,7 @@ function inputFixture() {
+ }
+ 
+ test('collector input configuration has explicit finite limits and rejects missing or invalid limits', () => {
+-    assert.deepEqual(loadCollectorConfig(environment), { host: '127.0.0.1', port: 0, maxBytes: 65536, maxConnections: 16, helloTimeoutMs: 1000, messagesPerSecond: 100 });
++    assert.deepEqual(loadCollectorConfig(environment), { host: '127.0.0.1', port: 0, maxBytes: 65536, maxConnections: 16, helloTimeoutMs: 1000, messagesPerSecond: 100, maxBufferedBytes: 262144 });
+     for (const name of Object.keys(environment).filter(name => !['COLLECTOR_HOST', 'COLLECTOR_PORT'].includes(name))) {
+         for (const value of [undefined, '', '0', '-1', '1.5', ' 10', '10x', '2147483648']) {
+             assert.throws(() => loadCollectorConfig({ ...environment, [name]: value }), new RegExp(name));
+diff --git a/test/collector-output-wire.test.cjs b/test/collector-output-wire.test.cjs
+new file mode 100644
+index 0000000..f6e9e15
+--- /dev/null
++++ b/test/collector-output-wire.test.cjs
+@@ -0,0 +1,75 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const startCollector = require('./fixtures/collector-wire.cjs');
++const { secretA } = require('./fixtures/collector.cjs');
++const { connect, login, send, inventory, waitMessage } = require('./fixtures/wire-client.cjs');
++
++async function waitForWrites(server, port, expected) {
++    for (let attempt = 0; attempt < 40; attempt++) {
++        const state = await server.command({ action: 'inspect', port });
++        if (state.writes >= expected) {
++            return state;
++        }
++        await new Promise(resolve => setTimeout(resolve, 25));
++    }
++    throw new Error('Expected bounded fixture writes did not arrive');
++}
++
++test('held output disconnects only the slow telemetry session and its identity can reconnect', { timeout: 15000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_MAX_BUFFERED_BYTES: '8192' }, 'output-wire-server.cjs');
++    const viewer = connect(t, server.port, 'primus');
++    await viewer.opened;
++    const owner = connect(t, server.port, 'api');
++    await login(owner, 'node-a', secretA);
++    const port = owner.socket._socket.localPort;
++    await server.command({ action: 'cork', port });
++    for (let index = 0; index < 2; index++) {
++        send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(3000) });
++    }
++    const held = await waitForWrites(server, port, 2);
++    assert.ok(held.queued > 6000 && held.queued <= 8192);
++    assert.equal(held.destroyed, false);
++    send(owner, 'node-ping', { id: 'node-a', clientTime: 'x'.repeat(3000) });
++    assert.equal((await owner.closed)[0], 1006);
++    const stopped = await server.command({ action: 'inspect', port });
++    assert.equal(stopped.destroyed, true);
++    assert.ok(stopped.peak <= 8192);
++    await waitMessage(viewer, message => message.action === 'inactive');
++    assert.equal((await inventory(viewer))[0].uptime.lastStatus, false);
++    const replacement = connect(t, server.port, 'api');
++    await login(replacement, 'node-a', secretA);
++    send(replacement, 'node-ping', { id: 'node-a', clientTime: 'recovered' });
++    await waitMessage(replacement, message => message.emit && message.emit[0] === 'node-pong' && message.emit[1].clientTime === 'recovered');
++    assert.equal((await inventory(viewer))[0].uptime.lastStatus, true);
++    t.diagnostic(JSON.stringify({ held, stopped }));
++    viewer.socket.close();
++    replacement.socket.close();
++    await Promise.all([viewer.closed, replacement.closed]);
++    await server.stop();
++});
++
++test('Primus and WebSocket control replies share the same output budget on every collector path', { timeout: 15000 }, async t => {
++    const server = await startCollector(t, { COLLECTOR_MAX_BUFFERED_BYTES: '512', COLLECTOR_HELLO_TIMEOUT_MS: '5000' }, 'output-wire-server.cjs');
++    for (const endpoint of ['api', 'primus', 'external']) {
++        const connection = connect(t, server.port, endpoint);
++        await connection.opened;
++        const port = connection.socket._socket.localPort;
++        await server.command({ action: 'cork', port });
++        connection.socket.send(JSON.stringify('primus::id::'));
++        const protocol = await waitForWrites(server, port, 1);
++        assert.ok(protocol.queued > 0 && protocol.queued < 128);
++        for (let index = 0; index < 3; index++) {
++            connection.socket.ping(Buffer.alloc(125));
++        }
++        const held = await waitForWrites(server, port, 4);
++        assert.equal(held.queued, protocol.queued + 381);
++        assert.equal(held.destroyed, false);
++        connection.socket.ping(Buffer.alloc(125));
++        assert.equal((await connection.closed)[0], 1006);
++        const stopped = await server.command({ action: 'inspect', port });
++        assert.equal(stopped.destroyed, true);
++        assert.ok(stopped.peak <= 512);
++        t.diagnostic(JSON.stringify({ endpoint, protocol, held, stopped }));
++    }
++    await server.stop();
++});
+diff --git a/test/collector-output.test.cjs b/test/collector-output.test.cjs
+new file mode 100644
+index 0000000..829271c
+--- /dev/null
++++ b/test/collector-output.test.cjs
+@@ -0,0 +1,101 @@
++const assert = require('node:assert/strict');
++const { test } = require('node:test');
++const { Writable } = require('node:stream');
++const { EventEmitter, once } = require('node:events');
++const limitCollectorOutput = require('../lib/collector-output');
++const { loadCollector } = require('./fixtures/collector.cjs');
++
++function stream(t, server) {
++    const writes = [];
++    const socket = new Writable({ highWaterMark: 4, write(chunk, encoding, callback) { writes.push(chunk.toString('hex')); callback(); } });
++    socket.on('error', () => {});
++    socket.cork();
++    server.emit('connection', socket);
++    t.after(() => socket.destroy());
++    return { socket, writes };
++}
++
++test('the exact queue budget accepts buffers and multibyte strings with native backpressure', async t => {
++    const server = new EventEmitter();
++    limitCollectorOutput(server, 8);
++    const { socket, writes } = stream(t, server);
++    const callbacks = [];
++
++    const accepted = [socket.write(Buffer.from('abcd'), error => callbacks.push(error ? error.message : 'ok')), socket.write('ÅÅ', 'utf8', error => callbacks.push(error ? error.message : 'ok'))];
++    const queued = socket.writableLength;
++    socket.uncork();
++    await new Promise(resolve => socket.end(resolve));
++
++    assert.deepEqual({ accepted, queued, writes, callbacks }, { accepted: [false, false], queued: 8, writes: ['61626364', 'c385c385'], callbacks: ['ok', 'ok'] });
++});
++
++test('one byte above the budget closes only that stream before enqueueing the new write', async t => {
++    const server = new EventEmitter();
++    limitCollectorOutput(server, 8);
++    const a = stream(t, server);
++    const b = stream(t, server);
++    a.socket.write(Buffer.alloc(8));
++    const closed = once(a.socket, 'close');
++    let result;
++
++    const error = await new Promise(resolve => { result = a.socket.write(Buffer.alloc(1), resolve); });
++    await closed;
++    b.socket.write('ok');
++    const other = { queued: b.socket.writableLength, destroyed: b.socket.destroyed };
++    b.socket.uncork();
++    await new Promise(resolve => b.socket.end(resolve));
++
++    assert.deepEqual({ result, error: error.message, destroyed: a.socket.destroyed, sent: a.writes, other, otherWrites: b.writes }, { result: false, error: 'Collector output buffer limit exceeded', destroyed: true, sent: [], other: { queued: 2, destroyed: false }, otherWrites: ['6f6b'] });
++});
++
++test('a single oversized write fails its callback asynchronously without writing payload bytes', async t => {
++    const server = new EventEmitter();
++    limitCollectorOutput(server, 4);
++    const { socket, writes } = stream(t, server);
++    let synchronous = true;
++    let callbackWasSynchronous;
++
++    const completed = new Promise(resolve => socket.write('ÅÅÅ', 'utf8', error => { callbackWasSynchronous = synchronous; resolve(error); }));
++    synchronous = false;
++    const error = await completed;
++
++    assert.deepEqual({ error: error.message, callbackWasSynchronous, destroyed: socket.destroyed, writes }, { error: 'Collector output buffer limit exceeded', callbackWasSynchronous: false, destroyed: true, writes: [] });
++});
++
++test('draining output restores the full byte budget rather than accumulating a lifetime quota', async t => {
++    const server = new EventEmitter();
++    limitCollectorOutput(server, 4);
++    const { socket, writes } = stream(t, server);
++    socket.uncork();
++
++    await new Promise(resolve => socket.write(Buffer.from('abcd'), resolve));
++    const afterFirst = socket.writableLength;
++    await new Promise(resolve => socket.write(Buffer.from('efgh'), resolve));
++
++    assert.deepEqual({ afterFirst, afterSecond: socket.writableLength, destroyed: socket.destroyed, writes }, { afterFirst: 0, afterSecond: 0, destroyed: false, writes: ['61626364', '65666768'] });
++});
++
++test('typed byte views count their visible bytes and refused writes need no callback', t => {
++    const server = new EventEmitter();
++    limitCollectorOutput(server, 2);
++    const { socket } = stream(t, server);
++
++    const accepted = socket.write(new Uint8Array([1, 2, 3, 4]).subarray(1, 3));
++    const queued = socket.writableLength;
++    const refused = socket.write(Buffer.from([9]));
++
++    assert.deepEqual({ accepted, queued, refused, destroyed: socket.destroyed }, { accepted: true, queued: 2, refused: false, destroyed: true });
++});
++
++test('collector requires an explicit output budget and attaches the guard before listening', t => {
++    const invalid = loadCollector(t, { environment: { COLLECTOR_MAX_BUFFERED_BYTES: undefined } });
++    const collector = loadCollector(t, { environment: { COLLECTOR_MAX_BUFFERED_BYTES: '2' } });
++    const { socket } = stream(t, collector.server);
++
++    const accepted = socket.write('abc');
++
++    assert.match(invalid.startupError.message, /COLLECTOR_MAX_BUFFERED_BYTES/);
++    assert.equal(invalid.listening, false);
++    assert.equal(collector.startupError, undefined);
++    assert.deepEqual({ accepted, destroyed: socket.destroyed }, { accepted: false, destroyed: true });
++});
+diff --git a/test/fixtures/collector-environment.cjs b/test/fixtures/collector-environment.cjs
+index 663944c..a4e3d68 100644
+--- a/test/fixtures/collector-environment.cjs
++++ b/test/fixtures/collector-environment.cjs
+@@ -5,4 +5,5 @@ module.exports = {
+     COLLECTOR_MAX_CONNECTIONS: '16',
+     COLLECTOR_HELLO_TIMEOUT_MS: '1000',
+     COLLECTOR_MESSAGES_PER_SECOND: '100',
++    COLLECTOR_MAX_BUFFERED_BYTES: '262144',
+ };
+diff --git a/test/fixtures/collector-wire.cjs b/test/fixtures/collector-wire.cjs
+index ce69927..e8f4655 100644
+--- a/test/fixtures/collector-wire.cjs
++++ b/test/fixtures/collector-wire.cjs
+@@ -5,9 +5,9 @@ const { join } = require('node:path');
+ const environment = require('./collector-environment.cjs');
+ const { credentialFile, secretA, secretB } = require('./collector.cjs');
+ 
+-async function startCollector(t, settings = {}) {
++async function startCollector(t, settings = {}, fixture = 'wire-server.cjs') {
+     const file = credentialFile(t, { 'node-a': secretA, 'node-b': secretB });
+-    const child = fork(join(__dirname, 'wire-server.cjs'), [], {
++    const child = fork(join(__dirname, fixture), [], {
+         env: { SystemRoot: process.env.SystemRoot, NODE_ENV: 'production', VERBOSITY: '2', WS_CREDENTIALS_FILE: file, ...environment, ...settings },
+         stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+     });
+@@ -26,6 +26,11 @@ async function startCollector(t, settings = {}) {
+     assert.equal(address.address, '127.0.0.1');
+     return {
+         port: address.port,
++        async command(message) {
++            const response = once(child, 'message');
++            child.send(message);
++            return (await response)[0];
++        },
+         async waitForConnections(expected) {
+             for (let attempt = 0; attempt < 40; attempt++) {
+                 const response = once(child, 'message');
+diff --git a/test/fixtures/collector.cjs b/test/fixtures/collector.cjs
+index 06b0e18..a72cffa 100644
+--- a/test/fixtures/collector.cjs
++++ b/test/fixtures/collector.cjs
+@@ -3,6 +3,7 @@ const { readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } = requ
+ const { join } = require('node:path');
+ const { tmpdir } = require('node:os');
+ const vm = require('node:vm');
++const { EventEmitter } = require('node:events');
+ const loadTelemetryCredentials = require('../../lib/telemetry-credentials');
+ const collectorEnvironment = require('./collector-environment.cjs');
+ 
+@@ -21,7 +22,7 @@ function credentialFile(t, value, raw = false) {
+ function loadCollector(t, options = {}) {
+     const file = credentialFile(t, options.credentials || { 'node-a': secretA, 'node-b': secretB });
+     const result = { calls: [], logs: [], sockets: new Map(), listening: false, registrations: [], timers: new Map() };
+-    const server = { listen(port, host) { result.listening = true; result.listener = { port, host }; } };
++    const server = Object.assign(new EventEmitter(), { listen(port, host) { result.listening = true; result.listener = { port, host }; } });
+     result.server = server;
+     class Primus {
+         constructor(_, config) {
+@@ -66,6 +67,7 @@ function loadCollector(t, options = {}) {
+         './lib/telemetry-credentials': loadTelemetryCredentials,
+         './lib/deployment-config': require('../../lib/deployment-config'),
+         './lib/collector-input': require('../../lib/collector-input'),
++        './lib/collector-output': require('../../lib/collector-output'),
+         lodash: { isUndefined: value => value === undefined, now: () => 1234 },
+         './lib/utils/logger': {},
+         './lib/utils/config': { banned: options.banned || [] },
+diff --git a/test/fixtures/output-wire-server.cjs b/test/fixtures/output-wire-server.cjs
+new file mode 100644
+index 0000000..410f51d
+--- /dev/null
++++ b/test/fixtures/output-wire-server.cjs
+@@ -0,0 +1,31 @@
++const server = require('../../server');
++const sockets = new Map();
++server.on('connection', socket => {
++    const record = { socket, writes: 0, peak: 0 };
++    sockets.set(socket.remotePort, record);
++    const write = socket.write;
++    socket.write = function (...args) {
++        const result = write.apply(this, args);
++        record.writes++;
++        record.peak = Math.max(record.peak, socket.writableLength);
++        return result;
++    };
++});
++server.on('listening', () => process.send(server.address()));
++process.on('message', message => {
++    if (message === 'stop') {
++        server.close(() => process.exit(0));
++        return;
++    }
++    if (message === 'connections') {
++        server.getConnections((error, count) => process.send({ connections: count }));
++        return;
++    }
++    const record = sockets.get(message.port);
++    if (message.action === 'cork') {
++        record.socket.cork();
++        record.writes = 0;
++        record.peak = 0;
++    }
++    process.send({ queued: record.socket.writableLength, peak: record.peak, writes: record.writes, destroyed: record.socket.destroyed });
++});
