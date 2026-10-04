@@ -1,0 +1,8 @@
+=== RUN   TestPreservedReplayHeadReadOnly
+INFO [10-04|21:03:13.724] Allocated cache and file handles         database=/mnt/fusion-3600000-resume-source cache=512.00MiB handles=128 readonly=true
+INFO [10-04|21:03:25.001] Allocated cache and file handles         database=/mnt/fusion-3600000-resume-closed cache=128.00MiB handles=64  readonly=true
+    replay_inspection_linux_test.go:29: read-only resume preflight matched height=3600000 hash=0x1013c88fb0a8be3b78a0a3acdb287f6e9a6f65e81353aadaccac7a580a5a1c74
+INFO [10-04|21:03:25.297] Allocated cache and file handles         database=/mnt/fusion-3600000-resume-closed cache=128.00MiB handles=64  readonly=true
+    replay_inspection_linux_test.go:41: closed replay matched: height=3600000 hash=0x1013c88fb0a8be3b78a0a3acdb287f6e9a6f65e81353aadaccac7a580a5a1c74 root=0xff355f1211571f85f3f3c6731db375c6d7c581a8e0c70db1f82382752f3ca0e8 ticketCommitment=0x09785f30d672027af83e75cb7e71882e52d84d40282d1ebc6f74a977b0fb79d1
+--- PASS: TestPreservedReplayHeadReadOnly (10.39s)
+PASS

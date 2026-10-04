@@ -3,8 +3,9 @@
 4 October 2026. This is a bounded continuation of the independently verified
 3,300,000 checkpoint with the same retained baseline and cold-check executables.
 It changes no node code and does not test historical compatibility of the
-P1–P17 candidate patches. Completion is pending until the final replay exit and
-fresh exact-height cold check both pass; startup evidence is provisional.
+P1–P17 candidate patches. **Complete after the validated continuation:** replay
+and the fresh exact-height cold check both pass. Original provisional captures,
+the monitor interruption and refused preflight remain retained below.
 
 ## Declared scope and preservation
 
@@ -39,7 +40,7 @@ samples allocated target size every 30 seconds and requests a clean stop at
 a stop. This is a sampled allowance, not a filesystem quota. The wrapper never
 starts another range automatically.
 
-## Startup evidence — final acceptance pending
+## Original startup evidence — provisional at capture
 
 The copy verified all 3,026 files / 6,521,468,908 bytes. The independent read-only
 check matched the retained 3,300,000 block hash, state root and ticket commitment
@@ -94,6 +95,32 @@ Continuation stop request:
 `resume/`, with no completion claim. Only `resume-final` after exit zero and
 the exact-height 3,600,000 cold check can complete this range. The previous
 complete checkpoint at 3,300,000 remains preserved and unchanged.
+
+## Final acceptance — complete through 3,600,000
+
+The resumed replay passed in 1,024.07 seconds and its wrapper recorded exit zero
+at 19:03:13 UTC. The separate read-only cold check passed in 10.39 seconds;
+`verified.txt` was written at 19:03:25 UTC on 4 October. Both checks agree on:
+
+| Commitment | Value |
+| --- | --- |
+| Height | 3,600,000 |
+| Block hash | `0x1013c88fb0a8be3b78a0a3acdb287f6e9a6f65e81353aadaccac7a580a5a1c74` |
+| State root | `0xff355f1211571f85f3f3c6731db375c6d7c581a8e0c70db1f82382752f3ca0e8` |
+| Ticket commitment | `0x09785f30d672027af83e75cb7e71882e52d84d40282d1ebc6f74a977b0fb79d1` |
+| Replayed active ticket count | 4,549 |
+
+The closed database occupies 7,534,972,928 allocated bytes. Final capture found
+45.84 GiB free in Linux / 93.02 GiB on D:. The resumed size monitor reported no
+errors. Its retry branches therefore remain a reviewed operational correction,
+not newly exercised failure-injection cases. The original single-attempt
+failure is retained and is not relabeled as a passing run.
+
+`resume/resume-final-capture.json` records `range_completion_claim=true` only
+after checking both successful outcomes. All raw final logs are under `resume/`.
+The unchanged baseline now has a completed checkpoint through 3,600,000, with
+the already-documented legacy shortcuts through 2,680,000. Later history and
+candidate-patch historical compatibility remain open. No next range was started.
 
 ## Execution, status and acceptance
 

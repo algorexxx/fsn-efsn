@@ -385,7 +385,7 @@ snapshot and final acceptance. `final-capture.json` records `completion_claim=tr
 only after exit code zero, the exact-height cold check and verified marker were
 present. The earlier startup capture remains explicitly provisional.
 
-## D: continuation toward 3,600,000 — running, acceptance pending
+## D: continuation through 3,600,000 — complete after monitor recovery
 
 Fresh checks later on 4 October found 58,757,775,360 free bytes inside Linux
 (54.7 GiB) and 112,664,543,232 on D: (104.9 GiB). The completed 3,300,000
@@ -439,6 +439,27 @@ New results are `/home/rehearsal/results/restart-replay-3600000-resume-v2-2026-1
 the new stop path is `/home/rehearsal/replay/STOP-baseline-mainnet-3600000-resume-v2`.
 The final exact-height cold check remains pending. Use `status.py --resume` for
 current progress; original failures and complete 3,300,000 checkpoint remain intact.
+
+Final update: the resumed replay passed in 1,024.07 seconds; its wrapper recorded
+exit zero at 19:03:13 UTC. A separate process then passed the exact-height
+read-only cold check in 10.39 seconds, writing the verified marker at
+19:03:25 UTC. Both checks match height 3,600,000 and these preserved commitments:
+
+| Commitment | Value |
+| --- | --- |
+| Block hash | `0x1013c88fb0a8be3b78a0a3acdb287f6e9a6f65e81353aadaccac7a580a5a1c74` |
+| State root | `0xff355f1211571f85f3f3c6731db375c6d7c581a8e0c70db1f82382752f3ca0e8` |
+| Ticket commitment | `0x09785f30d672027af83e75cb7e71882e52d84d40282d1ebc6f74a977b0fb79d1` |
+| Replayed active tickets | 4,549 |
+
+Final cold allocation is 7,534,972,928 bytes. The final evidence capture found
+45.84 GiB Linux / 93.02 GiB D: free, with no resumed monitor errors. The
+[completion capture](evidence/restart-replay-3600000-2026-10-04/resume/resume-final-capture.json)
+records true only after checking both passes. The original exit-1 run remains
+a monitor interruption with a separately validated stopped head. Original data
+and previous checkpoints remain preserved. The unchanged baseline is now
+complete through 3,600,000, subject to its recorded legacy shortcuts; later
+history and patched-client compatibility remain open. No new range has started.
 
 ## Next gates
 

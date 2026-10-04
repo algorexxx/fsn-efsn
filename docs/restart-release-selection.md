@@ -15,14 +15,21 @@ acceptance and independent approval remain open. See the
 | O1 bootstrap-list trimming | Exclude `02-optional-bootstrap-trim.patch` | Optional input convenience. Use the already-tested explicit TOML list or correctly formatted CLI list. DNS support remains in P12. |
 | Recovery executable | Separate build with `03-recovery-tool.patch` after the node selection | Includes the existing signing accessor and guarded command. Do not include observer code or automatically ship a signer in the validator package. |
 | Build compatibility B1 | Remove the obsolete memory-size profiler integration and its sole module/checksum entries | The unmodified candidate fails to link with the selected compiler. This is a four-file, eight-line deletion, separate from P1–P17. |
+| Dependency correction D1 | JWT v4.4.2 to v4.5.2; one version and two checksum lines | Qualifies the two JWT advisory fixes with unchanged transitive dependencies. Existing HTTP/WS authentication and node-package race tests pass; independent review remains required. |
 | Observer, explorer gateway and dashboard | Exclude from node patches and executable dependencies | Existing diagnostics/deployment work has separate scope and release ownership. |
 | Consensus additions | No native-decode activation, ongoing finality, token confiscation or new ticket economics | Preserve the agreed restart scope. The native-decode finding still needs a release disposition; excluding a fix is not accepting its risk. |
 
 The [selection manifest](evidence/restart-release-selection-2026-10-04/selection.json)
-pins patch hashes, source inventories and every selected review ID. Use the
+pins the original P1–P17+B1 patch hashes, source inventories and review IDs. Use the
 [existing hunk map](evidence/restart-release-extraction-2026-10-04/hunk-map.json)
 with it. The investigation branch also contains excluded code, so building its
 HEAD does not reproduce this selected source.
+
+The later [D1 addendum](evidence/restart-release-jwt-2026-10-04/selection-addendum.json)
+pins the JWT dependency correction after P1–P17+B1, its complete source
+inventories and qualification results. It extends the current candidate without
+rewriting the original frozen manifest. Recovery remains a separate addition;
+O1 stays excluded. The dependency correction does not change any efsn Go file.
 
 B1 removes `debug.Memsize.Add`, the exported memsize handler, its `/memsize/`
 registration and import, and the unused dependency from `go.mod`/`go.sum`.
@@ -85,6 +92,12 @@ production selection or rewrite the original evidence. The
 [offline dependency audit](restart-release-dependencies.md) now identifies four
 node advisories and records source/binary differences. F10 remains open; no
 dependency upgrade is selected by that audit.
+
+D1 was subsequently qualified in the [JWT evidence](evidence/restart-release-jwt-2026-10-04).
+Both commands build; node-package and upstream parser race tests pass. Offline
+scans no longer report either JWT advisory, while all other finding IDs remain.
+The new node binary and unchanged recovery binary are pinned in the addendum.
+F10 and final CI/release acceptance remain open.
 
 ## Remaining release boundary
 

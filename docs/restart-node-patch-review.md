@@ -52,6 +52,14 @@ entries. B1 has no consensus effect; it remains separate from the restart fixes.
 The original extraction remains unchanged; the standalone B1 patch applies after
 it. Independent release approval and final anchor/acceptance remain open.
 
+The subsequent [D1 dependency addendum](evidence/restart-release-jwt-2026-10-04/selection-addendum.json)
+updates only JWT v4.4.2 to v4.5.2 in `go.mod` and its two checksum lines. It
+removes both JWT findings in the offline audit and passes existing node/HTTP/WS
+and upstream parser race tests. Other linked modules are unchanged; the separate
+recovery executable is identical. Review this as an RPC-authentication dependency
+correction alongside B1, not an extra consensus or ticket-economics patch.
+Independent acceptance and the remaining F10 findings stay open.
+
 ## Permanent node candidates
 
 | ID | Exact change | Why include it / necessity | Lasting effect and evidence |

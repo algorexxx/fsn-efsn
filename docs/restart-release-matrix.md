@@ -9,6 +9,11 @@ No production anchor is configured yet. The later
 excludes O1 and selects Go 1.27.1 for qualification. The dated investigation
 reference above is retained for the original matrix and is not the final release.
 
+The later [D1 addendum](evidence/restart-release-jwt-2026-10-04/selection-addendum.json)
+adds the qualified JWT dependency correction. Its node/HTTP/WS race tests,
+separate builds and offline scans pass their stated checks; other F10 findings
+and final R1 acceptance remain open. Earlier same-host repeatability predates D1.
+
 ## Scope and evidence rules
 
 The initial target is Linux amd64, full block synchronization from a verified
@@ -35,7 +40,7 @@ pin old sources, fixed result paths and disposable data prerequisites.
 
 | ID / gates | Scope and retained evidence | Final acceptance still required |
 | --- | --- | --- |
-| R1 — G2/G5 | [Source selection](restart-release-selection.md) freezes P1–P17 plus build-compatibility B1, excludes O1 and separates recovery/observer/gateway material. Go 1.27.1 builds the node twice from fresh source/cache with identical bytes; the recovery command builds separately. Sources, modules, compiler and local CGO inputs are recorded. | Close the [findings ledger](restart-release-findings.md), including dependency review; pin the final CI/build image, qualify affected tests and record CI results. Set a distinct release version and verify CLI defaults and the final compiled anchor. Local same-host reproducibility does not approve final artifacts. Go 1.21.3 remains a rehearsal toolchain only. |
+| R1 — G2/G5 | [Source selection](restart-release-selection.md) freezes P1–P17 plus build-compatibility B1 and later dependency correction D1, excludes O1 and separates recovery/observer/gateway material. Go 1.27.1 builds the node twice from fresh source/cache with identical bytes; the recovery command builds separately. Sources, modules, compiler and local CGO inputs are recorded. | Close the [findings ledger](restart-release-findings.md), including dependency review; pin the final CI/build image, qualify affected tests and record CI results. Set a distinct release version and verify CLI defaults and the final compiled anchor. Local same-host reproducibility does not approve final artifacts. Go 1.21.3 remains a rehearsal toolchain only. |
 | R2 — G1/G2 | Anchor and validation: [36 entry-point cases](restart-anchor-implementation.md), [ticket reconstruction](restart-corrections.md), [parent isolation](restart-parent-isolation.md), [cold headers](restart-cold-header-validation.md), [snapshot framing](restart-snapshot-framing.md). Covers P1/P2/P9/P16. | Rerun these fixtures with the selected source. Incompatible startup/import/header/receipt/mining paths must reject without publishing a new head; eligible heavier descendants must still win. Missing ancestors must fail. Preserve valid encoding and expiry commitments. G1 historical compatibility remains separate. Update the test that currently expects an unset mainnet anchor to require the approved exact identity when that value is selected. |
 | R3 — G2 | Persistence: [rollback](restart-anchor-implementation.md), [reorg](restart-crash-rehearsal.md), [rewind](restart-rewind-rehearsal.md), [reset/pivot](restart-reset-pivot-rehearsal.md), and P8 read-only corruption refusal. The combined small crash fixture has 14 scenarios / 46 cuts. [Larger batch evidence](restart-reorg-cost.md) passes six cases through 4,096 displaced blocks. | Rerun the 46 application-write cuts and six bounded batch cases against selected source. Fresh processes must resolve heads, canonical indexes, transactions and receipts consistently, including shorter heavier forks. Read-only corruption must not invoke repair. Keep the existing workload/budget assertions. This does not certify power loss, torn writes or arbitrary fork depth. |
 | R4 — G2 | Automatic buying and miner ownership: [controller](restart-purchase-controller.md), [16 purchase cuts](restart-purchase-crash-rehearsal.md), [eight storage-error cases](restart-purchase-storage-and-peers.md), [nonce rollback](restart-purchase-nonce-rollback.md), [bounded resend](restart-autobuy-rebroadcast.md). Covers P3/P4. | Rerun controller guards, interrupted saved-intent handling, actual miner race case and the corrected delivery continuation. Require the exact saved purchase to execute and at least two subsequent purchases per owner in the retained two-owner scenario. Do not count local queueing as inclusion or silently sign replacements. |
@@ -87,7 +92,7 @@ remediation work. Neither result completes the final matrix or independent appro
 ## Independent reviewer packet and completion
 
 Prepare one packet with: upstream and selected release commits; the small
-production diff mapped hunk-by-hunk to P1–P17/B1, with O1 excluded; separate recovery-tool diff;
+production diff mapped hunk-by-hunk to P1–P17/B1 and dependency D1, with O1 excluded; separate recovery-tool diff;
 source/build/data/anchor hashes; this matrix with final result links; the findings
 ledger; and the operator launch/stop/restore procedure. Optional observer
 code and gateway packaging must not enter the node patch set unnoticed. Shared
@@ -100,15 +105,14 @@ For each finding record the concrete trigger, affected source and matrix row,
 reproduction, severity, decision and validation of any correction. Additional AI
 review supports this work; it does not replace the agreed human review.
 
-G1 baseline replay now closes at **3,300,000**, including an independent exact-height
-cold check ([evidence](evidence/restart-replay-3300000-2026-10-04)). The unchanged
-baseline retains legacy shortcuts through 2,680,000. Execution through the accepted
-parent and historical compatibility of the selected candidate are still open;
-neither this matrix nor synthetic passes replace them. A bounded continuation
-toward 3,600,000 resumed after a monitor-requested clean stop and a successful
-read-only inspection at 3,521,056. The [range evidence](evidence/restart-replay-3600000-2026-10-04)
-retains original failures and the corrected continuation; its final replay and
-exact-height cold check remain pending.
+G1 baseline replay now closes at **3,600,000**, including an independent
+exact-height cold check. The [range evidence](evidence/restart-replay-3600000-2026-10-04)
+retains the monitor-requested clean stop, read-only inspection at 3,521,056 and
+successful continuation. The unchanged baseline retains legacy shortcuts
+through 2,680,000. Execution through the accepted parent and historical
+compatibility of the selected candidate are still open; neither this matrix
+nor synthetic passes replace them. No new range has started, and the baseline
+result does not validate the candidate patches.
 
 Next technical order: close the recorded findings and qualify the selected
 candidate/build image; continue bounded G1 replay after fresh capacity checks;

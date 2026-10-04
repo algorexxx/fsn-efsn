@@ -58,7 +58,7 @@ can be waived merely to meet a date.
 
 | Gate | Evidence already available | Remaining boundary |
 | --- | --- | --- |
-| G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,300,000; complete local package/restore | Accepted history and trust record before final construction |
+| G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,600,000; complete local package/restore | Accepted history and trust record before final construction |
 | G2 Client and supported operation | P1–P17 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Supervised launch and response | SSH and self-hosted fsn-stats selected; optional observer diagnostics available | Rehearsed manual checks and operator response before public use |
@@ -72,7 +72,7 @@ can be waived merely to meet a date.
 - [ ] Confirm immutable preservation and a separate verified recoverable copy;
   record provenance, hashes, storage health and restore ownership. Resolve the
   earlier ESXi storage-controller concern before making it a launch dependency.
-- [ ] Continue bounded baseline replay from 3,300,000 through the accepted
+- [ ] Continue bounded baseline replay from 3,600,000 through the accepted
   historical parent (backup head 15,130,080 unless better verified history is
   selected). Check capacity before each range. Record legacy checkpoint
   shortcuts explicitly and compare cold state/ticket/receipt commitments.
@@ -93,9 +93,12 @@ A further bounded range toward 3,600,000 stopped cleanly after the size monitor
 encountered disappearing LevelDB files. Independent read-only inspection passed
 at 3,521,056, matching preserved history. The [range evidence](evidence/restart-replay-3600000-2026-10-04)
 retains that failure, a refused continuation preflight and the corrected resume
-at 18:44:57 UTC. The monitor now makes three bounded measurement attempts;
-disk reserves remain unchanged and no new bulk copy was needed. Final 3,600,000
-replay/cold acceptance is pending; the last completed range remains 3,300,000.
+at 18:44:57 UTC. The continuation completed and its separate exact-height cold
+check passed at 19:03:25 UTC. The verified baseline is now **3,600,000**, retaining
+the documented legacy shortcuts through 2,680,000. Closed allocation is
+7,534,972,928 bytes; final capture found 45.84 GiB Linux / 93.02 GiB D: free.
+The monitor now makes three bounded measurement attempts; disk reserves remain
+unchanged and no new bulk copy was needed. No next range has started.
 Candidate-patch historical compatibility remains open.
 
 ## G2 — Client and supported operation
@@ -145,6 +148,11 @@ Candidate-patch historical compatibility remains open.
   disposition; the unreviewed WebSocket entry has a fixed-version discrepancy.
   No modules were upgraded. F10 remediation, lower-level finding review and
   independent acceptance remain open within the preceding review-hold item.
+- [x] Qualify [D1, the narrow JWT dependency update](evidence/restart-release-jwt-2026-10-04):
+  existing node/HTTP/WS and upstream parser race tests pass; both commands build.
+  Both JWT advisory IDs disappear from offline scans, with no other module
+  changes or new findings. The separate addendum extends the selected candidate;
+  other F10 findings and independent review remain open.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss

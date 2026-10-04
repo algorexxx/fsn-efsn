@@ -6,6 +6,11 @@ independent acceptance are not. No runtime source, module version or consensus
 rule changed during this audit. The two discovery fixture repairs are separate
 test-only work recorded in the same [evidence bundle](evidence/restart-release-followup-2026-10-04).
 
+Subsequent qualification on the same date selects **D1: JWT v4.5.2**, documented
+below. It removes both JWT findings from new offline scans; the other findings
+and independent acceptance remain open. The original audit counts and hashes
+below remain the pre-D1 record.
+
 ## Inputs and limits
 
 Official `govulncheck v1.8.0`, built with the selected Go 1.27.1 compiler, scanned
@@ -98,5 +103,30 @@ recovery workflow opens a WebSocket or that the tool is universally unaffected.
    affected R1/R7/R8/R10 acceptance. A passing scan alone does not clear F10 or
    approve a public launch.
 
-No upgrade is selected by this report. The next technical work is the bounded
-dependency remediation above alongside the separate baseline history replay.
+## D1 — JWT remediation qualified
+
+The [D1 evidence and selection addendum](evidence/restart-release-jwt-2026-10-04)
+pin v4.5.2 and a separate two-file patch. Only the JWT version and its two
+checksum lines change. Its own module manifest is unchanged and adds no
+dependencies; every other linked module is unchanged. The update incorporates
+the upstream signature-error handling and bounded token-splitting fixes.
+No efsn Go file or consensus rule changed.
+
+The existing v4.4.2 HTTP/WS authentication test passes with race detection in
+1.063 s once its missing, already-pinned test libraries are cached. With D1,
+the full `node` package passes with race detection in 1.257 s and no skips.
+Three upstream parser/splitting/padding tests pass in 1.034 s. Both commands
+build and CLI probes pass. The node binary is
+`ecfb0c6333b2ae2963f021ce77acfbf74fcdd38dbdc135b6ec5794cccf164017`;
+the recovery executable remains byte-for-byte identical to the pre-D1 build.
+
+All four offline scans completed. Both JWT advisory IDs are absent; no new
+finding IDs appear, and every other finding ID remains. Node symbol findings
+are now GO-2026-5970 and GO-2026-6278. Recovery results are unchanged. The
+original failed cache-setup attempts and actual test selectors are preserved;
+this is not a full-project test pass or new clean-cache reproducibility result.
+
+The two JWT entries are technically remediated by D1, pending independent
+review. Next: qualify the text-normalization fix, resolve the WebSocket
+fixed-version discrepancy, and finish lower-level findings/CI acceptance.
+The existing F10 release hold remains in force.

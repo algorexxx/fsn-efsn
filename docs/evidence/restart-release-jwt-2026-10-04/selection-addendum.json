@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "status": "selected-for-qualification-and-independent-review",
+  "base_selection": {
+    "path": "docs/evidence/restart-release-selection-2026-10-04/selection.json",
+    "sha256": "46678097494b4e48052ea327e6ad2b28c89560e428543039674e393ef69587d3"
+  },
+  "review_decision": {
+    "id": "D1",
+    "decision": "include",
+    "module": "github.com/golang-jwt/jwt/v4",
+    "before": "v4.4.2",
+    "after": "v4.5.2",
+    "reason": "Narrow remediation of GO-2024-3250 and GO-2025-3553; unchanged dependency manifest and all other linked modules."
+  },
+  "node_patch_order": [
+    {
+      "path": "docs/evidence/restart-release-extraction-2026-10-04/01-node.patch",
+      "sha256": "88dd6c58f102881405d1d40a1ad8a2620ec36db686915416668f544f11b72b20"
+    },
+    {
+      "path": "docs/evidence/restart-release-selection-2026-10-04/05-build-compatibility.patch",
+      "sha256": "b31d27eee6e284f3ba0d029cc04941c925b50b9b3e83348726a9f5e277820a26"
+    },
+    {
+      "path": "docs/evidence/restart-release-jwt-2026-10-04/08-jwt-dependency.patch",
+      "sha256": "0e47ba9d150310bc1d7e978b68ca1388a0d3cc5c639c3e7bb8c9aef460b2950f"
+    }
+  ],
+  "recovery_addition": {
+    "path": "docs/evidence/restart-release-extraction-2026-10-04/03-recovery-tool.patch",
+    "sha256": "bb99a7c8398edf2d75ab664427e3cedca2d857e68777edbedc538b8323dd26cd"
+  },
+  "qualification_source_inventories": {
+    "node": {
+      "path": "docs/evidence/restart-release-jwt-2026-10-04/node-inventory.json",
+      "sha256": "247cf33fbdb99c09f5036f57da906dd91ad84eb5fc6d0a6bc9565632656c72d9"
+    },
+    "recovery": {
+      "path": "docs/evidence/restart-release-jwt-2026-10-04/recovery-inventory.json",
+      "sha256": "4f1cf1cafefbb34b707c5a37e4fe6870840f122e6f8d326d9f18471d325b62c6"
+    }
+  },
+  "qualification_test_overlay": "Recovery inventory retains the previously qualified handshake test correction; discovery patch 07 is not required by this node-package test run.",
+  "upstream_module": {
+    "path": "docs/evidence/restart-release-jwt-2026-10-04/module-download.json",
+    "sha256": "cc2ae51291d9dad11228d9821ccdae2a8ea950733a63cf2c2e10cf25539df5d2"
+  },
+  "acceptance": {
+    "path": "docs/evidence/restart-release-jwt-2026-10-04/acceptance.json",
+    "sha256": "1f0b4f43a831feed94cc0b08f75ba9c383553a458cb60d58f602f9ea52c6b635"
+  },
+  "consensus_change": false,
+  "dependency_security_approval": false,
+  "independent_review_approval": false,
+  "launch_approved": false
+}
