@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 3 October 2026. Working branch: `codex/restart-investigation-wip`.
+Updated 4 October 2026. Working branch: `codex/restart-investigation-wip`.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -175,7 +175,9 @@ More discovery operators/domains can be added as participation grows.
 
 ## G6 — Public dashboard
 
-Target repository: `C:/Users/Peter/Documents/CODING/fusionfoundation/fsn-stats`.
+Target repository: `C:/Users/Peter/Documents/CODING/fsn-stats`, branch
+`codex/recovery-readiness`. See the [repository handoff](restart-dashboard-handoff.md).
+Further dashboard implementation is parked while the chain investigation resumes.
 The dashboard is included in public-launch readiness, while block production
 must continue if it is unavailable.
 
@@ -437,45 +439,27 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Domains/organization/hosts/toolchain | Final choices unselected | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
 
-Current technical order:
+Current technical order (efsn):
 
-1. G6: continue the [runtime/dependency worklist](restart-dashboard-runtime.md).
-   The [toolchain replacement](restart-dashboard-toolchain.md) passes clean
-   installation and acceptance on Linux Node 24/npm 10. Both package audits
-   report zero known advisories; the separate map Acorn path is corrected.
-   The [UI review](restart-dashboard-ui-maintenance.md) records version/peer
-   gaps and closes the saved-pin storage defect. Its map/tooltip/React migration
-   or explicit legacy-stack acceptance remains a final release decision;
-   browser coverage and lint differences remain named limitations. Hosted
-   validation is unrun.
-   The [MMDB integration](restart-dashboard-mmdb.md) now passes combined
-   acceptance. The old validator/conversion format is retired from the candidate.
-   Select explicit disabled geography in the launch manifest, or finish the
-   [data workflow](restart-dashboard-geoip-operations.md) for enabled MMDB:
-   protected downloads, archive integrity, production lookup acceptance and
-   supervised activation/recovery. Source/account selection, attribution and
-   refresh/deletion terms apply if geography is enabled. Public hosting remains
-   subject to the release gates below.
-   The [service supervision candidate](restart-dashboard-supervision.md) now
-   passes local application recovery/shutdown and separate journal rotation.
-   The [proxy lifecycle candidate](restart-dashboard-proxy-lifecycle.md) now passes
-   local crash recovery, certificate replacement/refusal and timer-driven file-log
-   reopening/retention, with full proxy and native regression acceptance.
-   Continue public host/domain and certificate issuance/renewal selection,
-   actual-host reboot and persistent-journal checks. Preserve receipt/transport
-   diagnostics and the same-host clock assumption. Review the
-   unresolved logging-probe limitation, production retry pacing and log volume using the
-   [passing mining-outage drill](restart-dashboard-mining-outage.md).
-   Approve the common deployment
-   manifest before publishing. G6 remains open; eight enrolled nodes, 64 KiB
-   heads and the 4/1/1 MiB limits remain an explicit tested candidate, with
-   sizing review required for growth.
-2. G4: bounded longer-ancestry/backlog measurement, then retention and actual
+1. G4: bounded longer-ancestry/backlog measurement, then retention and actual
    notification delivery. Keep each experiment tied to its gate's pass condition.
-3. G1: resume bounded historical execution only after fresh capacity/path checks;
+2. G1: resume bounded historical execution only after fresh capacity/path checks;
    coordinate this larger disk job with the small local work above.
-4. G2/G5/G7: select the supported release matrix, complete the public package and
+3. G2/G5/G7: select the supported release matrix, complete the public package and
    clean-machine entrant rehearsal, then finish G3/G8 with actual operator choices.
+
+G6 implementation is parked in the [standalone dashboard repository](restart-dashboard-handoff.md).
+Its existing commits, local acceptance and remaining work are preserved there.
+When dashboard work resumes, use its `docs/recovery-handoff.md` and the
+[runtime/dependency worklist](restart-dashboard-runtime.md). Public host/domain,
+certificate renewal, reboot, persistent logs, alerts, production retry/log rates,
+UI maintenance disposition and the coordinated release manifest remain open.
+Retain the unresolved journal-probe limitation and same-host clock assumption.
+Select disabled geography explicitly or finish the enabled MMDB data workflow.
+Recheck advisories and rerun acceptance on the final package. The eight-node,
+64 KiB-head and 4/1/1 MiB limits remain a tested candidate requiring sizing review
+for growth. G6 is still required before public use; it no longer drives unrelated
+dashboard expansion in the chain investigation.
 
 Deliberately outside this launch: disputed-wallet confiscation/burns, new voting
 economics, ongoing finality, automatic nonce-gap funding/repair and survival
