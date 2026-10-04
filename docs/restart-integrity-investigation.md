@@ -361,7 +361,7 @@ and wrote its verified marker at 14:45:38 UTC (16:45:38 Stockholm).
 Replay and cold inspection agree with the preserved source. The unchanged
 baseline has now executed 620,000 blocks beyond the legacy shortcut boundary;
 those earlier shortcuts remain. The size monitor reported no error. The range
-is stopped at its requested height; no further range has been launched.
+stopped at its requested height. A later continuation is recorded below.
 
 The reused runner checks the retained executable hashes, holds source and target
 runner locks, mounts original history and checkpoint read-only, and uses private
@@ -384,6 +384,39 @@ retains scripts, checksummed copy/preflight records, the provisional startup
 snapshot and final acceptance. `final-capture.json` records `completion_claim=true`
 only after exit code zero, the exact-height cold check and verified marker were
 present. The earlier startup capture remains explicitly provisional.
+
+## D: continuation toward 3,600,000 — running, acceptance pending
+
+Fresh checks later on 4 October found 58,757,775,360 free bytes inside Linux
+(54.7 GiB) and 112,664,543,232 on D: (104.9 GiB). The completed 3,300,000
+checkpoint remains preserved and mounted read-only. Its new separate copy at
+`/home/rehearsal/replay/baseline-mainnet-3600000` verified all 3,026 files and
+6,521,468,908 bytes by SHA-256, length and complete inventory after rereading.
+No W: storage or large C: copy is needed for this range.
+
+The independent read-only checkpoint check passed at exactly 3,300,000 in
+5.51 seconds, matching the block hash, state root and ticket commitment recorded
+above. The same retained baseline executable resumed at 17:40:48 UTC
+(19:40:48 Stockholm), targeting 3,600,000. The provisional capture at
+17:44:29 UTC records progress through 3,314,336, 48.60 GiB Linux / 95.96 GiB D:
+free, no size-monitor errors and a latest allocated-size sample of
+6,560,456,704 bytes. This is progress evidence, not final acceptance.
+
+The runner preserves the previous source/destination locking, executable hash
+checks, read-only source/checkpoint mounts, private network namespace, 128-block
+batch checks and 12-hour ceiling. The existing 20 GiB Linux / 50 GiB D: free-space
+reserves and sampled 20 GiB target allowance remain unchanged. It stops at the
+requested height and launches no further range automatically. The verified
+baseline remains 3,300,000 until replay exits zero and a separate fresh read-only
+exact-height 3,600,000 check passes. Candidate-patch compatibility and the rest
+of the history through 15,130,080 remain open.
+
+Live results are `/home/rehearsal/results/restart-replay-3600000-2026-10-04`;
+the clean-stop request path is
+`/home/rehearsal/replay/STOP-baseline-mainnet-3600000`.
+The [range evidence directory](evidence/restart-replay-3600000-2026-10-04)
+retains the runner and checksummed startup records with `completion_claim=false`.
+This range changes no node code and involves no real keys or signing.
 
 ## Next gates
 

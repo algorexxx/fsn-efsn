@@ -1,0 +1,81 @@
+# Baseline replay from 3,300,000 to 3,600,000
+
+4 October 2026. This is a bounded continuation of the independently verified
+3,300,000 checkpoint with the same retained baseline and cold-check executables.
+It changes no node code and does not test historical compatibility of the
+P1–P17 candidate patches. Completion is pending until the final replay exit and
+fresh exact-height cold check both pass; startup evidence is provisional.
+
+## Declared scope and preservation
+
+- Original preserved history: `/home/rehearsal/data/efsn/chaindata`, mounted read-only.
+- Retained source checkpoint: `/home/rehearsal/replay/baseline-mainnet-3300000`, mounted read-only.
+- New writable copy: `/home/rehearsal/replay/baseline-mainnet-3600000`.
+- Live results: `/home/rehearsal/results/restart-replay-3600000-2026-10-04`.
+- Clean-stop request: `/home/rehearsal/replay/STOP-baseline-mainnet-3600000`.
+
+The previous checkpoint is about 6.52 GB. Fresh preflight found 58,757,775,360
+free bytes inside Linux and 112,664,543,232 on D:. Its previous replay exit is
+zero, the verified marker is present, no baseline replay is active and the new
+target does not exist. The source checkpoint resolves to the expected directory
+and is not a symlink. This range needs no W: storage or large C: copy.
+
+The existing copy helper requires more than 30 GiB Linux / 60 GiB D: free before
+starting, then preserves 20 GiB Linux / 50 GiB D: reserves while copying. Every
+file is flushed, reread and checked for SHA-256 and length; the complete target
+inventory must match before the verified-copy marker is written. The original
+backup, prior replay checkpoints and their stop files remain intact.
+
+The runner checks both retained executable hashes, prior success markers,
+unused paths, absence of another replay and source/destination runner locks.
+Private mount/network namespaces enforce read-only source/checkpoint mounts and
+offline operation. A separate process first checks the old checkpoint at exactly
+3,300,000. Replay then verifies the copied identity/resume head and executes only
+through 3,600,000 with the existing 12-hour ceiling and 128-block batch checks.
+
+Space reserves remain 20 GiB Linux / 50 GiB D: throughout replay. The wrapper
+samples allocated target size every 30 seconds and requests a clean stop at
+20 GiB total, including the copied checkpoint. A size-monitor error also requests
+a stop. This is a sampled allowance, not a filesystem quota. The wrapper never
+starts another range automatically.
+
+## Startup evidence — final acceptance pending
+
+The copy verified all 3,026 files / 6,521,468,908 bytes. The independent read-only
+check matched the retained 3,300,000 block hash, state root and ticket commitment
+and passed in 5.51 seconds. `isolation.txt` records both source mounts read-only,
+only a down loopback interface and the expected executable/identity hashes.
+
+Replay started at 17:40:48 UTC (19:40:48 Stockholm) on 4 October. The provisional
+capture at 17:44:29 UTC records progress through 3,314,336, with 48.60 GiB free
+inside Linux and 95.96 GiB on D:. The size monitor reported no error; its latest
+sample was 6,560,456,704 allocated bytes. `startup-capture.json` explicitly records
+`completion_claim=false`. The verified baseline remains 3,300,000 until this
+range exits successfully and passes its fresh exact-height cold check.
+
+## Execution, status and acceptance
+
+```text
+wsl.exe -d FusionRehearsal -u root -- unshare --mount --net --propagation private bash /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-replay-3600000-2026-10-04/run-replay.sh
+```
+
+`status.py` reads bounded log tails and free space without opening the database.
+`collect-evidence.py startup` records the verified copy, checkpoint preflight and
+progress with `completion_claim=false`. Only after successful replay and a fresh
+read-only exact-height 3,600,000 check can `collect-evidence.py final` record
+`completion_claim=true`. Both collection modes refuse existing stage captures.
+
+Final acceptance compares canonical head, state root, ticket commitment,
+transaction/receipt commitments, bloom, cumulative difficulty and available
+state against preserved history. The independent cold checker must pass before
+the runner writes `verified.txt`. Source/runtime identity and the inherited
+legacy shortcuts through 2,680,000 remain unchanged. The rest of history through
+15,130,080 and candidate-patch historical compatibility remain separate work.
+
+Replay executable SHA-256:
+`004d4eeb16fc27e68564ff34d18b5bb1c48829cb692b98770fe7c52543d26c1e`.
+Cold-check executable SHA-256:
+`4dd9b2a105c9984d0f0d8ac154582c997e5560818d365c7ce4cef803cd552778`.
+
+No real key, signing, mining or public network connection is involved. This is
+data validation using the unchanged baseline, not authorization for a launch.

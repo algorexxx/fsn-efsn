@@ -104,7 +104,9 @@ G1 baseline replay now closes at **3,300,000**, including an independent exact-h
 cold check ([evidence](evidence/restart-replay-3300000-2026-10-04)). The unchanged
 baseline retains legacy shortcuts through 2,680,000. Execution through the accepted
 parent and historical compatibility of the selected candidate are still open;
-neither this matrix nor synthetic passes replace them.
+neither this matrix nor synthetic passes replace them. A bounded continuation
+toward 3,600,000 is running with [provisional startup evidence](evidence/restart-replay-3600000-2026-10-04);
+its final replay and exact-height cold check are pending.
 
 Next technical order: select the production hunks/build inputs and record the
 failure dispositions; continue bounded G1 replay after fresh capacity checks;

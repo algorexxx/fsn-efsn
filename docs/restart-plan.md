@@ -89,7 +89,11 @@ space/path checks. On 4 October the unchanged baseline completed 3,000,000 throu
 3,300,000 on a verified separate D:-backed ext4 copy. Replay and the independent
 exact-height cold check passed; the closed target occupies 6,527,746,048 allocated
 bytes. See the [final evidence](evidence/restart-replay-3300000-2026-10-04).
-No further range is running; candidate-patch historical compatibility remains open.
+A further bounded range toward 3,600,000 is running after fresh capacity/path
+checks and a verified separate copy. Its [startup evidence](evidence/restart-replay-3600000-2026-10-04)
+records progress through 3,314,336 at 17:44:29 UTC. Final replay/cold acceptance
+is pending; the verified baseline remains 3,300,000. Candidate-patch historical
+compatibility remains open.
 
 ## G2 — Client and supported operation
 
