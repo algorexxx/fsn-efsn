@@ -1,0 +1,101 @@
+{
+  "verified": true,
+  "unchanged_existing_source_files": 1007,
+  "extension_blocks": 4096,
+  "replacement_blocks": 64,
+  "export_sha256": "0272e31ffa4a32409cadcf60d1f901b8d6ab7c6223dbe49c8186a29f519f4622",
+  "fixture_sha256": {
+    "ipc-config.json": "1e481b5e3659662480625fa5869bec140c9fc7e101b3bfe3844597680beedc12",
+    "cold-history-export.jsonl": "dc58e5b2a0cd912a0127df1cd241037c6628e5b1a073fc96a013363a5adb333f",
+    "ledger-29.json": "3c76802c24cf9aec00fa66762fd880e661e6a084d3895e162f9d5fcb220e8720"
+  },
+  "results": {
+    "windows": {
+      "timeline_samples": [
+        {
+          "blocks": 128,
+          "logical_bytes": 408046,
+          "median_ms": 15.9862,
+          "median_allocated_bytes": 10399720
+        },
+        {
+          "blocks": 1024,
+          "logical_bytes": 2501611,
+          "median_ms": 109.1181,
+          "median_allocated_bytes": 63650832
+        },
+        {
+          "blocks": 4096,
+          "logical_bytes": 9681277,
+          "median_ms": 439.6787,
+          "median_allocated_bytes": 246370064
+        }
+      ],
+      "backfill_median_ms": 158.51805,
+      "backfill_max_ms": 267.5655,
+      "replacement_ms": 253.8006,
+      "final_logical_bytes": 9833913,
+      "closed_copy_bytes": 2913967,
+      "closed_copy_files": 8
+    },
+    "linux": {
+      "timeline_samples": [
+        {
+          "blocks": 128,
+          "logical_bytes": 408046,
+          "median_ms": 14.900102,
+          "median_allocated_bytes": 10234296
+        },
+        {
+          "blocks": 1024,
+          "logical_bytes": 2501611,
+          "median_ms": 109.643966,
+          "median_allocated_bytes": 62543488
+        },
+        {
+          "blocks": 4096,
+          "logical_bytes": 9681277,
+          "median_ms": 378.128638,
+          "median_allocated_bytes": 241952016
+        }
+      ],
+      "backfill_median_ms": 143.9335105,
+      "backfill_max_ms": 205.826803,
+      "replacement_ms": 187.368736,
+      "final_logical_bytes": 9833913,
+      "closed_copy_bytes": 2913980,
+      "closed_copy_files": 8
+    },
+    "linux_race": {
+      "timeline_samples": [
+        {
+          "blocks": 128,
+          "logical_bytes": 408046,
+          "median_ms": 184.167055,
+          "median_allocated_bytes": 12476336
+        },
+        {
+          "blocks": 1024,
+          "logical_bytes": 2501611,
+          "median_ms": 1073.044742,
+          "median_allocated_bytes": 78942576
+        },
+        {
+          "blocks": 4096,
+          "logical_bytes": 9681277,
+          "median_ms": 4059.67884,
+          "median_allocated_bytes": 307376592
+        }
+      ],
+      "backfill_median_ms": 1145.3565905,
+      "backfill_max_ms": 1754.871553,
+      "replacement_ms": 1597.95766,
+      "final_logical_bytes": 9833913,
+      "closed_copy_bytes": 2913980,
+      "closed_copy_files": 8
+    }
+  },
+  "consensus_validity_tested": false,
+  "rolling_retention_implemented": false,
+  "alert_delivery_tested": false
+}

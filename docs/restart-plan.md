@@ -134,10 +134,15 @@ the backup owner's funds for another participant.
 
 ## G4 — Monitoring and response
 
-- [ ] Measure a declared longer block/receipt backlog and ticket timeline,
-  including a bounded competing branch. Select collection cadence, budget and
-  retention that preserve anchor baselines, unresolved incidents, review identity
-  and displaced evidence; verify reopening and continuity across retention.
+- [x] Measure the declared longer retained backlog: the
+  [4,096-block/64-block replacement fixture](restart-observer-backlog.md) passes
+  ticket reconstruction, preserved displaced evidence and closed-copy reopening
+  on Windows/Linux and with Linux race detection. This is observer evidence,
+  not execution of a consensus-valid 4,096-block chain or production capacity.
+- [ ] Select collection cadence, budget and retention that preserve anchor
+  baselines, unresolved incidents, review identity and displaced evidence;
+  verify continuity across the selected retention procedure. Whole-history
+  copying now passes but does not free active capacity or implement rotation.
 - [ ] Capture and preserve both production wallet baselines before activity.
   Historical state is sparse; later RPC acquisition cannot be assumed possible.
 - [ ] Implement and demonstrate alert delivery, acknowledgement and collector-
@@ -441,8 +446,9 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order (efsn):
 
-1. G4: bounded longer-ancestry/backlog measurement, then retention and actual
-   notification delivery. Keep each experiment tied to its gate's pass condition.
+1. G4: select and validate retention/capacity, then actual notification delivery.
+   Reuse the passing [bounded backlog and closed-copy check](restart-observer-backlog.md);
+   extend measurements only for a changed workload bound or concrete failure.
 2. G1: resume bounded historical execution only after fresh capacity/path checks;
    coordinate this larger disk job with the small local work above.
 3. G2/G5/G7: select the supported release matrix, complete the public package and
