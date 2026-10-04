@@ -207,6 +207,18 @@ state/ticket commitments. Use the [bounded runner](../../docs/evidence/restart-a
 for the exact filter, 90-second sync limits and six-minute outer deadline;
 [results and limits](../../docs/restart-automatic-sync.md) are retained separately.
 
+`TestRestartNodeRehearsal/operator_kit` additionally requires an absolute
+`FUSION_RESTART_EFSN_COMMAND` for the separately verified console binary and
+`python3` with the existing `snapshot_package.py` beside the tests. It restores
+small synthetic data into a fresh datadir, crosses the anchor by automatic sync,
+and uses actual console commands for peer addition, funding/identity reads,
+first purchase and mining/buying controls. Both producers and their successful
+native purchases must remain canonical after settling and cold restart, with
+matching heads, commitments, nonces and saved purchase bytes. Use the
+[eight-minute bounded runner](../../docs/evidence/restart-operator-kit-2026-10-04/run-linux.sh);
+[coverage and remaining host/release checks](../../docs/restart-operator-kit-rehearsal.md)
+are explicit. It never uses a real key or preserved-history database.
+
 `TestRestartCrashBoundaries` is available on Windows and Linux, explicitly enabled
 by `FUSION_RESTART_CRASH_REHEARSAL=1`. It uses actual LevelDB with a test-only write
 wrapper, exits child processes before and after every observed write, then cold

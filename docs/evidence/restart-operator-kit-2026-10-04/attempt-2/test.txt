@@ -1,0 +1,34 @@
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/operator_kit
+    operator_kit_linux_test.go:27: small reserve anchor owner=1 initial-wei=50000000000000000000000 tickets=1 nonce=14 liquid-wei=40037500042576000000000 timelocks=[{"StartTime":1791132286,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]
+    operator_kit_linux_test.go:27: small reserve anchor owner=2 initial-wei=50000000000000000000000 tickets=2 nonce=11 liquid-wei=40022499957424000000000 timelocks=[]
+    operator_kit_linux_test.go:52: operator package pack:
+        python3: can't open file '/home/rehearsal/results/restart-operator-kit-2026-10-04-attempt-2/source/tests/restart/snapshot_package.py': [Errno 2] No such file or directory
+    operator_kit_linux_test.go:52: exit status 2
+--- FAIL: TestRestartNodeRehearsal (0.32s)
+    --- FAIL: TestRestartNodeRehearsal/operator_kit (0.32s)
+FAIL
+Command exited with non-zero status 1
+	Command being timed: "/home/rehearsal/results/restart-operator-kit-2026-10-04-attempt-2/bin/restart-tests -test.run=^TestRestartNodeRehearsal$/^operator_kit$ -test.v -test.timeout=8m"
+	User time (seconds): 0.21
+	System time (seconds): 0.12
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.34
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 97600
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 72790
+	Voluntary context switches: 651
+	Involuntary context switches: 0
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 408
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

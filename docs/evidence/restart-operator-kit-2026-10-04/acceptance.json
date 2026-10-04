@@ -1,0 +1,86 @@
+{
+  "status": "pass",
+  "scope": "local fresh-restore and actual-console operator workflow",
+  "production_changes": false,
+  "clean_machine_or_final_release_acceptance": false,
+  "node_services": "existing race-instrumented embedded harness with synthetic genesis/anchor and unlocked public keys",
+  "funding": "50000 synthetic FSN for each public test owner at genesis; not a real reserve recommendation",
+  "final_assertions": [
+    "settled and cold native receipts for every suffix purchase",
+    "first entrant purchase remains canonical",
+    "both producers and replenishment remain canonical",
+    "all three heads and state/ticket commitments agree",
+    "nonce and saved purchase bytes survive cold restart"
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "failed_setup",
+      "exit": 1,
+      "binaries_sha256": {
+        "restart-tests": "2eb82cfce1076bde5f994870885b13475fa0faaebcdd02b7f6c68f60efb8ebe9",
+        "efsn-node": "9715d949f74702a22f7c3d552ab7bb8fc5150a05f14501d4ccdbc2010b07efd6"
+      },
+      "retained_source_files": 1325,
+      "retained_source_and_binary_readback": "pass",
+      "failure": "small reserve fixture owner 1 has 0 tickets"
+    },
+    {
+      "attempt": 2,
+      "status": "failed_setup",
+      "exit": 1,
+      "binaries_sha256": {
+        "restart-tests": "36defb3cd34c85bb74fba3458a5423f1279249faf61e5bf64403e2e1c38986be",
+        "efsn-node": "9715d949f74702a22f7c3d552ab7bb8fc5150a05f14501d4ccdbc2010b07efd6"
+      },
+      "retained_source_files": 1325,
+      "retained_source_and_binary_readback": "pass",
+      "failure": "snapshot_package.py': [Errno 2] No such file or directory"
+    },
+    {
+      "attempt": 3,
+      "status": "pass",
+      "exit": 0,
+      "binaries_sha256": {
+        "restart-tests": "9e8c78c49fcdf237d658d0e99283140f903816ddd63d7b93c3b306a1371d5de1",
+        "efsn-node": "9715d949f74702a22f7c3d552ab7bb8fc5150a05f14501d4ccdbc2010b07efd6"
+      },
+      "retained_source_files": 1326,
+      "retained_source_and_binary_readback": "pass",
+      "seconds": 127.86,
+      "restored_bytes": 66233,
+      "manifest_sha256": "6b732cd96f1d09ecc97ac18159fa6122ec7600d3ea4d955f3977d7715625c2dd",
+      "anchor_hash": "0x038b790a564af246e9ca9b485d8e1e30014541d514f3d682bb5add89fc1a0c14",
+      "first_purchase": "0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a",
+      "replenished_through": 32,
+      "final_number": 35,
+      "final_hash": "0x1e715cf90e9110b0b6c7bc46c494ea7413e2bd85b16fe16c85359f4934912657",
+      "cold_processes": 2,
+      "race_reports": 0,
+      "skips": 0
+    },
+    {
+      "attempt": 4,
+      "status": "pass",
+      "exit": 0,
+      "binaries_sha256": {
+        "restart-tests": "c3aed091ccfc7bb1fbd74e01492724b951f7ae1d230dae48106a1d9a092d8488",
+        "efsn-node": "9715d949f74702a22f7c3d552ab7bb8fc5150a05f14501d4ccdbc2010b07efd6"
+      },
+      "retained_source_files": 1326,
+      "retained_source_and_binary_readback": "pass",
+      "seconds": 117.07,
+      "restored_bytes": 65563,
+      "manifest_sha256": "71dec54fcf7d2c63445e44bd903cea6c6f0b8d4b78fb0789013504da7a2dca2a",
+      "anchor_hash": "0xa7dd1f25027dff026e373988648dc4f8d9f7b345a2991d3678ef70cd0a7ceca1",
+      "first_purchase": "0xc74cd8ae89dd24ed11fb50c323c4f50917c3f3cf30f2a814437586c6ac099b3c",
+      "replenished_through": 32,
+      "final_number": 34,
+      "final_hash": "0xced42c93457cb457df9491dda5f2ff3a2729ff5066bb7409dc00d6ec4224e406",
+      "cold_processes": 2,
+      "race_reports": 0,
+      "skips": 0
+    }
+  ],
+  "final_workspace_test_inputs_match": true
+}

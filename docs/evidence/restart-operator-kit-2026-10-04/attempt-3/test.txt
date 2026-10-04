@@ -1,0 +1,353 @@
+=== RUN   TestRestartNodeRehearsal
+=== RUN   TestRestartNodeRehearsal/operator_kit
+    operator_kit_linux_test.go:27: small reserve anchor owner=1 initial-wei=50000000000000000000000 tickets=2 nonce=12 liquid-wei=40030000042576000000000 timelocks=[]
+    operator_kit_linux_test.go:27: small reserve anchor owner=2 initial-wei=50000000000000000000000 tickets=1 nonce=13 liquid-wei=40029999957424000000000 timelocks=[{"StartTime":1791132005,"EndTime":18446744073709551615,"Value":"5000000000000000000000"}]
+    operator_kit_linux_test.go:52: operator package pack:
+        {"part": 0, "bytes": 66813, "seconds": 0.01}
+        {"complete": true, "manifest_sha256": "6b732cd96f1d09ecc97ac18159fa6122ec7600d3ea4d955f3977d7715625c2dd", "parts": 1, "bytes": 66233}
+    operator_kit_linux_test.go:52: operator package restore:
+        {"restored_part": 0, "seconds": 0.0}
+        {"restored": true, "files": 5, "bytes": 66233}
+    operator_kit_linux_test.go:52: verified fresh synthetic restore: bytes=66233 manifest=6b732cd96f1d09ecc97ac18159fa6122ec7600d3ea4d955f3977d7715625c2dd; package contains only flat LevelDB files
+    operator_kit_linux_test.go:56: operator console admin.nodeInfo:
+        OPERATOR_RESULT {"id":"08e39e90f1ab12cffd8d7a9b91050ebaa15699192c26361f8b3ba5bb4b61b78bc62d9043fafebc092a507fff69632caaec14afab866c0d2f0d601a0f9e57617e","name":"anchor-lab/linux-amd64/go1.21.3","enode":"enode://08e39e90f1ab12cffd8d7a9b91050ebaa15699192c26361f8b3ba5bb4b61b78bc62d9043fafebc092a507fff69632caaec14afab866c0d2f0d601a0f9e57617e@127.0.0.1:34415?discport=0","ip":"127.0.0.1","ports":{"discovery":0,"listener":34415},"listenAddr":"127.0.0.1:34415","protocols":{"efsn":{"network":99032659,"difficulty":126,"genesis":"0x65414162f5bde71c2f9ea375ff85134e02e665a30d017daab3961772329c3656","config":{"chainId":55555,"homesteadBlock":0,"daoForkBlock":0,"eip150Block":0,"eip150Hash":"0x0000000000000000000000000000000000000000000000000000000000000000","eip155Block":0,"eip158Block":0,"byzantiumBlock":0,"constantinopleBlock":0,"petersburgBlock":0,"istanbulBlock":0,"berlinBlock":0,"londonBlock":0,"ecoBlock":0,"datong":{"period":15}},"head":"0xedb8761345322604759c3465093a6c218dfcd70cd5af203c6f1004f40338edc8"}}}
+        null
+    operator_kit_linux_test.go:57: operator console admin.nodeInfo:
+        OPERATOR_RESULT {"id":"fef545c12cb801bb685f58d489207217c26d4b381c54317c3331428df4e2594f0f80ba2f508e1aea00301c3223c68e4c36cd7f976c18bfbc696a35bf625a4fdf","name":"anchor-lab/linux-amd64/go1.21.3","enode":"enode://fef545c12cb801bb685f58d489207217c26d4b381c54317c3331428df4e2594f0f80ba2f508e1aea00301c3223c68e4c36cd7f976c18bfbc696a35bf625a4fdf@127.0.0.1:44631?discport=0","ip":"127.0.0.1","ports":{"discovery":0,"listener":44631},"listenAddr":"127.0.0.1:44631","protocols":{"efsn":{"network":99032659,"difficulty":118,"genesis":"0x65414162f5bde71c2f9ea375ff85134e02e665a30d017daab3961772329c3656","config":{"chainId":55555,"homesteadBlock":0,"daoForkBlock":0,"eip150Block":0,"eip150Hash":"0x0000000000000000000000000000000000000000000000000000000000000000","eip155Block":0,"eip158Block":0,"byzantiumBlock":0,"constantinopleBlock":0,"petersburgBlock":0,"istanbulBlock":0,"berlinBlock":0,"londonBlock":0,"ecoBlock":0,"datong":{"period":15}},"head":"0x0e3da4561c89bbe7de721513dbb737b868e0fa3a6bb87ee23c02aa34458a899e"}}}
+        null
+    operator_kit_linux_test.go:62: operator console admin.addPeer("enode://08e39e90f1ab12cffd8d7a9b91050ebaa15699192c26361f8b3ba5bb4b61b78bc62d9043fafebc092a507fff69632caaec14afab866c0d2f0d601a0f9e57617e@127.0.0.1:34415?discport=0"):
+        OPERATOR_RESULT true
+        null
+    operator_kit_linux_test.go:78: operator console ({genesis:eth.getBlock(0).hash,anchor:eth.getBlock(25).hash,syncing:eth.syncing,mining:eth.mining,autoBuy:fsn.isAutoBuyTicket(),balance:fsn.getBalance("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69",'latest'),nonce:eth.getTransactionCount("0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69",'latest')}):
+        OPERATOR_RESULT {"genesis":"0x65414162f5bde71c2f9ea375ff85134e02e665a30d017daab3961772329c3656","anchor":"0x038b790a564af246e9ca9b485d8e1e30014541d514f3d682bb5add89fc1a0c14","syncing":false,"mining":false,"autoBuy":false,"balance":"50000000000000000000000","nonce":0}
+        null
+    operator_kit_linux_test.go:82: operator console miner.start(1):
+        OPERATOR_RESULT null
+        null
+    operator_kit_linux_test.go:82: operator console (miner.startAutoBuyTicket(),{mining:eth.mining,buying:fsn.isAutoBuyTicket()}):
+        OPERATOR_RESULT {"mining":true,"buying":true}
+        null
+    operator_kit_linux_test.go:85: operator console fsntx.buyTicket({from:"0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69"}):
+        OPERATOR_RESULT "0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a"
+        null
+    operator_kit_linux_test.go:103: operator console eth.getTransactionReceipt("0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a"):
+        OPERATOR_RESULT {"blockHash":"0x521cad7e3199802827ac9ddb613e87ded27f3f7145571350c0866ec1145e5a11","blockNumber":30,"contractAddress":null,"cumulativeGasUsed":42448,"effectiveGasPrice":"2000000000","from":"0x6813eb9362372eef6200f3b1dbc3f819671cba69","gasUsed":21224,"logs":[{"address":"0xffffffffffffffffffffffffffffffffffffffff","topics":["0x0000000000000000000000000000000000000000000000000000000000000004"],"data":"0x7b2242617365223a22796f5271776f7753684772714752493d222c225469636b65744944223a22307839313761653934383532386532386631623563633631626364623637636439363664663365316366626138313837623937663436666665623335663437346231222c225469636b65744f776e6572223a22307836383133656239333632333732656566363230306633623164626333663831393637316362613639227d","blockNumber":30,"transactionHash":"0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a","transactionIndex":1,"blockHash":"0x521cad7e3199802827ac9ddb613e87ded27f3f7145571350c0866ec1145e5a11","logIndex":1,"removed":false}],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000080000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000008000000000000000000010000000000000000000000000000000000000000000000000000000000000000000","status":"0x1","to":"0xffffffffffffffffffffffffffffffffffffffff","transactionHash":"0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a","transactionIndex":1,"type":"0x0"}
+        null
+    operator_kit_linux_test.go:109: operator console miner.start(1):
+        OPERATOR_RESULT null
+        null
+    operator_kit_linux_test.go:109: operator console (miner.startAutoBuyTicket(),{mining:eth.mining,buying:fsn.isAutoBuyTicket()}):
+        OPERATOR_RESULT {"mining":true,"buying":true}
+        null
+    operator_kit_linux_test.go:120: operator console (miner.stopAutoBuyTicket(),miner.stop(),{mining:eth.mining,buying:fsn.isAutoBuyTicket()}):
+        OPERATOR_RESULT {"mining":false,"buying":false}
+        null
+    operator_kit_linux_test.go:120: operator console (miner.stopAutoBuyTicket(),miner.stop(),{mining:eth.mining,buying:fsn.isAutoBuyTicket()}):
+        OPERATOR_RESULT {"mining":false,"buying":false}
+        null
+    operator_kit_linux_test.go:122: stopped miners reached a common head unchanged for 35s; observed 2 head changes after stop; final 35 0x1e715cf90e9110b0b6c7bc46c494ea7413e2bd85b16fe16c85359f4934912657
+    operator_kit_linux_test.go:138: operator console ({number:eth.blockNumber,hash:eth.getBlock('latest').hash,mining:eth.mining,buying:fsn.isAutoBuyTicket()}):
+        OPERATOR_RESULT {"number":35,"hash":"0x1e715cf90e9110b0b6c7bc46c494ea7413e2bd85b16fe16c85359f4934912657","mining":false,"buying":false}
+        null
+    operator_kit_linux_test.go:138: operator console ({number:eth.blockNumber,hash:eth.getBlock('latest').hash,mining:eth.mining,buying:fsn.isAutoBuyTicket()}):
+        OPERATOR_RESULT {"number":35,"hash":"0x1e715cf90e9110b0b6c7bc46c494ea7413e2bd85b16fe16c85359f4934912657","mining":false,"buying":false}
+        null
+    operator_kit_linux_test.go:141: operator kit: restored height=24 anchor=0x038b790a564af246e9ca9b485d8e1e30014541d514f3d682bb5add89fc1a0c14 first purchase=0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a both replenished through=32 final=35 hash=0x1e715cf90e9110b0b6c7bc46c494ea7413e2bd85b16fe16c85359f4934912657; backup process never started, two distinct live producers and both cold commitments/lookups passed
+    node_rehearsal_linux_test.go:344: node process /tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/process-3427816223.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [10-04|19:27:33.183] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:27:33.456] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [10-04|19:27:33.456] Allocated cache and file handles         database=/tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [10-04|19:27:33.495] Persisted trie from memory database      nodes=14 size=2.10KiB time="148.242µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [10-04|19:27:33.498]  
+        INFO [10-04|19:27:33.498] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:27:33.498] Chain ID:  55555 (devnet) 
+        INFO [10-04|19:27:33.498] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [10-04|19:27:33.498]  
+        INFO [10-04|19:27:33.498] hard forks: 
+        INFO [10-04|19:27:33.498]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [10-04|19:27:33.498]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [10-04|19:27:33.498]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [10-04|19:27:33.498]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:27:33.498]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:27:33.498]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [10-04|19:27:33.498]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [10-04|19:27:33.498]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [10-04|19:27:33.498]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [10-04|19:27:33.498]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [10-04|19:27:33.498]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [10-04|19:27:33.498]  - Fusion Eco:                  0        
+        INFO [10-04|19:27:33.498]  
+        INFO [10-04|19:27:33.498]  
+        INFO [10-04|19:27:33.498] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:27:33.498]  
+        INFO [10-04|19:27:33.498] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [10-04|19:27:33.504] Loaded most recent local header          number=35 hash="1e715c…912657" td=160 age=50s
+        INFO [10-04|19:27:33.504] Loaded most recent local full block      number=35 hash="1e715c…912657" td=160 age=50s
+        INFO [10-04|19:27:33.504] Loaded most recent local fast block      number=35 hash="1e715c…912657" td=160 age=50s
+        INFO [10-04|19:27:33.504] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [10-04|19:27:33.504] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:27:33.504] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [10-04|19:27:33.504] Starting P2P networking 
+        INFO [10-04|19:27:33.505] RLPx listener up                         self="enode://fef545c12cb801bb685f58d489207217c26d4b381c54317c3331428df4e2594f0f80ba2f508e1aea00301c3223c68e4c36cd7f976c18bfbc696a35bf625a4fdf@127.0.0.1:36327?discport=0"
+        INFO [10-04|19:27:33.509] IPC endpoint opened                      url=/tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/lab.ipc
+        INFO [10-04|19:27:33.666] IPC endpoint closed                      url=/tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/lab.ipc
+        INFO [10-04|19:27:33.666] Stopping Ethereum protocol 
+        INFO [10-04|19:27:33.666] Ethereum protocol stopped 
+        INFO [10-04|19:27:33.666] Transaction pool stopped 
+        INFO [10-04|19:27:33.666] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.48s)
+        PASS
+    node_rehearsal_linux_test.go:344: node process /tmp/fsn-dense-miner-3937706051/process-2847036010.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [10-04|19:27:30.501] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:27:30.797] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [10-04|19:27:30.798] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3937706051/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [10-04|19:27:30.845] Persisted trie from memory database      nodes=14 size=2.10KiB time="320.38µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [10-04|19:27:30.851]  
+        INFO [10-04|19:27:30.851] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:27:30.852] Chain ID:  55555 (devnet) 
+        INFO [10-04|19:27:30.852] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [10-04|19:27:30.852]  
+        INFO [10-04|19:27:30.852] hard forks: 
+        INFO [10-04|19:27:30.852]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [10-04|19:27:30.852]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [10-04|19:27:30.852]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [10-04|19:27:30.852]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:27:30.852]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:27:30.852]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [10-04|19:27:30.852]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [10-04|19:27:30.852]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [10-04|19:27:30.852]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [10-04|19:27:30.852]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [10-04|19:27:30.852]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [10-04|19:27:30.852]  - Fusion Eco:                  0        
+        INFO [10-04|19:27:30.852]  
+        INFO [10-04|19:27:30.852]  
+        INFO [10-04|19:27:30.852] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:27:30.852]  
+        INFO [10-04|19:27:30.852] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=3
+        INFO [10-04|19:27:30.864] Loaded most recent local header          number=35 hash="1e715c…912657" td=160 age=47s
+        INFO [10-04|19:27:30.864] Loaded most recent local full block      number=35 hash="1e715c…912657" td=160 age=47s
+        INFO [10-04|19:27:30.864] Loaded most recent local fast block      number=35 hash="1e715c…912657" td=160 age=47s
+        INFO [10-04|19:27:30.865] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [10-04|19:27:30.865] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:27:30.865] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [10-04|19:27:30.865] Starting P2P networking 
+        INFO [10-04|19:27:30.865] RLPx listener up                         self="enode://08e39e90f1ab12cffd8d7a9b91050ebaa15699192c26361f8b3ba5bb4b61b78bc62d9043fafebc092a507fff69632caaec14afab866c0d2f0d601a0f9e57617e@127.0.0.1:39899?discport=0"
+        INFO [10-04|19:27:30.869] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3937706051/lab.ipc
+        INFO [10-04|19:27:31.078] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3937706051/lab.ipc
+        INFO [10-04|19:27:31.078] Stopping Ethereum protocol 
+        INFO [10-04|19:27:31.078] Ethereum protocol stopped 
+        INFO [10-04|19:27:31.078] Transaction pool stopped 
+        INFO [10-04|19:27:31.078] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (0.58s)
+        PASS
+    node_rehearsal_linux_test.go:344: node process /tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/process-4233300166.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [10-04|19:25:27.202] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:25:28.049] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [10-04|19:25:28.049] Allocated cache and file handles         database=/tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [10-04|19:25:28.089] Persisted trie from memory database      nodes=14 size=2.10KiB time="144.686µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [10-04|19:25:28.090]  
+        INFO [10-04|19:25:28.090] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:25:28.090] Chain ID:  55555 (devnet) 
+        INFO [10-04|19:25:28.090] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [10-04|19:25:28.090]  
+        INFO [10-04|19:25:28.090] hard forks: 
+        INFO [10-04|19:25:28.090]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [10-04|19:25:28.090]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [10-04|19:25:28.090]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [10-04|19:25:28.090]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:25:28.090]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:25:28.090]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [10-04|19:25:28.090]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [10-04|19:25:28.090]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [10-04|19:25:28.090]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [10-04|19:25:28.090]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [10-04|19:25:28.090]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [10-04|19:25:28.090]  - Fusion Eco:                  0        
+        INFO [10-04|19:25:28.090]  
+        INFO [10-04|19:25:28.090]  
+        INFO [10-04|19:25:28.090] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:25:28.090]  
+        INFO [10-04|19:25:28.090] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [10-04|19:25:28.100] Loaded most recent local header          number=24 hash="0e3da4…8a899e" td=118 age=35m23s
+        INFO [10-04|19:25:28.100] Loaded most recent local full block      number=24 hash="0e3da4…8a899e" td=118 age=35m23s
+        INFO [10-04|19:25:28.100] Loaded most recent local fast block      number=24 hash="0e3da4…8a899e" td=118 age=35m23s
+        INFO [10-04|19:25:28.106] Gasprice oracle is ignoring threshold set threshold=2
+        WARN [10-04|19:25:28.106] Mining waits for restart anchor          err="restart anchor: synchronization required through block 25 before mining"
+        INFO [10-04|19:25:28.106] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:25:28.106] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [10-04|19:25:28.106] Starting P2P networking 
+        INFO [10-04|19:25:28.107] RLPx listener up                         self="enode://fef545c12cb801bb685f58d489207217c26d4b381c54317c3331428df4e2594f0f80ba2f508e1aea00301c3223c68e4c36cd7f976c18bfbc696a35bf625a4fdf@127.0.0.1:44631?discport=0"
+        INFO [10-04|19:25:28.110] IPC endpoint opened                      url=/tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/lab.ipc
+        INFO [10-04|19:25:38.111] Block synchronisation started 
+        INFO [10-04|19:25:38.116] Downloader queue stats                   receiptTasks=0 blockTasks=0 itemSize=163.37B throttle=8192
+        INFO [10-04|19:25:38.122] Imported new chain segment               blocks=1 txs=2 mgas=0.021 elapsed=5.367ms mgasps=3.966 order=1 number=25 hash="038b79…1a0c14" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="594dba…1ffaff" parentHash="0e3da4…8a899e" time=1,791,132,725 age=33m33s cache=0.00B    ignored=1
+        INFO [10-04|19:25:38.132] Imported new chain segment               blocks=3 txs=3 mgas=0.064 elapsed=9.272ms mgasps=6.887 order=0 number=28 hash="edb876…38edc8" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="082f72…47e9de" parentHash="5b72e6…5bcf5f" time=1,791,133,085 age=27m33s cache=0.00B
+        INFO [10-04|19:25:49.012] Imported new chain segment               blocks=1 txs=1 mgas=0.021 elapsed=9.827ms mgasps=2.160 order=0 number=29 hash="c58669…6afcc0" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="d29a64…d2a8ac" parentHash="edb876…38edc8" time=1,791,134,738 cache=0.00B
+        INFO [10-04|19:25:49.123] Setting new local account                address=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69
+        INFO [10-04|19:25:49.124] Submitted transaction                    hash=0x3b82ad39927c69e6dc347fe6fb6b950b662bd6157f4f5be443ea4b2e30e4ac0a from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=0 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:00.023] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=3.517ms mgasps=12.067 order=0 number=30 hash="521cad…5e5a11" difficulty=2 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="fa18f7…8fcc80" parentHash="c58669…6afcc0" time=1,791,134,749 cache=0.00B
+        INFO [10-04|19:26:00.131] Transaction pool price threshold updated price=1
+        INFO [10-04|19:26:00.134] Commit new mining work                   number=31 sealhash="b54f48…756590" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.978ms
+        INFO [10-04|19:26:00.184] Submitted transaction                    hash=0xb0534ecc13b0011e93b251c5d13f248e4e7c81a6609913f9671314768a5fe472 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=1 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:00.185] Automatic ticket submitted; awaiting inclusion tx="b0534e…5fe472" nonce=1
+        INFO [10-04|19:26:01.134] Commit new mining work                   number=31 sealhash="ee80cd…688bda" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.723ms
+        INFO [10-04|19:26:10.999] Successfully sealed new block            number=31 sealhash="ee80cd…688bda" hash="71a8df…4097ee" difficulty=4 elapsed=9.867s
+        INFO [10-04|19:26:10.999] 🔨 mined potential block                  number=31 hash="71a8df…4097ee"
+        INFO [10-04|19:26:11.000] Automatic ticket purchase confirmed      tx="b0534e…5fe472" block="71a8df…4097ee"
+        INFO [10-04|19:26:11.007] Commit new mining work                   number=32 sealhash="ac7eb1…41469f" uncles=0 txs=0 gas=0     fees=0          elapsed=6.873ms
+        INFO [10-04|19:26:11.011] Submitted transaction                    hash=0x75ffdc8db28b25584f489e04b7bdef3bb1cae9664e73dc39d56e68206353fde5 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=2 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:11.011] Automatic ticket submitted; awaiting inclusion tx="75ffdc…53fde5" nonce=2
+        INFO [10-04|19:26:12.003] Commit new mining work                   number=32 sealhash="c0cba3…27f80a" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.922ms
+        INFO [10-04|19:26:21.001] Successfully sealed new block            number=32 sealhash="c0cba3…27f80a" hash="f1e41f…968e34" difficulty=5 elapsed=8.998s
+        INFO [10-04|19:26:21.001] 🔨 mined potential block                  number=32 hash="f1e41f…968e34"
+        INFO [10-04|19:26:21.002] Automatic ticket purchase confirmed      tx="75ffdc…53fde5" block="f1e41f…968e34"
+        INFO [10-04|19:26:21.004] Commit new mining work                   number=33 sealhash="2fd09f…1ece0c" uncles=0 txs=0 gas=0     fees=0          elapsed=2.666ms
+        INFO [10-04|19:26:21.008] Submitted transaction                    hash=0xa3900c05e4cea0695ca5d4828a26ea8f3884d442fe1be3873bfbc8571fbe7af9 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=3 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:21.008] Automatic ticket submitted; awaiting inclusion tx="a3900c…be7af9" nonce=3
+        INFO [10-04|19:26:22.005] Commit new mining work                   number=33 sealhash="0894ad…e45d39" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.149ms
+        INFO [10-04|19:26:32.001] Successfully sealed new block            number=33 sealhash="0894ad…e45d39" hash="d61ac7…416151" difficulty=6 elapsed=9.995s
+        INFO [10-04|19:26:32.001] 🔨 mined potential block                  number=33 hash="d61ac7…416151"
+        INFO [10-04|19:26:32.001] Automatic ticket purchase confirmed      tx="a3900c…be7af9" block="d61ac7…416151"
+        INFO [10-04|19:26:32.004] Commit new mining work                   number=34 sealhash="7d0c1c…02aa83" uncles=0 txs=0 gas=0     fees=0          elapsed=3.126ms
+        INFO [10-04|19:26:32.010] Submitted transaction                    hash=0x6626a2a746afa9233174e7c696f69a55e8731500ecd3b6587ec3e0e514ae9eb8 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=4 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:32.010] Automatic ticket submitted; awaiting inclusion tx="6626a2…ae9eb8" nonce=4
+        INFO [10-04|19:26:33.005] Commit new mining work                   number=34 sealhash="808d29…988e27" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.950ms
+        INFO [10-04|19:26:43.652] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.743ms mgasps=8.948  order=0 number=34 hash="ed8724…369d47" difficulty=7 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="e6db97…3ab044" parentHash="d61ac7…416151" time=1,791,134,792 cache=0.00B
+        INFO [10-04|19:26:43.653] Automatic ticket purchase confirmed      tx="6626a2…ae9eb8" block="ed8724…369d47"
+        INFO [10-04|19:26:43.655] Commit new mining work                   number=35 sealhash="579790…a5b33d" uncles=0 txs=0 gas=0     fees=0          elapsed=2.806ms
+        INFO [10-04|19:26:43.659] Submitted transaction                    hash=0x0ba5d9ddfb487b4b9bc3d0b6c21055551cacb1c68a06dcd624067f4b9326bbd4 from=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 nonce=5 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:43.659] Automatic ticket submitted; awaiting inclusion tx="0ba5d9…26bbd4" nonce=5
+        INFO [10-04|19:26:54.006] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=3.434ms mgasps=0.000  order=0 number=35 hash="1e715c…912657" difficulty=8 miner=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF root="6ad974…cea139" parentHash="ed8724…369d47" time=1,791,134,803 cache=0.00B
+        INFO [10-04|19:27:02.001] Successfully sealed new block            number=35 sealhash="579790…a5b33d" hash="1494ab…a8e2bc" difficulty=4 elapsed=18.345s
+        INFO [10-04|19:27:02.001] 🔨 mined potential block                  number=35 hash="1494ab…a8e2bc"
+        INFO [10-04|19:27:32.138] IPC endpoint closed                      url=/tmp/TestRestartNodeRehearsaloperator_kit906398443/001/fresh-node/lab.ipc
+        INFO [10-04|19:27:32.138] Stopping Ethereum protocol 
+        INFO [10-04|19:27:32.138] Ethereum protocol stopped 
+        INFO [10-04|19:27:32.139] Transaction pool stopped 
+        INFO [10-04|19:27:32.139] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (124.00s)
+        PASS
+    node_rehearsal_linux_test.go:344: node process /tmp/fsn-dense-miner-3937706051/process-1704157940.log:
+        === RUN   TestRestartNodeRehearsal
+        INFO [10-04|19:25:26.298] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:25:27.125] Allocated trie memory caches             clean=16.00MiB dirty=0.00B
+        INFO [10-04|19:25:27.125] Allocated cache and file handles         database=/tmp/fsn-dense-miner-3937706051/anchor-lab/chaindata cache=16.00MiB handles=16
+        INFO [10-04|19:25:27.152] Persisted trie from memory database      nodes=14 size=2.10KiB time="162.408µs" gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=-164.00B
+        INFO [10-04|19:25:27.154]  
+        INFO [10-04|19:25:27.154] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:25:27.154] Chain ID:  55555 (devnet) 
+        INFO [10-04|19:25:27.154] Consensus: DaTong (Ticketed proof-of-stake) 
+        INFO [10-04|19:25:27.154]  
+        INFO [10-04|19:25:27.154] hard forks: 
+        INFO [10-04|19:25:27.154]  - Homestead:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/homestead.md) 
+        INFO [10-04|19:25:27.154]  - DAO Fork:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/dao-fork.md) 
+        INFO [10-04|19:25:27.154]  - Tangerine Whistle (EIP 150): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/tangerine-whistle.md) 
+        INFO [10-04|19:25:27.154]  - Spurious Dragon/1 (EIP 155): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:25:27.154]  - Spurious Dragon/2 (EIP 158): 0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/spurious-dragon.md) 
+        INFO [10-04|19:25:27.154]  - Byzantium:                   0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/byzantium.md) 
+        INFO [10-04|19:25:27.154]  - Constantinople:              0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/constantinople.md) 
+        INFO [10-04|19:25:27.154]  - Petersburg:                  0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/petersburg.md) 
+        INFO [10-04|19:25:27.154]  - Istanbul:                    0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/istanbul.md) 
+        INFO [10-04|19:25:27.154]  - Berlin:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/berlin.md) 
+        INFO [10-04|19:25:27.154]  - London:                      0        (https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/london.md) 
+        INFO [10-04|19:25:27.154]  - Fusion Eco:                  0        
+        INFO [10-04|19:25:27.154]  
+        INFO [10-04|19:25:27.154]  
+        INFO [10-04|19:25:27.154] --------------------------------------------------------------------------------------------------------------------------------------------------------- 
+        INFO [10-04|19:25:27.154]  
+        INFO [10-04|19:25:27.154] Initialising Ethereum protocol           versions="[63 62]" network=99,032,659 dbversion=<nil>
+        INFO [10-04|19:25:27.158] Loaded most recent local header          number=28 hash="edb876…38edc8" td=126 age=27m22s
+        INFO [10-04|19:25:27.158] Loaded most recent local full block      number=28 hash="edb876…38edc8" td=126 age=27m22s
+        INFO [10-04|19:25:27.158] Loaded most recent local fast block      number=28 hash="edb876…38edc8" td=126 age=27m22s
+        INFO [10-04|19:25:27.158] Gasprice oracle is ignoring threshold set threshold=2
+        INFO [10-04|19:25:27.161] InitCheckPoints finished                 count=0 last=0
+        INFO [10-04|19:25:27.161] Starting peer-to-peer node               instance=anchor-lab/linux-amd64/go1.21.3
+        INFO [10-04|19:25:27.161] Starting P2P networking 
+        INFO [10-04|19:25:27.162] RLPx listener up                         self="enode://08e39e90f1ab12cffd8d7a9b91050ebaa15699192c26361f8b3ba5bb4b61b78bc62d9043fafebc092a507fff69632caaec14afab866c0d2f0d601a0f9e57617e@127.0.0.1:34415?discport=0"
+        INFO [10-04|19:25:27.166] IPC endpoint opened                      url=/tmp/fsn-dense-miner-3937706051/lab.ipc
+        INFO [10-04|19:25:38.306] Transaction pool price threshold updated price=1
+        WARN [10-04|19:25:38.307] Next block doesn't have ticket, wait buy ticket 
+        INFO [10-04|19:25:38.307] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [10-04|19:25:38.368] Setting new local account                address=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
+        INFO [10-04|19:25:38.368] Submitted transaction                    hash=0x5578d63637a513765edf7866bf46e7720802347ae917f60af105e6ca2cadad0b from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=17 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:25:38.368] Automatic ticket submitted; awaiting inclusion tx="5578d6…adad0b" nonce=17
+        INFO [10-04|19:25:39.309] Commit new mining work                   number=29 sealhash="c7bf79…95f648" uncles=0 txs=1 gas=21224 fees=2.1224e-05 elapsed=2.958ms
+        INFO [10-04|19:25:49.001] Successfully sealed new block            number=29 sealhash="c7bf79…95f648" hash="c58669…6afcc0" difficulty=2 elapsed=9.692s
+        INFO [10-04|19:25:49.001] 🔨 mined potential block                  number=29 hash="c58669…6afcc0"
+        INFO [10-04|19:25:49.002] Automatic ticket purchase confirmed      tx="5578d6…adad0b" block="c58669…6afcc0"
+        WARN [10-04|19:25:49.002] Next block doesn't have ticket, wait buy ticket 
+        INFO [10-04|19:25:49.002] commit work in Finalize                  err="Next block doesn't have ticket, wait buy ticket"
+        INFO [10-04|19:25:49.007] Submitted transaction                    hash=0xd16c8b6195024b76081b7bbd94fb74e8629ab9b1466854a2c5dae302b985a2d7 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=18 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:25:49.007] Automatic ticket submitted; awaiting inclusion tx="d16c8b…85a2d7" nonce=18
+        INFO [10-04|19:25:50.004] Commit new mining work                   number=30 sealhash="d4eb6c…39c98b" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.813ms
+        INFO [10-04|19:26:00.002] Successfully sealed new block            number=30 sealhash="d4eb6c…39c98b" hash="521cad…5e5a11" difficulty=2 elapsed=9.997s
+        INFO [10-04|19:26:00.002] Automatic ticket purchase confirmed      tx="d16c8b…85a2d7" block="521cad…5e5a11"
+        INFO [10-04|19:26:00.018] 🔨 mined potential block                  number=30 hash="521cad…5e5a11"
+        INFO [10-04|19:26:00.019] commit work in Finalize                  err="UpdateTickets failed: UpdateTickets: Next block have no ticket, wait buy ticket."
+        INFO [10-04|19:26:00.025] Submitted transaction                    hash=0x76e6ce77ebef197884c7bce2d1b33810c45b00b3702bebae57c6dbd18c7da717 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=19 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:00.025] Automatic ticket submitted; awaiting inclusion tx="76e6ce…7da717" nonce=19
+        INFO [10-04|19:26:01.022] Commit new mining work                   number=31 sealhash="5a1b2f…6b090d" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.780ms
+        INFO [10-04|19:26:11.006] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.615ms mgasps=9.197 order=0 number=31 hash="71a8df…4097ee" difficulty=4 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="5ae5fa…eb7d37" parentHash="521cad…5e5a11" time=1,791,134,760 cache=0.00B
+        INFO [10-04|19:26:11.006] Automatic ticket purchase confirmed      tx="76e6ce…7da717" block="71a8df…4097ee"
+        INFO [10-04|19:26:11.009] Commit new mining work                   number=32 sealhash="c845b7…3d61d2" uncles=0 txs=0 gas=0     fees=0          elapsed=2.733ms
+        INFO [10-04|19:26:11.013] Submitted transaction                    hash=0x1713a019794186fb72abfc314f616fb18f9bbb8c52d4d02942ec1f09bbb8accb from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=20 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:11.013] Automatic ticket submitted; awaiting inclusion tx="1713a0…b8accb" nonce=20
+        INFO [10-04|19:26:12.009] Commit new mining work                   number=32 sealhash="84fcd2…3934c2" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.795ms
+        INFO [10-04|19:26:21.006] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.020ms mgasps=10.559 order=0 number=32 hash="f1e41f…968e34" difficulty=5 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="6b5a3d…74b035" parentHash="71a8df…4097ee" time=1,791,134,770 cache=0.00B
+        INFO [10-04|19:26:21.007] Automatic ticket purchase confirmed      tx="1713a0…b8accb" block="f1e41f…968e34"
+        INFO [10-04|19:26:21.009] Commit new mining work                   number=33 sealhash="b56949…3adea3" uncles=0 txs=0 gas=0     fees=0          elapsed=2.290ms
+        INFO [10-04|19:26:21.012] Submitted transaction                    hash=0x94fd501e8e9fe4830aa488bb6d66b769d1847590308174a5ef2df95af0cdf05a from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=21 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:21.012] Automatic ticket submitted; awaiting inclusion tx="94fd50…cdf05a" nonce=21
+        INFO [10-04|19:26:22.010] Commit new mining work                   number=33 sealhash="3fe383…4560bb" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=2.819ms
+        INFO [10-04|19:26:32.007] Imported new chain segment               blocks=1 txs=2 mgas=0.042 elapsed=4.325ms mgasps=9.813  order=0 number=33 hash="d61ac7…416151" difficulty=6 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="61a7b1…358b6c" parentHash="f1e41f…968e34" time=1,791,134,781 cache=0.00B
+        INFO [10-04|19:26:32.007] Automatic ticket purchase confirmed      tx="94fd50…cdf05a" block="d61ac7…416151"
+        INFO [10-04|19:26:32.010] Commit new mining work                   number=34 sealhash="17186e…de3ebf" uncles=0 txs=0 gas=0     fees=0          elapsed=2.949ms
+        INFO [10-04|19:26:32.013] Submitted transaction                    hash=0x3adf794cd51ef8d4ce672201d6fbd3e494eadcfb481d4cb41133b52718d9a232 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=22 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:32.013] Automatic ticket submitted; awaiting inclusion tx="3adf79…d9a232" nonce=22
+        INFO [10-04|19:26:33.011] Commit new mining work                   number=34 sealhash="9d4de0…3744aa" uncles=0 txs=2 gas=42448 fees=4.2448e-05 elapsed=3.167ms
+        INFO [10-04|19:26:43.646] Successfully sealed new block            number=34 sealhash="9d4de0…3744aa" hash="ed8724…369d47" difficulty=7 elapsed=9.990s
+        INFO [10-04|19:26:43.646] 🔨 mined potential block                  number=34 hash="ed8724…369d47"
+        INFO [10-04|19:26:43.647] Automatic ticket purchase confirmed      tx="3adf79…d9a232" block="ed8724…369d47"
+        INFO [10-04|19:26:43.649] Commit new mining work                   number=35 sealhash="18203b…1f3ba3" uncles=0 txs=0 gas=0     fees=0          elapsed=2.603ms
+        INFO [10-04|19:26:43.655] Submitted transaction                    hash=0xe5144eafa1c9a4c1dfbc53a222d7abf8966b52cc1446dfad5365bf08850228c4 from=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF nonce=23 recipient=0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF value=0
+        INFO [10-04|19:26:43.655] Automatic ticket submitted; awaiting inclusion tx="e5144e…0228c4" nonce=23
+        INFO [10-04|19:26:54.001] Successfully sealed new block            number=35 sealhash="18203b…1f3ba3" hash="1e715c…912657" difficulty=8 elapsed=10.352s
+        INFO [10-04|19:26:54.002] 🔨 mined potential block                  number=35 hash="1e715c…912657"
+        INFO [10-04|19:27:02.005] Imported new chain segment               blocks=1 txs=0 mgas=0.000 elapsed=2.856ms mgasps=0.000  order=1 number=35 hash="1494ab…a8e2bc" difficulty=4 miner=0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69 root="b47447…810510" parentHash="ed8724…369d47" time=1,791,134,822 cache=0.00B
+        INFO [10-04|19:27:29.436] IPC endpoint closed                      url=/tmp/fsn-dense-miner-3937706051/lab.ipc
+        INFO [10-04|19:27:29.436] Stopping Ethereum protocol 
+        INFO [10-04|19:27:29.437] Ethereum protocol stopped 
+        INFO [10-04|19:27:29.437] Transaction pool stopped 
+        INFO [10-04|19:27:29.437] Blockchain manager stopped 
+        --- PASS: TestRestartNodeRehearsal (122.20s)
+        PASS
+--- PASS: TestRestartNodeRehearsal (127.86s)
+    --- PASS: TestRestartNodeRehearsal/operator_kit (127.86s)
+PASS
+	Command being timed: "/home/rehearsal/results/restart-operator-kit-2026-10-04-attempt-3/bin/restart-tests -test.run=^TestRestartNodeRehearsal$/^operator_kit$ -test.v -test.timeout=8m"
+	User time (seconds): 5.17
+	System time (seconds): 1.33
+	Percent of CPU this job got: 5%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:09.82
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 104616
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 292825
+	Voluntary context switches: 71761
+	Involuntary context switches: 118
+	Swaps: 0
+	File system inputs: 32
+	File system outputs: 1416
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

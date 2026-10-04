@@ -434,11 +434,14 @@ node list alone does not close either gate.
 
 ## G7 — Independent producers after bootstrap
 
-- [ ] Before release, publish a simple operator kit: release and data verification,
+- [x] Assemble the [draft operator kit](restart-operator-kit.md) and its bounded
+  [fresh-restore/console-entry rehearsal](restart-operator-kit-rehearsal.md).
+  Final release binary, published package and clean-host acceptance stay open.
+- [ ] Before release, publish the selected operator kit: release and data verification,
   anchor/network configuration, discovery/static fallback, full-sync readiness,
   funding/interval/gas checks, first ticket purchase, mining/auto-buy and monitoring.
   An existing ticket or exactly 5,000 liquid FSN alone is not a runway guarantee.
-- [ ] Rehearse that kit from a fresh node with a distinct test key after recovery:
+- [ ] Rehearse the final released kit on a clean host with a distinct test key after recovery:
   synchronize through the fixed anchor, buy an ordinary funded ticket, mine an
   accepted block alongside donation production, replenish and cold-restart.
   Keep the backup signer stopped. Check incompatible old-chain refusal separately.
@@ -491,9 +494,10 @@ Current technical order (efsn):
    preserving completed checkpoints and the original backup. Keep baseline and
    candidate-patch validation distinct.
 2. G2/G5/G7: use the [frozen release matrix](restart-release-matrix.md) to select
-   production hunks/build inputs and disposition findings, close complete-ancestry
-   automatic-sync coverage, then complete the public package and clean-machine
-   entrant rehearsal. Reuse retained evidence; observer/dashboard expansion is parked.
+   production hunks/build inputs and disposition findings, then complete the
+   public package and final clean-machine entrant rehearsal. The bounded
+   automatic-sync and local operator-kit workflows have retained evidence;
+   observer/dashboard expansion is parked.
 3. G3/G4/G8: finish real-artifact review, the supervised SSH/dashboard handover
    procedure and final rehearsal. External monitoring-service work is parked.
 
