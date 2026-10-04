@@ -331,7 +331,7 @@ the explicit clean-stop file is
 Scripts, startup and final evidence are retained in
 [the three-million evidence directory](evidence/restart-replay-three-million-2026-09-25).
 
-## D: continuation toward 3,300,000 — running
+## D: continuation through 3,300,000 — complete
 
 On 4 October, fresh capacity checks found about 62.2 GiB available inside Linux
 and 112.3 GiB on D:. The existing reserves permit another bounded range. The
@@ -344,7 +344,24 @@ The separate read-only checkpoint check passed at exactly 3,000,000 in 4.89
 seconds. The unchanged retained baseline executable resumed at 13:28:37 UTC
 (15:28:37 Stockholm), targeting exactly 3,300,000. The startup capture at
 13:29:50 UTC records progress through 3,004,608 and makes no completion claim.
-Final replay and separate read-only exact-height acceptance remain pending.
+Replay passed in 4,555.02 seconds. The wrapper recorded completion at
+14:45:28 UTC; the independent read-only exact-height check passed in 9.52 seconds
+and wrote its verified marker at 14:45:38 UTC (16:45:38 Stockholm).
+
+| Final checkpoint | Observed |
+| --- | --- |
+| Height | 3,300,000 |
+| Block hash | `0x74a4fb230a6ee77b9f6e8ca536d7b2e0ffb4abd9796de23ef37c7951cc31583b` |
+| State root | `0x8c54be811459cc46df46350d9b2266652806a07fe9cff87a592e42fdeb0f7045` |
+| Ticket commitment | `0xfe0cce5c894d9a202ea3a8cf751c2c1eb70436626793b33443da21300aea5143` |
+| Tickets | 4,716 |
+| Closed logical / allocated bytes | 6,521,468,908 / 6,527,746,048 |
+| Linux / D: free bytes at completion | 60,154,019,840 / 113,771,839,488 |
+
+Replay and cold inspection agree with the preserved source. The unchanged
+baseline has now executed 620,000 blocks beyond the legacy shortcut boundary;
+those earlier shortcuts remain. The size monitor reported no error. The range
+is stopped at its requested height; no further range has been launched.
 
 The reused runner checks the retained executable hashes, holds source and target
 runner locks, mounts original history and checkpoint read-only, and uses private
@@ -363,9 +380,10 @@ Live Linux results are
 the explicit clean-stop path is
 `/home/rehearsal/replay/STOP-baseline-mainnet-3300000`.
 The [range evidence directory](evidence/restart-replay-3300000-2026-10-04)
-retains scripts, checksummed copy/preflight records and the provisional startup
-snapshot. Only a successful replay followed by the exact-height cold check may
-be collected as final acceptance.
+retains scripts, checksummed copy/preflight records, the provisional startup
+snapshot and final acceptance. `final-capture.json` records `completion_claim=true`
+only after exit code zero, the exact-height cold check and verified marker were
+present. The earlier startup capture remains explicitly provisional.
 
 ## Next gates
 

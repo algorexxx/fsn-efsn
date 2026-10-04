@@ -132,6 +132,12 @@ finality rule is proposed.
 
 ## Independent review handoff
 
+The [4 October release matrix](restart-release-matrix.md) consolidates ten
+acceptance groups, existing test/runners, final-candidate gaps and inherited
+failure dispositions. Use it with this hunk inventory when preparing the
+reviewer packet. Its source reference is an investigation checkpoint, not an
+approved release; the selected small production diff remains to be assembled.
+
 The [bounded reorganization storage measurement](restart-reorg-cost.md) adds
 only opt-in tests and evidence for P5/P1: larger canonical batches, shorter
 heavier replacement, and before/after batch exits with complete cold checks.

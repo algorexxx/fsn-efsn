@@ -2,13 +2,33 @@
 
 4 October 2026. This bounded continuation uses the verified three-million
 checkpoint and unchanged retained baseline executable. It introduces no node
-runtime change. Final replay and separate cold-check results remain pending;
-startup evidence must not be treated as completed historical validation.
+runtime change. Replay and the separate exact-height cold check both passed.
+The earlier startup capture remains provisional; final acceptance is recorded
+separately in `final-capture.json`, with `completion_claim=true`.
 
 Startup is verified: 2,351 copied files / 4,988,076,554 bytes, with the separate
 three-million-block cold check passing in 4.89 seconds. Replay began at
 13:28:37 UTC (15:28:37 Stockholm). The retained 13:29:50 UTC startup capture
 records progress through 3,004,608, with `completion_claim=false`.
+
+## Final result
+
+Replay passed in 4,555.02 seconds; `finished.txt` records 14:45:28 UTC. A fresh
+read-only process passed in 9.52 seconds and `verified.txt` records 14:45:38 UTC
+(16:45:38 Stockholm). Both processes match the preserved source at exactly
+3,300,000:
+
+- Block: `0x74a4fb230a6ee77b9f6e8ca536d7b2e0ffb4abd9796de23ef37c7951cc31583b`.
+- State: `0x8c54be811459cc46df46350d9b2266652806a07fe9cff87a592e42fdeb0f7045`.
+- Ticket commitment: `0xfe0cce5c894d9a202ea3a8cf751c2c1eb70436626793b33443da21300aea5143`;
+  4,716 tickets at the replay head.
+- Closed logical size: 6,521,468,908 bytes; allocated size: 6,527,746,048 bytes.
+- Completion free space: 60,154,019,840 bytes inside Linux and 113,771,839,488 on D:.
+- `exit-code.txt` is zero; `size-monitor-errors.txt` is empty.
+
+The runner has ended. No further range is started by collection. This adds
+300,000 executed blocks above the already-passed checkpoint, bringing retained
+baseline execution beyond the legacy shortcut boundary to 620,000 blocks.
 
 ## Execution and preservation
 

@@ -58,7 +58,7 @@ can be waived merely to meet a date.
 
 | Gate | Evidence already available | Remaining boundary |
 | --- | --- | --- |
-| G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,000,000; complete local package/restore | Accepted history and trust record before final construction |
+| G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,300,000; complete local package/restore | Accepted history and trust record before final construction |
 | G2 Client and supported operation | P1–P17 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Supervised launch and response | SSH and self-hosted fsn-stats selected; optional observer diagnostics available | Rehearsed manual checks and operator response before public use |
@@ -72,7 +72,7 @@ can be waived merely to meet a date.
 - [ ] Confirm immutable preservation and a separate verified recoverable copy;
   record provenance, hashes, storage health and restore ownership. Resolve the
   earlier ESXi storage-controller concern before making it a launch dependency.
-- [ ] Continue bounded baseline replay from 3,000,000 through the accepted
+- [ ] Continue bounded baseline replay from 3,300,000 through the accepted
   historical parent (backup head 15,130,080 unless better verified history is
   selected). Check capacity before each range. Record legacy checkpoint
   shortcuts explicitly and compare cold state/ticket/receipt commitments.
@@ -85,22 +85,24 @@ Evidence: [integrity/replay](restart-integrity-investigation.md),
 [snapshot restore](restart-snapshot-restore.md),
 [surviving-node contact](restart-surviving-node.md).
 W: remains available for capacity; no new bulk workload starts without fresh
-space/path checks. On 4 October the unchanged baseline resumed from 3,000,000
-toward 3,300,000 on a verified separate D:-backed ext4 copy. The checkpoint cold
-check passed; final range acceptance is pending. See the
-[startup evidence](evidence/restart-replay-3300000-2026-10-04).
+space/path checks. On 4 October the unchanged baseline completed 3,000,000 through
+3,300,000 on a verified separate D:-backed ext4 copy. Replay and the independent
+exact-height cold check passed; the closed target occupies 6,527,746,048 allocated
+bytes. See the [final evidence](evidence/restart-replay-3300000-2026-10-04).
+No further range is running; candidate-patch historical compatibility remains open.
 
 ## G2 — Client and supported operation
 
 - [ ] Select every production hunk against upstream from the
   [P1–P17 inventory](restart-node-patch-review.md); separate node changes,
   recovery tooling, observer, packaging and inherited explorer settings.
-- [ ] Freeze a bounded final regression matrix for supported Linux deployment:
-  anchor/startup/import/rewind, ordinary purchase/mining/restart, compatible
-  reorganization, interrupted writes, discovery and returning incompatible
-  history. Reuse the bounded startup/reorganization measurements below;
-  final release/host acceptance remains. Link earlier passing cases instead of
-  repeating unchanged tests.
+- [x] Freeze the [ten-group release matrix and reviewer handoff](restart-release-matrix.md)
+  for the supported Linux restored full-sync path. It links retained evidence,
+  exact test entry points, inherited failures and final acceptance criteria.
+- [ ] Complete those groups against the selected release and hosts. The matrix
+  explicitly retains the complete-ancestry automatic-sync/unknown incompatible
+  fork gap, clean-machine operator kit and final handover rehearsal. Reuse
+  existing passing evidence; do not rerun unchanged investigations by default.
 - [x] Measure [anchor startup cost](restart-anchor-startup.md) through one million
   synthetic descendants: all 12 cases pass, including split heads and damaged
   canonical indexes. The two largest successful startup checks take about 26 s
@@ -481,9 +483,10 @@ Current technical order (efsn):
 1. G1: resume bounded historical execution after fresh capacity/path checks,
    preserving completed checkpoints and the original backup. Keep baseline and
    candidate-patch validation distinct.
-2. G2/G5/G7: select the supported release matrix, complete the public package and
-   clean-machine entrant rehearsal. Reuse retained passing evidence rather than
-   extending unrelated observer/dashboard features.
+2. G2/G5/G7: use the [frozen release matrix](restart-release-matrix.md) to select
+   production hunks/build inputs and disposition findings, close complete-ancestry
+   automatic-sync coverage, then complete the public package and clean-machine
+   entrant rehearsal. Reuse retained evidence; observer/dashboard expansion is parked.
 3. G3/G4/G8: finish real-artifact review, the supervised SSH/dashboard handover
    procedure and final rehearsal. External monitoring-service work is parked.
 
