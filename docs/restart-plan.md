@@ -139,10 +139,15 @@ the backup owner's funds for another participant.
   ticket reconstruction, preserved displaced evidence and closed-copy reopening
   on Windows/Linux and with Linux race detection. This is observer evidence,
   not execution of a consensus-valid 4,096-block chain or production capacity.
-- [ ] Select collection cadence, budget and retention that preserve anchor
-  baselines, unresolved incidents, review identity and displaced evidence;
-  verify continuity across the selected retention procedure. Whole-history
-  copying now passes but does not free active capacity or implement rotation.
+- [x] Provide an explicit [capacity-copy procedure](restart-observer-capacity.md)
+  that continues a full history in a new directory with a larger reviewed budget,
+  preserving all original events, ticket baselines and unresolved review state.
+  This adds headroom within the existing 1 GiB ceiling; it does not prune events
+  or reduce growing replay cost.
+- [ ] Select production collection cadence, headroom and retention duration that
+  preserve anchor baselines, unresolved incidents, review identity and displaced
+  evidence. Validate the chosen workload and operator response window; bounded
+  copy acceptance is not a production retention policy or rolling rotation.
 - [ ] Capture and preserve both production wallet baselines before activity.
   Historical state is sparse; later RPC acquisition cannot be assumed possible.
 - [ ] Implement and demonstrate alert delivery, acknowledgement and collector-
@@ -447,8 +452,10 @@ The last two items are post-bootstrap milestones; the first two precede release.
 Current technical order (efsn):
 
 1. G4: select and validate retention/capacity, then actual notification delivery.
-   Reuse the passing [bounded backlog and closed-copy check](restart-observer-backlog.md);
-   extend measurements only for a changed workload bound or concrete failure.
+   Reuse the passing [bounded backlog](restart-observer-backlog.md) and
+   [explicit capacity copy](restart-observer-capacity.md). Choose the deployment
+   workload/headroom and response window; extend measurements only for a changed
+   bound or concrete failure. Alert delivery and collector-loss detection remain.
 2. G1: resume bounded historical execution only after fresh capacity/path checks;
    coordinate this larger disk job with the small local work above.
 3. G2/G5/G7: select the supported release matrix, complete the public package and

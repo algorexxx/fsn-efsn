@@ -29,12 +29,13 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	timeout := flags.Duration("timeout", 0, "required positive deadline per node and comparison, e.g. 10s; not an alert threshold")
 	historyPath := flags.String("history", "", "absolute initialized observer history directory; never a node datadir")
 	initialize := flags.Bool("init-history", false, "create a new history directory from --config without contacting nodes")
-	budget := flags.Int64("history-budget", 0, "required logical byte budget for --init-history; no automatic pruning")
+	budget := flags.Int64("history-budget", 0, "required logical byte budget for --init-history or --history-copy; no automatic pruning")
+	copyPath := flags.String("history-copy", "", "copy all history to a new absolute directory with a larger budget; requires --at-sequence; source unchanged")
 	statusOnly := flags.Bool("history-status", false, "reconstruct history status without contacting nodes")
 	export := flags.Bool("history-export", false, "export metadata and original events as JSON Lines without contacting nodes")
 	action := flags.String("history-action", "", "record an operator review: acknowledge or resolve")
 	incident := flags.String("incident", "", "incident ID to review")
-	sequence := flags.Uint64("at-sequence", 0, "expected current history sequence for review")
+	sequence := flags.Uint64("at-sequence", 0, "expected current positive history sequence for review or copy")
 	reason := flags.String("reason", "", "explicit operator review reason; not a notification")
 	backfillNode := flags.String("backfill-node", "", "collect complete block/receipt evidence for this configured node into --history")
 	backfillBlocks := flags.Uint64("backfill-blocks", 0, "required backfill batch bound, from 1 through 128; requires --backfill-node")
@@ -49,12 +50,12 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 		return err
 	}
 	operations := 0
-	for _, selected := range []bool{*initialize, *statusOnly, *export, *action != "", *ticketNode != ""} {
+	for _, selected := range []bool{*initialize, *statusOnly, *export, *action != "", *ticketNode != "", *copyPath != ""} {
 		if selected {
 			operations++
 		}
 	}
-	if flags.NArg() != 0 || *budget != 0 && !*initialize || (*incident != "" || *sequence != 0 || *reason != "") && *action == "" {
+	if flags.NArg() != 0 || *budget != 0 && !*initialize && *copyPath == "" || (*incident != "" || *reason != "") && *action == "" || *sequence != 0 && *action == "" && *copyPath == "" {
 		return fmt.Errorf("invalid observer/history argument combination")
 	}
 	if (*ticketFrom != 0 || *ticketBlocks != 0) && *ticketNode == "" || *ticketNode != "" && (*ticketBlocks == 0 || *ticketBlocks > 128) {
@@ -85,6 +86,13 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 			return err
 		}
 		defer history.Close()
+		if *copyPath != "" {
+			state, err := history.CopyWithBudget(ctx, *copyPath, *budget, *sequence)
+			if err != nil {
+				return err
+			}
+			return writeJSON(output, state)
+		}
 		if *export {
 			return history.Export(output)
 		}

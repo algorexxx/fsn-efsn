@@ -123,9 +123,12 @@ The explicit budget bounds logical key/value bytes, with a maximum 16 MiB per
 event and accepted total budgets from 1 KiB through 1 GiB. **It is not a physical
 disk quota**: database journals/compaction and exports need additional space.
 At exhaustion the append fails and existing evidence is retained. There is no
-automatic pruning, rotation, budget expansion or migration command. Do not
-start an empty history to make an unresolved incident disappear. An approved
-retention/capacity and migration procedure is still required before deployment.
+automatic pruning, rotation or budget expansion. An explicit
+[offline capacity copy](restart-observer-capacity.md) can preserve every event
+in a new history with a larger reviewed budget within the same 1 GiB ceiling.
+The source is retained; independent reopening/comparison precedes an operator
+path switch. Do not start an empty history to make an unresolved incident
+disappear. Production retention/capacity settings still require selection.
 
 Opening reconstructs and validates status from the bounded event history. The
 [validated opening state is now reused once](restart-observer-open-replay.md);
@@ -137,9 +140,10 @@ and the follow-up both show growing cost and unchanged storage needs. The 64 MiB
 not a deployment retention recommendation. A [mixed actual-command workload](restart-observer-mixed-workload.md)
 now passes six advancing IPC/HTTP rounds and a 512 KiB logical-budget exhaustion
 check with both ordinary and race builds. Rejected writes preserve evidence and
-offline ticket inventories. Longer ancestry and a retention procedure that
-preserves baselines and incidents remain to validate; sustained-load readiness
-is not established. The history-cost follow-up also corrects hexadecimal hash display in
+offline ticket inventories. A [4,096-block backlog](restart-observer-backlog.md)
+and explicit capacity copy now preserve baselines and incidents under their
+declared bounds; sustained-load readiness and rolling retention are not
+established. The history-cost follow-up also corrects hexadecimal hash display in
 canonical-change incidents without changing retained events or node behavior.
 Sync-acknowledged writes survive the tested abrupt process exit;
 power-loss/filesystem durability has not been demonstrated. No external signed

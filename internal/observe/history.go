@@ -52,11 +52,16 @@ type Review struct {
 type History struct {
 	mu           sync.Mutex
 	db           *leveldb.DB
+	path         string
 	meta         historyMetadata
 	openingState *incidentHistory
 }
 
 func CreateHistory(path string, config Config, maxBytes int64) (*History, error) {
+	return createHistory(path, config, maxBytes, "FORMAT")
+}
+
+func createHistory(path string, config Config, maxBytes int64, markerName string) (*History, error) {
 	if err := ValidateConfig(config); err != nil {
 		return nil, err
 	}
@@ -74,7 +79,7 @@ func CreateHistory(path string, config Config, maxBytes int64) (*History, error)
 	if err := os.Mkdir(path, 0700); err != nil {
 		return nil, fmt.Errorf("history initialization requires a new directory: %w", err)
 	}
-	marker, err := os.OpenFile(filepath.Join(path, "FORMAT"), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	marker, err := os.OpenFile(filepath.Join(path, markerName), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +102,7 @@ func CreateHistory(path string, config Config, maxBytes int64) (*History, error)
 		db.Close()
 		return nil, err
 	}
-	return &History{db: db, meta: meta}, nil
+	return &History{db: db, path: path, meta: meta}, nil
 }
 
 func OpenHistory(path string) (*History, error) {
@@ -117,7 +122,7 @@ func OpenHistory(path string) (*History, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot open observer history exclusively: %w", err)
 	}
-	history := &History{db: db}
+	history := &History{db: db, path: path}
 	raw, err := db.Get([]byte("metadata"), nil)
 	if err == nil {
 		err = decodeHistory(raw, &history.meta)
@@ -164,11 +169,15 @@ func scopeFor(config Config) HistoryScope {
 }
 
 func validateHistoryScope(scope HistoryScope) error {
+	return ValidateConfig(historyScopeConfig(scope))
+}
+
+func historyScopeConfig(scope HistoryScope) Config {
 	config := Config{ChainID: scope.ChainID, NetworkID: scope.NetworkID, Genesis: scope.Genesis, AnchorNumber: scope.AnchorNumber, AnchorHash: scope.AnchorHash}
 	for name, wallet := range scope.Wallets {
 		config.Nodes = append(config.Nodes, NodeConfig{Name: name, Wallet: wallet, Role: "maintenance", Endpoint: fmt.Sprintf("http://history.invalid/%d", len(config.Nodes))})
 	}
-	return ValidateConfig(config)
+	return config
 }
 
 func (history *History) Status() (HistoryStatus, error) {

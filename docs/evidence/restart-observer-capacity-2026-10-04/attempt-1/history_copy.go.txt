@@ -1,0 +1,86 @@
+package observe
+
+import (
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/syndtr/goleveldb/leveldb/opt"
+	"github.com/syndtr/goleveldb/leveldb/util"
+)
+
+func (history *History) CopyWithBudget(ctx context.Context, destination string, maxBytes int64, expectedSequence uint64) (HistoryStatus, error) {
+	history.mu.Lock()
+	defer history.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return HistoryStatus{}, err
+	}
+	state, err := history.load()
+	if err != nil {
+		return HistoryStatus{}, err
+	}
+	if expectedSequence == 0 || state.Sequence != expectedSequence || maxBytes <= history.meta.MaxBytes || maxBytes > 1024*1024*1024 {
+		return HistoryStatus{}, fmt.Errorf("copy requires the current positive sequence and a larger explicit budget up to 1073741824 bytes")
+	}
+	if err := history.checkCopyDestination(destination); err != nil {
+		return HistoryStatus{}, err
+	}
+	target, err := createHistory(destination, historyScopeConfig(history.meta.Scope), maxBytes, "COPYING")
+	if err != nil {
+		return HistoryStatus{}, err
+	}
+	defer func() {
+		if target != nil {
+			target.Close()
+		}
+	}()
+	iterator := history.db.NewIterator(util.BytesPrefix([]byte("event/")), nil)
+	defer iterator.Release()
+	for iterator.Next() {
+		if err := ctx.Err(); err != nil {
+			return HistoryStatus{}, err
+		}
+		if err := target.db.Put(iterator.Key(), iterator.Value(), &opt.WriteOptions{Sync: true}); err != nil {
+			return HistoryStatus{}, fmt.Errorf("copy incomplete; source preserved: %w", err)
+		}
+	}
+	if err := iterator.Error(); err != nil {
+		return HistoryStatus{}, err
+	}
+	copied, err := target.load()
+	if err != nil {
+		return HistoryStatus{}, err
+	}
+	if err := target.Close(); err != nil {
+		return HistoryStatus{}, err
+	}
+	target = nil
+	if err := ctx.Err(); err != nil {
+		return HistoryStatus{}, err
+	}
+	if err := os.Rename(filepath.Join(destination, "COPYING"), filepath.Join(destination, "FORMAT")); err != nil {
+		return HistoryStatus{}, fmt.Errorf("copy not activated; source preserved: %w", err)
+	}
+	return copied.status(), nil
+}
+
+func (history *History) checkCopyDestination(destination string) error {
+	if !filepath.IsAbs(destination) {
+		return fmt.Errorf("copy requires an absolute new destination outside the source history")
+	}
+	source, err := filepath.EvalSymlinks(history.path)
+	if err != nil {
+		return err
+	}
+	parent, err := filepath.EvalSymlinks(filepath.Dir(destination))
+	if err != nil {
+		return err
+	}
+	relative, err := filepath.Rel(source, filepath.Join(parent, filepath.Base(destination)))
+	if err == nil && relative != ".." && !strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return fmt.Errorf("copy destination must be outside the source history")
+	}
+	return nil
+}
