@@ -4,7 +4,10 @@
 in the [launch plan](restart-plan.md). It is a finite worklist, not release
 approval. Investigation source reviewed here: `4a216701`; upstream baseline:
 `c5f0174d88ab2b9c3086c6a9cc9ccf38a072992f`. Neither is the selected release.
-No production anchor is configured yet.
+No production anchor is configured yet. The later
+[pre-activation selection](restart-release-selection.md) pins P1–P17 plus B1,
+excludes O1 and selects Go 1.27.1 for qualification. The dated investigation
+reference above is retained for the original matrix and is not the final release.
 
 ## Scope and evidence rules
 
@@ -32,7 +35,7 @@ pin old sources, fixed result paths and disposable data prerequisites.
 
 | ID / gates | Scope and retained evidence | Final acceptance still required |
 | --- | --- | --- |
-| R1 — G2/G5 | Source selection and build. [P1–P17 inventory](restart-node-patch-review.md) and [concrete source extraction](restart-release-extraction.md) separate node, optional O1, recovery, observer and gateway material. Existing Linux builds use rehearsal Go 1.21.3. | Select exact hunks and release toolchain/dependencies; record dispositions below. Pin source, modules, compiler, CGO compiler/libraries and build flags. Build twice from clean inputs, explain any binary difference, and record hashes/CI results. Verify CLI defaults and the final compiled anchor. Go 1.21.3 is not an approved release choice. |
+| R1 — G2/G5 | [Source selection](restart-release-selection.md) freezes P1–P17 plus build-compatibility B1, excludes O1 and separates recovery/observer/gateway material. Go 1.27.1 builds the node twice from fresh source/cache with identical bytes; the recovery command builds separately. Sources, modules, compiler and local CGO inputs are recorded. | Close the [findings ledger](restart-release-findings.md), including dependency review; pin the final CI/build image, qualify affected tests and record CI results. Set a distinct release version and verify CLI defaults and the final compiled anchor. Local same-host reproducibility does not approve final artifacts. Go 1.21.3 remains a rehearsal toolchain only. |
 | R2 — G1/G2 | Anchor and validation: [36 entry-point cases](restart-anchor-implementation.md), [ticket reconstruction](restart-corrections.md), [parent isolation](restart-parent-isolation.md), [cold headers](restart-cold-header-validation.md), [snapshot framing](restart-snapshot-framing.md). Covers P1/P2/P9/P16. | Rerun these fixtures with the selected source. Incompatible startup/import/header/receipt/mining paths must reject without publishing a new head; eligible heavier descendants must still win. Missing ancestors must fail. Preserve valid encoding and expiry commitments. G1 historical compatibility remains separate. Update the test that currently expects an unset mainnet anchor to require the approved exact identity when that value is selected. |
 | R3 — G2 | Persistence: [rollback](restart-anchor-implementation.md), [reorg](restart-crash-rehearsal.md), [rewind](restart-rewind-rehearsal.md), [reset/pivot](restart-reset-pivot-rehearsal.md), and P8 read-only corruption refusal. The combined small crash fixture has 14 scenarios / 46 cuts. [Larger batch evidence](restart-reorg-cost.md) passes six cases through 4,096 displaced blocks. | Rerun the 46 application-write cuts and six bounded batch cases against selected source. Fresh processes must resolve heads, canonical indexes, transactions and receipts consistently, including shorter heavier forks. Read-only corruption must not invoke repair. Keep the existing workload/budget assertions. This does not certify power loss, torn writes or arbitrary fork depth. |
 | R4 — G2 | Automatic buying and miner ownership: [controller](restart-purchase-controller.md), [16 purchase cuts](restart-purchase-crash-rehearsal.md), [eight storage-error cases](restart-purchase-storage-and-peers.md), [nonce rollback](restart-purchase-nonce-rollback.md), [bounded resend](restart-autobuy-rebroadcast.md). Covers P3/P4. | Rerun controller guards, interrupted saved-intent handling, actual miner race case and the corrected delivery continuation. Require the exact saved purchase to execute and at least two subsequent purchases per owner in the retained two-owner scenario. Do not count local queueing as inclusion or silently sign replacements. |
@@ -72,24 +75,18 @@ copies. Backup/replay probes keep original data read-only.
 
 ## Findings requiring a recorded disposition
 
-All entries below remain open until the release review records an owner,
-decision and evidence. They are not implicit waivers or extra patch categories.
-
-| Finding | Release disposition to record |
-| --- | --- |
-| Legacy package compilation | `miner` has obsolete worker/database/state test APIs ([baseline log](evidence/restart-integrity-2026-09-23/baseline-package-tests.txt)); `core/rawdb` refers to removed `params.RinkebyGenesisHash` ([anchor report](restart-anchor-implementation.md)); `core/bench_test.go` uses obsolete APIs ([parent report](restart-parent-isolation.md)); broader `eth` tests also contain stale APIs ([resend report](restart-autobuy-rebroadcast.md)). Repair test compatibility or explicitly document the excluded checks and replacement coverage. A `-run` filter cannot bypass package compilation. |
-| Inherited networking failures | `TestParseNode` expected-error differences, `TestForwardCompatibility` Ethereum/Fusion packet-type mismatch, and `TestProtocolHandshake` disconnect-size mismatch (`got 2, want 1`) remain in the [discovery evidence](restart-discovery-resilience.md). Confirm their status on the final toolchain and review runtime implications; do not label the entire p2p suite green. |
-| Native-call decoding | [Ignored decode errors](native-call-decode-errors.md) affect historical balances/fees and some transaction validation. Preserve historical behavior while the reviewer decides whether a separately activated change is needed. No activation or additional consensus patch is selected here; pool rejection alone does not dispose of block-validation concerns. |
-| Ordinary compatible forks | Equal-weight forks can need operator intervention; heavier compatible forks can replace post-anchor transactions. [Response guide](restart-monitoring-response.md) must state the limit. The fixed recovery anchor adds no ongoing finality. |
-| Buying and funding | Nonce gaps, stale saved purchases and retreat losses can require manual repair and additional authorized funds. Retained successful funded repair is not an automatic funding source or universal reserve. Record the supported operator response and actual runway. |
-| State, durability and discovery limits | Sparse historical state, inherited header-only reconstruction limits, process-exit versus power-loss durability, and inbound-only discovery recovery limits stay explicit. The selected restored full-sync path and storage acceptance must address their operational consequences. |
+The [release findings ledger](restart-release-findings.md) is the authority for
+F1–F10 decisions, evidence, ownership and closure conditions. It records the
+legacy compilation gaps, two remaining networking test repairs, the corrected
+disconnect fixture, native-call behavior, operating limits, compiler compatibility
+and dependency/CI review. A disposition is not an independent approval.
 
 ## Independent reviewer packet and completion
 
 Prepare one packet with: upstream and selected release commits; the small
-production diff mapped hunk-by-hunk to P1–P17/O1; separate recovery-tool diff;
+production diff mapped hunk-by-hunk to P1–P17/B1, with O1 excluded; separate recovery-tool diff;
 source/build/data/anchor hashes; this matrix with final result links; the findings
-ledger above; and the operator launch/stop/restore procedure. Optional observer
+ledger; and the operator launch/stop/restore procedure. Optional observer
 code and gateway packaging must not enter the node patch set unnoticed. Shared
 files mean investigation commits are not independently cherry-pickable patches.
 
@@ -108,8 +105,8 @@ neither this matrix nor synthetic passes replace them. A bounded continuation
 toward 3,600,000 is running with [provisional startup evidence](evidence/restart-replay-3600000-2026-10-04);
 its final replay and exact-height cold check are pending.
 
-Next technical order: select the production hunks/build inputs and record the
-failure dispositions; continue bounded G1 replay after fresh capacity checks;
+Next technical order: close the recorded findings and qualify the selected
+candidate/build image; continue bounded G1 replay after fresh capacity checks;
 close the clean-machine operator-kit gap; then run the final artifact/host
 rehearsal, including R8 against the selected release. Public endpoints, custody,
 real artifact approval and go/no-go remain the decisions in the main plan. Stop extending the investigation when these

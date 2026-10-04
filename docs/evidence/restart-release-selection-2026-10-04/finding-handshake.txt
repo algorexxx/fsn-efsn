@@ -1,0 +1,56 @@
+=== RUN   TestProtocolHandshake
+panic: test timed out after 1m30s
+	running tests:
+		TestProtocolHandshake (1m30s)
+
+goroutine 22 [running]:
+testing.(*M).startAlarm.func1()
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2959 +0x34a
+created by time.goFunc
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/time/sleep.go:182 +0x2d
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x3ec0260b4248, {0x7285c7?, 0x3ec026087aa0?}, 0xa6e880)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2266 +0x4f2
+testing.runTests.func1(0x3ec0260b4248)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2742 +0x37
+testing.tRunner(0x3ec0260b4248, 0x3ec026087bc8)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2193 +0xea
+testing.runTests({0x72f9db, 0x23}, {0x731b73, 0x27}, 0x3ec026020420, {0xa7e8d0, 0x20, 0x20}, {0xc2a8c3281c0ef7af, 0x14f4de6c66, ...})
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2740 +0x510
+testing.(*M).Run(0x3ec02601fd60)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2600 +0x6af
+main.main()
+	_testmain.go:110 +0x9b
+
+goroutine 20 [chan receive]:
+github.com/FusionFoundation/efsn/v5/p2p/simulations/pipes.TCPPipe()
+	/home/rehearsal/results/restart-release-selection-2026-10-04/repeat/p2p/simulations/pipes/pipes.go:47 +0x318
+github.com/FusionFoundation/efsn/v5/p2p.TestProtocolHandshake(0x3ec0260b4488)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/repeat/p2p/rlpx_test.go:163 +0x3e9
+testing.tRunner(0x3ec0260b4488, 0xa6e880)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/testing/testing.go:2258 +0x4d4
+
+goroutine 21 [IO wait]:
+internal/poll.runtime_pollWait(0x75b2d2783a00, 0x72)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0x3ec026060a80?, 0x100?, 0x0)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Accept(0x3ec026060a80)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/internal/poll/fd_unix.go:618 +0x27d
+net.(*netFD).accept(0x3ec026060a80)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/net/fd_unix.go:149 +0x29
+net.(*TCPListener).accept(0x3ec02603bc40)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/net/tcpsock_posix.go:159 +0x1b
+net.(*TCPListener).Accept(0x3ec02603bc40)
+	/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/net/tcpsock.go:387 +0x30
+github.com/FusionFoundation/efsn/v5/p2p/simulations/pipes.TCPPipe.func1()
+	/home/rehearsal/results/restart-release-selection-2026-10-04/repeat/p2p/simulations/pipes/pipes.go:41 +0x34
+created by github.com/FusionFoundation/efsn/v5/p2p/simulations/pipes.TCPPipe in goroutine 20
+	/home/rehearsal/results/restart-release-selection-2026-10-04/repeat/p2p/simulations/pipes/pipes.go:39 +0x174
+FAIL	github.com/FusionFoundation/efsn/v5/p2p	90.045s
+FAIL

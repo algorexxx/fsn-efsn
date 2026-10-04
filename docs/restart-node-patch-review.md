@@ -44,6 +44,14 @@ automatic successors on restarted copies, with matching 58-block cold ledgers.
 It adds only tests and does not establish unattended nonce repair, a real funding
 source or a universal reserve.
 
+4 October selection: the [pre-activation manifest](restart-release-selection.md)
+selects P1–P17, excludes O1 and adds the separately reviewed build-compatibility
+item B1. It removes the unsupported optional memsize debug integration from
+`cmd/efsn/main.go` and `internal/debug/flags.go`, plus its unused module/checksum
+entries. B1 has no consensus effect; it remains separate from the restart fixes.
+The original extraction remains unchanged; the standalone B1 patch applies after
+it. Independent release approval and final anchor/acceptance remain open.
+
 ## Permanent node candidates
 
 | ID | Exact change | Why include it / necessity | Lasting effect and evidence |
@@ -142,7 +150,8 @@ The [4 October release matrix](restart-release-matrix.md) consolidates ten
 acceptance groups, existing test/runners, final-candidate gaps and inherited
 failure dispositions. Use it with this hunk inventory when preparing the
 reviewer packet. Its source reference is an investigation checkpoint, not an
-approved release; the selected small production diff remains to be assembled.
+approved release. The later selection linked above assembles the proposed diff
+and build direction for qualification.
 
 The [bounded reorganization storage measurement](restart-reorg-cost.md) adds
 only opt-in tests and evidence for P5/P1: larger canonical batches, shorter

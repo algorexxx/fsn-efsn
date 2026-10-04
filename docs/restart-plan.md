@@ -101,9 +101,10 @@ compatibility remains open.
   pinned upstream: P1–P17 node changes, optional O1 and separate recovery tooling.
   All 109 node hunks have review IDs; observer and gateway changes are excluded.
   This prepares the review input, not approval of the release selection below.
-- [ ] Select every production hunk against upstream from the
-  [P1–P17 inventory](restart-node-patch-review.md); separate node changes,
-  recovery tooling, observer, packaging and inherited explorer settings.
+- [x] Freeze the [pre-activation source selection](restart-release-selection.md):
+  P1–P17 plus the separate B1 compiler-compatibility deletion; exclude optional
+  O1 and observer/gateway changes; build recovery separately. All 109 node hunks
+  are mapped and exact inputs are pinned. Independent approval remains open.
 - [x] Freeze the [ten-group release matrix and reviewer handoff](restart-release-matrix.md)
   for the supported Linux restored full-sync path. It links retained evidence,
   exact test entry points, inherited failures and final acceptance criteria.
@@ -124,9 +125,14 @@ compatibility remains open.
   heavier replacement and before/after canonical-batch process exits. All six
   corrected-fixture cases pass; no runtime change. Maximum-gas workloads,
   arbitrary depth and production resource sizing are not established.
-- [ ] Record inherited failing tests and disposition native-call decode and
-  other audit findings. Select the release toolchain/dependencies, establish CI,
-  build reproducibly and rerun affected compatibility checks after changes.
+- [x] Record the [findings ledger](restart-release-findings.md), with specific
+  decisions, evidence and remaining holds. Candidate qualification selects Go
+  1.27.1; two clean node builds match, the separate recovery tool builds, and
+  the disconnect fixture correction passes with race detection.
+- [ ] Close the ledger's review holds, including native-call behavior, remaining
+  test repairs and dependency security. Pin final CI/build-image inputs and run
+  affected acceptance with the selected compiler. The local repeatability check
+  does not approve the final release or close the full regression matrix.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss
@@ -489,7 +495,7 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Launch visibility and response | Supervised SSH plus self-hosted fsn-stats; observer tools optional; no separate alert-service requirement | G4 |
 | Public dashboard and hosting | Included; fsn-stats requires readiness work | G6 before public use |
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
-| Domains/organization/hosts/toolchain | Final choices unselected | G2/G5 |
+| Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
 
 Current technical order (efsn):
@@ -497,8 +503,9 @@ Current technical order (efsn):
 1. G1: resume bounded historical execution after fresh capacity/path checks,
    preserving completed checkpoints and the original backup. Keep baseline and
    candidate-patch validation distinct.
-2. G2/G5/G7: use the [frozen release matrix](restart-release-matrix.md) to select
-   production hunks/build inputs and disposition findings, then complete the
+2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
+   the [frozen release matrix](restart-release-matrix.md), close the recorded
+   findings and pin CI/build-image inputs, then complete the
    public package and final clean-machine entrant rehearsal. The bounded
    automatic-sync and local operator-kit workflows have retained evidence;
    observer/dashboard expansion is parked.

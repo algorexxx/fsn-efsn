@@ -1,0 +1,13 @@
+{
+  "runner": "check-repeat-and-findings.sh",
+  "exit_code": 1,
+  "completed": [
+    "fresh node build",
+    "exact binary comparison",
+    "shared library listing"
+  ],
+  "stopped_at": "go list -m all",
+  "reason": "Module lookup disabled by GOPROXY=off; full module graph metadata is not available in the retained cache.",
+  "source_or_runtime_change": false,
+  "continuation": "Capture the same metadata failure to files, then continue the separately declared recovery build and three test probes without repeating the successful builds."
+}

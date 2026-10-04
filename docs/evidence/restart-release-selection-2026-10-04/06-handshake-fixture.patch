@@ -1,0 +1,13 @@
+diff --git a/p2p/rlpx_test.go b/p2p/rlpx_test.go
+index c71d56d2..ca8aa3d3 100644
+--- a/p2p/rlpx_test.go
++++ b/p2p/rlpx_test.go
+@@ -217,7 +217,7 @@ func TestProtocolHandshake(t *testing.T) {
+ 			return
+ 		}
+ 
+-		if err := ExpectMsg(rlpx, discMsg, []DiscReason{DiscQuitting}); err != nil {
++		if err := ExpectMsg(rlpx, discMsg, []interface{}{DiscQuitting}); err != nil {
+ 			t.Errorf("error receiving disconnect: %v", err)
+ 		}
+ 	}()
