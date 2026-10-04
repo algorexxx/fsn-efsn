@@ -1,0 +1,113 @@
+=== RUN   TestRestartReorganizationCost
+=== RUN   TestRestartReorganizationCost/1024_longer_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=1024 new=1025 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=6806219; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (0.78s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=1025 drops=0 lookupPuts=32800 lookupDrops=24576 markers=7 keyValueBytes=2034981 apiValueSize=942304 stagedHeapBytes=126800608 goSysBytes=183790888 elapsed=730.629457ms
+            reorg_cost_test.go:152: reorganization old=1024 new=1025 duration=820.133764ms allocatedBytes=386454744 heapAfterBytes=65202712 goSysAfterBytes=192179496
+        --- PASS: TestRestartReorganizationCost (0.87s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:126: stored body or receipt commitments differ
+        --- FAIL: TestRestartReorganizationCost (0.29s)
+        FAIL
+    reorg_cost_test.go:75: exit status 1
+=== RUN   TestRestartReorganizationCost/1024_shorter_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=1024 new=512 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=6729376; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (0.55s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=512 drops=512 lookupPuts=16384 lookupDrops=28672 markers=7 keyValueBytes=1562747 apiValueSize=1016928 stagedHeapBytes=93611808 goSysBytes=139944216 elapsed=531.629193ms
+            reorg_cost_test.go:152: reorganization old=1024 new=512 duration=574.419321ms allocatedBytes=349447088 heapAfterBytes=104227640 goSysAfterBytes=149466408
+        --- PASS: TestRestartReorganizationCost (0.61s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:126: stored body or receipt commitments differ
+        --- FAIL: TestRestartReorganizationCost (0.41s)
+        FAIL
+    reorg_cost_test.go:75: exit status 1
+=== RUN   TestRestartReorganizationCost/4096_longer_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=4097 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=23523772; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.92s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=4097 drops=0 lookupPuts=131104 lookupDrops=98304 markers=7 keyValueBytes=8135973 apiValueSize=3768544 stagedHeapBytes=489906776 goSysBytes=673044888 elapsed=7.831723089s
+            reorg_cost_test.go:152: reorganization old=4096 new=4097 duration=8.475045455s allocatedBytes=1757296632 heapAfterBytes=204266032 goSysAfterBytes=673044888
+        --- PASS: TestRestartReorganizationCost (8.72s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:126: stored body or receipt commitments differ
+        --- FAIL: TestRestartReorganizationCost (0.94s)
+        FAIL
+    reorg_cost_test.go:75: exit status 1
+=== RUN   TestRestartReorganizationCost/4096_shorter_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=2048 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=19521938; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.12s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=2048 drops=2048 lookupPuts=65536 lookupDrops=114688 markers=7 keyValueBytes=6250619 apiValueSize=4067424 stagedHeapBytes=376310088 goSysBytes=535214456 elapsed=2.280586435s
+            reorg_cost_test.go:152: reorganization old=4096 new=2048 duration=2.553030361s allocatedBytes=1540562352 heapAfterBytes=423896432 goSysAfterBytes=565708168
+        --- PASS: TestRestartReorganizationCost (2.66s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:126: stored body or receipt commitments differ
+        --- FAIL: TestRestartReorganizationCost (0.63s)
+        FAIL
+    reorg_cost_test.go:75: exit status 1
+=== RUN   TestRestartReorganizationCost/4096_shorter_before
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=2048 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=19521942; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.16s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=2048 drops=2048 lookupPuts=65536 lookupDrops=114688 markers=7 keyValueBytes=6250619 apiValueSize=4067424 stagedHeapBytes=353713880 goSysBytes=574162312 elapsed=2.162903554s
+        CRASH before canonical batch
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:126: stored body or receipt commitments differ
+        --- FAIL: TestRestartReorganizationCost (0.79s)
+        FAIL
+    reorg_cost_test.go:75: exit status 1
+=== RUN   TestRestartReorganizationCost/4096_shorter_after
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=2048 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=19521940; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.16s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=2048 drops=2048 lookupPuts=65536 lookupDrops=114688 markers=7 keyValueBytes=6250619 apiValueSize=4067424 stagedHeapBytes=362938440 goSysBytes=539801976 elapsed=2.261447755s
+        CRASH after canonical batch
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:126: stored body or receipt commitments differ
+        --- FAIL: TestRestartReorganizationCost (0.62s)
+        FAIL
+    reorg_cost_test.go:75: exit status 1
+--- FAIL: TestRestartReorganizationCost (32.87s)
+    --- FAIL: TestRestartReorganizationCost/1024_longer_complete (2.00s)
+    --- FAIL: TestRestartReorganizationCost/1024_shorter_complete (1.63s)
+    --- FAIL: TestRestartReorganizationCost/4096_longer_complete (12.67s)
+    --- FAIL: TestRestartReorganizationCost/4096_shorter_complete (5.49s)
+    --- FAIL: TestRestartReorganizationCost/4096_shorter_before (5.31s)
+    --- FAIL: TestRestartReorganizationCost/4096_shorter_after (5.77s)
+FAIL

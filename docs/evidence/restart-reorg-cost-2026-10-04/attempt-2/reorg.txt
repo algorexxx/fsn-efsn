@@ -1,0 +1,107 @@
+=== RUN   TestRestartReorganizationCost
+=== RUN   TestRestartReorganizationCost/1024_longer_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=1024 new=1025 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=6804758; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (0.84s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=1025 drops=0 lookupPuts=32800 lookupDrops=24576 markers=7 keyValueBytes=2034981 apiValueSize=942304 stagedHeapBytes=124850408 goSysBytes=179531048 elapsed=840.126732ms
+            reorg_cost_test.go:152: reorganization old=1024 new=1025 duration=900.865917ms allocatedBytes=386887336 heapAfterBytes=66606240 goSysAfterBytes=187919656
+        --- PASS: TestRestartReorganizationCost (0.94s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:128: fresh-process verification passed: old=1024 new=1025 expectedHead=0xdc8efe3512bed6b4ca16d2e0d7efe048df8a3202e5dc79c501f5a79b6d7cfb7f; complete canonical suffix, transaction indexes, receipt commitments, state and anchor readiness
+        --- PASS: TestRestartReorganizationCost (1.84s)
+        PASS
+=== RUN   TestRestartReorganizationCost/1024_shorter_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=1024 new=512 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=6728323; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (0.61s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=512 drops=512 lookupPuts=16384 lookupDrops=28672 markers=7 keyValueBytes=1562747 apiValueSize=1016928 stagedHeapBytes=88212424 goSysBytes=135749912 elapsed=397.948642ms
+            reorg_cost_test.go:152: reorganization old=1024 new=512 duration=422.522895ms allocatedBytes=349809408 heapAfterBytes=98828224 goSysAfterBytes=144138520
+        --- PASS: TestRestartReorganizationCost (0.47s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:128: fresh-process verification passed: old=1024 new=512 expectedHead=0x6f163fca8e48656dafdc193b9c340fbd71b664a0faa763d5cc98e661d23bfb8f; complete canonical suffix, transaction indexes, receipt commitments, state and anchor readiness
+        --- PASS: TestRestartReorganizationCost (1.29s)
+        PASS
+=== RUN   TestRestartReorganizationCost/4096_longer_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=4097 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=23524761; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (3.08s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=4097 drops=0 lookupPuts=131104 lookupDrops=98304 markers=7 keyValueBytes=8135973 apiValueSize=3768544 stagedHeapBytes=446493528 goSysBytes=617385352 elapsed=4.98230477s
+            reorg_cost_test.go:152: reorganization old=4096 new=4097 duration=5.366423912s allocatedBytes=1762949560 heapAfterBytes=480511440 goSysAfterBytes=639752600
+        --- PASS: TestRestartReorganizationCost (5.54s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:128: fresh-process verification passed: old=4096 new=4097 expectedHead=0x54a432c67b30908f519d7048170db6ab5d888be8fa5275202152c45735d281e4; complete canonical suffix, transaction indexes, receipt commitments, state and anchor readiness
+        --- PASS: TestRestartReorganizationCost (7.79s)
+        PASS
+=== RUN   TestRestartReorganizationCost/4096_shorter_complete
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=2048 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=19524625; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.46s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=2048 drops=2048 lookupPuts=65536 lookupDrops=114688 markers=7 keyValueBytes=6250619 apiValueSize=4067424 stagedHeapBytes=375917144 goSysBytes=552057208 elapsed=1.886828656s
+            reorg_cost_test.go:152: reorganization old=4096 new=2048 duration=2.116548955s allocatedBytes=1541045632 heapAfterBytes=423298040 goSysAfterBytes=569968008
+        --- PASS: TestRestartReorganizationCost (2.22s)
+        PASS
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:128: fresh-process verification passed: old=4096 new=2048 expectedHead=0x32bca2e4406a03eb75e50ff8eb3b1b95b5708e860962c0e5441b2f7cdecceb2a; complete canonical suffix, transaction indexes, receipt commitments, state and anchor readiness
+        --- PASS: TestRestartReorganizationCost (5.59s)
+        PASS
+=== RUN   TestRestartReorganizationCost/4096_shorter_before
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=2048 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=19524621; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.46s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=2048 drops=2048 lookupPuts=65536 lookupDrops=114688 markers=7 keyValueBytes=6250619 apiValueSize=4067424 stagedHeapBytes=380186784 goSysBytes=543668600 elapsed=2.035875874s
+        CRASH before canonical batch
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:128: fresh-process verification passed: old=4096 new=2048 expectedHead=0x6c22d6ae7b4451417a887da1d86b90e3925738e5d95f9f70ef882e47b9b13c21; complete canonical suffix, transaction indexes, receipt commitments, state and anchor readiness
+        --- PASS: TestRestartReorganizationCost (6.56s)
+        PASS
+=== RUN   TestRestartReorganizationCost/4096_shorter_after
+    reorg_cost_test.go:75: prepare:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:52: stored-branch fixture old=4096 new=2048 transactionsPerBlock=32 sharedPerHeight=8 logsPerReceipt=1 transactionDataBytes=256 logDataBytes=64 diskBytes=19524625; unsigned, unexecuted, reused state
+        --- PASS: TestRestartReorganizationCost (2.41s)
+        PASS
+    reorg_cost_test.go:75: write:
+        === RUN   TestRestartReorganizationCost
+        canonical batch: puts=2048 drops=2048 lookupPuts=65536 lookupDrops=114688 markers=7 keyValueBytes=6250619 apiValueSize=4067424 stagedHeapBytes=380156504 goSysBytes=547862904 elapsed=2.012972658s
+        CRASH after canonical batch
+    reorg_cost_test.go:75: verify:
+        === RUN   TestRestartReorganizationCost
+            reorg_cost_fixture_test.go:128: fresh-process verification passed: old=4096 new=2048 expectedHead=0x32bca2e4406a03eb75e50ff8eb3b1b95b5708e860962c0e5441b2f7cdecceb2a; complete canonical suffix, transaction indexes, receipt commitments, state and anchor readiness
+        --- PASS: TestRestartReorganizationCost (5.49s)
+        PASS
+--- PASS: TestRestartReorganizationCost (54.44s)
+    --- PASS: TestRestartReorganizationCost/1024_longer_complete (3.69s)
+    --- PASS: TestRestartReorganizationCost/1024_shorter_complete (2.41s)
+    --- PASS: TestRestartReorganizationCost/4096_longer_complete (16.49s)
+    --- PASS: TestRestartReorganizationCost/4096_shorter_complete (10.33s)
+    --- PASS: TestRestartReorganizationCost/4096_shorter_before (11.24s)
+    --- PASS: TestRestartReorganizationCost/4096_shorter_after (10.29s)
+PASS

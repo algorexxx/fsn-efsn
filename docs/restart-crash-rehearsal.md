@@ -104,6 +104,13 @@ vectors for every consensus transition.
 
 ## Results and limits
 
+The [4 October storage-cost follow-up](restart-reorg-cost.md) now passes six
+bounded cases through 4,096 displaced blocks, 32 transactions/logs per block,
+shorter/heavier replacement and before/after canonical-batch process exits. It
+uses coherent synthetic stored bodies with reused state, not executed/sealed
+branches. It narrows the large-batch question below without changing the node
+or claiming arbitrary-depth, maximum-gas or production-hardware coverage.
+
 The original failures and corrected Windows/Linux results, source and binary
 identities and exact runners belong in the
 [evidence directory](evidence/restart-crash-rehearsal-2026-09-24).

@@ -132,6 +132,12 @@ finality rule is proposed.
 
 ## Independent review handoff
 
+The [bounded reorganization storage measurement](restart-reorg-cost.md) adds
+only opt-in tests and evidence for P5/P1: larger canonical batches, shorter
+heavier replacement, and before/after batch exits with complete cold checks.
+All six corrected-fixture cases pass. No runtime patch or economic rule is added;
+these unexecuted stored-body fixtures are not new consensus-validation evidence.
+
 The [bounded anchor-startup measurement](restart-anchor-startup.md) adds only
 an opt-in test and retained evidence. All 12 cases through one million synthetic
 descendants pass. Startup ancestry work is linear and repeated by genesis setup
