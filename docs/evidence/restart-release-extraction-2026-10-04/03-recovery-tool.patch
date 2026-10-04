@@ -1,0 +1,1554 @@
+diff --git a/cmd/fsn-recovery/main.go b/cmd/fsn-recovery/main.go
+new file mode 100644
+--- /dev/null
++++ b/cmd/fsn-recovery/main.go
+@@ -0,0 +1,131 @@
++package main
++
++import (
++	"bytes"
++	"encoding/json"
++	"flag"
++	"fmt"
++	"io"
++	"os"
++	"path/filepath"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/common/hexutil"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/internal/recovery"
++	"github.com/FusionFoundation/efsn/v5/params"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++)
++
++type report struct {
++	Version       uint64
++	Plan          recovery.Plan
++	ChainConfig   *params.ChainConfig
++	UnsignedBlock hexutil.Bytes
++	Header        *types.Header
++	Receipt       *types.Receipt
++	Ticket        common.Ticket
++	Selected      common.Hash
++	Retreat       []common.Hash
++}
++
++func main() {
++	if err := run(); err != nil {
++		if err == flag.ErrHelp {
++			return
++		}
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func run() error {
++	return runCommand(os.Args[1:])
++}
++
++func runReview(args []string) error {
++	flags := flag.NewFlagSet("review", flag.ContinueOnError)
++	directory := flags.String("chaindata", "", "absolute path to a stopped LevelDB database; opened read-only")
++	planPath := flags.String("plan", "", "reviewed recovery plan JSON")
++	purchasePath := flags.String("purchase", "", "one already-signed purchase transaction in binary RLP")
++	output := flags.String("out", "", "new absolute report filename; existing files are refused")
++	if err := flags.Parse(args); err != nil {
++		return err
++	}
++	if flags.NArg() != 0 || !filepath.IsAbs(*directory) || !filepath.IsAbs(*output) || *planPath == "" || *purchasePath == "" {
++		return fmt.Errorf("required: -chaindata ABSOLUTE_PATH -plan PLAN.json -purchase TX.rlp -out NEW_ABSOLUTE_REPORT.json")
++	}
++	planData, err := readInput(*planPath)
++	if err != nil {
++		return err
++	}
++	var plan recovery.Plan
++	decoder := json.NewDecoder(bytes.NewReader(planData))
++	decoder.DisallowUnknownFields()
++	if err := decoder.Decode(&plan); err != nil {
++		return err
++	}
++	if err := decoder.Decode(new(interface{})); err != io.EOF {
++		return fmt.Errorf("plan must contain exactly one JSON object")
++	}
++	purchaseData, err := readInput(*purchasePath)
++	if err != nil {
++		return err
++	}
++	var purchase types.Transaction
++	if err := rlp.DecodeBytes(purchaseData, &purchase); err != nil {
++		return err
++	}
++	result, err := buildReviewReport(*directory, plan, &purchase)
++	if err != nil {
++		return err
++	}
++	if err := writeNewFile(*output, result); err != nil {
++		return err
++	}
++	fmt.Fprintln(os.Stdout, "Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.")
++	return nil
++}
++
++func buildReviewReport(directory string, plan recovery.Plan, purchase *types.Transaction) ([]byte, error) {
++	db, err := rawdb.NewLevelDBDatabase(directory, 128, 64, "recovery-readonly", true)
++	if err != nil {
++		return nil, err
++	}
++	defer db.Close()
++	chain, err := recovery.NewReader(db)
++	if err != nil {
++		return nil, err
++	}
++	candidate, err := recovery.Build(chain, plan, types.Transactions{purchase})
++	if err != nil {
++		return nil, err
++	}
++	encoded, err := rlp.EncodeToBytes(candidate.Block)
++	if err != nil {
++		return nil, err
++	}
++	result, err := json.MarshalIndent(report{Version: 1, Plan: plan, ChainConfig: chain.Config(), UnsignedBlock: encoded, Header: candidate.Block.Header(), Receipt: candidate.Receipt, Ticket: candidate.Ticket, Selected: candidate.Selected, Retreat: candidate.Retreat}, "", "  ")
++	if err != nil {
++		return nil, err
++	}
++	return append(result, '\n'), nil
++}
++
++func readInput(path string) ([]byte, error) {
++	file, err := os.Open(path)
++	if err != nil {
++		return nil, err
++	}
++	defer file.Close()
++	const limit = 1 << 20
++	data, err := io.ReadAll(io.LimitReader(file, limit+1))
++	if err != nil {
++		return nil, err
++	}
++	if len(data) > limit {
++		return nil, fmt.Errorf("input exceeds one MiB: %s", path)
++	}
++	return data, nil
++}
+diff --git a/cmd/fsn-recovery/operator.go b/cmd/fsn-recovery/operator.go
+new file mode 100644
+--- /dev/null
++++ b/cmd/fsn-recovery/operator.go
+@@ -0,0 +1,227 @@
++package main
++
++import (
++	"bytes"
++	"crypto/sha256"
++	"encoding/json"
++	"flag"
++	"fmt"
++	"io"
++	"os"
++	"path/filepath"
++	"strings"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/internal/recovery"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++)
++
++func runCommand(args []string) error {
++	if len(args) == 0 || strings.HasPrefix(args[0], "-") {
++		return runReview(args)
++	}
++	switch args[0] {
++	case "review":
++		return runReview(args[1:])
++	case "prepare":
++		return runPrepare(args[1:])
++	case "init-journal", "sign", "export":
++		return runOperator(args[0], args[1:])
++	default:
++		return fmt.Errorf("expected review, prepare, init-journal, sign or export")
++	}
++}
++
++func runPrepare(args []string) error {
++	flags := flag.NewFlagSet("prepare", flag.ContinueOnError)
++	directory := flags.String("chaindata", "", "absolute stopped chain used to verify the complete report")
++	reportPath := flags.String("report", "", "reviewed unsigned report")
++	purchasePath := flags.String("purchase", "", "signed purchase RLP")
++	count := flags.Uint64("blocks", 0, "first stage only: 1 backup block or 2 donation blocks")
++	previous := flags.String("policy-from", "", "first approval from the same signer, for its next stage")
++	previousHash := flags.String("policy-sha256", "", "separately reviewed SHA-256 of that first approval")
++	output := flags.String("out", "", "new absolute approval JSON filename")
++	if err := flags.Parse(args); err != nil {
++		return err
++	}
++	if flags.NArg() != 0 || !filepath.IsAbs(*directory) || *reportPath == "" || *purchasePath == "" || !filepath.IsAbs(*output) || ((*previous == "") == (*count == 0)) || (*previous == "" && *previousHash != "") {
++		return fmt.Errorf("prepare requires report, purchase, new absolute out, and either blocks or policy-from with policy-sha256")
++	}
++	data, err := readInput(*reportPath)
++	if err != nil {
++		return err
++	}
++	var reviewed report
++	decoder := json.NewDecoder(bytes.NewReader(data))
++	decoder.DisallowUnknownFields()
++	if err := decoder.Decode(&reviewed); err != nil {
++		return err
++	}
++	if err := decoder.Decode(new(interface{})); err != io.EOF || reviewed.Version != 1 {
++		return fmt.Errorf("one version 1 report required")
++	}
++	purchase, err := readInput(*purchasePath)
++	if err != nil {
++		return err
++	}
++	var tx types.Transaction
++	if err := rlp.DecodeBytes(purchase, &tx); err != nil || tx.Hash() != reviewed.Plan.Purchase.Hash {
++		return fmt.Errorf("purchase differs from reviewed report")
++	}
++	expectedReport, err := buildReviewReport(*directory, reviewed.Plan, &tx)
++	if err != nil {
++		return err
++	}
++	if !bytes.Equal(data, expectedReport) {
++		return fmt.Errorf("report differs from the complete rebuilt canonical report")
++	}
++	executable, err := recovery.ExecutableSHA256()
++	if err != nil {
++		return err
++	}
++	config, err := recovery.ConfigurationSHA256(reviewed.ChainConfig)
++	if err != nil {
++		return err
++	}
++	plan := reviewed.Plan
++	policy := recovery.SigningPolicy{FirstParent: plan.ParentHash, FirstParentNumber: plan.ParentNumber, PurchaseOwner: plan.Purchase.Owner, BlockCount: *count, ExecutableSHA256: executable, ConfigSHA256: config}
++	if *previous != "" {
++		priorData, err := readInput(*previous)
++		if err != nil {
++			return err
++		}
++		checksum, err := parseDigest(*previousHash)
++		if err != nil {
++			return err
++		}
++		prior, err := recovery.DecodeSigningApproval(priorData, checksum)
++		if err != nil {
++			return err
++		}
++		if prior.Plan.Signer != plan.Signer || prior.Plan.GenesisHash != plan.GenesisHash || prior.Plan.ChainID != plan.ChainID || prior.Policy.ExecutableSHA256 != executable || prior.Policy.ConfigSHA256 != config {
++			return fmt.Errorf("prior approval identity or runtime differs from this report")
++		}
++		policy = prior.Policy
++	}
++	if (policy.BlockCount != 1 && policy.BlockCount != 2) || (policy.BlockCount == 1) == (plan.Signer == policy.PurchaseOwner) || policy.PurchaseOwner != plan.Purchase.Owner {
++		return fmt.Errorf("invalid handover role or purchaser")
++	}
++	encoded, err := recovery.EncodeSigningApproval(recovery.SigningApproval{Version: 1, Policy: policy, Plan: plan, Purchase: purchase, UnsignedBlock: reviewed.UnsignedBlock})
++	if err != nil {
++		return err
++	}
++	if _, err := recovery.DecodeSigningApproval(encoded, common.Hash(sha256.Sum256(encoded))); err != nil {
++		return err
++	}
++	if err := writeNewFile(*output, encoded); err != nil {
++		return err
++	}
++	fmt.Fprintf(os.Stdout, "Prepared approval for review. SHA256=%x\n", sha256.Sum256(encoded))
++	return nil
++}
++
++func runOperator(action string, args []string) error {
++	flags := flag.NewFlagSet(action, flag.ContinueOnError)
++	approvalPath := flags.String("approval", "", "canonical reviewed approval JSON")
++	digest := flags.String("approved-sha256", "", "separately reviewed approval SHA-256")
++	journal := flags.String("journal", "", "absolute journal directory")
++	var chainPath, keyPath, output string
++	var passwordStdin bool
++	if action != "export" {
++		flags.StringVar(&chainPath, "chaindata", "", "absolute stopped working chain directory")
++	}
++	if action == "sign" {
++		flags.StringVar(&keyPath, "keyfile", "", "absolute encrypted V3 scrypt key file")
++		flags.BoolVar(&passwordStdin, "password-stdin", false, "read one password line from a pipe; terminal input refused")
++	}
++	if action == "export" {
++		flags.StringVar(&output, "out", "", "new absolute RLP filename")
++	}
++	if err := flags.Parse(args); err != nil {
++		return err
++	}
++	if flags.NArg() != 0 || *approvalPath == "" || !filepath.IsAbs(*journal) || (action != "export" && !filepath.IsAbs(chainPath)) || (action == "sign" && (!filepath.IsAbs(keyPath) || !passwordStdin)) || (action == "export" && !filepath.IsAbs(output)) {
++		return fmt.Errorf("required explicit approval, approved-sha256, absolute journal and action-specific paths; sign requires password-stdin")
++	}
++	checksum, err := parseDigest(*digest)
++	if err != nil {
++		return err
++	}
++	data, err := readInput(*approvalPath)
++	if err != nil {
++		return err
++	}
++	switch action {
++	case "init-journal":
++		if err := recovery.InitializeApprovedOffline(chainPath, *journal, data, checksum); err != nil {
++			return err
++		}
++		fmt.Fprintln(os.Stdout, "Initialized approved journal. No signature created.")
++	case "sign":
++		block, err := recovery.SignApprovedKeystore(chainPath, *journal, data, checksum, keyPath, readPasswordStdin)
++		if err != nil {
++			return err
++		}
++		fmt.Fprintf(os.Stdout, "Completed block retained in journal: %s. Export separately.\n", block.Hash().Hex())
++	case "export":
++		if err := recovery.ExportApprovedBlock(*journal, data, checksum, output); err != nil {
++			return err
++		}
++		fmt.Fprintln(os.Stdout, "Exported exact approved block. Verify independently before import.")
++	}
++	return nil
++}
++
++func parseDigest(value string) (common.Hash, error) {
++	var checksum common.Hash
++	if !strings.HasPrefix(value, "0x") {
++		value = "0x" + value
++	}
++	if err := checksum.UnmarshalText([]byte(value)); err != nil || checksum == (common.Hash{}) {
++		return common.Hash{}, fmt.Errorf("explicit nonzero 32-byte reviewed SHA-256 required")
++	}
++	return checksum, nil
++}
++
++func readPasswordStdin() ([]byte, error) {
++	info, err := os.Stdin.Stat()
++	if err != nil || info.Mode()&os.ModeNamedPipe == 0 {
++		return nil, fmt.Errorf("password input requires a pipe, never an echoing terminal")
++	}
++	return readPasswordLine(os.Stdin)
++}
++
++func readPasswordLine(input io.Reader) ([]byte, error) {
++	secret := make([]byte, 0, 4097)
++	one := make([]byte, 1)
++	for len(secret) <= 4096 {
++		_, err := io.ReadFull(input, one)
++		if err == io.EOF || (err == nil && one[0] == '\n') {
++			if len(secret) > 0 && secret[len(secret)-1] == '\r' {
++				secret = secret[:len(secret)-1]
++			}
++			return secret, nil
++		}
++		if err != nil {
++			return secret, fmt.Errorf("password input failed")
++		}
++		secret = append(secret, one[0])
++	}
++	return secret, fmt.Errorf("password exceeds 4096 bytes")
++}
++
++func writeNewFile(path string, data []byte) error {
++	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
++	if err != nil {
++		return err
++	}
++	defer file.Close()
++	if _, err := file.Write(data); err != nil {
++		return err
++	}
++	if err := file.Sync(); err != nil {
++		return err
++	}
++	return file.Close()
++}
+diff --git a/consensus/datong/consensus.go b/consensus/datong/consensus.go
+--- a/consensus/datong/consensus.go
++++ b/consensus/datong/consensus.go
+@@ -743,6 +743,15 @@
+ 		return nil, err
+ 	}
+ 	return tickets, nil
++}
++
++// SigningPayload returns the encoding signed by Seal, which differs from SealHash.
++// It does not validate the header's consensus eligibility.
++func SigningPayload(header *types.Header) ([]byte, error) {
++	if header == nil || header.Number == nil || header.Number.Sign() <= 0 || header.Difficulty == nil || header.Difficulty.Sign() < 0 || len(header.Extra) < extraSeal {
++		return nil, errors.New("incomplete DaTong signing header")
++	}
++	return sigRlp(header), nil
+ }
+ 
+ func sigRlp(header *types.Header) (result []byte) {
+diff --git a/internal/recovery/approval.go b/internal/recovery/approval.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/approval.go
+@@ -0,0 +1,128 @@
++package recovery
++
++import (
++	"bytes"
++	"crypto/sha256"
++	"encoding/json"
++	"fmt"
++	"io"
++	"os"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/common/hexutil"
++	"github.com/FusionFoundation/efsn/v5/consensus/datong"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/params"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++)
++
++type SigningApproval struct {
++	Version       uint64
++	Policy        SigningPolicy
++	Plan          Plan
++	Purchase      hexutil.Bytes
++	UnsignedBlock hexutil.Bytes
++}
++
++func EncodeSigningApproval(approval SigningApproval) ([]byte, error) {
++	data, err := json.MarshalIndent(approval, "", "  ")
++	if err != nil {
++		return nil, err
++	}
++	return append(data, '\n'), nil
++}
++
++func decodeSigningApproval(data []byte, approvedSHA256 common.Hash) (*SigningApproval, error) {
++	if len(data) > 1<<20 || common.Hash(sha256.Sum256(data)) != approvedSHA256 {
++		return nil, fmt.Errorf("approval exceeds one MiB or differs from reviewed SHA-256")
++	}
++	var approval SigningApproval
++	if err := json.Unmarshal(data, &approval); err != nil {
++		return nil, err
++	}
++	canonical, err := EncodeSigningApproval(approval)
++	if err != nil || !bytes.Equal(data, canonical) || approval.Version != 1 {
++		return nil, fmt.Errorf("version 1 canonical signing approval required")
++	}
++	return &approval, nil
++}
++
++func DecodeSigningApproval(data []byte, approvedSHA256 common.Hash) (*SigningApproval, error) {
++	return decodeSigningApproval(data, approvedSHA256)
++}
++
++func ExecutableSHA256() (common.Hash, error) {
++	path, err := os.Executable()
++	if err != nil {
++		return common.Hash{}, err
++	}
++	file, err := os.Open(path)
++	if err != nil {
++		return common.Hash{}, err
++	}
++	defer file.Close()
++	checksum := sha256.New()
++	if _, err := io.Copy(checksum, file); err != nil {
++		return common.Hash{}, err
++	}
++	return common.BytesToHash(checksum.Sum(nil)), nil
++}
++
++func ConfigurationSHA256(config *params.ChainConfig) (common.Hash, error) {
++	if config == nil {
++		return common.Hash{}, fmt.Errorf("chain configuration required")
++	}
++	data, err := json.Marshal(config)
++	return common.Hash(sha256.Sum256(data)), err
++}
++
++func SignApprovedOffline(chainPath, journalPath string, data []byte, approvedSHA256 common.Hash, signer datong.SignerFn) (*types.Block, error) {
++	return signApprovedOffline(chainPath, journalPath, data, approvedSHA256, fixedSigner(signer))
++}
++
++func signApprovedOffline(chainPath, journalPath string, data []byte, approvedSHA256 common.Hash, open signerPreflight) (*types.Block, error) {
++	approval, err := decodeSigningApproval(data, approvedSHA256)
++	if err != nil {
++		return nil, err
++	}
++	plan := approval.Plan
++	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
++	return withOfflineJournal(chainPath, journalPath, identity, func(reader *Reader, journal *SigningJournal) (*types.Block, error) {
++		journal.mu.Lock()
++		defer journal.mu.Unlock()
++		if journal.policy == nil || *journal.policy != approval.Policy || plan.Purchase.Owner != approval.Policy.PurchaseOwner {
++			return nil, fmt.Errorf("approval differs from immutable journal policy")
++		}
++		if err := checkApprovalContext(reader, approval); err != nil {
++			return nil, err
++		}
++		var purchase types.Transaction
++		if err := rlp.DecodeBytes(approval.Purchase, &purchase); err != nil {
++			return nil, err
++		}
++		return journal.signReviewedWithPreflight(reader, plan, types.Transactions{&purchase}, approval.UnsignedBlock, open)
++	})
++}
++
++func checkApprovalContext(reader *Reader, approval *SigningApproval) error {
++	plan := approval.Plan
++	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
++	if err := validateSigningPolicy(identity, approval.Policy); err != nil {
++		return err
++	}
++	if plan.Purchase.Owner != approval.Policy.PurchaseOwner {
++		return fmt.Errorf("purchase owner differs from policy")
++	}
++	executable, err := ExecutableSHA256()
++	if err != nil {
++		return err
++	}
++	config, err := ConfigurationSHA256(reader.Config())
++	if err != nil {
++		return err
++	}
++	if executable != approval.Policy.ExecutableSHA256 || config != approval.Policy.ConfigSHA256 {
++		return fmt.Errorf("executable or chain configuration differs from approved policy")
++	}
++	return nil
++}
+diff --git a/internal/recovery/build.go b/internal/recovery/build.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/build.go
+@@ -0,0 +1,172 @@
++package recovery
++
++import (
++	"encoding/json"
++	"fmt"
++	"math/big"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/consensus"
++	"github.com/FusionFoundation/efsn/v5/consensus/datong"
++	"github.com/FusionFoundation/efsn/v5/consensus/misc"
++	"github.com/FusionFoundation/efsn/v5/core"
++	"github.com/FusionFoundation/efsn/v5/core/state"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/core/vm"
++	"github.com/FusionFoundation/efsn/v5/crypto"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++)
++
++type Plan struct {
++	GenesisHash   common.Hash
++	ChainID       uint64
++	ParentNumber  uint64
++	ParentHash    common.Hash
++	Signer        common.Address
++	Timestamp     uint64
++	NextTimestamp uint64
++	Purchase      Purchase
++}
++
++type Purchase struct {
++	Hash  common.Hash
++	Owner common.Address
++	Nonce uint64
++	Start uint64
++	End   uint64
++}
++
++type Candidate struct {
++	Block    *types.Block
++	Receipt  *types.Receipt
++	Ticket   common.Ticket
++	Selected common.Hash
++	Retreat  []common.Hash
++}
++
++type Chain interface {
++	consensus.ChainReader
++	core.ChainContext
++	StateAt(common.Hash, common.Hash) (*state.StateDB, error)
++}
++
++// Build executes one reviewed purchase without committing state or signing a block.
++// NextTimestamp is an explicit eligibility horizon, not a guarantee of future uptime.
++func Build(chain Chain, plan Plan, txs types.Transactions) (*Candidate, error) {
++	parent, err := checkPlan(chain, plan, txs)
++	if err != nil {
++		return nil, err
++	}
++	header := &types.Header{ParentHash: parent.Hash(), Number: new(big.Int).Add(parent.Number, big.NewInt(1)), Time: plan.Timestamp, GasLimit: parent.GasLimit, Coinbase: plan.Signer, Difficulty: new(big.Int)}
++	if chain.Config().IsLondon(header.Number) {
++		header.BaseFee = misc.CalcBaseFee(chain.Config(), parent)
++	}
++	if err := chain.Engine().Prepare(chain, header); err != nil {
++		return nil, fmt.Errorf("prepare recovery block: %w", err)
++	}
++	if header.Time != plan.Timestamp {
++		return nil, fmt.Errorf("consensus adjusted planned timestamp from %d to %d", plan.Timestamp, header.Time)
++	}
++	s, err := chain.StateAt(parent.Root, parent.MixDigest)
++	if err != nil {
++		return nil, err
++	}
++	s.Prepare(txs[0].Hash(), 0)
++	receipt, err := core.ApplyTransaction(chain.Config(), chain, &plan.Signer, new(core.GasPool).AddGas(header.GasLimit), s, header, txs[0], &header.GasUsed, vm.Config{})
++	if err != nil {
++		return nil, fmt.Errorf("execute required purchase: %w", err)
++	}
++	id := crypto.Keccak256Hash(plan.Purchase.Owner.Bytes(), plan.ParentHash.Bytes())
++	if err := checkReceipt(receipt, plan.Purchase, id); err != nil {
++		return nil, err
++	}
++	block, err := chain.Engine().Finalize(chain, header, s, txs, nil, types.Receipts{receipt})
++	if err != nil {
++		return nil, fmt.Errorf("finalize recovery block: %w", err)
++	}
++	ticket, err := s.GetTicket(id)
++	if err != nil {
++		return nil, fmt.Errorf("required successor ticket missing: %w", err)
++	}
++	if ticket.Owner != plan.Purchase.Owner || ticket.Height != block.NumberU64() || ticket.StartTime != plan.Purchase.Start || ticket.ExpireTime != plan.Purchase.End {
++		return nil, fmt.Errorf("resulting successor ticket differs from plan")
++	}
++	if err := s.Error(); err != nil {
++		return nil, err
++	}
++	snapshot, err := datong.NewSnapshotFromHeader(block.Header())
++	if err != nil {
++		return nil, err
++	}
++	return &Candidate{Block: block, Receipt: receipt, Ticket: *ticket, Selected: snapshot.Selected, Retreat: snapshot.Retreat}, nil
++}
++
++func checkPlan(chain Chain, plan Plan, txs types.Transactions) (*types.Header, error) {
++	if _, ok := chain.Engine().(*datong.DaTong); !ok {
++		return nil, fmt.Errorf("recovery requires the DaTong engine")
++	}
++	genesis := chain.GetHeaderByNumber(0)
++	if genesis == nil || genesis.Hash() != plan.GenesisHash || plan.ChainID == 0 || chain.Config().ChainID == nil || chain.Config().ChainID.Cmp(new(big.Int).SetUint64(plan.ChainID)) != 0 {
++		return nil, fmt.Errorf("genesis or chain ID differs from plan")
++	}
++	parent := chain.CurrentHeader()
++	if parent == nil || parent.Number == nil || !parent.Number.IsUint64() || parent.Number.Uint64() != plan.ParentNumber || parent.Hash() != plan.ParentHash || plan.ParentNumber == ^uint64(0) {
++		return nil, fmt.Errorf("current parent differs from plan")
++	}
++	if plan.Signer == (common.Address{}) || plan.Purchase.Owner == (common.Address{}) {
++		return nil, fmt.Errorf("explicit signer and purchase owner required")
++	}
++	if plan.Timestamp <= parent.Time || plan.Timestamp-parent.Time < datong.MinBlockTime || plan.NextTimestamp <= plan.Timestamp || plan.NextTimestamp-plan.Timestamp < datong.MinBlockTime {
++		return nil, fmt.Errorf("planned block times must advance by at least the consensus minimum")
++	}
++	p := plan.Purchase
++	if p.End <= p.Start || p.End-p.Start < 30*24*3600 || p.Start > plan.Timestamp || p.End <= plan.NextTimestamp {
++		return nil, fmt.Errorf("purchase must remain usable beyond the next planned timestamp")
++	}
++	if len(txs) != 1 || txs[0] == nil || txs[0].Hash() != p.Hash {
++		return nil, fmt.Errorf("exactly the required purchase transaction must be included")
++	}
++	tx := txs[0]
++	if !tx.Protected() || tx.ChainId().Cmp(chain.Config().ChainID) != 0 || tx.To() == nil || *tx.To() != common.FSNCallAddress || tx.Value().Sign() != 0 || tx.Nonce() != p.Nonce {
++		return nil, fmt.Errorf("purchase destination, value, nonce or chain ID differs from plan")
++	}
++	owner, err := types.Sender(types.MakeSigner(chain.Config(), new(big.Int).Add(parent.Number, big.NewInt(1))), tx)
++	if err != nil || owner != p.Owner {
++		return nil, fmt.Errorf("purchase signature does not match planned owner")
++	}
++	var call common.FSNCallParam
++	var purchase common.BuyTicketParam
++	if err := rlp.DecodeBytes(tx.Data(), &call); err != nil || call.Func != common.BuyTicketFunc {
++		return nil, fmt.Errorf("required transaction is not a native ticket purchase")
++	}
++	if err := rlp.DecodeBytes(call.Data, &purchase); err != nil || purchase.Start != p.Start || purchase.End != p.End {
++		return nil, fmt.Errorf("purchase interval differs from plan")
++	}
++	return parent, nil
++}
++
++func checkReceipt(receipt *types.Receipt, purchase Purchase, id common.Hash) error {
++	if receipt == nil || receipt.Status != types.ReceiptStatusSuccessful || receipt.TxHash != purchase.Hash || len(receipt.Logs) != 1 {
++		return fmt.Errorf("required purchase receipt failed or is ambiguous")
++	}
++	entry := receipt.Logs[0]
++	if entry == nil || entry.Address != common.FSNCallAddress || len(entry.Topics) != 1 || entry.Topics[0] != common.BytesToHash([]byte{common.BuyTicketFunc}) {
++		return fmt.Errorf("required native purchase log missing")
++	}
++	var payload map[string]json.RawMessage
++	if err := json.Unmarshal(entry.Data, &payload); err != nil {
++		return fmt.Errorf("invalid purchase log: %w", err)
++	}
++	if _, failed := payload["Error"]; failed {
++		return fmt.Errorf("native purchase reported an error: %s", payload["Error"])
++	}
++	var loggedID common.Hash
++	var loggedOwner common.Address
++	if err := json.Unmarshal(payload["TicketID"], &loggedID); err != nil || loggedID != id {
++		return fmt.Errorf("native purchase ticket ID mismatch")
++	}
++	if err := json.Unmarshal(payload["TicketOwner"], &loggedOwner); err != nil || loggedOwner != purchase.Owner {
++		return fmt.Errorf("native purchase owner mismatch")
++	}
++	return nil
++}
+diff --git a/internal/recovery/chain.go b/internal/recovery/chain.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/chain.go
+@@ -0,0 +1,67 @@
++package recovery
++
++import (
++	"fmt"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/consensus"
++	"github.com/FusionFoundation/efsn/v5/consensus/datong"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
++	"github.com/FusionFoundation/efsn/v5/core/state"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/ethdb"
++	"github.com/FusionFoundation/efsn/v5/params"
++)
++
++type Reader struct {
++	db     ethdb.Database
++	config *params.ChainConfig
++	cache  state.Database
++	engine *datong.DaTong
++	head   *types.Header
++}
++
++// NewReader reads a stopped database without startup repair or canonical writes.
++// The caller must open the database read-only and keep it open for the reader.
++func NewReader(db ethdb.Database) (*Reader, error) {
++	config := rawdb.ReadChainConfig(db, rawdb.ReadCanonicalHash(db, 0))
++	if config == nil || config.DaTong == nil {
++		return nil, fmt.Errorf("missing DaTong chain configuration")
++	}
++	hash := rawdb.ReadHeadBlockHash(db)
++	number := rawdb.ReadHeaderNumber(db, hash)
++	if number == nil || hash != rawdb.ReadHeadHeaderHash(db) || hash != rawdb.ReadHeadFastBlockHash(db) || hash != rawdb.ReadCanonicalHash(db, *number) {
++		return nil, fmt.Errorf("full, header, fast and canonical heads must agree")
++	}
++	head := rawdb.ReadHeader(db, hash, *number)
++	if head == nil {
++		return nil, fmt.Errorf("missing head header")
++	}
++	cache := state.NewDatabase(db)
++	engine := datong.New(config.DaTong, db)
++	engine.SetStateCache(cache)
++	return &Reader{db: db, config: config, cache: cache, engine: engine, head: head}, nil
++}
++
++func (r *Reader) Config() *params.ChainConfig  { return r.config }
++func (r *Reader) Engine() consensus.Engine     { return r.engine }
++func (r *Reader) CurrentHeader() *types.Header { return types.CopyHeader(r.head) }
++func (r *Reader) StateAt(root, tickets common.Hash) (*state.StateDB, error) {
++	return state.New(root, tickets, r.cache)
++}
++func (r *Reader) GetHeader(hash common.Hash, number uint64) *types.Header {
++	return rawdb.ReadHeader(r.db, hash, number)
++}
++func (r *Reader) GetHeaderByNumber(number uint64) *types.Header {
++	return r.GetHeader(rawdb.ReadCanonicalHash(r.db, number), number)
++}
++func (r *Reader) GetHeaderByHash(hash common.Hash) *types.Header {
++	number := rawdb.ReadHeaderNumber(r.db, hash)
++	if number == nil {
++		return nil
++	}
++	return r.GetHeader(hash, *number)
++}
++func (r *Reader) GetBlock(hash common.Hash, number uint64) *types.Block {
++	return rawdb.ReadBlock(r.db, hash, number)
++}
+diff --git a/internal/recovery/keystore.go b/internal/recovery/keystore.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/keystore.go
+@@ -0,0 +1,138 @@
++package recovery
++
++import (
++	"bytes"
++	"encoding/hex"
++	"encoding/json"
++	"fmt"
++	"io"
++	"math"
++	"os"
++	"path/filepath"
++
++	"github.com/FusionFoundation/efsn/v5/accounts"
++	"github.com/FusionFoundation/efsn/v5/accounts/keystore"
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/consensus/datong"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/crypto"
++)
++
++type signingSession struct {
++	sign  datong.SignerFn
++	close func()
++}
++
++type signerPreflight func(accounts.Account, []byte) (*signingSession, error)
++
++func fixedSigner(signer datong.SignerFn) signerPreflight {
++	return func(accounts.Account, []byte) (*signingSession, error) {
++		if signer == nil {
++			return nil, fmt.Errorf("signer callback required")
++		}
++		return &signingSession{sign: signer, close: func() {}}, nil
++	}
++}
++
++func SignApprovedKeystore(chainPath, journalPath string, data []byte, approvedSHA256 common.Hash, keyPath string, password func() ([]byte, error)) (*types.Block, error) {
++	return signApprovedOffline(chainPath, journalPath, data, approvedSHA256, func(account accounts.Account, payload []byte) (*signingSession, error) {
++		return openKeystoreSigner(keyPath, account, payload, password)
++	})
++}
++
++func openKeystoreSigner(path string, account accounts.Account, payload []byte, password func() ([]byte, error)) (*signingSession, error) {
++	if !filepath.IsAbs(path) || password == nil {
++		return nil, fmt.Errorf("absolute encrypted key path and password reader required")
++	}
++	file, err := os.Open(path)
++	if err != nil {
++		return nil, err
++	}
++	defer file.Close()
++	data, err := io.ReadAll(io.LimitReader(file, (1<<20)+1))
++	if err != nil {
++		return nil, err
++	}
++	encrypted, err := checkedKeyCrypto(data, account.Address)
++	if err != nil {
++		return nil, err
++	}
++	secret, err := password()
++	defer eraseBytes(secret)
++	if err != nil {
++		return nil, fmt.Errorf("password input failed")
++	}
++	if len(secret) > 4096 {
++		return nil, fmt.Errorf("password exceeds 4096 bytes")
++	}
++	plain, err := keystore.DecryptDataV3(*encrypted, string(secret))
++	defer eraseBytes(plain)
++	if err != nil {
++		return nil, fmt.Errorf("encrypted key could not be decrypted")
++	}
++	key, err := crypto.ToECDSA(plain)
++	if err != nil {
++		return nil, fmt.Errorf("invalid decrypted private scalar")
++	}
++	closed := false
++	closeKey := func() {
++		for i := range key.D.Bits() {
++			key.D.Bits()[i] = 0
++		}
++		closed = true
++	}
++	if crypto.PubkeyToAddress(key.PublicKey) != account.Address {
++		closeKey()
++		return nil, fmt.Errorf("decrypted key does not match approved signer")
++	}
++	expected := common.CopyBytes(payload)
++	used := false
++	return &signingSession{close: closeKey, sign: func(request accounts.Account, mime string, message []byte) ([]byte, error) {
++		if closed || used || request.Address != account.Address || mime != "" || !bytes.Equal(message, expected) {
++			return nil, fmt.Errorf("key session permits only its one approved signing payload")
++		}
++		used = true
++		return crypto.Sign(crypto.Keccak256(message), key)
++	}}, nil
++}
++
++func checkedKeyCrypto(data []byte, signer common.Address) (*keystore.CryptoJSON, error) {
++	if len(data) > 1<<20 {
++		return nil, fmt.Errorf("encrypted key exceeds one MiB")
++	}
++	var key struct {
++		Version int
++		Address string
++		Crypto  keystore.CryptoJSON
++	}
++	if err := json.Unmarshal(data, &key); err != nil {
++		return nil, fmt.Errorf("invalid encrypted key JSON")
++	}
++	if key.Version != 3 || !common.IsHexAddress(key.Address) || common.HexToAddress(key.Address) != signer || key.Crypto.Cipher != "aes-128-ctr" || key.Crypto.KDF != "scrypt" {
++		return nil, fmt.Errorf("expected signer requires a version 3 AES-128-CTR/scrypt keystore")
++	}
++	n, nOK := key.Crypto.KDFParams["n"].(float64)
++	r, rOK := key.Crypto.KDFParams["r"].(float64)
++	p, pOK := key.Crypto.KDFParams["p"].(float64)
++	dklen, dkOK := key.Crypto.KDFParams["dklen"].(float64)
++	salt, saltOK := key.Crypto.KDFParams["salt"].(string)
++	if !nOK || !rOK || !pOK || !dkOK || !saltOK || math.Trunc(n) != n || math.Trunc(p) != p || n < 2 || n > 262144 || int(n)&(int(n)-1) != 0 || r != 8 || p < 1 || p > 16 || n*p > 1048576 || dklen != 32 {
++		return nil, fmt.Errorf("unsupported or excessive scrypt parameters")
++	}
++	for _, field := range []struct {
++		value string
++		size  int
++	}{{salt, 32}, {key.Crypto.CipherText, 32}, {key.Crypto.MAC, 32}, {key.Crypto.CipherParams.IV, 16}} {
++		decoded, err := hex.DecodeString(field.value)
++		if err != nil || len(decoded) != field.size {
++			return nil, fmt.Errorf("invalid encrypted key field length")
++		}
++	}
++	return &key.Crypto, nil
++}
++
++func eraseBytes(data []byte) {
++	for i := range data {
++		data[i] = 0
++	}
++}
+diff --git a/internal/recovery/offline.go b/internal/recovery/offline.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/offline.go
+@@ -0,0 +1,137 @@
++package recovery
++
++import (
++	"fmt"
++	"os"
++	"path/filepath"
++	"strings"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/consensus/datong"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++)
++
++// SignOffline holds the stopped chain's read-only database lock throughout
++// construction and signing. The existing journal must live outside chain data.
++// It does not open a key, import a block, export a file or contact the network.
++func SignOffline(chainPath, journalPath string, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
++	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
++	return withOfflineJournal(chainPath, journalPath, identity, func(reader *Reader, journal *SigningJournal) (*types.Block, error) {
++		return journal.Sign(reader, plan, txs, reviewed, signer)
++	})
++}
++
++func withOfflineJournal(chainPath, journalPath string, identity SigningIdentity, sign func(*Reader, *SigningJournal) (*types.Block, error)) (*types.Block, error) {
++	chainPath, err := existingDirectory(chainPath)
++	if err != nil {
++		return nil, err
++	}
++	journalPath, err = existingDirectory(journalPath)
++	if err != nil {
++		return nil, err
++	}
++	if containsPath(chainPath, journalPath) || containsPath(journalPath, chainPath) {
++		return nil, fmt.Errorf("signing journal and chain data must be separate directories")
++	}
++	return withStoppedChain(chainPath, func(reader *Reader) (*types.Block, error) {
++		journal, err := OpenSigningJournal(journalPath, identity)
++		if err != nil {
++			return nil, err
++		}
++		defer journal.Close()
++		return sign(reader, journal)
++	})
++}
++
++func withStoppedChain(chainPath string, use func(*Reader) (*types.Block, error)) (*types.Block, error) {
++	db, err := rawdb.NewLevelDBDatabase(chainPath, 16, 16, "recovery-offline", true)
++	if err != nil {
++		return nil, err
++	}
++	defer db.Close()
++	reader, err := NewReader(db)
++	if err != nil {
++		return nil, err
++	}
++	return use(reader)
++}
++
++// ExportSavedBlock retrieves a completed journal record without any signing
++// capability or chain-head dependency. It only creates a new file. A failed
++// write can leave a partial file; retry to a new path and verify before import.
++func ExportSavedBlock(journalPath string, identity SigningIdentity, parent common.Hash, output string) error {
++	return exportSavedBlock(journalPath, identity, parent, output, nil)
++}
++
++func exportSavedBlock(journalPath string, identity SigningIdentity, parent common.Hash, output string, check func(*SigningJournal, *types.Block) error) error {
++	if !filepath.IsAbs(output) {
++		return fmt.Errorf("absolute export filename required")
++	}
++	journalPath, err := existingDirectory(journalPath)
++	if err != nil {
++		return err
++	}
++	directory, err := existingDirectory(filepath.Dir(output))
++	if err != nil {
++		return err
++	}
++	output = filepath.Join(directory, filepath.Base(output))
++	if containsPath(journalPath, output) {
++		return fmt.Errorf("export must be outside signing journal")
++	}
++	journal, err := OpenSigningJournal(journalPath, identity)
++	if err != nil {
++		return err
++	}
++	defer journal.Close()
++	block, err := journal.Saved(parent)
++	if err != nil {
++		return err
++	}
++	if check != nil {
++		if err := check(journal, block); err != nil {
++			return err
++		}
++	}
++	encoded, err := rlp.EncodeToBytes(block)
++	if err != nil {
++		return err
++	}
++	file, err := os.OpenFile(output, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
++	if err != nil {
++		return err
++	}
++	defer file.Close()
++	if _, err := file.Write(encoded); err != nil {
++		return err
++	}
++	if err := file.Sync(); err != nil {
++		return err
++	}
++	return file.Close()
++}
++
++func existingDirectory(path string) (string, error) {
++	if !filepath.IsAbs(path) {
++		return "", fmt.Errorf("absolute existing directory required")
++	}
++	resolved, err := filepath.EvalSymlinks(path)
++	if err != nil {
++		return "", fmt.Errorf("resolve existing directory %q: %w", path, err)
++	}
++	info, err := os.Stat(resolved)
++	if err != nil {
++		return "", err
++	}
++	if !info.IsDir() {
++		return "", fmt.Errorf("directory required: %s", path)
++	}
++	return resolved, nil
++}
++
++func containsPath(parent, child string) bool {
++	relative, err := filepath.Rel(parent, child)
++	return err == nil && relative != ".." && !strings.HasPrefix(relative, ".."+string(filepath.Separator))
++}
+diff --git a/internal/recovery/operator.go b/internal/recovery/operator.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/operator.go
+@@ -0,0 +1,85 @@
++package recovery
++
++import (
++	"bytes"
++	"fmt"
++	"os"
++	"path/filepath"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++)
++
++func InitializeApprovedOffline(chainPath, journalPath string, data []byte, approvedSHA256 common.Hash) error {
++	approval, err := decodeSigningApproval(data, approvedSHA256)
++	if err != nil {
++		return err
++	}
++	chainPath, err = existingDirectory(chainPath)
++	if err != nil {
++		return err
++	}
++	if !filepath.IsAbs(journalPath) {
++		return fmt.Errorf("absolute new journal path required")
++	}
++	parent, err := existingDirectory(filepath.Dir(journalPath))
++	if err != nil {
++		return err
++	}
++	journalPath = filepath.Join(parent, filepath.Base(journalPath))
++	if _, err := os.Lstat(journalPath); err == nil {
++		return fmt.Errorf("journal path already exists; initialization cannot replace it")
++	} else if !os.IsNotExist(err) {
++		return err
++	}
++	if containsPath(chainPath, journalPath) || containsPath(journalPath, chainPath) {
++		return fmt.Errorf("signing journal and chain data must be separate directories")
++	}
++	plan := approval.Plan
++	if plan.ParentHash != approval.Policy.FirstParent || plan.ParentNumber != approval.Policy.FirstParentNumber {
++		return fmt.Errorf("journal initialization requires the first approved stage")
++	}
++	_, err = withStoppedChain(chainPath, func(reader *Reader) (*types.Block, error) {
++		if err := checkApprovalContext(reader, approval); err != nil {
++			return nil, err
++		}
++		var purchase types.Transaction
++		if err := rlp.DecodeBytes(approval.Purchase, &purchase); err != nil {
++			return nil, err
++		}
++		if _, err := reviewedCandidate(reader, plan, types.Transactions{&purchase}, approval.UnsignedBlock); err != nil {
++			return nil, err
++		}
++		journal, err := CreateApprovedSigningJournal(journalPath, SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}, approval.Policy)
++		if err != nil {
++			return nil, err
++		}
++		return nil, journal.Close()
++	})
++	return err
++}
++
++func ExportApprovedBlock(journalPath string, data []byte, approvedSHA256 common.Hash, output string) error {
++	approval, err := decodeSigningApproval(data, approvedSHA256)
++	if err != nil {
++		return err
++	}
++	plan := approval.Plan
++	identity := SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}
++	return exportSavedBlock(journalPath, identity, plan.ParentHash, output, func(journal *SigningJournal, block *types.Block) error {
++		if journal.policy == nil || *journal.policy != approval.Policy {
++			return fmt.Errorf("export approval differs from journal policy")
++		}
++		header := block.Header()
++		copy(header.Extra[len(header.Extra)-65:], make([]byte, 65))
++		unsigned, err := rlp.EncodeToBytes(block.WithSeal(header))
++		if err != nil {
++			return err
++		}
++		if !bytes.Equal(unsigned, approval.UnsignedBlock) {
++			return fmt.Errorf("saved block differs from approved unsigned bytes")
++		}
++		return nil
++	})
++}
+diff --git a/internal/recovery/policy.go b/internal/recovery/policy.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/policy.go
+@@ -0,0 +1,112 @@
++package recovery
++
++import (
++	"fmt"
++	"sort"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++	"github.com/syndtr/goleveldb/leveldb"
++	"github.com/syndtr/goleveldb/leveldb/util"
++)
++
++type SigningPolicy struct {
++	FirstParent       common.Hash
++	FirstParentNumber uint64
++	PurchaseOwner     common.Address
++	BlockCount        uint64
++	ExecutableSHA256  common.Hash
++	ConfigSHA256      common.Hash
++}
++
++func CreateApprovedSigningJournal(path string, identity SigningIdentity, policy SigningPolicy) (*SigningJournal, error) {
++	if err := validateSigningPolicy(identity, policy); err != nil {
++		return nil, err
++	}
++	return openSigningJournal(path, identity, true, &policy)
++}
++
++func validateSigningPolicy(identity SigningIdentity, policy SigningPolicy) error {
++	if policy.FirstParent == (common.Hash{}) || policy.PurchaseOwner == (common.Address{}) || policy.ExecutableSHA256 == (common.Hash{}) || policy.ConfigSHA256 == (common.Hash{}) {
++		return fmt.Errorf("explicit parent, purchaser, executable and configuration pins required")
++	}
++	if policy.BlockCount != 1 && policy.BlockCount != 2 || policy.FirstParentNumber > ^uint64(0)-policy.BlockCount {
++		return fmt.Errorf("policy must allow one backup block or two donation blocks without height overflow")
++	}
++	if (policy.BlockCount == 1) == (policy.PurchaseOwner == identity.Signer) {
++		return fmt.Errorf("backup must purchase for donation owner; donation must purchase for itself")
++	}
++	return nil
++}
++
++func (j *SigningJournal) readPolicy() error {
++	data, err := j.db.Get([]byte("policy-v1"), nil)
++	if err == leveldb.ErrNotFound {
++		return nil
++	}
++	if err != nil {
++		return err
++	}
++	var policy SigningPolicy
++	if err := rlp.DecodeBytes(data, &policy); err != nil {
++		return err
++	}
++	if err := validateSigningPolicy(j.identity, policy); err != nil {
++		return err
++	}
++	j.policy = &policy
++	return nil
++}
++
++func (j *SigningJournal) checkPolicySequence(candidate *types.Block) error {
++	if j.policy == nil {
++		return nil
++	}
++	blocks := make([]*types.Block, 0, j.policy.BlockCount)
++	sealed := make(map[common.Hash]*types.Block)
++	iterator := j.db.NewIterator(util.BytesPrefix([]byte{'p'}), nil)
++	defer iterator.Release()
++	for iterator.Next() {
++		if len(iterator.Key()) != 33 {
++			continue
++		}
++		record, signed, err := j.decodeRecord(common.BytesToHash(iterator.Key()[1:]), iterator.Value())
++		if err != nil {
++			return err
++		}
++		var block types.Block
++		if err := rlp.DecodeBytes(record.Unsigned, &block); err != nil {
++			return err
++		}
++		blocks = append(blocks, &block)
++		sealed[block.ParentHash()] = signed
++	}
++	if err := iterator.Error(); err != nil {
++		return err
++	}
++	if candidate != nil {
++		if _, exists := sealed[candidate.ParentHash()]; !exists {
++			blocks = append(blocks, candidate)
++		}
++	}
++	if uint64(len(blocks)) > j.policy.BlockCount {
++		return fmt.Errorf("approved block quota exhausted")
++	}
++	sort.Slice(blocks, func(i, k int) bool { return blocks[i].NumberU64() < blocks[k].NumberU64() })
++	parent, number := j.policy.FirstParent, j.policy.FirstParentNumber
++	for index, block := range blocks {
++		if !block.Number().IsUint64() || block.ParentHash() != parent || block.NumberU64() != number+1 {
++			return fmt.Errorf("block is outside approved consecutive handover sequence")
++		}
++		completed := sealed[block.ParentHash()]
++		if completed == nil {
++			if index != len(blocks)-1 {
++				return ErrSigningUncertain
++			}
++			break
++		}
++		parent, number = completed.Hash(), completed.NumberU64()
++	}
++	return nil
++}
+diff --git a/internal/recovery/signing.go b/internal/recovery/signing.go
+new file mode 100644
+--- /dev/null
++++ b/internal/recovery/signing.go
+@@ -0,0 +1,288 @@
++package recovery
++
++import (
++	"bytes"
++	"errors"
++	"fmt"
++	"path/filepath"
++	"sync"
++
++	"github.com/FusionFoundation/efsn/v5/accounts"
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/consensus/datong"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++	"github.com/syndtr/goleveldb/leveldb"
++	"github.com/syndtr/goleveldb/leveldb/opt"
++)
++
++var (
++	ErrSigningUncertain = errors.New("signing reservation is unfinished; do not sign again")
++	ErrSigningConflict  = errors.New("another payload is reserved for this parent")
++)
++
++type SigningIdentity struct {
++	GenesisHash common.Hash
++	ChainID     uint64
++	Signer      common.Address
++}
++
++type signingRecord struct {
++	Unsigned  []byte
++	Signature []byte
++}
++
++type SigningJournal struct {
++	mu       sync.Mutex
++	db       *leveldb.DB
++	identity SigningIdentity
++	policy   *SigningPolicy
++	fault    error
++}
++
++// CreateSigningJournal is an explicit, one-time initialization, never a recovery
++// action. Copies, rollbacks and other signers using the same key are not protected.
++func CreateSigningJournal(path string, identity SigningIdentity) (*SigningJournal, error) {
++	return openSigningJournal(path, identity, true, nil)
++}
++
++func OpenSigningJournal(path string, identity SigningIdentity) (*SigningJournal, error) {
++	return openSigningJournal(path, identity, false, nil)
++}
++
++func openSigningJournal(path string, identity SigningIdentity, create bool, policy *SigningPolicy) (*SigningJournal, error) {
++	if !filepath.IsAbs(path) || identity.GenesisHash == (common.Hash{}) || identity.ChainID == 0 || identity.Signer == (common.Address{}) {
++		return nil, fmt.Errorf("absolute journal path and explicit signing identity required")
++	}
++	db, err := leveldb.OpenFile(path, &opt.Options{ErrorIfExist: create, ErrorIfMissing: !create, Strict: opt.StrictAll})
++	if err != nil {
++		return nil, err
++	}
++	j := &SigningJournal{db: db, identity: identity}
++	encoded, err := rlp.EncodeToBytes(identity)
++	if err == nil && create {
++		batch := new(leveldb.Batch)
++		batch.Put([]byte("identity-v1"), encoded)
++		if policy != nil {
++			var data []byte
++			data, err = rlp.EncodeToBytes(policy)
++			if err == nil {
++				batch.Put([]byte("policy-v1"), data)
++			}
++		}
++		if err == nil {
++			err = db.Write(batch, &opt.WriteOptions{Sync: true})
++		}
++	}
++	if err == nil {
++		err = j.readPolicy()
++	}
++	if err == nil {
++		var stored []byte
++		stored, err = db.Get([]byte("identity-v1"), nil)
++		if err == nil && !bytes.Equal(stored, encoded) {
++			err = fmt.Errorf("signing journal identity mismatch")
++		}
++	}
++	if err == nil {
++		err = j.validateRecords()
++	}
++	if err != nil {
++		db.Close()
++		return nil, err
++	}
++	return j, nil
++}
++
++func (j *SigningJournal) validateRecords() error {
++	iterator := j.db.NewIterator(nil, nil)
++	defer iterator.Release()
++	for iterator.Next() {
++		key := iterator.Key()
++		if bytes.Equal(key, []byte("identity-v1")) || bytes.Equal(key, []byte("policy-v1")) {
++			continue
++		}
++		if len(key) != 33 || key[0] != 'p' {
++			return fmt.Errorf("unknown signing journal record")
++		}
++		if _, _, err := j.decodeRecord(common.BytesToHash(key[1:]), iterator.Value()); err != nil {
++			return err
++		}
++	}
++	if err := iterator.Error(); err != nil {
++		return err
++	}
++	return j.checkPolicySequence(nil)
++}
++
++// Sign rebuilds an explicitly reviewed candidate against a stopped chain reader.
++// It never imports or broadcasts. The callback must sign Keccak256(payload), as
++// DaTong's ordinary SignerFn does. An ambiguous attempt permanently reserves its
++// parent; recovery must not recreate the journal or call another signing path.
++func (j *SigningJournal) Sign(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
++	j.mu.Lock()
++	defer j.mu.Unlock()
++	if j.policy != nil {
++		return nil, fmt.Errorf("policy journal requires approved offline signing")
++	}
++	return j.signReviewed(chain, plan, txs, reviewed, signer)
++}
++
++func (j *SigningJournal) signReviewed(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, signer datong.SignerFn) (*types.Block, error) {
++	return j.signReviewedWithPreflight(chain, plan, txs, reviewed, fixedSigner(signer))
++}
++
++func (j *SigningJournal) signReviewedWithPreflight(chain Chain, plan Plan, txs types.Transactions, reviewed []byte, open signerPreflight) (*types.Block, error) {
++	if j.fault != nil {
++		return nil, j.fault
++	}
++	if j.identity != (SigningIdentity{GenesisHash: plan.GenesisHash, ChainID: plan.ChainID, Signer: plan.Signer}) {
++		return nil, fmt.Errorf("plan differs from journal signing identity")
++	}
++	block, err := reviewedCandidate(chain, plan, txs, reviewed)
++	if err != nil {
++		return nil, err
++	}
++	return j.signWithPreflight(block, reviewed, open)
++}
++
++func reviewedCandidate(chain Chain, plan Plan, txs types.Transactions, reviewed []byte) (*types.Block, error) {
++	candidate, err := Build(chain, plan, txs)
++	if err != nil {
++		return nil, err
++	}
++	encoded, err := rlp.EncodeToBytes(candidate.Block)
++	if err != nil {
++		return nil, err
++	}
++	if !bytes.Equal(encoded, reviewed) {
++		return nil, fmt.Errorf("rebuilt block differs from reviewed unsigned artifact")
++	}
++	return candidate.Block, nil
++}
++
++func (j *SigningJournal) signBlock(block *types.Block, encoded []byte, signer datong.SignerFn) (*types.Block, error) {
++	return j.signWithPreflight(block, encoded, fixedSigner(signer))
++}
++
++func (j *SigningJournal) signWithPreflight(block *types.Block, encoded []byte, open signerPreflight) (*types.Block, error) {
++	if err := j.checkPolicySequence(block); err != nil {
++		return nil, err
++	}
++	key := append([]byte{'p'}, block.ParentHash().Bytes()...)
++	stored, err := j.db.Get(key, nil)
++	if err == nil {
++		record, sealed, err := j.decodeRecord(block.ParentHash(), stored)
++		if err != nil {
++			return nil, err
++		}
++		if !bytes.Equal(record.Unsigned, encoded) {
++			return nil, ErrSigningConflict
++		}
++		if sealed == nil {
++			return nil, ErrSigningUncertain
++		}
++		return sealed, nil
++	}
++	if err != leveldb.ErrNotFound {
++		return nil, err
++	}
++	payload, err := datong.SigningPayload(block.Header())
++	if err != nil {
++		return nil, err
++	}
++	session, err := open(accounts.Account{Address: j.identity.Signer}, common.CopyBytes(payload))
++	if err != nil {
++		return nil, err
++	}
++	defer session.close()
++	record := signingRecord{Unsigned: encoded}
++	if err := j.writeRecord(key, record); err != nil {
++		return nil, err
++	}
++	signature, err := session.sign(accounts.Account{Address: j.identity.Signer}, "", payload)
++	if err != nil {
++		return nil, fmt.Errorf("%w: callback failed: %v", ErrSigningUncertain, err)
++	}
++	record.Signature = common.CopyBytes(signature)
++	sealed, err := sealRecordedBlock(block, record.Signature)
++	if err != nil {
++		return nil, fmt.Errorf("%w: %v", ErrSigningUncertain, err)
++	}
++	if err := j.writeRecord(key, record); err != nil {
++		return nil, err
++	}
++	return sealed, nil
++}
++
++func (j *SigningJournal) writeRecord(key []byte, record signingRecord) error {
++	data, err := rlp.EncodeToBytes(record)
++	if err == nil {
++		err = j.db.Put(key, data, &opt.WriteOptions{Sync: true})
++	}
++	if err != nil {
++		j.fault = fmt.Errorf("%w: journal write failed: %v", ErrSigningUncertain, err)
++	}
++	return j.fault
++}
++
++func (j *SigningJournal) decodeRecord(parent common.Hash, data []byte) (signingRecord, *types.Block, error) {
++	var record signingRecord
++	if err := rlp.DecodeBytes(data, &record); err != nil {
++		return record, nil, err
++	}
++	var block types.Block
++	if err := rlp.DecodeBytes(record.Unsigned, &block); err != nil {
++		return record, nil, err
++	}
++	header := block.Header()
++	if _, err := datong.SigningPayload(header); err != nil {
++		return record, nil, err
++	}
++	if block.ParentHash() != parent || block.Coinbase() != j.identity.Signer || block.NumberU64() == 0 || !bytes.Equal(header.Extra[len(header.Extra)-65:], make([]byte, 65)) {
++		return record, nil, fmt.Errorf("invalid unsigned signing journal record")
++	}
++	if len(record.Signature) == 0 {
++		return record, nil, nil
++	}
++	sealed, err := sealRecordedBlock(&block, record.Signature)
++	return record, sealed, err
++}
++
++func sealRecordedBlock(block *types.Block, signature []byte) (*types.Block, error) {
++	if len(signature) != 65 {
++		return nil, fmt.Errorf("invalid block signature length")
++	}
++	header := block.Header()
++	copy(header.Extra[len(header.Extra)-65:], signature)
++	if err := datong.VerifySignature(header); err != nil {
++		return nil, err
++	}
++	return block.WithSeal(header), nil
++}
++
++// Saved returns the exact completed artifact even after the chain head advances.
++// Retrieval is not approval to publish it; independently validate before import.
++func (j *SigningJournal) Saved(parent common.Hash) (*types.Block, error) {
++	j.mu.Lock()
++	defer j.mu.Unlock()
++	if j.fault != nil {
++		return nil, j.fault
++	}
++	data, err := j.db.Get(append([]byte{'p'}, parent.Bytes()...), nil)
++	if err != nil {
++		return nil, err
++	}
++	_, block, err := j.decodeRecord(parent, data)
++	if err == nil && block == nil {
++		err = ErrSigningUncertain
++	}
++	return block, err
++}
++
++func (j *SigningJournal) Close() error {
++	j.mu.Lock()
++	defer j.mu.Unlock()
++	j.fault = fmt.Errorf("signing journal is closed")
++	return j.db.Close()
++}

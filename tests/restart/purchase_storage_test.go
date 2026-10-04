@@ -102,15 +102,16 @@ func runPurchaseStorageError(t *testing.T, mode string, f *fixture, b *autoBuyBa
 		b.failNext.Store(operation != "delete")
 		stop := startPurchaseController(t, true)
 		first := awaitSubmission(t, b)
-		stop()
 		original = first.tx
 		if operation == "delete" {
 			requireNoError(t, first.err)
+			stop()
 			f.importBlock(t, f.buildBlockWithTransactions(t, f.chain.CurrentBlock().Time()+120, []*types.Transaction{original}))
 			awaitPoolNonce(t, b, original.Nonce()+1)
 		} else {
 			requireErrorContains(t, first.err, "injected temporary submission failure")
 			awaitPurchaseWarning(t, warnings, "injected temporary submission failure")
+			stop()
 		}
 	}
 	head := f.chain.CurrentBlock()

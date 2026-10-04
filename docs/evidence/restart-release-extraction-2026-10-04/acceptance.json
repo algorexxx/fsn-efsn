@@ -1,0 +1,27 @@
+{
+  "production_patch_changes_this_turn": false,
+  "extraction_builds": "pass in attempts 3 and 4",
+  "initial_restart_pass_groups": [
+    "TestRestartAnchorEnforcement",
+    "TestRestartAnchorConfiguration",
+    "TestAutoBuyRuntime",
+    "TestHeaderBatchUsesUnstoredParents",
+    "TestFinalizeParentIsolatedFromConcurrentImport",
+    "TestColdHeaderValidationBoundaries",
+    "TestAutomaticPurchaseRecovery",
+    "TestSubmittedTicketReplacementAllowsExplicitRetry",
+    "TestReconstructionAcrossMissingStates",
+    "TestReconstructionAtHistoricalExpiryBoundary",
+    "TestReconstructionWithMissingAncestorReturnsError",
+    "TestRestartRollbackDatabaseModes"
+  ],
+  "initial_restart_failed_groups": [
+    "TestAutomaticPurchaseStorageErrors"
+  ],
+  "corrected_storage_cases": 8,
+  "additional_has_get_passes": 6,
+  "production_source_unchanged": true,
+  "complete_source_checks": "821 Go files node-only, 831 with recovery, 951 with test overlay; exact hashes before and after test-only correction",
+  "params_supplement": "TestCheckCompatible passed; initial filter matched no params tests",
+  "scope": "Extraction and selected regression acceptance only; not final release approval"
+}

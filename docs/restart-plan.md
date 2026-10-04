@@ -93,6 +93,10 @@ No further range is running; candidate-patch historical compatibility remains op
 
 ## G2 — Client and supported operation
 
+- [x] Assemble the [proposed source patches](restart-release-extraction.md) from
+  pinned upstream: P1–P17 node changes, optional O1 and separate recovery tooling.
+  All 109 node hunks have review IDs; observer and gateway changes are excluded.
+  This prepares the review input, not approval of the release selection below.
 - [ ] Select every production hunk against upstream from the
   [P1–P17 inventory](restart-node-patch-review.md); separate node changes,
   recovery tooling, observer, packaging and inherited explorer settings.

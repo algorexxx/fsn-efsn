@@ -1,0 +1,2364 @@
+diff --git a/cmd/efsn/main.go b/cmd/efsn/main.go
+--- a/cmd/efsn/main.go
++++ b/cmd/efsn/main.go
+@@ -294,6 +294,7 @@
+ 	stack, backend := makeFullNode(ctx)
+ 	defer stack.Close()
+ 
++	stack.RegisterLifecycle(ethapi.NewTicketBuyer(ctx.Bool(utils.AutoBuyTicketsEnabledFlag.Name)))
+ 	startNode(ctx, stack, backend)
+ 	stack.Wait()
+ 	return nil
+@@ -363,8 +364,6 @@
+ 		}
+ 	}()
+ 
+-	// Start auto buy tickets
+-	go ethapi.AutoBuyTicket(ctx.Bool(utils.AutoBuyTicketsEnabledFlag.Name))
+ 	// Start report illegal
+ 	go ethapi.ReportIllegal()
+ 
+diff --git a/cmd/utils/flags.go b/cmd/utils/flags.go
+--- a/cmd/utils/flags.go
++++ b/cmd/utils/flags.go
+@@ -830,7 +830,7 @@
+ 
+ 	cfg.BootstrapNodes = make([]*discover.Node, 0, len(urls))
+ 	for _, url := range urls {
+-		node, err := discover.ParseNode(url)
++		node, err := discover.ParseBootnode(url)
+ 		if err != nil {
+ 			log.Crit("Bootstrap URL invalid", "enode", url, "err", err)
+ 		}
+diff --git a/common/autobuy.go b/common/autobuy.go
+new file mode 100644
+--- /dev/null
++++ b/common/autobuy.go
+@@ -0,0 +1,25 @@
++package common
++
++import "sync/atomic"
++
++var autoBuyTicketEnabled uint32
++
++func IsAutoBuyTicketEnabled() bool {
++	return atomic.LoadUint32(&autoBuyTicketEnabled) != 0
++}
++
++func SetAutoBuyTicketEnabled(enabled bool) {
++	var value uint32
++	if enabled {
++		value = 1
++	}
++	atomic.StoreUint32(&autoBuyTicketEnabled, value)
++	NotifyAutoBuyTicket()
++}
++
++func NotifyAutoBuyTicket() {
++	select {
++	case AutoBuyTicketChan <- 1:
++	default:
++	}
++}
+diff --git a/common/fsntypes.go b/common/fsntypes.go
+--- a/common/fsntypes.go
++++ b/common/fsntypes.go
+@@ -48,8 +48,6 @@
+ }
+ 
+ var (
+-	// AutoBuyTicket wacom
+-	AutoBuyTicket = false
+ 	// AutoBuyTicketChan wacom
+ 	AutoBuyTicketChan = make(chan int, 10)
+ 
+diff --git a/consensus/datong/consensus.go b/consensus/datong/consensus.go
+--- a/consensus/datong/consensus.go
++++ b/consensus/datong/consensus.go
+@@ -203,7 +203,7 @@
+ // VerifyHeader checks whether a header conforms to the consensus rules of the
+ // stock Ethereum ethash engine.
+ func (dt *DaTong) VerifyHeader(chain consensus.ChainReader, header *types.Header, seal bool) error {
+-	return dt.verifyHeader(chain, header, seal, glb_parents)
++	return dt.verifyHeader(chain, header, seal, nil)
+ }
+ 
+ // VerifyHeaders is similar to VerifyHeader, but verifies a batch of headers
+@@ -238,12 +238,6 @@
+ 	return c.verifySeal(chain, header, nil)
+ }
+ 
+-var glb_parents []*types.Header
+-
+-func SetHeaders(parents []*types.Header) {
+-	glb_parents = parents
+-}
+-
+ func getParent(chain consensus.ChainReader, header *types.Header, parents []*types.Header) (*types.Header, error) {
+ 	number := header.Number.Uint64()
+ 	var parent *types.Header
+@@ -373,7 +367,7 @@
+ // consensus rules that happen at finalization (e.g. block rewards).
+ func (dt *DaTong) Finalize(chain consensus.ChainReader, header *types.Header, statedb *state.StateDB, txs []*types.Transaction,
+ 	uncles []*types.Header, receipts []*types.Receipt) (*types.Block, error) {
+-	parent, err := getParent(chain, header, glb_parents)
++	parent, err := getParent(chain, header, nil)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -585,8 +579,9 @@
+ 	parent := header
+ 	parents := []*types.Header{parent}
+ 	for {
+-		if parent = chain.GetHeader(parent.ParentHash, parent.Number.Uint64()-1); parent == nil {
+-			return nil, fmt.Errorf("Can not find parent, number=%v, hash=%v", parent.Number.Uint64()-1, parent.ParentHash.String())
++		parent, err = getParent(chain, parent, nil)
++		if err != nil {
++			return nil, err
+ 		}
+ 		statedb, err = state.New(parent.Root, parent.MixDigest, dt.stateCache)
+ 		if err == nil {
+@@ -736,7 +731,11 @@
+ 		}
+ 	}
+ 
+-	tickets, err = tickets.ClearExpiredTickets(header.Time)
++	cleanupParent, err := getParent(chain, header, nil)
++	if err != nil {
++		return nil, err
++	}
++	tickets, err = tickets.ClearExpiredTickets(cleanupParent.Time)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+diff --git a/consensus/datong/snapshot.go b/consensus/datong/snapshot.go
+--- a/consensus/datong/snapshot.go
++++ b/consensus/datong/snapshot.go
+@@ -70,6 +70,9 @@
+ func (snap *snapshot) SetBytes(data []byte) error {
+ 	if len(data) <= 0 {
+ 		return errors.New("Empty data")
++	}
++	if len(data) < 5 {
++		return errors.New("data length error")
+ 	}
+ 
+ 	realData := data[:len(data)-1]
+diff --git a/core/blockchain.go b/core/blockchain.go
+--- a/core/blockchain.go
++++ b/core/blockchain.go
+@@ -328,12 +328,32 @@
+ 	bc.chainmu.Lock()
+ 	defer bc.chainmu.Unlock()
+ 
+-	// Rewind the header chain, deleting all block bodies until then
++	currentBlock, currentFastBlock := bc.CurrentBlock(), bc.CurrentFastBlock()
++	updateFn := func(db ethdb.KeyValueWriter, header *types.Header) {
++		if currentBlock != nil && header.Number.Uint64() < currentBlock.NumberU64() {
++			currentBlock = bc.GetBlock(header.Hash(), header.Number.Uint64())
++		}
++		if currentBlock == nil {
++			currentBlock = bc.genesisBlock
++		}
++		if err := bc.repair(&currentBlock); err != nil {
++			currentBlock = bc.genesisBlock
++		}
++		if currentFastBlock != nil && header.Number.Uint64() < currentFastBlock.NumberU64() {
++			currentFastBlock = bc.GetBlock(header.Hash(), header.Number.Uint64())
++		}
++		if currentFastBlock == nil {
++			currentFastBlock = bc.genesisBlock
++		}
++		rawdb.WriteHeadBlockHash(db, currentBlock.Hash())
++		rawdb.WriteHeadFastBlockHash(db, currentFastBlock.Hash())
++	}
+ 	delFn := func(db ethdb.KeyValueWriter, hash common.Hash, num uint64) {
+ 		rawdb.DeleteBody(db, hash, num)
+ 	}
+-	bc.hc.SetHead(head, delFn)
+-	currentHeader := bc.hc.CurrentHeader()
++	bc.hc.setHead(head, updateFn, delFn)
++	bc.currentBlock.Store(currentBlock)
++	bc.currentFastBlock.Store(currentFastBlock)
+ 
+ 	// Clear out any stale content from the caches
+ 	bc.bodyCache.Purge()
+@@ -343,38 +363,6 @@
+ 	bc.txLookupCache.Purge()
+ 	bc.futureBlocks.Purge()
+ 
+-	// Rewind the block chain, ensuring we don't end up with a stateless head block
+-	if currentBlock := bc.CurrentBlock(); currentBlock != nil && currentHeader.Number.Uint64() < currentBlock.NumberU64() {
+-		bc.currentBlock.Store(bc.GetBlock(currentHeader.Hash(), currentHeader.Number.Uint64()))
+-	}
+-	if currentBlock := bc.CurrentBlock(); currentBlock != nil {
+-		// Make sure the state associated with the block is available
+-		err := bc.repair(&currentBlock)
+-		if err == nil {
+-			// Everything seems to be fine, set as the head block
+-			bc.currentBlock.Store(currentBlock)
+-		} else {
+-			// Rewound state missing, rolled back to before pivot, reset to genesis
+-			bc.currentBlock.Store(bc.genesisBlock)
+-		}
+-	}
+-	// Rewind the fast block in a simpleton way to the target head
+-	if currentFastBlock := bc.CurrentFastBlock(); currentFastBlock != nil && currentHeader.Number.Uint64() < currentFastBlock.NumberU64() {
+-		bc.currentFastBlock.Store(bc.GetBlock(currentHeader.Hash(), currentHeader.Number.Uint64()))
+-	}
+-	// If either blocks reached nil, reset to the genesis state
+-	if currentBlock := bc.CurrentBlock(); currentBlock == nil {
+-		bc.currentBlock.Store(bc.genesisBlock)
+-	}
+-	if currentFastBlock := bc.CurrentFastBlock(); currentFastBlock == nil {
+-		bc.currentFastBlock.Store(bc.genesisBlock)
+-	}
+-	currentBlock := bc.CurrentBlock()
+-	currentFastBlock := bc.CurrentFastBlock()
+-
+-	rawdb.WriteHeadBlockHash(bc.db, currentBlock.Hash())
+-	rawdb.WriteHeadFastBlockHash(bc.db, currentFastBlock.Hash())
+-
+ 	return bc.loadLastState()
+ }
+ 
+@@ -386,13 +374,22 @@
+ 	if block == nil {
+ 		return fmt.Errorf("non existent block [%x…]", hash[:4])
+ 	}
++	bc.chainmu.Lock()
++	defer bc.chainmu.Unlock()
++	if err := bc.hc.restartAnchor.checkHead(block.Header(), bc.CurrentBlock().Header()); err != nil {
++		return err
++	}
++	if bc.hc.restartAnchor != nil && (bc.CurrentHeader().Number.Uint64() < block.NumberU64() || rawdb.ReadCanonicalHash(bc.db, block.NumberU64()) != block.Hash()) {
++		return fmt.Errorf("restart anchor: fast-sync head is not canonical")
++	}
+ 	if _, err := trie.NewSecure(block.Root(), bc.stateCache.TrieDB()); err != nil {
+ 		return err
+ 	}
+ 	// If all checks out, manually set the head block
+-	bc.chainmu.Lock()
++	if bc.hc.restartAnchor != nil {
++		rawdb.WriteHeadBlockHash(bc.db, hash)
++	}
+ 	bc.currentBlock.Store(block)
+-	bc.chainmu.Unlock()
+ 
+ 	log.Info("Committed new head block", "number", block.Number(), "hash", hash)
+ 	return nil
+@@ -466,6 +463,9 @@
+ // ResetWithGenesisBlock purges the entire blockchain, restoring it to the
+ // specified genesis state.
+ func (bc *BlockChain) ResetWithGenesisBlock(genesis *types.Block) error {
++	if a := bc.hc.restartAnchor; a != nil && genesis.Hash() != a.rule.GenesisHash {
++		return fmt.Errorf("restart anchor: cannot replace genesis")
++	}
+ 	// Dump the entire block chain and purge the caches
+ 	if err := bc.SetHead(0); err != nil {
+ 		return err
+@@ -500,7 +500,7 @@
+ // fast block are left intact.
+ func (bc *BlockChain) repair(head **types.Block) error {
+ 	rewound := false
+-	for {
++	for *head != nil {
+ 		blockNumber := (*head).Number()
+ 		// Abort if we've rewound to a head block that does have associated state
+ 		if _, err := bc.StateAt((*head).Root(), (*head).MixDigest()); err == nil {
+@@ -511,10 +511,14 @@
+ 		} else if !rewound {
+ 			log.Warn("Head state missing, repairing chain", "number", blockNumber, "hash", (*head).Hash())
+ 		}
++		if blockNumber.Sign() == 0 {
++			return errors.New("genesis state missing while repairing chain")
++		}
+ 		// Otherwise rewind one block and recheck state availability there
+ 		(*head) = bc.GetBlock((*head).ParentHash(), blockNumber.Uint64()-1)
+ 		rewound = true
+ 	}
++	return errors.New("ancestor block missing while repairing chain")
+ }
+ 
+ // Export writes the active chain to the given writer.
+@@ -561,7 +565,7 @@
+ 		return
+ 	}
+ 	// If the block is on a side chain or an unknown one, force other heads onto it too
+-	updateHeads := rawdb.ReadCanonicalHash(bc.db, block.NumberU64()) != block.Hash()
++	updateHeads := rawdb.ReadCanonicalHash(bc.db, block.NumberU64()) != block.Hash() || bc.hc.CurrentHeader().Number.Uint64() < block.NumberU64()
+ 
+ 	// Add the block to the canonical chain number scheme and mark as the head
+ 	batch := bc.db.NewBatch()
+@@ -578,7 +582,10 @@
+ 	if err := batch.Write(); err != nil {
+ 		log.Crit("Failed to update chain indexes and markers", "err", err)
+ 	}
+-	// Update all in-memory chain markers in the last step
++	bc.updateHeadBlock(block, updateHeads)
++}
++
++func (bc *BlockChain) updateHeadBlock(block *types.Block, updateHeads bool) {
+ 	if updateHeads {
+ 		bc.hc.SetCurrentHeader(block.Header())
+ 		bc.currentFastBlock.Store(block)
+@@ -853,6 +860,9 @@
+ func (bc *BlockChain) Rollback(chain []common.Hash) {
+ 	bc.chainmu.Lock()
+ 	defer bc.chainmu.Unlock()
++	if bc.hc.restartAnchor != nil {
++		bc.hc.restartAnchor.proven.Purge()
++	}
+ 
+ 	batch := bc.db.NewBatch()
+ 	for i := len(chain) - 1; i >= 0; i-- {
+@@ -898,6 +908,9 @@
+ // data in the ancient store that exceeds the specified header.
+ func (bc *BlockChain) truncateAncient(head uint64) error {
+ 	frozen, err := bc.db.Ancients()
++	if errors.Is(err, rawdb.ErrNotSupported) {
++		return nil
++	}
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -935,6 +948,14 @@
+ // InsertReceiptChain attempts to complete an already existing header chain with
+ // transaction and receipt data.
+ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain []types.Receipts, ancientLimit uint64) (int, error) {
++	if i, err := bc.hc.restartAnchor.checkBlocks(blockChain); err != nil {
++		return i, err
++	}
++	if len(blockChain) > 0 {
++		if err := bc.hc.restartAnchor.checkHead(blockChain[len(blockChain)-1].Header(), bc.CurrentFastBlock().Header()); err != nil {
++			return 0, err
++		}
++	}
+ 	// We don't require the chainMu here since we want to maximize the
+ 	// concurrency of header insertion and receipt insertion.
+ 	bc.wg.Add(1)
+@@ -968,8 +989,12 @@
+ 	)
+ 	// updateHead updates the head fast sync block if the inserted blocks are better
+ 	// and returns an indicator whether the inserted blocks are canonical.
+-	updateHead := func(head *types.Block) bool {
++	updateHead := func(head *types.Block) (bool, error) {
+ 		bc.chainmu.Lock()
++		if err := bc.hc.restartAnchor.checkHead(head.Header(), bc.CurrentFastBlock().Header()); err != nil {
++			bc.chainmu.Unlock()
++			return false, err
++		}
+ 
+ 		// Rewind may have occurred, skip in that case.
+ 		if bc.CurrentHeader().Number.Cmp(head.Number()) >= 0 {
+@@ -979,11 +1004,11 @@
+ 				bc.currentFastBlock.Store(head)
+ 				headFastBlockGauge.Update(int64(head.NumberU64()))
+ 				bc.chainmu.Unlock()
+-				return true
++				return true, nil
+ 			}
+ 		}
+ 		bc.chainmu.Unlock()
+-		return false
++		return false, nil
+ 	}
+ 	// writeAncient writes blockchain and corresponding receipt chain into ancient store.
+ 	//
+@@ -1058,7 +1083,11 @@
+ 		if err := bc.db.Sync(); err != nil {
+ 			return 0, err
+ 		}
+-		if !updateHead(blockChain[len(blockChain)-1]) {
++		updated, err := updateHead(blockChain[len(blockChain)-1])
++		if err != nil {
++			return 0, err
++		}
++		if !updated {
+ 			return 0, errors.New("side blocks can't be accepted as the ancient chain data")
+ 		}
+ 		previous = nil // disable rollback explicitly
+@@ -1150,8 +1179,8 @@
+ 				return 0, err
+ 			}
+ 		}
+-		updateHead(blockChain[len(blockChain)-1])
+-		return 0, nil
++		_, err := updateHead(blockChain[len(blockChain)-1])
++		return 0, err
+ 	}
+ 	// Write downloaded chain data and corresponding receipt chain data
+ 	if len(ancientBlocks) > 0 {
+@@ -1215,6 +1244,9 @@
+ // but does not write any state. This is used to construct competing side forks
+ // up to the point where they exceed the canonical total difficulty.
+ func (bc *BlockChain) WriteBlockWithoutState(block *types.Block, td *big.Int) (err error) {
++	if err := bc.hc.restartAnchor.check(block.Header(), nil); err != nil {
++		return err
++	}
+ 	bc.wg.Add(1)
+ 	defer bc.wg.Done()
+ 
+@@ -1234,6 +1266,9 @@
+ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.Receipt, state *state.StateDB) (status WriteStatus, err error) {
+ 	bc.chainmu.Lock()
+ 	defer bc.chainmu.Unlock()
++	if err := bc.CheckRestartReady(); err != nil {
++		return NonStatTy, err
++	}
+ 
+ 	return bc.writeBlockWithState(block, receipts, state)
+ }
+@@ -1241,6 +1276,9 @@
+ // writeBlockWithState writes the block and all associated state to the database,
+ // but is expects the chain mutex to be held.
+ func (bc *BlockChain) writeBlockWithState(block *types.Block, receipts []*types.Receipt, state *state.StateDB) (status WriteStatus, err error) {
++	if err := bc.hc.restartAnchor.checkHead(block.Header(), bc.CurrentBlock().Header()); err != nil {
++		return NonStatTy, err
++	}
+ 	bc.wg.Add(1)
+ 	defer bc.wg.Done()
+ 
+@@ -1355,11 +1393,8 @@
+ 	// Set new head.
+ 	if status == CanonStatTy {
+ 		bc.writeHeadBlock(block)
+-		// (auto) buy ticket when block height changed
+-		if common.AutoBuyTicket == true { // if enable
+-			go func() { // do not block process
+-				common.AutoBuyTicketChan <- 1
+-			}()
++		if common.IsAutoBuyTicketEnabled() {
++			common.NotifyAutoBuyTicket()
+ 		}
+ 	}
+ 	bc.futureBlocks.Remove(block.Hash())
+@@ -1400,6 +1435,9 @@
+ 	if i, err := datong.CheckPointsInBlockChain(bc.chainConfig.ChainID, chain); err != nil {
+ 		return i, nil, nil, err
+ 	}
++	if i, err := bc.hc.restartAnchor.checkBlocks(chain); err != nil {
++		return i, nil, nil, err
++	}
+ 	// Pre-checks passed, start the full block imports
+ 	bc.wg.Add(1)
+ 	defer bc.wg.Done()
+@@ -1451,12 +1489,10 @@
+ 		bstart := time.Now()
+ 
+ 		//err := <-results
+-		datong.SetHeaders(headers[:i])
+ 		err := bc.engine.VerifyHeader(bc, block.RawHeader(), seals[i])
+ 		if err == nil {
+ 			err = bc.Validator().ValidateBody(block)
+ 		}
+-		datong.SetHeaders(nil)
+ 		switch {
+ 		case err == ErrKnownBlock:
+ 			// Block and state both already known. However if the current block is below
+@@ -1535,9 +1571,7 @@
+ 		err = bc.engine.PreProcess(bc, headers[i], state)
+ 
+ 		// Process block using the parent state as reference point.
+-		datong.SetHeaders(headers[:i])
+ 		receipts, logs, usedGas, err := bc.processor.Process(block, state, bc.vmConfig)
+-		datong.SetHeaders(nil)
+ 		if err != nil {
+ 			bc.reportBlock(block, receipts, err)
+ 			return i, events, coalescedLogs, err
+@@ -1659,6 +1693,9 @@
+ // to be part of the new canonical chain and accumulates potential missing transactions and post an
+ // event about them
+ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
++	if err := bc.hc.restartAnchor.checkHead(newBlock.Header(), oldBlock.Header()); err != nil {
++		return err
++	}
+ 	var (
+ 		newChain    types.Blocks
+ 		oldChain    types.Blocks
+@@ -1729,6 +1766,9 @@
+ 	if _, err := datong.CheckPointsInBlockChain(bc.chainConfig.ChainID, newChain); err != nil {
+ 		return err
+ 	}
++	if len(newChain) == 0 {
++		return fmt.Errorf("invalid reorganization: empty replacement chain")
++	}
+ 	// Ensure the user sees large reorgs
+ 	if len(oldChain) > 0 && len(newChain) > 0 {
+ 		logFn := log.Debug
+@@ -1744,20 +1784,25 @@
+ 	}
+ 	// Insert the new chain, taking care of the proper incremental order
+ 	var addedTxs types.Transactions
++	indexesBatch := bc.db.NewBatch()
+ 	for i := len(newChain) - 1; i >= 0; i-- {
+-		// insert the block in the canonical way, re-writing history
+-		bc.writeHeadBlock(newChain[i])
++		block := newChain[i]
++		if _, err := datong.CheckPoint(bc.chainConfig.ChainID, block.NumberU64(), block.Hash()); err != nil {
++			return err
++		}
++		rawdb.WriteCanonicalHash(indexesBatch, block.Hash(), block.NumberU64())
++		rawdb.WriteTxLookupEntriesByBlock(indexesBatch, block)
+ 		// Collect the new added transactions.
+-		addedTxs = append(addedTxs, newChain[i].Transactions()...)
++		addedTxs = append(addedTxs, block.Transactions()...)
+ 	}
+ 	// Delete useless indexes right now which includes the non-canonical
+ 	// transaction indexes, canonical chain indexes which above the head.
+-	indexesBatch := bc.db.NewBatch()
+ 	for _, tx := range types.TxDifference(deletedTxs, addedTxs) {
+ 		rawdb.DeleteTxLookupEntry(indexesBatch, tx.Hash())
+ 	}
+ 	// Delete any canonical number assignments above the new head
+-	number := bc.CurrentBlock().NumberU64()
++	head := newChain[0]
++	number := head.NumberU64()
+ 	for i := number + 1; ; i++ {
+ 		hash := rawdb.ReadCanonicalHash(bc.db, i)
+ 		if hash == (common.Hash{}) {
+@@ -1765,9 +1810,13 @@
+ 		}
+ 		rawdb.DeleteCanonicalHash(indexesBatch, i)
+ 	}
++	rawdb.WriteHeadBlockHash(indexesBatch, head.Hash())
++	rawdb.WriteHeadHeaderHash(indexesBatch, head.Hash())
++	rawdb.WriteHeadFastBlockHash(indexesBatch, head.Hash())
+ 	if err := indexesBatch.Write(); err != nil {
+-		log.Crit("Failed to delete useless indexes", "err", err)
+-	}
++		log.Crit("Failed to write reorganized chain indexes and markers", "err", err)
++	}
++	bc.updateHeadBlock(head, true)
+ 
+ 	if len(deletedLogs) > 0 {
+ 		go bc.rmLogsFeed.Send(RemovedLogsEvent{deletedLogs})
+diff --git a/core/genesis.go b/core/genesis.go
+--- a/core/genesis.go
++++ b/core/genesis.go
+@@ -190,6 +190,13 @@
+ 
+ 	// Get the existing chain configuration.
+ 	newcfg := genesis.configOrDefault(stored)
++	anchor, err := newRestartAnchor(db, newcfg)
++	if err != nil {
++		return newcfg, stored, err
++	}
++	if err := anchor.preflight(); err != nil {
++		return newcfg, stored, err
++	}
+ 	storedcfg := rawdb.ReadChainConfig(db, stored)
+ 	if storedcfg == nil {
+ 		log.Warn("Found genesis block without chain config")
+diff --git a/core/headerchain.go b/core/headerchain.go
+--- a/core/headerchain.go
++++ b/core/headerchain.go
+@@ -65,9 +65,10 @@
+ 	currentHeader     atomic.Value // Current head of the header chain (may be above the block chain!)
+ 	currentHeaderHash common.Hash  // Hash of the current head of the header chain (prevent recomputing all the time)
+ 
+-	headerCache *lru.Cache // Cache for the most recent block headers
+-	tdCache     *lru.Cache // Cache for the most recent block total difficulties
+-	numberCache *lru.Cache // Cache for the most recent block numbers
++	headerCache   *lru.Cache // Cache for the most recent block headers
++	tdCache       *lru.Cache // Cache for the most recent block total difficulties
++	numberCache   *lru.Cache // Cache for the most recent block numbers
++	restartAnchor *restartAnchor
+ 
+ 	procInterrupt func() bool
+ 
+@@ -78,6 +79,13 @@
+ // NewHeaderChain creates a new HeaderChain structure. ProcInterrupt points
+ // to the parent's interrupt semaphore.
+ func NewHeaderChain(chainDb ethdb.Database, config *params.ChainConfig, engine consensus.Engine, procInterrupt func() bool) (*HeaderChain, error) {
++	anchor, err := newRestartAnchor(chainDb, config)
++	if err != nil {
++		return nil, err
++	}
++	if err := anchor.preflight(); err != nil {
++		return nil, err
++	}
+ 	headerCache, _ := lru.New(headerCacheLimit)
+ 	tdCache, _ := lru.New(tdCacheLimit)
+ 	numberCache, _ := lru.New(numberCacheLimit)
+@@ -97,6 +105,7 @@
+ 		procInterrupt: procInterrupt,
+ 		rand:          mrand.New(mrand.NewSource(seed.Int64())),
+ 		engine:        engine,
++		restartAnchor: anchor,
+ 	}
+ 
+ 	hc.genesisHeader = hc.GetHeaderByNumber(0)
+@@ -139,6 +148,9 @@
+ // in two scenarios: pure-header mode of operation (light clients), or properly
+ // separated header/block phases (non-archive clients).
+ func (hc *HeaderChain) WriteHeader(header *types.Header) (status WriteStatus, err error) {
++	if err := hc.restartAnchor.checkHead(header, hc.CurrentHeader()); err != nil {
++		return NonStatTy, err
++	}
+ 	// Cache some values to prevent constant recalculation
+ 	var (
+ 		hash   = header.Hash()
+@@ -223,6 +235,9 @@
+ type WhCallback func(*types.Header) error
+ 
+ func (hc *HeaderChain) ValidateHeaderChain(chain []*types.Header, checkFreq int) (int, error) {
++	if i, err := hc.restartAnchor.checkHeaders(chain); err != nil {
++		return i, err
++	}
+ 	// Do a sanity check that the provided chain is actually ordered and linked
+ 
+ 	for i := 1; i < len(chain); i++ {
+@@ -245,14 +260,10 @@
+ 		}
+ 		seals[index] = true
+ 	}
+-	headers := make([]*types.Header, len(chain))
+-	for i, header := range chain {
+-		headers[i] = header
+-	}
+ 	seals[len(seals)-1] = true // Last should always be verified to avoid junk
+ 
+-	// abort, results := hc.engine.VerifyHeaders(hc, chain, seals)
+-	// defer close(abort)
++	abort, results := hc.engine.VerifyHeaders(hc, chain, seals)
++	defer close(abort)
+ 
+ 	// Iterate over the headers and ensure they all check out
+ 	for i, header := range chain {
+@@ -266,10 +277,7 @@
+ 			return i, ErrBannedHash
+ 		}
+ 		// Otherwise wait for headers checks and ensure they pass
+-		datong.SetHeaders(headers[:i])
+-		err := hc.engine.VerifyHeader(hc, headers[i], seals[i])
+-		datong.SetHeaders(nil)
+-		if err != nil {
++		if err := <-results; err != nil {
+ 			return i, err
+ 		}
+ 	}
+@@ -290,6 +298,9 @@
+ // of the header retrieval mechanisms already need to verfy nonces, as well as
+ // because nonces can be verified sparsely, not needing to check each.
+ func (hc *HeaderChain) InsertHeaderChain(chain []*types.Header, writeHeader WhCallback, start time.Time) (int, error) {
++	if i, err := hc.restartAnchor.checkHeaders(chain); err != nil {
++		return i, err
++	}
+ 	if i, err := datong.CheckPointsInHeaderChain(hc.config.ChainID, chain); err != nil {
+ 		return i, err
+ 	}
+@@ -486,12 +497,19 @@
+ // SetHead rewinds the local chain to a new head. Everything above the new head
+ // will be deleted and the new one set.
+ func (hc *HeaderChain) SetHead(head uint64, delFn DeleteCallback) {
++	hc.setHead(head, nil, delFn)
++}
++
++func (hc *HeaderChain) setHead(head uint64, updateFn func(ethdb.KeyValueWriter, *types.Header), delFn DeleteCallback) {
++	if hc.restartAnchor != nil {
++		hc.restartAnchor.proven.Purge()
++	}
+ 	var (
+-		parentHash common.Hash
+-		batch      = hc.chainDb.NewBatch()
+-		origin     = true
++		batch   = hc.chainDb.NewBatch()
++		origin  = true
++		current = hc.CurrentHeader()
+ 	)
+-	for hdr := hc.CurrentHeader(); hdr != nil && hdr.Number.Uint64() > head; hdr = hc.CurrentHeader() {
++	for hdr := current; hdr != nil && hdr.Number.Uint64() > head; hdr = current {
+ 		num := hdr.Number.Uint64()
+ 
+ 		// Rewind block chain to new head.
+@@ -499,31 +517,7 @@
+ 		if parent == nil {
+ 			parent = hc.genesisHeader
+ 		}
+-		parentHash = parent.Hash()
+-
+-		// Notably, since geth has the possibility for setting the head to a low
+-		// height which is even lower than ancient head.
+-		// In order to ensure that the head is always no higher than the data in
+-		// the database (ancient store or active store), we need to update head
+-		// first then remove the relative data from the database.
+-		//
+-		// Update head first(head fast block, head full block) before deleting the data.
+-		markerBatch := hc.chainDb.NewBatch()
+-		//if updateFn != nil {
+-		//	newHead, force := updateFn(markerBatch, parent)
+-		//	if force && newHead < head {
+-		//		log.Warn("Force rewinding till ancient limit", "head", newHead)
+-		//		head = newHead
+-		//	}
+-		//}
+-		// Update head header then.
+-		rawdb.WriteHeadHeaderHash(markerBatch, parentHash)
+-		if err := markerBatch.Write(); err != nil {
+-			log.Crit("Failed to update chain markers", "error", err)
+-		}
+-		hc.currentHeader.Store(parent)
+-		hc.currentHeaderHash = parentHash
+-		headHeaderGauge.Update(parent.Number.Int64())
++		current = parent
+ 
+ 		// If this is the first iteration, wipe any leftover data upwards too so
+ 		// we don't end up with dangling daps in the database
+@@ -554,10 +548,15 @@
+ 			rawdb.DeleteCanonicalHash(batch, num)
+ 		}
+ 	}
+-	// Flush all accumulated deletions.
++	if updateFn != nil {
++		updateFn(batch, current)
++	}
++	rawdb.WriteHeadHeaderHash(batch, current.Hash())
+ 	if err := batch.Write(); err != nil {
+ 		log.Crit("Failed to rewind block", "error", err)
+ 	}
++	hc.SetCurrentHeader(current)
++	headHeaderGauge.Update(current.Number.Int64())
+ 	// Clear out any stale content from the caches
+ 	hc.headerCache.Purge()
+ 	hc.tdCache.Purge()
+diff --git a/core/rawdb/database.go b/core/rawdb/database.go
+--- a/core/rawdb/database.go
++++ b/core/rawdb/database.go
+@@ -81,42 +81,42 @@
+ 
+ // HasAncient returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) HasAncient(kind string, number uint64) (bool, error) {
+-	return false, errNotSupported
++	return false, ErrNotSupported
+ }
+ 
+ // Ancient returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) Ancient(kind string, number uint64) ([]byte, error) {
+-	return nil, errNotSupported
++	return nil, ErrNotSupported
+ }
+ 
+ // ReadAncients returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) ReadAncients(kind string, start, max, maxByteSize uint64) ([][]byte, error) {
+-	return nil, errNotSupported
++	return nil, ErrNotSupported
+ }
+ 
+ // Ancients returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) Ancients() (uint64, error) {
+-	return 0, errNotSupported
++	return 0, ErrNotSupported
+ }
+ 
+ // AncientSize returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) AncientSize(kind string) (uint64, error) {
+-	return 0, errNotSupported
++	return 0, ErrNotSupported
+ }
+ 
+ // AppendAncient returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) AppendAncient(number uint64, hash, header, body, receipts, td []byte) error {
+-	return errNotSupported
++	return ErrNotSupported
+ }
+ 
+ // TruncateAncients returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) TruncateAncients(items uint64) error {
+-	return errNotSupported
++	return ErrNotSupported
+ }
+ 
+ // Sync returns an error as we don't have a backing chain freezer.
+ func (db *nofreezedb) Sync() error {
+-	return errNotSupported
++	return ErrNotSupported
+ }
+ 
+ // NewDatabase creates a high level database on top of a given key-value data
+diff --git a/core/rawdb/freezer_table.go b/core/rawdb/freezer_table.go
+--- a/core/rawdb/freezer_table.go
++++ b/core/rawdb/freezer_table.go
+@@ -41,8 +41,8 @@
+ 	// freezer table.
+ 	errOutOfBounds = errors.New("out of bounds")
+ 
+-	// errNotSupported is returned if the database doesn't support the required operation.
+-	errNotSupported = errors.New("this operation is not supported")
++	// ErrNotSupported is returned if the database doesn't support the required operation.
++	ErrNotSupported = errors.New("this operation is not supported")
+ )
+ 
+ // indexEntry contains the number/id of the file that the data resides in, aswell as the
+diff --git a/core/restart_anchor.go b/core/restart_anchor.go
+new file mode 100644
+--- /dev/null
++++ b/core/restart_anchor.go
+@@ -0,0 +1,177 @@
++package core
++
++import (
++	"fmt"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/ethdb"
++	"github.com/FusionFoundation/efsn/v5/params"
++	lru "github.com/hashicorp/golang-lru"
++)
++
++type restartAnchor struct {
++	rule   params.RestartAnchor
++	db     ethdb.Database
++	proven *lru.Cache
++}
++
++func newRestartAnchor(db ethdb.Database, config *params.ChainConfig) (*restartAnchor, error) {
++	rule, err := config.RestartAnchorForGenesis(rawdb.ReadCanonicalHash(db, 0))
++	if err != nil || rule == nil {
++		return nil, err
++	}
++	cache, _ := lru.New(headerCacheLimit)
++	return &restartAnchor{rule: *rule, db: db, proven: cache}, nil
++}
++
++func (a *restartAnchor) check(header *types.Header, parents map[common.Hash]*types.Header) error {
++	if a == nil {
++		return nil
++	}
++	if header == nil || header.Number == nil || !header.Number.IsUint64() {
++		return fmt.Errorf("restart anchor: invalid header number")
++	}
++	if header.Number.Uint64() < a.rule.Number {
++		if rawdb.ReadCanonicalHash(a.db, a.rule.Number) == a.rule.Hash && rawdb.ReadCanonicalHash(a.db, header.Number.Uint64()) != header.Hash() {
++			return fmt.Errorf("restart anchor: header conflicts with anchored prefix at %d", header.Number.Uint64())
++		}
++		return nil
++	}
++	origin := header.Hash()
++	for {
++		hash, number := header.Hash(), header.Number.Uint64()
++		if number == a.rule.Number {
++			if hash != a.rule.Hash {
++				return fmt.Errorf("restart anchor: hash mismatch at %d: have %s, want %s", number, hash.Hex(), a.rule.Hash.Hex())
++			}
++			break
++		}
++		if a.proven.Contains(hash) {
++			break
++		}
++		parentHash := header.ParentHash
++		parent := parents[parentHash]
++		provedInBatch := parent != nil
++		if parent == nil {
++			parent = rawdb.ReadHeader(a.db, parentHash, number-1)
++		}
++		if parent == nil || parent.Number == nil || !parent.Number.IsUint64() || parent.Number.Uint64() != number-1 || parent.Hash() != parentHash {
++			return fmt.Errorf("restart anchor: missing or corrupt ancestor %s at %d", parentHash.Hex(), number-1)
++		}
++		if provedInBatch {
++			break
++		}
++		header = parent
++	}
++	if parents == nil {
++		a.proven.Add(origin, struct{}{})
++	}
++	return nil
++}
++
++func (a *restartAnchor) checkHeaders(headers []*types.Header) (int, error) {
++	if a == nil {
++		return 0, nil
++	}
++	parents := make(map[common.Hash]*types.Header, len(headers))
++	for i, header := range headers {
++		if err := a.check(header, parents); err != nil {
++			return i, err
++		}
++		parents[header.Hash()] = header
++	}
++	return 0, nil
++}
++
++func (a *restartAnchor) checkBlocks(blocks types.Blocks) (int, error) {
++	if a == nil {
++		return 0, nil
++	}
++	headers := make([]*types.Header, len(blocks))
++	for i, block := range blocks {
++		headers[i] = block.Header()
++	}
++	return a.checkHeaders(headers)
++}
++
++func (a *restartAnchor) checkHead(header, current *types.Header) error {
++	if err := a.check(header, nil); err != nil {
++		return err
++	}
++	if a != nil && header.Number.Uint64() < a.rule.Number && current.Number.Uint64() >= a.rule.Number {
++		return fmt.Errorf("restart anchor: candidate head is below anchor %d", a.rule.Number)
++	}
++	return nil
++}
++
++func (a *restartAnchor) preflight() error {
++	if a == nil {
++		return nil
++	}
++	headHash := rawdb.ReadHeadHeaderHash(a.db)
++	headNumber := rawdb.ReadHeaderNumber(a.db, headHash)
++	if headNumber == nil {
++		return fmt.Errorf("restart anchor: missing persisted header head %s", headHash.Hex())
++	}
++	for _, hash := range []common.Hash{rawdb.ReadHeadHeaderHash(a.db), rawdb.ReadHeadBlockHash(a.db), rawdb.ReadHeadFastBlockHash(a.db)} {
++		number := rawdb.ReadHeaderNumber(a.db, hash)
++		if number == nil {
++			return fmt.Errorf("restart anchor: missing persisted head %s", hash.Hex())
++		}
++		if *number > *headNumber {
++			return fmt.Errorf("restart anchor: block head %s is above header head", hash.Hex())
++		}
++		header := rawdb.ReadHeader(a.db, hash, *number)
++		if header == nil || header.Hash() != hash || header.Number == nil || !header.Number.IsUint64() || header.Number.Uint64() != *number {
++			return fmt.Errorf("restart anchor: corrupt persisted head %s", hash.Hex())
++		}
++		if err := a.check(header, nil); err != nil {
++			return err
++		}
++	}
++	for _, hash := range []common.Hash{rawdb.ReadHeadBlockHash(a.db), rawdb.ReadHeadFastBlockHash(a.db)} {
++		number := rawdb.ReadHeaderNumber(a.db, hash)
++		if rawdb.ReadBlock(a.db, hash, *number) == nil {
++			return fmt.Errorf("restart anchor: missing or corrupt head block %s", hash.Hex())
++		}
++	}
++	for height := *headNumber; height >= a.rule.Number; height-- {
++		header := rawdb.ReadHeader(a.db, headHash, height)
++		if header == nil || header.Hash() != headHash || rawdb.ReadCanonicalHash(a.db, height) != headHash {
++			return fmt.Errorf("restart anchor: inconsistent canonical index at %d", height)
++		}
++		headHash = header.ParentHash
++	}
++	if canonical := rawdb.ReadCanonicalHash(a.db, a.rule.Number); canonical != (common.Hash{}) && canonical != a.rule.Hash {
++		return fmt.Errorf("restart anchor: inconsistent canonical anchor at %d", a.rule.Number)
++	}
++	return nil
++}
++
++func (bc *BlockChain) CheckRestartReady() error {
++	a := bc.hc.restartAnchor
++	if a == nil {
++		return nil
++	}
++	head := bc.CurrentBlock().Header()
++	if head.Number.Uint64() < a.rule.Number {
++		return fmt.Errorf("restart anchor: synchronization required through block %d before mining", a.rule.Number)
++	}
++	if head.Number.Uint64() > bc.CurrentHeader().Number.Uint64() {
++		return fmt.Errorf("restart anchor: full head is above header head")
++	}
++	return a.check(head, nil)
++}
++
++func (hc *HeaderChain) HasRestartAnchor() bool {
++	return hc.restartAnchor != nil
++}
++
++func (bc *BlockChain) RestartAnchorHeight() uint64 {
++	if bc.hc.restartAnchor == nil {
++		return 0
++	}
++	return bc.hc.restartAnchor.rule.Number
++}
+diff --git a/eth/api.go b/eth/api.go
+--- a/eth/api.go
++++ b/eth/api.go
+@@ -158,13 +158,13 @@
+ 	if _, err := api.e.Etherbase(); err != nil {
+ 		return fmt.Errorf("StartAutoBuyTicket Error: coinbase not exist")
+ 	}
+-	common.AutoBuyTicket = true
++	common.SetAutoBuyTicketEnabled(true)
+ 	return nil
+ }
+ 
+ // StopAutoBuyTicket
+ func (api *PrivateMinerAPI) StopAutoBuyTicket() {
+-	common.AutoBuyTicket = false
++	common.SetAutoBuyTicketEnabled(false)
+ }
+ 
+ // PrivateAdminAPI is the collection of Ethereum full node-related APIs
+diff --git a/eth/api_backend.go b/eth/api_backend.go
+--- a/eth/api_backend.go
++++ b/eth/api_backend.go
+@@ -216,7 +216,23 @@
+ }
+ 
+ func (b *EthAPIBackend) SendTx(ctx context.Context, signedTx *types.Transaction) error {
++	if err := b.eth.blockchain.CheckRestartReady(); err != nil {
++		return err
++	}
+ 	return b.eth.txPool.AddLocal(signedTx)
++}
++
++func (b *EthAPIBackend) RebroadcastTx(ctx context.Context, signedTx *types.Transaction) error {
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if err := b.eth.blockchain.CheckRestartReady(); err != nil {
++		return err
++	}
++	if b.eth.txPool.Status([]common.Hash{signedTx.Hash()})[0] != core.TxStatusPending {
++		return nil
++	}
++	return b.eth.protocolManager.rebroadcastTx(ctx, signedTx)
+ }
+ 
+ func (b *EthAPIBackend) GetPoolTransactions() (types.Transactions, error) {
+@@ -274,7 +290,14 @@
+ }
+ 
+ func (b *EthAPIBackend) SyncProgress() ethereum.SyncProgress {
+-	return b.eth.Downloader().Progress()
++	progress := b.eth.Downloader().Progress()
++	if anchor := b.eth.blockchain.RestartAnchorHeight(); anchor > progress.HighestBlock {
++		progress.HighestBlock = anchor
++	}
++	if head := b.eth.blockchain.CurrentBlock(); head.NumberU64() < b.eth.blockchain.RestartAnchorHeight() {
++		progress.CurrentBlock = head.NumberU64()
++	}
++	return progress
+ }
+ 
+ func (b *EthAPIBackend) SuggestGasTipCap(ctx context.Context) (*big.Int, error) {
+diff --git a/eth/backend.go b/eth/backend.go
+--- a/eth/backend.go
++++ b/eth/backend.go
+@@ -360,6 +360,9 @@
+ // is already running, this method adjust the number of threads allowed to use
+ // and updates the minimum price required by the transaction pool.
+ func (s *Ethereum) StartMining(threads int) error {
++	if err := s.blockchain.CheckRestartReady(); err != nil {
++		return err
++	}
+ 	// Update the thread count within the consensus engine
+ 	type threaded interface {
+ 		SetThreads(threads int)
+diff --git a/eth/handler.go b/eth/handler.go
+--- a/eth/handler.go
++++ b/eth/handler.go
+@@ -17,6 +17,7 @@
+ package eth
+ 
+ import (
++	"context"
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+@@ -189,7 +190,7 @@
+ 			return 0, nil
+ 		}
+ 		n, err := manager.blockchain.InsertChain(blocks)
+-		if err == nil {
++		if err == nil && manager.blockchain.CheckRestartReady() == nil {
+ 			atomic.StoreUint32(&manager.acceptTxs, 1) // Mark initial sync done on any fetcher import
+ 		}
+ 		return n, err
+@@ -686,7 +687,7 @@
+ 
+ 	case msg.Code == TxMsg:
+ 		// Transactions arrived, make sure we have a valid and fresh chain to handle them
+-		if atomic.LoadUint32(&pm.acceptTxs) == 0 {
++		if atomic.LoadUint32(&pm.acceptTxs) == 0 || pm.blockchain.CheckRestartReady() != nil {
+ 			break
+ 		}
+ 		// Transactions can be processed, parse all of them and deliver to the pool
+@@ -761,6 +762,21 @@
+ 	}
+ }
+ 
++func (pm *ProtocolManager) rebroadcastTx(ctx context.Context, tx *types.Transaction) error {
++	pm.peers.lock.RLock()
++	defer pm.peers.lock.RUnlock()
++	if pm.peers.closed {
++		return ctx.Err()
++	}
++	for _, peer := range pm.peers.peers {
++		if err := ctx.Err(); err != nil {
++			return err
++		}
++		peer.AsyncSendTransactions(types.Transactions{tx})
++	}
++	return ctx.Err()
++}
++
+ // Mined broadcast loop
+ func (pm *ProtocolManager) minedBroadcastLoop() {
+ 	// automatically stops if unsubscribe
+diff --git a/eth/sync.go b/eth/sync.go
+--- a/eth/sync.go
++++ b/eth/sync.go
+@@ -209,7 +209,7 @@
+ 	// If we've successfully finished a sync cycle and passed any required checkpoint,
+ 	// enable accepting transactions from the network.
+ 	head := pm.blockchain.CurrentBlock()
+-	if head.NumberU64() >= pm.checkpointNumber {
++	if head.NumberU64() >= pm.checkpointNumber && pm.blockchain.CheckRestartReady() == nil {
+ 		// Checkpoint passed, sanity check the timestamp to have a fallback mechanism
+ 		// for non-checkpointed (number = 0) private networks.
+ 		if head.Time() >= uint64(time.Now().AddDate(0, -1, 0).Unix()) {
+diff --git a/ethdb/leveldb/leveldb.go b/ethdb/leveldb/leveldb.go
+--- a/ethdb/leveldb/leveldb.go
++++ b/ethdb/leveldb/leveldb.go
+@@ -118,7 +118,7 @@
+ 
+ 	// Open the db and recover any potential corruptions
+ 	db, err := leveldb.OpenFile(file, options)
+-	if _, corrupted := err.(*errors.ErrCorrupted); corrupted {
++	if _, corrupted := err.(*errors.ErrCorrupted); corrupted && !options.GetReadOnly() {
+ 		db, err = leveldb.RecoverFile(file, nil)
+ 	}
+ 	if err != nil {
+diff --git a/ethstats/ethstats.go b/ethstats/ethstats.go
+--- a/ethstats/ethstats.go
++++ b/ethstats/ethstats.go
+@@ -333,8 +333,8 @@
+ 					if err = s.reportHistory(conn, list); err != nil {
+ 						log.Warn("Requested history report failed", "err", err)
+ 					}
+-				case head := <-headCh:
+-					if err = s.reportBlock(conn, head); err != nil {
++				case <-headCh:
++					if err = s.reportBlock(conn, nil); err != nil {
+ 						log.Warn("Block stats report failed", "err", err)
+ 					}
+ 					if err = s.reportPending(conn); err != nil {
+diff --git a/internal/ethapi/api_fsn.go b/internal/ethapi/api_fsn.go
+--- a/internal/ethapi/api_fsn.go
++++ b/internal/ethapi/api_fsn.go
+@@ -7,7 +7,6 @@
+ 	"fmt"
+ 	"math/big"
+ 	"sort"
+-	"sync"
+ 	"time"
+ 
+ 	"github.com/FusionFoundation/efsn/v5/accounts"
+@@ -22,10 +21,6 @@
+ 	"github.com/FusionFoundation/efsn/v5/rpc"
+ )
+ 
+-var lastBlockOfBuyTickets = int64(0)
+-var buyTicketOnBlockMap map[common.Address]bool
+-var buyTicketOnBlockMapMutex sync.Mutex
+-
+ //--------------------------------------------- PublicFusionAPI -------------------------------------
+ 
+ // PublicFusionAPI ss
+@@ -42,7 +37,7 @@
+ 
+ // IsAutoBuyTicket wacom
+ func (s *PublicFusionAPI) IsAutoBuyTicket(ctx context.Context) bool {
+-	return common.AutoBuyTicket
++	return common.IsAutoBuyTicketEnabled()
+ }
+ 
+ // GetBalance wacom
+@@ -881,10 +876,6 @@
+ 		return nil, err
+ 	}
+ 
+-	if doesTicketPurchaseExistsForBlock(header.Number.Int64(), args.From) {
+-		return nil, fmt.Errorf("Purchase of BuyTicket for this block already submitted")
+-	}
+-
+ 	parentTime := header.Time
+ 	args.Init(parentTime)
+ 	if err := args.ToParam().Check(common.BigMaxUint64, parentTime); err != nil {
+@@ -1286,33 +1277,13 @@
+ 	return s.papi.SendTransaction(ctx, *sendArgs, passwd)
+ }
+ 
+-/*
+-* on our public gateways too many buyTickets are past through
+-this cache of purchase on block will stop multiple purchase
+-attempt on a block (which state_transistion also flags).
+-the goals is to limit the number of buytickets being processed
+-if it is know that they will fail anyway
+-*/
+-func doesTicketPurchaseExistsForBlock(blockNbr int64, from common.Address) bool {
+-	buyTicketOnBlockMapMutex.Lock()
+-	defer buyTicketOnBlockMapMutex.Unlock()
+-	if lastBlockOfBuyTickets == 0 || lastBlockOfBuyTickets != blockNbr {
+-		lastBlockOfBuyTickets = blockNbr
+-		buyTicketOnBlockMap = make(map[common.Address]bool)
+-	}
+-	_, found := buyTicketOnBlockMap[from]
+-	return found
+-}
+-
+-// only record on purchase ticket successfully
+-func addTicketPurchaseForBlock(from common.Address) {
+-	buyTicketOnBlockMapMutex.Lock()
+-	defer buyTicketOnBlockMapMutex.Unlock()
+-	buyTicketOnBlockMap[from] = true
+-}
+-
+ // BuyTicket ss
+ func (s *PrivateFusionAPI) BuyTicket(ctx context.Context, args common.BuyTicketArgs, passwd string) (common.Hash, error) {
++	ticketPurchaseLock.LockAddr(args.From)
++	defer ticketPurchaseLock.UnlockAddr(args.From)
++	if err := checkPendingTicketPurchase(s.b, args); err != nil {
++		return common.Hash{}, err
++	}
+ 	sendArgs, err := s.BuildBuyTicketSendTxArgs(ctx, args)
+ 	if err != nil {
+ 		return common.Hash{}, err
+@@ -1321,7 +1292,6 @@
+ 	if err != nil {
+ 		return common.Hash{}, err
+ 	}
+-	addTicketPurchaseForBlock(args.From)
+ 	return hash, err
+ }
+ 
+@@ -1420,43 +1390,6 @@
+ 		txapi:     txapi,
+ 	}
+ 	return fusionTransactionAPI
+-}
+-
+-// auto buy ticket
+-func AutoBuyTicket(enable bool) {
+-	if enable {
+-		_, err := fusionTransactionAPI.b.Coinbase()
+-		if err != nil {
+-			log.Warn("AutoBuyTicket not enabled as no coinbase account exist")
+-			enable = false
+-		}
+-	}
+-	common.AutoBuyTicket = enable
+-
+-	for {
+-		<-common.AutoBuyTicketChan
+-	COMSUMEALL:
+-		for {
+-			select {
+-			case <-common.AutoBuyTicketChan:
+-			default:
+-				break COMSUMEALL
+-			}
+-		}
+-
+-		// prevent auto buy ticket in syncing
+-		if !fusionTransactionAPI.b.IsMining() {
+-			common.DebugInfo("ignore AutoBuyTicket as isMining is false")
+-			continue
+-		}
+-
+-		coinbase, err := fusionTransactionAPI.b.Coinbase()
+-		if err == nil {
+-			fbase := common.FusionBaseArgs{From: coinbase}
+-			args := common.BuyTicketArgs{FusionBaseArgs: fbase}
+-			fusionTransactionAPI.BuyTicket(context.TODO(), args)
+-		}
+-	}
+ }
+ 
+ // report illegal
+@@ -1527,20 +1460,24 @@
+ }
+ 
+ func (s *FusionTransactionAPI) sendTransaction(ctx context.Context, from common.Address, tx *types.Transaction) (common.Hash, error) {
++	signed, err := s.signTransaction(from, tx)
++	if err != nil {
++		return common.Hash{}, err
++	}
++	return s.SendRawTransaction(ctx, signed)
++}
++
++func (s *FusionTransactionAPI) signTransaction(from common.Address, tx *types.Transaction) (*types.Transaction, error) {
+ 	account := accounts.Account{Address: from}
+ 	wallet, err := s.b.AccountManager().Find(account)
+ 	if err != nil {
+-		return common.Hash{}, err
++		return nil, err
+ 	}
+ 	var chainID *big.Int
+ 	if config := s.b.ChainConfig(); config.IsEIP155(s.b.CurrentBlock().Number()) {
+ 		chainID = config.ChainID
+ 	}
+-	signed, err := wallet.SignTx(account, tx, chainID)
+-	if err != nil {
+-		return common.Hash{}, err
+-	}
+-	return s.SendRawTransaction(ctx, signed)
++	return wallet.SignTx(account, tx, chainID)
+ }
+ 
+ // SendRawTransaction wacom
+@@ -1689,6 +1626,11 @@
+ 
+ // BuyTicket ss
+ func (s *FusionTransactionAPI) BuyTicket(ctx context.Context, args common.BuyTicketArgs) (common.Hash, error) {
++	ticketPurchaseLock.LockAddr(args.From)
++	defer ticketPurchaseLock.UnlockAddr(args.From)
++	if err := checkPendingTicketPurchase(s.b, args); err != nil {
++		return common.Hash{}, err
++	}
+ 	tx, err := s.BuildBuyTicketTx(ctx, args)
+ 	if err != nil {
+ 		return common.Hash{}, err
+@@ -1697,7 +1639,6 @@
+ 	if err != nil {
+ 		return common.Hash{}, err
+ 	}
+-	addTicketPurchaseForBlock(args.From)
+ 	return hash, err
+ }
+ 
+diff --git a/internal/ethapi/autobuy.go b/internal/ethapi/autobuy.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ethapi/autobuy.go
+@@ -0,0 +1,324 @@
++package ethapi
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"time"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/common/hexutil"
++	"github.com/FusionFoundation/efsn/v5/core/types"
++	"github.com/FusionFoundation/efsn/v5/crypto"
++	"github.com/FusionFoundation/efsn/v5/log"
++	"github.com/FusionFoundation/efsn/v5/rlp"
++	"github.com/FusionFoundation/efsn/v5/rpc"
++)
++
++const autoBuyRetryInterval = 5 * time.Second
++
++var ticketPurchaseLock AddrLocker
++
++type TicketBuyer struct {
++	enabled bool
++	cancel  context.CancelFunc
++	done    chan struct{}
++}
++
++func NewTicketBuyer(enabled bool) *TicketBuyer {
++	return &TicketBuyer{enabled: enabled}
++}
++
++func (buyer *TicketBuyer) Start() error {
++	ctx, cancel := context.WithCancel(context.Background())
++	buyer.cancel, buyer.done = cancel, make(chan struct{})
++	go func() {
++		defer close(buyer.done)
++		AutoBuyTicket(ctx, buyer.enabled)
++	}()
++	return nil
++}
++
++func (buyer *TicketBuyer) Stop() error {
++	buyer.cancel()
++	<-buyer.done
++	return nil
++}
++
++func AutoBuyTicket(ctx context.Context, enable bool) {
++	ticker := time.NewTicker(autoBuyRetryInterval)
++	defer ticker.Stop()
++	runAutoBuyTicket(ctx, enable, time.Now, ticker.C)
++}
++
++func runAutoBuyTicket(ctx context.Context, enable bool, now func() time.Time, ticks <-chan time.Time) {
++	api := fusionTransactionAPI
++	common.SetAutoBuyTicketEnabled(enable)
++	var lastHead common.Hash
++	var lastAttempt time.Time
++	var lastRebroadcast time.Time
++	var lastError string
++	wasEnabled := false
++	for {
++		enabled := common.IsAutoBuyTicketEnabled() && api.b.IsMining()
++		if ctx.Err() != nil {
++			return
++		}
++		if enabled {
++			instant := now()
++			head := api.b.CurrentHeader().Hash()
++			if !wasEnabled || head != lastHead || instant.Sub(lastAttempt) >= autoBuyRetryInterval {
++				lastHead, lastAttempt = head, instant
++				attempt, cancel := context.WithTimeout(ctx, autoBuyRetryInterval)
++				rebroadcast := instant.Sub(lastRebroadcast) >= autoBuyRetryInterval
++				if rebroadcast {
++					lastRebroadcast = instant
++				}
++				err := api.reconcileTicketPurchase(attempt, rebroadcast)
++				cancel()
++				if err != nil && err.Error() != lastError && ctx.Err() == nil {
++					log.Warn("Automatic ticket purchase needs attention; retrying", "err", err)
++					lastError = err.Error()
++				} else if err == nil {
++					lastError = ""
++				}
++			}
++		}
++		wasEnabled = enabled
++		select {
++		case <-ctx.Done():
++			return
++		case <-ticks:
++		case <-common.AutoBuyTicketChan:
++		}
++	}
++}
++
++func (s *FusionTransactionAPI) reconcileTicketPurchase(ctx context.Context, rebroadcast bool) error {
++	owner, err := s.b.Coinbase()
++	if err != nil {
++		return err
++	}
++	ticketPurchaseLock.LockAddr(owner)
++	defer ticketPurchaseLock.UnlockAddr(owner)
++	s.nonceLock.LockAddr(owner)
++	defer s.nonceLock.UnlockAddr(owner)
++	statedb, header, err := s.b.StateAndHeaderByNumber(ctx, rpc.LatestBlockNumber)
++	if err != nil {
++		return err
++	}
++	if statedb == nil || header == nil {
++		return fmt.Errorf("latest state is unavailable")
++	}
++	nonce := statedb.GetNonce(owner)
++	if err := statedb.Error(); err != nil {
++		return err
++	}
++	tx, err := s.loadAutomaticTicket(owner)
++	if err != nil {
++		return err
++	}
++	if tx != nil && tx.Nonce() < nonce {
++		if err := s.finishAutomaticTicket(ctx, owner, tx, header.Hash()); err != nil {
++			return err
++		}
++		tx = nil
++	}
++	pending, queued := s.b.TxPoolContent()
++	pool := append(pending[owner], queued[owner]...)
++	for _, candidate := range pool {
++		if candidate.Nonce() < nonce {
++			continue
++		}
++		if tx != nil && candidate.Nonce() == tx.Nonce() && candidate.Hash() != tx.Hash() {
++			return fmt.Errorf("automatic ticket %s was replaced at nonce %d by %s; awaiting nonce resolution", tx.Hash(), tx.Nonce(), candidate.Hash())
++		}
++		if tx != nil && candidate.Hash() != tx.Hash() && isTicketPurchase(candidate) {
++			return fmt.Errorf("another ticket purchase %s is pending; awaiting nonce resolution", candidate.Hash())
++		}
++		if tx == nil && isTicketPurchase(candidate) {
++			tx = candidate
++			if err := s.saveAutomaticTicket(owner, tx); err != nil {
++				return err
++			}
++		}
++	}
++	if tx != nil {
++		if tx.Nonce() != nonce {
++			return fmt.Errorf("automatic ticket %s needs nonce %d, current nonce is %d", tx.Hash(), tx.Nonce(), nonce)
++		}
++		for _, candidate := range pending[owner] {
++			if candidate.Hash() == tx.Hash() {
++				if !rebroadcast {
++					return nil
++				}
++				if err := ctx.Err(); err != nil {
++					return err
++				}
++				if !common.IsAutoBuyTicketEnabled() || !s.b.IsMining() {
++					return nil
++				}
++				if s.b.CurrentHeader().Hash() != header.Hash() {
++					return fmt.Errorf("head changed while checking pending ticket purchase")
++				}
++				return s.b.RebroadcastTx(ctx, tx)
++			}
++		}
++		for _, candidate := range queued[owner] {
++			if candidate.Hash() == tx.Hash() {
++				return nil
++			}
++		}
++		return s.submitAutomaticTicket(ctx, tx)
++	}
++	for _, candidate := range pool {
++		if candidate.Nonce() >= nonce {
++			return fmt.Errorf("account has another pending transaction %s; awaiting nonce resolution", candidate.Hash())
++		}
++	}
++	args := common.BuyTicketArgs{FusionBaseArgs: common.FusionBaseArgs{From: owner, Nonce: (*hexutil.Uint64)(&nonce)}}
++	unsigned, err := s.BuildBuyTicketTx(ctx, args)
++	if err != nil {
++		return err
++	}
++	tx, err = s.signTransaction(owner, unsigned)
++	if err != nil {
++		return err
++	}
++	if s.b.CurrentHeader().Hash() != header.Hash() {
++		return fmt.Errorf("head changed while constructing ticket purchase; retrying against new state")
++	}
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if !common.IsAutoBuyTicketEnabled() || !s.b.IsMining() {
++		return nil
++	}
++	if err := s.saveAutomaticTicket(owner, tx); err != nil {
++		return err
++	}
++	return s.submitAutomaticTicket(ctx, tx)
++}
++
++func automaticTicketKey(owner common.Address) []byte {
++	return append([]byte("fsn-auto-ticket-v1-"), owner[:]...)
++}
++
++func (s *FusionTransactionAPI) loadAutomaticTicket(owner common.Address) (*types.Transaction, error) {
++	key := automaticTicketKey(owner)
++	exists, err := s.b.ChainDb().Has(key)
++	if err != nil || !exists {
++		return nil, err
++	}
++	data, err := s.b.ChainDb().Get(key)
++	if err != nil {
++		return nil, err
++	}
++	var tx types.Transaction
++	if err := tx.UnmarshalBinary(data); err != nil {
++		return nil, fmt.Errorf("invalid saved automatic ticket: %w", err)
++	}
++	sender, err := types.Sender(types.LatestSigner(s.b.ChainConfig()), &tx)
++	if err != nil || sender != owner || !isTicketPurchase(&tx) {
++		return nil, fmt.Errorf("saved automatic ticket has an invalid sender or payload")
++	}
++	return &tx, nil
++}
++
++func (s *FusionTransactionAPI) saveAutomaticTicket(owner common.Address, tx *types.Transaction) error {
++	data, err := tx.MarshalBinary()
++	if err != nil {
++		return err
++	}
++	return s.b.ChainDb().Put(automaticTicketKey(owner), data)
++}
++
++func (s *FusionTransactionAPI) submitAutomaticTicket(ctx context.Context, tx *types.Transaction) error {
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if !common.IsAutoBuyTicketEnabled() || !s.b.IsMining() {
++		return nil
++	}
++	if _, err := s.SendRawTransaction(ctx, tx); err != nil {
++		return err
++	}
++	log.Info("Automatic ticket submitted; awaiting inclusion", "tx", tx.Hash(), "nonce", tx.Nonce())
++	return nil
++}
++
++func (s *FusionTransactionAPI) finishAutomaticTicket(ctx context.Context, owner common.Address, tx *types.Transaction, head common.Hash) error {
++	included, hash, number, index, err := s.b.GetTransaction(ctx, tx.Hash())
++	if err != nil {
++		return err
++	}
++	confirmed := false
++	if included != nil {
++		header, err := s.b.HeaderByNumber(ctx, rpc.BlockNumber(number))
++		if err != nil {
++			return err
++		}
++		if header == nil || header.Hash() != hash {
++			return fmt.Errorf("ticket inclusion changed during reconciliation")
++		}
++		receipts, err := s.b.GetReceipts(ctx, hash)
++		if err != nil {
++			return err
++		}
++		if index >= uint64(len(receipts)) || receipts[index] == nil || receipts[index].TxHash != tx.Hash() {
++			return fmt.Errorf("ticket receipt unavailable")
++		}
++		expected := crypto.Keccak256Hash(owner[:], header.ParentHash[:])
++		for _, entry := range receipts[index].Logs {
++			if entry.Address != common.FSNCallAddress || len(entry.Topics) == 0 || entry.Topics[0] != common.BytesToHash([]byte{byte(common.BuyTicketFunc)}) {
++				continue
++			}
++			var outcome struct {
++				TicketID    common.Hash
++				TicketOwner common.Address
++				Error       string
++			}
++			if json.Unmarshal(entry.Data, &outcome) == nil && outcome.Error == "" && outcome.TicketID == expected && outcome.TicketOwner == owner && receipts[index].Status == types.ReceiptStatusSuccessful {
++				confirmed = true
++			}
++		}
++	}
++	if s.b.CurrentHeader().Hash() != head {
++		return fmt.Errorf("head changed while checking ticket inclusion")
++	}
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if err := s.b.ChainDb().Delete(automaticTicketKey(owner)); err != nil {
++		return err
++	}
++	if confirmed {
++		log.Info("Automatic ticket purchase confirmed", "tx", tx.Hash(), "block", hash)
++	} else {
++		log.Warn("Automatic ticket nonce consumed without a confirmed purchase", "tx", tx.Hash(), "nonce", tx.Nonce())
++	}
++	return nil
++}
++
++func isTicketPurchase(tx *types.Transaction) bool {
++	if tx.To() == nil || *tx.To() != common.FSNCallAddress {
++		return false
++	}
++	var envelope common.FSNCallParam
++	var purchase common.BuyTicketParam
++	return rlp.DecodeBytes(tx.Data(), &envelope) == nil && envelope.Func == common.BuyTicketFunc && rlp.DecodeBytes(envelope.Data, &purchase) == nil
++}
++
++func checkPendingTicketPurchase(b Backend, args common.BuyTicketArgs) error {
++	pending := b.GetPoolTransactionByPredicate(func(tx *types.Transaction) bool {
++		if !isTicketPurchase(tx) {
++			return false
++		}
++		owner, err := types.Sender(types.LatestSigner(b.ChainConfig()), tx)
++		return err == nil && owner == args.From
++	})
++	if pending != nil && (args.Nonce == nil || uint64(*args.Nonce) != pending.Nonce()) {
++		return fmt.Errorf("ticket purchase already pending: %s", pending.Hash())
++	}
++	return nil
++}
+diff --git a/internal/ethapi/backend.go b/internal/ethapi/backend.go
+--- a/internal/ethapi/backend.go
++++ b/internal/ethapi/backend.go
+@@ -70,6 +70,7 @@
+ 
+ 	// TxPool API
+ 	SendTx(ctx context.Context, signedTx *types.Transaction) error
++	RebroadcastTx(ctx context.Context, signedTx *types.Transaction) error
+ 	GetTransaction(ctx context.Context, txHash common.Hash) (*types.Transaction, common.Hash, uint64, uint64, error)
+ 	GetPoolTransactions() (types.Transactions, error)
+ 	GetPoolTransaction(txHash common.Hash) *types.Transaction
+diff --git a/les/api_backend.go b/les/api_backend.go
+--- a/les/api_backend.go
++++ b/les/api_backend.go
+@@ -164,6 +164,10 @@
+ 	return b.eth.txPool.Add(ctx, signedTx)
+ }
+ 
++func (b *LesApiBackend) RebroadcastTx(ctx context.Context, signedTx *types.Transaction) error {
++	return errors.New("automatic ticket rebroadcast requires a full node")
++}
++
+ func (b *LesApiBackend) RemoveTx(txHash common.Hash) {
+ 	b.eth.txPool.RemoveTx(txHash)
+ }
+diff --git a/light/lightchain.go b/light/lightchain.go
+--- a/light/lightchain.go
++++ b/light/lightchain.go
+@@ -95,6 +95,9 @@
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	if bc.hc.HasRestartAnchor() {
++		return nil, errors.New("restart anchor: light sync is not supported")
++	}
+ 	bc.genesisBlock, _ = bc.GetBlockByNumber(NoOdr, 0)
+ 	if bc.genesisBlock == nil {
+ 		return nil, core.ErrNoGenesis
+diff --git a/miner/worker.go b/miner/worker.go
+--- a/miner/worker.go
++++ b/miner/worker.go
+@@ -831,6 +831,10 @@
+ 
+ // commitNewWork generates several new sealing tasks based on the parent block.
+ func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) {
++	if err := w.chain.CheckRestartReady(); err != nil {
++		log.Warn("Mining waits for restart anchor", "err", err)
++		return
++	}
+ 	w.mu.RLock()
+ 	defer w.mu.RUnlock()
+ 
+@@ -984,11 +988,20 @@
+ 	return nil
+ }
+ 
+-// copyReceipts makes a deep copy of the given receipts.
++// copyReceipts copies the given receipts and their mutable log data.
+ func copyReceipts(receipts []*types.Receipt) []*types.Receipt {
+ 	result := make([]*types.Receipt, len(receipts))
+ 	for i, l := range receipts {
+ 		cpy := *l
++		if l.Logs != nil {
++			cpy.Logs = make([]*types.Log, len(l.Logs))
++			for j, entry := range l.Logs {
++				entryCopy := *entry
++				entryCopy.Topics = append([]common.Hash(nil), entry.Topics...)
++				entryCopy.Data = common.CopyBytes(entry.Data)
++				cpy.Logs[j] = &entryCopy
++			}
++		}
+ 		result[i] = &cpy
+ 	}
+ 	return result
+diff --git a/p2p/discover/bootstrap.go b/p2p/discover/bootstrap.go
+new file mode 100644
+--- /dev/null
++++ b/p2p/discover/bootstrap.go
+@@ -0,0 +1,155 @@
++package discover
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"net"
++	"net/url"
++	"strings"
++	"time"
++
++	"github.com/FusionFoundation/efsn/v5/log"
++)
++
++const (
++	bootstrapLookupTimeout   = 5 * time.Second
++	bootstrapRetryInterval   = 10 * time.Second
++	bootstrapRefreshInterval = 30 * time.Second
++	bootstrapMaxRetry        = 5 * time.Minute
++)
++
++type BootstrapNodes []*Node
++
++func (nodes *BootstrapNodes) UnmarshalTOML(decode func(interface{}) error) error {
++	var urls []string
++	if err := decode(&urls); err != nil {
++		return err
++	}
++	parsed := make(BootstrapNodes, 0, len(urls))
++	for _, raw := range urls {
++		n, err := ParseBootnode(raw)
++		if err != nil {
++			return err
++		}
++		parsed = append(parsed, n)
++	}
++	*nodes = parsed
++	return nil
++}
++
++func ParseBootnode(raw string) (*Node, error) {
++	n, err := parseNodeEndpoint(raw)
++	if err != nil {
++		return nil, err
++	}
++	u, err := url.Parse(raw)
++	if err != nil {
++		return nil, err
++	}
++	query, err := url.ParseQuery(u.RawQuery)
++	if err != nil || u.Path != "" || u.Fragment != "" || u.ForceQuery || len(query) > 1 || (len(query) == 1 && len(query["discport"]) != 1) || (len(query) == 1 && query.Get("discport") == "") {
++		return nil, errors.New("invalid bootstrap URL suffix")
++	}
++	if err := n.validateBootstrap(); err != nil {
++		return nil, err
++	}
++	return n, nil
++}
++
++func (n *Node) validateBootstrap() error {
++	if n == nil || n.UDP == 0 {
++		return errors.New("missing bootstrap UDP port")
++	}
++	if _, err := n.ID.Pubkey(); err != nil {
++		return err
++	}
++	if n.hostname != "" {
++		name := strings.TrimSuffix(n.hostname, ".")
++		if len(name) == 0 || len(name) > 253 {
++			return errors.New("invalid bootstrap hostname")
++		}
++		for _, label := range strings.Split(name, ".") {
++			if len(label) == 0 || len(label) > 63 || label[0] == '-' || label[len(label)-1] == '-' {
++				return errors.New("invalid bootstrap hostname")
++			}
++			for _, c := range label {
++				if !(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '-') {
++					return errors.New("invalid bootstrap hostname")
++				}
++			}
++		}
++		return nil
++	}
++	if n.IP.To16() == nil || n.IP.IsMulticast() || n.IP.IsUnspecified() {
++		return errors.New("invalid bootstrap IP")
++	}
++	return nil
++}
++
++func (tab *Table) resolveBootstrap(ctx context.Context, seed *Node) error {
++	lookupCtx, cancel := context.WithTimeout(ctx, bootstrapLookupTimeout)
++	defer cancel()
++	addresses, err := net.DefaultResolver.LookupIPAddr(lookupCtx, seed.hostname)
++	if err != nil {
++		return err
++	}
++	if len(addresses) > bucketSize {
++		addresses = addresses[:bucketSize]
++	}
++	for _, address := range addresses {
++		if ctx.Err() != nil {
++			return ctx.Err()
++		}
++		n := NewNode(seed.ID, address.IP, seed.UDP, seed.TCP)
++		if n.validateBootstrap() != nil || address.Zone != "" || (tab.netrestrict != nil && !tab.netrestrict.Contains(n.IP)) || n.ID == tab.self.ID {
++			continue
++		}
++		if tab.net.ping(n.ID, n.addr()) != nil {
++			continue
++		}
++		tab.add(n)
++		select {
++		case tab.refreshReq <- make(chan struct{}):
++		case <-ctx.Done():
++			return ctx.Err()
++		}
++		return nil
++	}
++	return fmt.Errorf("no reachable allowed address for %s", seed.hostname)
++}
++
++func (tab *Table) bootstrapLoop(ctx context.Context, seed *Node) {
++	delay := bootstrapRetryInterval
++	failed := false
++	for ctx.Err() == nil {
++		err := tab.resolveBootstrap(ctx, seed)
++		if ctx.Err() != nil {
++			return
++		}
++		wait := bootstrapRefreshInterval
++		if err != nil {
++			if !failed {
++				log.Warn("Bootstrap contact unavailable; retrying", "host", seed.hostname, "id", seed.ID, "err", err)
++			}
++			wait = delay
++			delay *= 2
++			if delay > bootstrapMaxRetry {
++				delay = bootstrapMaxRetry
++			}
++		} else {
++			if failed {
++				log.Info("Bootstrap contact recovered", "host", seed.hostname, "id", seed.ID)
++			}
++			delay = bootstrapRetryInterval
++		}
++		failed = err != nil
++		timer := time.NewTimer(wait)
++		select {
++		case <-timer.C:
++		case <-ctx.Done():
++			timer.Stop()
++			return
++		}
++	}
++}
+diff --git a/p2p/discover/database.go b/p2p/discover/database.go
+--- a/p2p/discover/database.go
++++ b/p2p/discover/database.go
+@@ -358,6 +358,7 @@
+ 			log.Warn("Failed to decode node RLP", "id", id, "err", err)
+ 			continue
+ 		}
++		n.sha = crypto.Keccak256Hash(n.ID[:])
+ 		return &n
+ 	}
+ 	return nil
+diff --git a/p2p/discover/node.go b/p2p/discover/node.go
+--- a/p2p/discover/node.go
++++ b/p2p/discover/node.go
+@@ -43,6 +43,7 @@
+ 	IP       net.IP // len 4 for IPv4 or 16 for IPv6
+ 	UDP, TCP uint16 // port numbers
+ 	ID       NodeID // the node's public key
++	hostname string
+ 
+ 	// This is a cached copy of sha3(ID) which is used for node
+ 	// distance calculations. This is part of Node in order to make it
+@@ -101,7 +102,13 @@
+ // Please see ParseNode for a description of the format.
+ func (n *Node) String() string {
+ 	u := url.URL{Scheme: "enode"}
+-	if n.Incomplete() {
++	if n.hostname != "" {
++		u.User = url.User(fmt.Sprintf("%x", n.ID[:]))
++		u.Host = net.JoinHostPort(n.hostname, strconv.Itoa(int(n.TCP)))
++		if n.UDP != n.TCP {
++			u.RawQuery = "discport=" + strconv.Itoa(int(n.UDP))
++		}
++	} else if n.Incomplete() {
+ 		u.Host = fmt.Sprintf("%x", n.ID[:])
+ 	} else {
+ 		addr := net.TCPAddr{IP: n.IP, Port: int(n.TCP)}
+@@ -151,6 +158,18 @@
+ }
+ 
+ func parseComplete(rawurl string) (*Node, error) {
++	n, err := parseNodeEndpoint(rawurl)
++	if err != nil || n.hostname == "" {
++		return n, err
++	}
++	ips, err := net.LookupIP(n.hostname)
++	if err != nil || len(ips) == 0 {
++		return nil, errors.New("invalid host")
++	}
++	return NewNode(n.ID, ips[0], n.UDP, n.TCP), nil
++}
++
++func parseNodeEndpoint(rawurl string) (*Node, error) {
+ 	var (
+ 		id               NodeID
+ 		ip               net.IP
+@@ -175,12 +194,11 @@
+ 	if err != nil {
+ 		return nil, fmt.Errorf("invalid host: %v", err)
+ 	}
+-
+-	ips, err := net.LookupIP(host)
+-	if err != nil || len(ips) < 1 {
++	if host == "" {
+ 		return nil, errors.New("invalid host")
+ 	}
+-	ip = ips[0]
++
++	ip = net.ParseIP(host)
+ 	// Ensure the IP is 4 bytes long for IPv4 addresses.
+ 	if ipv4 := ip.To4(); ipv4 != nil {
+ 		ip = ipv4
+@@ -197,7 +215,11 @@
+ 			return nil, errors.New("invalid discport in query")
+ 		}
+ 	}
+-	return NewNode(id, ip, uint16(udpPort), uint16(tcpPort)), nil
++	n := NewNode(id, ip, uint16(udpPort), uint16(tcpPort))
++	if ip == nil {
++		n.hostname = host
++	}
++	return n, nil
+ }
+ 
+ // MustParseNode parses a node URL. It panics if the URL is not valid.
+diff --git a/p2p/discover/table.go b/p2p/discover/table.go
+--- a/p2p/discover/table.go
++++ b/p2p/discover/table.go
+@@ -23,6 +23,7 @@
+ package discover
+ 
+ import (
++	"context"
+ 	crand "crypto/rand"
+ 	"encoding/binary"
+ 	"fmt"
+@@ -63,11 +64,13 @@
+ )
+ 
+ type Table struct {
+-	mutex   sync.Mutex        // protects buckets, bucket content, nursery, rand
+-	buckets [nBuckets]*bucket // index of known nodes by distance
+-	nursery []*Node           // bootstrap nodes
+-	rand    *mrand.Rand       // source of randomness, periodically reseeded
+-	ips     netutil.DistinctNetSet
++	mutex       sync.Mutex        // protects buckets, bucket content, nursery, rand
++	buckets     [nBuckets]*bucket // index of known nodes by distance
++	nursery     []*Node           // bootstrap nodes
++	dnsSeeds    []*Node
++	netrestrict *netutil.Netlist
++	rand        *mrand.Rand // source of randomness, periodically reseeded
++	ips         netutil.DistinctNetSet
+ 
+ 	db         *nodeDB // database of known nodes
+ 	refreshReq chan chan struct{}
+@@ -129,7 +132,6 @@
+ 	// seed nodes also considers older nodes that would otherwise be removed by the
+ 	// expiration.
+ 	tab.db.ensureExpirer()
+-	go tab.loop()
+ 	return tab, nil
+ }
+ 
+@@ -204,17 +206,22 @@
+ // are no known nodes in the database.
+ func (tab *Table) setFallbackNodes(nodes []*Node) error {
+ 	for _, n := range nodes {
+-		if err := n.validateComplete(); err != nil {
++		if err := n.validateBootstrap(); err != nil {
+ 			return fmt.Errorf("bad bootstrap/fallback node %q (%v)", n, err)
+ 		}
+ 	}
+ 	tab.nursery = make([]*Node, 0, len(nodes))
++	tab.dnsSeeds = nil
+ 	for _, n := range nodes {
+ 		cpy := *n
+ 		// Recompute cpy.sha because the node might not have been
+ 		// created by NewNode or ParseNode.
+ 		cpy.sha = crypto.Keccak256Hash(n.ID[:])
+-		tab.nursery = append(tab.nursery, &cpy)
++		if cpy.hostname != "" {
++			tab.dnsSeeds = append(tab.dnsSeeds, &cpy)
++		} else {
++			tab.nursery = append(tab.nursery, &cpy)
++		}
+ 	}
+ 	return nil
+ }
+@@ -316,19 +323,24 @@
+ }
+ 
+ func (tab *Table) findnode(n *Node, targetID NodeID, reply chan<- []*Node) {
+-	fails := tab.db.findFails(n.ID)
+ 	r, err := tab.net.findnode(n.ID, n.addr(), targetID)
+-	if err != nil || len(r) == 0 {
+-		fails++
+-		tab.db.updateFindFails(n.ID, fails)
+-		log.Trace("Findnode failed", "id", n.ID, "failcount", fails, "err", err)
+-		if fails >= maxFindnodeFailures {
+-			log.Trace("Too many findnode failures, dropping", "id", n.ID, "failcount", fails)
+-			tab.delete(n)
+-		}
+-	} else if fails > 0 {
+-		tab.db.updateFindFails(n.ID, fails-1)
+-	}
++	tab.mutex.Lock()
++	b := tab.bucket(n.sha)
++	if findNode(b.entries, n.ID) == n {
++		fails := tab.db.findFails(n.ID)
++		if err != nil || len(r) == 0 {
++			fails++
++			tab.db.updateFindFails(n.ID, fails)
++			log.Trace("Findnode failed", "id", n.ID, "failcount", fails, "err", err)
++			if fails >= maxFindnodeFailures {
++				log.Trace("Too many findnode failures, dropping", "id", n.ID, "failcount", fails)
++				tab.deleteInBucket(b, n)
++			}
++		} else if fails > 0 {
++			tab.db.updateFindFails(n.ID, fails-1)
++		}
++	}
++	tab.mutex.Unlock()
+ 
+ 	// Grab as many nodes as possible. Some of them might not be alive anymore, but we'll
+ 	// just remove those again during revalidation.
+@@ -350,6 +362,15 @@
+ 
+ // loop schedules refresh, revalidate runs and coordinates shutdown.
+ func (tab *Table) loop() {
++	ctx, cancel := context.WithCancel(context.Background())
++	var resolvers sync.WaitGroup
++	for _, seed := range tab.dnsSeeds {
++		resolvers.Add(1)
++		go func(seed *Node) {
++			defer resolvers.Done()
++			tab.bootstrapLoop(ctx, seed)
++		}(seed)
++	}
+ 	var (
+ 		revalidate     = time.NewTimer(tab.nextRevalidateTime())
+ 		refresh        = time.NewTicker(refreshInterval)
+@@ -396,9 +417,11 @@
+ 		}
+ 	}
+ 
++	cancel()
+ 	if tab.net != nil {
+ 		tab.net.close()
+ 	}
++	resolvers.Wait()
+ 	if refreshDone != nil {
+ 		<-refreshDone
+ 	}
+@@ -438,11 +461,19 @@
+ 
+ func (tab *Table) loadSeedNodes() {
+ 	seeds := tab.db.querySeeds(seedCount, seedMaxAge)
+-	seeds = append(seeds, tab.nursery...)
+ 	for i := range seeds {
+ 		seed := seeds[i]
+ 		age := log.Lazy{Fn: func() interface{} { return time.Since(tab.db.lastPongReceived(seed.ID)) }}
+ 		log.Debug("Found seed node in database", "id", seed.ID, "addr", seed.addr(), "age", age)
++		tab.mutex.Lock()
++		b := tab.bucket(seed.sha)
++		known := findNode(b.entries, seed.ID) != nil || findNode(b.replacements, seed.ID) != nil
++		if !known && !tab.bumpOrAdd(b, seed) {
++			tab.addReplacement(b, seed)
++		}
++		tab.mutex.Unlock()
++	}
++	for _, seed := range tab.nursery {
+ 		tab.add(seed)
+ 	}
+ }
+@@ -464,6 +495,9 @@
+ 	tab.mutex.Lock()
+ 	defer tab.mutex.Unlock()
+ 	b := tab.buckets[bi]
++	if len(b.entries) == 0 || b.entries[len(b.entries)-1] != last {
++		return
++	}
+ 	if err == nil {
+ 		// The node responded, move it to the front.
+ 		log.Trace("Revalidated node", "b", bi, "id", last.ID)
+@@ -554,6 +588,9 @@
+ //
+ // The caller must not hold tab.mutex.
+ func (tab *Table) add(n *Node) {
++	if n.ID == tab.self.ID {
++		return
++	}
+ 	tab.mutex.Lock()
+ 	defer tab.mutex.Unlock()
+ 
+@@ -626,10 +663,25 @@
+ 	b.ips.Remove(ip)
+ }
+ 
++func (tab *Table) updateIP(b *bucket, old, next net.IP) bool {
++	if old.Equal(next) {
++		return true
++	}
++	tab.removeIP(b, old)
++	if tab.addIP(b, next) {
++		return true
++	}
++	tab.addIP(b, old)
++	return false
++}
++
+ func (tab *Table) addReplacement(b *bucket, n *Node) {
+-	for _, e := range b.replacements {
++	for i, e := range b.replacements {
+ 		if e.ID == n.ID {
+-			return // already in list
++			if tab.updateIP(b, e.IP, n.IP) {
++				b.replacements[i] = n
++			}
++			return
+ 		}
+ 	}
+ 	if !tab.addIP(b, n.IP) {
+@@ -646,7 +698,7 @@
+ // last entry in the bucket. If 'last' isn't the last entry, it has either been replaced
+ // with someone else or became active.
+ func (tab *Table) replace(b *bucket, last *Node) *Node {
+-	if len(b.entries) == 0 || b.entries[len(b.entries)-1].ID != last.ID {
++	if len(b.entries) == 0 || b.entries[len(b.entries)-1] != last {
+ 		// Entry has moved, don't replace it.
+ 		return nil
+ 	}
+@@ -658,6 +710,7 @@
+ 	r := b.replacements[tab.rand.Intn(len(b.replacements))]
+ 	b.replacements = deleteNode(b.replacements, r)
+ 	b.entries[len(b.entries)-1] = r
++	r.addedAt = time.Now()
+ 	tab.removeIP(b, last.IP)
+ 	return r
+ }
+@@ -667,6 +720,7 @@
+ func (b *bucket) bump(n *Node) bool {
+ 	for i := range b.entries {
+ 		if b.entries[i].ID == n.ID {
++			n.addedAt = b.entries[i].addedAt
+ 			// move it to the front
+ 			copy(b.entries[1:], b.entries[:i])
+ 			b.entries[0] = n
+@@ -677,12 +731,22 @@
+ }
+ 
+ // bumpOrAdd moves n to the front of the bucket entry list or adds it if the list isn't
+-// full. The return value is true if n is in the bucket.
++// full. The return value is true if n's identity is in the bucket.
+ func (tab *Table) bumpOrAdd(b *bucket, n *Node) bool {
+-	if b.bump(n) {
++	if previous := findNode(b.entries, n.ID); previous != nil {
++		if tab.updateIP(b, previous.IP, n.IP) {
++			b.bump(n)
++		}
+ 		return true
+ 	}
+-	if len(b.entries) >= bucketSize || !tab.addIP(b, n.IP) {
++	if len(b.entries) >= bucketSize {
++		return false
++	}
++	if previous := findNode(b.replacements, n.ID); previous != nil {
++		if !tab.updateIP(b, previous.IP, n.IP) {
++			return false
++		}
++	} else if !tab.addIP(b, n.IP) {
+ 		return false
+ 	}
+ 	b.entries, _ = pushNode(b.entries, n, bucketSize)
+@@ -695,8 +759,20 @@
+ }
+ 
+ func (tab *Table) deleteInBucket(b *bucket, n *Node) {
++	if findNode(b.entries, n.ID) != n {
++		return
++	}
+ 	b.entries = deleteNode(b.entries, n)
+ 	tab.removeIP(b, n.IP)
++}
++
++func findNode(list []*Node, id NodeID) *Node {
++	for _, n := range list {
++		if n.ID == id {
++			return n
++		}
++	}
++	return nil
+ }
+ 
+ // pushNode adds n to the front of list, keeping at most max items.
+diff --git a/p2p/discover/udp.go b/p2p/discover/udp.go
+--- a/p2p/discover/udp.go
++++ b/p2p/discover/udp.go
+@@ -256,9 +256,11 @@
+ 		return nil, nil, err
+ 	}
+ 	udp.Table = tab
++	tab.netrestrict = cfg.NetRestrict
+ 
+ 	go udp.loop()
+ 	go udp.readLoop(cfg.Unhandled)
++	go tab.loop()
+ 	return udp.Table, udp, nil
+ }
+ 
+@@ -332,7 +334,11 @@
+ 		Target:     target,
+ 		Expiration: uint64(time.Now().Add(expiration).Unix()),
+ 	})
+-	return nodes, <-errc
++	err := <-errc
++	if err == errTimeout && len(nodes) > 0 {
++		err = nil
++	}
++	return nodes, err
+ }
+ 
+ // pending adds a reply callback to the pending reply queue.
+diff --git a/p2p/server.go b/p2p/server.go
+--- a/p2p/server.go
++++ b/p2p/server.go
+@@ -87,7 +87,7 @@
+ 
+ 	// BootstrapNodes are used to establish connectivity
+ 	// with the rest of the network.
+-	BootstrapNodes []*discover.Node
++	BootstrapNodes discover.BootstrapNodes
+ 
+ 	// BootstrapNodesV5 are used to establish connectivity
+ 	// with the rest of the network using the V5 discovery
+@@ -522,7 +522,13 @@
+ 	}
+ 
+ 	dynPeers := srv.maxDialedConns()
+-	dialer := newDialState(srv.StaticNodes, srv.BootstrapNodes, srv.ntab, dynPeers, srv.NetRestrict)
++	var dialBootnodes []*discover.Node
++	for _, n := range srv.BootstrapNodes {
++		if n != nil && !n.Incomplete() && n.TCP != 0 {
++			dialBootnodes = append(dialBootnodes, n)
++		}
++	}
++	dialer := newDialState(srv.StaticNodes, dialBootnodes, srv.ntab, dynPeers, srv.NetRestrict)
+ 
+ 	// handshake
+ 	srv.ourHandshake = &protoHandshake{Version: baseProtocolVersion, Name: srv.Name, ID: discover.PubkeyID(&srv.PrivateKey.PublicKey)}
+diff --git a/params/config.go b/params/config.go
+--- a/params/config.go
++++ b/params/config.go
+@@ -120,16 +120,16 @@
+ 	//
+ 	// This configuration is intentionally not using keyed fields to force anyone
+ 	// adding flags to the config to also have to set these fields.
+-	AllEthashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, new(EthashConfig), nil, nil}
++	AllEthashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, new(EthashConfig), nil, nil, nil}
+ 
+ 	// AllCliqueProtocolChanges contains every protocol change (EIPs) introduced
+ 	// and accepted by the Ethereum core developers into the Clique consensus.
+ 	//
+ 	// This configuration is intentionally not using keyed fields to force anyone
+ 	// adding flags to the config to also have to set these fields.
+-	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}, nil}
+-
+-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, new(EthashConfig), nil, nil}
++	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}, nil, nil}
++
++	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, new(EthashConfig), nil, nil, nil}
+ 	TestRules       = TestChainConfig.Rules(new(big.Int))
+ )
+ 
+@@ -185,6 +185,8 @@
+ 	Ethash *EthashConfig `json:"ethash,omitempty"`
+ 	Clique *CliqueConfig `json:"clique,omitempty"`
+ 	DaTong *DaTongConfig `json:"datong,omitempty"`
++
++	RestartAnchor *RestartAnchor `json:"-"`
+ }
+ 
+ // EthashConfig is the consensus engine configs for proof-of-work based sealing.
+diff --git a/params/restart_anchor.go b/params/restart_anchor.go
+new file mode 100644
+--- /dev/null
++++ b/params/restart_anchor.go
+@@ -0,0 +1,32 @@
++package params
++
++import (
++	"fmt"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++)
++
++type RestartAnchor struct {
++	GenesisHash common.Hash
++	ChainID     uint64
++	Number      uint64
++	Hash        common.Hash
++}
++
++func (c *ChainConfig) RestartAnchorForGenesis(genesis common.Hash) (*RestartAnchor, error) {
++	anchor := c.RestartAnchor
++	if genesis == MainnetGenesisHash {
++		anchor = MainnetChainConfig.RestartAnchor
++	}
++	if anchor == nil {
++		return nil, nil
++	}
++	if anchor.GenesisHash != genesis || c.ChainID == nil || !c.ChainID.IsUint64() || c.ChainID.Uint64() != anchor.ChainID {
++		return nil, fmt.Errorf("restart anchor: network identity mismatch")
++	}
++	if anchor.Number == 0 || anchor.Hash == (common.Hash{}) {
++		return nil, fmt.Errorf("restart anchor: missing height or hash")
++	}
++	copy := *anchor
++	return &copy, nil
++}

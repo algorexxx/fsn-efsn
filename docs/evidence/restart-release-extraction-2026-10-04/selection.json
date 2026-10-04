@@ -1,0 +1,440 @@
+{
+  "baseline": "c5f0174d88ab2b9c3086c6a9cc9ccf38a072992f",
+  "candidate": "6ecc753f00f6c6ec9ee7ad3855f2f8ff71f1f711",
+  "patches": [
+    {
+      "patch": "01-node.patch",
+      "sha256": "88dd6c58f102881405d1d40a1ad8a2620ec36db686915416668f544f11b72b20",
+      "files": [
+        {
+          "path": "cmd/efsn/main.go",
+          "before_sha256": "28f893d16a9b3f3e47ab84254789d3ca1119cb767d517062488f7aa4ee89e115",
+          "after_sha256": "a4bc1ca465df67e2bc9998d8b45f7da462d96fe721d0186d8717aaf4426f6c71",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "cmd/utils/flags.go",
+          "before_sha256": "bbd254e9ac15e4691cac25c74eb74f9b5dc23f3650fa34b593224151a28ce7cf",
+          "after_sha256": "2cd72fd3725a78f98a12c09e2660bac0e1bdb626149f6a6298b5b2faea137c25",
+          "review_ids": [
+            "P12"
+          ]
+        },
+        {
+          "path": "common/autobuy.go",
+          "before_sha256": null,
+          "after_sha256": "d2b7d48ca7db86d97689db8e89395622508254df9e52e8ae8eb82ca1385508e4",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "common/fsntypes.go",
+          "before_sha256": "757897e9363ca7eca676cc8293cb7780962037b7591629fbbb921fce49894aca",
+          "after_sha256": "57fcf3d0405c7d4fb44f4b4249d8afffca52f06b6d5d643c3a360eef44deee50",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "consensus/datong/consensus.go",
+          "before_sha256": "7549d37d88afc8919d12dda4a01ad62764a9239e1a57d2d590f1a2a56d2ff507",
+          "after_sha256": "23048e92f4db611fc5206773a2768cfc69c402da3a06d08accc2fc35ff7182ee",
+          "review_ids": [
+            "P2",
+            "P9"
+          ]
+        },
+        {
+          "path": "consensus/datong/snapshot.go",
+          "before_sha256": "ea6c8f94621114c796963526d1c356755e6abf02684ab168d106f34eaec06c14",
+          "after_sha256": "828a572d6a44a65b7c1371d1f64024f4d25a07de6a1709c85a6843983d59661b",
+          "review_ids": [
+            "P16"
+          ]
+        },
+        {
+          "path": "core/blockchain.go",
+          "before_sha256": "b5294303a467f448347f4874134871981b65b30968f7ff9e6da1e45271619e70",
+          "after_sha256": "a4162ea52710cd5b278212e25e9ebc7b057caef71436d3ab2c41fef4ffffb4b7",
+          "review_ids": [
+            "P1",
+            "P4",
+            "P5",
+            "P6",
+            "P7",
+            "P9"
+          ]
+        },
+        {
+          "path": "core/genesis.go",
+          "before_sha256": "d10628ad602a5eb461d2189913b0c753a1d7a30b224bd7ab6c95a2d00ca2da91",
+          "after_sha256": "581ab715168e445344e9a824920cd0df884e737ca4cdb724b2ecc8e0b1a6af1a",
+          "review_ids": [
+            "P1"
+          ]
+        },
+        {
+          "path": "core/headerchain.go",
+          "before_sha256": "b774785d63ab3ddc5fc43a46c064811f11818a8643ac5a73765188be7420bf29",
+          "after_sha256": "603385e86d7c9530f51b003d36ecd057873eb0668561ccac20b2a30330b117eb",
+          "review_ids": [
+            "P1",
+            "P6",
+            "P9"
+          ]
+        },
+        {
+          "path": "core/rawdb/database.go",
+          "before_sha256": "d433d5665621f6fb82333c5ad69391e8e0ecca2dda4472cfc93fee3dfdfe0289",
+          "after_sha256": "0c627308161fb8cb552faf13885a5dd697cc5b445d6c36651c618fb7537c4d43",
+          "review_ids": [
+            "P7"
+          ]
+        },
+        {
+          "path": "core/rawdb/freezer_table.go",
+          "before_sha256": "43a7c722c382cb15d8458b6bf260d2bb369fe615b9d0d7c0ee512801b45feb02",
+          "after_sha256": "3f24d596295b6acfb8eab86e3f7348564eb73d16772f03f76d98dbce33163887",
+          "review_ids": [
+            "P7"
+          ]
+        },
+        {
+          "path": "core/restart_anchor.go",
+          "before_sha256": null,
+          "after_sha256": "4b1727734f01cab2a1d640e178455fbc2b7405b31d702f74fef9e6e14afaebc4",
+          "review_ids": [
+            "P1"
+          ]
+        },
+        {
+          "path": "eth/api.go",
+          "before_sha256": "a9a0bc3551a60fbe249e23d255a70ba887224732cf80372b4dfd48f41d5a1966",
+          "after_sha256": "5060ab8312a08de6c9bbf2d34f8921bb4df597dff98905e88ec1862ab8be0f91",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "eth/api_backend.go",
+          "before_sha256": "86313f4b71cc9ab005d7bfdca51d744d657302e4f42ed340c4d83aec2c62f6d0",
+          "after_sha256": "d1db3698571a27cc48855204e9bdd04e9c9eb3ec9de17ee7c61b24f0e78b1b26",
+          "review_ids": [
+            "P1",
+            "P4"
+          ]
+        },
+        {
+          "path": "eth/backend.go",
+          "before_sha256": "b9a20bad5bb4302de92e8460e8814fbb7f9fbe1ca401a7107a4aef1f863accef",
+          "after_sha256": "317aaa8f76143a69a667824991beb71bf5ddc7e7d2abbe961d5b4ff323c93498",
+          "review_ids": [
+            "P1"
+          ]
+        },
+        {
+          "path": "eth/handler.go",
+          "before_sha256": "21d3506ec8373b78e740f28f30bf881bb1347c87784166d0f5d1530bbbd7b110",
+          "after_sha256": "8be4e891e4a275ab2ebeba50ceb7fdbca5564424c1c204f7cd0aaee6241bcf9b",
+          "review_ids": [
+            "P1",
+            "P4"
+          ]
+        },
+        {
+          "path": "eth/sync.go",
+          "before_sha256": "d592b7b2e38cefe45e46f0c631c88be805f1957e5e35abba74894ee8679bbda7",
+          "after_sha256": "1878cb3dcec82d971afd104918b2b38ce7470e449a6ecfc5e789e6a1ce8979da",
+          "review_ids": [
+            "P1"
+          ]
+        },
+        {
+          "path": "ethdb/leveldb/leveldb.go",
+          "before_sha256": "34995776de427af75a0291bd58b81cf7812331e844d105ccea822d7cee897543",
+          "after_sha256": "bc7e2ba31c37beab6fa9136a493dc733ca8c5f3d29b0d9db512d4fadf93e2545",
+          "review_ids": [
+            "P8"
+          ]
+        },
+        {
+          "path": "ethstats/ethstats.go",
+          "before_sha256": "04921fb154b074594101f7c94bd66aa2fe56e8d4ca91925efc7525bf1ffd4345",
+          "after_sha256": "5b4a0deecd13a6f0784fe5f6f378633cab5d49861f7bfef5b3d57df16d10b0f6",
+          "review_ids": [
+            "P17"
+          ]
+        },
+        {
+          "path": "internal/ethapi/api_fsn.go",
+          "before_sha256": "7f5210f71b60f7cd509f6d514b15c8b757e0bbd66aecee06bab878c9eadb4efc",
+          "after_sha256": "a18865dd95b72286592f8f1b6f2353b9bb090f45532153849d71fa24db0019ed",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "internal/ethapi/autobuy.go",
+          "before_sha256": null,
+          "after_sha256": "e08f5497bcde436b45cad117b2d4d49de98a63bd66236b21fd8ff41548f26b0b",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "internal/ethapi/backend.go",
+          "before_sha256": "5d0c02f25e7acb7ae001b22c800e6c4ad6b0ca1f9f514f7271b1e82a3539b865",
+          "after_sha256": "7752d7801e1383ec0f1259e45661d3213c04aba2a127e75c98793670d7e6b828",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "les/api_backend.go",
+          "before_sha256": "de201c81591430a349fe026d1233ed166a4bb6d1728f0ecdbf7b48543ef924da",
+          "after_sha256": "6e4d8606c65290800941996b883a196b592bf9e61c42ae953fecd6aa71ed946a",
+          "review_ids": [
+            "P4"
+          ]
+        },
+        {
+          "path": "light/lightchain.go",
+          "before_sha256": "a033f6aa7f1dea684cf89ad87dc4b8b62e7ec008f5ae71de63901f898f2647ad",
+          "after_sha256": "cfe8df9132073ebca1c62806f8dbe6ee16280eacb46f92a50093c7d61b7a1eb8",
+          "review_ids": [
+            "P1"
+          ]
+        },
+        {
+          "path": "miner/worker.go",
+          "before_sha256": "790dcc5b4b759fb3d9b89c87c92cb1e7b20dc79a63ce34f2e697951ba578e73f",
+          "after_sha256": "dd9515523c355e3357582bfb8948572f2bd4fe867f934c81228f131716024ec2",
+          "review_ids": [
+            "P1",
+            "P3"
+          ]
+        },
+        {
+          "path": "p2p/discover/bootstrap.go",
+          "before_sha256": null,
+          "after_sha256": "f9e7fde45e00634ab1dfee8bf8b72ac67756970f443b93a5083a9657be415e27",
+          "review_ids": [
+            "P12"
+          ]
+        },
+        {
+          "path": "p2p/discover/database.go",
+          "before_sha256": "76c170b5775eee3a4d332311c77e931a55841ca66eec4b2aebad3581ff9d881e",
+          "after_sha256": "757d634cfb3101fa5ff77f4c7e95a6b631cfd9572bf5db43382353059a7019f1",
+          "review_ids": [
+            "P13"
+          ]
+        },
+        {
+          "path": "p2p/discover/node.go",
+          "before_sha256": "d26195115c116413caa7a707bad22bab48609704382ba197be55003db6f8ddf2",
+          "after_sha256": "687c7c9aaac63b9b3a72e40cf0ac77386e2f82cb03343694183a8593da24489d",
+          "review_ids": [
+            "P12"
+          ]
+        },
+        {
+          "path": "p2p/discover/table.go",
+          "before_sha256": "e44141e9364fc918e5d6ec35fddc17897c83455f2f86e1a24e0d8e71203c04d8",
+          "after_sha256": "9f30e8a16df0bd3bc6c09e963f9040b240e39329bce73ea134b39cbc26498c98",
+          "review_ids": [
+            "P10",
+            "P11",
+            "P12",
+            "P13",
+            "P14",
+            "P15"
+          ]
+        },
+        {
+          "path": "p2p/discover/udp.go",
+          "before_sha256": "72de7e383d21832333f897affdae2b7c1d8124e2fac5d1af10c38aefbfe06e7f",
+          "after_sha256": "64ff2e261503a863e329be797835f99ad0d124044bf6702e758a379dc6d0121b",
+          "review_ids": [
+            "P10",
+            "P11",
+            "P12"
+          ]
+        },
+        {
+          "path": "p2p/server.go",
+          "before_sha256": "e3617cbe365a4c772742a543fb1ab4cdd32e366c0100688c3319834d03984725",
+          "after_sha256": "eee240f2d77c380d234e98d2677f76151012848c467aff743493d52f32e1c88c",
+          "review_ids": [
+            "P12"
+          ]
+        },
+        {
+          "path": "params/config.go",
+          "before_sha256": "34f1c7a2a70310bb946d985bbb229ddee9bfccbb0796377dcb61669218a37b73",
+          "after_sha256": "9487163b485477402f3329fbd29dfe2a8f60494a91f6450d609743d09de929d4",
+          "review_ids": [
+            "P1"
+          ]
+        },
+        {
+          "path": "params/restart_anchor.go",
+          "before_sha256": null,
+          "after_sha256": "1361bba5bfed19165ea9f404a49ab27c2ceb106a531d870f6bfdf755d444d704",
+          "review_ids": [
+            "P1"
+          ]
+        }
+      ]
+    },
+    {
+      "patch": "02-optional-bootstrap-trim.patch",
+      "sha256": "8e5d1ad13c4d67f59030c2e3f1c5533e8b167d25c0ce4378805966a490233995",
+      "files": [
+        {
+          "path": "cmd/utils/flags.go",
+          "before_sha256": "2cd72fd3725a78f98a12c09e2660bac0e1bdb626149f6a6298b5b2faea137c25",
+          "after_sha256": "217df9ae9d5f641b97edae147005db090a9bb9efd33433bd5e724f92211760e3",
+          "review_ids": [
+            "O1"
+          ]
+        }
+      ]
+    },
+    {
+      "patch": "03-recovery-tool.patch",
+      "sha256": "bb99a7c8398edf2d75ab664427e3cedca2d857e68777edbedc538b8323dd26cd",
+      "files": [
+        {
+          "path": "cmd/fsn-recovery/main.go",
+          "before_sha256": null,
+          "after_sha256": "6163dc064f0b799f6f9070d5bb55d1e453c29e2148929b158995508f56e7eda9",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "cmd/fsn-recovery/operator.go",
+          "before_sha256": null,
+          "after_sha256": "7941ab59f7f8cffb9dff8bbf7bcc77798f68463c35957653b3bca4640c365e4b",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "consensus/datong/consensus.go",
+          "before_sha256": "23048e92f4db611fc5206773a2768cfc69c402da3a06d08accc2fc35ff7182ee",
+          "after_sha256": "26a568a4c7b630b3ddd5600d14248f1d1273f04d0ea78e7e53c9259e11861427",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/approval.go",
+          "before_sha256": null,
+          "after_sha256": "12e32406bbd7397db7da96a35d96454c41274d6e56e013bb64759f1d062f0a7e",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/build.go",
+          "before_sha256": null,
+          "after_sha256": "0524aaff9e57ca223619016d70d49218c181981f1e82fb5e983dbd320592d227",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/chain.go",
+          "before_sha256": null,
+          "after_sha256": "ff7e4f286bd39d87633655b95fcb7d132f856bf26ea805121c2a2b8298aefc0d",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/keystore.go",
+          "before_sha256": null,
+          "after_sha256": "0335a3104c6fc99f1daffaf87d839c0da18fc745335d22f6cac20a631440d8fb",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/offline.go",
+          "before_sha256": null,
+          "after_sha256": "2553fddb24d4cc17f01e36e6b6340a5666fdc48f4051c5f19a57fb221add7dd6",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/operator.go",
+          "before_sha256": null,
+          "after_sha256": "3e9bcfeea03b8da86dfa6ac642a01d51665d06ba9f5682a3dcf594956c72e86c",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/policy.go",
+          "before_sha256": null,
+          "after_sha256": "69feac39f4db353c302827eeec8413f426b6e64c49e84b5009b1f3f6e1a906d5",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        },
+        {
+          "path": "internal/recovery/signing.go",
+          "before_sha256": null,
+          "after_sha256": "2806c3c25f9cb982a021c21fa455c180199ecb27aa5d0d68d603cd1fe0a78bd9",
+          "review_ids": [
+            "recovery-tool"
+          ]
+        }
+      ]
+    }
+  ],
+  "excluded_runtime": [
+    "cmd/fsn-observe/main.go",
+    "internal/observe/anchor_inventory.go",
+    "internal/observe/backfill.go",
+    "internal/observe/block_coverage.go",
+    "internal/observe/block_evidence.go",
+    "internal/observe/collect.go",
+    "internal/observe/config.go",
+    "internal/observe/history.go",
+    "internal/observe/history_check.go",
+    "internal/observe/history_copy.go",
+    "internal/observe/incidents.go",
+    "internal/observe/report.go",
+    "internal/observe/rpc.go",
+    "internal/observe/ticket_events.go",
+    "internal/observe/ticket_timeline.go",
+    "internal/observe/ticket_transactions.go",
+    "internal/observe/transaction.go"
+  ],
+  "changed_path_count": 12430,
+  "node_file_count": 33,
+  "recovery_file_count": 11,
+  "excluded_packaging": [
+    ".gitattributes",
+    ".gitignore",
+    "Dockerfile.gateway-isolated",
+    "QuickNodeSetup/README.md",
+    "QuickNodeSetup/fsnNode.sh",
+    "QuickNodeSetup/fusion-rpc-proxy.sh",
+    "QuickNodeSetup/fusion-rpc-proxy.test.sh",
+    "QuickNodeSetup/fusion-rpc.service",
+    "QuickNodeSetup/fusion-rpc.socket",
+    "QuickNodeSetup/fusion.service",
+    "QuickNodeSetup/isolatedGateway.sh",
+    "QuickNodeSetup/isolatedGateway.test.sh",
+    "README.md"
+  ],
+  "test_evidence_path_count": 12357
+}

@@ -109,3 +109,15 @@ their own review or explicit operational decisions.
 Commands and raw results are retained in
 [`restart-purchase-storage-2026-09-25`](evidence/restart-purchase-storage-2026-09-25).
 Independent review of P4 remains a release requirement.
+
+## 4 October extraction follow-up
+
+The [release patch extraction](restart-release-extraction.md) reproduced a
+fixture ordering race in `storage_has`: setup stopped the buyer before awaiting
+its submission-failure warning. Cancellation can suppress that warning. The
+test now observes the required warning before stopping in the `has`/`get` setup;
+the delete setup remains stopped before import. Production code, fault checks,
+byte/nonce assertions and timeouts are unchanged. All eight storage cases pass,
+followed by three additional passes each for `has` and `get`, with Linux race
+detection. The original failed run and exact test-only patch are retained in
+[the extraction evidence](evidence/restart-release-extraction-2026-10-04).

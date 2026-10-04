@@ -132,6 +132,12 @@ finality rule is proposed.
 
 ## Independent review handoff
 
+The [4 October extraction](restart-release-extraction.md) now supplies concrete
+patches against upstream, a hash-pinned file inventory and mappings for all 109
+node hunks. P1–P17 occupy 33 Go files; O1 and the recovery tool/accessor are
+separate patches. Observer and inherited gateway changes are excluded. These
+are proposed review inputs, not 17 independently applicable or approved patches.
+
 The [4 October release matrix](restart-release-matrix.md) consolidates ten
 acceptance groups, existing test/runners, final-candidate gaps and inherited
 failure dispositions. Use it with this hunk inventory when preparing the
