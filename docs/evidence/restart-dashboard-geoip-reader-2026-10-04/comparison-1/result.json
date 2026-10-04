@@ -1,0 +1,61 @@
+[
+  {
+    "name": "legacy-original",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "env",
+      "GEODATADIR=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-geoip-validation-1/precision",
+      "timeout",
+      "30s",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "--max-old-space-size=128",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-geoip-reader-2026-10-04/legacy.cjs",
+      "original"
+    ]
+  },
+  {
+    "name": "legacy-patched",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "env",
+      "GEODATADIR=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-geoip-validation-1/precision",
+      "timeout",
+      "30s",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "--max-old-space-size=128",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-geoip-reader-2026-10-04/legacy.cjs",
+      "patched"
+    ]
+  },
+  {
+    "name": "model",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "env",
+      "GEODATADIR=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-geoip-validation-1/precision",
+      "timeout",
+      "30s",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "--max-old-space-size=128",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-geoip-reader-2026-10-04/model.cjs"
+    ]
+  }
+]

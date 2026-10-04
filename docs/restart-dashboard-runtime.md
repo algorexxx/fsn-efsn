@@ -177,10 +177,13 @@ report records lint coverage differences and remaining maintenance work.
 2. Use the [GeoIP operations investigation](restart-dashboard-geoip-operations.md)
    for reproduced updater failures and passing isolated switch/rollback checks.
    The [read-only validator](restart-dashboard-geoip-validation.md) implements
-   binary checks and exposes incompatible IPv6 data. Resolve reader/format
-   compatibility, then finish protected downloads, conversion and supervised
-   activation. Source/account selection, applicable terms/attribution and refresh/
-   deletion operations remain open; the stock updater is not an accepted job.
+   binary checks and exposes incompatible IPv6 data. The subsequent
+   [reader comparison](restart-dashboard-geoip-reader.md) selects standard MMDB
+   and `mmdb-lib` 3.0.3 after 3,007 passing raw lookups and isolated model checks.
+   Implement the bounded loader, preserve country-only flags, retire the custom
+   format when replaced, and repeat combined acceptance. Then finish protected
+   downloads and supervised immutable-MMDB activation. Source/account selection,
+   applicable terms/attribution and refresh/deletion operations remain open.
 3. Continue G6 supervision, retry/log lifecycle, public certificates and the
    coordinated deployment manifest. Recheck advisories at release and rerun
    combined acceptance on that exact package. These local compatibility

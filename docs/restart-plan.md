@@ -357,8 +357,11 @@ complete dataset validation and supervised restart before accepting public updat
 The subsequent [read-only validator](restart-dashboard-geoip-validation.md) passes
 59 new tests, with 237 backend contracts and 14 socket tests passing overall.
 A full data scan and synthetic lookup expose the reader's loss of IPv6 precision;
-the bundled data fails the gate. Resolve reader/format compatibility before
-accepting a new dataset. No updater, activation or chain behavior changes.
+the bundled data fails the gate. The [reader comparison](restart-dashboard-geoip-reader.md)
+selects standard MMDB with `mmdb-lib` 3.0.3 for implementation: 3,007 raw lookups
+and the proposed node/snapshot mapping pass in isolation. The current checkout
+is unchanged. Integrate the bounded loader and preserve country-only flags,
+then repeat combined acceptance; no updater, activation or chain behavior changes.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -427,11 +430,15 @@ Current technical order:
    or explicit legacy-stack acceptance remains a final release decision;
    browser coverage and lint differences remain named limitations. Hosted
    validation is unrun.
-   Resolve the IPv6 reader/format incompatibility recorded by the implemented
-   [dataset validator](restart-dashboard-geoip-validation.md); bundled data fails
-   this gate. Then finish the [update workflow](restart-dashboard-geoip-operations.md):
-   protected downloads, archive integrity, conversion/lookup acceptance and
-   supervised activation/recovery. The stock updater is insufficient. Source/account
+   Implement the selected [MMDB reader migration](restart-dashboard-geoip-reader.md)
+   with a bounded loader and explicit missing-location mapping; preserve country
+   flags without inventing map points. Its isolated compatibility checks pass,
+   but production integration and combined acceptance remain open. The old
+   [dataset validator](restart-dashboard-geoip-validation.md) and conversion format
+   become historical evidence when the migration lands. Then finish the
+   [update workflow](restart-dashboard-geoip-operations.md) for immutable MMDB:
+   protected downloads, archive integrity, lookup acceptance and supervised
+   activation/recovery. The stock CSV updater is not the selected path. Source/account
    selection, attribution and refresh/deletion terms remain open; public hosting
    is not approved yet.
    Continue service supervision, public certificate acceptance/renewal and log

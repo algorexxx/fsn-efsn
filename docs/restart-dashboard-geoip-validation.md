@@ -117,13 +117,16 @@ all 1007 efsn source/module files and the original dashboard checkout are preser
 
 ## Next decision and remaining work
 
-Resolve GeoIP reader/converter compatibility before attempting to accept a fresh
-production dataset. Compare a bounded correction to the current format with a
-maintained reader/data format, preserving flags, useful coordinates and explicit
-unavailable results. Test real input ranges and fresh-process dashboard mapping;
-do not assume that downloading newer data fixes the 64-bit reader limitation.
+The subsequent [reader comparison](restart-dashboard-geoip-reader.md) selects
+standard MMDB with `mmdb-lib` 3.0.3 for implementation. It passes 3,007 independently
+expected raw lookups and isolated node/snapshot mapping checks. The precision
+patch also works on a tiny fixture but leaves the bundled-data ordering and
+custom-converter maintenance unresolved. Implement the bounded MMDB loader and
+preserve country-only flags before accepting a production dataset; the dashboard
+still uses the original reader at this evidence point. Retire this five-file
+validator from the active deployment path when the format replacement lands.
 
-Then complete the protected download/conversion job, independent archive
+Then complete the protected MMDB download job, independent archive
 integrity checks, source metadata, immutable activation/rollback, service
 supervision and refresh/deletion policy from the [operations design](restart-dashboard-geoip-operations.md).
 No provider account or live download was used, and no scheduler or public
