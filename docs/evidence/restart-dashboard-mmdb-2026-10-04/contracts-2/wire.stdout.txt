@@ -1,0 +1,35 @@
+
+> fsn-stats@1.0.0 test:wire
+> node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs test/metadata-admission-wire.test.cjs
+
+✔ every real collector transport retains byte, fragment and buffered chunk bounds with text validation (603.330875ms)
+✔ real telemetry login deadline closes a silent socket and ordinary login still works (859.131787ms)
+✔ real transport refuses a message over its byte limit on every collector path (522.587747ms)
+ℹ {"endpoint":"api","code":1009}
+ℹ {"endpoint":"primus","code":1009}
+ℹ {"endpoint":"external","code":1009}
+ℹ {"endpoint":"primus","boundaryCode":1009}
+✔ real transport counts the aggregate bytes of a fragmented message (624.044065ms)
+ℹ {"fragmented":true,"code":1009}
+✔ application message allowance closes the sender and permits a later fresh session (700.040042ms)
+✔ TCP connection budget is shared across paths and a closed slot can be reused (856.269715ms)
+✔ invalid envelopes close before the event plugin and do not interrupt another node (967.096698ms)
+✔ efsn-sized history reaches collection and an extra entry closes the reporting session (2369.0827ms)
+✔ held output disconnects only the slow telemetry session and its identity can reconnect (714.245727ms)
+ℹ {"held":{"queued":8077,"peak":8077,"writes":82,"destroyed":false},"stopped":{"queued":0,"peak":8081,"writes":84,"destroyed":true}}
+✔ Primus and WebSocket control replies share the same output budget on every collector path (571.428054ms)
+ℹ {"endpoint":"api","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+ℹ {"endpoint":"primus","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+ℹ {"endpoint":"external","protocol":{"queued":37,"peak":37,"writes":2,"destroyed":false},"held":{"queued":418,"peak":418,"writes":8,"destroyed":false},"stopped":{"queued":0,"peak":420,"writes":10,"destroyed":true}}
+✔ collector backfills requested gaps and broadcasts the newest forty heights as heads advance (2640.609329ms)
+✔ real collector bounds registration and ping while retaining only native metadata across reconnect (513.971724ms)
+✔ real collector timestamps reports, ignores ping/history for freshness and clears receipts on reconnect (683.551901ms)
+✔ real loopback collector preserves identity, rejects unowned updates and reconnects after disconnect (752.330561ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7647.393549

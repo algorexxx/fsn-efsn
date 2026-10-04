@@ -1,0 +1,1689 @@
+diff --git a/README.md b/README.md
+index e8f8d3810362554c0d972ea598021ece9e436cb0..c7f8c7a881bc486b9b5429737bdd8faa19693b29 100644
+--- a/README.md
++++ b/README.md
+@@ -31,14 +31,14 @@ The [GeoIP/diagnostics update](docs/geoip-dependency-upgrade.md) clears the
+ remaining backend advisories in the recorded audit. The backend now requires
+ Node 24 or newer; local acceptance uses Node 24.21.0 and npm 10.9.0. Public
+ deployment still needs the frontend and operational release checks.
+-This product includes GeoLite2 data created by MaxMind, available from
+-[MaxMind](https://www.maxmind.com/). Country flags and map locations use this
+-approximate data. Follow the dataset attribution/update requirements in the
+-GeoIP guide before public use. The [update and recovery investigation](docs/geoip-operations.md)
+-reproduces updater integrity/partial-write failures and rehearses isolated dataset
+-switching and rollback. The [read-only validator](docs/geoip-validation.md) now
+-checks complete datasets, and rejects incompatible IPv6 data. Reader/format
+-compatibility and a protected production update job still need work.
++The [MMDB integration](docs/geoip-mmdb.md) replaces the old GeoIP reader and
++conversion format. Set `GEOIP_MODE=disabled` explicitly, or configure a checked
++City MMDB file with its approved hash and byte budget. Known country flags remain
++visible without coordinates. No production geography data is bundled. Enabled
++geography still needs protected acquisition, appropriate attribution and data
++refresh/deletion procedures; see the integration guide before public use.
++The earlier [updater](docs/geoip-operations.md) and [validator](docs/geoip-validation.md)
++reports remain historical evidence.
+ 
+ Run `npm test` for configuration, identity and startup checks, including an HTTP
+ API test with stubbed storage. Run `npm run test:wire` for the real loopback
+diff --git a/deploy/validate-geoip.cjs b/deploy/validate-geoip.cjs
+index 6bb6a0e4fd0d692e3cc5d97ccf83e40077ba35d5..1ca074cdc6e862c1f636f916b80060dfef1e261d 100644
+--- a/deploy/validate-geoip.cjs
++++ b/deploy/validate-geoip.cjs
+@@ -1,12 +1,14 @@
+-const validateGeoipDataset = require('../lib/geoip-dataset');
+-
+-try {
+-    const [directory, limit] = process.argv.slice(2);
+-    if (process.argv.length !== 4 || !/^[1-9][0-9]*$/.test(limit)) {
+-        throw new Error('Usage: node deploy/validate-geoip.cjs ABSOLUTE_DATA_DIRECTORY MAX_DATASET_BYTES');
+-    }
+-    console.log(JSON.stringify(validateGeoipDataset(directory, Number(limit)), null, 2));
+-} catch (error) {
+-    console.error(`GeoIP validation failed: ${error.message}`);
+-    process.exitCode = 1;
+-}
++const loadGeoip = require('../lib/geoip');
++const {loadGeoipConfig} = require('../lib/deployment-config');
++
++try {
++    if (process.argv.length !== 2) {
++        throw new Error('Configure GEOIP_* settings and run node deploy/validate-geoip.cjs without arguments');
++    }
++    const config = loadGeoipConfig(process.env);
++    const geoip = loadGeoip(config);
++    console.log(JSON.stringify({mode: config.mode, database: geoip.database}));
++} catch (error) {
++    console.error(error.message);
++    process.exitCode = 1;
++}
+diff --git a/docs/deployment-configuration.md b/docs/deployment-configuration.md
+index de6a5a5ace352fdd78fce691b8d458a974b8a926..238824cbc93ff44eacc45f9dc1a1fa9d65de8b98 100644
+--- a/docs/deployment-configuration.md
++++ b/docs/deployment-configuration.md
+@@ -27,6 +27,10 @@ input/output/snapshot budgets and records the remaining admission limits.
+ | Collector | `COLLECTOR_MESSAGES_PER_SECOND` | Per-connection application-message refill rate and initial burst allowance |
+ | Collector | `COLLECTOR_MAX_BUFFERED_BYTES` | Per-connection pending output byte budget; see [output limits](collector-output-limits.md) |
+ | Collector | `WS_CREDENTIALS_FILE` | Absolute private JSON file; see [enrollment](telemetry-enrollment.md) |
++| Collector | `GEOIP_MODE` | Explicit `disabled` or `mmdb`; see [GeoIP configuration](geoip-mmdb.md) |
++| Collector in MMDB mode | `GEOIP_DATABASE_FILE` | Absolute path to the approved City MMDB file |
++| Collector in MMDB mode | `GEOIP_DATABASE_SHA256` | Approved lowercase SHA-256; no bundled fallback |
++| Collector in MMDB mode | `GEOIP_MAX_BYTES` | Maximum dataset bytes, positive and at most 2147483647 |
+ | Persistence | `COLLECTOR_WS_URL` | Explicit URL ending in `/primus`; local WS or WSS |
+ | API | `API_HOST` | `127.0.0.1` or `::1` |
+ | API | `API_PORT` | Explicit listener port |
+@@ -107,7 +111,7 @@ For a local collector test after installing the
+ locked dependencies:
+ 
+ ```sh
+-NODE_ENV=production COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json npm start
++NODE_ENV=production GEOIP_MODE=disabled COLLECTOR_HOST=127.0.0.1 COLLECTOR_PORT=3000 WS_CREDENTIALS_FILE=/absolute/private/telemetry-credentials.json npm start
+ ```
+ 
+ Use protected service environments to set each process's required values.
+diff --git a/docs/geoip-mmdb.md b/docs/geoip-mmdb.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e2c60f9ff4c1992da876ef8f9e6de40ec087b62a
+--- /dev/null
++++ b/docs/geoip-mmdb.md
+@@ -0,0 +1,97 @@
++# GeoIP from a checked MMDB file
++
++The collector now uses `mmdb-lib` 3.0.3 with a single City MMDB file. It no longer
++ships the old five-file GeoIP dataset, CSV converter or `geoip-lite` dependency.
++The small files in `test/fixtures/geoip/` are synthetic test data and must never
++be configured for a public dashboard.
++
++## Collector settings
++
++| Setting | Required value |
++| --- | --- |
++| `GEOIP_MODE` | `mmdb` or `disabled`; always explicit |
++| `GEOIP_DATABASE_FILE` | In MMDB mode, an absolute path to the approved file |
++| `GEOIP_DATABASE_SHA256` | In MMDB mode, its approved 64-character lowercase SHA-256 |
++| `GEOIP_MAX_BYTES` | In MMDB mode, a positive byte budget no larger than 2147483647 |
++
++For intentional operation without geography, set `GEOIP_MODE=disabled` and omit
++all three database settings. Nodes still appear and report normally; flags and
++map points are unavailable. A misspelled mode, missing required setting,
++contradictory disabled configuration or legacy `GEODATADIR` stops startup.
++Persistence and API processes do not read a GeoIP file or need these settings.
++
++MMDB mode checks that the file is regular, nonempty, within budget, stable during
++reading and matches the configured hash before constructing the reader. A
++symlink at the final file component is refused; an immutable release directory
++selected through a parent directory symlink is supported. The reader then
++requires an IPv4/IPv6 `GeoLite2-City` or `GeoIP2-City` database in MMDB 2.0 format,
++with usable tree and build metadata. Missing or invalid configured data stops
++startup before sockets are created. There is no packaged-data fallback.
++
++After setting those environment variables, validate without starting a server:
++
++```sh
++node deploy/validate-geoip.cjs
++```
++
++Success prints JSON with the mode and accepted file metadata: hash, byte count,
++database type and build time, or `database: null` when explicitly disabled.
++Failure writes a diagnostic to stderr and exits nonzero. The old directory and
++byte-limit arguments are no longer supported. Validation does not download,
++modify, activate or refresh a dataset.
++
++The expected hash must come from the reviewed staging/release process. Computing
++a hash from arbitrary downloaded bytes and immediately trusting it does not
++establish provenance. The byte budget limits the input buffer; it is not a total
++process-memory limit. The metadata build date is reported, not a freshness
++policy. This loader does not comprehensively validate every MMDB pointer or
++provide resource isolation for an untrusted decoder input.
++
++## Lookup and display
++
++The collector looks up the admitted node's connection address, validates the IP
++syntax first and retains the complete IPv6/mapped address. Peer-reported
++geography is not accepted. The node model receives the collector's result,
++without loading its own database or repeating the lookup.
++
++Only the location country and valid coordinates enter the dashboard. A known
++country without coordinates retains its flag, with `ll: null` and no map point.
++Missing geography remains `null`; absent coordinates are never filled with
++zero. Explicit valid `[0, 0]` is preserved. The account's registered country is
++not substituted for a missing location country. IP geography remains approximate.
++
++The running process holds an immutable buffer. Changing the selected path does
++not refresh a live reader. Stage and verify a new immutable file, update the
++configured hash/path together, then use a supervised restart and lookup check.
++Rollback selects the previous approved file/hash and restarts again. The
++protected acquisition job, fresh production-data acceptance, refresh/deletion
++policy and supervision remain deployment work; none is scheduled here.
++
++If geography is enabled at launch, select the source/edition, account and
++applicable attribution/retention terms before using real data. For GeoLite2,
++retain the MaxMind attribution. An explicitly disabled launch does not need a
++GeoIP account or update job. The [earlier updater investigation](geoip-operations.md)
++and [legacy validator report](geoip-validation.md) remain historical evidence;
++their old conversion/validation commands are not the current deployment path.
++
++## Local acceptance
++
++Linux Node 24.21.0/npm 10.9.0 clean installation and backend audit pass with zero
++reported advisories. The dependency change removes eleven old package entries
++and adds the dependency-free reader; all other locked entries are unchanged.
++The install still reports the inherited v1-lock and `yaeti` deprecation notices.
++
++- 204 backend contracts, including 25 MMDB cases and the country-only snapshot case.
++- All 14 existing socket tests and 23 frontend tests.
++- Frontend lint and the normal deployment build, without build warnings.
++- Twelve compiled-browser checkpoints, including flags without coordinates,
++  mixed geography, unknown geography and the existing outage/recovery behavior.
++- Native efsn through WSS, disposable PostgreSQL, HTTPS API and browser with MMDB
++  enabled; the existing four native browser checkpoints pass.
++
++The obsolete validator's 59 cases are removed with its implementation, not
++silently skipped. Initial runner/fixture failures are retained in the parent
++investigation evidence: npm initially lacked Node on PATH, a numeric-limit test
++included the new mode setting, and the native harness parsed its readiness file
++before the producer finished writing it. The corrected runs pass. No efsn
++source, chain database, signing key or consensus rule was changed.
+diff --git a/docs/geoip-operations.md b/docs/geoip-operations.md
+index c96edbd8c6685ae60888f00ea155feb551d12ab9..a5cb3f490b1f0c94581083d61d82ddb12920f99c 100644
+--- a/docs/geoip-operations.md
++++ b/docs/geoip-operations.md
+@@ -1,5 +1,8 @@
+ # Dashboard GeoIP dataset update and recovery investigation
+ 
++Historical format investigation. The current [MMDB integration](geoip-mmdb.md)
++replaces the five-file reader/converter and its validation command.
++
+ Local evidence date: 2026-10-04. Ten offline updater cases and five dataset
+ switch/lookup checkpoints are complete. The installed `geoip-lite` 2.0.3 updater
+ is unsuitable as an unattended production update job in its current form.
+diff --git a/docs/geoip-validation.md b/docs/geoip-validation.md
+index fc9e5bcf41470181ca18c27b41459f474433b5f7..c4ac34424f91c39db60e685300279675dd4b9c32 100644
+--- a/docs/geoip-validation.md
++++ b/docs/geoip-validation.md
+@@ -1,5 +1,8 @@
+ # Dashboard GeoIP dataset validator and IPv6 compatibility finding
+ 
++Historical format investigation. The current [MMDB integration](geoip-mmdb.md)
++replaces the five-file reader/converter and its validation command.
++
+ Local evidence date: 2026-10-04. A read-only dataset validator is implemented in
+ the isolated dashboard candidate. It checks the five binary files before any
+ future activation step. Fifty-nine new tests pass, along with all 178 existing
+diff --git a/lib/deployment-config.js b/lib/deployment-config.js
+index fa6927a21f900f48ec916568385425ebcd0b7f58..0297b8c5ece772b62a09e4a476306879a65d699c 100644
+--- a/lib/deployment-config.js
++++ b/lib/deployment-config.js
+@@ -116,4 +116,29 @@ function loadCollectorConfig(environment) {
+     };
+ }
+ 
+-module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl, loadPersistenceConfig, loadApiConfig, loadCollectorConfig };
++function loadGeoipConfig(environment) {
++    if (environment.GEODATADIR !== undefined) {
++        throw new Error('GEODATADIR is unsupported; configure GEOIP_MODE and MMDB settings');
++    }
++    const mode = requiredSetting(environment, 'GEOIP_MODE');
++    if (mode === 'disabled') {
++        if (['GEOIP_DATABASE_FILE', 'GEOIP_DATABASE_SHA256', 'GEOIP_MAX_BYTES'].some(name => environment[name] !== undefined)) {
++            throw new Error('Disabled GeoIP must not have database settings');
++        }
++        return {mode};
++    }
++    if (mode !== 'mmdb') {
++        throw new Error('GEOIP_MODE must be mmdb or disabled');
++    }
++    const file = requiredSetting(environment, 'GEOIP_DATABASE_FILE');
++    if (!isAbsolute(file)) {
++        throw new Error('GEOIP_DATABASE_FILE must be an absolute path');
++    }
++    const sha256 = requiredSetting(environment, 'GEOIP_DATABASE_SHA256');
++    if (!/^[0-9a-f]{64}$/.test(sha256)) {
++        throw new Error('GEOIP_DATABASE_SHA256 must be 64 lowercase hexadecimal characters');
++    }
++    return {mode, file, sha256, maxBytes: positiveInteger(environment, 'GEOIP_MAX_BYTES')};
++}
++
++module.exports = { loadListenerConfig, loadDatabaseConfig, loadPersistenceUrl, loadPersistenceConfig, loadApiConfig, loadCollectorConfig, loadGeoipConfig };
+diff --git a/lib/geoip-dataset.js b/lib/geoip-dataset.js
+deleted file mode 100644
+index a1bae96b7d241d9bde44a1f20919330a26d44df5..0000000000000000000000000000000000000000
+--- a/lib/geoip-dataset.js
++++ /dev/null
+@@ -1,156 +0,0 @@
+-const fs = require('node:fs');
+-const path = require('node:path');
+-const {createHash} = require('node:crypto');
+-const {isUtf8} = require('node:buffer');
+-
+-const formats = [
+-    {name: 'geoip-city-names.dat', size: 88, addressBytes: 0},
+-    {name: 'geoip-country.dat', size: 10, addressBytes: 4},
+-    {name: 'geoip-country6.dat', size: 34, addressBytes: 16},
+-    {name: 'geoip-city.dat', size: 24, addressBytes: 4},
+-    {name: 'geoip-city6.dat', size: 48, addressBytes: 16},
+-];
+-
+-function validateGeoipDataset(directory, maxBytes) {
+-    if (typeof directory !== 'string' || !path.isAbsolute(directory)) {
+-        throw new Error('GeoIP directory must be an absolute path');
+-    }
+-    if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0) {
+-        throw new Error('GeoIP byte limit must be a positive safe integer');
+-    }
+-    const resolved = fs.realpathSync(directory);
+-    const opened = [];
+-    try {
+-        openDataset(resolved, maxBytes, opened);
+-        const locationCount = Number(opened[0].stat.size) / formats[0].size;
+-        const files = Object.fromEntries(opened.map(file => [file.name, inspectFile(file, locationCount)]));
+-        verifyUnchanged(directory, resolved, opened);
+-        return {directory: resolved, files};
+-    } finally {
+-        for (const file of opened) {
+-            fs.closeSync(file.fd);
+-        }
+-    }
+-}
+-
+-function openDataset(directory, maxBytes, opened) {
+-    let total = 0n;
+-    for (const format of formats) {
+-        const filename = path.join(directory, format.name);
+-        if (!fs.lstatSync(filename).isFile()) {
+-            throw new Error(`${format.name}: expected a regular file without a symlink`);
+-        }
+-        const fd = fs.openSync(filename, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK);
+-        const file = {...format, filename, fd};
+-        opened.push(file);
+-        file.stat = fs.fstatSync(fd, {bigint: true});
+-        total += file.stat.size;
+-        if (!file.stat.isFile() || file.stat.size === 0n || file.stat.size % BigInt(file.size) !== 0n) {
+-            throw new Error(`${format.name}: expected nonempty aligned records`);
+-        }
+-        if (total > BigInt(maxBytes)) {
+-            throw new Error('GeoIP dataset exceeds the configured byte limit');
+-        }
+-    }
+-}
+-
+-function inspectFile(file, locationCount) {
+-    const bytes = Number(file.stat.size);
+-    const chunk = Buffer.alloc(file.size * 1024);
+-    const hash = createHash('sha256');
+-    let previousEnd = null;
+-    for (let position = 0; position < bytes; position += chunk.length) {
+-        const length = Math.min(chunk.length, bytes - position);
+-        readChunk(file, chunk, position, length);
+-        hash.update(chunk.subarray(0, length));
+-        for (let offset = 0; offset < length; offset += file.size) {
+-            const record = chunk.subarray(offset, offset + file.size);
+-            const label = `${file.name} record ${(position + offset) / file.size}`;
+-            if (file.addressBytes === 0) {
+-                validateLocation(record, label);
+-            } else {
+-                previousEnd = validateRange(record, file.addressBytes, previousEnd, label);
+-                validateRangeData(record, file.addressBytes, locationCount, label);
+-            }
+-        }
+-    }
+-    return {bytes, records: bytes / file.size, sha256: hash.digest('hex')};
+-}
+-
+-function readChunk(file, chunk, position, length) {
+-    let filled = 0;
+-    while (filled < length) {
+-        const count = fs.readSync(file.fd, chunk, filled, length - filled, position + filled);
+-        if (count === 0) {
+-            throw new Error(`${file.name}: file changed or ended during validation`);
+-        }
+-        filled += count;
+-    }
+-}
+-
+-function validateLocation(record, label) {
+-    validateCountry(record.subarray(0, 2), true, label);
+-    if (record.readInt32BE(5) < 0 || ![0, 48, 49].includes(record[9])) {
+-        throw new Error(`${label}: invalid location metadata`);
+-    }
+-    for (const field of [record.subarray(2, 5), record.subarray(10, 42), record.subarray(42, 88)]) {
+-        const end = field.indexOf(0);
+-        if (!isUtf8(end === -1 ? field : field.subarray(0, end))) {
+-            throw new Error(`${label}: invalid UTF-8 location field`);
+-        }
+-    }
+-}
+-
+-function validateCountry(country, allowEmpty, label) {
+-    if (allowEmpty && country[0] === 0 && country[1] === 0) {
+-        return;
+-    }
+-    if (!country.every(value => value >= 65 && value <= 90)) {
+-        throw new Error(`${label}: invalid country code`);
+-    }
+-}
+-
+-function validateRange(record, width, previousEnd, label) {
+-    const first = width === 4 ? BigInt(record.readUInt32BE(0)) : record.readBigUInt64BE(0);
+-    const last = width === 4 ? BigInt(record.readUInt32BE(4)) : record.readBigUInt64BE(16);
+-    if (first > last) {
+-        throw new Error(`${label}: reversed address range`);
+-    }
+-    if (width === 16 && (record.readBigUInt64BE(8) !== 0n || record.readBigUInt64BE(24) !== 0xffffffffffffffffn)) {
+-        throw new Error(`${label}: IPv6 bounds exceed the reader's 64-bit precision`);
+-    }
+-    if (previousEnd !== null && first <= previousEnd) {
+-        throw new Error(`${label}: address ranges overlap or are unsorted`);
+-    }
+-    return last;
+-}
+-
+-function validateRangeData(record, width, locationCount, label) {
+-    const offset = width * 2;
+-    if (record.length === offset + 2) {
+-        validateCountry(record.subarray(offset), false, label);
+-        return;
+-    }
+-    const location = record.readUInt32BE(offset);
+-    if (location !== 0xffffffff && location >= locationCount) {
+-        throw new Error(`${label}: location reference is outside the names file`);
+-    }
+-    if (Math.abs(record.readInt32BE(offset + 4)) > 900000 || Math.abs(record.readInt32BE(offset + 8)) > 1800000 || record.readInt32BE(offset + 12) < 0) {
+-        throw new Error(`${label}: invalid coordinates or accuracy radius`);
+-    }
+-}
+-
+-function verifyUnchanged(directory, resolved, opened) {
+-    if (fs.realpathSync(directory) !== resolved) {
+-        throw new Error('GeoIP directory changed during validation');
+-    }
+-    for (const file of opened) {
+-        const current = fs.lstatSync(file.filename, {bigint: true});
+-        const handle = fs.fstatSync(file.fd, {bigint: true});
+-        if (!current.isFile() || ['dev', 'ino', 'size', 'mtimeNs', 'ctimeNs'].some(key => current[key] !== file.stat[key] || handle[key] !== file.stat[key])) {
+-            throw new Error(`${file.name}: file changed during validation`);
+-        }
+-    }
+-}
+-
+-module.exports = validateGeoipDataset;
+diff --git a/lib/geoip.js b/lib/geoip.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..289c377ce18eb90547ed9ea757ace94378820a9e
+--- /dev/null
++++ b/lib/geoip.js
+@@ -0,0 +1,85 @@
++const fs = require('node:fs');
++const {createHash} = require('node:crypto');
++const {isIP} = require('node:net');
++const {Reader} = require('mmdb-lib');
++
++function loadGeoip(config) {
++    if (config.mode === 'disabled') {
++        return {lookup: () => null, database: null};
++    }
++    const buffer = readDatabase(config);
++    const reader = new Reader(buffer);
++    validateMetadata(reader.metadata, buffer.length);
++    return {
++        lookup: ip => lookupAddress(reader, ip),
++        database: {sha256: config.sha256, bytes: buffer.length, type: reader.metadata.databaseType,
++            buildEpoch: reader.metadata.buildEpoch.toISOString()},
++    };
++}
++
++function readDatabase(config) {
++    if (!fs.lstatSync(config.file).isFile()) {
++        throw new Error('GeoIP database must be a regular file without a symlink');
++    }
++    const resolved = fs.realpathSync(config.file);
++    const fd = fs.openSync(resolved, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK);
++    try {
++        const before = fs.fstatSync(fd, {bigint: true});
++        if (!before.isFile() || before.size === 0n || before.size > BigInt(config.maxBytes)) {
++            throw new Error('GeoIP database must be nonempty and within GEOIP_MAX_BYTES');
++        }
++        const buffer = Buffer.alloc(Number(before.size));
++        let offset = 0;
++        while (offset < buffer.length) {
++            const count = fs.readSync(fd, buffer, offset, buffer.length - offset, offset);
++            if (count === 0) {
++                throw new Error('GeoIP database ended during loading');
++            }
++            offset += count;
++        }
++        verifyUnchanged(config.file, resolved, fd, before);
++        if (createHash('sha256').update(buffer).digest('hex') !== config.sha256) {
++            throw new Error('GeoIP database does not match GEOIP_DATABASE_SHA256');
++        }
++        return buffer;
++    } finally {
++        fs.closeSync(fd);
++    }
++}
++
++function verifyUnchanged(file, resolved, fd, before) {
++    const current = fs.lstatSync(file, {bigint: true});
++    const handle = fs.fstatSync(fd, {bigint: true});
++    const changed = ['dev', 'ino', 'size', 'mtimeNs', 'ctimeNs'].some(key => before[key] !== current[key] || before[key] !== handle[key]);
++    if (!current.isFile() || fs.realpathSync(file) !== resolved || changed) {
++        throw new Error('GeoIP database changed during loading');
++    }
++}
++
++function validateMetadata(metadata, bytes) {
++    if (!['GeoLite2-City', 'GeoIP2-City'].includes(metadata.databaseType) || metadata.ipVersion !== 6 ||
++        metadata.binaryFormatMajorVersion !== 2 || metadata.binaryFormatMinorVersion !== 0 ||
++        !Number.isSafeInteger(metadata.nodeCount) || metadata.nodeCount <= 0 ||
++        !Number.isSafeInteger(metadata.searchTreeSize) || metadata.searchTreeSize + 16 >= bytes ||
++        !Number.isFinite(metadata.buildEpoch.getTime()) || metadata.buildEpoch.getTime() < 0) {
++        throw new Error('GeoIP database must be a supported IPv4/IPv6 City MMDB');
++    }
++}
++
++function lookupAddress(reader, ip) {
++    if (typeof ip !== 'string' || !isIP(ip)) {
++        return null;
++    }
++    const record = reader.get(ip);
++    const country = record?.country?.iso_code;
++    if (typeof country !== 'string' || !/^[A-Z]{2}$/.test(country)) {
++        return null;
++    }
++    const latitude = record.location?.latitude;
++    const longitude = record.location?.longitude;
++    const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude) &&
++        Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180;
++    return {country, ll: hasCoordinates ? [latitude, longitude] : null};
++}
++
++module.exports = loadGeoip;
+diff --git a/lib/node.js b/lib/node.js
+index f7ab272226f1a0e06e971597717040d8fcf52b0a..96a9279f6a5c8984d5ba704234fbeeda27d0ca24 100644
+--- a/lib/node.js
++++ b/lib/node.js
+@@ -1,4 +1,3 @@
+-var geoip = require('geoip-lite');
+ var _ = require('lodash');
+ var trusted = require('./utils/config').trusted;
+ 
+@@ -90,7 +89,8 @@ Node.prototype.setInfo = function(data, callback)
+ 			this.trusted = true;
+ 		}
+ 
+-		this.setGeo(data.ip);
++		this.info.ip = data.ip;
++		this.geo = data.geo || null;
+ 	}
+ 
+ 	this.spark = _.result(data, 'spark', null);
+@@ -103,15 +103,6 @@ Node.prototype.setInfo = function(data, callback)
+ 	}
+ }
+ 
+-Node.prototype.setGeo = function(ip)
+-{
+-	if (ip.substr(0, 7) == "::ffff:") {
+-		ip = ip.substr(7)
+-        }
+-	this.info.ip = ip;
+-	this.geo = geoip.lookup(ip);
+-}
+-
+ Node.prototype.getInfo = function(callback)
+ {
+ 
+diff --git a/package-lock.json b/package-lock.json
+index 1876466b1c7bf47ee57a0ef1d5b6e79a1917d8b9..caf4e3d1ca73cbdf55f3097e6e63d4dbfb15a255 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -374,58 +374,6 @@
+         "predefine": "0.1.x"
+       }
+     },
+-    "geoip-lite": {
+-      "version": "2.0.3",
+-      "resolved": "https://registry.npmjs.org/geoip-lite/-/geoip-lite-2.0.3.tgz",
+-      "integrity": "sha512-I0v/6sITK5FhEXHmatGSPBMply2nHN/2D743LIx4KkksttZt/E505lDaV6qUwt5RM08MbZW+/4E0KxusLVN39w==",
+-      "requires": {
+-        "chalk": "4.1 - 4.1.2",
+-        "iconv-lite": "0.4.13 - 0.6.3",
+-        "ip-address": "^10.2.0",
+-        "lazy": "1.0.11",
+-        "yauzl": "^3.3.1"
+-      },
+-      "dependencies": {
+-        "ansi-styles": {
+-          "version": "4.3.0",
+-          "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz",
+-          "integrity": "sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==",
+-          "requires": {
+-            "color-convert": "^2.0.1"
+-          }
+-        },
+-        "chalk": {
+-          "version": "4.1.2",
+-          "resolved": "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz",
+-          "integrity": "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==",
+-          "requires": {
+-            "ansi-styles": "^4.1.0",
+-            "supports-color": "^7.1.0"
+-          }
+-        },
+-        "color-convert": {
+-          "version": "2.0.1",
+-          "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz",
+-          "integrity": "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==",
+-          "requires": {
+-            "color-name": "~1.1.4"
+-          }
+-        },
+-        "color-name": {
+-          "version": "1.1.4",
+-          "resolved": "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz",
+-          "integrity": "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA=="
+-        },
+-        "supports-color": {
+-          "version": "7.2.0",
+-          "resolved": "https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz",
+-          "integrity": "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==",
+-          "requires": {
+-            "has-flag": "^4.0.0"
+-          }
+-        }
+-      }
+-    },
+     "get-intrinsic": {
+       "version": "1.3.0",
+       "resolved": "https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.3.0.tgz",
+@@ -465,11 +413,6 @@
+         "ansi-regex": "^2.0.0"
+       }
+     },
+-    "has-flag": {
+-      "version": "4.0.0",
+-      "resolved": "https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz",
+-      "integrity": "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="
+-    },
+     "has-symbols": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/has-symbols/-/has-symbols-1.1.0.tgz",
+@@ -508,11 +451,6 @@
+       "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz",
+       "integrity": "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="
+     },
+-    "ip-address": {
+-      "version": "10.7.3",
+-      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.3.tgz",
+-      "integrity": "sha512-A1kdq/tSb5QjvKvAMgIoEvDBIgL7qaqVP/jkvSwYYRZ9iEzvPpopxp2wQfu3SuZRHtpHNxMn8Fs0bS+gf5Xmwg=="
+-    },
+     "ipaddr.js": {
+       "version": "1.9.1",
+       "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz",
+@@ -531,11 +469,6 @@
+         "colornames": "^1.1.1"
+       }
+     },
+-    "lazy": {
+-      "version": "1.0.11",
+-      "resolved": "https://registry.npmjs.org/lazy/-/lazy-1.0.11.tgz",
+-      "integrity": "sha1-2qBoIGKCVCwIgojpdcKXwa53tpA="
+-    },
+     "lodash": {
+       "version": "4.18.1",
+       "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
+@@ -584,6 +517,11 @@
+         "mime-db": "1.52.0"
+       }
+     },
++    "mmdb-lib": {
++      "version": "3.0.3",
++      "resolved": "https://registry.npmjs.org/mmdb-lib/-/mmdb-lib-3.0.3.tgz",
++      "integrity": "sha512-xQPoBXcNjjHiOvOraFBKtA++uNWF6aCVHL9dRKFXEov8eI3QJwtgiw3qApsonFT5SpoqsEVISUTg3HIDs2DiXw=="
++    },
+     "ms": {
+       "version": "2.0.0",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+@@ -627,11 +565,6 @@
+       "resolved": "https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-0.1.13.tgz",
+       "integrity": "sha512-A/AGNMFN3c8bOlvV9RreMdrv7jsmF9XIfDeCd87+I8RNg6s78BhJxMu69NEMHBSJFxKidViTEdruRwEk/WIKqA=="
+     },
+-    "pend": {
+-      "version": "1.2.0",
+-      "resolved": "https://registry.npmjs.org/pend/-/pend-1.2.0.tgz",
+-      "integrity": "sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg=="
+-    },
+     "pg": {
+       "version": "8.23.1",
+       "resolved": "https://registry.npmjs.org/pg/-/pg-8.23.1.tgz",
+@@ -1044,14 +977,6 @@
+       "version": "0.0.6",
+       "resolved": "https://registry.npmjs.org/yaeti/-/yaeti-0.0.6.tgz",
+       "integrity": "sha1-8m9ITXJoTPQr7ft2lwqhYI+/lXc="
+-    },
+-    "yauzl": {
+-      "version": "3.4.0",
+-      "resolved": "https://registry.npmjs.org/yauzl/-/yauzl-3.4.0.tgz",
+-      "integrity": "sha512-jIH9yLR9wqr0wOS0TpBvo/g/2UgZH5qePVbjgRliiF0BYvOZyaBknKsF+x9Iht0O6sqgnB93rCICdOZFecJuDw==",
+-      "requires": {
+-        "pend": "~1.2.0"
+-      }
+     }
+   }
+ }
+diff --git a/package.json b/package.json
+index af85b6bd21c8f8b2707a39f66b5db893514fec6c..44606a9deca25fc5b2866f89bd16945e070d2710 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "description": "Fusion's node monitor",
+   "main": "server.js",
+   "scripts": {
+-    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs test/head-budget.test.cjs test/geoip-dataset.test.cjs",
++    "test": "node --test test/collector.test.cjs test/collector-input.test.cjs test/telemetry-credentials.test.cjs test/deployment-config.test.cjs test/deployment-wiring.test.cjs test/snapshot-collector.test.cjs test/snapshot-api.test.cjs test/browser-snapshot.test.cjs test/report-freshness.test.cjs test/history.test.cjs test/collector-output.test.cjs test/telemetry-report.test.cjs test/metadata-admission.test.cjs test/head-budget.test.cjs test/geoip.test.cjs",
+     "test:wire": "node --test test/telemetry-wire.test.cjs test/collector-input-wire.test.cjs test/report-freshness-wire.test.cjs test/history-wire.test.cjs test/collector-output-wire.test.cjs test/metadata-admission-wire.test.cjs",
+     "test:postgres": "node --test test/postgres.test.cjs",
+     "test:persistence": "node --test test/persistence.test.cjs",
+@@ -25,7 +25,7 @@
+     "chalk": "1.1.1",
+     "d3": "3.5.6",
+     "express": "4.22.3",
+-    "geoip-lite": "2.0.3",
++    "mmdb-lib": "3.0.3",
+     "lodash": "4.18.1",
+     "pg": "8.23.1",
+     "primus": "8.0.9",
+diff --git a/react-frontend/src/App.test.js b/react-frontend/src/App.test.js
+index c559c33f0699b15fe23c88ab8f3feaa09c6bd9c3..21ade2f6b0cdeec0a9e475efae7824b8fa15c1d1 100644
+--- a/react-frontend/src/App.test.js
++++ b/react-frontend/src/App.test.js
+@@ -183,3 +183,21 @@ it('keeps a silent node connected while its block and pending values expire inde
+     expect(container.textContent).toContain('# 42');
+     expect(container.textContent).toContain('Pending: Recent');
+ });
++
++it('shows a country-only flag without enabling an empty map', async () => {
++    const response = snapshot(['country-only']);
++    const node = JSON.parse(response.data[0].stats);
++    node.geo = {country: 'SE', ll: null};
++    response.data[0].stats = JSON.stringify(node);
++    const expectedCountry = 'se';
++    const expectedBackground = /\/flags\/4x3\/se\.svg/;
++
++    await reply(0, response);
++    const image = container.querySelector('tbody [role="img"][aria-label="se"]');
++    const map = Array.from(container.querySelectorAll('button')).find(button => button.textContent === 'View Map');
++
++    expect(image.getAttribute('aria-label')).toBe(expectedCountry);
++    expect(image.style.backgroundImage).toMatch(expectedBackground);
++    expect(map.disabled).toBe(true);
++    expect(container.querySelectorAll('tbody tr')).toHaveLength(1);
++});
+diff --git a/react-frontend/src/snapshot-view.js b/react-frontend/src/snapshot-view.js
+index 62304bc03cc1cf27ff3c0267cb991fb1bfc41d00..39e997206c945f7ace84991cfa5dac2212cc8bff 100644
+--- a/react-frontend/src/snapshot-view.js
++++ b/react-frontend/src/snapshot-view.js
+@@ -60,10 +60,11 @@ function readNode(row, observedAt, elapsedMs) {
+         node.reportStatus[kind] = node.connected === false ? 'Disconnected' : !known ? 'Not reported' : node.fresh[kind] ? 'Recent' : 'Stale';
+     }
+     const geo = node.geo;
+-    if (geo !== null && (!object(geo) || typeof geo.country !== 'string' || !/^[A-Z]{2}$/.test(geo.country) ||
+-        !Array.isArray(geo.ll) || geo.ll.length !== 2 || !geo.ll.every(Number.isFinite) ||
+-        Math.abs(geo.ll[0]) > 90 || Math.abs(geo.ll[1]) > 180)) {
+-        node.geo = null;
++    node.geo = null;
++    if (object(geo) && typeof geo.country === 'string' && /^[A-Z]{2}$/.test(geo.country)) {
++        const hasCoordinates = Array.isArray(geo.ll) && geo.ll.length === 2 && geo.ll.every(Number.isFinite) &&
++            Math.abs(geo.ll[0]) <= 90 && Math.abs(geo.ll[1]) <= 180;
++        node.geo = {country: geo.country, ll: hasCoordinates ? geo.ll : null};
+     }
+     return node;
+ }
+@@ -87,7 +88,7 @@ function prepareSnapshot(response, elapsedMs = 0) {
+     const activeNodes = nodesList.filter(node => node.connected === true);
+     const highest = activeNodes.find(node => node.fresh.block);
+     const expiries = nodesList.flatMap(node => Object.values(node.reportValidForMs)).filter(value => value > 0);
+-    const geoCharts = nodesList.filter(node => node.geo !== null).map(node => ({
++    const geoCharts = nodesList.filter(node => node.geo !== null && node.geo.ll !== null).map(node => ({
+         name: node.id, radius: 2, latitude: node.geo.ll[0], longitude: node.geo.ll[1], fillKey: 'bubbleFill',
+     }));
+     return {
+diff --git a/server.js b/server.js
+index 1006dec4946fb6a026a9f594d992ab9015e76ac5..15dc3ad5372f648151d2be9503a0e579cbc5add7 100644
+--- a/server.js
++++ b/server.js
+@@ -1,4 +1,6 @@
+-var listener = require('./lib/deployment-config').loadCollectorConfig(process.env);
++var deployment = require('./lib/deployment-config');
++var listener = deployment.loadCollectorConfig(process.env);
++var geoip = require('./lib/geoip')(deployment.loadGeoipConfig(process.env));
+ var matchesTelemetryCredential = require('./lib/telemetry-credentials')(process.env, listener.maxNodes);
+ var limitCollectorInput = require('./lib/collector-input');
+ var limitCollectorOutput = require('./lib/collector-output');
+@@ -146,6 +148,7 @@ api.on('connection', function (spark)
+             id: identity,
+             info: projectedInfo,
+             ip: spark.address.ip,
++            geo: geoip.lookup(spark.address.ip),
+             spark: spark.id,
+             latency: spark.latency || 0
+         };
+diff --git a/test/browser-snapshot.test.cjs b/test/browser-snapshot.test.cjs
+index aa5acc45ec62a0557b93ba81038c6711b478faf4..a79adf5b1a27fc681ed502309485e5900eca0238 100644
+--- a/test/browser-snapshot.test.cjs
++++ b/test/browser-snapshot.test.cjs
+@@ -233,3 +233,24 @@ test('report expiry updates a connected row while a newer request is pending wit
+     f.polling.stop();
+     assert.equal(f.timers.size, 0);
+ });
++
++test('country-only reports retain flags while only valid coordinates enter the map', () => {
++    const geography = [{country: 'SE', ll: null}, {country: 'NO'}, {country: 'GB', ll: [0, 0]},
++        {country: 'DE', ll: [91, 12]}, {country: 'JP', ll: ['35', 139]}, {country: 'bad', ll: [59, 18]}, null];
++    const inputs = geography.map((geo, index) => {
++        const value = row('geo-' + index, 1);
++        const node = JSON.parse(value.stats);
++        node.geo = geo;
++        value.stats = JSON.stringify(node);
++        return value;
++    });
++    const expectedGeo = [{country: 'SE', ll: null}, {country: 'NO', ll: null}, {country: 'GB', ll: [0, 0]},
++        {country: 'DE', ll: null}, {country: 'JP', ll: null}, null, null];
++    const expectedMap = [{name: 'geo-2', radius: 2, latitude: 0, longitude: 0, fillKey: 'bubbleFill'}];
++
++    const result = prepareSnapshot(response(inputs));
++    const actualGeo = result.nodesList.map(node => node.geo);
++
++    assert.deepEqual(actualGeo, expectedGeo);
++    assert.deepEqual(result.geoCharts, expectedMap);
++});
+diff --git a/test/collector-input.test.cjs b/test/collector-input.test.cjs
+index d8baba2709d5076e7869161effa216bd9a9140df..5a4cca62abc21b7ba338db6ba8e469b75831de30 100644
+--- a/test/collector-input.test.cjs
++++ b/test/collector-input.test.cjs
+@@ -18,7 +18,7 @@ function inputFixture() {
+ 
+ test('collector input configuration has explicit finite limits and rejects missing or invalid limits', () => {
+     assert.deepEqual(loadCollectorConfig(environment), { host: '127.0.0.1', port: 0, maxBytes: 65536, maxHeadBytes: 32768, maxNodes: 8, maxConnections: 16, helloTimeoutMs: 1000, messagesPerSecond: 100, maxBufferedBytes: 262144 });
+-    for (const name of Object.keys(environment).filter(name => !['COLLECTOR_HOST', 'COLLECTOR_PORT'].includes(name))) {
++    for (const name of Object.keys(environment).filter(name => name.startsWith('COLLECTOR_') && !['COLLECTOR_HOST', 'COLLECTOR_PORT'].includes(name))) {
+         for (const value of [undefined, '', '0', '-1', '1.5', ' 10', '10x', '2147483648']) {
+             assert.throws(() => loadCollectorConfig({ ...environment, [name]: value }), new RegExp(name));
+         }
+diff --git a/test/efsn-telemetry.test.cjs b/test/efsn-telemetry.test.cjs
+index a30df3ca21af7103a54dcbe5bd411f3f4031d61a..1853ae51927458b0df204e6c73a3f321ad7b4fea 100644
+--- a/test/efsn-telemetry.test.cjs
++++ b/test/efsn-telemetry.test.cjs
+@@ -78,6 +78,7 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     const ca = tls ? readFileSync(process.env.EFSN_TLS_CA) : undefined;
+     const limits = tls ? { messageBytes: 4194304, headBytes: 65536, bufferedBytes: 1048576, messagesPerSecond: 100, snapshotBytes: 1048576, nodes: 8 } : { messageBytes: 131072, headBytes: 32768, bufferedBytes: 262144, messagesPerSecond: 100, snapshotBytes: 65536, nodes: 2 };
+     const tlsEnvironment = tls ? Object.fromEntries(['EFSN_TLS_CERT', 'EFSN_TLS_KEY', 'EFSN_TLS_OUTPUT', 'TEST_NGINX', 'TEST_PG_PORT', 'TEST_PG_PASSWORD_FILE'].map(name => { assert.ok(process.env[name], name); return [name, process.env[name]]; })) : {};
++    const geoipEnvironment = Object.fromEntries(Object.entries(process.env).filter(([name]) => name.startsWith('GEOIP_')));
+     let phase = 'startup';
+     let collector;
+     let server;
+@@ -98,7 +99,7 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+         }
+     });
+     t.after(() => writeFileSync(join(process.env.EFSN_TELEMETRY_EVIDENCE, 'transport.json'), JSON.stringify(transport, null, 2) + '\n', 'utf8'));
+-    server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE, COLLECTOR_MAX_MESSAGE_BYTES: String(limits.messageBytes), COLLECTOR_MAX_HEAD_BYTES: String(limits.headBytes), COLLECTOR_MAX_BUFFERED_BYTES: String(limits.bufferedBytes), ...tlsEnvironment }, 'efsn-wsl-server.cjs');
++    server = await startCollector(t, { EFSN_LINUX_NODE: process.env.EFSN_LINUX_NODE, COLLECTOR_MAX_MESSAGE_BYTES: String(limits.messageBytes), COLLECTOR_MAX_HEAD_BYTES: String(limits.headBytes), COLLECTOR_MAX_BUFFERED_BYTES: String(limits.bufferedBytes), ...tlsEnvironment, ...geoipEnvironment }, 'efsn-wsl-server.cjs');
+     const directory = mkdtempSync(join(tmpdir(), 'efsn-dashboard-'));
+     const settings = join(directory, 'settings.json');
+     writeFileSync(settings, JSON.stringify({ Collector: `${tls ? 'wss' : 'ws'}://127.0.0.1:${tls ? server.tlsPort : server.port}`, Secret: secretA, TransactionsPerBlock: 10 }), { encoding: 'utf8', mode: 0o600 });
+@@ -134,7 +135,12 @@ test('busy efsn reports match RPC through storage, API and browser and expire du
+     });
+     const ready = await waitFor(() => {
+         assert.equal(child.exitCode, null, logs);
+-        return existsSync(join(directory, 'ready.json')) && JSON.parse(readFileSync(join(directory, 'ready.json'), 'utf8'));
++        const file = join(directory, 'ready.json');
++        if (!existsSync(file)) {
++            return false;
++        }
++        const content = readFileSync(file, 'utf8');
++        return content.trimEnd().endsWith('}') && JSON.parse(content);
+     });
+     if (tls) {
+         await waitForCollectorPort(Number(process.env.TEST_PG_PORT), transport, 'postgres');
+diff --git a/test/fixtures/browser-server.cjs b/test/fixtures/browser-server.cjs
+index bca711828ffae10ddb08f2eff531d827f4c3cf10..607475b84dd4ca43aede874347ac72aee8bc365b 100644
+--- a/test/fixtures/browser-server.cjs
++++ b/test/fixtures/browser-server.cjs
+@@ -29,7 +29,7 @@ function makeNode(id, height, active, observedAt, scenario) {
+     }
+     return {
+         id, info: { node: 'efsn/v5.0.0-browser-acceptance' },
+-        geo: { country: 'SE', ll: [59.33, 18.07] }, history: [],
++        geo: scenario.geoMode === 'unknown' ? null : {country: 'SE', ll: scenario.geoMode === 'country-only' || (scenario.geoMode === 'mixed' && active) ? null : [59.33, 18.07]}, history: [],
+         connected: active, reports,
+         stats: { active, mining: active, syncing: false, peers: active ? 1 : 0,
+             pending: 0, myTicketNumber: 0, uptime: 100, latency: 0,
+diff --git a/test/fixtures/collector-environment.cjs b/test/fixtures/collector-environment.cjs
+index c47bff657abb28ad7eabfc45da9c9cf13467bbe8..ad74f41e1613e356e6045b9a0486dcfd3582c4b2 100644
+--- a/test/fixtures/collector-environment.cjs
++++ b/test/fixtures/collector-environment.cjs
+@@ -1,4 +1,5 @@
+ module.exports = {
++    GEOIP_MODE: 'disabled',
+     COLLECTOR_HOST: '127.0.0.1',
+     COLLECTOR_PORT: '0',
+     COLLECTOR_MAX_MESSAGE_BYTES: '65536',
+diff --git a/test/fixtures/collector.cjs b/test/fixtures/collector.cjs
+index 886d4119ca8ce2f7591f7ff2645ef316077751d9..ca686a9e2f08b00be30deaee2218937db057dfd7 100644
+--- a/test/fixtures/collector.cjs
++++ b/test/fixtures/collector.cjs
+@@ -67,6 +67,7 @@ function loadCollector(t, options = {}) {
+     const modules = {
+         './lib/telemetry-credentials': loadTelemetryCredentials,
+         './lib/deployment-config': require('../../lib/deployment-config'),
++        './lib/geoip': require('../../lib/geoip'),
+         './lib/collector-input': require('../../lib/collector-input'),
+         './lib/collector-output': require('../../lib/collector-output'),
+         './lib/telemetry-info': require('../../lib/telemetry-info'),
+diff --git a/test/fixtures/efsn-wsl-server.cjs b/test/fixtures/efsn-wsl-server.cjs
+index acc2048ef1b82d83e8ec57f40ba1fb585f40d491..6b494631ac6e8b7b1e33aed8b65da0342bbcba80 100644
+--- a/test/fixtures/efsn-wsl-server.cjs
++++ b/test/fixtures/efsn-wsl-server.cjs
+@@ -9,7 +9,7 @@ function linuxPath(path) {
+     return '/mnt/' + path[0].toLowerCase() + path.slice(2).replaceAll('\\', '/');
+ }
+ 
+-const settings = Object.entries(process.env).filter(([name]) => name.startsWith('COLLECTOR_') || ['NODE_ENV', 'VERBOSITY'].includes(name)).map(([name, value]) => name + '=' + value);
++const settings = Object.entries(process.env).filter(([name]) => name.startsWith('COLLECTOR_') || name.startsWith('GEOIP_') || ['NODE_ENV', 'VERBOSITY'].includes(name)).map(([name, value]) => name + '=' + (name === 'GEOIP_DATABASE_FILE' ? linuxPath(value) : value));
+ settings.push('WS_CREDENTIALS_FILE=' + linuxPath(process.env.WS_CREDENTIALS_FILE));
+ if (process.env.EFSN_TLS_CERT) {
+     for (const name of ['EFSN_TLS_CERT', 'EFSN_TLS_OUTPUT', 'TEST_NGINX', 'TEST_PG_PASSWORD_FILE']) {
+diff --git a/test/fixtures/geoip-data.json b/test/fixtures/geoip-data.json
+deleted file mode 100644
+index 7203c4e733b062c11bc65e26c5a36cdde9ca0fb1..0000000000000000000000000000000000000000
+--- a/test/fixtures/geoip-data.json
++++ /dev/null
+@@ -1,32 +0,0 @@
+-{
+-  "geoip-country.dat": {
+-    "hex": "c0000200c00002ff4e4f",
+-    "bytes": 10,
+-    "records": 1,
+-    "sha256": "a0bbbac876cf18d200135994e18d49c730f277da9035774dc24d88d8cba19a66"
+-  },
+-  "geoip-country6.dat": {
+-    "hex": "20010db800000000000000000000000020010db8ffffffffffffffffffffffff4e4f",
+-    "bytes": 34,
+-    "records": 1,
+-    "sha256": "380181def587eb105b65f8f91c75601db8d100f2b9afab35a5052b26ed173942"
+-  },
+-  "geoip-city-names.dat": {
+-    "hex": "4e4f30330000000000314575726f70652f4f736c6f00000000000000000000000000000000000000000046697874757265204200000000000000000000000000000000000000000000000000000000000000000000000000",
+-    "bytes": 88,
+-    "records": 1,
+-    "sha256": "aa341661596e3d6e8116aad67928ed92f71c5cc17a561649b4cd60f51b55468c"
+-  },
+-  "geoip-city.dat": {
+-    "hex": "c0000200c00002ff00000000000924630001a4020000000a",
+-    "bytes": 24,
+-    "records": 1,
+-    "sha256": "e756472060c9bbdfb7f40775fbcecee9972e778b08979d2e9b413e387ee4a4de"
+-  },
+-  "geoip-city6.dat": {
+-    "hex": "20010db800000000000000000000000020010db8ffffffffffffffffffffffff00000000000924630001a4020000000a",
+-    "bytes": 48,
+-    "records": 1,
+-    "sha256": "fbdb5279a862c2d1427335e63e4f82235718aafa2fe7029d348439e54488b261"
+-  }
+-}
+diff --git a/test/fixtures/geoip/LICENSE-MIT b/test/fixtures/geoip/LICENSE-MIT
+new file mode 100644
+index 0000000000000000000000000000000000000000..f85e365de02a257e41b27305e74277428218ff96
+--- /dev/null
++++ b/test/fixtures/geoip/LICENSE-MIT
+@@ -0,0 +1,17 @@
++Permission is hereby granted, free of charge, to any person obtaining a copy of
++this software and associated documentation files (the "Software"), to deal in
++the Software without restriction, including without limitation the rights to
++use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
++of the Software, and to permit persons to whom the Software is furnished to do
++so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
+diff --git a/test/fixtures/geoip/README.md b/test/fixtures/geoip/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..bb4c0504b9a05737fe8f1e38edcec1df5bd027f7
+--- /dev/null
++++ b/test/fixtures/geoip/README.md
+@@ -0,0 +1,17 @@
++# Synthetic MMDB fixtures
++
++These are public MaxMind test fixtures, never production geography data.
++Source commit: `276926d23b4109ca5452709bfb5931c338afb34c` in
++[MaxMind-DB](https://github.com/maxmind/MaxMind-DB/tree/276926d23b4109ca5452709bfb5931c338afb34c).
++The accompanying MIT license is preserved unchanged.
++
++| Local file | Upstream path | SHA-256 |
++| --- | --- | --- |
++| `city.mmdb` | `test-data/GeoLite2-City-Test.mmdb` | `f936702b51dcb6c94b286d77a6f182c31a1601baf4b27e8e896934deb41f49f2` |
++| `not-city.mmdb` | `test-data/MaxMind-DB-test-ipv6-24.mmdb` | `599f1555ce3a568c2d4ad965332dcba87d0d109297636f1b595241247263d98b` |
++
++City lookup expectations are from `source-data/GeoLite2-City-Test.json` at that
++commit: `2.125.160.216/29` is GB at `[51.75, -1.25]`, and `2001:218::/32` is JP
++at `[35.68536, 139.75309]`. The metadata build epoch is the fixture's published
++binary metadata, independently captured in the reader-comparison evidence.
++Handwritten provider-field cases specify the dashboard's missing-data contract.
+diff --git a/test/fixtures/geoip/city.mmdb b/test/fixtures/geoip/city.mmdb
+new file mode 100644
+index 0000000000000000000000000000000000000000..4549847ab095ce5f90e7bb7293b455a0b29c88a0
+GIT binary patch
+literal 21088
+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
+R`CLU<6%_j2m9Dz${|~u>@?-!2
+
+literal 0
+HcmV?d00001
+
+diff --git a/test/fixtures/geoip/not-city.mmdb b/test/fixtures/geoip/not-city.mmdb
+new file mode 100644
+index 0000000000000000000000000000000000000000..94f90d2279be2875efa451fc496de38c23611ff8
+GIT binary patch
+literal 2794
+zcmZA11$Yx@0LJn6N^y6G;10zhcqs!~g1cpDa<m6+5|R{Xad&rz`NrH`m~Sw5FH>gB
+zH)iba-vr9?e9!NB@BO}fcgfvzk|AS{lqBP*R6<6sluRy(rLZ)Xk<nc$OD>1yu>w}a
+zN>~}IU{$P!)v*TF#9CMz>tJ21hxM@mHpE8Q7+u%|n_@F;jxDeyw!+rf2HRpgY>yqV
+zBX+_R?2KKoD|W-~*aLfFFYJwO?1O!=ANI!qI1mS6Dh|dp9D-NiP#lKCF&#5-1bT2J
+zj>6G6Mn+3%EO{J`#|bzQC*fqAf>UuCPRAKI6TLD@Nmoi=NIq%4lqt=T{LBW>l(MB+
+z<SfUcAuADP7b|ll`@xG!!NhDx3OiYIF>-0KQ^qLsa9(^$3#3gn`BFimTqrG))<}yJ
+z%@Wou#bvl0SKvxqg{vK%)2+pIxE?p)M#uP?%`{tZtMt0GO?pJyPO}4dO7}{;q#LB&
+zG<$F_?!*0f01x6JJd8)M=&Fv9k4x7}SCOyAYw%jU&awE=jqyX>#DWvj&4gR<R=my8
+z9=aXxknSYhg?BqTv-c#zeTi_t^gtp%C_TiohvQBBTaQYQ(Lat);7REj!jsZdgr^-Z
+z4m~S9NB?}h)C(NGD4j|)r)gf2UM9Sf=wFpyi)VX7y^-kOWZ7HN+k|)UU3?GU#}DvB
+z{0KjGbhi2g3-OHfDd98x-0|Yjmy}=OS^OHm!Ef<9{2tHY5BMYggg@gi_$&T~zvCZx
+z9{<F@@NfJF|HTWAhS0zyEP=^b677efG@%TZ#d264D_}*egq5)hR>f*q9cy4stcA6)
+z4%WqbSRWf;Lu`bN(S`Q&(?mv7vi&49lVRV-<}zB)a4(!++KR*0*aq8TJ8X{~up@TD
+z6zq&$uq$?Rv|oTm4-R``FYJwO?1O!=ANI!qI1mS6Dh|dp9D=<6jiKaWI2_Y414p0-
+zN8%_Pjbm^uj>GXd0Vm=loQzX&Do(@cI0I**7ww;K|FJ&IL_Y@5MBe{K7C9R&oQ-oZ
+z2kouw5yTLNaV|zMiZRT?c{m>zV7`pqgaR2035#$sF2SWTHpo~;UXCkpC9cBNxCYna
+zI$ZDQ-1?#m-Y8>JB5x*ak+C(=Y$I&P9Wr(jb|q$u@3WV3AMVEkcn}ZCI83lldL$ln
+z`KK_|3VYn{&hA<E2MS%rP`A5_JH?%1$6-aWTd~}|c<y!L^f`}jfyW94I{HJoXQyRa
+zL0=@_J1Z2)^~JoozS*IOcb*xETA|?ar2o%a!ArBpGBWe5oPgI1hy2;eN!H3!=RE;m
+z%$Mnln%-D`*i0L5Mq?QPGwP36;h4SOnN&0AaY|QOd|hfm_Jqp{*Whd`XhzL+D}3=P
+uN)6BP1+(&eS!OgT*%fpxO%H|wrq>_J3&u_wM>8U(KNJagqgH`=yv~0)S|Q8;
+
+literal 0
+HcmV?d00001
+
+diff --git a/test/geoip-dataset.test.cjs b/test/geoip-dataset.test.cjs
+deleted file mode 100644
+index b2b3efe8a8cdffbca8fa24a38814a0f5e4abbbea..0000000000000000000000000000000000000000
+--- a/test/geoip-dataset.test.cjs
++++ /dev/null
+@@ -1,235 +0,0 @@
+-const assert = require('node:assert/strict');
+-const {test} = require('node:test');
+-const fs = require('node:fs');
+-const os = require('node:os');
+-const path = require('node:path');
+-const {spawnSync} = require('node:child_process');
+-const validateGeoipDataset = require('../lib/geoip-dataset');
+-const fixture = require('./fixtures/geoip-data.json');
+-
+-function writeDataset(t) {
+-    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'fsn-geoip-'));
+-    t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
+-    for (const [name, record] of Object.entries(fixture)) {
+-        fs.writeFileSync(path.join(directory, name), Buffer.from(record.hex, 'hex'));
+-    }
+-    return directory;
+-}
+-
+-function readValidation(directory, limit) {
+-    try {
+-        return validateGeoipDataset(directory, limit);
+-    } catch (error) {
+-        return {error: error.message};
+-    }
+-}
+-
+-test('validates the independently encoded complete fixture at the exact byte limit', t => {
+-    const directory = writeDataset(t);
+-    const expected = {directory: fs.realpathSync(directory), files: Object.fromEntries(Object.entries(fixture).map(([name, {bytes, records, sha256}]) => [name, {bytes, records, sha256}]))};
+-
+-    const result = validateGeoipDataset(directory, 204);
+-
+-    assert.deepEqual(result, expected);
+-});
+-
+-for (const directory of [undefined, '', '.', 'relative/data']) {
+-    test(`requires an absolute dataset directory: ${directory}`, () => {
+-        const expected = {error: 'GeoIP directory must be an absolute path'};
+-
+-        const result = readValidation(directory, 204);
+-
+-        assert.deepEqual(result, expected);
+-    });
+-}
+-
+-for (const limit of [undefined, 0, -1, 1.5, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+-    test(`requires an explicit safe byte limit: ${limit}`, t => {
+-        const directory = writeDataset(t);
+-        const expected = {error: 'GeoIP byte limit must be a positive safe integer'};
+-
+-        const result = readValidation(directory, limit);
+-
+-        assert.deepEqual(result, expected);
+-    });
+-}
+-
+-test('rejects a dataset over budget before inspecting records', t => {
+-    const directory = writeDataset(t);
+-    const expected = {error: 'GeoIP dataset exceeds the configured byte limit'};
+-
+-    const result = readValidation(directory, 203);
+-
+-    assert.deepEqual(result, expected);
+-});
+-
+-for (const name of Object.keys(fixture)) {
+-    test(`requires ${name}`, t => {
+-        const directory = writeDataset(t);
+-        fs.unlinkSync(path.join(directory, name));
+-        const expected = 'ENOENT';
+-
+-        const result = readValidation(directory, 204).error.split(':')[0];
+-
+-        assert.equal(result, expected);
+-    });
+-    for (const mode of ['empty', 'truncated']) {
+-        test(`rejects ${mode} ${name}`, t => {
+-            const directory = writeDataset(t);
+-            fs.truncateSync(path.join(directory, name), mode === 'empty' ? 0 : fixture[name].bytes - 1);
+-            const expected = {error: `${name}: expected nonempty aligned records`};
+-
+-            const result = readValidation(directory, 204);
+-
+-            assert.deepEqual(result, expected);
+-        });
+-    }
+-}
+-
+-for (const type of ['directory', 'symlink']) {
+-    test(`rejects a ${type} in place of a dataset file`, t => {
+-        const directory = writeDataset(t);
+-        const file = path.join(directory, 'geoip-city.dat');
+-        fs.unlinkSync(file);
+-        if (type === 'directory') fs.mkdirSync(file);
+-        else fs.symlinkSync(path.join(directory, 'geoip-city6.dat'), file);
+-        const expected = {error: 'geoip-city.dat: expected a regular file without a symlink'};
+-
+-        const result = readValidation(directory, 204);
+-
+-        assert.deepEqual(result, expected);
+-    });
+-}
+-
+-const invalidRecords = [
+-    ['geoip-country.dat', b => b.writeUInt32BE(0xc0000300, 0), 'reversed address range'],
+-    ['geoip-country6.dat', b => b.writeBigUInt64BE(0x20010db900000000n, 0), 'reversed address range'],
+-    ['geoip-country6.dat', b => { b[15] = 1; }, "IPv6 bounds exceed the reader's 64-bit precision"],
+-    ['geoip-city6.dat', b => { b[31] = 254; }, "IPv6 bounds exceed the reader's 64-bit precision"],
+-    ['geoip-country.dat', b => { b[8] = 110; }, 'invalid country code'],
+-    ['geoip-country6.dat', b => { b[32] = 0; }, 'invalid country code'],
+-    ['geoip-city-names.dat', b => { b[1] = 0; }, 'invalid country code'],
+-    ['geoip-city-names.dat', b => { b[9] = 50; }, 'invalid location metadata'],
+-    ['geoip-city-names.dat', b => b.writeInt32BE(-1, 5), 'invalid location metadata'],
+-    ['geoip-city-names.dat', b => { b[42] = 255; }, 'invalid UTF-8 location field'],
+-    ['geoip-city-names.dat', b => { b[2] = 255; }, 'invalid UTF-8 location field'],
+-    ['geoip-city-names.dat', b => { b[10] = 255; }, 'invalid UTF-8 location field'],
+-    ['geoip-city.dat', b => b.writeUInt32BE(1, 8), 'location reference is outside the names file'],
+-    ['geoip-city6.dat', b => b.writeUInt32BE(1, 32), 'location reference is outside the names file'],
+-    ['geoip-city.dat', b => b.writeInt32BE(900001, 12), 'invalid coordinates or accuracy radius'],
+-    ['geoip-city.dat', b => b.writeInt32BE(-900001, 12), 'invalid coordinates or accuracy radius'],
+-    ['geoip-city6.dat', b => b.writeInt32BE(1800001, 40), 'invalid coordinates or accuracy radius'],
+-    ['geoip-city6.dat', b => b.writeInt32BE(-1800001, 40), 'invalid coordinates or accuracy radius'],
+-    ['geoip-city.dat', b => b.writeInt32BE(-1, 20), 'invalid coordinates or accuracy radius'],
+-];
+-for (const [index, [name, edit, reason]] of invalidRecords.entries()) {
+-    test(`rejects invalid record ${index}: ${reason}`, t => {
+-        const directory = writeDataset(t);
+-        const record = Buffer.from(fixture[name].hex, 'hex');
+-        edit(record);
+-        fs.writeFileSync(path.join(directory, name), record);
+-        const expected = {error: `${name} record 0: ${reason}`};
+-
+-        const result = readValidation(directory, 204);
+-
+-        assert.deepEqual(result, expected);
+-    });
+-}
+-
+-for (const name of ['geoip-country.dat', 'geoip-country6.dat', 'geoip-city.dat', 'geoip-city6.dat']) {
+-    test(`rejects overlapping ranges in ${name}`, t => {
+-        const directory = writeDataset(t);
+-        fs.appendFileSync(path.join(directory, name), Buffer.from(fixture[name].hex, 'hex'));
+-        const expected = {error: `${name} record 1: address ranges overlap or are unsorted`};
+-
+-        const result = readValidation(directory, 1000);
+-
+-        assert.deepEqual(result, expected);
+-    });
+-}
+-
+-test('checks ordering across chunk boundaries', t => {
+-    const directory = writeDataset(t);
+-    const records = Buffer.alloc(1025 * 10);
+-    for (let index = 0; index < 1025; index++) {
+-        const value = 0xc0000200 + Math.min(index, 1023);
+-        records.writeUInt32BE(value, index * 10);
+-        records.writeUInt32BE(value, index * 10 + 4);
+-        records.write('NO', index * 10 + 8);
+-    }
+-    fs.writeFileSync(path.join(directory, 'geoip-country.dat'), records);
+-    const expected = {error: 'geoip-country.dat record 1024: address ranges overlap or are unsorted'};
+-
+-    const result = readValidation(directory, 20000);
+-
+-    assert.deepEqual(result, expected);
+-});
+-
+-for (const [name, offset] of [['geoip-city.dat', 8], ['geoip-city6.dat', 32]]) {
+-    test(`recognizes the defined no-location sentinel in ${name}`, t => {
+-        const directory = writeDataset(t);
+-        const record = Buffer.from(fixture[name].hex, 'hex');
+-        record.writeUInt32BE(0xffffffff, offset);
+-        fs.writeFileSync(path.join(directory, name), record);
+-        const expected = 1;
+-
+-        const result = validateGeoipDataset(directory, 204).files[name].records;
+-
+-        assert.equal(result, expected);
+-    });
+-}
+-
+-test('preserves a structurally valid unknown location country', t => {
+-    const directory = writeDataset(t);
+-    const record = Buffer.from(fixture['geoip-city-names.dat'].hex, 'hex');
+-    record.fill(0, 0, 2);
+-    fs.writeFileSync(path.join(directory, 'geoip-city-names.dat'), record);
+-    const expected = 1;
+-
+-    const result = validateGeoipDataset(directory, 204).files['geoip-city-names.dat'].records;
+-
+-    assert.equal(result, expected);
+-});
+-
+-test('rejects a file modified during validation', t => {
+-    const directory = writeDataset(t);
+-    const read = fs.readSync;
+-    let changed = false;
+-    t.mock.method(fs, 'readSync', (...args) => {
+-        const count = read(...args);
+-        if (!changed) {
+-            changed = true;
+-            const filename = path.join(directory, 'geoip-city-names.dat');
+-            const bytes = fs.readFileSync(filename);
+-            bytes[42] = 90;
+-            fs.writeFileSync(filename, bytes);
+-        }
+-        return count;
+-    });
+-    const expected = {error: 'geoip-city-names.dat: file changed during validation'};
+-
+-    const result = readValidation(directory, 204);
+-
+-    assert.deepEqual(result, expected);
+-});
+-
+-test('CLI emits only the manifest on success', t => {
+-    const directory = writeDataset(t);
+-    const command = path.resolve(__dirname, '../deploy/validate-geoip.cjs');
+-    const expected = {status: 0, stderr: '', directory: fs.realpathSync(directory)};
+-
+-    const child = spawnSync(process.execPath, [command, directory, '204'], {encoding: 'utf8', timeout: 10000});
+-    const result = {status: child.status, stderr: child.stderr, directory: JSON.parse(child.stdout).directory};
+-
+-    assert.deepEqual(result, expected);
+-});
+-
+-test('CLI rejects invalid argument counts without reading a dataset', () => {
+-    const command = path.resolve(__dirname, '../deploy/validate-geoip.cjs');
+-    const expected = {status: 1, stdout: '', stderr: 'GeoIP validation failed: Usage: node deploy/validate-geoip.cjs ABSOLUTE_DATA_DIRECTORY MAX_DATASET_BYTES\n'};
+-
+-    const child = spawnSync(process.execPath, [command], {encoding: 'utf8', timeout: 10000});
+-    const result = {status: child.status, stdout: child.stdout, stderr: child.stderr};
+-
+-    assert.deepEqual(result, expected);
+-});
+diff --git a/test/geoip.test.cjs b/test/geoip.test.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..3434bd92bceba5d99625f6315e5351433fa97cec
+--- /dev/null
++++ b/test/geoip.test.cjs
+@@ -0,0 +1,216 @@
++const assert = require('node:assert/strict');
++const {test} = require('node:test');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const {spawnSync} = require('node:child_process');
++const {Reader} = require('mmdb-lib');
++const loadGeoip = require('../lib/geoip');
++const {loadGeoipConfig} = require('../lib/deployment-config');
++const {loadCollector, connectCollector, hello} = require('./fixtures/collector.cjs');
++const Node = require('../lib/node');
++
++const city = path.join(__dirname, 'fixtures/geoip/city.mmdb');
++const cityHash = 'f936702b51dcb6c94b286d77a6f182c31a1601baf4b27e8e896934deb41f49f2';
++const environment = {GEOIP_MODE: 'mmdb', GEOIP_DATABASE_FILE: city, GEOIP_DATABASE_SHA256: cityHash, GEOIP_MAX_BYTES: '21088'};
++
++function capture(operation) {
++    try {
++        return operation();
++    } catch (error) {
++        return {error: error.message};
++    }
++}
++
++function copyDatabase(t) {
++    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'fsn-mmdb-'));
++    const file = path.join(directory, 'city.mmdb');
++    fs.copyFileSync(city, file);
++    t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
++    return file;
++}
++
++test('requires explicit mode and validated MMDB settings', () => {
++    const invalid = [
++        [{}, /GEOIP_MODE/], [{GEOIP_MODE: 'unknown'}, /GEOIP_MODE/],
++        [{GEOIP_MODE: ' disabled'}, /GEOIP_MODE/],
++        [{GEOIP_MODE: 'disabled', GEODATADIR: '/old'}, /GEODATADIR/],
++        [{GEOIP_MODE: 'disabled', GEOIP_DATABASE_FILE: city}, /Disabled GeoIP/],
++        [{GEOIP_MODE: 'disabled', GEOIP_DATABASE_SHA256: cityHash}, /Disabled GeoIP/],
++        [{GEOIP_MODE: 'disabled', GEOIP_MAX_BYTES: '1'}, /Disabled GeoIP/],
++        [{...environment, GEOIP_DATABASE_FILE: undefined}, /GEOIP_DATABASE_FILE/],
++        [{...environment, GEOIP_DATABASE_FILE: 'relative.mmdb'}, /absolute path/],
++        [{...environment, GEOIP_DATABASE_SHA256: undefined}, /GEOIP_DATABASE_SHA256/],
++        [{...environment, GEOIP_DATABASE_SHA256: cityHash.toUpperCase()}, /lowercase/],
++        [{...environment, GEOIP_DATABASE_SHA256: 'not-a-hash'}, /hexadecimal/],
++        [{...environment, GEOIP_MAX_BYTES: undefined}, /GEOIP_MAX_BYTES/],
++        [{...environment, GEOIP_MAX_BYTES: '0'}, /GEOIP_MAX_BYTES/],
++        [{...environment, GEOIP_MAX_BYTES: '1.5'}, /GEOIP_MAX_BYTES/],
++        [{...environment, GEOIP_MAX_BYTES: '2147483648'}, /GEOIP_MAX_BYTES/],
++    ];
++    const expected = {mode: 'mmdb', file: city, sha256: cityHash, maxBytes: 21088};
++    const expectedMatches = [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
++
++    const actual = loadGeoipConfig(environment);
++    const errors = invalid.map(([settings]) => capture(() => loadGeoipConfig(settings)).error);
++    const matches = errors.map((error, index) => invalid[index][1].test(error));
++
++    assert.deepEqual(actual, expected);
++    assert.deepEqual(matches, expectedMatches);
++});
++
++test('disabled geography is explicit and performs no database reads', t => {
++    const config = loadGeoipConfig({GEOIP_MODE: 'disabled'});
++    t.mock.method(fs, 'lstatSync', () => { throw new Error('Unexpected file read'); });
++    const expected = {database: null, geo: null};
++
++    const geoip = loadGeoip(config);
++    const actual = {database: geoip.database, geo: geoip.lookup('2.125.160.216')};
++
++    assert.deepEqual(actual, expected);
++});
++
++test('loads the published City fixture at the exact byte budget', () => {
++    const config = loadGeoipConfig(environment);
++    const expected = {sha256: cityHash, bytes: 21088, type: 'GeoLite2-City', buildEpoch: '2026-02-04T22:49:29.000Z'};
++
++    const actual = loadGeoip(config).database;
++
++    assert.deepEqual(actual, expected);
++});
++
++test('returns published IPv4 and IPv6 locations, mapped equivalents and unavailable results', () => {
++    const geoip = loadGeoip(loadGeoipConfig(environment));
++    const inputs = ['2.125.160.216', '::ffff:2.125.160.216', '::FFFF:027D:A0D8', '2001:218::', '127.0.0.1', 'invalid', null, '999.1.1.1'];
++    const expected = [{country: 'GB', ll: [51.75, -1.25]}, {country: 'GB', ll: [51.75, -1.25]},
++        {country: 'GB', ll: [51.75, -1.25]}, {country: 'JP', ll: [35.68536, 139.75309]}, null, null, null, null];
++
++    const actual = inputs.map(geoip.lookup);
++
++    assert.deepEqual(actual, expected);
++});
++
++for (const [record, expected] of [
++    [null, null], [{}, null], [{registered_country: {iso_code: 'SE'}}, null],
++    [{country: {iso_code: 'SE'}}, {country: 'SE', ll: null}],
++    [{country: {iso_code: 'SE'}, location: {latitude: 0, longitude: 0}}, {country: 'SE', ll: [0, 0]}],
++    [{country: {iso_code: 'SE'}, location: {latitude: 91, longitude: 18}}, {country: 'SE', ll: null}],
++    [{country: {iso_code: 'SE'}, location: {latitude: 59, longitude: 181}}, {country: 'SE', ll: null}],
++    [{country: {iso_code: 'SE'}, location: {latitude: 59}}, {country: 'SE', ll: null}],
++    [{country: {iso_code: 'SE'}, location: {latitude: null, longitude: null}}, {country: 'SE', ll: null}],
++    [{country: {iso_code: 'se'}, location: {latitude: 59, longitude: 18}}, null],
++]) {
++    test('maps optional provider fields without inventing geography: ' + JSON.stringify(record), t => {
++        const geoip = loadGeoip(loadGeoipConfig(environment));
++        t.mock.method(Reader.prototype, 'get', () => record);
++
++        const actual = geoip.lookup('2001:db8::1');
++
++        assert.deepEqual(actual, expected);
++    });
++}
++
++test('refuses files exceeding the byte budget before constructing the reader', () => {
++    const config = loadGeoipConfig({...environment, GEOIP_MAX_BYTES: '21087'});
++    const expected = {error: 'GeoIP database must be nonempty and within GEOIP_MAX_BYTES'};
++
++    const actual = capture(() => loadGeoip(config));
++
++    assert.deepEqual(actual, expected);
++});
++
++test('refuses a mismatched expected hash before decoding', () => {
++    const config = loadGeoipConfig({...environment, GEOIP_DATABASE_SHA256: '0'.repeat(64)});
++    const expected = {error: 'GeoIP database does not match GEOIP_DATABASE_SHA256'};
++
++    const actual = capture(() => loadGeoip(config));
++
++    assert.deepEqual(actual, expected);
++});
++
++test('refuses a non-City MMDB with an otherwise matching hash', () => {
++    const config = loadGeoipConfig({...environment, GEOIP_DATABASE_FILE: path.join(__dirname, 'fixtures/geoip/not-city.mmdb'), GEOIP_DATABASE_SHA256: '599f1555ce3a568c2d4ad965332dcba87d0d109297636f1b595241247263d98b'});
++    const expected = {error: 'GeoIP database must be a supported IPv4/IPv6 City MMDB'};
++
++    const actual = capture(() => loadGeoip(config));
++
++    assert.deepEqual(actual, expected);
++});
++
++for (const mode of ['empty', 'directory', 'symlink']) {
++    test('refuses a database that is ' + mode, t => {
++        const file = copyDatabase(t);
++        fs.unlinkSync(file);
++        if (mode === 'empty') { fs.writeFileSync(file, ''); }
++        if (mode === 'directory') { fs.mkdirSync(file); }
++        if (mode === 'symlink') { fs.symlinkSync(city, file); }
++        const config = loadGeoipConfig({...environment, GEOIP_DATABASE_FILE: file});
++        const expected = {error: mode === 'empty' ? 'GeoIP database must be nonempty and within GEOIP_MAX_BYTES' : 'GeoIP database must be a regular file without a symlink'};
++
++        const actual = capture(() => loadGeoip(config));
++
++        assert.deepEqual(actual, expected);
++    });
++}
++
++test('detects a database changed during reading and closes its descriptor', t => {
++    const file = copyDatabase(t);
++    const config = loadGeoipConfig({...environment, GEOIP_DATABASE_FILE: file});
++    const read = fs.readSync;
++    let descriptor;
++    t.mock.method(fs, 'readSync', (...args) => { descriptor = args[0]; const count = read(...args); fs.appendFileSync(file, 'x'); return count; });
++    const expected = {error: 'GeoIP database changed during loading'};
++    const expectedClosed = /^EBADF:/;
++
++    const actual = capture(() => loadGeoip(config));
++    const closed = capture(() => fs.fstatSync(descriptor));
++
++    assert.deepEqual(actual, expected);
++    assert.match(closed.error, expectedClosed);
++});
++
++test('keeps the loaded bytes stable if the file is removed after loading', t => {
++    const file = copyDatabase(t);
++    const geoip = loadGeoip(loadGeoipConfig({...environment, GEOIP_DATABASE_FILE: file}));
++    const expected = {country: 'GB', ll: [51.75, -1.25]};
++    fs.unlinkSync(file);
++
++    const actual = geoip.lookup('2.125.160.216');
++
++    assert.deepEqual(actual, expected);
++});
++
++test('collector derives geography from the connection and passes it through the real node model', t => {
++    const collector = loadCollector(t, {environment});
++    const spark = connectCollector(collector);
++    spark.address.ip = '::FFFF:027D:A0D8';
++    const expected = {ip: '::FFFF:027D:A0D8', geo: {country: 'GB', ll: [51.75, -1.25]}};
++
++    hello(spark);
++    const node = new Node(collector.calls[0].data).getInfo();
++    const actual = {ip: node.info.ip, geo: node.geo};
++
++    assert.deepEqual(actual, expected);
++});
++
++test('collector refuses missing mode or invalid configured database before creating sockets', t => {
++    const inputs = [{GEOIP_MODE: undefined}, {...environment, GEOIP_DATABASE_SHA256: '0'.repeat(64)}];
++    const expected = [{listening: false, sockets: 0, error: 'GEOIP_MODE must be explicitly configured'},
++        {listening: false, sockets: 0, error: 'GeoIP database does not match GEOIP_DATABASE_SHA256'}];
++
++    const actual = inputs.map(settings => { const collector = loadCollector(t, {environment: settings}); return {listening: collector.listening, sockets: collector.sockets.size, error: collector.startupError?.message}; });
++
++    assert.deepEqual(actual, expected);
++});
++
++test('CLI validates the configured file and reports its accepted metadata', () => {
++    const args = [path.join(__dirname, '../deploy/validate-geoip.cjs')];
++    const expected = {mode: 'mmdb', database: {sha256: cityHash, bytes: 21088, type: 'GeoLite2-City', buildEpoch: '2026-02-04T22:49:29.000Z'}};
++
++    const child = spawnSync(process.execPath, args, {env: environment, encoding: 'utf8', timeout: 5000});
++    const actual = JSON.parse(child.stdout);
++
++    assert.equal(child.status, 0);
++    assert.equal(child.stderr, '');
++    assert.deepEqual(actual, expected);
++});

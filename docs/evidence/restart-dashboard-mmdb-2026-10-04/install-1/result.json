@@ -1,0 +1,75 @@
+[
+  {
+    "name": "lock",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "/mnt/c/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "install",
+      "--package-lock-only",
+      "--lockfile-version=1",
+      "--ignore-scripts",
+      "--engine-strict",
+      "--no-audit",
+      "--no-fund"
+    ]
+  },
+  {
+    "name": "ci",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "/mnt/c/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "ci",
+      "--ignore-scripts",
+      "--engine-strict",
+      "--no-audit",
+      "--no-fund"
+    ]
+  },
+  {
+    "name": "audit",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "/mnt/c/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "audit",
+      "--json"
+    ]
+  },
+  {
+    "name": "ls",
+    "exit": 0,
+    "command": [
+      "wsl",
+      "-d",
+      "FusionRehearsal",
+      "-u",
+      "rehearsal",
+      "--",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node",
+      "/mnt/c/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "ls",
+      "--all",
+      "--json"
+    ]
+  }
+]

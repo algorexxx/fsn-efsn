@@ -1,5 +1,8 @@
 # Dashboard GeoIP reader decision
 
+Follow-up: the [MMDB integration](restart-dashboard-mmdb.md) is now complete in
+the isolated dashboard candidate. This report records the preceding comparison.
+
 Local evidence date: 2026-10-04. Use an unmodified standard MMDB reader and a
 single City database for the next dashboard implementation. The selected reader
 candidate is `mmdb-lib` 3.0.3. Its published package has no runtime dependencies,

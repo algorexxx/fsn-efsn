@@ -180,10 +180,11 @@ report records lint coverage differences and remaining maintenance work.
    binary checks and exposes incompatible IPv6 data. The subsequent
    [reader comparison](restart-dashboard-geoip-reader.md) selects standard MMDB
    and `mmdb-lib` 3.0.3 after 3,007 passing raw lookups and isolated model checks.
-   Implement the bounded loader, preserve country-only flags, retire the custom
-   format when replaced, and repeat combined acceptance. Then finish protected
-   downloads and supervised immutable-MMDB activation. Source/account selection,
-   applicable terms/attribution and refresh/deletion operations remain open.
+   The [MMDB integration](restart-dashboard-mmdb.md) completes the bounded
+   loader, country-only flags, old-format removal and combined acceptance.
+   For enabled geography, finish protected downloads and supervised immutable
+   activation, source/account selection, terms/attribution and refresh/deletion.
+   Alternatively, select explicit disabled geography in the launch manifest.
 3. Continue G6 supervision, retry/log lifecycle, public certificates and the
    coordinated deployment manifest. Recheck advisories at release and rerun
    combined acceptance on that exact package. These local compatibility
