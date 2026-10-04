@@ -1,0 +1,1919 @@
+{
+  "discovery": {
+    "corrected_vectors": 6,
+    "opt_in_tests_skipped": [
+      "TestRestartPeerAddressLive",
+      "TestRestartDiscoverySelfLive"
+    ],
+    "payloads_and_expected_objects_unchanged": true
+  },
+  "scans": {
+    "binary-efsn": {
+      "advisory_records_returned": 234,
+      "config": {
+        "db": "file:///home/rehearsal/results/restart-release-followup-2026-10-04/vulndb",
+        "db_last_modified": "2026-10-01T20:24:15Z",
+        "protocol_version": "v1.0.0",
+        "scan_level": "symbol",
+        "scan_mode": "binary",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.8.0"
+      },
+      "finding_records": 100,
+      "findings": [
+        {
+          "highest_level": "module",
+          "id": "GO-2023-1988",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.13.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Improper rendering of text nodes in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2023-2102",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.17.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "HTTP/2 rapid reset can cause excessive work in net/http"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2023-2402",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.17.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Man-in-the-middle attacker can compromise integrity of secure channel in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-2611",
+          "installed": "v1.26.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v1.33.0",
+          "module": "google.golang.org/protobuf",
+          "review_status": "REVIEWED",
+          "summary": "Infinite loop in JSON unmarshaling in google.golang.org/protobuf"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-2687",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.23.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "HTTP/2 CONTINUATION flood in net/http"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2024-3250",
+          "installed": "v4.4.2",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 2
+          },
+          "listed_fixed": "v4.5.1",
+          "module": "github.com/golang-jwt/jwt/v4",
+          "review_status": "REVIEWED",
+          "summary": "Improper error handling in ParseWithClaims and bad documentation may cause dangerous situations in github.com/golang-jwt/jwt"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-3321",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.31.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Misuse of connection.serverAuthenticate may cause authorization bypass in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-3333",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.33.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Non-linear parsing of case-insensitive content in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3487",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.35.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3503",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.36.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2025-3553",
+          "installed": "v4.4.2",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 1
+          },
+          "listed_fixed": "v4.5.2",
+          "module": "github.com/golang-jwt/jwt/v4",
+          "review_status": "REVIEWED",
+          "summary": "Excessive memory allocation during header parsing in github.com/golang-jwt/jwt"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3595",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.38.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Incorrect Neutralization of Input During Web Page Generation in x/net in golang.org/x/net"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4116",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.43.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4134",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Unbounded memory consumption in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4135",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Malformed constraint may cause denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-4440",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Quadratic parsing complexity in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-4441",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Infinite parsing loop in golang.org/x/net"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-4918",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.53.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Infinite loop in HTTP/2 transport when given bad SETTINGS_MAX_FRAME_SIZE in net/http/internal/http2 in golang.org/x/net"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5005",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5006",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking agent constraints dropped when forwarding keys in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5013",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking byte arithmetic causes underflow and panic in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5014",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5015",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking server panic during CheckHostKey/Authenticate in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5016",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking memory leak when rejecting channels can lead to DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5017",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking client can cause server deadlock on unexpected responses in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5018",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological RSA/DSA parameters may cause DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5019",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of FIDO/U2F security keys physical interaction in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5020",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5021",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking auth bypass via unenforced @revoked status in golang.org/x/crypto/ssh/knownhosts"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5023",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking VerifiedPublicKeyCallback permissions skip enforcement in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5025",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking incorrect handling of namespaced elements in foreign content in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5026",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking failure to reject ASCII-only Punycode-encoded labels in golang.org/x/net/idna"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5027",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking incorrect handling of HTML elements in foreign content in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5028",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking denial of service when parsing arbitrary HTML in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5029",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking incorrect handling of character references in DOCTYPE nodes in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5030",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking duplicate attributes can cause XSS in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5033",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological inputs can lead to client panic in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5932",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": null,
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5942",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Parsing an invalid SVCB or HTTPS RR can panic in golang.org/x/net/dns/dnsmessage"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2026-5970",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 24
+          },
+          "listed_fixed": "v0.39.0",
+          "module": "golang.org/x/text",
+          "review_status": "REVIEWED",
+          "summary": "Infinite loop on invalid input in golang.org/x/text"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2026-6278",
+          "installed": "v1.5.0",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 25
+          },
+          "listed_fixed": "v1.5.3",
+          "module": "github.com/gorilla/websocket",
+          "review_status": "UNREVIEWED",
+          "summary": "Gorilla WebSocket Uses Cryptographically Weak PRNG for WebSocket Mask Key in github.com/gorilla/websocket"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6303",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Source-address critical option not enforced for non-public-key auth callbacks in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6354",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked undecided channel in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6355",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked established channel in golang.org/x/crypto/ssh"
+        }
+      ],
+      "ids_by_highest_level": {
+        "module": [
+          "GO-2023-1988",
+          "GO-2023-2102",
+          "GO-2023-2402",
+          "GO-2024-2611",
+          "GO-2024-2687",
+          "GO-2024-3321",
+          "GO-2024-3333",
+          "GO-2025-3487",
+          "GO-2025-3503",
+          "GO-2025-3595",
+          "GO-2025-4116",
+          "GO-2025-4134",
+          "GO-2025-4135",
+          "GO-2026-4440",
+          "GO-2026-4441",
+          "GO-2026-4918",
+          "GO-2026-5005",
+          "GO-2026-5006",
+          "GO-2026-5013",
+          "GO-2026-5014",
+          "GO-2026-5015",
+          "GO-2026-5016",
+          "GO-2026-5017",
+          "GO-2026-5018",
+          "GO-2026-5019",
+          "GO-2026-5020",
+          "GO-2026-5021",
+          "GO-2026-5023",
+          "GO-2026-5025",
+          "GO-2026-5026",
+          "GO-2026-5027",
+          "GO-2026-5028",
+          "GO-2026-5029",
+          "GO-2026-5030",
+          "GO-2026-5033",
+          "GO-2026-5932",
+          "GO-2026-5942",
+          "GO-2026-6303",
+          "GO-2026-6354",
+          "GO-2026-6355"
+        ],
+        "package": [],
+        "symbol": [
+          "GO-2024-3250",
+          "GO-2025-3553",
+          "GO-2026-5970",
+          "GO-2026-6278"
+        ]
+      },
+      "unique_finding_ids": 44
+    },
+    "binary-fsn-recovery": {
+      "advisory_records_returned": 202,
+      "config": {
+        "db": "file:///home/rehearsal/results/restart-release-followup-2026-10-04/vulndb",
+        "db_last_modified": "2026-10-01T20:24:15Z",
+        "protocol_version": "v1.0.0",
+        "scan_level": "symbol",
+        "scan_mode": "binary",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.8.0"
+      },
+      "finding_records": 26,
+      "findings": [
+        {
+          "highest_level": "module",
+          "id": "GO-2023-2402",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.17.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Man-in-the-middle attacker can compromise integrity of secure channel in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-3321",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.31.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Misuse of connection.serverAuthenticate may cause authorization bypass in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3487",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.35.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4116",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.43.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4134",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Unbounded memory consumption in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4135",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Malformed constraint may cause denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5005",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5006",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking agent constraints dropped when forwarding keys in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5013",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking byte arithmetic causes underflow and panic in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5014",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5015",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking server panic during CheckHostKey/Authenticate in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5016",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking memory leak when rejecting channels can lead to DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5017",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking client can cause server deadlock on unexpected responses in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5018",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological RSA/DSA parameters may cause DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5019",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of FIDO/U2F security keys physical interaction in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5020",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5021",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking auth bypass via unenforced @revoked status in golang.org/x/crypto/ssh/knownhosts"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5023",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking VerifiedPublicKeyCallback permissions skip enforcement in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5033",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological inputs can lead to client panic in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5932",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": null,
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2026-6278",
+          "installed": "v1.5.0",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 1
+          },
+          "listed_fixed": "v1.5.3",
+          "module": "github.com/gorilla/websocket",
+          "review_status": "UNREVIEWED",
+          "summary": "Gorilla WebSocket Uses Cryptographically Weak PRNG for WebSocket Mask Key in github.com/gorilla/websocket"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6303",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Source-address critical option not enforced for non-public-key auth callbacks in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6354",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked undecided channel in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6355",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked established channel in golang.org/x/crypto/ssh"
+        }
+      ],
+      "ids_by_highest_level": {
+        "module": [
+          "GO-2023-2402",
+          "GO-2024-3321",
+          "GO-2025-3487",
+          "GO-2025-4116",
+          "GO-2025-4134",
+          "GO-2025-4135",
+          "GO-2026-5005",
+          "GO-2026-5006",
+          "GO-2026-5013",
+          "GO-2026-5014",
+          "GO-2026-5015",
+          "GO-2026-5016",
+          "GO-2026-5017",
+          "GO-2026-5018",
+          "GO-2026-5019",
+          "GO-2026-5020",
+          "GO-2026-5021",
+          "GO-2026-5023",
+          "GO-2026-5033",
+          "GO-2026-5932",
+          "GO-2026-6303",
+          "GO-2026-6354",
+          "GO-2026-6355"
+        ],
+        "package": [],
+        "symbol": [
+          "GO-2026-6278"
+        ]
+      },
+      "unique_finding_ids": 24
+    },
+    "source-efsn": {
+      "advisory_records_returned": 234,
+      "config": {
+        "db": "file:///home/rehearsal/results/restart-release-followup-2026-10-04/vulndb",
+        "db_last_modified": "2026-10-01T20:24:15Z",
+        "go_version": "go1.27.1",
+        "protocol_version": "v1.0.0",
+        "scan_level": "symbol",
+        "scan_mode": "source",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.8.0"
+      },
+      "finding_records": 70,
+      "findings": [
+        {
+          "highest_level": "module",
+          "id": "GO-2023-1988",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.13.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Improper rendering of text nodes in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2023-2102",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.17.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "HTTP/2 rapid reset can cause excessive work in net/http"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2023-2402",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.17.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Man-in-the-middle attacker can compromise integrity of secure channel in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-2611",
+          "installed": "v1.26.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v1.33.0",
+          "module": "google.golang.org/protobuf",
+          "review_status": "REVIEWED",
+          "summary": "Infinite loop in JSON unmarshaling in google.golang.org/protobuf"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-2687",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.23.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "HTTP/2 CONTINUATION flood in net/http"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2024-3250",
+          "installed": "v4.4.2",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 1
+          },
+          "listed_fixed": "v4.5.1",
+          "module": "github.com/golang-jwt/jwt/v4",
+          "review_status": "REVIEWED",
+          "summary": "Improper error handling in ParseWithClaims and bad documentation may cause dangerous situations in github.com/golang-jwt/jwt"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-3321",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.31.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Misuse of connection.serverAuthenticate may cause authorization bypass in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-3333",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.33.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Non-linear parsing of case-insensitive content in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3487",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.35.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3503",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.36.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2025-3553",
+          "installed": "v4.4.2",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 1
+          },
+          "listed_fixed": "v4.5.2",
+          "module": "github.com/golang-jwt/jwt/v4",
+          "review_status": "REVIEWED",
+          "summary": "Excessive memory allocation during header parsing in github.com/golang-jwt/jwt"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3595",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.38.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Incorrect Neutralization of Input During Web Page Generation in x/net in golang.org/x/net"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4116",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.43.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4134",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Unbounded memory consumption in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4135",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Malformed constraint may cause denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-4440",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Quadratic parsing complexity in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-4441",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Infinite parsing loop in golang.org/x/net"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-4918",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.53.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Infinite loop in HTTP/2 transport when given bad SETTINGS_MAX_FRAME_SIZE in net/http/internal/http2 in golang.org/x/net"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5005",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5006",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking agent constraints dropped when forwarding keys in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5013",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking byte arithmetic causes underflow and panic in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5014",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5015",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking server panic during CheckHostKey/Authenticate in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5016",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking memory leak when rejecting channels can lead to DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5017",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking client can cause server deadlock on unexpected responses in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5018",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological RSA/DSA parameters may cause DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5019",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of FIDO/U2F security keys physical interaction in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5020",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5021",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking auth bypass via unenforced @revoked status in golang.org/x/crypto/ssh/knownhosts"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5023",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking VerifiedPublicKeyCallback permissions skip enforcement in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5024",
+          "installed": "v0.11.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.44.0",
+          "module": "golang.org/x/sys",
+          "review_status": "REVIEWED",
+          "summary": "Invoking integer overflow in NewNTUnicodeString in golang.org/x/sys/windows"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5025",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking incorrect handling of namespaced elements in foreign content in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5026",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking failure to reject ASCII-only Punycode-encoded labels in golang.org/x/net/idna"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5027",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking incorrect handling of HTML elements in foreign content in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5028",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking denial of service when parsing arbitrary HTML in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5029",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking incorrect handling of character references in DOCTYPE nodes in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5030",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Invoking duplicate attributes can cause XSS in golang.org/x/net/html"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5033",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological inputs can lead to client panic in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5932",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": null,
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5942",
+          "installed": "v0.10.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/net",
+          "review_status": "REVIEWED",
+          "summary": "Parsing an invalid SVCB or HTTPS RR can panic in golang.org/x/net/dns/dnsmessage"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2026-5970",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 7
+          },
+          "listed_fixed": "v0.39.0",
+          "module": "golang.org/x/text",
+          "review_status": "REVIEWED",
+          "summary": "Infinite loop on invalid input in golang.org/x/text"
+        },
+        {
+          "highest_level": "symbol",
+          "id": "GO-2026-6278",
+          "installed": "v1.5.0",
+          "levels": {
+            "module": 1,
+            "package": 1,
+            "symbol": 12
+          },
+          "listed_fixed": "v1.5.3",
+          "module": "github.com/gorilla/websocket",
+          "review_status": "UNREVIEWED",
+          "summary": "Gorilla WebSocket Uses Cryptographically Weak PRNG for WebSocket Mask Key in github.com/gorilla/websocket"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6303",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Source-address critical option not enforced for non-public-key auth callbacks in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6354",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked undecided channel in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6355",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked established channel in golang.org/x/crypto/ssh"
+        }
+      ],
+      "ids_by_highest_level": {
+        "module": [
+          "GO-2023-1988",
+          "GO-2023-2102",
+          "GO-2023-2402",
+          "GO-2024-2611",
+          "GO-2024-2687",
+          "GO-2024-3321",
+          "GO-2024-3333",
+          "GO-2025-3487",
+          "GO-2025-3503",
+          "GO-2025-3595",
+          "GO-2025-4116",
+          "GO-2025-4134",
+          "GO-2025-4135",
+          "GO-2026-4440",
+          "GO-2026-4441",
+          "GO-2026-4918",
+          "GO-2026-5005",
+          "GO-2026-5006",
+          "GO-2026-5013",
+          "GO-2026-5014",
+          "GO-2026-5015",
+          "GO-2026-5016",
+          "GO-2026-5017",
+          "GO-2026-5018",
+          "GO-2026-5019",
+          "GO-2026-5020",
+          "GO-2026-5021",
+          "GO-2026-5023",
+          "GO-2026-5024",
+          "GO-2026-5025",
+          "GO-2026-5026",
+          "GO-2026-5027",
+          "GO-2026-5028",
+          "GO-2026-5029",
+          "GO-2026-5030",
+          "GO-2026-5033",
+          "GO-2026-5932",
+          "GO-2026-5942",
+          "GO-2026-6303",
+          "GO-2026-6354",
+          "GO-2026-6355"
+        ],
+        "package": [],
+        "symbol": [
+          "GO-2024-3250",
+          "GO-2025-3553",
+          "GO-2026-5970",
+          "GO-2026-6278"
+        ]
+      },
+      "unique_finding_ids": 45
+    },
+    "source-fsn-recovery": {
+      "advisory_records_returned": 202,
+      "config": {
+        "db": "file:///home/rehearsal/results/restart-release-followup-2026-10-04/vulndb",
+        "db_last_modified": "2026-10-01T20:24:15Z",
+        "go_version": "go1.27.1",
+        "protocol_version": "v1.0.0",
+        "scan_level": "symbol",
+        "scan_mode": "source",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.8.0"
+      },
+      "finding_records": 26,
+      "findings": [
+        {
+          "highest_level": "module",
+          "id": "GO-2023-2402",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.17.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Man-in-the-middle attacker can compromise integrity of secure channel in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2024-3321",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.31.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Misuse of connection.serverAuthenticate may cause authorization bypass in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-3487",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.35.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4116",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.43.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Potential denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4134",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Unbounded memory consumption in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2025-4135",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.45.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Malformed constraint may cause denial of service in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5005",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5006",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking agent constraints dropped when forwarding keys in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5013",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking byte arithmetic causes underflow and panic in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5014",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5015",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking server panic during CheckHostKey/Authenticate in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5016",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking memory leak when rejecting channels can lead to DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5017",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking client can cause server deadlock on unexpected responses in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5018",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological RSA/DSA parameters may cause DoS in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5019",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking bypass of FIDO/U2F security keys physical interaction in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5020",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5021",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking auth bypass via unenforced @revoked status in golang.org/x/crypto/ssh/knownhosts"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5023",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking VerifiedPublicKeyCallback permissions skip enforcement in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5024",
+          "installed": "v0.11.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.44.0",
+          "module": "golang.org/x/sys",
+          "review_status": "REVIEWED",
+          "summary": "Invoking integer overflow in NewNTUnicodeString in golang.org/x/sys/windows"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5033",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.52.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Invoking pathological inputs can lead to client panic in golang.org/x/crypto/ssh/agent"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-5932",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": null,
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues"
+        },
+        {
+          "highest_level": "package",
+          "id": "GO-2026-6278",
+          "installed": "v1.5.0",
+          "levels": {
+            "module": 1,
+            "package": 1
+          },
+          "listed_fixed": "v1.5.3",
+          "module": "github.com/gorilla/websocket",
+          "review_status": "UNREVIEWED",
+          "summary": "Gorilla WebSocket Uses Cryptographically Weak PRNG for WebSocket Mask Key in github.com/gorilla/websocket"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6303",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.55.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Source-address critical option not enforced for non-public-key auth callbacks in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6354",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked undecided channel in golang.org/x/crypto/ssh"
+        },
+        {
+          "highest_level": "module",
+          "id": "GO-2026-6355",
+          "installed": "v0.12.0",
+          "levels": {
+            "module": 1
+          },
+          "listed_fixed": "v0.56.0",
+          "module": "golang.org/x/crypto",
+          "review_status": "REVIEWED",
+          "summary": "Prevent DoS on deadlocked established channel in golang.org/x/crypto/ssh"
+        }
+      ],
+      "ids_by_highest_level": {
+        "module": [
+          "GO-2023-2402",
+          "GO-2024-3321",
+          "GO-2025-3487",
+          "GO-2025-4116",
+          "GO-2025-4134",
+          "GO-2025-4135",
+          "GO-2026-5005",
+          "GO-2026-5006",
+          "GO-2026-5013",
+          "GO-2026-5014",
+          "GO-2026-5015",
+          "GO-2026-5016",
+          "GO-2026-5017",
+          "GO-2026-5018",
+          "GO-2026-5019",
+          "GO-2026-5020",
+          "GO-2026-5021",
+          "GO-2026-5023",
+          "GO-2026-5024",
+          "GO-2026-5033",
+          "GO-2026-5932",
+          "GO-2026-6303",
+          "GO-2026-6354",
+          "GO-2026-6355"
+        ],
+        "package": [
+          "GO-2026-6278"
+        ],
+        "symbol": []
+      },
+      "unique_finding_ids": 25
+    }
+  }
+}

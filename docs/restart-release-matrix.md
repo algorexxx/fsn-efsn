@@ -77,9 +77,12 @@ copies. Backup/replay probes keep original data read-only.
 
 The [release findings ledger](restart-release-findings.md) is the authority for
 F1–F10 decisions, evidence, ownership and closure conditions. It records the
-legacy compilation gaps, two remaining networking test repairs, the corrected
-disconnect fixture, native-call behavior, operating limits, compiler compatibility
-and dependency/CI review. A disposition is not an independent approval.
+legacy compilation gaps, three corrected networking fixtures, native-call
+behavior, operating limits, compiler compatibility and dependency/CI review.
+The [follow-up package run](evidence/restart-release-followup-2026-10-04) passes
+with race detection, with two opt-in live tests explicitly skipped. The
+[dependency audit](restart-release-dependencies.md) identifies concrete F10
+remediation work. Neither result completes the final matrix or independent approval.
 
 ## Independent reviewer packet and completion
 
@@ -102,8 +105,10 @@ cold check ([evidence](evidence/restart-replay-3300000-2026-10-04)). The unchang
 baseline retains legacy shortcuts through 2,680,000. Execution through the accepted
 parent and historical compatibility of the selected candidate are still open;
 neither this matrix nor synthetic passes replace them. A bounded continuation
-toward 3,600,000 is running with [provisional startup evidence](evidence/restart-replay-3600000-2026-10-04);
-its final replay and exact-height cold check are pending.
+toward 3,600,000 resumed after a monitor-requested clean stop and a successful
+read-only inspection at 3,521,056. The [range evidence](evidence/restart-replay-3600000-2026-10-04)
+retains original failures and the corrected continuation; its final replay and
+exact-height cold check remain pending.
 
 Next technical order: close the recorded findings and qualify the selected
 candidate/build image; continue bounded G1 replay after fresh capacity checks;

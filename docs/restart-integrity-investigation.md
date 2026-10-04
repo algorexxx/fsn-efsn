@@ -418,6 +418,28 @@ The [range evidence directory](evidence/restart-replay-3600000-2026-10-04)
 retains the runner and checksummed startup records with `completion_claim=false`.
 This range changes no node code and involves no real keys or signing.
 
+Later update: the original run stopped at 18:32:38 UTC, before block 3,521,057,
+after `du` could not stat three disappearing `.ldb` files. It exited 1 through
+the existing clean-stop path. No block/state mismatch was reported. A separate
+read-only inspection passed at 3,521,056 in 6.98 seconds, with hash
+`0xfff6ae4ff23211b76165e8b5201fd1a8719aa65e3b46d926245ca07a353228aa`,
+root `0x92b1b7a3f89f0f6605bc742758f327bcde2fa3e75f384d35dacc6299d1b08399`
+and ticket commitment
+`0xa5cdd2d349d602bffea2ff6da359e1297da94dcbb3c5c0f9efc7daeba4e228b2`.
+The closed copy occupies 7,289,987,072 allocated bytes. Logs are retained under
+the evidence directory's `stopped/` folder; this is not a successful 3,600,000 run.
+
+After a first continuation preflight correctly refused a missing read-only
+mount, the corrected wrapper resumed the same validated disposable copy at
+18:44:57 UTC, with 46.25 GiB Linux / 93.43 GiB D: free before starting. No bulk
+copy or replay-code change was needed. Three bounded size-measurement attempts
+now allow transient failures to recover; all errors are retained and persistent
+failure still requests a stop. Existing reserves and workload limits remain.
+New results are `/home/rehearsal/results/restart-replay-3600000-resume-v2-2026-10-04`;
+the new stop path is `/home/rehearsal/replay/STOP-baseline-mainnet-3600000-resume-v2`.
+The final exact-height cold check remains pending. Use `status.py --resume` for
+current progress; original failures and complete 3,300,000 checkpoint remain intact.
+
 ## Next gates
 
 1. Continue bounded execution replay, investigating any failure. Current-state

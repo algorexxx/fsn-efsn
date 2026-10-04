@@ -53,6 +53,48 @@ sample was 6,560,456,704 allocated bytes. `startup-capture.json` explicitly reco
 `completion_claim=false`. The verified baseline remains 3,300,000 until this
 range exits successfully and passes its fresh exact-height cold check.
 
+## Monitor stop and validated continuation
+
+The first replay ended at 18:32:38 UTC with exit 1 after its monitor requested
+a clean stop before block 3,521,057. `du` had reported three disappearing `.ldb`
+files during live measurement. This is consistent with concurrent LevelDB
+compaction; it was not a recorded block/state mismatch or a space-limit breach.
+The failed run, size errors and stop request are preserved in `stopped/`.
+
+A separate process then opened both source and stopped target through read-only
+mounts in a private network namespace. Exact-height inspection passed at
+3,521,056 in 6.98 seconds:
+
+- Block: `0xfff6ae4ff23211b76165e8b5201fd1a8719aa65e3b46d926245ca07a353228aa`.
+- State root: `0x92b1b7a3f89f0f6605bc742758f327bcde2fa3e75f384d35dacc6299d1b08399`.
+- Ticket commitment: `0xa5cdd2d349d602bffea2ff6da359e1297da94dcbb3c5c0f9efc7daeba4e228b2`.
+- Closed allocation: 7,289,987,072 bytes; fresh free space 46.25 GiB Linux /
+  93.43 GiB D:.
+
+The initial continuation wrapper omitted a read-only bind view for its repeat
+cold preflight. The checker correctly refused it before replay started. That
+harness failure and script are retained in `resume-preflight-refused/` and
+`resume-preflight-refused.sh`. The corrected `resume-replay.sh` supplies the
+required mount and uses new result/stop paths; it does not erase the refusal.
+
+Corrected continuation began at 18:44:57 UTC from the inspected 3,521,056 head,
+using the same writable disposable copy and baseline executable. No new bulk
+copy was made. The size monitor now requires one successful `du` measurement
+within three attempts, each capped at 15 seconds with a two-second kill grace.
+Every failed measurement is retained. Three failures, malformed output or a
+20 GiB sample still request a clean stop. Existing batch-level 20 GiB Linux /
+50 GiB D: free-space checks and the 12-hour ceiling remain in force.
+
+Continuation results:
+`/home/rehearsal/results/restart-replay-3600000-resume-v2-2026-10-04`.
+Continuation stop request:
+`/home/rehearsal/replay/STOP-baseline-mainnet-3600000-resume-v2`.
+`status.py --resume` reads this run; the default still reads the original stop.
+`collect-continuation.py resume-startup` records provisional progress under
+`resume/`, with no completion claim. Only `resume-final` after exit zero and
+the exact-height 3,600,000 cold check can complete this range. The previous
+complete checkpoint at 3,300,000 remains preserved and unchanged.
+
 ## Execution, status and acceptance
 
 ```text

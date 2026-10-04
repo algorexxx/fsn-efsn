@@ -77,6 +77,15 @@ in the evidence. These results do not represent a full regression-suite pass.
 Detailed logs and exact hashes are in the
 [selection evidence](evidence/restart-release-selection-2026-10-04).
 
+The later [follow-up evidence](evidence/restart-release-followup-2026-10-04)
+adds test-only patch 07 after the matching discovery-test overlay. Both remaining
+discovery fixtures and the ordinary package tests pass with race detection;
+two opt-in live cases are explicitly skipped. This does not modify the frozen
+production selection or rewrite the original evidence. The
+[offline dependency audit](restart-release-dependencies.md) now identifies four
+node advisories and records source/binary differences. F10 remains open; no
+dependency upgrade is selected by that audit.
+
 ## Remaining release boundary
 
 1. Complete G1 history acceptance and patched historical compatibility. Current

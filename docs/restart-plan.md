@@ -89,11 +89,14 @@ space/path checks. On 4 October the unchanged baseline completed 3,000,000 throu
 3,300,000 on a verified separate D:-backed ext4 copy. Replay and the independent
 exact-height cold check passed; the closed target occupies 6,527,746,048 allocated
 bytes. See the [final evidence](evidence/restart-replay-3300000-2026-10-04).
-A further bounded range toward 3,600,000 is running after fresh capacity/path
-checks and a verified separate copy. Its [startup evidence](evidence/restart-replay-3600000-2026-10-04)
-records progress through 3,314,336 at 17:44:29 UTC. Final replay/cold acceptance
-is pending; the verified baseline remains 3,300,000. Candidate-patch historical
-compatibility remains open.
+A further bounded range toward 3,600,000 stopped cleanly after the size monitor
+encountered disappearing LevelDB files. Independent read-only inspection passed
+at 3,521,056, matching preserved history. The [range evidence](evidence/restart-replay-3600000-2026-10-04)
+retains that failure, a refused continuation preflight and the corrected resume
+at 18:44:57 UTC. The monitor now makes three bounded measurement attempts;
+disk reserves remain unchanged and no new bulk copy was needed. Final 3,600,000
+replay/cold acceptance is pending; the last completed range remains 3,300,000.
+Candidate-patch historical compatibility remains open.
 
 ## G2 — Client and supported operation
 
@@ -133,6 +136,15 @@ compatibility remains open.
   test repairs and dependency security. Pin final CI/build-image inputs and run
   affected acceptance with the selected compiler. The local repeatability check
   does not approve the final release or close the full regression matrix.
+- [x] Repair the two remaining discovery fixtures on the selected compiler:
+  focused tests and the ordinary package suite pass with race detection; two
+  opt-in live tests are explicitly skipped. Preserve test-only patch 07 and
+  original expectations in the [follow-up evidence](evidence/restart-release-followup-2026-10-04).
+- [x] Perform the initial [offline dependency audit](restart-release-dependencies.md)
+  of both selected executables and command sources. Four node advisories need
+  disposition; the unreviewed WebSocket entry has a fixed-version discrepancy.
+  No modules were upgraded. F10 remediation, lower-level finding review and
+  independent acceptance remain open within the preceding review-hold item.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss
