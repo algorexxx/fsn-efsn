@@ -32,6 +32,9 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 	budget := flags.Int64("history-budget", 0, "required logical byte budget for --init-history or --history-copy; no automatic pruning")
 	copyPath := flags.String("history-copy", "", "copy all history to a new absolute directory with a larger budget; requires --at-sequence; source unchanged")
 	statusOnly := flags.Bool("history-status", false, "reconstruct history status without contacting nodes")
+	checkHistory := flags.Bool("history-check", false, "check retained collection freshness, headroom and unresolved incidents; nonzero exit requires attention")
+	maxReportAge := flags.Duration("report-max-age", 0, "required positive maximum age of a durable collection for --history-check")
+	minFreeBytes := flags.Int64("history-min-free", 0, "required positive logical headroom in bytes for --history-check; not physical disk space")
 	export := flags.Bool("history-export", false, "export metadata and original events as JSON Lines without contacting nodes")
 	action := flags.String("history-action", "", "record an operator review: acknowledge or resolve")
 	incident := flags.String("incident", "", "incident ID to review")
@@ -50,13 +53,16 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 		return err
 	}
 	operations := 0
-	for _, selected := range []bool{*initialize, *statusOnly, *export, *action != "", *ticketNode != "", *copyPath != ""} {
+	for _, selected := range []bool{*initialize, *statusOnly, *checkHistory, *export, *action != "", *ticketNode != "", *copyPath != ""} {
 		if selected {
 			operations++
 		}
 	}
 	if flags.NArg() != 0 || *budget != 0 && !*initialize && *copyPath == "" || (*incident != "" || *reason != "") && *action == "" || *sequence != 0 && *action == "" && *copyPath == "" {
 		return fmt.Errorf("invalid observer/history argument combination")
+	}
+	if (*maxReportAge != 0 || *minFreeBytes != 0) && !*checkHistory || *checkHistory && (*maxReportAge <= 0 || *minFreeBytes <= 0) {
+		return fmt.Errorf("history check requires --history-check, positive --report-max-age and positive --history-min-free")
 	}
 	if (*ticketFrom != 0 || *ticketBlocks != 0) && *ticketNode == "" || *ticketNode != "" && (*ticketBlocks == 0 || *ticketBlocks > 128) {
 		return fmt.Errorf("ticket timeline requires --ticket-timeline and --ticket-blocks from 1 through 128")
@@ -114,6 +120,19 @@ func run(ctx context.Context, args []string, output, diagnostics io.Writer) erro
 		}
 		if err != nil {
 			return err
+		}
+		if *checkHistory {
+			check, err := observe.CheckHistory(state, time.Now(), *maxReportAge, *minFreeBytes)
+			if err != nil {
+				return err
+			}
+			if err := writeJSON(output, check); err != nil {
+				return err
+			}
+			if len(check.Problems) != 0 {
+				return fmt.Errorf("observer history requires attention")
+			}
+			return nil
 		}
 		return writeJSON(output, state)
 	}

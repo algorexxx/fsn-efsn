@@ -150,9 +150,14 @@ the backup owner's funds for another participant.
   copy acceptance is not a production retention policy or rolling rotation.
 - [ ] Capture and preserve both production wallet baselines before activity.
   Historical state is sparse; later RPC acquisition cannot be assumed possible.
-- [ ] Implement and demonstrate alert delivery, acknowledgement and collector-
-  loss detection, including collection failure when history rejects an append.
-  Choose destinations, response timings and operator coverage before deployment.
+- [x] Supply an [external history check](restart-observer-check.md) with tested
+  executable exit codes for missing/stale collection, low logical headroom and
+  unresolved incidents. Fresh reviews do not mask stopped collection; failed
+  history reads return nonzero. This is local detection, not message delivery.
+- [ ] Connect the check to an existing monitoring service if available (the
+  selected preference); choose the actual service, destination, response timings
+  and operator coverage. Demonstrate message receipt/acknowledgement and missed-
+  job/host detection, including collection failure when history rejects an append.
 - [ ] Rehearse the finite detection/response cases in the
   [response guide](restart-monitoring-response.md), accept manual intervention
   limits and verify the actual authorized funding available for supported repair.
@@ -455,7 +460,9 @@ Current technical order (efsn):
    Reuse the passing [bounded backlog](restart-observer-backlog.md) and
    [explicit capacity copy](restart-observer-capacity.md). Choose the deployment
    workload/headroom and response window; extend measurements only for a changed
-   bound or concrete failure. Alert delivery and collector-loss detection remain.
+   bound or concrete failure. Use the [history check](restart-observer-check.md)
+   with the selected external monitoring service; actual delivery and independent
+   missed-job/host detection remain. No provider is configured yet.
 2. G1: resume bounded historical execution only after fresh capacity/path checks;
    coordinate this larger disk job with the small local work above.
 3. G2/G5/G7: select the supported release matrix, complete the public package and

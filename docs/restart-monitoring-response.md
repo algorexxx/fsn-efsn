@@ -162,8 +162,12 @@ same incident as exhausted backing after a first retreat.
 ## Alert ownership, timing and closure
 
 The initial responding operator is Peter, consistent with the agreed launch.
-An alternate contact, notification destination and acknowledgement/escalation
-timings remain unset. The backup key owner is not automatically an on-call
+The preference is to reuse an existing monitoring service if available. The
+[offline history check](restart-observer-check.md) now supplies tested process
+results for stale/missing collection, low logical headroom and unresolved
+incidents. Actual service selection, message delivery and independently detecting
+missing check/host results remain open. An alternate contact, notification
+destination and acknowledgement/escalation timings remain unset. The backup key owner is not automatically an on-call
 operator or emergency signer. Other operators can own alerts for their own nodes
 when they join; the central dashboard should not gain control of their wallets.
 

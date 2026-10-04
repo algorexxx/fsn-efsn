@@ -41,6 +41,11 @@ show why historical availability cannot be assumed even for every recent block.
 
 History status contains its chain/anchor/named-wallet scope, sequence, latest
 event/report times, logical byte usage, coverage limitation and incident list.
+The [external monitoring check](restart-observer-check.md) evaluates this status
+with explicit freshness/headroom bounds and unresolved-incident state. It emits
+JSON and exits nonzero on triggered conditions; ordinary status remains a read
+operation, not a health check. An external service must schedule checks, deliver
+notifications and detect missing results.
 To acknowledge or resolve a reviewed incident, use its ID and the current
 sequence from that status:
 
