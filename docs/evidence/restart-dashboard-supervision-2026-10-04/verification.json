@@ -1,0 +1,36 @@
+{
+  "verified": true,
+  "application_run": "run-4",
+  "application_checkpoints": [
+    "late-collector-start",
+    "collector-crash-recovery",
+    "writer-crash-recovery",
+    "api-crash-recovery",
+    "database-recovery",
+    "pending-write-shutdown",
+    "stale-and-recover",
+    "intentional-stop",
+    "restart-limit",
+    "configuration-repair",
+    "credential-log-check"
+  ],
+  "combined_run_passed": false,
+  "journal_run": "journal-1",
+  "journal_rotation_passed": true,
+  "journal_allocated_bytes": 16777216,
+  "unchanged_efsn_sources": 1007,
+  "unchanged_compiled_build_files": 546,
+  "prior_dashboard_application_and_dependencies_preserved": true,
+  "original_dashboard_preserved": true,
+  "previous_runtime_binaries_preserved": true,
+  "temporary_fixtures_removed": true,
+  "public_deployment_performed": false,
+  "source_sha256": {
+    "deploy/systemd/fsn-stats-api.service": "41dcc4fd832553c53af9f4e1513dbc12c4e9fcd5a3fa1a54f44a980021a19ece",
+    "deploy/systemd/fsn-stats-collector.service": "6088a925b52e6521e4516fe61ff2d426b2dda5b6923aec2c55063abb2e6e710a",
+    "deploy/systemd/fsn-stats-writer.service": "8089111049f7d402937ccece46691355240885de7ded5b4ebf6452cf84daf7fa",
+    "deploy/systemd/journald@fsn-stats.conf": "247d05805ead6f7c46aa7778f9508b221a4d96cd0eae4e7e354d90d2f8b4ac2c"
+  },
+  "dashboard_commit": "83a35269b1a5b1db47563cefb2a6946ed4982608",
+  "portable_patch_reverse_check": true
+}

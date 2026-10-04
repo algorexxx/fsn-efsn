@@ -365,6 +365,14 @@ tests, 23 frontend tests, twelve compiled-browser checkpoints and native
 WSS/database/browser acceptance pass. Explicitly disabled geography is supported;
 production data acquisition/update controls remain conditional on enabling it.
 No efsn source or chain behavior changes.
+The [service supervision follow-up](restart-dashboard-supervision.md) adds three
+systemd service candidates and a private journal profile. Eleven real-process
+checkpoints pass, including crash recovery, database outage, pending-write drain,
+stale refusal, deliberate stop and startup-rate-limit repair. A separate rotation
+drill retains 16 MiB and evicts old logs. The combined run's logging-probe failure
+is retained; production rate-limit/log-rate acceptance remains open. Application,
+dependency, frontend and efsn code are unchanged. Proxy supervision/file logs,
+public certificates, actual-host reboot and the coordinated manifest remain open.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -441,9 +449,12 @@ Current technical order:
    supervised activation/recovery. Source/account selection, attribution and
    refresh/deletion terms apply if geography is enabled. Public hosting remains
    subject to the release gates below.
-   Continue service supervision, public certificate acceptance/renewal and log
-   lifecycle checks. Preserve receipt/transport diagnostics and the same-host
-   clock assumption. Review retry pacing and log volume using the
+   The [service supervision candidate](restart-dashboard-supervision.md) now
+   passes local application recovery/shutdown and separate journal rotation.
+   Continue nginx supervision and its file-log lifecycle, public certificate
+   acceptance/renewal, actual-host reboot and persistent-journal checks. Preserve
+   receipt/transport diagnostics and the same-host clock assumption. Review the
+   unresolved logging-probe limitation, production retry pacing and log volume using the
    [passing mining-outage drill](restart-dashboard-mining-outage.md).
    Approve the common deployment
    manifest before publishing. G6 remains open; eight enrolled nodes, 64 KiB

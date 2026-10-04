@@ -1,0 +1,35 @@
+[Unit]
+Description=Fusion dashboard writer
+After=network.target
+StartLimitIntervalSec=60s
+StartLimitBurst=5
+
+[Service]
+Type=exec
+DynamicUser=yes
+WorkingDirectory=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth
+ExecStart=/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/dashboard-runtime-review/v24.21.0/node wsclient/wsclient.js
+Environment=NODE_ENV=production
+EnvironmentFile=/home/rehearsal/fusion-dashboard-supervision-ihavkdob/writer.env
+LoadCredential=writer.password:/home/rehearsal/fusion-dashboard-supervision-ihavkdob/writer.password
+Environment=DB_PASSWORD_FILE=%d/writer.password
+Restart=always
+RestartSec=5s
+TimeoutStopSec=15s
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+LimitCORE=0
+StandardOutput=journal
+StandardError=journal
+LogNamespace=fsn-stats-test-6fc35d37
+
+[Install]
+WantedBy=multi-user.target

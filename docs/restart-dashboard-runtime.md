@@ -185,8 +185,11 @@ report records lint coverage differences and remaining maintenance work.
    For enabled geography, finish protected downloads and supervised immutable
    activation, source/account selection, terms/attribution and refresh/deletion.
    Alternatively, select explicit disabled geography in the launch manifest.
-3. Continue G6 supervision, retry/log lifecycle, public certificates and the
-   coordinated deployment manifest. Recheck advisories at release and rerun
+3. The [service supervision follow-up](restart-dashboard-supervision.md) now
+   validates three application services and separate journal rotation, with the
+   combined logging-probe limitation retained. Continue proxy supervision/file
+   logs, production retry/log rates, public certificates, actual-host reboot and
+   the coordinated deployment manifest. Recheck advisories at release and rerun
    combined acceptance on that exact package. These local compatibility
    results do not constitute release approval.
 

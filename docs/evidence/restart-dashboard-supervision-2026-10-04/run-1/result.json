@@ -1,0 +1,118 @@
+{
+  "passed": false,
+  "commands": [
+    {
+      "name": "systemd-version",
+      "exit": 0
+    },
+    {
+      "name": "node-version",
+      "exit": 0
+    },
+    {
+      "name": "postgres-version",
+      "exit": 0
+    },
+    {
+      "name": "initdb",
+      "exit": 0
+    },
+    {
+      "name": "database-start",
+      "exit": 0
+    },
+    {
+      "name": "provision",
+      "exit": 0
+    },
+    {
+      "name": "unit-verify",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-7",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-8",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-9",
+      "exit": 0
+    },
+    {
+      "name": "final-journal-tail",
+      "exit": 0
+    },
+    {
+      "name": "service-manager-journal",
+      "exit": 0
+    },
+    {
+      "name": "database-stop-final",
+      "exit": 0
+    }
+  ],
+  "checkpoints": [],
+  "private": "/home/rehearsal/fusion-dashboard-supervision-ralls4q1",
+  "namespace": "fsn-stats-test-75c276d5",
+  "units": {
+    "collector": "fsn-stats-test-75c276d5-collector.service",
+    "writer": "fsn-stats-test-75c276d5-writer.service",
+    "api": "fsn-stats-test-75c276d5-api.service"
+  },
+  "ports": {
+    "collector": 51939,
+    "api": 44455,
+    "postgres": 48671
+  },
+  "failure": "Traceback (most recent call last):\n  File \"/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-supervision-2026-10-04/run-linux.py\", line 177, in <module>\n    response = wait(lambda: fresh(701), 'initial snapshot')\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-supervision-2026-10-04/run-linux.py\", line 75, in wait\n    raise AssertionError('Deadline: ' + label)\nAssertionError: Deadline: initial snapshot\n",
+  "final_states": {
+    "collector": {
+      "MainPID": "0",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "writer": {
+      "MainPID": "0",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "api": {
+      "MainPID": "0",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    }
+  },
+  "cleanup": {
+    "errors": [],
+    "unit_files_removed": true,
+    "postgres_pid_absent": true,
+    "fixture_processes_stopped": true,
+    "private_plaintext_removed": true
+  },
+  "source_sha256": {
+    "deploy/systemd/fsn-stats-api.service": "41dcc4fd832553c53af9f4e1513dbc12c4e9fcd5a3fa1a54f44a980021a19ece",
+    "deploy/systemd/fsn-stats-collector.service": "6088a925b52e6521e4516fe61ff2d426b2dda5b6923aec2c55063abb2e6e710a",
+    "deploy/systemd/fsn-stats-writer.service": "8089111049f7d402937ccece46691355240885de7ded5b4ebf6452cf84daf7fa",
+    "deploy/systemd/journald@fsn-stats.conf": "247d05805ead6f7c46aa7778f9508b221a4d96cd0eae4e7e354d90d2f8b4ac2c"
+  },
+  "runner_sha256": {
+    "log-probe.py": "15f787eadb10878939f9674f2ba7aba31d2c85c31ed6ab9a152aa55954bf60a3",
+    "reporter.cjs": "bc73cd7e5ed5c153cd2b4c50b54e62b320d7aa17ede0235fb75bb9994a820cc1",
+    "run-linux.py": "6014de097fc1fbb20467e62f6ca32342c682c35f52fc14e21698d39294800dbc"
+  }
+}

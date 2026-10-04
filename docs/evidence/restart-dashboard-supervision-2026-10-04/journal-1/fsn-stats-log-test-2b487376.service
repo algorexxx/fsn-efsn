@@ -1,0 +1,15 @@
+[Unit]
+Description=Temporary bounded journal rotation probe
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+DynamicUser=yes
+ExecStart=/usr/bin/python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-supervision-2026-10-04/log-probe.py
+LogNamespace=fsn-stats-log-test-2b487376
+LogRateLimitIntervalSec=0
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+LimitCORE=0

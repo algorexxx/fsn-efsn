@@ -1,0 +1,369 @@
+{
+  "passed": false,
+  "commands": [
+    {
+      "name": "systemd-version",
+      "exit": 0
+    },
+    {
+      "name": "node-version",
+      "exit": 0
+    },
+    {
+      "name": "postgres-version",
+      "exit": 0
+    },
+    {
+      "name": "initdb",
+      "exit": 0
+    },
+    {
+      "name": "database-start",
+      "exit": 0
+    },
+    {
+      "name": "provision",
+      "exit": 0
+    },
+    {
+      "name": "unit-verify",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-7",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-8",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-9",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-10",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-11",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-12",
+      "exit": 0
+    },
+    {
+      "name": "database-stop-outage",
+      "exit": 0
+    },
+    {
+      "name": "database-restart",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-15",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-16",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-17",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-18",
+      "exit": 0
+    },
+    {
+      "name": "restart-limit-journal",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-20",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-21",
+      "exit": 0
+    },
+    {
+      "name": "application-journal",
+      "exit": 0
+    },
+    {
+      "name": "systemctl-23",
+      "exit": 0
+    },
+    {
+      "name": "journal-sync",
+      "exit": 0
+    },
+    {
+      "name": "first-log-marker",
+      "exit": 0
+    },
+    {
+      "name": "final-journal-tail",
+      "exit": 0
+    },
+    {
+      "name": "service-manager-journal",
+      "exit": 0
+    },
+    {
+      "name": "database-stop-final",
+      "exit": 0
+    }
+  ],
+  "checkpoints": [
+    {
+      "name": "late-collector-start",
+      "states": {
+        "collector": {
+          "MainPID": "452",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStatus": "0",
+          "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-collector.service",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "writer": {
+          "MainPID": "427",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStatus": "0",
+          "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-writer.service",
+          "ActiveState": "active",
+          "SubState": "running"
+        },
+        "api": {
+          "MainPID": "430",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStatus": "0",
+          "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-api.service",
+          "ActiveState": "active",
+          "SubState": "running"
+        }
+      },
+      "identities": {
+        "collector": "62235\t62235\t62235\t62235",
+        "writer": "64293\t64293\t64293\t64293",
+        "api": "62351\t62351\t62351\t62351"
+      },
+      "height": 701
+    },
+    {
+      "name": "collector-crash-recovery",
+      "before": {
+        "MainPID": "452",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-collector.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "after": {
+        "MainPID": "539",
+        "Result": "success",
+        "NRestarts": "1",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-collector.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "other_pids_unchanged": true,
+      "height": 702
+    },
+    {
+      "name": "writer-crash-recovery",
+      "before": {
+        "MainPID": "427",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-writer.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "after": {
+        "MainPID": "607",
+        "Result": "success",
+        "NRestarts": "1",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-writer.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "other_pids_unchanged": true,
+      "height": 703
+    },
+    {
+      "name": "api-crash-recovery",
+      "before": {
+        "MainPID": "430",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-api.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "after": {
+        "MainPID": "682",
+        "Result": "success",
+        "NRestarts": "1",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-stats-test-4cba9901-api.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "other_pids_unchanged": true,
+      "height": 704
+    },
+    {
+      "name": "database-recovery",
+      "same_application_pids": true,
+      "unavailable_during_outage": true,
+      "height": 705
+    },
+    {
+      "name": "pending-write-shutdown",
+      "status": {
+        "MainPID": "0",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      },
+      "drain_seconds": 2.1635416469944175,
+      "new_snapshot_committed": true
+    },
+    {
+      "name": "stale-and-recover",
+      "height": 706
+    },
+    {
+      "name": "intentional-stop",
+      "states": {
+        "collector": {
+          "MainPID": "0",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "ActiveState": "inactive",
+          "SubState": "dead"
+        },
+        "writer": {
+          "MainPID": "0",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "ActiveState": "inactive",
+          "SubState": "dead"
+        },
+        "api": {
+          "MainPID": "0",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStatus": "0",
+          "ControlGroup": "",
+          "ActiveState": "inactive",
+          "SubState": "dead"
+        }
+      },
+      "held_seconds": 6
+    },
+    {
+      "name": "restart-limit",
+      "status": {
+        "MainPID": "0",
+        "Result": "exit-code",
+        "NRestarts": "5",
+        "ExecMainStatus": "1",
+        "ControlGroup": "",
+        "ActiveState": "failed",
+        "SubState": "failed"
+      }
+    },
+    {
+      "name": "configuration-repair",
+      "height": 707
+    },
+    {
+      "name": "credential-log-check",
+      "secrets_present": false,
+      "log_bytes": 16290
+    }
+  ],
+  "private": "/home/rehearsal/fusion-dashboard-supervision-8ukksgxa",
+  "namespace": "fsn-stats-test-4cba9901",
+  "units": {
+    "collector": "fsn-stats-test-4cba9901-collector.service",
+    "writer": "fsn-stats-test-4cba9901-writer.service",
+    "api": "fsn-stats-test-4cba9901-api.service"
+  },
+  "ports": {
+    "collector": 40709,
+    "api": 43253,
+    "postgres": 49175
+  },
+  "failure": "Traceback (most recent call last):\n  File \"/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-supervision-2026-10-04/run-linux.py\", line 280, in <module>\n    first = run('first-log-marker', ['journalctl', '--namespace=' + namespace, '--no-pager', '-g', '^supervision-log-first-marker$'], expected=1)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-supervision-2026-10-04/run-linux.py\", line 57, in run\n    assert result.returncode == expected, (name, result.returncode, result.stderr.decode(errors='replace'))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('first-log-marker', 0, '')\n",
+  "final_states": {
+    "collector": {
+      "MainPID": "0",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "writer": {
+      "MainPID": "0",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "api": {
+      "MainPID": "0",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    }
+  },
+  "cleanup": {
+    "errors": [],
+    "unit_files_removed": true,
+    "postgres_pid_absent": true,
+    "fixture_processes_stopped": true,
+    "private_plaintext_removed": true
+  },
+  "source_sha256": {
+    "deploy/systemd/fsn-stats-api.service": "41dcc4fd832553c53af9f4e1513dbc12c4e9fcd5a3fa1a54f44a980021a19ece",
+    "deploy/systemd/fsn-stats-collector.service": "6088a925b52e6521e4516fe61ff2d426b2dda5b6923aec2c55063abb2e6e710a",
+    "deploy/systemd/fsn-stats-writer.service": "8089111049f7d402937ccece46691355240885de7ded5b4ebf6452cf84daf7fa",
+    "deploy/systemd/journald@fsn-stats.conf": "247d05805ead6f7c46aa7778f9508b221a4d96cd0eae4e7e354d90d2f8b4ac2c"
+  },
+  "runner_sha256": {
+    "log-probe.py": "828170092605ece738476dec7ac5dc55330516e72564252e871e4a131046e02c",
+    "reporter.cjs": "760b9b4ba47f89f66ea7b03cceec36de1a6d588316c13935cb626ccd323568bd",
+    "run-linux.py": "7659e8b101646e48e0b7065e92219f137fac04ddeea4483d020e71494d7e186b",
+    "verify.py": "df8bb914453d81e563e45f5df98635c8c3d3695f1966547104ad478412bee2c3"
+  }
+}

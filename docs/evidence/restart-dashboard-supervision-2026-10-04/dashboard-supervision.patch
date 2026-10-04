@@ -1,0 +1,296 @@
+diff --git a/deploy/systemd/fsn-stats-api.service b/deploy/systemd/fsn-stats-api.service
+new file mode 100644
+index 0000000000000000000000000000000000000000..03d94028b4a2d1d2f0628ba939b27024b028edd2
+--- /dev/null
++++ b/deploy/systemd/fsn-stats-api.service
+@@ -0,0 +1,35 @@
++[Unit]
++Description=Fusion dashboard api
++After=network.target
++StartLimitIntervalSec=60s
++StartLimitBurst=5
++
++[Service]
++Type=exec
++DynamicUser=yes
++WorkingDirectory=/opt/fsn-stats/current
++ExecStart=/opt/fsn-stats/node/bin/node api-server/server.js
++Environment=NODE_ENV=production
++EnvironmentFile=/etc/fsn-stats/api.env
++LoadCredential=api.password:/etc/fsn-stats/credentials/api.password
++Environment=DB_PASSWORD_FILE=%d/api.password
++Restart=always
++RestartSec=5s
++TimeoutStopSec=15s
++KillMode=control-group
++UMask=0077
++NoNewPrivileges=yes
++ProtectSystem=strict
++ProtectHome=yes
++PrivateTmp=yes
++PrivateDevices=yes
++RestrictSUIDSGID=yes
++RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
++CapabilityBoundingSet=
++LimitCORE=0
++StandardOutput=journal
++StandardError=journal
++LogNamespace=fsn-stats
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/deploy/systemd/fsn-stats-collector.service b/deploy/systemd/fsn-stats-collector.service
+new file mode 100644
+index 0000000000000000000000000000000000000000..754b68527a313ae00626455ed837bd69715d52cc
+--- /dev/null
++++ b/deploy/systemd/fsn-stats-collector.service
+@@ -0,0 +1,35 @@
++[Unit]
++Description=Fusion dashboard collector
++After=network.target
++StartLimitIntervalSec=60s
++StartLimitBurst=5
++
++[Service]
++Type=exec
++DynamicUser=yes
++WorkingDirectory=/opt/fsn-stats/current
++ExecStart=/opt/fsn-stats/node/bin/node server.js
++Environment=NODE_ENV=production
++EnvironmentFile=/etc/fsn-stats/collector.env
++LoadCredential=telemetry.json:/etc/fsn-stats/credentials/telemetry.json
++Environment=WS_CREDENTIALS_FILE=%d/telemetry.json
++Restart=always
++RestartSec=5s
++TimeoutStopSec=15s
++KillMode=control-group
++UMask=0077
++NoNewPrivileges=yes
++ProtectSystem=strict
++ProtectHome=yes
++PrivateTmp=yes
++PrivateDevices=yes
++RestrictSUIDSGID=yes
++RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
++CapabilityBoundingSet=
++LimitCORE=0
++StandardOutput=journal
++StandardError=journal
++LogNamespace=fsn-stats
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/deploy/systemd/fsn-stats-writer.service b/deploy/systemd/fsn-stats-writer.service
+new file mode 100644
+index 0000000000000000000000000000000000000000..b071105f78c2de3ea904ab3bc41fd3f8fa2184d9
+--- /dev/null
++++ b/deploy/systemd/fsn-stats-writer.service
+@@ -0,0 +1,35 @@
++[Unit]
++Description=Fusion dashboard writer
++After=network.target
++StartLimitIntervalSec=60s
++StartLimitBurst=5
++
++[Service]
++Type=exec
++DynamicUser=yes
++WorkingDirectory=/opt/fsn-stats/current
++ExecStart=/opt/fsn-stats/node/bin/node wsclient/wsclient.js
++Environment=NODE_ENV=production
++EnvironmentFile=/etc/fsn-stats/writer.env
++LoadCredential=writer.password:/etc/fsn-stats/credentials/writer.password
++Environment=DB_PASSWORD_FILE=%d/writer.password
++Restart=always
++RestartSec=5s
++TimeoutStopSec=15s
++KillMode=control-group
++UMask=0077
++NoNewPrivileges=yes
++ProtectSystem=strict
++ProtectHome=yes
++PrivateTmp=yes
++PrivateDevices=yes
++RestrictSUIDSGID=yes
++RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
++CapabilityBoundingSet=
++LimitCORE=0
++StandardOutput=journal
++StandardError=journal
++LogNamespace=fsn-stats
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/deploy/systemd/journald@fsn-stats.conf b/deploy/systemd/journald@fsn-stats.conf
+new file mode 100644
+index 0000000000000000000000000000000000000000..3c893e7be52a302c45e8af689d0cfff5b0e6be56
+--- /dev/null
++++ b/deploy/systemd/journald@fsn-stats.conf
+@@ -0,0 +1,16 @@
++[Journal]
++Storage=persistent
++SystemMaxUse=64M
++SystemMaxFileSize=8M
++SystemKeepFree=1G
++RuntimeMaxUse=16M
++RuntimeMaxFileSize=2M
++RuntimeKeepFree=64M
++MaxRetentionSec=7day
++MaxFileSec=1day
++RateLimitIntervalSec=30s
++RateLimitBurst=1000
++ForwardToSyslog=no
++ForwardToKMsg=no
++ForwardToConsole=no
++ForwardToWall=no
+diff --git a/docs/service-supervision.md b/docs/service-supervision.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..fd3973e0b6aa462a11392a5f2108ee085819d47c
+--- /dev/null
++++ b/docs/service-supervision.md
+@@ -0,0 +1,130 @@
++# Dashboard service supervision
++
++The candidate in `deploy/systemd/` runs the collector, snapshot writer and API
++as three independent system services. It adds no application or consensus code.
++The local rehearsal uses Ubuntu's systemd 255 and Linux Node 24.21.0. Validate
++the selected host and installed versions again before public deployment.
++
++## Provision the host
++
++Keep a reviewed, read-only release at `/opt/fsn-stats/current` and the reviewed
++Node executable at `/opt/fsn-stats/node/bin/node`. The working directory contains
++the installed root backend dependencies. The frontend build and TLS proxy remain
++separate. Only the deployment administrator may change the release or runtime.
++
++Each unit uses `DynamicUser=yes`: systemd assigns a separate unprivileged identity
++and removes it after shutdown. Do not grant these identities ownership of the
++release or persistent files. The processes use loopback TCP for the collector
++and PostgreSQL, not Unix peer authentication. No service writes application files.
++The units make the filesystem read-only, hide home directories, isolate temporary
++files/devices, remove capabilities and disable core dumps.
++
++Prepare root-owned, mode 0600 environment files at:
++
++- `/etc/fsn-stats/collector.env`
++- `/etc/fsn-stats/writer.env`
++- `/etc/fsn-stats/api.env`
++
++Use systemd environment-file syntax (`NAME=value`, no `export` or shell expansion).
++Supply the explicit settings in [deployment configuration](deployment-configuration.md),
++[snapshot storage](snapshot-storage.md) and [dashboard profile](dashboard-profile.md).
++Choose `GEOIP_MODE=disabled` or the complete checked [MMDB profile](geoip-mmdb.md).
++The local supervision drill's sampling and timeout values are test settings;
++the public manifest must reconcile them with freshness and stop deadlines.
++
++The environment files must not contain `WS_CREDENTIALS_FILE`, `DB_PASSWORD_FILE`,
++`WS_SECRET`, `SQLHOST` or `SQLPASS`. The units supply the two supported credential
++paths themselves. Store the source secrets in a root-owned mode 0700 directory
++`/etc/fsn-stats/credentials`, with mode 0600 files:
++
++| File | Recipient | Contents |
++| --- | --- | --- |
++| `telemetry.json` | Collector | Per-node telemetry credential roster |
++| `writer.password` | Writer | Restricted database writer password |
++| `api.password` | API | Read-only database password |
++
++`LoadCredential=` supplies a private copy to the corresponding service. Passwords
++are not command-line arguments or environment values. Keep the source files
++outside the release. Changing a source credential requires restarting its
++recipient; database role/password rotation still needs coordinated provisioning.
++The dashboard never receives validator signing keys.
++
++Provision PostgreSQL, the versioned schema and separate writer/read-only roles
++using [snapshot storage](snapshot-storage.md). Manage PostgreSQL through the
++selected distribution's own service. These units neither install nor initialize it.
++
++Install the three service files into `/etc/systemd/system/` and the journal
++configuration into `/etc/systemd/journald@fsn-stats.conf`. Run `systemd-analyze verify`
++on the installed unit files, then `systemctl daemon-reload`. Verify permissions,
++paths, credentials, schema and the chosen profile before enabling the three units
++for boot. There is no automatic installer or public activation in this change.
++
++## Start, inspect and recover
++
++Start the collector, writer and API with `systemctl start fsn-stats-collector
++fsn-stats-writer fsn-stats-api`. Each runs the Node entry point directly, without
++an npm or shell wrapper. There are no dependencies that stop healthy components
++when a neighbour restarts. The writer retries collector/database loss and the
++API returns unavailable when its database or fresh snapshot is missing.
++
++`Type=exec` confirms execution, not readiness. Verify the loopback API, complete
++fresh snapshots, per-node receipts and the public browser/proxy separately.
++`systemctl is-active` alone is insufficient. This configuration does not detect
++a live but hung process; monitoring and notification remain deployment work.
++
++`Restart=always` restarts unexpected exits after five seconds, including a clean
++unexpected exit. `systemctl stop` deliberately leaves a unit stopped. At most five
++starts within sixty seconds are allowed; repeated configuration failures leave
++the service failed instead of retrying indefinitely. Inspect both:
++
++```sh
++systemctl status fsn-stats-collector fsn-stats-writer fsn-stats-api
++journalctl -u fsn-stats-collector -u fsn-stats-writer -u fsn-stats-api
++journalctl --namespace=fsn-stats
++```
++
++Service-manager lifecycle messages are in the host journal; application output
++is in the dashboard namespace. After fixing a repeated startup failure, use
++`systemctl reset-failed` for that unit and explicitly start it. Restarts use the
++currently selected release/configuration; they do not choose a rollback version.
++Keep and verify the previous reviewed release before changing the selection.
++
++For a controlled full shutdown, stop the writer first, then the collector and
++API. The writer stops sampling, drains its pending transaction and closes its
++pool. The collector/API use Node's normal SIGTERM termination; in-flight HTTP
++requests and reporter sockets may be interrupted. Collector observations are
++rebuilt on reconnect; the database retains the last committed snapshot. The
++supervisor stops remaining processes after fifteen seconds. Choose database
++timeouts below that deadline and rehearse the actual profile under load.
++
++## Journal lifecycle and scope
++
++The supplied namespace configuration uses persistent storage with a 64 MiB
++budget and 8 MiB files, a 16 MiB/2 MiB volatile fallback, seven-day maximum
++retention and no forwarding to syslog, console, kernel or wall. It requests
++1 GiB/64 MiB free-space reserves for persistent/volatile storage respectively.
++These limits apply to this namespace, not the entire host. Journald rotation
++removes archived files; active files and allocation can exceed a nominal budget.
++Size limits can remove entries before seven days. Retention is not an archive.
++
++The configured 1000-message/30-second rate limit can suppress diagnostics, and
++journald adjusts its effective burst with available disk space. Review suppression
++messages and normal/outage log rates. Do not interpret silence as service health.
++Changing journal configuration requires restarting that namespace's journal
++service; coordinate application restarts and verify new messages afterwards.
++
++The local drill checks the actual service processes, crash recovery, a database
++outage, pending-write shutdown, stale API behaviour, intentional stop, repeated
++startup failure and repair. Its rotation exercise uses the same 16 MiB volatile
++budget, disables compression, and disables rate limiting in a separate temporary
++namespace containing only a synthetic log generator. It does not prove retention across reboot,
++public-host capacity or production rate-limiter behaviour.
++
++The existing nginx acceptance template still writes file logs. Its supervision,
++log rotation/reopening, public certificates/renewal, host reboot, health alerts
++and the common production manifest remain separate acceptance work. No service
++is enabled persistently by the local drill.
++
++References: [systemd service semantics](https://github.com/systemd/systemd/blob/v255/man/systemd.service.xml),
++[execution and credentials](https://github.com/systemd/systemd/blob/v255/man/systemd.exec.xml),
++[journal configuration](https://github.com/systemd/systemd/blob/v255/man/journald.conf.xml).
+diff --git a/docs/snapshot-storage.md b/docs/snapshot-storage.md
+index 65ac8eadc7ed5cf4f884930285b6bbe12c75d944..1a7fd8e2461ea241cf5a6f1fda70b5eb905948be 100644
+--- a/docs/snapshot-storage.md
++++ b/docs/snapshot-storage.md
+@@ -34,8 +34,8 @@ npm run start:api
+ The equivalent explicit service command is `node api-server/server.js`, with
+ the release root as its working directory. Update older service definitions
+ that ran `npm start` inside `api-server`; `npm start` now selects the root
+-collector command. Service supervision and graceful lifecycle acceptance
+-remain separate launch work.
++collector command. See [service supervision](service-supervision.md) for the tested systemd units,
++writer drain, restart limits and remaining host acceptance.
+ 
+ ## Provisioning
+ 

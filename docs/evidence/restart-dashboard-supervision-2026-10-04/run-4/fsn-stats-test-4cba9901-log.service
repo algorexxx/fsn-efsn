@@ -1,0 +1,14 @@
+[Unit]
+Description=Temporary bounded journal probe
+[Service]
+Type=oneshot
+DynamicUser=yes
+ExecStart=/usr/bin/python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-dashboard-supervision-2026-10-04/log-probe.py
+LogNamespace=fsn-stats-test-4cba9901
+LogRateLimitIntervalSec=0
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+LimitCORE=0
