@@ -1,6 +1,9 @@
 # External monitoring check
 
-The launch preference is to reuse an existing monitoring service if available.
+4 October scope update: launch supervision uses SSH checks and self-hosted
+fsn-stats. This external-monitor integration is optional and parked; it is not
+a launch prerequisite. The command remains available as a local diagnostic.
+
 `fsn-observe --history-check` supplies a small offline check that such a service
 can run. It evaluates retained collection freshness, logical budget headroom
 and unresolved incidents, returning JSON and a process exit status. It does not

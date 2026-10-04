@@ -29,11 +29,31 @@ across naturally advancing heads, catch-up and cold rechecks. Its native invento
 reconstruction supplied the retained reference data for the external timeline.
 Production workload and complete accounting remain open gates.
 
-The proposed minimal policy is **automatic observation and notification, with
-manual recovery** through the [operator procedure](restart-operator-recovery.md).
+The optional extended policy below is **automatic observation and notification,
+with manual recovery** through the [operator procedure](restart-operator-recovery.md).
 The existing purchase controller continues its ordinary retries. A monitor does
 not submit transactions, sign, fund accounts, clear records, choose branches,
 restart services or change mining settings.
+
+## Current launch scope — 4 October 2026
+
+The selected arrangement is supervised SSH inspection during the initial blocks
+and Peter's self-hosted fsn-stats dashboard. A separate hosted monitoring service
+is not required. The automatic notification design below is an optional future
+operating proposal, not a prerequisite for this restart. Existing collector,
+history and check commands remain optional tools for diagnosis and evidence.
+
+During an active launch session, inspect process/sync state, the agreed anchor
+and canonical head, the backup wallet's one-block/no-more-buying transition, the
+donation wallet's native purchase receipts and tickets, and continuing production.
+Use the established wallet handover and operator recovery procedures for those
+checks. Dashboard visibility complements the detailed SSH/RPC evidence; it does
+not attest ticket funding, native purchase success or finality by itself.
+
+Manual observation needs an active responder. Neither this chat nor the dashboard
+promises an unattended notification if its host stops responding. That limitation
+does not add a new service requirement. Revisit alerts only if unattended response
+becomes part of the requested operating scope.
 
 ## Initial operating arrangement
 
@@ -162,16 +182,15 @@ same incident as exhausted backing after a first retreat.
 ## Alert ownership, timing and closure
 
 The initial responding operator is Peter, consistent with the agreed launch.
-The preference is to reuse an existing monitoring service if available. The
-[offline history check](restart-observer-check.md) now supplies tested process
-results for stale/missing collection, low logical headroom and unresolved
-incidents. Actual service selection, message delivery and independently detecting
-missing check/host results remain open. An alternate contact, notification
-destination and acknowledgement/escalation timings remain unset. The backup key owner is not automatically an on-call
+For the optional automated-alert design, reuse an existing monitoring service
+if that work is later requested. The [offline history check](restart-observer-check.md)
+is already available; no provider selection or delivery work is on the present
+critical path. An alternate contact, notification destination and acknowledgement/
+escalation timings remain unset. The backup key owner is not automatically an on-call
 operator or emergency signer. Other operators can own alerts for their own nodes
 when they join; the central dashboard should not gain control of their wallets.
 
-| Setting to approve before deployment | Basis for choosing it |
+| Setting to approve if automated alerts are deployed | Basis for choosing it |
 | --- | --- |
 | Collection interval and RPC deadline | Measured node/RPC load; bound work and report partial/missing observations |
 | Collector/endpoint freshness deadline | Detect lost coverage independently of the collector's own success reports |

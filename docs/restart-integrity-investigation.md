@@ -321,7 +321,8 @@ head transaction/receipt commitments, bloom, cumulative difficulty and available
 head state against the preserved source. The retained baseline has now executed
 320,000 blocks beyond the legacy checkpoint boundary; the remaining history
 through 15,130,080 and historical execution of the newer candidate patches are
-still separate work. No replay beyond 3,000,000 has been launched.
+still separate work. At that completion, no replay beyond 3,000,000 had been
+launched.
 
 Original Linux results are
 `/home/rehearsal/results/restart-replay-three-million-2026-09-25`;
@@ -329,6 +330,42 @@ the explicit clean-stop file is
 `/home/rehearsal/replay/STOP-baseline-mainnet-three-million`.
 Scripts, startup and final evidence are retained in
 [the three-million evidence directory](evidence/restart-replay-three-million-2026-09-25).
+
+## D: continuation toward 3,300,000 — running
+
+On 4 October, fresh capacity checks found about 62.2 GiB available inside Linux
+and 112.3 GiB on D:. The existing reserves permit another bounded range. The
+closed three-million checkpoint remains preserved; a new D:-backed Linux ext4
+target at `/home/rehearsal/replay/baseline-mainnet-3300000` received its 2,351 files,
+totaling 4,988,076,554 bytes. Every copied file was reread and checked for SHA-256
+and length, with the complete inventory verified before replay.
+
+The separate read-only checkpoint check passed at exactly 3,000,000 in 4.89
+seconds. The unchanged retained baseline executable resumed at 13:28:37 UTC
+(15:28:37 Stockholm), targeting exactly 3,300,000. The startup capture at
+13:29:50 UTC records progress through 3,004,608 and makes no completion claim.
+Final replay and separate read-only exact-height acceptance remain pending.
+
+The reused runner checks the retained executable hashes, holds source and target
+runner locks, mounts original history and checkpoint read-only, and uses private
+mount/network namespaces. It preserves the existing 20 GiB Linux / 50 GiB D:
+free-space reserves and sampled 20 GiB target allowance. After copying, Linux
+had 61,801,828,352 available bytes and D: had 116,254,617,600. No W: storage is
+used, and no large copy is placed on C:. No real key or signing is involved.
+
+This continues baseline historical execution above the legacy shortcut boundary.
+It does not establish historical compatibility of the current P1–P17 candidate
+patches or complete the remaining history through 15,130,080. The runner ends
+at the bounded target; it does not launch a further range automatically.
+
+Live Linux results are
+`/home/rehearsal/results/restart-replay-3300000-2026-10-04`;
+the explicit clean-stop path is
+`/home/rehearsal/replay/STOP-baseline-mainnet-3300000`.
+The [range evidence directory](evidence/restart-replay-3300000-2026-10-04)
+retains scripts, checksummed copy/preflight records and the provisional startup
+snapshot. Only a successful replay followed by the exact-height cold check may
+be collected as final acceptance.
 
 ## Next gates
 

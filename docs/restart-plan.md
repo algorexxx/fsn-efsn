@@ -59,9 +59,9 @@ can be waived merely to meet a date.
 | Gate | Evidence already available | Remaining boundary |
 | --- | --- | --- |
 | G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,000,000; complete local package/restore | Accepted history and trust record before final construction |
-| G2 Client and supported operation | P1–P16 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
+| G2 Client and supported operation | P1–P17 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
-| G4 Monitoring and response | Read-only collector, durable history, ticket timelines, live reorg and budget checks | Usable operator coverage before public use |
+| G4 Supervised launch and response | SSH and self-hosted fsn-stats selected; optional observer diagnostics available | Rehearsed manual checks and operator response before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
 | G6 Public dashboard | [Toolchain acceptance](restart-dashboard-toolchain.md) passes; frontend and backend audits now report zero known advisories, with maintenance and public deployment controls open | Working public dashboard before public-use announcement |
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
@@ -85,7 +85,10 @@ Evidence: [integrity/replay](restart-integrity-investigation.md),
 [snapshot restore](restart-snapshot-restore.md),
 [surviving-node contact](restart-surviving-node.md).
 W: remains available for capacity; no new bulk workload starts without fresh
-space/path checks. Full execution beyond 3,000,000 is not currently running.
+space/path checks. On 4 October the unchanged baseline resumed from 3,000,000
+toward 3,300,000 on a verified separate D:-backed ext4 copy. The checkpoint cold
+check passed; final range acceptance is pending. See the
+[startup evidence](evidence/restart-replay-3300000-2026-10-04).
 
 ## G2 — Client and supported operation
 
@@ -132,7 +135,16 @@ Evidence: [wallet handover](restart-wallet-handover.md),
 Passing public-test-key rehearsals does not authorize real signing or use of
 the backup owner's funds for another participant.
 
-## G4 — Monitoring and response
+## G4 — Supervised launch and operator response
+
+4 October scope decision: Peter will use SSH checks during the actively
+supervised initial blocks and the self-hosted fsn-stats dashboard for visibility.
+A separate hosted monitoring service, heartbeat integration or notification
+provider is not a launch prerequisite. The observer/history tools already built
+remain optional diagnostics. They add no consensus rule. SSH checks by this
+assistant take place during an active work session, not as an unattended service.
+If nobody is watching, this arrangement does not promise immediate notification
+of a node or dashboard-host outage. Automated alerting can be a later choice.
 
 - [x] Measure the declared longer retained backlog: the
   [4,096-block/64-block replacement fixture](restart-observer-backlog.md) passes
@@ -144,21 +156,21 @@ the backup owner's funds for another participant.
   preserving all original events, ticket baselines and unresolved review state.
   This adds headroom within the existing 1 GiB ceiling; it does not prune events
   or reduce growing replay cost.
-- [ ] Select production collection cadence, headroom and retention duration that
-  preserve anchor baselines, unresolved incidents, review identity and displaced
-  evidence. Validate the chosen workload and operator response window; bounded
-  copy acceptance is not a production retention policy or rolling rotation.
+- [ ] For any observer history actually used during launch, select a bounded
+  collection/evidence budget and preserve its baselines and unresolved incidents.
+  Continuous retention/rotation sizing is conditional on deploying continuous
+  collection; it is not a reason to delay the supervised restart work.
 - [ ] Capture and preserve both production wallet baselines before activity.
   Historical state is sparse; later RPC acquisition cannot be assumed possible.
 - [x] Supply an [external history check](restart-observer-check.md) with tested
   executable exit codes for missing/stale collection, low logical headroom and
   unresolved incidents. Fresh reviews do not mask stopped collection; failed
   history reads return nonzero. This is local detection, not message delivery.
-- [ ] Connect the check to an existing monitoring service if available (the
-  selected preference); choose the actual service, destination, response timings
-  and operator coverage. Demonstrate message receipt/acknowledgement and missed-
-  job/host detection, including collection failure when history rejects an append.
-- [ ] Rehearse the finite detection/response cases in the
+- [ ] Rehearse the supervised SSH checks and fsn-stats visibility for the agreed
+  wallet handover. Record the responding operator, evidence and manual response
+  to stalled production, failed purchases and unavailable observation. External
+  service integration and automated notification delivery are outside this gate.
+- [ ] Rehearse the applicable manual detection/response cases in the
   [response guide](restart-monitoring-response.md), accept manual intervention
   limits and verify the actual authorized funding available for supported repair.
 
@@ -395,11 +407,11 @@ archive retention, valid/invalid certificate replacement, worker/master recovery
 and deliberate stop. Separate proxy and native efsn/database/browser regressions
 also pass. WebSocket clients reconnect after bounded worker retirement on reload;
 log size/age settings are retention targets, not a disk quota. Public certificate
-issuance/renewal, actual-host reboot, production log/alert acceptance and the
-coordinated manifest remain open. No chain or application code changes.
+issuance/renewal, actual-host reboot, production log and supervised-response
+acceptance and the coordinated manifest remain open. No chain or application code changes.
 
-This gate is separate from G4's operational alerts. A visible node list alone
-does not close either gate.
+This gate complements G4's supervised checks and response procedure. A visible
+node list alone does not close either gate.
 
 ## G7 — Independent producers after bootstrap
 
@@ -448,7 +460,7 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Historical parent and evidence deadline | Backup is a candidate; welcome verifiable surviving history | G1, before construction |
 | Recovery sequence | Candidate A, one backup block then donation bridge/production | G3, before real signing |
 | Chain/network identity and replay policy | Preserve history; no new ID selected | G5/G8 release manifest |
-| Monitor limits, delivery and coverage | Measured bounded observer; no deployed alert route | G4 |
+| Launch visibility and response | Supervised SSH plus self-hosted fsn-stats; observer tools optional; no separate alert-service requirement | G4 |
 | Public dashboard and hosting | Included; fsn-stats requires readiness work | G6 before public use |
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/toolchain | Final choices unselected | G2/G5 |
@@ -456,24 +468,21 @@ The last two items are post-bootstrap milestones; the first two precede release.
 
 Current technical order (efsn):
 
-1. G4: select and validate retention/capacity, then actual notification delivery.
-   Reuse the passing [bounded backlog](restart-observer-backlog.md) and
-   [explicit capacity copy](restart-observer-capacity.md). Choose the deployment
-   workload/headroom and response window; extend measurements only for a changed
-   bound or concrete failure. Use the [history check](restart-observer-check.md)
-   with the selected external monitoring service; actual delivery and independent
-   missed-job/host detection remain. No provider is configured yet.
-2. G1: resume bounded historical execution only after fresh capacity/path checks;
-   coordinate this larger disk job with the small local work above.
-3. G2/G5/G7: select the supported release matrix, complete the public package and
-   clean-machine entrant rehearsal, then finish G3/G8 with actual operator choices.
+1. G1: resume bounded historical execution after fresh capacity/path checks,
+   preserving completed checkpoints and the original backup. Keep baseline and
+   candidate-patch validation distinct.
+2. G2/G5/G7: select the supported release matrix, complete the public package and
+   clean-machine entrant rehearsal. Reuse retained passing evidence rather than
+   extending unrelated observer/dashboard features.
+3. G3/G4/G8: finish real-artifact review, the supervised SSH/dashboard handover
+   procedure and final rehearsal. External monitoring-service work is parked.
 
 G6 implementation is parked in the [standalone dashboard repository](restart-dashboard-handoff.md).
 Its existing commits, local acceptance and remaining work are preserved there.
 When dashboard work resumes, use its `docs/recovery-handoff.md` and the
 [runtime/dependency worklist](restart-dashboard-runtime.md). Public host/domain,
-certificate renewal, reboot, persistent logs, alerts, production retry/log rates,
-UI maintenance disposition and the coordinated release manifest remain open.
+certificate renewal, reboot, persistent logs, supervised response, production
+retry/log rates, UI maintenance disposition and the coordinated release manifest remain open.
 Retain the unresolved journal-probe limitation and same-host clock assumption.
 Select disabled geography explicitly or finish the enabled MMDB data workflow.
 Recheck advisories and rerun acceptance on the final package. The eight-node,
