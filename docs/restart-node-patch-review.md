@@ -132,6 +132,12 @@ finality rule is proposed.
 
 ## Independent review handoff
 
+The [bounded anchor-startup measurement](restart-anchor-startup.md) adds only
+an opt-in test and retained evidence. All 12 cases through one million synthetic
+descendants pass. Startup ancestry work is linear and repeated by genesis setup
+and chain construction; final hardware timing remains a release check. This adds
+no runtime patch and does not extend the P1–P17 inventory.
+
 Reviewers should identify the baseline and candidate commit, reference the row ID,
 and report the concrete trigger, affected behavior, severity and reproduction for
 each finding. Check the actual source and retained failure logs as well as these

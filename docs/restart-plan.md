@@ -98,9 +98,13 @@ check passed; final range acceptance is pending. See the
 - [ ] Freeze a bounded final regression matrix for supported Linux deployment:
   anchor/startup/import/rewind, ordinary purchase/mining/restart, compatible
   reorganization, interrupted writes, discovery and returning incompatible
-  history. Measure long post-anchor startup and larger reorganization batches
-  against declared resource limits; link earlier passing cases instead of
-  repeating unchanged tests indefinitely.
+  history. Larger reorganization batches still need a bounded resource
+  measurement; link earlier passing cases instead of repeating unchanged tests.
+- [x] Measure [anchor startup cost](restart-anchor-startup.md) through one million
+  synthetic descendants: all 12 cases pass, including split heads and damaged
+  canonical indexes. The two largest successful startup checks take about 26 s
+  aligned / 37 s split locally. Final release/host service timing remains open;
+  this does not establish full historical execution or large-reorg batch cost.
 - [ ] Record inherited failing tests and disposition native-call decode and
   other audit findings. Select the release toolchain/dependencies, establish CI,
   build reproducibly and rerun affected compatibility checks after changes.

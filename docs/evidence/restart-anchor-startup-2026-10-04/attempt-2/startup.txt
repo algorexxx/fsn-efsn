@@ -1,0 +1,34 @@
+=== RUN   TestRestartAnchorStartupCost
+=== RUN   TestRestartAnchorStartupCost/1000000
+    anchor_startup_test.go:36: unsigned stored-header fixture: anchor=15130080 descendants=1000000 diskBytes=278726566; state reused, no execution or seal-validation claim
+=== RUN   TestRestartAnchorStartupCost/1000000/disabled
+    anchor_startup_test.go:44: fresh-process startup disabled:
+        === RUN   TestRestartAnchorStartupCost
+            anchor_startup_test.go:159: startup mode=disabled descendants=1000000 setup=1.468936ms chain=971.349µs setupHeaderReads=0 chainHeaderReads=4 allocatedBytes=1541280 goSysBytes=74683656
+        --- PASS: TestRestartAnchorStartupCost (13.15s)
+        PASS
+=== RUN   TestRestartAnchorStartupCost/1000000/aligned
+    anchor_startup_test.go:44: fresh-process startup aligned:
+        === RUN   TestRestartAnchorStartupCost
+            anchor_startup_test.go:159: startup mode=aligned descendants=1000000 setup=12.910798851s chain=13.061745371s setupHeaderReads=2000006 chainHeaderReads=2000010 allocatedBytes=12125276768 goSysBytes=66360584
+        --- PASS: TestRestartAnchorStartupCost (38.64s)
+        PASS
+=== RUN   TestRestartAnchorStartupCost/1000000/split
+    anchor_startup_test.go:44: fresh-process startup split:
+        === RUN   TestRestartAnchorStartupCost
+            anchor_startup_test.go:159: startup mode=split descendants=1000000 setup=18.527241442s chain=18.787227688s setupHeaderReads=2750006 chainHeaderReads=2750012 allocatedBytes=16083200856 goSysBytes=62100744
+        --- PASS: TestRestartAnchorStartupCost (50.31s)
+        PASS
+=== RUN   TestRestartAnchorStartupCost/1000000/damaged_index
+    anchor_startup_test.go:44: fresh-process startup damaged_index:
+        === RUN   TestRestartAnchorStartupCost
+            anchor_startup_test.go:159: startup mode=damaged_index descendants=1000000 setup=14.288492882s chain=14.092314152s setupHeaderReads=2000005 chainHeaderReads=2000005 allocatedBytes=12124882336 goSysBytes=62035208
+        --- PASS: TestRestartAnchorStartupCost (42.56s)
+        PASS
+--- PASS: TestRestartAnchorStartupCost (204.34s)
+    --- PASS: TestRestartAnchorStartupCost/1000000 (204.34s)
+        --- PASS: TestRestartAnchorStartupCost/1000000/disabled (13.17s)
+        --- PASS: TestRestartAnchorStartupCost/1000000/aligned (38.66s)
+        --- PASS: TestRestartAnchorStartupCost/1000000/split (50.32s)
+        --- PASS: TestRestartAnchorStartupCost/1000000/damaged_index (42.57s)
+PASS

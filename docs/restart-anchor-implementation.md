@@ -137,6 +137,14 @@ and database; this work does not replace them.
 
 ## Remaining release gates
 
+The [4 October startup measurement](restart-anchor-startup.md) now passes 12
+bounded cases through one million synthetic descendants, using fresh child
+processes and reopened LevelDB. The two startup calls take about 26 seconds with
+aligned heads or 37 seconds with split heads at that depth; a damaged early
+canonical index is rejected without database mutation. This closes the local
+measurement in item 1 below, not final-host service timing or execution coverage.
+No production optimization was added.
+
 The later [multi-process rehearsal](restart-node-rehearsal.md) adds actual
 service/IPC/miner/downloader evidence and readable hexadecimal hashes in anchor
 rejection diagnostics. Its synthetic network passed compatible synchronization,
