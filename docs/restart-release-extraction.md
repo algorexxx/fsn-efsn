@@ -97,6 +97,11 @@ v4/v5 uniqueness guard correction is also recorded in the bundle.
 
 ## Next bounded sync check
 
+Completed on 4 October: [all three cases pass](restart-automatic-sync.md),
+including explicit downloader anchor rejection and unanchored adoption. The
+original scope below is retained as the pre-execution bound. Final release/host
+acceptance remains in the matrix.
+
 R8 can reuse `seedDenseMinerPair`, `buildAnchorBranch`, `closeTwoMinerSeed` and the
 existing process/IPC harness. No further historical database copy is needed.
 The planned fixture has 24 shared synthetic blocks, four accepted successors

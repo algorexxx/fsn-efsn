@@ -197,6 +197,16 @@ and probes the worker guard; it is not included in the production node binary.
 See [the service rehearsal report](../../docs/restart-node-rehearsal.md) for the
 four scenarios, retained logs and explicit limits on the sparse history/crash case.
 
+`TestRestartNodeRehearsal/unknown_heavier_automatic_sync` uses the same namespace
+and opt-in, but relies on ordinary automatic full-sync scheduling. It has 24
+shared blocks, four accepted successors and at most twelve foreign successors.
+It checks compatible catch-up, explicit anchored rejection of unknown heavier
+ancestry, and unanchored adoption of the same competing branch. Mining and buying
+stay stopped. Each case checks live/cold canonical lookups, three heads and
+state/ticket commitments. Use the [bounded runner](../../docs/evidence/restart-automatic-sync-2026-10-04/run-linux.sh)
+for the exact filter, 90-second sync limits and six-minute outer deadline;
+[results and limits](../../docs/restart-automatic-sync.md) are retained separately.
+
 `TestRestartCrashBoundaries` is available on Windows and Linux, explicitly enabled
 by `FUSION_RESTART_CRASH_REHEARSAL=1`. It uses actual LevelDB with a test-only write
 wrapper, exits child processes before and after every observed write, then cold

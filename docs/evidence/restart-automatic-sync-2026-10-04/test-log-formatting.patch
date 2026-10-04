@@ -1,0 +1,50 @@
+--- attempt-1/automatic_sync_linux_test.go
++++ attempt-2/automatic_sync_linux_test.go
+@@ -59,7 +59,7 @@
+ 	closeAutomaticSyncSeed(t, pair, 1, nil)
+ 	closeAutomaticSyncSeed(t, extra, 0, accepted[0])
+ 	closeAutomaticSyncSeed(t, extra, 1, nil)
+-	t.Logf("shared=%d anchor=%s acceptedHead=%s acceptedTD=%s foreignBlocks=%d foreignAnchor=%s foreignHead=%s foreignTD=%s; no foreign headers/bodies stored in any receiver", shared.NumberU64(), accepted[0].Hash(), acceptedHead.Hash(), acceptedTD, len(foreign), foreign[0].Hash(), foreignHead.Hash(), foreignTD)
++	t.Logf("shared=%d anchor=%s acceptedHead=%s acceptedTD=%s foreignBlocks=%d foreignAnchor=%s foreignHead=%s foreignTD=%s; no foreign headers/bodies stored in any receiver", shared.NumberU64(), accepted[0].Hash().Hex(), acceptedHead.Hash().Hex(), acceptedTD, len(foreign), foreign[0].Hash().Hex(), foreignHead.Hash().Hex(), foreignTD)
+ 	for _, scenario := range []struct {
+ 		name       string
+ 		localPath  string
+@@ -106,7 +106,7 @@
+ 			requireAutomaticSyncStopped(t, cold.status(t))
+ 			requireAutomaticSyncLookups(t, cold, scenario.canonical, scenario.displaced)
+ 			cold.stop(t, false)
+-			t.Logf("live/cold canonical transactions, receipts, three heads, state and ticket commitments agree at %d %s root=%s tickets=%s", scenario.want.NumberU64(), scenario.want.Hash(), scenario.want.Root(), scenario.want.MixDigest())
++			t.Logf("live/cold canonical transactions, receipts, three heads, state and ticket commitments agree at %d %s root=%s tickets=%s", scenario.want.NumberU64(), scenario.want.Hash().Hex(), scenario.want.Root().Hex(), scenario.want.MixDigest().Hex())
+ 		})
+ 	}
+ }
+@@ -159,12 +159,12 @@
+ 			var found *ethapi.RPCTransaction
+ 			requireNoError(t, node.call(t, &found, "eth_getTransactionByHash", tx.Hash()))
+ 			if found == nil || found.Hash != tx.Hash() || found.BlockHash == nil || *found.BlockHash != block.Hash() || found.BlockNumber == nil || (*big.Int)(found.BlockNumber).Cmp(block.Number()) != 0 || found.TransactionIndex == nil || uint64(*found.TransactionIndex) != uint64(index) {
+-				t.Fatalf("canonical transaction lookup differs for %s", tx.Hash())
++				t.Fatalf("canonical transaction lookup differs for %s", tx.Hash().Hex())
+ 			}
+ 			var receipt *types.Receipt
+ 			requireNoError(t, node.call(t, &receipt, "eth_getTransactionReceipt", tx.Hash()))
+ 			if receipt == nil || receipt.TxHash != tx.Hash() || receipt.BlockHash != block.Hash() || receipt.BlockNumber == nil || receipt.BlockNumber.Cmp(block.Number()) != 0 || receipt.TransactionIndex != uint(index) || receipt.Status != types.ReceiptStatusSuccessful {
+-				t.Fatalf("canonical receipt differs for %s", tx.Hash())
++				t.Fatalf("canonical receipt differs for %s", tx.Hash().Hex())
+ 			}
+ 		}
+ 	}
+@@ -173,12 +173,12 @@
+ 			var found *ethapi.RPCTransaction
+ 			requireNoError(t, node.call(t, &found, "eth_getTransactionByHash", tx.Hash()))
+ 			if found != nil && found.BlockHash != nil {
+-				t.Fatalf("displaced transaction %s retained a canonical lookup", tx.Hash())
++				t.Fatalf("displaced transaction %s retained a canonical lookup", tx.Hash().Hex())
+ 			}
+ 			var receipt *types.Receipt
+ 			requireNoError(t, node.call(t, &receipt, "eth_getTransactionReceipt", tx.Hash()))
+ 			if receipt != nil {
+-				t.Fatalf("displaced transaction %s retained a receipt", tx.Hash())
++				t.Fatalf("displaced transaction %s retained a receipt", tx.Hash().Hex())
+ 			}
+ 		}
+ 	}

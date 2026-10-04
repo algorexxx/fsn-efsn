@@ -1,0 +1,70 @@
+{
+  "status": "pass",
+  "scope": "R8 bounded complete-ancestry unknown-heavier automatic full-sync investigation",
+  "production_changes": false,
+  "final_release_acceptance": false,
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "pass",
+      "seconds": 43.39,
+      "cases": {
+        "compatible_catchup": {
+          "pass_seconds": 14.45,
+          "sync_seconds": 9.060987349,
+          "offered_td": 484,
+          "initial_td": 372
+        },
+        "anchored_refusal": {
+          "pass_seconds": 13.88,
+          "sync_seconds": 8.973847026,
+          "offered_td": 498,
+          "initial_td": 484
+        },
+        "unanchored_control": {
+          "pass_seconds": 14.41,
+          "sync_seconds": 9.589271711,
+          "offered_td": 498,
+          "initial_td": 484
+        }
+      },
+      "binary_sha256": "c7fb14c723a62f60d2d5e6b48d8192ca142430cb70a13edda2e568f4261ed014",
+      "retained_source_files": 1324,
+      "retained_source_and_binary_readback": "pass",
+      "skips": 0,
+      "race_reports": 0
+    },
+    {
+      "attempt": 2,
+      "status": "pass",
+      "seconds": 43.42,
+      "cases": {
+        "compatible_catchup": {
+          "pass_seconds": 14.45,
+          "sync_seconds": 9.059152008,
+          "offered_td": 484,
+          "initial_td": 372
+        },
+        "anchored_refusal": {
+          "pass_seconds": 13.87,
+          "sync_seconds": 9.081317379,
+          "offered_td": 498,
+          "initial_td": 484
+        },
+        "unanchored_control": {
+          "pass_seconds": 14.48,
+          "sync_seconds": 9.571031931,
+          "offered_td": 498,
+          "initial_td": 484
+        }
+      },
+      "binary_sha256": "ebb14f46261b0ed0de39db4cd3e14331396a878a504c0aec79b22f7d8c60b57c",
+      "retained_source_files": 1324,
+      "retained_source_and_binary_readback": "pass",
+      "skips": 0,
+      "race_reports": 0
+    }
+  ],
+  "only_inter_attempt_source_change": "test hash log/failure formatting",
+  "final_workspace_test_inputs_match": true
+}

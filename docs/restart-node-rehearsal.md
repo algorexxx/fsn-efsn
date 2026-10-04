@@ -1,6 +1,8 @@
 # Restart service and peer rehearsal
 
 24 September 2026. This extends the [inactive anchor prototype](restart-anchor-implementation.md).
+The later [automatic-sync follow-up](restart-automatic-sync.md) closes the bounded
+complete-ancestry/unknown-heavier combination, including an unanchored control.
 The production mainnet anchor remains unset. No operator key, preserved database,
 public network or production transaction is used in these experiments.
 

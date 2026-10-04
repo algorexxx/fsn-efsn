@@ -103,10 +103,13 @@ No further range is running; candidate-patch historical compatibility remains op
 - [x] Freeze the [ten-group release matrix and reviewer handoff](restart-release-matrix.md)
   for the supported Linux restored full-sync path. It links retained evidence,
   exact test entry points, inherited failures and final acceptance criteria.
-- [ ] Complete those groups against the selected release and hosts. The matrix
-  explicitly retains the complete-ancestry automatic-sync/unknown incompatible
-  fork gap, clean-machine operator kit and final handover rehearsal. Reuse
-  existing passing evidence; do not rerun unchanged investigations by default.
+- [ ] Complete those groups against the selected release and hosts, including
+  the clean-machine operator kit and final handover rehearsal. Reuse existing
+  passing evidence; do not rerun unchanged investigations by default.
+- [x] Close the bounded [unknown-heavier automatic-sync gap](restart-automatic-sync.md):
+  complete ancestry, compatible catch-up, explicit anchored refusal and an
+  unanchored control all pass with cold heads/lookups intact. Final release/host
+  acceptance remains open; the fixture adds no ongoing finality.
 - [x] Measure [anchor startup cost](restart-anchor-startup.md) through one million
   synthetic descendants: all 12 cases pass, including split heads and damaged
   canonical indexes. The two largest successful startup checks take about 26 s
