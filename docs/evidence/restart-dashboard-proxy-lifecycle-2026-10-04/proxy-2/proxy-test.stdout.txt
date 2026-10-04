@@ -1,0 +1,25 @@
+✖ local TLS proxy preserves bounded telemetry and isolates private routes (1088.195717ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2956.488645
+
+✖ failing tests:
+
+test at test/proxy-tls.test.cjs:46:1
+✖ local TLS proxy preserves bounded telemetry and isolates private routes (1088.195717ms)
+  Error: ENOENT: no such file or directory, open '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/react-frontend/build/asset-manifest.json'
+      at readFileSync (node:fs:483:20)
+      at TestContext.<anonymous> (/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/test/proxy-tls.test.cjs:76:33)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tmp/fsn-stats-auth/react-frontend/build/asset-manifest.json'
+  }

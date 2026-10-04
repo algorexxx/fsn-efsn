@@ -75,9 +75,11 @@ directories were removed after checking stopped processes and exact paths.
 No services were enabled at boot, and nothing was pushed or publicly deployed.
 
 This closes bounded local supervision of the three application processes and
-isolated journal rotation. Next, handle nginx supervision and its current file
-logs, log reopening/retention, public certificate acceptance/renewal and the
-coordinated host manifest. Still rehearse actual-host reboot, persistent journal
+isolated journal rotation. The subsequent
+[proxy lifecycle drill](restart-dashboard-proxy-lifecycle.md) passes nginx
+supervision, file-log reopening/retention and local certificate replacement.
+Public certificate issuance/renewal and the coordinated host manifest remain
+open. Still rehearse actual-host reboot, persistent journal
 retention, health/notification delivery, resource allocation and production
 retry/log-rate behaviour. A running process alone does not prove readiness;
 the existing freshness and report checks remain essential. See the

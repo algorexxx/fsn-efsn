@@ -1,0 +1,21 @@
+[Unit]
+Description=Rotate Fusion dashboard proxy logs
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/logrotate --state /var/lib/fsn-proxy-test-ffc166f3-rotate/status /run/fsn-proxy-test-ffc166f3-fixture/logrotate.conf
+StateDirectory=fsn-proxy-test-ffc166f3-rotate
+StateDirectoryMode=0700
+ReadWritePaths=/var/log/fsn-proxy-test-ffc166f3-logs
+UMask=0027
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_UNIX
+LimitCORE=0
+TimeoutStartSec=60s
+StandardOutput=journal
+StandardError=journal
+LogNamespace=fsn-proxy-test-ffc166f3

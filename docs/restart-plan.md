@@ -371,8 +371,15 @@ checkpoints pass, including crash recovery, database outage, pending-write drain
 stale refusal, deliberate stop and startup-rate-limit repair. A separate rotation
 drill retains 16 MiB and evicts old logs. The combined run's logging-probe failure
 is retained; production rate-limit/log-rate acceptance remains open. Application,
-dependency, frontend and efsn code are unchanged. Proxy supervision/file logs,
-public certificates, actual-host reboot and the coordinated manifest remain open.
+dependency, frontend and efsn code are unchanged.
+The [proxy lifecycle follow-up](restart-dashboard-proxy-lifecycle.md) now passes
+all eight local checkpoints for supervised HTTPS/WSS, timer-driven file rotation,
+archive retention, valid/invalid certificate replacement, worker/master recovery
+and deliberate stop. Separate proxy and native efsn/database/browser regressions
+also pass. WebSocket clients reconnect after bounded worker retirement on reload;
+log size/age settings are retention targets, not a disk quota. Public certificate
+issuance/renewal, actual-host reboot, production log/alert acceptance and the
+coordinated manifest remain open. No chain or application code changes.
 
 This gate is separate from G4's operational alerts. A visible node list alone
 does not close either gate.
@@ -451,9 +458,12 @@ Current technical order:
    subject to the release gates below.
    The [service supervision candidate](restart-dashboard-supervision.md) now
    passes local application recovery/shutdown and separate journal rotation.
-   Continue nginx supervision and its file-log lifecycle, public certificate
-   acceptance/renewal, actual-host reboot and persistent-journal checks. Preserve
-   receipt/transport diagnostics and the same-host clock assumption. Review the
+   The [proxy lifecycle candidate](restart-dashboard-proxy-lifecycle.md) now passes
+   local crash recovery, certificate replacement/refusal and timer-driven file-log
+   reopening/retention, with full proxy and native regression acceptance.
+   Continue public host/domain and certificate issuance/renewal selection,
+   actual-host reboot and persistent-journal checks. Preserve receipt/transport
+   diagnostics and the same-host clock assumption. Review the
    unresolved logging-probe limitation, production retry pacing and log volume using the
    [passing mining-outage drill](restart-dashboard-mining-outage.md).
    Approve the common deployment

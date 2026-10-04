@@ -187,9 +187,12 @@ report records lint coverage differences and remaining maintenance work.
    Alternatively, select explicit disabled geography in the launch manifest.
 3. The [service supervision follow-up](restart-dashboard-supervision.md) now
    validates three application services and separate journal rotation, with the
-   combined logging-probe limitation retained. Continue proxy supervision/file
-   logs, production retry/log rates, public certificates, actual-host reboot and
-   the coordinated deployment manifest. Recheck advisories at release and rerun
+   combined logging-probe limitation retained. The
+   [proxy lifecycle follow-up](restart-dashboard-proxy-lifecycle.md) now passes
+   local service recovery, certificate replacement/refusal and file-log lifecycle,
+   plus proxy and native regressions. Continue production retry/log rates, public
+   host/certificate renewal, actual-host reboot, alerts and the coordinated
+   deployment manifest. Recheck advisories at release and rerun
    combined acceptance on that exact package. These local compatibility
    results do not constitute release approval.
 

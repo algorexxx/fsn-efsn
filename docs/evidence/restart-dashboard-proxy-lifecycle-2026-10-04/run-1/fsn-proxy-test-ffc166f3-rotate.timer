@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Fusion dashboard proxy log rotation
+
+[Timer]
+OnCalendar=*-*-* *:00/5:00
+AccuracySec=30s
+Persistent=yes
+Unit=fsn-proxy-test-ffc166f3-rotate.service
+
+[Install]
+WantedBy=timers.target

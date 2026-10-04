@@ -1,0 +1,337 @@
+{
+  "passed": true,
+  "prefix": "fsn-proxy-test-ffc166f3",
+  "units": {
+    "proxy": "fsn-proxy-test-ffc166f3.service",
+    "rotate": "fsn-proxy-test-ffc166f3-rotate.service",
+    "timer": "fsn-proxy-test-ffc166f3-rotate.timer"
+  },
+  "commands": [
+    {
+      "name": "nginx-version",
+      "exit": 0
+    },
+    {
+      "name": "logrotate-version",
+      "exit": 0
+    },
+    {
+      "name": "systemd-version",
+      "exit": 0
+    },
+    {
+      "name": "calendar",
+      "exit": 0
+    },
+    {
+      "name": "syntax-backend.cjs",
+      "exit": 0
+    },
+    {
+      "name": "syntax-reporter.cjs",
+      "exit": 0
+    },
+    {
+      "name": "ca",
+      "exit": 0
+    },
+    {
+      "name": "csr-1",
+      "exit": 0
+    },
+    {
+      "name": "cert-1",
+      "exit": 0
+    },
+    {
+      "name": "csr-2",
+      "exit": 0
+    },
+    {
+      "name": "cert-2",
+      "exit": 0
+    },
+    {
+      "name": "verify-units",
+      "exit": 0
+    },
+    {
+      "name": "control-12",
+      "exit": 0
+    },
+    {
+      "name": "control-13",
+      "exit": 0
+    },
+    {
+      "name": "control-14",
+      "exit": 0
+    },
+    {
+      "name": "control-15",
+      "exit": 0
+    },
+    {
+      "name": "control-16",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-1",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-2",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-3",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-4",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-5",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-6",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-7",
+      "exit": 0
+    },
+    {
+      "name": "force-rotation-8",
+      "exit": 0
+    },
+    {
+      "name": "control-25",
+      "exit": 0
+    },
+    {
+      "name": "control-26",
+      "exit": 1
+    },
+    {
+      "name": "control-27",
+      "exit": 0
+    },
+    {
+      "name": "control-28",
+      "exit": 0
+    },
+    {
+      "name": "stopped-rotation",
+      "exit": 0
+    },
+    {
+      "name": "control-30",
+      "exit": 0
+    },
+    {
+      "name": "journal",
+      "exit": 0
+    },
+    {
+      "name": "manager-journal",
+      "exit": 0
+    },
+    {
+      "name": "control-33",
+      "exit": 0
+    },
+    {
+      "name": "control-34",
+      "exit": 1
+    },
+    {
+      "name": "control-35",
+      "exit": 0
+    }
+  ],
+  "checkpoints": [
+    {
+      "name": "supervised-https-wss",
+      "state": {
+        "MainPID": "445",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-proxy-test-ffc166f3.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "uid": 1000,
+      "certificate_serial": "01",
+      "height": 901
+    },
+    {
+      "name": "timer-rotation-reopen",
+      "rotation": {
+        "MainPID": "0",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      },
+      "descriptors": [
+        {
+          "pid": 445,
+          "target": "/var/log/fsn-proxy-test-ffc166f3-logs/nginx-error.log",
+          "inode": 193385
+        },
+        {
+          "pid": 445,
+          "target": "/var/log/fsn-proxy-test-ffc166f3-logs/nginx-access.log",
+          "inode": 193384
+        },
+        {
+          "pid": 445,
+          "target": "/var/log/fsn-proxy-test-ffc166f3-logs/nginx-error.log",
+          "inode": 193385
+        },
+        {
+          "pid": 446,
+          "target": "/var/log/fsn-proxy-test-ffc166f3-logs/nginx-error.log",
+          "inode": 193385
+        },
+        {
+          "pid": 446,
+          "target": "/var/log/fsn-proxy-test-ffc166f3-logs/nginx-access.log",
+          "inode": 193384
+        },
+        {
+          "pid": 446,
+          "target": "/var/log/fsn-proxy-test-ffc166f3-logs/nginx-error.log",
+          "inode": 193385
+        }
+      ],
+      "master_unchanged": true
+    },
+    {
+      "name": "archive-retention",
+      "files": {
+        "nginx-access.log": [
+          "nginx-access.log",
+          "nginx-access.log.1",
+          "nginx-access.log.2.gz",
+          "nginx-access.log.3.gz",
+          "nginx-access.log.4.gz",
+          "nginx-access.log.5.gz",
+          "nginx-access.log.6.gz",
+          "nginx-access.log.7.gz"
+        ],
+        "nginx-error.log": [
+          "nginx-error.log",
+          "nginx-error.log.1",
+          "nginx-error.log.2.gz",
+          "nginx-error.log.3.gz",
+          "nginx-error.log.4.gz",
+          "nginx-error.log.5.gz",
+          "nginx-error.log.6.gz",
+          "nginx-error.log.7.gz"
+        ]
+      },
+      "telemetry_connection_unchanged": true
+    },
+    {
+      "name": "certificate-reload",
+      "serial": "02",
+      "master_unchanged": true,
+      "old_workers_retired_seconds": 10.722675125987735,
+      "reporter_reconnected": true
+    },
+    {
+      "name": "invalid-certificate-refusal",
+      "reload_failed": true,
+      "serving_serial": "02",
+      "workers_unchanged": true,
+      "valid_selection_restored": true
+    },
+    {
+      "name": "worker-crash",
+      "master_unchanged": true,
+      "new_workers": [
+        565
+      ],
+      "reporter_reconnected": true
+    },
+    {
+      "name": "master-crash",
+      "before": {
+        "MainPID": "445",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-proxy-test-ffc166f3.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "after": {
+        "MainPID": "623",
+        "Result": "success",
+        "NRestarts": "1",
+        "ExecMainStatus": "0",
+        "ControlGroup": "/system.slice/fsn-proxy-test-ffc166f3.service",
+        "ActiveState": "active",
+        "SubState": "running"
+      },
+      "old_workers_gone": true,
+      "reporter_reconnected": true
+    },
+    {
+      "name": "intentional-stop",
+      "state": {
+        "MainPID": "0",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStatus": "0",
+        "ControlGroup": "",
+        "ActiveState": "inactive",
+        "SubState": "dead"
+      },
+      "seconds": 0.011302776008960791,
+      "rotation_while_stopped_passed": true
+    }
+  ],
+  "source_sha256": {
+    "deploy/nginx.conf.template": "d39d7e735c476d493fcea5ead82c94e2a6560ca290d76ca10f971b516c48e757",
+    "deploy/systemd/fsn-stats-proxy.service": "320630d87972d628b7dc185f1de9296afb5e223e91f62b48ef22f210680b4e82",
+    "deploy/systemd/fsn-stats-logrotate.service": "cc1cbe877373bb3b43e47330e5a9dafc9e607f5e066a945c8c0c1c113ce24adf",
+    "deploy/systemd/fsn-stats-logrotate.timer": "0bce26835190219239eb376c16ebce23421a1e6e32a6dfa7628827c82545ecf8",
+    "deploy/logrotate.conf": "a3f436bec6f62c1b1965d711e05ed82de4aed57cbae20fa8651e820b13648828"
+  },
+  "port": 42873,
+  "final_proxy": {
+    "MainPID": "0",
+    "Result": "success",
+    "NRestarts": "0",
+    "ExecMainStatus": "0",
+    "ControlGroup": "",
+    "ActiveState": "inactive",
+    "SubState": "dead"
+  },
+  "cleanup": {
+    "remaining_processes": [],
+    "runtime_units_removed": true,
+    "removed_paths": [
+      "/run/fsn-proxy-test-ffc166f3-fixture",
+      "/run/fsn-proxy-test-ffc166f3-runtime",
+      "/var/log/fsn-proxy-test-ffc166f3-logs",
+      "/var/lib/fsn-proxy-test-ffc166f3-rotate",
+      "/run/log/journal/239a1fc7d2234b1a95215e5c9f30af91.fsn-proxy-test-ffc166f3",
+      "/var/log/journal/239a1fc7d2234b1a95215e5c9f30af91.fsn-proxy-test-ffc166f3"
+    ],
+    "all_paths_removed": true,
+    "no_synthetic_secret_in_evidence": true
+  },
+  "runtime_sha256": {
+    "tmp/dashboard-runtime-review/v24.21.0/node": "7fde7b8afa198da66257f42ee2001d874c7355631e6d1579a5fb5ef1f246df4c",
+    "tmp/dashboard-proxy-runtime/extracted/usr/sbin/nginx": "a24def283d640db0bcad3c81b0630a3444b3079f6c50c956c9bd39330eaca544"
+  }
+}

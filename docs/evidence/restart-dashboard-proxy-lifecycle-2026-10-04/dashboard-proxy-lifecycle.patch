@@ -1,0 +1,347 @@
+diff --git a/deploy/logrotate.conf b/deploy/logrotate.conf
+new file mode 100644
+index 0000000000000000000000000000000000000000..de09bc2a4668bc21a9be4f17d473887b6c8da997
+--- /dev/null
++++ b/deploy/logrotate.conf
+@@ -0,0 +1,18 @@
++/var/log/fsn-stats-proxy/nginx-access.log /var/log/fsn-stats-proxy/nginx-error.log {
++    daily
++    maxsize 8M
++    rotate 7
++    maxage 7
++    missingok
++    notifempty
++    compress
++    delaycompress
++    create 0640 fsn-stats-proxy fsn-stats-proxy
++    su fsn-stats-proxy fsn-stats-proxy
++    sharedscripts
++    postrotate
++        if /usr/bin/systemctl --quiet is-active fsn-stats-proxy.service; then
++            /usr/bin/systemctl kill --kill-whom=main --signal=USR1 fsn-stats-proxy.service
++        fi
++    endscript
++}
+diff --git a/deploy/nginx.conf.template b/deploy/nginx.conf.template
+index 56399acd8e7dcbf89c80f593dde2afdb26325599..5e5ffff6045057abcfe4e9eca09b1f6e9a7bf961 100644
+--- a/deploy/nginx.conf.template
++++ b/deploy/nginx.conf.template
+@@ -1,7 +1,8 @@
+ worker_processes 1;
++worker_shutdown_timeout 10s;
+ daemon off;
+ pid "@@RUN@@/nginx.pid";
+-error_log "@@RUN@@/nginx-error.log" warn;
++error_log "@@LOG@@/nginx-error.log" warn;
+ events {
+     worker_connections 256;
+ }
+@@ -21,7 +22,7 @@ http {
+     }
+     default_type application/octet-stream;
+     log_format dashboard '$remote_addr $request_method $uri $status $body_bytes_sent';
+-    access_log "@@RUN@@/nginx-access.log" dashboard;
++    access_log "@@LOG@@/nginx-access.log" dashboard;
+     client_body_temp_path "@@RUN@@/body";
+     proxy_temp_path "@@RUN@@/proxy";
+     fastcgi_temp_path "@@RUN@@/fastcgi";
+diff --git a/deploy/systemd/fsn-stats-logrotate.service b/deploy/systemd/fsn-stats-logrotate.service
+new file mode 100644
+index 0000000000000000000000000000000000000000..404e01a7f9ac414d96e0461c703fa90bf5622762
+--- /dev/null
++++ b/deploy/systemd/fsn-stats-logrotate.service
+@@ -0,0 +1,21 @@
++[Unit]
++Description=Rotate Fusion dashboard proxy logs
++
++[Service]
++Type=oneshot
++ExecStart=/usr/sbin/logrotate --state /var/lib/fsn-stats-logrotate/status /etc/fsn-stats/logrotate.conf
++StateDirectory=fsn-stats-logrotate
++StateDirectoryMode=0700
++ReadWritePaths=/var/log/fsn-stats-proxy
++UMask=0027
++NoNewPrivileges=yes
++ProtectSystem=strict
++ProtectHome=yes
++PrivateTmp=yes
++PrivateDevices=yes
++RestrictAddressFamilies=AF_UNIX
++LimitCORE=0
++TimeoutStartSec=60s
++StandardOutput=journal
++StandardError=journal
++LogNamespace=fsn-stats
+diff --git a/deploy/systemd/fsn-stats-logrotate.timer b/deploy/systemd/fsn-stats-logrotate.timer
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8ca0acfd71a78857c8ef7dd804dc793319bdd44
+--- /dev/null
++++ b/deploy/systemd/fsn-stats-logrotate.timer
+@@ -0,0 +1,11 @@
++[Unit]
++Description=Check Fusion dashboard proxy log rotation
++
++[Timer]
++OnCalendar=*-*-* *:00/5:00
++AccuracySec=30s
++Persistent=yes
++Unit=fsn-stats-logrotate.service
++
++[Install]
++WantedBy=timers.target
+diff --git a/deploy/systemd/fsn-stats-proxy.service b/deploy/systemd/fsn-stats-proxy.service
+new file mode 100644
+index 0000000000000000000000000000000000000000..be735982fb80d20dd5b0b21489bc135b926499da
+--- /dev/null
++++ b/deploy/systemd/fsn-stats-proxy.service
+@@ -0,0 +1,40 @@
++[Unit]
++Description=Fusion dashboard HTTPS proxy
++After=network.target
++StartLimitIntervalSec=60s
++StartLimitBurst=5
++
++[Service]
++Type=exec
++User=fsn-stats-proxy
++Group=fsn-stats-proxy
++RuntimeDirectory=fsn-stats-proxy
++RuntimeDirectoryMode=0700
++LogsDirectory=fsn-stats-proxy
++LogsDirectoryMode=0750
++ExecStartPre=/usr/sbin/nginx -t -q -e stderr -c /etc/fsn-stats/nginx.conf
++ExecStart=/usr/sbin/nginx -e stderr -c /etc/fsn-stats/nginx.conf
++ExecReload=/usr/sbin/nginx -t -q -e stderr -c /etc/fsn-stats/nginx.conf
++ExecReload=/bin/kill -HUP $MAINPID
++Restart=always
++RestartSec=5s
++KillSignal=SIGQUIT
++KillMode=mixed
++TimeoutStopSec=15s
++UMask=0027
++NoNewPrivileges=yes
++ProtectSystem=strict
++ProtectHome=yes
++PrivateTmp=yes
++PrivateDevices=yes
++RestrictSUIDSGID=yes
++RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
++CapabilityBoundingSet=CAP_NET_BIND_SERVICE
++AmbientCapabilities=CAP_NET_BIND_SERVICE
++LimitCORE=0
++StandardOutput=journal
++StandardError=journal
++LogNamespace=fsn-stats
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/docs/proxy-lifecycle.md b/docs/proxy-lifecycle.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..45545671e4a7f7536f1d429f26ad3dd634c15b2e
+--- /dev/null
++++ b/docs/proxy-lifecycle.md
+@@ -0,0 +1,116 @@
++# Proxy supervision, logs and certificate replacement
++
++The candidate adds `fsn-stats-proxy.service`, `fsn-stats-logrotate.service` and
++`fsn-stats-logrotate.timer` under `deploy/systemd/`, plus `deploy/logrotate.conf`.
++The nginx template separates `@@RUN@@` from `@@LOG@@` and limits old-worker
++shutdown to ten seconds. Application, frontend and efsn code are unchanged.
++These files are deployment candidates; local testing does not install a public
++service or select its domain, address, certificates or capacity.
++
++## Provision and render
++
++Provision a dedicated system account and group named `fsn-stats-proxy`, without
++a login shell, home directory or validator keys. This proxy uses a stable account
++so file ownership and logrotate's `su`/`create` identities remain consistent.
++The three application services retain their separate dynamic identities.
++
++Use the reviewed distribution nginx executable at `/usr/sbin/nginx`, or explicitly
++adjust all three executable references in the unit. Do not run the default nginx
++service against this same configuration. The custom unit manages one foreground
++master, using the template's `daemon off`. Its only retained capability is binding
++privileged ports; the rest of the process runs unprivileged with a read-only
++filesystem except its managed runtime and log directories.
++
++Render the [proxy template](proxy-tls.md) with these host paths:
++
++| Field | Candidate host value |
++| --- | --- |
++| `@@RUN@@` | `/run/fsn-stats-proxy` |
++| `@@LOG@@` | `/var/log/fsn-stats-proxy` |
++| `@@BUILD@@` | Reviewed compiled frontend directory, readable by the proxy |
++| `@@CERT@@`, `@@KEY@@` | Protected certificate/key pair selected by the administrator |
++
++Supply the remaining host, port and loopback-upstream values explicitly. The
++template still listens on loopback; public binding is a separate reviewed change.
++Write the rendered file to `/etc/fsn-stats/nginx.conf`, root-owned and mode 0640
++with group `fsn-stats-proxy`. Give that group directory traversal and read access
++to the selected certificate/key files, but no write access. Keep environment
++files and application credentials root-only as described in
++[service supervision](service-supervision.md).
++
++Systemd creates `/run/fsn-stats-proxy` with mode 0700 and the persistent log
++directory with mode 0750. Install the three unit files into `/etc/systemd/system/`.
++Install the root-only logrotate configuration at `/etc/fsn-stats/logrotate.conf`;
++do not also include it in `/etc/logrotate.d`. The custom timer owns this schedule
++and its separate state file at `/var/lib/fsn-stats-logrotate/status`. Install the
++existing `journald@fsn-stats.conf` profile for service startup/reload diagnostics.
++Verify the installed units, reload systemd, then start the proxy and rotation
++timer. Enable boot startup only as part of the selected host's acceptance.
++
++## Recovery and controlled reload
++
++The proxy has the same five-second restart delay and five-starts-per-minute
++limit as the application services. A failed worker is replaced by nginx's
++existing master; a failed master is replaced by systemd. Deliberate service stop
++uses SIGQUIT and stays stopped. The fifteen-second service stop deadline bounds
++remaining processes. Check actual HTTPS/WSS and fresh reports after recovery.
++
++`systemctl reload fsn-stats-proxy` first runs `nginx -t` under the service identity,
++then sends HUP only if validation succeeds. Old workers retire within the
++template's ten-second shutdown budget. Existing WebSocket sessions can close
++and must reconnect; this reload is not a promise of uninterrupted telemetry.
++The local drill observes successful reconnection and fresh reports.
++
++For certificate replacement, provision a complete immutable directory containing
++the new key and certificate chain with the required ownership. Select that pair
++atomically, for example through an administrator-owned `current` symlink, then
++reload. Check a new TLS connection with normal chain and hostname verification
++and confirm the intended certificate is served. A successful HUP command alone
++does not prove activation. Keep the previous pair until acceptance completes.
++
++If validation fails, the tested service keeps serving its already-loaded pair.
++Restore the valid on-disk selection immediately: a subsequent crash/reboot would
++otherwise try to start with the rejected files. Inspect service and nginx error
++logs, repair the candidate and retry. The local test covers a mismatched key,
++restoration and later successful process recovery.
++
++The public CA/ACME client, protected renewal account, authorization method,
++renewal schedule, full-chain/expiry checks, failure alerts and host-specific
++reload hook remain to be selected and rehearsed. Short-lived fixture certificates
++are never deployment material. The
++[nginx reload semantics](https://nginx.org/en/docs/control.html) inform this
++procedure; certificate acceptance is checked independently over TLS.
++
++## Rotation and retention
++
++The timer checks every five minutes. Logrotate requests daily rotation, earlier
++rotation above 8 MiB, at most seven archives per log, seven-day age cleanup,
++compression and one-cycle delayed compression. It renames files and signals the
++manager-owned nginx master to reopen them. It does not copy and truncate an open
++log. New files have mode 0640 and the stable proxy owner/group. Rotation remains
++valid while the proxy is deliberately stopped.
++
++The local drill triggers the real timer/service with a test-only one-second
++schedule and padded fixture logs above 8 MiB. It checks master/worker descriptors
++point at the new inodes, then forces eight additional rotations and verifies
++archive count/content, compression, owner/mode and uninterrupted telemetry.
++It does not wait seven days or measure public traffic capacity.
++
++These settings are not a hard disk quota or seven guaranteed days of history.
++Files can exceed 8 MiB between timer checks, archive count may remove recent
++history sooner, and age cleanup occurs when rotation runs. Provision disk space
++and alerts for growth, rotation errors, failed timers and nginx reopen failures.
++Do not silently ignore a failed postrotate signal. The exact semantics are in
++the [logrotate manual](https://github.com/logrotate/logrotate/blob/3.21.0/logrotate.8.in).
++
++Access logs omit query strings and request bodies. nginx error diagnostics can
++include the request target, including its query. Do not put telemetry credentials
++in URLs; they remain in the existing TLS-protected reporter hello message. Apply
++log access/retention policy to both streams. The local fixture demonstrates this
++difference with non-secret markers.
++
++Inspect the proxy files, `journalctl --namespace=fsn-stats`, the host service-manager
++journal, `systemctl status fsn-stats-proxy fsn-stats-logrotate` and
++`systemctl list-timers fsn-stats-logrotate.timer`. Process state alone is not health.
++Public-host reboot, capacity, sustained retry/log volume and notification delivery
++remain deployment gates.
+diff --git a/docs/proxy-tls.md b/docs/proxy-tls.md
+index 57b490f95ec4c0070717b844c8669046d449c93f..a257055271d528d9cbb826f1afa3e3a3a028d95b 100644
+--- a/docs/proxy-tls.md
++++ b/docs/proxy-tls.md
+@@ -72,7 +72,7 @@ seconds. API timeout returns 504; API stale data remains 503 with `no-store`.
+ 
+ ## Reproduction and remaining acceptance
+ 
+-Render the template's explicit `@@RUN@@`, `@@TLS_PORT@@`, `@@HOST@@`, `@@CERT@@`,
++Render the template's explicit `@@RUN@@`, `@@LOG@@`, `@@TLS_PORT@@`, `@@HOST@@`, `@@CERT@@`,
+ `@@KEY@@`, `@@BUILD@@`, `@@COLLECTOR_PORT@@` and `@@API_PORT@@` values into a private
+ runtime directory. `@@BUILD@@` must point only at the compiled public directory.
+ Validate with `nginx -t`; the test fixture renders and checks that exact template.
+@@ -93,7 +93,10 @@ Complete actual efsn WSS, PostgreSQL and browser integration and collector outag
+ during mining before closing dashboard acceptance. Certificate renewal, service
+ restart, log retention, public-network conditions and runtime/dependency review
+ remain open. Access logs omit query strings and request bodies; production log
+-ownership and rotation still need to be configured.
++ownership and rotation are now covered by the local [proxy lifecycle](proxy-lifecycle.md)
++candidate, including service recovery and certificate replacement. Its separate
++runtime/log paths and ten-second old-worker shutdown are part of this template.
++Public hosting and production retention/renewal acceptance remain open.
+ 
+ Reference semantics: [nginx WebSocket tunneling](https://nginx.org/en/docs/http/websocket.html),
+ [proxy buffering, headers and timeouts](https://nginx.org/en/docs/http/ngx_http_proxy_module.html),
+diff --git a/docs/service-supervision.md b/docs/service-supervision.md
+index fd3973e0b6aa462a11392a5f2108ee085819d47c..8acc2b73a5a1e633c109049eedc5e939f7f0b127 100644
+--- a/docs/service-supervision.md
++++ b/docs/service-supervision.md
+@@ -120,10 +120,11 @@ budget, disables compression, and disables rate limiting in a separate temporary
+ namespace containing only a synthetic log generator. It does not prove retention across reboot,
+ public-host capacity or production rate-limiter behaviour.
+ 
+-The existing nginx acceptance template still writes file logs. Its supervision,
+-log rotation/reopening, public certificates/renewal, host reboot, health alerts
+-and the common production manifest remain separate acceptance work. No service
+-is enabled persistently by the local drill.
++The [proxy lifecycle candidate](proxy-lifecycle.md) now tests nginx supervision,
++file-log rotation/reopening and local certificate replacement. Public certificate
++issuance/renewal, host reboot, health alerts and the common production manifest
++remain separate acceptance work. No service is enabled persistently by the local
++drills.
+ 
+ References: [systemd service semantics](https://github.com/systemd/systemd/blob/v255/man/systemd.service.xml),
+ [execution and credentials](https://github.com/systemd/systemd/blob/v255/man/systemd.exec.xml),
+diff --git a/test/fixtures/nginx.cjs b/test/fixtures/nginx.cjs
+index d3c59c4d07031a5d121ddee414cf53d52de812cd..329340fe5225426e46f2403cbdb2e9a7821e9605 100644
+--- a/test/fixtures/nginx.cjs
++++ b/test/fixtures/nginx.cjs
+@@ -18,7 +18,7 @@ async function startProxy(t, directory, values) {
+     const port = await availablePort();
+     const template = readFileSync(join(__dirname, '../../deploy/nginx.conf.template'), 'utf8');
+     const config = template.replace(/@@([A-Z_]+)@@/g, (_, name) => {
+-        const value = { RUN: directory, TLS_PORT: port, ...values }[name];
++        const value = { RUN: directory, LOG: directory, TLS_PORT: port, ...values }[name];
+         assert.ok(value !== undefined && !/["\r\n]/.test(String(value)));
+         return value;
+     });
+diff --git a/test/proxy-tls.test.cjs b/test/proxy-tls.test.cjs
+index 9a805e77e67cf5b9aeb3ea73aafcb5ad93d9378a..7b8b8acb083f1d222a1c0e404a18859d5100bc27 100644
+--- a/test/proxy-tls.test.cjs
++++ b/test/proxy-tls.test.cjs
+@@ -73,12 +73,19 @@ test('local TLS proxy preserves bounded telemetry and isolates private routes',
+     await assert.rejects(request(proxy.port, ca, '/', { servername: 'wrong.test' }), error => error.code === 'ERR_TLS_CERT_ALTNAME_INVALID');
+     assert.equal((await request(proxy.port, ca, '/', { headers: { Host: 'wrong.test' } })).status, 421);
+     evidence.checks.certificateTrustAndHostname = true;
+-    const manifest = JSON.parse(readFileSync(join(values.BUILD, 'asset-manifest.json'), 'utf8'));
+-    const assetPath = manifest.files['main.js'];
+-    const asset = await request(proxy.port, ca, assetPath);
+-    assert.equal(asset.status, 200);
+-    assert.match(asset.headers['content-type'], /application\/javascript/);
+-    assert.deepEqual(asset.body, readFileSync(join(values.BUILD, assetPath)));
++    const html = readFileSync(join(values.BUILD, 'index.html'), 'utf8');
++    const scripts = Array.from(html.matchAll(/<script\b[^>]*\bsrc="([^"\r\n]+)"/g), match => match[1]);
++    assert.ok(scripts.length > 0);
++    for (const assetPath of scripts) {
++        assert.match(assetPath, /^\/static\/js\/[A-Za-z0-9_.-]+\.js$/);
++        const expectedAsset = readFileSync(join(values.BUILD, assetPath));
++
++        const asset = await request(proxy.port, ca, assetPath);
++
++        assert.equal(asset.status, 200);
++        assert.match(asset.headers['content-type'], /application\/javascript/);
++        assert.deepEqual(asset.body, expectedAsset);
++    }
+     evidence.checks.compiledAssets = true;
+     const routes = ['/primus', '/primus/', '/primus/primus.js', '/external', '/external/', '/api/primus.js', '/api/extra', '/stats-api', '/stats-api/private', '/stats-api/primus'];
+     for (const path of routes) {
