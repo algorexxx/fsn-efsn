@@ -99,6 +99,15 @@ scans no longer report either JWT advisory, while all other finding IDs remain.
 The new node binary and unchanged recovery binary are pinned in the addendum.
 F10 and final CI/release acceptance remain open.
 
+The later [text correction experiment](evidence/restart-release-text-2026-10-04)
+does **not** extend this selection. Its builds, runtime console checks and
+offline scans establish useful evidence, but the required Go 1.25 language
+directive changes compatibility defaults and needs broader review. Both the
+workspace module manifests remain at D1, and the selected candidate remains
+P1–P17+B1+D1 with Go 1.27.1 as compiler and `go 1.18` as the main-module language
+directive. These are distinct inputs; the investigation branch still contains
+excluded source and is not itself the release.
+
 ## Remaining release boundary
 
 1. Complete G1 history acceptance and patched historical compatibility. Current

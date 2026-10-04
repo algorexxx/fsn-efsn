@@ -130,3 +130,31 @@ The two JWT entries are technically remediated by D1, pending independent
 review. Next: qualify the text-normalization fix, resolve the WebSocket
 fixed-version discrepancy, and finish lower-level findings/CI acceptance.
 The existing F10 release hold remains in force.
+
+## Text correction experiment — not selected
+
+The [bounded text experiment](evidence/restart-release-text-2026-10-04)
+verified that authenticated x/text v0.39.0 includes all four files of the
+upstream correction. Both experimental commands build, the JS runtime and
+upstream text tests pass with their recorded skips, and actual console Unicode
+checks pass before and after. GO-2026-5970 disappears from both node scans;
+no new finding IDs appear. The WebSocket finding and lower-level review remain.
+
+This is broader than D1: it requires x/sync v0.21.0 and raises the main
+module's `go` directive from 1.18 to 1.25.0. Only text/sync change in the node's
+linked-module list, but both commands change compatibility defaults. The
+recovery binary changes even though its linked modules do not. A newer language
+directive can also alter existing loop-variable behavior. Do not equate a
+two-file manifest patch with unchanged execution semantics.
+
+Existing console/JS-tracer suites fail to compile identically before and after;
+RPC `TestServer` fails because its testdata directory is absent, also reproduced
+on D1. Node/NAT/errgroup checks pass; optional upstream text and real-router
+tests are explicitly skipped. These gaps belong to F1 and cannot be called
+full regression acceptance.
+
+Keep P1–P17+B1+D1 selected. Next, review the language/default changes and choose
+either a qualified upgrade with patched-history coverage or a separately
+maintained and qualified upstream backport. No backport, D2 selection or
+workspace module change is made by this experiment. The x/text finding remains
+open on the selected candidate; F10 is not cleared by the experimental scans.

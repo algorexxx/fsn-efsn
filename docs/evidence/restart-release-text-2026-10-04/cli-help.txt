@@ -1,0 +1,429 @@
+NAME:
+   efsn - the efsn command line interface
+
+USAGE:
+   efsn [global options] command [command options] [arguments...]
+
+COMMANDS:
+   account           Manage accounts
+   attach            Start an interactive JavaScript environment (connect to node)
+   console           Start an interactive JavaScript environment
+   db                Low level database operations
+   dump              Dump a specific block from storage
+   dumpconfig        Show configuration values
+   export            Export blockchain into file
+   export-preimages  Export the preimage database into an RLP stream
+   import            Import a blockchain file
+   import-preimages  Import the preimage database from an RLP stream
+   init              Bootstrap and initialize a new genesis block
+   license           Display license information
+   rawtx             Process raw transaction
+   removedb          Remove blockchain and state databases
+   version           Print version numbers
+   wallet            Manage Ethereum presale wallets
+   help, h           Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   ACCOUNT
+   
+    --keystore value              
+          Directory for the keystore (default = inside the datadir)
+   
+    --lightkdf                     (default: false)
+          Reduce key-derivation RAM & CPU usage at some expense of KDF strength
+   
+    --password value              
+          Password file to use for non-interactive password input
+   
+    --unlock value                
+          Comma separated list of accounts to unlock
+   
+    --usb                          (default: false)
+          Enable monitoring and management of USB hardware wallets
+   
+   API AND CONSOLE
+   
+    --authrpc.addr value           (default: "localhost")
+          Listening address for authenticated APIs
+   
+    --authrpc.jwtsecret value     
+          Path to a JWT secret to use for authenticated RPC endpoints
+   
+    --authrpc.port value           (default: 8551)
+          Listening port for authenticated APIs
+   
+    --authrpc.vhosts value        
+          Comma separated list of virtual hostnames from which to accept requests (server
+          enforced). Accepts '*' wildcard.
+   
+    --exec value                  
+          Execute JavaScript statement
+   
+    --http                         (default: false)
+          Enable the HTTP-RPC server
+   
+    --http.addr value              (default: "localhost")
+          HTTP-RPC server listening interface
+   
+    --http.api value              
+          API's offered over the HTTP-RPC interface
+   
+    --http.corsdomain value       
+          Comma separated list of domains from which to accept cross origin requests
+          (browser enforced)
+   
+    --http.port value              (default: 8545)
+          HTTP-RPC server listening port
+   
+    --http.rpcprefix value        
+          HTTP path path prefix on which JSON-RPC is served. Use '/' to serve on all
+          paths.
+   
+    --http.vhosts value            (default: "localhost")
+          Comma separated list of virtual hostnames from which to accept requests (server
+          enforced). Accepts '*' wildcard.
+   
+    --ipcdisable                   (default: false)
+          Disable the IPC-RPC server
+   
+    --ipcpath value               
+          Filename for IPC socket/pipe within the datadir (explicit paths escape it)
+   
+    --jspath value                 (default: .)
+          JavaScript root path for `loadScript`
+   
+    --preload value               
+          Comma separated list of JavaScript files to preload into the console
+   
+    --rpc.evmtimeout value         (default: 10s)
+          Sets a timeout used for eth_call (0=infinite)
+   
+    --rpc.gascap value             (default: 50000000)
+          Sets a cap on gas that can be used in eth_call/estimateGas (0=infinite)
+   
+    --rpc.txfeecap value           (default: 1)
+          Sets a cap on transaction fee (in ether) that can be sent via the RPC APIs (0 =
+          no cap)
+   
+    --ws                           (default: false)
+          Enable the WS-RPC server
+   
+    --ws.addr value                (default: "localhost")
+          WS-RPC server listening interface
+   
+    --ws.api value                
+          API's offered over the WS-RPC interface
+   
+    --ws.origins value            
+          Origins from which to accept websockets requests
+   
+    --ws.port value                (default: 8546)
+          WS-RPC server listening port
+   
+    --ws.rpcprefix value          
+          HTTP path prefix on which JSON-RPC is served. Use '/' to serve on all paths.
+   
+   DEVELOPER CHAIN
+   
+    --dev                          (default: false)
+          Ephemeral proof-of-authority network with a pre-funded developer account, mining
+          enabled
+   
+    --dev.period value             (default: 0)
+          Block period to use in developer mode (0 = mine only if transaction pending)
+   
+    --devnet                       (default: false)
+          Develop network: pre-configured proof-of-stake test network
+   
+    --devnetaddr value            
+          Develop network genesis address
+   
+   ETHEREUM
+   
+    --checkpoints value           
+          Specify check points custom file
+   
+    --config value                
+          TOML configuration file
+   
+    --datadir value                (default: /home/rehearsal/.ethereum)
+          Data directory for the databases and keystore
+   
+    --gcmode value                 (default: "full")
+          Blockchain garbage collection mode ("full", "archive")
+   
+    --networkid value              (default: 32659)
+          Network identifier (integer, 32659=mainnet, 46688=testnet, 55555=devnet)
+   
+    --resyncfrom value             (default: 0)
+          Force resync from specified block height
+   
+    --syncmode value               (default: full)
+          Blockchain sync mode ("fast", "full", or "light")
+   
+    --testnet                      (default: false)
+          Testnet network: pre-configured Fusion test network
+   
+   GAS PRICE ORACLE
+   
+    --gpo.blocks value             (default: 20)
+          Number of recent blocks to check for gas prices
+   
+    --gpo.ignoreprice value        (default: 2)
+          Gas price below which gpo will ignore transactions
+   
+    --gpo.maxprice value           (default: 500000000000)
+          Maximum transaction priority fee (or gasprice before London fork) to be
+          recommended by gpo
+   
+    --gpo.percentile value         (default: 60)
+          Suggested gas price is the given percentile of a set of recent transaction gas
+          prices
+   
+   LIGHT CLIENT
+   
+    --light.maxpeers value         (default: 100)
+          Maximum number of light clients to serve, or light servers to attach to
+   
+    --light.serve value            (default: 0)
+          Maximum percentage of time allowed for serving LES requests (multi-threaded
+          processing allows values over 100)
+   
+   LOGGING AND DEBUGGING
+   
+    --fakepow                      (default: false)
+          Disables proof-of-work verification
+   
+    --log.backtrace value         
+          Request a stack trace at a specific logging statement (e.g. "block.go:271")
+   
+    --log.debug                    (default: false)
+          Prepends log messages with call-site location (file and line number)
+   
+    --log.json                     (default: false)
+          Format logs with JSON
+   
+    --nocompaction                 (default: false)
+          Disables db compaction after import
+   
+    --pprof                        (default: false)
+          Enable the pprof HTTP server
+   
+    --pprof.addr value             (default: "127.0.0.1")
+          pprof HTTP server listening interface
+   
+    --pprof.blockprofilerate value (default: 0)
+          Turn on block profiling with the given rate
+   
+    --pprof.cpuprofile value      
+          Write CPU profile to the given file
+   
+    --pprof.memprofilerate value   (default: 524288)
+          Turn on memory profiling with the given rate
+   
+    --pprof.port value             (default: 6060)
+          pprof HTTP server listening port
+   
+    --trace value                 
+          Write execution trace to the given file
+   
+    --verbosity value              (default: 3)
+          Logging verbosity: 0=silent, 1=error, 2=warn, 3=info, 4=debug, 5=detail
+   
+    --vmodule value               
+          Per-module verbosity: comma-separated list of <pattern>=<level> (e.g.
+          eth/*=5,p2p=4)
+   
+   METRICS AND STATS
+   
+    --ethstats value              
+          Reporting URL of a ethstats service (nodename:secret@host:port)
+   
+    --metrics                      (default: false)
+          Enable metrics collection and reporting
+   
+    --metrics.addr value           (default: "127.0.0.1")
+          Enable stand-alone metrics HTTP server listening interface
+   
+    --metrics.expensive            (default: false)
+          Enable expensive metrics collection and reporting
+   
+    --metrics.influxdb             (default: false)
+          Enable metrics export/push to an external InfluxDB database
+   
+    --metrics.influxdb.bucket value (default: "geth")
+          InfluxDB bucket name to push reported metrics to (v2 only)
+   
+    --metrics.influxdb.database value (default: "geth")
+          InfluxDB database name to push reported metrics to
+   
+    --metrics.influxdb.endpoint value (default: "http://localhost:8086")
+          InfluxDB API endpoint to report metrics to
+   
+    --metrics.influxdb.organization value (default: "geth")
+          InfluxDB organization name (v2 only)
+   
+    --metrics.influxdb.password value (default: "test")
+          Password to authorize access to the database
+   
+    --metrics.influxdb.tags value  (default: "host=localhost")
+          Comma-separated InfluxDB tags (key/values) attached to all measurements
+   
+    --metrics.influxdb.token value (default: "test")
+          Token to authorize access to the database (v2 only)
+   
+    --metrics.influxdb.username value (default: "test")
+          Username to authorize access to the database
+   
+    --metrics.influxdbv2           (default: false)
+          Enable metrics export/push to an external InfluxDB v2 database
+   
+    --metrics.port value           (default: 6060)
+          Metrics HTTP server listening port
+   
+   MINER
+   
+    --autobt                       (default: false)
+          Enable auto buy tickets
+   
+    --mine                         (default: false)
+          Enable mining
+   
+    --miner.etherbase value        (default: "0")
+          Public address for block mining rewards (default = first account)
+   
+    --miner.extradata value       
+          Block extra data set by the miner (default = client version)
+   
+    --miner.gaslimit value         (default: 30000000)
+          Target gas ceiling for mined blocks
+   
+    --miner.gasprice value         (default: 0)
+          Minimum gas price for mining a transaction
+   
+    --miner.notify value          
+          Comma separated HTTP URL list to notify of new work packages
+   
+    --miner.noverify               (default: false)
+          Disable remote sealing verification
+   
+    --miner.recommit value         (default: 3s)
+          Time interval to recreate the block being mined
+   
+    --miner.threads value          (default: 0)
+          Number of CPU threads to use for mining
+   
+   MISC
+   
+    --help, -h                     (default: false)
+          show help
+   
+   NETWORKING
+   
+    --bootnodes value             
+          Comma separated enode URLs for P2P discovery bootstrap
+   
+    --bootnodesv4 value           
+          Comma separated enode URLs for P2P v4 discovery bootstrap (light server, full
+          nodes)
+   
+    --bootnodesv5 value           
+          Comma separated enode URLs for P2P v5 discovery bootstrap (light server, light
+          nodes)
+   
+    --identity value              
+          Custom node name
+   
+    --maxpeers value               (default: 25)
+          Maximum number of network peers (network disabled if set to 0)
+   
+    --maxpendpeers value           (default: 0)
+          Maximum number of pending connection attempts (defaults used if set to 0)
+   
+    --nat value                    (default: "any")
+          NAT port mapping mechanism (any|none|upnp|pmp|extip:<IP>)
+   
+    --netrestrict value           
+          Restricts network communication to the given IP networks (CIDR masks)
+   
+    --nodekey value               
+          P2P node key file
+   
+    --nodekeyhex value            
+          P2P node key as hex (for testing)
+   
+    --nodiscover                   (default: false)
+          Disables the peer discovery mechanism (manual peer addition)
+   
+    --port value                   (default: 40408)
+          Network listening port
+   
+    --v5disc                       (default: false)
+          Enables the experimental RLPx V5 (Topic Discovery) mechanism
+   
+   PERFORMANCE TUNING
+   
+    --cache value                  (default: 1024)
+          Megabytes of memory allocated to internal caching (default = 4096 mainnet full
+          node, 128 light mode)
+   
+    --cache.database value         (default: 50)
+          Percentage of cache memory allowance to use for database io
+   
+    --cache.gc value               (default: 25)
+          Percentage of cache memory allowance to use for trie pruning (default = 25% full
+          mode, 0% archive mode)
+   
+    --cache.preimages              (default: false)
+          Enable recording the SHA3/keccak preimages of trie keys
+   
+    --cache.trie value             (default: 25)
+          Percentage of cache memory allowance to use for trie caching (default = 25% full
+          mode, 50% archive mode)
+   
+    --fdlimit value                (default: 0)
+          Raise the open file descriptor resource limit (default = system fd limit)
+   
+   TRANSACTION POOL
+   
+    --txpool.accountqueue value    (default: 64)
+          Maximum number of non-executable transaction slots permitted per account
+   
+    --txpool.accountslots value    (default: 16)
+          Minimum number of executable transaction slots guaranteed per account
+   
+    --txpool.globalqueue value     (default: 1024)
+          Maximum number of non-executable transaction slots for all accounts
+   
+    --txpool.globalslots value     (default: 5120)
+          Maximum number of executable transaction slots for all accounts
+   
+    --txpool.journal value         (default: "transactions.rlp")
+          Disk journal for local transaction to survive node restarts
+   
+    --txpool.lifetime value        (default: 3h0m0s)
+          Maximum amount of time non-executable transaction are queued
+   
+    --txpool.locals value         
+          Comma separated accounts to treat as locals (no flush, priority inclusion)
+   
+    --txpool.nolocals              (default: false)
+          Disables price exemptions for locally submitted transactions
+   
+    --txpool.pricebump value       (default: 10)
+          Price bump percentage to replace an already existing transaction
+   
+    --txpool.pricelimit value      (default: 1)
+          Minimum gas price limit to enforce for acceptance into the pool
+   
+    --txpool.rejournal value       (default: 1h0m0s)
+          Time interval to regenerate the local transaction journal
+   
+   VIRTUAL MACHINE
+   
+    --vmdebug                      (default: false)
+          Record information useful for VM and contract debugging
+   
+
+COPYRIGHT:
+   Copyright 2017-2022 The Fusion Foundation Authors

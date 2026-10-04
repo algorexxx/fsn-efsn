@@ -1,0 +1,537 @@
+=== RUN   TestAutoDiscRace
+--- PASS: TestAutoDiscRace (0.50s)
+=== RUN   TestUPNP_DDWRT
+    natupnp_test.go:157: cannot listen: listen udp 239.255.255.250:1900: setsockopt: no such device
+--- SKIP: TestUPNP_DDWRT (0.02s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/p2p/nat	1.535s
+=== RUN   TestStartRPC
+=== RUN   TestStartRPC/all_off
+=== PAUSE TestStartRPC/all_off
+=== RUN   TestStartRPC/rpc_enabled_through_config
+=== PAUSE TestStartRPC/rpc_enabled_through_config
+=== RUN   TestStartRPC/rpc_enabled_through_API
+=== PAUSE TestStartRPC/rpc_enabled_through_API
+=== RUN   TestStartRPC/rpc_start_again_after_failure
+=== PAUSE TestStartRPC/rpc_start_again_after_failure
+=== RUN   TestStartRPC/rpc_stopped_through_API
+=== PAUSE TestStartRPC/rpc_stopped_through_API
+=== RUN   TestStartRPC/rpc_stopped_twice
+=== PAUSE TestStartRPC/rpc_stopped_twice
+=== RUN   TestStartRPC/ws_enabled_through_config
+=== PAUSE TestStartRPC/ws_enabled_through_config
+=== RUN   TestStartRPC/ws_enabled_through_API
+=== PAUSE TestStartRPC/ws_enabled_through_API
+=== RUN   TestStartRPC/ws_stopped_through_API
+=== PAUSE TestStartRPC/ws_stopped_through_API
+=== RUN   TestStartRPC/ws_stopped_twice
+=== PAUSE TestStartRPC/ws_stopped_twice
+=== RUN   TestStartRPC/ws_enabled_after_RPC
+=== PAUSE TestStartRPC/ws_enabled_after_RPC
+=== RUN   TestStartRPC/ws_enabled_after_RPC_then_stopped
+=== PAUSE TestStartRPC/ws_enabled_after_RPC_then_stopped
+=== RUN   TestStartRPC/rpc_stopped_with_ws_enabled
+=== PAUSE TestStartRPC/rpc_stopped_with_ws_enabled
+=== RUN   TestStartRPC/rpc_enabled_after_ws
+=== PAUSE TestStartRPC/rpc_enabled_after_ws
+=== CONT  TestStartRPC/all_off
+=== CONT  TestStartRPC/ws_enabled_through_config
+INFO [10-04|21:30:03.247] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.247] Starting P2P networking 
+INFO [10-04|21:30:03.247] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.248] Starting P2P networking 
+=== CONT  TestStartRPC/ws_stopped_through_API
+INFO [10-04|21:30:03.249] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.249] Starting P2P networking 
+INFO [10-04|21:30:03.251] WebSocket enabled                        url=ws://127.0.0.1:34867
+INFO [10-04|21:30:03.251] WebSocket enabled                        url=ws://127.0.0.1:45905
+INFO [10-04|21:30:03.251] HTTP server stopped                      endpoint=127.0.0.1:45905
+=== CONT  TestStartRPC/rpc_stopped_twice
+INFO [10-04|21:30:03.252] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.252] Starting P2P networking 
+INFO [10-04|21:30:03.252] HTTP server started                      endpoint=127.0.0.1:35439 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.253] test enabled                             url=http://127.0.0.1:35439/test
+INFO [10-04|21:30:03.253] HTTP server stopped                      endpoint=127.0.0.1:35439
+=== CONT  TestStartRPC/rpc_stopped_through_API
+INFO [10-04|21:30:03.253] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.253] Starting P2P networking 
+INFO [10-04|21:30:03.254] HTTP server stopped                      endpoint=127.0.0.1:34867
+=== CONT  TestStartRPC/rpc_start_again_after_failure
+INFO [10-04|21:30:03.255] HTTP server started                      endpoint=127.0.0.1:46789 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.255] test enabled                             url=http://127.0.0.1:46789/test
+INFO [10-04|21:30:03.255] HTTP server stopped                      endpoint=127.0.0.1:46789
+INFO [10-04|21:30:03.255] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.255] Starting P2P networking 
+=== CONT  TestStartRPC/rpc_enabled_through_API
+INFO [10-04|21:30:03.256] HTTP server started                      endpoint=127.0.0.1:33249 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.256] test enabled                             url=http://127.0.0.1:33249/test
+INFO [10-04|21:30:03.256] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.256] Starting P2P networking 
+INFO [10-04|21:30:03.257] HTTP server started                      endpoint=127.0.0.1:42791 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.257] test enabled                             url=http://127.0.0.1:42791/test
+INFO [10-04|21:30:03.265] HTTP server stopped                      endpoint=127.0.0.1:33249
+INFO [10-04|21:30:03.265] HTTP server stopped                      endpoint=127.0.0.1:42791
+=== CONT  TestStartRPC/rpc_enabled_through_config
+=== CONT  TestStartRPC/ws_enabled_after_RPC
+INFO [10-04|21:30:03.266] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.266] Starting P2P networking 
+INFO [10-04|21:30:03.266] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.266] Starting P2P networking 
+INFO [10-04|21:30:03.266] HTTP server started                      endpoint=127.0.0.1:42177 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.266] test enabled                             url=http://127.0.0.1:42177/test
+INFO [10-04|21:30:03.266] WebSocket endpoint opened                url=ws://127.0.0.1:42177
+INFO [10-04|21:30:03.267] HTTP server started                      endpoint=127.0.0.1:34255 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.267] test enabled                             url=http://127.0.0.1:34255/test
+INFO [10-04|21:30:03.269] HTTP server stopped                      endpoint=127.0.0.1:34255
+=== CONT  TestStartRPC/rpc_enabled_after_ws
+INFO [10-04|21:30:03.270] HTTP server stopped                      endpoint=127.0.0.1:42177
+=== CONT  TestStartRPC/rpc_stopped_with_ws_enabled
+INFO [10-04|21:30:03.270] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.270] Starting P2P networking 
+INFO [10-04|21:30:03.270] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.270] Starting P2P networking 
+INFO [10-04|21:30:03.270] HTTP server started                      endpoint=127.0.0.1:41855 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.271] test enabled                             url=http://127.0.0.1:41855/test
+INFO [10-04|21:30:03.270] WebSocket enabled                        url=ws://127.0.0.1:41571
+INFO [10-04|21:30:03.271] WebSocket endpoint opened                url=ws://127.0.0.1:41855
+INFO [10-04|21:30:03.271] WebSocket endpoint opened                url=ws://127.0.0.1:41571
+INFO [10-04|21:30:03.271] HTTP server stopped                      endpoint=127.0.0.1:41855
+=== CONT  TestStartRPC/ws_enabled_after_RPC_then_stopped
+INFO [10-04|21:30:03.272] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.272] Starting P2P networking 
+INFO [10-04|21:30:03.272] HTTP server started                      endpoint=127.0.0.1:39193 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.272] test enabled                             url=http://127.0.0.1:39193/test
+INFO [10-04|21:30:03.273] WebSocket endpoint opened                url=ws://127.0.0.1:39193
+INFO [10-04|21:30:03.274] HTTP server stopped                      endpoint=127.0.0.1:41571
+=== CONT  TestStartRPC/ws_enabled_through_API
+INFO [10-04|21:30:03.274] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.274] Starting P2P networking 
+INFO [10-04|21:30:03.275] HTTP server stopped                      endpoint=127.0.0.1:39193
+INFO [10-04|21:30:03.275] WebSocket enabled                        url=ws://127.0.0.1:42769
+INFO [10-04|21:30:03.275] WebSocket endpoint opened                url=ws://127.0.0.1:42769
+=== CONT  TestStartRPC/ws_stopped_twice
+INFO [10-04|21:30:03.275] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.275] Starting P2P networking 
+INFO [10-04|21:30:03.276] WebSocket enabled                        url=ws://127.0.0.1:38363
+INFO [10-04|21:30:03.276] HTTP server stopped                      endpoint=127.0.0.1:38363
+INFO [10-04|21:30:03.277] HTTP server stopped                      endpoint=127.0.0.1:42769
+--- PASS: TestStartRPC (0.00s)
+    --- PASS: TestStartRPC/all_off (0.00s)
+    --- PASS: TestStartRPC/ws_stopped_through_API (0.00s)
+    --- PASS: TestStartRPC/rpc_stopped_twice (0.00s)
+    --- PASS: TestStartRPC/ws_enabled_through_config (0.01s)
+    --- PASS: TestStartRPC/rpc_stopped_through_API (0.00s)
+    --- PASS: TestStartRPC/rpc_start_again_after_failure (0.01s)
+    --- PASS: TestStartRPC/rpc_enabled_through_API (0.01s)
+    --- PASS: TestStartRPC/rpc_enabled_through_config (0.00s)
+    --- PASS: TestStartRPC/ws_enabled_after_RPC (0.00s)
+    --- PASS: TestStartRPC/rpc_stopped_with_ws_enabled (0.00s)
+    --- PASS: TestStartRPC/rpc_enabled_after_ws (0.00s)
+    --- PASS: TestStartRPC/ws_enabled_after_RPC_then_stopped (0.00s)
+    --- PASS: TestStartRPC/ws_stopped_twice (0.00s)
+    --- PASS: TestStartRPC/ws_enabled_through_API (0.00s)
+=== RUN   TestDatadirCreation
+--- PASS: TestDatadirCreation (0.00s)
+=== RUN   TestIPCPathResolution
+--- PASS: TestIPCPathResolution (0.00s)
+=== RUN   TestNodeKeyPersistency
+--- PASS: TestNodeKeyPersistency (0.00s)
+=== RUN   TestNodeCloseMultipleTimes
+--- PASS: TestNodeCloseMultipleTimes (0.00s)
+=== RUN   TestNodeStartMultipleTimes
+INFO [10-04|21:30:03.280] Starting peer-to-peer node               instance="test node/linux-amd64/go1.27.1"
+INFO [10-04|21:30:03.281] Starting P2P networking 
+INFO [10-04|21:30:03.282] UDP listener up                          self=enode://8440cc6f1e140f5aba7f7ab11e0d2a7881001b4f8842c93e3eaaf69b6b7c43cfaa0c28be5bb9353623365c38c5a797e170568884eb16b2a052ae5ff2784e1899@[::]:39235
+--- PASS: TestNodeStartMultipleTimes (0.00s)
+=== RUN   TestNodeUsedDataDir
+INFO [10-04|21:30:03.283] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.283] Starting P2P networking 
+INFO [10-04|21:30:03.303] UDP listener up                          self=enode://05e951af608ebea6104086d6b4f5d66984f552acce86467f71f584a980b295d94c4a2ab7a5353bc9389d3f4517c847597125b6869ed5f23452d865e4cfb866a9@[::]:49701
+--- PASS: TestNodeUsedDataDir (0.02s)
+=== RUN   TestLifecycleRegistry_Successful
+--- PASS: TestLifecycleRegistry_Successful (0.00s)
+=== RUN   TestRegisterProtocols
+--- PASS: TestRegisterProtocols (0.00s)
+=== RUN   TestNodeCloseClosesDB
+--- PASS: TestNodeCloseClosesDB (0.00s)
+=== RUN   TestNodeOpenDatabaseFromLifecycleStart
+INFO [10-04|21:30:03.305] Starting peer-to-peer node               instance="test node/linux-amd64/go1.27.1"
+INFO [10-04|21:30:03.305] Starting P2P networking 
+INFO [10-04|21:30:03.307] UDP listener up                          self=enode://8440cc6f1e140f5aba7f7ab11e0d2a7881001b4f8842c93e3eaaf69b6b7c43cfaa0c28be5bb9353623365c38c5a797e170568884eb16b2a052ae5ff2784e1899@[::]:34827
+--- PASS: TestNodeOpenDatabaseFromLifecycleStart (0.00s)
+=== RUN   TestNodeOpenDatabaseFromLifecycleStop
+INFO [10-04|21:30:03.308] Starting peer-to-peer node               instance="test node/linux-amd64/go1.27.1"
+INFO [10-04|21:30:03.308] Starting P2P networking 
+INFO [10-04|21:30:03.311] UDP listener up                          self=enode://8440cc6f1e140f5aba7f7ab11e0d2a7881001b4f8842c93e3eaaf69b6b7c43cfaa0c28be5bb9353623365c38c5a797e170568884eb16b2a052ae5ff2784e1899@[::]:35619
+--- PASS: TestNodeOpenDatabaseFromLifecycleStop (0.00s)
+=== RUN   TestLifecycleLifeCycle
+INFO [10-04|21:30:03.312] Starting peer-to-peer node               instance="test node/linux-amd64/go1.27.1"
+INFO [10-04|21:30:03.312] Starting P2P networking 
+INFO [10-04|21:30:03.316] UDP listener up                          self=enode://8440cc6f1e140f5aba7f7ab11e0d2a7881001b4f8842c93e3eaaf69b6b7c43cfaa0c28be5bb9353623365c38c5a797e170568884eb16b2a052ae5ff2784e1899@[::]:37117
+--- PASS: TestLifecycleLifeCycle (0.00s)
+=== RUN   TestLifecycleStartupError
+INFO [10-04|21:30:03.318] Starting peer-to-peer node               instance="test node/linux-amd64/go1.27.1"
+INFO [10-04|21:30:03.318] Starting P2P networking 
+INFO [10-04|21:30:03.318] UDP listener up                          self=enode://8440cc6f1e140f5aba7f7ab11e0d2a7881001b4f8842c93e3eaaf69b6b7c43cfaa0c28be5bb9353623365c38c5a797e170568884eb16b2a052ae5ff2784e1899@[::]:49230
+--- PASS: TestLifecycleStartupError (0.00s)
+=== RUN   TestLifecycleTerminationGuarantee
+INFO [10-04|21:30:03.320] Starting peer-to-peer node               instance="test node/linux-amd64/go1.27.1"
+INFO [10-04|21:30:03.320] Starting P2P networking 
+INFO [10-04|21:30:03.321] UDP listener up                          self=enode://8440cc6f1e140f5aba7f7ab11e0d2a7881001b4f8842c93e3eaaf69b6b7c43cfaa0c28be5bb9353623365c38c5a797e170568884eb16b2a052ae5ff2784e1899@[::]:57432
+--- PASS: TestLifecycleTerminationGuarantee (0.00s)
+=== RUN   TestRegisterHandler_Successful
+INFO [10-04|21:30:03.323] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.323] Starting P2P networking 
+INFO [10-04|21:30:03.324] UDP listener up                          self=enode://f0be8fafd1af4d19d12b89340c230e1c015cda5caa66ae0713cb2464de1b1888fe64a77a1a82e4eee31e7689f8e2f4675bc810edb57c191e5e80ba3f7e9b8c0c@[::]:56670
+INFO [10-04|21:30:03.325] HTTP server started                      endpoint=127.0.0.1:7878  auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.325] test enabled                             url=http://127.0.0.1:7878/test
+INFO [10-04|21:30:03.325] WebSocket enabled                        url=ws://127.0.0.1:7979
+INFO [10-04|21:30:03.326] HTTP server stopped                      endpoint=127.0.0.1:7878
+INFO [10-04|21:30:03.327] HTTP server stopped                      endpoint=127.0.0.1:7979
+--- PASS: TestRegisterHandler_Successful (0.00s)
+=== RUN   TestRegisterHandler_Unsuccessful
+--- PASS: TestRegisterHandler_Unsuccessful (0.00s)
+=== RUN   TestWebsocketHTTPOnSamePort_WebsocketRequest
+INFO [10-04|21:30:03.328] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.328] Starting P2P networking 
+INFO [10-04|21:30:03.329] UDP listener up                          self=enode://07d1a44d19719ab2454500f31e8717e417e8875710be0823409f922ad6fcfa18feb02f8b81f692c74429f96fe50cf304f99cb49a20411ce6627e12d9521f4938@[::]:32783
+INFO [10-04|21:30:03.330] WebSocket enabled                        url=ws://127.0.0.1:33663
+INFO [10-04|21:30:03.330] HTTP server started                      endpoint=127.0.0.1:33663 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.335] HTTP server stopped                      endpoint=127.0.0.1:33663
+--- PASS: TestWebsocketHTTPOnSamePort_WebsocketRequest (0.01s)
+=== RUN   TestWebsocketHTTPOnSeparatePort_WSRequest
+INFO [10-04|21:30:03.336] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.336] Starting P2P networking 
+INFO [10-04|21:30:03.339] UDP listener up                          self=enode://800014fad88f44286db1c39f308de13a0e585289680889c0a0e1efd6bf1235c83fe83d8f1059879ea2b14a65cf30d80e5d3dd06981f07e419206917aeca55a65@[::]:52523
+INFO [10-04|21:30:03.339] HTTP server started                      endpoint=127.0.0.1:45113 auth=false prefix= cors= vhosts=
+INFO [10-04|21:30:03.340] WebSocket enabled                        url=ws://127.0.0.1:36007
+INFO [10-04|21:30:03.343] HTTP server stopped                      endpoint=127.0.0.1:45113
+INFO [10-04|21:30:03.343] HTTP server stopped                      endpoint=127.0.0.1:36007
+--- PASS: TestWebsocketHTTPOnSeparatePort_WSRequest (0.01s)
+=== RUN   TestNodeRPCPrefix
+=== PAUSE TestNodeRPCPrefix
+=== RUN   TestCorsHandler
+    rpcstack.go:160: INFO [10-04|21:30:03.344] HTTP server started                      endpoint=127.0.0.1:37741 auth=false prefix= cors=test,test.com vhosts=
+    rpcstack_test.go:43: checking RPC/HTTP on http://127.0.0.1:37741 [origin test.com]
+    rpcstack_test.go:46: checking RPC/HTTP on http://127.0.0.1:37741 [origin bad]
+    rpcstack.go:266: INFO [10-04|21:30:03.350] HTTP server stopped                      endpoint=127.0.0.1:37741
+--- PASS: TestCorsHandler (0.01s)
+=== RUN   TestVhosts
+    rpcstack.go:160: INFO [10-04|21:30:03.350] HTTP server started                      endpoint=127.0.0.1:42033 auth=false prefix= cors=              vhosts=test
+    rpcstack_test.go:56: checking RPC/HTTP on http://127.0.0.1:42033 [host test]
+    rpcstack_test.go:59: checking RPC/HTTP on http://127.0.0.1:42033 [host bad]
+    rpcstack.go:266: INFO [10-04|21:30:03.352] HTTP server stopped                      endpoint=127.0.0.1:42033
+--- PASS: TestVhosts (0.00s)
+=== RUN   TestWebsocketOrigins
+    rpcstack.go:153: INFO [10-04|21:30:03.353] WebSocket enabled                        url=ws://127.0.0.1:42765
+    rpcstack.go:160: INFO [10-04|21:30:03.353] HTTP server started                      endpoint=127.0.0.1:42765 auth=false prefix= cors=              vhosts=
+    rpcstack.go:266: INFO [10-04|21:30:03.359] HTTP server stopped                      endpoint=127.0.0.1:42765
+    rpcstack.go:153: INFO [10-04|21:30:03.359] WebSocket enabled                        url=ws://127.0.0.1:35031
+    rpcstack.go:160: INFO [10-04|21:30:03.359] HTTP server started                      endpoint=127.0.0.1:35031 auth=false prefix= cors=              vhosts=
+WARN [10-04|21:30:03.363] Rejected WebSocket connection            origin=http://test.com
+WARN [10-04|21:30:03.363] Rejected WebSocket connection            origin=https://foo.test
+WARN [10-04|21:30:03.364] Rejected WebSocket connection            origin=http://testa
+WARN [10-04|21:30:03.364] Rejected WebSocket connection            origin=http://atestb:8540
+WARN [10-04|21:30:03.365] Rejected WebSocket connection            origin=https://atestb:8540
+    rpcstack.go:266: INFO [10-04|21:30:03.365] HTTP server stopped                      endpoint=127.0.0.1:35031
+    rpcstack.go:153: INFO [10-04|21:30:03.365] WebSocket enabled                        url=ws://127.0.0.1:39291
+    rpcstack.go:160: INFO [10-04|21:30:03.365] HTTP server started                      endpoint=127.0.0.1:39291 auth=false prefix= cors=              vhosts=
+WARN [10-04|21:30:03.367] Rejected WebSocket connection            origin=test
+WARN [10-04|21:30:03.367] Rejected WebSocket connection            origin=http://test
+WARN [10-04|21:30:03.368] Rejected WebSocket connection            origin=http://test.foo
+WARN [10-04|21:30:03.368] Rejected WebSocket connection            origin=https://a.test.x
+WARN [10-04|21:30:03.369] Rejected WebSocket connection            origin=http://testx:8540
+WARN [10-04|21:30:03.369] Rejected WebSocket connection            origin=https://xtest:8540
+    rpcstack.go:266: INFO [10-04|21:30:03.369] HTTP server stopped                      endpoint=127.0.0.1:39291
+    rpcstack.go:153: INFO [10-04|21:30:03.370] WebSocket enabled                        url=ws://127.0.0.1:41189
+    rpcstack.go:160: INFO [10-04|21:30:03.370] HTTP server started                      endpoint=127.0.0.1:41189 auth=false prefix= cors=              vhosts=
+WARN [10-04|21:30:03.372] Rejected WebSocket connection            origin=http://12.34.56.78
+WARN [10-04|21:30:03.372] Rejected WebSocket connection            origin=http://12.34.56.78:443
+WARN [10-04|21:30:03.373] Rejected WebSocket connection            origin=http://1.12.34.56.78
+WARN [10-04|21:30:03.374] Rejected WebSocket connection            origin=http://12.34.56.78.a
+WARN [10-04|21:30:03.374] Rejected WebSocket connection            origin=https://87.65.43.21
+WARN [10-04|21:30:03.374] Rejected WebSocket connection            origin=http://87.65.43.21:8540
+WARN [10-04|21:30:03.375] Rejected WebSocket connection            origin=https://87.65.43.21:8540
+    rpcstack.go:266: INFO [10-04|21:30:03.375] HTTP server stopped                      endpoint=127.0.0.1:41189
+    rpcstack.go:153: INFO [10-04|21:30:03.376] WebSocket enabled                        url=ws://127.0.0.1:32907
+    rpcstack.go:160: INFO [10-04|21:30:03.376] HTTP server started                      endpoint=127.0.0.1:32907 auth=false prefix= cors=              vhosts=
+WARN [10-04|21:30:03.384] Rejected WebSocket connection            origin=http://test
+WARN [10-04|21:30:03.388] Rejected WebSocket connection            origin=https://test
+WARN [10-04|21:30:03.390] Rejected WebSocket connection            origin=http://test:8541
+WARN [10-04|21:30:03.392] Rejected WebSocket connection            origin=https://test:8541
+WARN [10-04|21:30:03.393] Rejected WebSocket connection            origin=http://bad
+WARN [10-04|21:30:03.394] Rejected WebSocket connection            origin=https://bad
+WARN [10-04|21:30:03.395] Rejected WebSocket connection            origin=http://bad:8540
+WARN [10-04|21:30:03.395] Rejected WebSocket connection            origin=https://bad:8540
+    rpcstack.go:266: INFO [10-04|21:30:03.396] HTTP server stopped                      endpoint=127.0.0.1:32907
+    rpcstack.go:153: INFO [10-04|21:30:03.396] WebSocket enabled                        url=ws://127.0.0.1:42051
+    rpcstack.go:160: INFO [10-04|21:30:03.396] HTTP server started                      endpoint=127.0.0.1:42051 auth=false prefix= cors=              vhosts=
+WARN [10-04|21:30:03.398] Rejected WebSocket connection            origin=https://test
+WARN [10-04|21:30:03.398] Rejected WebSocket connection            origin=http://test
+WARN [10-04|21:30:03.399] Rejected WebSocket connection            origin=http://test:8540
+WARN [10-04|21:30:03.400] Rejected WebSocket connection            origin=http://test:8541
+WARN [10-04|21:30:03.400] Rejected WebSocket connection            origin=https://test:8541
+WARN [10-04|21:30:03.401] Rejected WebSocket connection            origin=http://bad
+WARN [10-04|21:30:03.401] Rejected WebSocket connection            origin=https://bad
+WARN [10-04|21:30:03.401] Rejected WebSocket connection            origin=http://bad:8540
+WARN [10-04|21:30:03.402] Rejected WebSocket connection            origin=https://bad:8540
+    rpcstack.go:266: INFO [10-04|21:30:03.402] HTTP server stopped                      endpoint=127.0.0.1:42051
+    rpcstack.go:153: INFO [10-04|21:30:03.402] WebSocket enabled                        url=ws://127.0.0.1:46809
+    rpcstack.go:160: INFO [10-04|21:30:03.402] HTTP server started                      endpoint=127.0.0.1:46809 auth=false prefix= cors=              vhosts=
+WARN [10-04|21:30:03.405] Rejected WebSocket connection            origin=https://127.0.0.1
+WARN [10-04|21:30:03.405] Rejected WebSocket connection            origin=http://bad
+WARN [10-04|21:30:03.406] Rejected WebSocket connection            origin=https://bad
+WARN [10-04|21:30:03.406] Rejected WebSocket connection            origin=http://bad:8540
+WARN [10-04|21:30:03.407] Rejected WebSocket connection            origin=https://bad:8540
+    rpcstack.go:266: INFO [10-04|21:30:03.407] HTTP server stopped                      endpoint=127.0.0.1:46809
+--- PASS: TestWebsocketOrigins (0.05s)
+=== RUN   TestIsWebsocket
+--- PASS: TestIsWebsocket (0.00s)
+=== RUN   Test_checkPath
+=== RUN   Test_checkPath/0
+=== RUN   Test_checkPath/1
+=== RUN   Test_checkPath/2
+=== RUN   Test_checkPath/3
+=== RUN   Test_checkPath/4
+=== RUN   Test_checkPath/5
+=== RUN   Test_checkPath/6
+=== RUN   Test_checkPath/7
+--- PASS: Test_checkPath (0.00s)
+    --- PASS: Test_checkPath/0 (0.00s)
+    --- PASS: Test_checkPath/1 (0.00s)
+    --- PASS: Test_checkPath/2 (0.00s)
+    --- PASS: Test_checkPath/3 (0.00s)
+    --- PASS: Test_checkPath/4 (0.00s)
+    --- PASS: Test_checkPath/5 (0.00s)
+    --- PASS: Test_checkPath/6 (0.00s)
+    --- PASS: Test_checkPath/7 (0.00s)
+=== RUN   TestJWT
+    rpcstack.go:153: INFO [10-04|21:30:03.408] WebSocket enabled                        url=ws://127.0.0.1:45319
+    rpcstack.go:160: INFO [10-04|21:30:03.409] HTTP server started                      endpoint=127.0.0.1:45319 auth=true  prefix= cors=              vhosts=
+    rpcstack_test.go:339: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:339: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDd9.FlQK8v9RUvNs7ZheJWE_o2sLQtCan5ZF-dxVY1wmaeA]
+    rpcstack_test.go:339: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIxOTl9.rKSq0Bdp4nLiFQYDfDIhlPGh8Qc8NCAvs8HzrZQrEj4]
+    rpcstack_test.go:339: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTExNDIyMDUsImlhdCI6MTc5MTE0MjIwM30.-_Bw0Wt4hKznWDXtCu0-fzzuInVUpSUO5NkS0uWNL1M]
+    rpcstack_test.go:339: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXIiOiJiYXoiLCJpYXQiOjE3OTExNDIyMDN9.T398kd7BmXLKKawXmhHuc5hnJWOZUhLvU5P4spsndqA]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDl9.gVeT8AMJ1DxWj8afAyhs2Q-5d6lqQiqYv4c_7zz9A18]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIxOTd9.znqHg58mA5O8cP4xiA7JniCEvJxS6lD7wg2qfxg4Cw8]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDd9.LWdKI5DkJ2x9oufxounKNcDeP7LcXxDZQhfUD40DjSMvXCwH9nBkkZlIxN04sZsaBpU3tUWLkS-YMt_fV0BLmg]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTExNDIyMDMsImlhdCI6MTc5MTE0MjIwM30.4rPlwqcwSGH5Z19BYqCLjmxnXsLRdYYTT237EP81Dzo]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDcSemACt8x4iTMCda8Yhe3iZaWbvV5XKSTbuAn0M]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.UlZgGlBoQGVMMx_o0DBxDcXu8sOXloAlBDilw_OYsUE]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.WY5zrKy-isIVazLg1cBiIWZiJmnn8Xgpnhkt3mqnHHk]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.WY5zrKy-isIVazLg1cBiIWZiJmnn8Xgpnhkt3mqnHHk]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack_test.go:371: checking RPC/HTTP on http://127.0.0.1:45319 [Authorization Bearer 	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3OTExNDIyMDN9.297OVikGxI18fkbK5uAhmpQhDwJWhXsHfF7CjS7z6fI]
+    rpcstack.go:266: INFO [10-04|21:30:03.444] HTTP server stopped                      endpoint=127.0.0.1:45319
+--- PASS: TestJWT (0.04s)
+=== CONT  TestNodeRPCPrefix
+=== RUN   TestNodeRPCPrefix/http=_ws=
+INFO [10-04|21:30:03.444] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.444] Starting P2P networking 
+INFO [10-04|21:30:03.445] UDP listener up                          self=enode://189bdd2975fdbde88bc1fb5e69e66ed99aa3dd91f678f25abf4a4d84443d3ede9d27a68b1d957cf77431aa64d428487c19520fb4f81455d2f41d13da73f8a3db@[::]:49498
+INFO [10-04|21:30:03.446] WebSocket enabled                        url=ws://127.0.0.1:38565
+INFO [10-04|21:30:03.446] HTTP server started                      endpoint=127.0.0.1:38565 auth=false prefix= cors=              vhosts=
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38565/ []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38565/?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38565/test []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38565/test?p=1 []
+INFO [10-04|21:30:03.452] HTTP server stopped                      endpoint=127.0.0.1:38565
+=== RUN   TestNodeRPCPrefix/http=/testprefix_ws=
+INFO [10-04|21:30:03.453] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.453] Starting P2P networking 
+INFO [10-04|21:30:03.455] UDP listener up                          self=enode://f300b073fe7f4516c0e06d766c52f0ab40594dc4f1476d84ca1b376a9109aaee573dad7531d11a7516005ad592eb0cee304b18ff0b1a69516c7597590727012e@[::]:47270
+INFO [10-04|21:30:03.455] WebSocket enabled                        url=ws://127.0.0.1:36039
+INFO [10-04|21:30:03.455] HTTP server started                      endpoint=127.0.0.1:36039 auth=false prefix=/testprefix cors=              vhosts=
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/testprefix []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/testprefix?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/testprefix/x []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/testprefix/x?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/ []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/test []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:36039/test?p=1 []
+INFO [10-04|21:30:03.466] HTTP server stopped                      endpoint=127.0.0.1:36039
+=== RUN   TestNodeRPCPrefix/http=_ws=/testprefix
+INFO [10-04|21:30:03.466] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.466] Starting P2P networking 
+INFO [10-04|21:30:03.469] UDP listener up                          self=enode://c070d1e0483d1c42eaf09e13a63b286ba62fdd65d8c6bef480000c14024b1934299f522aad6f694361d2cabd00876dadeed4d7cc0fac2e9627c0c5aba02e4fee@[::]:35831
+INFO [10-04|21:30:03.469] WebSocket enabled                        url=ws://127.0.0.1:40315/testprefix
+INFO [10-04|21:30:03.469] HTTP server started                      endpoint=127.0.0.1:40315 auth=false prefix=            cors=              vhosts=
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:40315/ []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:40315/?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:40315/testprefix []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:40315/testprefix?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:40315/test []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:40315/test?p=1 []
+INFO [10-04|21:30:03.476] HTTP server stopped                      endpoint=127.0.0.1:40315
+=== RUN   TestNodeRPCPrefix/http=/testprefix_ws=/testprefix
+INFO [10-04|21:30:03.477] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.477] Starting P2P networking 
+INFO [10-04|21:30:03.479] UDP listener up                          self=enode://062840e11246ed8c827002c16f837f929040c5ee1d17ef3e550c0f9546acb58cc354e066bbec87ca46388e46c6171084b41dfb50f45bc0a27d1c64c9943183e4@[::]:60624
+INFO [10-04|21:30:03.479] WebSocket enabled                        url=ws://127.0.0.1:38629/testprefix
+INFO [10-04|21:30:03.479] HTTP server started                      endpoint=127.0.0.1:38629 auth=false prefix=/testprefix cors=              vhosts=
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/testprefix []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/testprefix?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/testprefix/x []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/testprefix/x?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/ []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/?p=1 []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/test []
+    node_test.go:547: checking RPC/HTTP on http://127.0.0.1:38629/test?p=1 []
+INFO [10-04|21:30:03.490] HTTP server stopped                      endpoint=127.0.0.1:38629
+--- PASS: TestNodeRPCPrefix (0.05s)
+    --- PASS: TestNodeRPCPrefix/http=_ws= (0.01s)
+    --- PASS: TestNodeRPCPrefix/http=/testprefix_ws= (0.01s)
+    --- PASS: TestNodeRPCPrefix/http=_ws=/testprefix (0.01s)
+    --- PASS: TestNodeRPCPrefix/http=/testprefix_ws=/testprefix (0.01s)
+=== RUN   ExampleLifecycle
+INFO [10-04|21:30:03.491] Starting peer-to-peer node               instance=node.test/linux-amd64/go1.27.1
+INFO [10-04|21:30:03.491] Starting P2P networking 
+INFO [10-04|21:30:03.491] UDP listener up                          self=enode://26745b820d3a4f77fbd0b8f221ed75c2af1090391401912bb51c886ab9a3bbbafead5484d2f0723f4457a3e9c5f78f75bd596ea8cd7f5249931c8145f17d5973@[::]:57110
+--- PASS: ExampleLifecycle (0.00s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/node	1.272s
+=== RUN   TestClientRequest
+--- PASS: TestClientRequest (0.00s)
+=== RUN   TestClientResponseType
+--- PASS: TestClientResponseType (0.00s)
+=== RUN   TestClientErrorData
+--- PASS: TestClientErrorData (0.00s)
+=== RUN   TestClientBatchRequest
+--- PASS: TestClientBatchRequest (0.00s)
+=== RUN   TestClientNotify
+--- PASS: TestClientNotify (0.00s)
+=== RUN   TestClientCancelWebsocket
+=== PAUSE TestClientCancelWebsocket
+=== RUN   TestClientCancelHTTP
+=== PAUSE TestClientCancelHTTP
+=== RUN   TestClientCancelIPC
+=== PAUSE TestClientCancelIPC
+=== RUN   TestClientSubscribeInvalidArg
+--- PASS: TestClientSubscribeInvalidArg (0.00s)
+=== RUN   TestClientSubscribe
+--- PASS: TestClientSubscribe (0.00s)
+=== RUN   TestClientSubscribeClose
+--- PASS: TestClientSubscribeClose (0.00s)
+=== RUN   TestClientCloseUnsubscribeRace
+--- PASS: TestClientCloseUnsubscribeRace (0.01s)
+=== RUN   TestClientSubscriptionUnsubscribeServer
+=== PAUSE TestClientSubscriptionUnsubscribeServer
+=== RUN   TestClientSubscriptionChannelClose
+=== PAUSE TestClientSubscriptionChannelClose
+=== RUN   TestClientNotificationStorm
+--- PASS: TestClientNotificationStorm (4.90s)
+=== RUN   TestClientSetHeader
+--- PASS: TestClientSetHeader (0.01s)
+=== RUN   TestClientHTTP
+--- PASS: TestClientHTTP (0.08s)
+=== RUN   TestClientReconnect
+    client_test.go:663: 0 errors, last error: <nil>
+--- PASS: TestClientReconnect (2.01s)
+=== RUN   TestHTTPErrorResponseWithDelete
+--- PASS: TestHTTPErrorResponseWithDelete (0.00s)
+=== RUN   TestHTTPErrorResponseWithPut
+--- PASS: TestHTTPErrorResponseWithPut (0.00s)
+=== RUN   TestHTTPErrorResponseWithMaxContentLength
+--- PASS: TestHTTPErrorResponseWithMaxContentLength (0.06s)
+=== RUN   TestHTTPErrorResponseWithEmptyContentType
+--- PASS: TestHTTPErrorResponseWithEmptyContentType (0.00s)
+=== RUN   TestHTTPErrorResponseWithValidRequest
+--- PASS: TestHTTPErrorResponseWithValidRequest (0.00s)
+=== RUN   TestHTTPResponseWithEmptyGet
+--- PASS: TestHTTPResponseWithEmptyGet (0.00s)
+=== RUN   TestHTTPRespBodyUnlimited
+--- PASS: TestHTTPRespBodyUnlimited (1.74s)
+=== RUN   TestHTTPErrorResponse
+--- PASS: TestHTTPErrorResponse (0.00s)
+=== RUN   TestHTTPPeerInfo
+--- PASS: TestHTTPPeerInfo (0.00s)
+=== RUN   TestServerRegisterName
+--- PASS: TestServerRegisterName (0.00s)
+=== RUN   TestServer
+    server_test.go:57: where'd my testdata go?
+--- FAIL: TestServer (0.00s)
+=== RUN   TestServerShortLivedConn
+--- PASS: TestServerShortLivedConn (0.01s)
+=== RUN   TestNewID
+--- PASS: TestNewID (0.00s)
+=== RUN   TestSubscriptions
+--- PASS: TestSubscriptions (0.00s)
+=== RUN   TestServerUnsubscribe
+--- PASS: TestServerUnsubscribe (0.00s)
+=== RUN   TestBlockNumberJSONUnmarshal
+--- PASS: TestBlockNumberJSONUnmarshal (0.00s)
+=== RUN   TestBlockNumberOrHash_UnmarshalJSON
+--- PASS: TestBlockNumberOrHash_UnmarshalJSON (0.00s)
+=== RUN   TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal
+=== RUN   TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/max
+=== RUN   TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/pending
+=== RUN   TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/latest
+=== RUN   TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/earliest
+--- PASS: TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal (0.00s)
+    --- PASS: TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/max (0.00s)
+    --- PASS: TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/pending (0.00s)
+    --- PASS: TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/latest (0.00s)
+    --- PASS: TestBlockNumberOrHash_WithNumber_MarshalAndUnmarshal/earliest (0.00s)
+=== RUN   TestWebsocketClientHeaders
+=== PAUSE TestWebsocketClientHeaders
+=== RUN   TestWebsocketOriginCheck
+=== PAUSE TestWebsocketOriginCheck
+=== RUN   TestWebsocketLargeCall
+=== PAUSE TestWebsocketLargeCall
+=== RUN   TestWebsocketPeerInfo
+--- PASS: TestWebsocketPeerInfo (0.00s)
+=== RUN   TestClientWebsocketPing
+=== PAUSE TestClientWebsocketPing
+=== RUN   TestClientWebsocketLargeMessage
+--- PASS: TestClientWebsocketLargeMessage (1.95s)
+=== RUN   TestClientWebsocketSevered
+=== PAUSE TestClientWebsocketSevered
+=== CONT  TestClientCancelWebsocket
+=== CONT  TestWebsocketLargeCall
+--- PASS: TestClientCancelWebsocket (1.99s)
+=== CONT  TestClientSubscriptionUnsubscribeServer
+--- PASS: TestClientSubscriptionUnsubscribeServer (0.00s)
+=== CONT  TestClientSubscriptionChannelClose
+--- PASS: TestWebsocketLargeCall (38.07s)
+=== CONT  TestClientCancelIPC
+--- PASS: TestClientCancelIPC (1.75s)
+=== CONT  TestClientCancelHTTP
+--- PASS: TestClientCancelHTTP (2.15s)
+=== CONT  TestWebsocketOriginCheck
+--- PASS: TestWebsocketOriginCheck (0.10s)
+=== CONT  TestClientWebsocketSevered
+    websocket_test.go:275: client subscription error: read tcp 127.0.0.1:40856->127.0.0.1:45771: i/o timeout
+--- PASS: TestClientWebsocketSevered (90.10s)
+=== CONT  TestClientWebsocketPing
+    websocket_test.go:369: server sending ping
+    websocket_test.go:342: server got pong: "ping"
+    websocket_test.go:381: server sending response
+    websocket_test.go:194: client got result: 1
+--- PASS: TestClientWebsocketPing (1.22s)
+=== CONT  TestWebsocketClientHeaders
+--- PASS: TestWebsocketClientHeaders (0.00s)
+--- PASS: TestClientSubscriptionChannelClose (133.66s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/rpc	146.445s
+=== RUN   TestZeroGroup
+--- PASS: TestZeroGroup (0.00s)
+=== RUN   TestWithContext
+--- PASS: TestWithContext (0.00s)
+=== RUN   TestTryGo
+--- PASS: TestTryGo (0.00s)
+=== RUN   TestGoLimit
+--- PASS: TestGoLimit (0.00s)
+=== RUN   TestCancelCause
+--- PASS: TestCancelCause (0.00s)
+=== RUN   ExampleGroup_parallel
+--- PASS: ExampleGroup_parallel (0.00s)
+PASS
+ok  	golang.org/x/sync/errgroup	1.017s
+FAIL

@@ -1,0 +1,28 @@
+# github.com/FusionFoundation/efsn/v5/eth/tracers/js [github.com/FusionFoundation/efsn/v5/eth/tracers/js.test]
+eth/tracers/js/tracer_test.go:65:60: cannot use &dummyStatedb{} (value of type *dummyStatedb) as vm.StateDB value in argument to vm.NewEVM: *dummyStatedb does not implement vm.StateDB (wrong type for method GetBalance)
+		have GetBalance("github.com/FusionFoundation/efsn/v5/common".Address) *big.Int
+		want GetBalance("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address) *big.Int
+eth/tracers/js/tracer_test.go:73:9: tracer.CaptureTxStart undefined (type "github.com/FusionFoundation/efsn/v5/eth/tracers".Tracer has no field or method CaptureTxStart)
+eth/tracers/js/tracer_test.go:78:9: tracer.CaptureTxEnd undefined (type "github.com/FusionFoundation/efsn/v5/eth/tracers".Tracer has no field or method CaptureTxEnd)
+eth/tracers/js/tracer_test.go:88:41: too many arguments in call to newJsTracer
+	have (string, nil, nil)
+	want (string, *"github.com/FusionFoundation/efsn/v5/eth/tracers".Context)
+eth/tracers/js/tracer_test.go:152:128: too many arguments in call to newJsTracer
+	have (string, nil, nil)
+	want (string, *"github.com/FusionFoundation/efsn/v5/eth/tracers".Context)
+eth/tracers/js/tracer_test.go:166:118: too many arguments in call to newJsTracer
+	have (string, nil, nil)
+	want (string, *"github.com/FusionFoundation/efsn/v5/eth/tracers".Context)
+eth/tracers/js/tracer_test.go:170:103: cannot use &dummyStatedb{} (value of type *dummyStatedb) as vm.StateDB value in argument to vm.NewEVM: *dummyStatedb does not implement vm.StateDB (wrong type for method GetBalance)
+		have GetBalance("github.com/FusionFoundation/efsn/v5/common".Address) *big.Int
+		want GetBalance("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address) *big.Int
+eth/tracers/js/tracer_test.go:190:41: too many arguments in call to newJsTracer
+	have (string, nil, nil)
+	want (string, *"github.com/FusionFoundation/efsn/v5/eth/tracers".Context)
+eth/tracers/js/tracer_test.go:194:106: cannot use &dummyStatedb{} (value of type *dummyStatedb) as vm.StateDB value in argument to vm.NewEVM: *dummyStatedb does not implement vm.StateDB (wrong type for method GetBalance)
+		have GetBalance("github.com/FusionFoundation/efsn/v5/common".Address) *big.Int
+		want GetBalance("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Address) *big.Int
+eth/tracers/js/tracer_test.go:219: unknown field MuirGlacierBlock in struct literal of type params.ChainConfig
+eth/tracers/js/tracer_test.go:219: too many errors
+FAIL	github.com/FusionFoundation/efsn/v5/eth/tracers/js [build failed]
+FAIL

@@ -153,6 +153,12 @@ Candidate-patch historical compatibility remains open.
   Both JWT advisory IDs disappear from offline scans, with no other module
   changes or new findings. The separate addendum extends the selected candidate;
   other F10 findings and independent review remain open.
+- [x] Complete the bounded [text dependency experiment](evidence/restart-release-text-2026-10-04):
+  authenticated upstream fix, before/after JS runtime and actual console checks,
+  both command builds and offline scans. Keep the update unselected: it also
+  raises the main Go language version and changes compatibility defaults.
+  Review those effects and patched-history requirements under F10; inherited
+  console/tracer/RPC test gaps remain under F1. P1–P17+B1+D1 is unchanged.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss

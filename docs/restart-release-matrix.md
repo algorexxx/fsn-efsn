@@ -14,6 +14,12 @@ adds the qualified JWT dependency correction. Its node/HTTP/WS race tests,
 separate builds and offline scans pass their stated checks; other F10 findings
 and final R1 acceptance remain open. Earlier same-host repeatability predates D1.
 
+The subsequent [text dependency experiment](evidence/restart-release-text-2026-10-04)
+remains unselected: its required main-module Go version change affects runtime
+defaults as well as dependencies. It records passing bounded checks and the
+inherited console/tracer/RPC coverage gaps under F1/F10, without extending the
+source selection or closing final acceptance.
+
 ## Scope and evidence rules
 
 The initial target is Linux amd64, full block synchronization from a verified
