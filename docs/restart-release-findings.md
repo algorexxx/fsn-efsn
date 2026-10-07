@@ -81,6 +81,15 @@ No human review or acceptance is inferred from a test pass.
   build. Seven relevant runtime files match upstream exactly. The incomplete
   EVM probe is archived separately and is not a passing regression.
 
+- F11 review completed and consolidated for handoff:
+  [restart-state-rollback-findings.md](restart-state-rollback-findings.md).
+  The EVM fixture was corrected (zero-balance omission observation) and
+  completed; the non-system time-locked rollback defect (F11-a) is reproduced
+  with a nil-pointer panic, the empty-entry deletion-flag defect (F11-b) is
+  confirmed direct-API-only, and the system-asset revert is clean once the
+  expectation is corrected. No runtime change, consensus activation, or
+  accepted-block/historical claim is made.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

@@ -1,0 +1,15 @@
+=== RUN   TestSelfdestructParentRollback
+=== RUN   TestSelfdestructParentRollback/successful_child_and_parent
+=== RUN   TestSelfdestructParentRollback/reverted_system_time_lock
+=== RUN   TestSelfdestructParentRollback/reverted_other_asset_time_lock
+    suicide_evm_test.go:105: reading restored child state panicked; snapshot rollback left invalid account state: runtime error: invalid memory address or nil pointer dereference
+    suicide_evm_test.go:92: ordinary balances after parent rollback = map[], want map[]
+    suicide_evm_test.go:95: time lock after parent rollback = [], want [{"StartTime":2000000001,"EndTime":2000000100,"Value":"5"}]
+--- FAIL: TestSelfdestructParentRollback (0.00s)
+    --- PASS: TestSelfdestructParentRollback/successful_child_and_parent (0.00s)
+    --- PASS: TestSelfdestructParentRollback/reverted_system_time_lock (0.00s)
+    --- FAIL: TestSelfdestructParentRollback/reverted_other_asset_time_lock (0.00s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/core/state	0.018s
+FAIL
+exit=1
