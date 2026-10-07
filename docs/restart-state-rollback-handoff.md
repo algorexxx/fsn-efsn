@@ -3,6 +3,10 @@
 7 October 2026. Investigation branch: `codex/restart-investigation-wip`.
 Saved investigation checkpoint: `e34f5c6e`.
 
+Follow-ups: [Opus findings](restart-state-rollback-findings.md) and
+[review gaps for Opus 4.8](restart-state-rollback-followup-opus.md).
+The sections below preserve the original handoff status.
+
 ## Purpose
 
 Check that cancelling an operation restores the account state that existed

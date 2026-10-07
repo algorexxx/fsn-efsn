@@ -1,0 +1,22 @@
+run-date-utc: 2026-10-07T19:29:56Z
+user: rehearsal
+distro: FusionRehearsal (WSL2)
+go: go version go1.27.1 linux/amd64
+gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+go-env: GOTOOLCHAIN=local GOWORK=off GOPROXY=off GOSUMDB=off GOFLAGS=-mod=readonly CGO_ENABLED=1 GOAMD64=v1 GOMAXPROCS=2
+GOCACHE: /home/rehearsal/results/restart-release-selection-2026-10-04/repeat-cache
+GOTMPDIR: (default /tmp)
+test-flags: -race -p=2 -count=1 -timeout=5m -run TestSelfdestructParentRollback -v ./core/state
+inner-timeout: 5m (go test)   outer-limit: 7m (timeout --kill-after=20s)
+network-namespace: unshare -n NOT PERMITTED for user rehearsal; ran in the distro default namespace.
+network-use: none possible — GOPROXY=off GOSUMDB=off GOFLAGS=-mod=readonly, cached modules only.
+net-ns-inode: net:[4026531833]
+ip-links:
+  lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+  eth0             UP             00:15:5d:46:33:75 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+disk:
+  Filesystem     1G-blocks  Used Available Use% Mounted on
+  /dev/sdd            196G  141G       46G  76% /
+  D:\                 466G  374G       93G  81% /mnt/d
+capacity-check: linux=45.2GiB (>30) d=92.7GiB (>60) ok=True
+fixture-patch-vs-corrected: 165 lines

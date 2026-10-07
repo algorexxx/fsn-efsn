@@ -1,0 +1,17 @@
+=== RUN   TestSelfdestructParentRollback
+=== RUN   TestSelfdestructParentRollback/successful_child_and_parent
+=== RUN   TestSelfdestructParentRollback/reverted_asset_without_ordinary_entry
+    suicide_evm_test.go:121: restored ordinary-balance read unavailable: rollback left an invalid (nil) ordinary entry and GetAllBalances panicked: runtime error: invalid memory address or nil pointer dereference
+    suicide_evm_test.go:134: restored time lock independently observed as unchanged: [{"StartTime":2000000001,"EndTime":2000000100,"Value":"5"}]
+=== RUN   TestSelfdestructParentRollback/reverted_asset_with_zero_ordinary_entry
+    suicide_evm_test.go:134: restored time lock independently observed as unchanged: [{"StartTime":2000000001,"EndTime":2000000100,"Value":"5"}]
+=== RUN   TestSelfdestructParentRollback/reverted_system_asset_with_ordinary_entry
+    suicide_evm_test.go:134: restored time lock independently observed as unchanged: [{"StartTime":2000000001,"EndTime":2000000100,"Value":"5"}]
+--- FAIL: TestSelfdestructParentRollback (0.01s)
+    --- PASS: TestSelfdestructParentRollback/successful_child_and_parent (0.00s)
+    --- FAIL: TestSelfdestructParentRollback/reverted_asset_without_ordinary_entry (0.00s)
+    --- PASS: TestSelfdestructParentRollback/reverted_asset_with_zero_ordinary_entry (0.00s)
+    --- PASS: TestSelfdestructParentRollback/reverted_system_asset_with_ordinary_entry (0.00s)
+FAIL
+FAIL	github.com/FusionFoundation/efsn/v5/core/state	0.020s
+FAIL

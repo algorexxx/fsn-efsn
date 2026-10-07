@@ -23,7 +23,7 @@ No human review or acceptance is inferred from a test pass.
 | F8 — R3/R7/R9 | Sparse historical state, header-only reconstruction limits, storage durability and inbound-only discovery leave supported-path boundaries. | Support Linux restored LevelDB without freezer, full sync and enabled outbound dialing. Keep read-only preservation and verified restore. Do not infer power-loss safety from process exits. | Scope restriction selected; final storage/host, restart/restore, advertised TCP/UDP and DNS checks remain required. |
 | F9 — R1 | Go 1.21.3 is outside the current support window. Go 1.27.1 cannot link the inherited optional memsize integration. | Select Go 1.27.1 for qualification and the isolated B1 profiler removal. Remove its unused dependency entries. Keep the baseline replay toolchain unchanged. | Technical correction passes node build, CLI probes and same-host clean-cache binary comparison. Independent patch review and final compiler regression acceptance remain open. |
 | F10 — R1/all affected rows | D1 technically remediates the two JWT findings. The selected candidate retains x/text and an unreviewed WebSocket entry with a disputed fixed version. The text experiment removes its advisory but also changes the main Go language version and compatibility defaults. The bounded language/default review is complete; required regression and history evidence is not. Recovery has WebSocket symbol presence but no source call finding. Lower-level findings remain. Existing CI uses Go 1.19. | Follow the [dependency report](restart-release-dependencies.md). Keep D1 selected and the text experiment unselected pending the recorded coverage/historical acceptance. Prefer qualifying upstream over a private backport without a demonstrated blocker. Resolve the other corrections; replace old CI after inputs are accepted. | **Release hold:** independent D1 review, remaining dependency remediation/dispositions, module/package review, a pinned CI/build image and affected acceptance are required. Successful scans do not constitute complete security acceptance. |
-| F11 - R2/R3/G1 | Restored state tests expose inherited deletion-journal rollback defects: missing flag restoration for accounts without balance entries and a nil ordinary balance after reverting a time-locked asset. Both selected D1 and the text experiment fail identically. | Preserve the minimal failing regressions and unchanged production behavior while completing the bounded impact review. The empty-entry direct-API case alone does not prove EVM reachability; the separate EVM probe remains incomplete, with an assertion mistake and a balance-read panic retained. Any runtime correction needs historical compatibility and an explicit activation decision. | **Release hold:** complete the impact/disposition review and obtain independent consensus review. No runtime fix or waiver is selected. Further failure-reproduction testing stopped following repeated product content restrictions; documentation/source provenance checks continued. |
+| F11 - R2/R3/G1 | Restored state tests expose inherited deletion-journal rollback defects: missing flag restoration for accounts without balance entries and a nil ordinary balance after reverting a time-locked asset. Both selected D1 and the text experiment fail identically. | Preserve the minimal failing regressions and unchanged production behavior while completing the bounded impact review. The empty-entry direct-API case alone does not prove EVM reachability. The EVM observation is now a completed bounded check (see the 7 Oct follow-up note below); completing that observation does not close this finding. Any runtime correction needs historical compatibility and an explicit activation decision. | **Release hold:** complete the impact/disposition review and obtain independent consensus review. No runtime fix or waiver is selected. The bounded EVM observation is complete and provenanced; the release finding stays open. |
 
 ## Evidence and source checks
 
@@ -81,14 +81,19 @@ No human review or acceptance is inferred from a test pass.
   build. Seven relevant runtime files match upstream exactly. The incomplete
   EVM probe is archived separately and is not a passing regression.
 
-- F11 review completed and consolidated for handoff:
-  [restart-state-rollback-findings.md](restart-state-rollback-findings.md).
-  The EVM fixture was corrected (zero-balance omission observation) and
-  completed; the non-system time-locked rollback defect (F11-a) is reproduced
-  with a nil-pointer panic, the empty-entry deletion-flag defect (F11-b) is
-  confirmed direct-API-only, and the system-asset revert is clean once the
-  expectation is corrected. No runtime change, consensus activation, or
-  accepted-block/historical claim is made.
+- F11 bounded EVM observation — completed and consolidated (7 Oct 2026):
+  [restart-state-rollback-findings.md](restart-state-rollback-findings.md),
+  following [restart-state-rollback-followup-opus.md](restart-state-rollback-followup-opus.md).
+  The fixture was corrected and refined; the precondition for F11-a is isolated
+  as the **absence of an ordinary-balance entry** for the self-destructed asset
+  (not system vs non-system), the time lock is independently observed as
+  restored, and the stray nil ordinary entry (read panic) is the defect. Re-run
+  with full provenance against both the D1 baseline and the text experiment
+  (identical results) in
+  [evidence/restart-state-rollback-followup-2026-10-07](evidence/restart-state-rollback-followup-2026-10-07).
+  Completing this observation does **not** close F11. No runtime change,
+  release-input change, consensus activation, or accepted-block/historical claim
+  is made. (`unshare -n` was not permitted; recorded in the run's environment.)
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
