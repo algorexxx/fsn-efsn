@@ -98,6 +98,15 @@ No human review or acceptance is inferred from a test pass.
   settings do not supply that isolation. The
   [evidence correction](evidence/restart-state-rollback-followup-2026-10-07/README.md)
   supersedes the network-use claim while preserving the original artifacts.
+- F11 source-based disposition proposal (7 Oct 2026):
+  [restart-state-rollback-disposition.md](restart-state-rollback-disposition.md)
+  compares leaving the inherited behavior with a narrow correction gated by
+  block height. It identifies recovery-reader configuration, approval checksums
+  and startup conflict handling as required parts of any candidate. The sole
+  inspected production deletion caller supplies the balance entry that avoids
+  F11-b; retain the direct-API defect and its scoped disposition for review.
+  This is a source review, with no new test run, runtime change, selected
+  activation or release waiver. F11 stays open.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

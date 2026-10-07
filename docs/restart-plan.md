@@ -178,12 +178,15 @@ Candidate-patch historical compatibility remains open.
   private network isolation or independently verify zero network activity;
   the [evidence correction](evidence/restart-state-rollback-followup-2026-10-07/README.md)
   qualifies the original network claim. Production code remains unchanged.
+- [x] Prepare the [F11 source-based disposition proposal](restart-state-rollback-disposition.md):
+  compare preservation with a correction gated by block height, identify the
+  recovery/configuration and startup-conflict requirements, and scope F11-b to
+  the inspected direct-API path. This completes source analysis only.
 - [ ] Complete F11 runtime impact/disposition and independent consensus review.
-  Next: prepare a source-based comparison of preserving current behavior and a
-  narrow correction with an explicit activation boundary. Specify how execution
-  before that boundary remains unchanged and what additional evidence the
-  decision needs. Keep transaction/commit and historical effects unverified;
-  no fix, activation height or waiver is selected. Preserve the failing tests.
+  Next: prepare an isolated candidate diff and bounded qualification specification
+  following the proposal. Preserve historical execution before activation and
+  the original failing evidence. Transaction/commit and historical effects remain
+  unverified; no production fix, activation height or waiver is selected.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss

@@ -79,7 +79,7 @@ Earlier phases (unchanged historical records):
 
 ## Findings
 
-### F11-a — Non-system time-locked asset corrupts ordinary balances on rollback (confirmed)
+### F11-a — Time-locked asset without an ordinary entry corrupts balances on rollback (confirmed)
 
 **Defect.** In `StateDB.Suicide` the time-lock journal loop
 ([statedb.go:588-599](../core/state/statedb.go:588)) builds a `suicideChange`
@@ -280,17 +280,18 @@ unselected text update are unchanged.
 
 ## Open items for Astra
 
-1. Prepare a source-based F11-a disposition proposal comparing preservation of
-   current behavior with a narrowly scoped correction activated at an explicit
-   future boundary. Document the consequences and uncertainties for each option.
-   No option or activation height is selected by the existing local evidence.
-2. Specify the historical-compatibility requirements and the remaining evidence
-   needed to review that proposal. Any proposed correction must preserve
-   execution before its activation boundary. Keep transaction/commit and
-   accepted-block effects unverified until separately demonstrated, and obtain
-   independent consensus review before selecting a production change.
-3. F11-b: confirm whether any production or RPC path marks a zero-entry account
-   for deletion; if not, record as latent/direct-API-only.
+1. The [source-based disposition proposal](restart-state-rollback-disposition.md)
+   now compares preservation with a narrow correction gated by block height.
+   Its configuration, historical-compatibility and qualification requirements
+   are recorded. Next: prepare the isolated candidate diff and bounded
+   qualification specification against the selected release inputs.
+2. Complete that qualification and independent consensus review before selecting
+   a production change. Transaction/commit and accepted-block effects remain
+   unverified; no activation height or waiver is selected.
+3. F11-b source-call review is complete for the inspected production tree: no
+   separate production/RPC deletion caller was found. Retain the latent/direct-
+   API-only classification and failing regression for independent disposition;
+   do not broaden the F11-a correction merely to make the suite pass.
 4. Unchanged open items from the original handoff: F1 console/tracer/RPC
    coverage, F10 dependency/CI acceptance, the 3,600,000-block replay checkpoint.
 
