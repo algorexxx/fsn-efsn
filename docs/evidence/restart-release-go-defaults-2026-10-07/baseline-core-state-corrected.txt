@@ -1,0 +1,26 @@
+# github.com/FusionFoundation/efsn/v5/core/state [github.com/FusionFoundation/efsn/v5/core/state.test]
+core/state/state_test.go:31:15: undefined: ethdb.MemDatabase
+core/state/state_test.go:42:18: not enough arguments in call to obj1.AddBalance
+	have (*big.Int)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, *big.Int)
+core/state/state_test.go:46:18: not enough arguments in call to obj3.SetBalance
+	have (*big.Int)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, *big.Int)
+core/state/state_test.go:54:16: not enough arguments in call to s.state.Dump
+	have ()
+	want (*DumpConfig)
+core/state/state_test.go:90:15: undefined: ethdb.NewMemDatabase
+core/state/state_test.go:91:34: not enough arguments in call to New
+	have ("github.com/FusionFoundation/efsn/v5/common".Hash, Database)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash, Database)
+core/state/state_test.go:144:33: not enough arguments in call to New
+	have ("github.com/FusionFoundation/efsn/v5/common".Hash, Database)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash, Database)
+core/state/state_test.go:144:51: undefined: ethdb.NewMemDatabase
+core/state/iterator_test.go:32:26: not enough arguments in call to New
+	have ("github.com/FusionFoundation/efsn/v5/common".Hash, Database)
+	want ("github.com/FusionFoundation/efsn/v5/common".Hash, "github.com/FusionFoundation/efsn/v5/common".Hash, Database)
+core/state/iterator_test.go:54:51: undefined: ethdb.MemDatabase
+core/state/state_test.go:144:33: too many errors
+FAIL	github.com/FusionFoundation/efsn/v5/core/state [build failed]
+FAIL

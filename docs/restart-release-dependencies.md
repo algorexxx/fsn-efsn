@@ -153,8 +153,30 @@ on D1. Node/NAT/errgroup checks pass; optional upstream text and real-router
 tests are explicitly skipped. These gaps belong to F1 and cannot be called
 full regression acceptance.
 
-Keep P1–P17+B1+D1 selected. Next, review the language/default changes and choose
-either a qualified upgrade with patched-history coverage or a separately
-maintained and qualified upstream backport. No backport, D2 selection or
-workspace module change is made by this experiment. The x/text finding remains
-open on the selected candidate; F10 is not cleared by the experimental scans.
+Keep P1–P17+B1+D1 selected. No backport, D2 selection or workspace module
+change is made by this experiment. The x/text finding remains open on the
+selected candidate; F10 is not cleared by the experimental scans.
+
+## Language/default follow-up — 7 October
+
+The [bounded review](evidence/restart-release-go-defaults-2026-10-07) covers
+25 compiler-diagnosed node loops, 14 recovery loops and all 22 changed legacy
+compatibility overrides. Inspected ticket scoring and storage callees consume
+or copy loop values before reuse; no specific consensus-output change was
+identified. This does not establish historical compatibility. DNS, HTTP/TLS
+and CPU scheduling defaults have concrete operational effects recorded in the
+report. Do not globally restore old defaults: that also removes newer request
+limits and does not preserve the old language semantics.
+
+Common/RLP race tests pass before and after. Two minimal test-only repairs
+restore the complete core/types suite, also passing on both versions. State
+tests still have identical inherited compilation failures after their pinned
+test dependencies are cached. Original failures and exact overlay/patch inputs
+are retained; no production source or selected manifest changed.
+
+Prefer continuing qualification of the upstream update over maintaining a
+private dependency backport without an identified compatibility blocker.
+Next, repair or precisely replace the relevant state/console/tracer/RPC test
+coverage and verify patched historical/recovery behavior. Actual service
+DNS/TLS checks remain part of existing host acceptance. The update stays
+unselected until that evidence is accepted; other F10 findings remain open.

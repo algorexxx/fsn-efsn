@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 4 October 2026. Working branch: `codex/restart-investigation-wip`.
+Updated 7 October 2026. Working branch: `codex/restart-investigation-wip`.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -157,8 +157,15 @@ Candidate-patch historical compatibility remains open.
   authenticated upstream fix, before/after JS runtime and actual console checks,
   both command builds and offline scans. Keep the update unselected: it also
   raises the main Go language version and changes compatibility defaults.
-  Review those effects and patched-history requirements under F10; inherited
-  console/tracer/RPC test gaps remain under F1. P1–P17+B1+D1 is unchanged.
+  The follow-up below reviews those effects; historical and inherited-test
+  acceptance remain under F1/F10. P1–P17+B1+D1 is unchanged.
+- [x] Complete the [Go language/default review](evidence/restart-release-go-defaults-2026-10-07):
+  inspect all compiler-diagnosed loops and 22 changed compatibility defaults.
+  No specific consensus-output change was identified by this bounded review.
+  Repair two core/types fixtures; the complete package passes before/after with
+  race detection, as do common and RLP. State tests still fail identically on
+  obsolete APIs. Prefer qualifying the upstream update; keep it unselected
+  pending state/console/tracer/RPC coverage and patched-history acceptance.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss

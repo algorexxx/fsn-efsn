@@ -20,6 +20,12 @@ defaults as well as dependencies. It records passing bounded checks and the
 inherited console/tracer/RPC coverage gaps under F1/F10, without extending the
 source selection or closing final acceptance.
 
+The [7 October language/default review](evidence/restart-release-go-defaults-2026-10-07)
+records the concrete loop/default effects and repairs two core/types fixtures.
+The complete types package plus common/RLP pass with race detection before/after.
+State compilation and console/tracer/RPC coverage still need resolution before
+upgrade/history acceptance. Test-only patch 10 changes no production input.
+
 ## Scope and evidence rules
 
 The initial target is Linux amd64, full block synchronization from a verified

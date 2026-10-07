@@ -1,0 +1,1383 @@
+
+efsn accounts/manager.go
+208: 
+209: // merge is a sorted analogue of append for wallets, where the ordering of the
+210: // origin list is preserved by inserting new wallets at the correct position.
+211: //
+212: // The original slice is assumed to be already sorted by URL.
+213: func merge(slice []Wallet, wallets ...Wallet) []Wallet {
+214: 	for _, wallet := range wallets {
+215: 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+216: 		if n == len(slice) {
+217: 			slice = append(slice, wallet)
+218: 			continue
+219: 		}
+220: 		slice = append(slice[:n], append([]Wallet{wallet}, slice[n:]...)...)
+221: 	}
+222: 	return slice
+223: }
+224: 
+225: // drop is the couterpart of merge, which looks up wallets from within the sorted
+226: // cache and removes the ones specified.
+227: func drop(slice []Wallet, wallets ...Wallet) []Wallet {
+228: 	for _, wallet := range wallets {
+229: 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+230: 		if n == len(slice) {
+231: 			// Wallet not found, may happen during startup
+232: 			continue
+233: 		}
+234: 		slice = append(slice[:n], slice[n+1:]...)
+235: 	}
+236: 	return slice
+237: }
+
+efsn accounts/manager.go
+222: 	return slice
+223: }
+224: 
+225: // drop is the couterpart of merge, which looks up wallets from within the sorted
+226: // cache and removes the ones specified.
+227: func drop(slice []Wallet, wallets ...Wallet) []Wallet {
+228: 	for _, wallet := range wallets {
+229: 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+230: 		if n == len(slice) {
+231: 			// Wallet not found, may happen during startup
+232: 			continue
+233: 		}
+234: 		slice = append(slice[:n], slice[n+1:]...)
+235: 	}
+236: 	return slice
+237: }
+
+efsn cmd/efsn/accountcmd.go
+206: )
+207: 
+208: func accountList(ctx *cli.Context) error {
+209: 	stack, _ := makeConfigNode(ctx)
+210: 	var index int
+211: 	for _, wallet := range stack.AccountManager().Wallets() {
+212: 		for _, account := range wallet.Accounts() {
+213: 			fmt.Printf("Account #%d: {%x} %s\n", index, account.Address, &account.URL)
+214: 			index++
+215: 		}
+216: 	}
+217: 	return nil
+218: }
+219: 
+220: // tries unlocking the specified account a few times.
+221: func unlockAccount(ks *keystore.KeyStore, address string, i int, passwords []string) (accounts.Account, string) {
+222: 	account, err := utils.MakeAddress(ks, address)
+223: 	if err != nil {
+224: 		utils.Fatalf("Could not list accounts: %v", err)
+225: 	}
+226: 	for trials := 0; trials < 3; trials++ {
+227: 		prompt := fmt.Sprintf("Unlocking account %s | Attempt %d/%d", address, trials+1, 3)
+228: 		password := utils.GetPassPhraseWithList(prompt, false, i, passwords)
+229: 		err = ks.Unlock(account, password)
+230: 		if err == nil {
+231: 			log.Info("Unlocked account", "address", account.Address.Hex())
+232: 			return account, password
+233: 		}
+234: 		if err, ok := err.(*keystore.AmbiguousAddrError); ok {
+235: 			log.Info("Unlocked account", "address", account.Address.Hex())
+236: 			return ambiguousAddrRecovery(ks, err, password), password
+237: 		}
+238: 		if err != keystore.ErrDecrypt {
+
+efsn cmd/efsn/accountcmd.go
+250: 	fmt.Printf("Multiple key files exist for address %x:\n", err.Addr)
+251: 	for _, a := range err.Matches {
+252: 		fmt.Println("  ", a.URL)
+253: 	}
+254: 	fmt.Println("Testing your passphrase against all of them...")
+255: 	var match *accounts.Account
+256: 	for _, a := range err.Matches {
+257: 		if err := ks.Unlock(a, auth); err == nil {
+258: 			match = &a
+259: 			break
+260: 		}
+261: 	}
+262: 	if match == nil {
+263: 		utils.Fatalf("None of the listed files could be unlocked.")
+264: 	}
+265: 	fmt.Printf("Your passphrase unlocked %s\n", match.URL)
+266: 	fmt.Println("In order to avoid this warning, you need to remove the following duplicate key files:")
+267: 	for _, a := range err.Matches {
+268: 		if a != *match {
+269: 			fmt.Println("  ", a.URL)
+270: 		}
+271: 	}
+272: 	return *match
+273: }
+274: 
+275: // accountCreate creates a new account into the keystore defined by the CLI flags.
+276: func accountCreate(ctx *cli.Context) error {
+277: 	cfg := gethConfig{Node: defaultNodeConfig()}
+278: 	// Load config file.
+279: 	if file := ctx.String(configFileFlag.Name); file != "" {
+280: 		if err := loadConfig(file, &cfg); err != nil {
+281: 			utils.Fatalf("%v", err)
+282: 		}
+
+efsn common/ticket.go
+101: 		Value:      t.Value(),
+102: 	}
+103: }
+104: 
+105: func (s TicketSlice) ToMap() map[Hash]TicketDisplay {
+106: 	r := make(map[Hash]TicketDisplay, len(s))
+107: 	for _, t := range s {
+108: 		r[t.ID] = t.ToDisplay()
+109: 	}
+110: 	return r
+111: }
+112: 
+113: func (s TicketSlice) DeepCopy() TicketSlice {
+114: 	r := make(TicketSlice, len(s))
+115: 	for i, t := range s {
+116: 		r[i] = t
+117: 	}
+118: 	return r
+119: }
+120: 
+121: func (s TicketBodySlice) DeepCopy() TicketBodySlice {
+122: 	res := make(TicketBodySlice, len(s))
+123: 	for i, v := range s {
+124: 		res[i] = v
+125: 	}
+126: 	return res
+127: }
+128: 
+129: func (s TicketsData) DeepCopy() TicketsData {
+130: 	return TicketsData{
+131: 		Owner:   s.Owner,
+132: 		Tickets: s.Tickets.DeepCopy(),
+133: 	}
+
+efsn consensus/datong/consensus.go
+851: func calcDisInfo(ind int, tickets common.TicketsData, parent *types.Header, ch chan *DisInfoWithIndex) {
+852: 	posHash := posHash(parent)
+853: 	owner := tickets.Owner
+854: 
+855: 	var minTicket common.TicketBody
+856: 	var minDist *big.Int
+857: 	for _, t := range tickets.Tickets {
+858: 		w := new(big.Int).SetUint64(parent.Number.Uint64() - t.Height + 1)
+859: 		w2 := new(big.Int).Mul(w, w)
+860: 
+861: 		id := new(big.Int).SetBytes(crypto.Keccak256(posHash[:], t.ID[:], []byte(owner.Hex())))
+862: 		id2 := new(big.Int).Mul(id, id)
+863: 		s := new(big.Int).Add(w2, id2)
+864: 
+865: 		if minDist == nil || s.Cmp(minDist) < 0 {
+866: 			minTicket = t
+867: 			minDist = s
+868: 		}
+869: 	}
+870: 	ticket := &common.Ticket{
+871: 		Owner:      owner,
+872: 		TicketBody: minTicket,
+873: 	}
+874: 	result := &DisInfoWithIndex{index: ind, info: &DisInfo{tk: ticket, res: minDist}}
+875: 	ch <- result
+876: }
+877: 
+878: func (dt *DaTong) calcBlockDifficulty(chain consensus.ChainReader, header *types.Header, parent *types.Header) (*big.Int, *common.Ticket, uint64, common.TicketPtrSlice, error) {
+879: 	if header.GetSelectedTicket() != nil {
+880: 		return header.Difficulty, header.GetSelectedTicket(), header.Nonce.Uint64(), header.GetRetreatTickets(), nil
+881: 	}
+882: 	parentTickets, err := dt.getAllTickets(chain, parent)
+883: 	if err != nil {
+
+efsn core/bloombits/matcher.go
+486: 			m.schedulers[result.Bit].deliver(sections, bitsets)
+487: 			allocs--
+488: 
+489: 			// Reschedule missing sections and allocate bit if newly available
+490: 			if len(missing) > 0 {
+491: 				queue := requests[result.Bit]
+492: 				for _, section := range missing {
+493: 					index := sort.Search(len(queue), func(i int) bool { return queue[i] >= section })
+494: 					queue = append(queue[:index], append([]uint64{section}, queue[index:]...)...)
+495: 				}
+496: 				requests[result.Bit] = queue
+497: 
+498: 				if len(queue) == len(missing) {
+499: 					assign(result.Bit)
+500: 				}
+501: 			}
+502: 			// If we're in the process of shutting down, terminate
+503: 			if allocs == 0 && shutdown == nil {
+504: 				return
+505: 			}
+506: 		}
+507: 	}
+508: }
+509: 
+510: // MatcherSession is returned by a started matcher to be used as a terminator
+511: // for the actively running matching operation.
+512: type MatcherSession struct {
+513: 	matcher *Matcher
+514: 
+515: 	closer sync.Once     // Sync object to ensure we only ever close once
+516: 	quit   chan struct{} // Quit channel to request pipeline termination
+517: 	kill   chan struct{} // Term channel to signal non-graceful forced shutdown
+518: 
+
+efsn core/state/state_object.go
+369: 	s.finalise() // Don't prefetch any more, pull directly if need be
+370: 	if len(s.pendingStorage) == 0 {
+371: 		return s.trie
+372: 	}
+373: 	// Insert all the pending updates into the trie
+374: 	tr := s.getTrie(db)
+375: 	for key, value := range s.pendingStorage {
+376: 		// Skip noop changes, persist actual changes
+377: 		if value == s.originStorage[key] {
+378: 			continue
+379: 		}
+380: 		s.originStorage[key] = value
+381: 
+382: 		if (value == common.Hash{}) {
+383: 			s.setError(tr.TryDelete(key[:]))
+384: 			continue
+385: 		}
+386: 		// Encoding []byte cannot fail, ok to ignore the error.
+387: 		v, _ := rlp.EncodeToBytes(bytes.TrimLeft(value[:], "\x00"))
+388: 		s.setError(tr.TryUpdate(key[:], v))
+389: 	}
+390: 	if len(s.pendingStorage) > 0 {
+391: 		s.pendingStorage = make(Storage)
+392: 	}
+393: 	return tr
+394: }
+395: 
+396: // UpdateRoot sets the trie root to the current root hash of
+397: func (s *stateObject) updateRoot(db Database) {
+398: 	// If nothing changed, don't bother with hashing anything
+399: 	if s.updateTrie(db) == nil {
+400: 		return
+401: 	}
+
+efsn core/state/state_object.go
+369: 	s.finalise() // Don't prefetch any more, pull directly if need be
+370: 	if len(s.pendingStorage) == 0 {
+371: 		return s.trie
+372: 	}
+373: 	// Insert all the pending updates into the trie
+374: 	tr := s.getTrie(db)
+375: 	for key, value := range s.pendingStorage {
+376: 		// Skip noop changes, persist actual changes
+377: 		if value == s.originStorage[key] {
+378: 			continue
+379: 		}
+380: 		s.originStorage[key] = value
+381: 
+382: 		if (value == common.Hash{}) {
+383: 			s.setError(tr.TryDelete(key[:]))
+384: 			continue
+385: 		}
+386: 		// Encoding []byte cannot fail, ok to ignore the error.
+387: 		v, _ := rlp.EncodeToBytes(bytes.TrimLeft(value[:], "\x00"))
+388: 		s.setError(tr.TryUpdate(key[:], v))
+389: 	}
+390: 	if len(s.pendingStorage) > 0 {
+391: 		s.pendingStorage = make(Storage)
+392: 	}
+393: 	return tr
+394: }
+395: 
+396: // UpdateRoot sets the trie root to the current root hash of
+397: func (s *stateObject) updateRoot(db Database) {
+398: 	// If nothing changed, don't bother with hashing anything
+399: 	if s.updateTrie(db) == nil {
+400: 		return
+401: 	}
+
+efsn core/state/statedb.go
+1384: 		return
+1385: 	}
+1386: 	for i, v := range tickets {
+1387: 		if v.Owner != from {
+1388: 			continue
+1389: 		}
+1390: 		for _, ticket := range v.Tickets {
+1391: 			if ticket.ExpireTime <= timestamp {
+1392: 				continue
+1393: 			}
+1394: 			value := common.NewTimeLock(&common.TimeLockItem{
+1395: 				StartTime: ticket.StartTime,
+1396: 				EndTime:   ticket.ExpireTime,
+1397: 				Value:     ticket.Value(),
+1398: 			})
+1399: 			s.AddTimeLockBalance(to, common.SystemAssetID, value, timestamp)
+1400: 		}
+1401: 		tickets = append(tickets[:i], tickets[i+1:]...)
+1402: 		s.tickets = tickets
+1403: 		break
+1404: 	}
+1405: }
+1406: 
+1407: /** swaps
+1408: *
+1409:  */
+1410: type swapPersist struct {
+1411: 	Deleted bool // if true swap was recalled and should not be returned
+1412: 	Swap    common.Swap
+1413: }
+1414: 
+1415: // GetSwap wacom
+1416: func (s *StateDB) GetSwap(swapID common.Hash) (common.Swap, error) {
+
+efsn core/types/bloom9.go
+101: }
+102: 
+103: func LogsBloom(logs []*Log) *big.Int {
+104: 	bin := new(big.Int)
+105: 	for _, log := range logs {
+106: 		bin.Or(bin, bloom9(log.Address.Bytes()))
+107: 		for _, b := range log.Topics {
+108: 			bin.Or(bin, bloom9(b[:]))
+109: 		}
+110: 	}
+111: 
+112: 	return bin
+113: }
+114: 
+115: func bloom9(b []byte) *big.Int {
+116: 	b = crypto.Keccak256(b)
+117: 
+118: 	r := new(big.Int)
+119: 
+120: 	for i := 0; i < 6; i += 2 {
+121: 		t := big.NewInt(1)
+122: 		b := (uint(b[i+1]) + (uint(b[i]) << 8)) & 2047
+123: 		r.Or(r, t.Lsh(t, b))
+124: 	}
+125: 
+126: 	return r
+127: }
+128: 
+129: var Bloom9 = bloom9
+130: 
+131: func BloomLookup(bin Bloom, topic bytesBacked) bool {
+132: 	bloom := bin.Big()
+133: 	cmp := bloom9(topic.Bytes())
+
+efsn core/vm/stack.go
+83: }
+84: 
+85: // Print dumps the content of the stack
+86: func (st *Stack) Print() {
+87: 	fmt.Println("### stack ###")
+88: 	if len(st.data) > 0 {
+89: 		for i, val := range st.data {
+90: 			fmt.Printf("%-3d  %s\n", i, val.String())
+91: 		}
+92: 	} else {
+93: 		fmt.Println("-- empty --")
+94: 	}
+95: 	fmt.Println("#############")
+96: }
+
+efsn eth/filters/api.go
+249: 
+250: 	go func() {
+251: 
+252: 		for {
+253: 			select {
+254: 			case logs := <-matchedLogs:
+255: 				for _, log := range logs {
+256: 					notifier.Notify(rpcSub.ID, &log)
+257: 				}
+258: 			case <-rpcSub.Err(): // client send an unsubscribe request
+259: 				logsSub.Unsubscribe()
+260: 				return
+261: 			case <-notifier.Closed(): // connection dropped
+262: 				logsSub.Unsubscribe()
+263: 				return
+264: 			}
+265: 		}
+266: 	}()
+267: 
+268: 	return rpcSub, nil
+269: }
+270: 
+271: // FilterCriteria represents a request to create a new filter.
+272: // Same as ethereum.FilterQuery but with UnmarshalJSON() method.
+273: type FilterCriteria ethereum.FilterQuery
+274: 
+275: // NewFilter creates a new filter and returns the filter id. It can be
+276: // used to retrieve logs when the state changes. This method cannot be
+277: // used to fetch logs that are already stored in the state.
+278: //
+279: // Default criteria for the from and to block are "latest".
+280: // Using "latest" as block number will return logs for mined blocks.
+281: // Using "pending" as block number returns logs for not yet mined (pending) blocks.
+
+efsn eth/tracers/logger/logger.go
+318: 	stack := scope.Stack
+319: 	fmt.Fprintf(t.out, "| %4d  | %10v  |  %3d |", pc, op, cost)
+320: 
+321: 	if !t.cfg.DisableStack {
+322: 		// format stack
+323: 		var a []string
+324: 		for _, elem := range stack.Data() {
+325: 			a = append(a, elem.Hex())
+326: 		}
+327: 		b := fmt.Sprintf("[%v]", strings.Join(a, ","))
+328: 		fmt.Fprintf(t.out, "%10v |", b)
+329: 	}
+330: 	fmt.Fprintf(t.out, "%10v |", t.env.StateDB.GetRefund())
+331: 	fmt.Fprintln(t.out, "")
+332: 	if err != nil {
+333: 		fmt.Fprintf(t.out, "Error: %v\n", err)
+334: 	}
+335: }
+336: 
+337: func (t *mdLogger) CaptureFault(pc uint64, op vm.OpCode, gas, cost uint64, scope *vm.ScopeContext, depth int, err error) {
+338: 	fmt.Fprintf(t.out, "\nError: at pc=%d, op=%v: %v\n", pc, op, err)
+339: }
+340: 
+341: func (t *mdLogger) CaptureEnd(output []byte, gasUsed uint64, tm time.Duration, err error) {
+342: 	fmt.Fprintf(t.out, "\nOutput: `0x%x`\nConsumed gas: `%d`\nError: `%v`\n",
+343: 		output, gasUsed, err)
+344: }
+345: 
+346: func (t *mdLogger) CaptureEnter(typ vm.OpCode, from common.Address, to common.Address, input []byte, gas uint64, value *big.Int) {
+347: }
+348: 
+349: func (t *mdLogger) CaptureExit(output []byte, gasUsed uint64, err error) {}
+
+efsn internal/ethapi/api.go
+962: 	Storage *map[string]string `json:"storage,omitempty"`
+963: }
+964: 
+965: // FormatLogs formats EVM returned structured logs for json output
+966: func FormatLogs(logs []logger.StructLog) []StructLogRes {
+967: 	formatted := make([]StructLogRes, len(logs))
+968: 	for index, trace := range logs {
+969: 		formatted[index] = StructLogRes{
+970: 			Pc:      trace.Pc,
+971: 			Op:      trace.Op.String(),
+972: 			Gas:     trace.Gas,
+973: 			GasCost: trace.GasCost,
+974: 			Depth:   trace.Depth,
+975: 			Error:   trace.ErrorString(),
+976: 		}
+977: 		if trace.Stack != nil {
+978: 			stack := make([]string, len(trace.Stack))
+979: 			for i, stackValue := range trace.Stack {
+980: 				stack[i] = stackValue.Hex()
+981: 			}
+982: 			formatted[index].Stack = &stack
+983: 		}
+984: 		if trace.Memory != nil {
+985: 			memory := make([]string, 0, (len(trace.Memory)+31)/32)
+986: 			for i := 0; i+32 <= len(trace.Memory); i += 32 {
+987: 				memory = append(memory, fmt.Sprintf("%x", trace.Memory[i:i+32]))
+988: 			}
+989: 			formatted[index].Memory = &memory
+990: 		}
+991: 		if trace.Storage != nil {
+992: 			storage := make(map[string]string)
+993: 			for i, storageValue := range trace.Storage {
+994: 				storage[fmt.Sprintf("%x", i)] = fmt.Sprintf("%x", storageValue)
+
+efsn internal/ethapi/api.go
+973: 			GasCost: trace.GasCost,
+974: 			Depth:   trace.Depth,
+975: 			Error:   trace.ErrorString(),
+976: 		}
+977: 		if trace.Stack != nil {
+978: 			stack := make([]string, len(trace.Stack))
+979: 			for i, stackValue := range trace.Stack {
+980: 				stack[i] = stackValue.Hex()
+981: 			}
+982: 			formatted[index].Stack = &stack
+983: 		}
+984: 		if trace.Memory != nil {
+985: 			memory := make([]string, 0, (len(trace.Memory)+31)/32)
+986: 			for i := 0; i+32 <= len(trace.Memory); i += 32 {
+987: 				memory = append(memory, fmt.Sprintf("%x", trace.Memory[i:i+32]))
+988: 			}
+989: 			formatted[index].Memory = &memory
+990: 		}
+991: 		if trace.Storage != nil {
+992: 			storage := make(map[string]string)
+993: 			for i, storageValue := range trace.Storage {
+994: 				storage[fmt.Sprintf("%x", i)] = fmt.Sprintf("%x", storageValue)
+995: 			}
+996: 			formatted[index].Storage = &storage
+997: 		}
+998: 	}
+999: 	return formatted
+1000: }
+1001: 
+1002: // RPCMarshalHeader converts the given header to the RPC output .
+1003: func RPCMarshalHeader(head *types.Header, engine consensus.Engine) map[string]interface{} {
+1004: 	miner, _ := engine.Author(head)
+1005: 	result := map[string]interface{}{
+
+efsn p2p/discv5/net.go
+678: 	}
+679: 	if len(seeds) == 0 {
+680: 		log.Trace("no seed nodes found")
+681: 		time.AfterFunc(time.Second*10, func() { close(done) })
+682: 		return
+683: 	}
+684: 	for _, n := range seeds {
+685: 		log.Debug("", "msg", log.Lazy{Fn: func() string {
+686: 			var age string
+687: 			if net.db != nil {
+688: 				age = time.Since(net.db.lastPong(n.ID)).String()
+689: 			} else {
+690: 				age = "unknown"
+691: 			}
+692: 			return fmt.Sprintf("seed node (age %s): %v", age, n)
+693: 		}})
+694: 		n = net.internNodeFromDB(n)
+695: 		if n.state == unknown {
+696: 			net.transition(n, verifyinit)
+697: 		}
+698: 		// Force-add the seed node so Lookup does something.
+699: 		// It will be deleted again if verification fails.
+700: 		net.tab.add(n)
+701: 	}
+702: 	// Start self lookup to fill up the buckets.
+703: 	go func() {
+704: 		net.Lookup(net.tab.self.ID)
+705: 		close(done)
+706: 	}()
+707: }
+708: 
+709: // Node Interning.
+710: 
+
+efsn p2p/nat/natpmp.go
+106: // the router is X.X.X.1 in a local LAN range.
+107: func potentialGateways() (gws []net.IP) {
+108: 	ifaces, err := net.Interfaces()
+109: 	if err != nil {
+110: 		return nil
+111: 	}
+112: 	for _, iface := range ifaces {
+113: 		ifaddrs, err := iface.Addrs()
+114: 		if err != nil {
+115: 			return gws
+116: 		}
+117: 		for _, addr := range ifaddrs {
+118: 			if x, ok := addr.(*net.IPNet); ok {
+119: 				if lan10.Contains(x.IP) || lan176.Contains(x.IP) || lan192.Contains(x.IP) {
+120: 					ip := x.IP.Mask(x.Mask).To4()
+121: 					if ip != nil {
+122: 						ip[3] = ip[3] | 0x01
+123: 						gws = append(gws, ip)
+124: 					}
+125: 				}
+126: 			}
+127: 		}
+128: 	}
+129: 	return gws
+130: }
+
+efsn p2p/nat/natupnp.go
+138: 	devs, err := goupnp.DiscoverDevices(target)
+139: 	if err != nil {
+140: 		out <- nil
+141: 		return
+142: 	}
+143: 	found := false
+144: 	for i := 0; i < len(devs) && !found; i++ {
+145: 		if devs[i].Root == nil {
+146: 			continue
+147: 		}
+148: 		devs[i].Root.Device.VisitServices(func(service *goupnp.Service) {
+149: 			if found {
+150: 				return
+151: 			}
+152: 			// check for a matching IGD service
+153: 			sc := goupnp.ServiceClient{
+154: 				SOAPClient: service.NewSOAPClient(),
+155: 				RootDevice: devs[i].Root,
+156: 				Location:   devs[i].Location,
+157: 				Service:    service,
+158: 			}
+159: 			sc.SOAPClient.HTTPClient.Timeout = soapRequestTimeout
+160: 			upnp := matcher(devs[i].Root, sc)
+161: 			if upnp == nil {
+162: 				return
+163: 			}
+164: 			// check whether port mapping is enabled
+165: 			if _, nat, err := upnp.client.GetNATRSIPStatus(); err != nil || !nat {
+166: 				return
+167: 			}
+168: 			out <- upnp
+169: 			found = true
+170: 		})
+
+efsn p2p/nat/natupnp.go
+72: 		return nil, err
+73: 	}
+74: 	ifaces, err := net.Interfaces()
+75: 	if err != nil {
+76: 		return nil, err
+77: 	}
+78: 	for _, iface := range ifaces {
+79: 		addrs, err := iface.Addrs()
+80: 		if err != nil {
+81: 			return nil, err
+82: 		}
+83: 		for _, addr := range addrs {
+84: 			if x, ok := addr.(*net.IPNet); ok && x.Contains(devaddr.IP) {
+85: 				return x.IP, nil
+86: 			}
+87: 		}
+88: 	}
+89: 	return nil, fmt.Errorf("could not find local address in same net as %v", devaddr)
+90: }
+91: 
+92: func (n *upnp) DeleteMapping(protocol string, extport, intport int) error {
+93: 	return n.client.DeletePortMapping("", uint16(extport), strings.ToUpper(protocol))
+94: }
+95: 
+96: func (n *upnp) String() string {
+97: 	return "UPNP " + n.service
+98: }
+99: 
+100: // discoverUPnP searches for Internet Gateway Devices
+101: // and returns the first one it can find on the local network.
+102: func discoverUPnP() Interface {
+103: 	found := make(chan *upnp, 2)
+104: 	// IGDv1
+
+efsn p2p/netutil/net.go
+124: 
+125: // Contains reports whether the given IP is contained in the list.
+126: func (l *Netlist) Contains(ip net.IP) bool {
+127: 	if l == nil {
+128: 		return false
+129: 	}
+130: 	for _, net := range *l {
+131: 		if net.Contains(ip) {
+132: 			return true
+133: 		}
+134: 	}
+135: 	return false
+136: }
+137: 
+138: // IsLAN reports whether an IP is a local network address.
+139: func IsLAN(ip net.IP) bool {
+140: 	if ip.IsLoopback() {
+141: 		return true
+142: 	}
+143: 	if v4 := ip.To4(); v4 != nil {
+144: 		return lan4.Contains(v4)
+145: 	}
+146: 	return lan6.Contains(ip)
+147: }
+148: 
+149: // IsSpecialNetwork reports whether an IP is located in a special-use network range
+150: // This includes broadcast, multicast and documentation addresses.
+151: func IsSpecialNetwork(ip net.IP) bool {
+152: 	if ip.IsMulticast() {
+153: 		return true
+154: 	}
+155: 	if v4 := ip.To4(); v4 != nil {
+156: 		return special4.Contains(v4)
+
+efsn p2p/netutil/net.go
+124: 
+125: // Contains reports whether the given IP is contained in the list.
+126: func (l *Netlist) Contains(ip net.IP) bool {
+127: 	if l == nil {
+128: 		return false
+129: 	}
+130: 	for _, net := range *l {
+131: 		if net.Contains(ip) {
+132: 			return true
+133: 		}
+134: 	}
+135: 	return false
+136: }
+137: 
+138: // IsLAN reports whether an IP is a local network address.
+139: func IsLAN(ip net.IP) bool {
+140: 	if ip.IsLoopback() {
+141: 		return true
+142: 	}
+143: 	if v4 := ip.To4(); v4 != nil {
+144: 		return lan4.Contains(v4)
+145: 	}
+146: 	return lan6.Contains(ip)
+147: }
+148: 
+149: // IsSpecialNetwork reports whether an IP is located in a special-use network range
+150: // This includes broadcast, multicast and documentation addresses.
+151: func IsSpecialNetwork(ip net.IP) bool {
+152: 	if ip.IsMulticast() {
+153: 		return true
+154: 	}
+155: 	if v4 := ip.To4(); v4 != nil {
+156: 		return special4.Contains(v4)
+
+efsn p2p/netutil/net.go
+87: 	return &l, nil
+88: }
+89: 
+90: // MarshalTOML implements toml.MarshalerRec.
+91: func (l Netlist) MarshalTOML() interface{} {
+92: 	list := make([]string, 0, len(l))
+93: 	for _, net := range l {
+94: 		list = append(list, net.String())
+95: 	}
+96: 	return list
+97: }
+98: 
+99: // UnmarshalTOML implements toml.UnmarshalerRec.
+100: func (l *Netlist) UnmarshalTOML(fn func(interface{}) error) error {
+101: 	var masks []string
+102: 	if err := fn(&masks); err != nil {
+103: 		return err
+104: 	}
+105: 	for _, mask := range masks {
+106: 		_, n, err := net.ParseCIDR(mask)
+107: 		if err != nil {
+108: 			return err
+109: 		}
+110: 		*l = append(*l, *n)
+111: 	}
+112: 	return nil
+113: }
+114: 
+115: // Add parses a CIDR mask and appends it to the list. It panics for invalid masks and is
+116: // intended to be used for setting up static lists.
+117: func (l *Netlist) Add(cidr string) {
+118: 	_, n, err := net.ParseCIDR(cidr)
+119: 	if err != nil {
+
+efsn rlp/encode.go
+213: }
+214: 
+215: func (w *encbuf) toBytes() []byte {
+216: 	out := make([]byte, w.size())
+217: 	strpos := 0
+218: 	pos := 0
+219: 	for _, head := range w.lheads {
+220: 		// write string data before header
+221: 		n := copy(out[pos:], w.str[strpos:head.offset])
+222: 		pos += n
+223: 		strpos += n
+224: 		// write the header
+225: 		enc := head.encode(out[pos:])
+226: 		pos += len(enc)
+227: 	}
+228: 	// copy string data after the last list header
+229: 	copy(out[pos:], w.str[strpos:])
+230: 	return out
+231: }
+232: 
+233: func (w *encbuf) toWriter(out io.Writer) (err error) {
+234: 	strpos := 0
+235: 	for _, head := range w.lheads {
+236: 		// write string data before header
+237: 		if head.offset-strpos > 0 {
+238: 			n, err := out.Write(w.str[strpos:head.offset])
+239: 			strpos += n
+240: 			if err != nil {
+241: 				return err
+242: 			}
+243: 		}
+244: 		// write the header
+245: 		enc := head.encode(w.sizebuf[:])
+
+efsn rlp/encode.go
+229: 	copy(out[pos:], w.str[strpos:])
+230: 	return out
+231: }
+232: 
+233: func (w *encbuf) toWriter(out io.Writer) (err error) {
+234: 	strpos := 0
+235: 	for _, head := range w.lheads {
+236: 		// write string data before header
+237: 		if head.offset-strpos > 0 {
+238: 			n, err := out.Write(w.str[strpos:head.offset])
+239: 			strpos += n
+240: 			if err != nil {
+241: 				return err
+242: 			}
+243: 		}
+244: 		// write the header
+245: 		enc := head.encode(w.sizebuf[:])
+246: 		if _, err = out.Write(enc); err != nil {
+247: 			return err
+248: 		}
+249: 	}
+250: 	if strpos < len(w.str) {
+251: 		// write string data after the last list header
+252: 		_, err = out.Write(w.str[strpos:])
+253: 	}
+254: 	return err
+255: }
+256: 
+257: // encReader is the io.Reader returned by EncodeToReader.
+258: // It releases its encbuf at EOF.
+259: type encReader struct {
+260: 	buf    *encbuf // the buffer we're reading from. this is nil when we're at EOF.
+261: 	lhpos  int     // index of list header that we're reading
+
+efsn trie/sync.go
+308: }
+309: 
+310: // Commit flushes the data stored in the internal membatch out to persistent
+311: // storage, returning any occurred error.
+312: func (s *Sync) Commit(dbw ethdb.Batch) error {
+313: 	// Dump the membatch into a database dbw
+314: 	for key, value := range s.membatch.nodes {
+315: 		rawdb.WriteTrieNode(dbw, key, value)
+316: 		if s.bloom != nil {
+317: 			s.bloom.Add(key[:])
+318: 		}
+319: 	}
+320: 	for key, value := range s.membatch.codes {
+321: 		rawdb.WriteCode(dbw, key, value)
+322: 		if s.bloom != nil {
+323: 			s.bloom.Add(key[:])
+324: 		}
+325: 	}
+326: 	// Drop the membatch data and return
+327: 	s.membatch = newSyncMemBatch()
+328: 	return nil
+329: }
+330: 
+331: // Pending returns the number of state entries currently pending for download.
+332: func (s *Sync) Pending() int {
+333: 	return len(s.nodeReqs) + len(s.codeReqs)
+334: }
+335: 
+336: // schedule inserts a new state retrieval request into the fetch queue. If there
+337: // is already a pending request for this node, the new request will be discarded
+338: // and only a parent reference added to the old one.
+339: func (s *Sync) schedule(req *request) {
+340: 	var reqset = s.nodeReqs
+
+efsn trie/sync.go
+314: 	for key, value := range s.membatch.nodes {
+315: 		rawdb.WriteTrieNode(dbw, key, value)
+316: 		if s.bloom != nil {
+317: 			s.bloom.Add(key[:])
+318: 		}
+319: 	}
+320: 	for key, value := range s.membatch.codes {
+321: 		rawdb.WriteCode(dbw, key, value)
+322: 		if s.bloom != nil {
+323: 			s.bloom.Add(key[:])
+324: 		}
+325: 	}
+326: 	// Drop the membatch data and return
+327: 	s.membatch = newSyncMemBatch()
+328: 	return nil
+329: }
+330: 
+331: // Pending returns the number of state entries currently pending for download.
+332: func (s *Sync) Pending() int {
+333: 	return len(s.nodeReqs) + len(s.codeReqs)
+334: }
+335: 
+336: // schedule inserts a new state retrieval request into the fetch queue. If there
+337: // is already a pending request for this node, the new request will be discarded
+338: // and only a parent reference added to the old one.
+339: func (s *Sync) schedule(req *request) {
+340: 	var reqset = s.nodeReqs
+341: 	if req.code {
+342: 		reqset = s.codeReqs
+343: 	}
+344: 	// If we're already requesting this node, add a new reference and stop
+345: 	if old, ok := reqset[req.hash]; ok {
+346: 		old.parents = append(old.parents, req.parents...)
+
+fsn-recovery accounts/manager.go
+208: 
+209: // merge is a sorted analogue of append for wallets, where the ordering of the
+210: // origin list is preserved by inserting new wallets at the correct position.
+211: //
+212: // The original slice is assumed to be already sorted by URL.
+213: func merge(slice []Wallet, wallets ...Wallet) []Wallet {
+214: 	for _, wallet := range wallets {
+215: 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+216: 		if n == len(slice) {
+217: 			slice = append(slice, wallet)
+218: 			continue
+219: 		}
+220: 		slice = append(slice[:n], append([]Wallet{wallet}, slice[n:]...)...)
+221: 	}
+222: 	return slice
+223: }
+224: 
+225: // drop is the couterpart of merge, which looks up wallets from within the sorted
+226: // cache and removes the ones specified.
+227: func drop(slice []Wallet, wallets ...Wallet) []Wallet {
+228: 	for _, wallet := range wallets {
+229: 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+230: 		if n == len(slice) {
+231: 			// Wallet not found, may happen during startup
+232: 			continue
+233: 		}
+234: 		slice = append(slice[:n], slice[n+1:]...)
+235: 	}
+236: 	return slice
+237: }
+
+fsn-recovery accounts/manager.go
+222: 	return slice
+223: }
+224: 
+225: // drop is the couterpart of merge, which looks up wallets from within the sorted
+226: // cache and removes the ones specified.
+227: func drop(slice []Wallet, wallets ...Wallet) []Wallet {
+228: 	for _, wallet := range wallets {
+229: 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
+230: 		if n == len(slice) {
+231: 			// Wallet not found, may happen during startup
+232: 			continue
+233: 		}
+234: 		slice = append(slice[:n], slice[n+1:]...)
+235: 	}
+236: 	return slice
+237: }
+
+fsn-recovery common/ticket.go
+101: 		Value:      t.Value(),
+102: 	}
+103: }
+104: 
+105: func (s TicketSlice) ToMap() map[Hash]TicketDisplay {
+106: 	r := make(map[Hash]TicketDisplay, len(s))
+107: 	for _, t := range s {
+108: 		r[t.ID] = t.ToDisplay()
+109: 	}
+110: 	return r
+111: }
+112: 
+113: func (s TicketSlice) DeepCopy() TicketSlice {
+114: 	r := make(TicketSlice, len(s))
+115: 	for i, t := range s {
+116: 		r[i] = t
+117: 	}
+118: 	return r
+119: }
+120: 
+121: func (s TicketBodySlice) DeepCopy() TicketBodySlice {
+122: 	res := make(TicketBodySlice, len(s))
+123: 	for i, v := range s {
+124: 		res[i] = v
+125: 	}
+126: 	return res
+127: }
+128: 
+129: func (s TicketsData) DeepCopy() TicketsData {
+130: 	return TicketsData{
+131: 		Owner:   s.Owner,
+132: 		Tickets: s.Tickets.DeepCopy(),
+133: 	}
+
+fsn-recovery consensus/datong/consensus.go
+860: func calcDisInfo(ind int, tickets common.TicketsData, parent *types.Header, ch chan *DisInfoWithIndex) {
+861: 	posHash := posHash(parent)
+862: 	owner := tickets.Owner
+863: 
+864: 	var minTicket common.TicketBody
+865: 	var minDist *big.Int
+866: 	for _, t := range tickets.Tickets {
+867: 		w := new(big.Int).SetUint64(parent.Number.Uint64() - t.Height + 1)
+868: 		w2 := new(big.Int).Mul(w, w)
+869: 
+870: 		id := new(big.Int).SetBytes(crypto.Keccak256(posHash[:], t.ID[:], []byte(owner.Hex())))
+871: 		id2 := new(big.Int).Mul(id, id)
+872: 		s := new(big.Int).Add(w2, id2)
+873: 
+874: 		if minDist == nil || s.Cmp(minDist) < 0 {
+875: 			minTicket = t
+876: 			minDist = s
+877: 		}
+878: 	}
+879: 	ticket := &common.Ticket{
+880: 		Owner:      owner,
+881: 		TicketBody: minTicket,
+882: 	}
+883: 	result := &DisInfoWithIndex{index: ind, info: &DisInfo{tk: ticket, res: minDist}}
+884: 	ch <- result
+885: }
+886: 
+887: func (dt *DaTong) calcBlockDifficulty(chain consensus.ChainReader, header *types.Header, parent *types.Header) (*big.Int, *common.Ticket, uint64, common.TicketPtrSlice, error) {
+888: 	if header.GetSelectedTicket() != nil {
+889: 		return header.Difficulty, header.GetSelectedTicket(), header.Nonce.Uint64(), header.GetRetreatTickets(), nil
+890: 	}
+891: 	parentTickets, err := dt.getAllTickets(chain, parent)
+892: 	if err != nil {
+
+fsn-recovery core/state/state_object.go
+369: 	s.finalise() // Don't prefetch any more, pull directly if need be
+370: 	if len(s.pendingStorage) == 0 {
+371: 		return s.trie
+372: 	}
+373: 	// Insert all the pending updates into the trie
+374: 	tr := s.getTrie(db)
+375: 	for key, value := range s.pendingStorage {
+376: 		// Skip noop changes, persist actual changes
+377: 		if value == s.originStorage[key] {
+378: 			continue
+379: 		}
+380: 		s.originStorage[key] = value
+381: 
+382: 		if (value == common.Hash{}) {
+383: 			s.setError(tr.TryDelete(key[:]))
+384: 			continue
+385: 		}
+386: 		// Encoding []byte cannot fail, ok to ignore the error.
+387: 		v, _ := rlp.EncodeToBytes(bytes.TrimLeft(value[:], "\x00"))
+388: 		s.setError(tr.TryUpdate(key[:], v))
+389: 	}
+390: 	if len(s.pendingStorage) > 0 {
+391: 		s.pendingStorage = make(Storage)
+392: 	}
+393: 	return tr
+394: }
+395: 
+396: // UpdateRoot sets the trie root to the current root hash of
+397: func (s *stateObject) updateRoot(db Database) {
+398: 	// If nothing changed, don't bother with hashing anything
+399: 	if s.updateTrie(db) == nil {
+400: 		return
+401: 	}
+
+fsn-recovery core/state/state_object.go
+369: 	s.finalise() // Don't prefetch any more, pull directly if need be
+370: 	if len(s.pendingStorage) == 0 {
+371: 		return s.trie
+372: 	}
+373: 	// Insert all the pending updates into the trie
+374: 	tr := s.getTrie(db)
+375: 	for key, value := range s.pendingStorage {
+376: 		// Skip noop changes, persist actual changes
+377: 		if value == s.originStorage[key] {
+378: 			continue
+379: 		}
+380: 		s.originStorage[key] = value
+381: 
+382: 		if (value == common.Hash{}) {
+383: 			s.setError(tr.TryDelete(key[:]))
+384: 			continue
+385: 		}
+386: 		// Encoding []byte cannot fail, ok to ignore the error.
+387: 		v, _ := rlp.EncodeToBytes(bytes.TrimLeft(value[:], "\x00"))
+388: 		s.setError(tr.TryUpdate(key[:], v))
+389: 	}
+390: 	if len(s.pendingStorage) > 0 {
+391: 		s.pendingStorage = make(Storage)
+392: 	}
+393: 	return tr
+394: }
+395: 
+396: // UpdateRoot sets the trie root to the current root hash of
+397: func (s *stateObject) updateRoot(db Database) {
+398: 	// If nothing changed, don't bother with hashing anything
+399: 	if s.updateTrie(db) == nil {
+400: 		return
+401: 	}
+
+fsn-recovery core/state/statedb.go
+1384: 		return
+1385: 	}
+1386: 	for i, v := range tickets {
+1387: 		if v.Owner != from {
+1388: 			continue
+1389: 		}
+1390: 		for _, ticket := range v.Tickets {
+1391: 			if ticket.ExpireTime <= timestamp {
+1392: 				continue
+1393: 			}
+1394: 			value := common.NewTimeLock(&common.TimeLockItem{
+1395: 				StartTime: ticket.StartTime,
+1396: 				EndTime:   ticket.ExpireTime,
+1397: 				Value:     ticket.Value(),
+1398: 			})
+1399: 			s.AddTimeLockBalance(to, common.SystemAssetID, value, timestamp)
+1400: 		}
+1401: 		tickets = append(tickets[:i], tickets[i+1:]...)
+1402: 		s.tickets = tickets
+1403: 		break
+1404: 	}
+1405: }
+1406: 
+1407: /** swaps
+1408: *
+1409:  */
+1410: type swapPersist struct {
+1411: 	Deleted bool // if true swap was recalled and should not be returned
+1412: 	Swap    common.Swap
+1413: }
+1414: 
+1415: // GetSwap wacom
+1416: func (s *StateDB) GetSwap(swapID common.Hash) (common.Swap, error) {
+
+fsn-recovery core/types/bloom9.go
+101: }
+102: 
+103: func LogsBloom(logs []*Log) *big.Int {
+104: 	bin := new(big.Int)
+105: 	for _, log := range logs {
+106: 		bin.Or(bin, bloom9(log.Address.Bytes()))
+107: 		for _, b := range log.Topics {
+108: 			bin.Or(bin, bloom9(b[:]))
+109: 		}
+110: 	}
+111: 
+112: 	return bin
+113: }
+114: 
+115: func bloom9(b []byte) *big.Int {
+116: 	b = crypto.Keccak256(b)
+117: 
+118: 	r := new(big.Int)
+119: 
+120: 	for i := 0; i < 6; i += 2 {
+121: 		t := big.NewInt(1)
+122: 		b := (uint(b[i+1]) + (uint(b[i]) << 8)) & 2047
+123: 		r.Or(r, t.Lsh(t, b))
+124: 	}
+125: 
+126: 	return r
+127: }
+128: 
+129: var Bloom9 = bloom9
+130: 
+131: func BloomLookup(bin Bloom, topic bytesBacked) bool {
+132: 	bloom := bin.Big()
+133: 	cmp := bloom9(topic.Bytes())
+
+fsn-recovery core/vm/stack.go
+83: }
+84: 
+85: // Print dumps the content of the stack
+86: func (st *Stack) Print() {
+87: 	fmt.Println("### stack ###")
+88: 	if len(st.data) > 0 {
+89: 		for i, val := range st.data {
+90: 			fmt.Printf("%-3d  %s\n", i, val.String())
+91: 		}
+92: 	} else {
+93: 		fmt.Println("-- empty --")
+94: 	}
+95: 	fmt.Println("#############")
+96: }
+
+fsn-recovery p2p/netutil/net.go
+124: 
+125: // Contains reports whether the given IP is contained in the list.
+126: func (l *Netlist) Contains(ip net.IP) bool {
+127: 	if l == nil {
+128: 		return false
+129: 	}
+130: 	for _, net := range *l {
+131: 		if net.Contains(ip) {
+132: 			return true
+133: 		}
+134: 	}
+135: 	return false
+136: }
+137: 
+138: // IsLAN reports whether an IP is a local network address.
+139: func IsLAN(ip net.IP) bool {
+140: 	if ip.IsLoopback() {
+141: 		return true
+142: 	}
+143: 	if v4 := ip.To4(); v4 != nil {
+144: 		return lan4.Contains(v4)
+145: 	}
+146: 	return lan6.Contains(ip)
+147: }
+148: 
+149: // IsSpecialNetwork reports whether an IP is located in a special-use network range
+150: // This includes broadcast, multicast and documentation addresses.
+151: func IsSpecialNetwork(ip net.IP) bool {
+152: 	if ip.IsMulticast() {
+153: 		return true
+154: 	}
+155: 	if v4 := ip.To4(); v4 != nil {
+156: 		return special4.Contains(v4)
+
+fsn-recovery p2p/netutil/net.go
+87: 	return &l, nil
+88: }
+89: 
+90: // MarshalTOML implements toml.MarshalerRec.
+91: func (l Netlist) MarshalTOML() interface{} {
+92: 	list := make([]string, 0, len(l))
+93: 	for _, net := range l {
+94: 		list = append(list, net.String())
+95: 	}
+96: 	return list
+97: }
+98: 
+99: // UnmarshalTOML implements toml.UnmarshalerRec.
+100: func (l *Netlist) UnmarshalTOML(fn func(interface{}) error) error {
+101: 	var masks []string
+102: 	if err := fn(&masks); err != nil {
+103: 		return err
+104: 	}
+105: 	for _, mask := range masks {
+106: 		_, n, err := net.ParseCIDR(mask)
+107: 		if err != nil {
+108: 			return err
+109: 		}
+110: 		*l = append(*l, *n)
+111: 	}
+112: 	return nil
+113: }
+114: 
+115: // Add parses a CIDR mask and appends it to the list. It panics for invalid masks and is
+116: // intended to be used for setting up static lists.
+117: func (l *Netlist) Add(cidr string) {
+118: 	_, n, err := net.ParseCIDR(cidr)
+119: 	if err != nil {
+
+fsn-recovery rlp/encode.go
+213: }
+214: 
+215: func (w *encbuf) toBytes() []byte {
+216: 	out := make([]byte, w.size())
+217: 	strpos := 0
+218: 	pos := 0
+219: 	for _, head := range w.lheads {
+220: 		// write string data before header
+221: 		n := copy(out[pos:], w.str[strpos:head.offset])
+222: 		pos += n
+223: 		strpos += n
+224: 		// write the header
+225: 		enc := head.encode(out[pos:])
+226: 		pos += len(enc)
+227: 	}
+228: 	// copy string data after the last list header
+229: 	copy(out[pos:], w.str[strpos:])
+230: 	return out
+231: }
+232: 
+233: func (w *encbuf) toWriter(out io.Writer) (err error) {
+234: 	strpos := 0
+235: 	for _, head := range w.lheads {
+236: 		// write string data before header
+237: 		if head.offset-strpos > 0 {
+238: 			n, err := out.Write(w.str[strpos:head.offset])
+239: 			strpos += n
+240: 			if err != nil {
+241: 				return err
+242: 			}
+243: 		}
+244: 		// write the header
+245: 		enc := head.encode(w.sizebuf[:])
+
+fsn-recovery rlp/encode.go
+229: 	copy(out[pos:], w.str[strpos:])
+230: 	return out
+231: }
+232: 
+233: func (w *encbuf) toWriter(out io.Writer) (err error) {
+234: 	strpos := 0
+235: 	for _, head := range w.lheads {
+236: 		// write string data before header
+237: 		if head.offset-strpos > 0 {
+238: 			n, err := out.Write(w.str[strpos:head.offset])
+239: 			strpos += n
+240: 			if err != nil {
+241: 				return err
+242: 			}
+243: 		}
+244: 		// write the header
+245: 		enc := head.encode(w.sizebuf[:])
+246: 		if _, err = out.Write(enc); err != nil {
+247: 			return err
+248: 		}
+249: 	}
+250: 	if strpos < len(w.str) {
+251: 		// write string data after the last list header
+252: 		_, err = out.Write(w.str[strpos:])
+253: 	}
+254: 	return err
+255: }
+256: 
+257: // encReader is the io.Reader returned by EncodeToReader.
+258: // It releases its encbuf at EOF.
+259: type encReader struct {
+260: 	buf    *encbuf // the buffer we're reading from. this is nil when we're at EOF.
+261: 	lhpos  int     // index of list header that we're reading
+
+fsn-recovery trie/sync.go
+308: }
+309: 
+310: // Commit flushes the data stored in the internal membatch out to persistent
+311: // storage, returning any occurred error.
+312: func (s *Sync) Commit(dbw ethdb.Batch) error {
+313: 	// Dump the membatch into a database dbw
+314: 	for key, value := range s.membatch.nodes {
+315: 		rawdb.WriteTrieNode(dbw, key, value)
+316: 		if s.bloom != nil {
+317: 			s.bloom.Add(key[:])
+318: 		}
+319: 	}
+320: 	for key, value := range s.membatch.codes {
+321: 		rawdb.WriteCode(dbw, key, value)
+322: 		if s.bloom != nil {
+323: 			s.bloom.Add(key[:])
+324: 		}
+325: 	}
+326: 	// Drop the membatch data and return
+327: 	s.membatch = newSyncMemBatch()
+328: 	return nil
+329: }
+330: 
+331: // Pending returns the number of state entries currently pending for download.
+332: func (s *Sync) Pending() int {
+333: 	return len(s.nodeReqs) + len(s.codeReqs)
+334: }
+335: 
+336: // schedule inserts a new state retrieval request into the fetch queue. If there
+337: // is already a pending request for this node, the new request will be discarded
+338: // and only a parent reference added to the old one.
+339: func (s *Sync) schedule(req *request) {
+340: 	var reqset = s.nodeReqs
+
+fsn-recovery trie/sync.go
+314: 	for key, value := range s.membatch.nodes {
+315: 		rawdb.WriteTrieNode(dbw, key, value)
+316: 		if s.bloom != nil {
+317: 			s.bloom.Add(key[:])
+318: 		}
+319: 	}
+320: 	for key, value := range s.membatch.codes {
+321: 		rawdb.WriteCode(dbw, key, value)
+322: 		if s.bloom != nil {
+323: 			s.bloom.Add(key[:])
+324: 		}
+325: 	}
+326: 	// Drop the membatch data and return
+327: 	s.membatch = newSyncMemBatch()
+328: 	return nil
+329: }
+330: 
+331: // Pending returns the number of state entries currently pending for download.
+332: func (s *Sync) Pending() int {
+333: 	return len(s.nodeReqs) + len(s.codeReqs)
+334: }
+335: 
+336: // schedule inserts a new state retrieval request into the fetch queue. If there
+337: // is already a pending request for this node, the new request will be discarded
+338: // and only a parent reference added to the old one.
+339: func (s *Sync) schedule(req *request) {
+340: 	var reqset = s.nodeReqs
+341: 	if req.code {
+342: 		reqset = s.codeReqs
+343: 	}
+344: 	// If we're already requesting this node, add a new reference and stop
+345: 	if old, ok := reqset[req.hash]; ok {
+346: 		old.parents = append(old.parents, req.parents...)

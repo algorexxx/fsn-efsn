@@ -1,0 +1,647 @@
+{
+  "defaults": {
+    "efsn": {
+      "removed_legacy_overrides": {
+        "containermaxprocs": "0",
+        "decoratemappings": "0",
+        "gotestjsonbuildtext": "1",
+        "httpcookiemaxnum": "0",
+        "httplaxcontentlength": "1",
+        "httpmuxgo121": "1",
+        "httpservecontentkeepheaders": "1",
+        "multipathtcp": "0",
+        "netedns0": "0",
+        "panicnil": "1",
+        "randseednop": "0",
+        "rsa1024min": "0",
+        "tlsmlkem": "0",
+        "tlssha1": "1",
+        "updatemaxprocs": "0",
+        "urlmaxqueryparams": "0",
+        "winreadlinkvolume": "0",
+        "winsymlink": "0",
+        "x509negativeserial": "1",
+        "x509rsacrt": "0",
+        "x509sha256skid": "0",
+        "x509usepolicies": "0"
+      },
+      "retained_overrides": {
+        "cryptocustomrand": "1",
+        "tlssecpmlkem": "0",
+        "tracebacklabels": "0",
+        "urlstrictcolons": "0",
+        "x509sslcertoverrideplatform": "0"
+      }
+    },
+    "fsn-recovery": {
+      "removed_legacy_overrides": {
+        "containermaxprocs": "0",
+        "decoratemappings": "0",
+        "gotestjsonbuildtext": "1",
+        "httpcookiemaxnum": "0",
+        "httplaxcontentlength": "1",
+        "httpmuxgo121": "1",
+        "httpservecontentkeepheaders": "1",
+        "multipathtcp": "0",
+        "netedns0": "0",
+        "panicnil": "1",
+        "randseednop": "0",
+        "rsa1024min": "0",
+        "tlsmlkem": "0",
+        "tlssha1": "1",
+        "updatemaxprocs": "0",
+        "urlmaxqueryparams": "0",
+        "winreadlinkvolume": "0",
+        "winsymlink": "0",
+        "x509negativeserial": "1",
+        "x509rsacrt": "0",
+        "x509sha256skid": "0",
+        "x509usepolicies": "0"
+      },
+      "retained_overrides": {
+        "cryptocustomrand": "1",
+        "tlssecpmlkem": "0",
+        "tracebacklabels": "0",
+        "urlstrictcolons": "0",
+        "x509sslcertoverrideplatform": "0"
+      }
+    }
+  },
+  "direct_reference_inventory": {
+    "efsn": [
+      {
+        "File": "pool.go",
+        "Line": 241,
+        "Package": "sync",
+        "Symbol": "runtime.GOMAXPROCS"
+      },
+      {
+        "File": "file.go",
+        "Line": 59,
+        "Package": "github.com/VictoriaMetrics/fastcache",
+        "Symbol": "runtime.GOMAXPROCS"
+      },
+      {
+        "File": "database.go",
+        "Line": 883,
+        "Package": "github.com/FusionFoundation/efsn/v5/trie",
+        "Symbol": "runtime.GOMAXPROCS"
+      },
+      {
+        "File": "cache.go",
+        "Line": 26,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "common.go",
+        "Line": 1564,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "common.go",
+        "Line": 1667,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "handshake_server.go",
+        "Line": 948,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "tls.go",
+        "Line": 307,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "tls.go",
+        "Line": 365,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParsePKCS1PrivateKey"
+      },
+      {
+        "File": "expvar.go",
+        "Line": 382,
+        "Package": "expvar",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "expvar.go",
+        "Line": 384,
+        "Package": "expvar",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "exp.go",
+        "Line": 46,
+        "Package": "github.com/FusionFoundation/efsn/v5/metrics/exp",
+        "Symbol": "net/http.Handle"
+      },
+      {
+        "File": "exp.go",
+        "Line": 47,
+        "Package": "github.com/FusionFoundation/efsn/v5/metrics/exp",
+        "Symbol": "net/http.Handle"
+      },
+      {
+        "File": "exp.go",
+        "Line": 59,
+        "Package": "github.com/FusionFoundation/efsn/v5/metrics/exp",
+        "Symbol": "net/http.NewServeMux"
+      },
+      {
+        "File": "pprof.go",
+        "Line": 100,
+        "Package": "net/http/pprof",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "pprof.go",
+        "Line": 101,
+        "Package": "net/http/pprof",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "pprof.go",
+        "Line": 102,
+        "Package": "net/http/pprof",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "pprof.go",
+        "Line": 103,
+        "Package": "net/http/pprof",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "pprof.go",
+        "Line": 104,
+        "Package": "net/http/pprof",
+        "Symbol": "net/http.HandleFunc"
+      },
+      {
+        "File": "ecdsa_utils.go",
+        "Line": 55,
+        "Package": "github.com/golang-jwt/jwt/v4",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "rsa_utils.go",
+        "Line": 27,
+        "Package": "github.com/golang-jwt/jwt/v4",
+        "Symbol": "crypto/x509.ParsePKCS1PrivateKey"
+      },
+      {
+        "File": "rsa_utils.go",
+        "Line": 63,
+        "Package": "github.com/golang-jwt/jwt/v4",
+        "Symbol": "crypto/x509.ParsePKCS1PrivateKey"
+      },
+      {
+        "File": "rsa_utils.go",
+        "Line": 91,
+        "Package": "github.com/golang-jwt/jwt/v4",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "rpcstack.go",
+        "Line": 61,
+        "Package": "github.com/FusionFoundation/efsn/v5/node",
+        "Symbol": "net/http.ServeMux"
+      }
+    ],
+    "fsn-recovery": [
+      {
+        "File": "pool.go",
+        "Line": 241,
+        "Package": "sync",
+        "Symbol": "runtime.GOMAXPROCS"
+      },
+      {
+        "File": "file.go",
+        "Line": 59,
+        "Package": "github.com/VictoriaMetrics/fastcache",
+        "Symbol": "runtime.GOMAXPROCS"
+      },
+      {
+        "File": "database.go",
+        "Line": 883,
+        "Package": "github.com/FusionFoundation/efsn/v5/trie",
+        "Symbol": "runtime.GOMAXPROCS"
+      },
+      {
+        "File": "cache.go",
+        "Line": 26,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "common.go",
+        "Line": 1564,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "common.go",
+        "Line": 1667,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "handshake_server.go",
+        "Line": 948,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "tls.go",
+        "Line": 307,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParseCertificate"
+      },
+      {
+        "File": "tls.go",
+        "Line": 365,
+        "Package": "crypto/tls",
+        "Symbol": "crypto/x509.ParsePKCS1PrivateKey"
+      }
+    ]
+  },
+  "full_regression_pass": false,
+  "historical_compatibility_established": false,
+  "launch_approved": false,
+  "loops": {
+    "efsn": {
+      "diagnostic_records_without_inlining_duplicates": 27,
+      "distinct_loop_sites": 25,
+      "distinct_variables": 26
+    },
+    "fsn-recovery": {
+      "diagnostic_records_without_inlining_duplicates": 15,
+      "distinct_loop_sites": 14,
+      "distinct_variables": 15
+    }
+  },
+  "production_selection": "P1-P17+B1+D1",
+  "status": "language-default-review-complete-with-coverage-hold",
+  "test_only_patch": "10-core-types-fixtures.patch",
+  "tests": {
+    "baseline-common": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/common [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-common-cached": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/common [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-common-complete": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/common [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-common-corrected": {
+      "exit": 0,
+      "package_results": [
+        "ok  \tgithub.com/FusionFoundation/efsn/v5/common\t1.010s"
+      ],
+      "passed_top_level": [
+        "TestFromHex",
+        "TestIsHex",
+        "TestFromHexOddLength",
+        "TestNoPrefixShortHexOddLength",
+        "Test",
+        "TestStorageSizeString",
+        "TestBytesConversion",
+        "TestIsHexAddress",
+        "TestHashJsonValidation",
+        "TestAddressUnmarshalJSON",
+        "TestAddressHexChecksum",
+        "TestMixedcaseAccount_Address",
+        "TestHash_Scan",
+        "TestHash_Value",
+        "TestAddress_Scan",
+        "TestAddress_Value"
+      ],
+      "skipped_top_level": []
+    },
+    "baseline-core-state": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-core-state-cached": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-core-state-complete": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-core-state-corrected": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [build failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-core-types": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/types [build failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "baseline-core-types-repaired": {
+      "exit": 0,
+      "package_results": [
+        "ok  \tgithub.com/FusionFoundation/efsn/v5/core/types\t2.200s"
+      ],
+      "passed_top_level": [
+        "TestBlockEncoding",
+        "TestBloom",
+        "TestUnmarshalLog",
+        "TestDecodeEmptyTypedReceipt",
+        "TestLegacyReceiptDecoding",
+        "TestDeriveFields",
+        "TestTypedReceiptEncodingDecoding",
+        "TestEIP155Signing",
+        "TestEIP155ChainId",
+        "TestEIP155SigningVitalik",
+        "TestChainId",
+        "TestTransactionSigHash",
+        "TestTransactionEncode",
+        "TestRecipientEmpty",
+        "TestRecipientNormal",
+        "TestTransactionPriceNonceSort",
+        "TestTransactionJSON",
+        "TestDeriveSha",
+        "TestEIP2718DeriveSha",
+        "TestFuzzDeriveSha",
+        "TestDerivableList"
+      ],
+      "skipped_top_level": []
+    },
+    "baseline-rlp": {
+      "exit": 0,
+      "package_results": [
+        "ok  \tgithub.com/FusionFoundation/efsn/v5/rlp\t1.033s"
+      ],
+      "passed_top_level": [
+        "TestStreamKind",
+        "TestNewListStream",
+        "TestStreamErrors",
+        "TestStreamList",
+        "TestStreamRaw",
+        "TestDecodeErrors",
+        "TestDecodeWithByteReader",
+        "TestDecodeWithEncReader",
+        "TestDecodeWithNonByteReader",
+        "TestDecodeStreamReset",
+        "TestDecodeDecoder",
+        "TestDecodeDecoderNilPointer",
+        "TestDecoderInByteSlice",
+        "TestDecoderFunc",
+        "TestInvalidOptionalField",
+        "TestEncode",
+        "TestEncodeToBytes",
+        "TestEncodeToReader",
+        "TestEncodeToReaderPiecewise",
+        "TestEncodeToReaderReturnToPool",
+        "TestIterator",
+        "TestCountValues",
+        "TestSplitTypes",
+        "TestSplitUint64",
+        "TestSplit",
+        "TestReadSize",
+        "TestAppendUint64",
+        "TestAppendUint64Random",
+        "ExampleDecode_structTagTail",
+        "ExampleDecode",
+        "ExampleDecode_structTagNil",
+        "ExampleStream",
+        "ExampleEncoder"
+      ],
+      "skipped_top_level": []
+    },
+    "candidate-common": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/common [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-common-cached": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/common [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-common-complete": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/common [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-common-corrected": {
+      "exit": 0,
+      "package_results": [
+        "ok  \tgithub.com/FusionFoundation/efsn/v5/common\t1.010s"
+      ],
+      "passed_top_level": [
+        "TestFromHex",
+        "TestIsHex",
+        "TestFromHexOddLength",
+        "TestNoPrefixShortHexOddLength",
+        "Test",
+        "TestStorageSizeString",
+        "TestBytesConversion",
+        "TestIsHexAddress",
+        "TestHashJsonValidation",
+        "TestAddressUnmarshalJSON",
+        "TestAddressHexChecksum",
+        "TestMixedcaseAccount_Address",
+        "TestHash_Scan",
+        "TestHash_Value",
+        "TestAddress_Scan",
+        "TestAddress_Value"
+      ],
+      "skipped_top_level": []
+    },
+    "candidate-core-state": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-core-state-cached": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-core-state-complete": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [setup failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-core-state-corrected": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/state [build failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-core-types": {
+      "exit": 1,
+      "package_results": [
+        "FAIL\tgithub.com/FusionFoundation/efsn/v5/core/types [build failed]"
+      ],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "candidate-core-types-repaired": {
+      "exit": 0,
+      "package_results": [
+        "ok  \tgithub.com/FusionFoundation/efsn/v5/core/types\t2.200s"
+      ],
+      "passed_top_level": [
+        "TestBlockEncoding",
+        "TestBloom",
+        "TestUnmarshalLog",
+        "TestDecodeEmptyTypedReceipt",
+        "TestLegacyReceiptDecoding",
+        "TestDeriveFields",
+        "TestTypedReceiptEncodingDecoding",
+        "TestEIP155Signing",
+        "TestEIP155ChainId",
+        "TestEIP155SigningVitalik",
+        "TestChainId",
+        "TestTransactionSigHash",
+        "TestTransactionEncode",
+        "TestRecipientEmpty",
+        "TestRecipientNormal",
+        "TestTransactionPriceNonceSort",
+        "TestTransactionJSON",
+        "TestDeriveSha",
+        "TestEIP2718DeriveSha",
+        "TestFuzzDeriveSha",
+        "TestDerivableList"
+      ],
+      "skipped_top_level": []
+    },
+    "candidate-rlp": {
+      "exit": 0,
+      "package_results": [
+        "ok  \tgithub.com/FusionFoundation/efsn/v5/rlp\t1.035s"
+      ],
+      "passed_top_level": [
+        "TestStreamKind",
+        "TestNewListStream",
+        "TestStreamErrors",
+        "TestStreamList",
+        "TestStreamRaw",
+        "TestDecodeErrors",
+        "TestDecodeWithByteReader",
+        "TestDecodeWithEncReader",
+        "TestDecodeWithNonByteReader",
+        "TestDecodeStreamReset",
+        "TestDecodeDecoder",
+        "TestDecodeDecoderNilPointer",
+        "TestDecoderInByteSlice",
+        "TestDecoderFunc",
+        "TestInvalidOptionalField",
+        "TestEncode",
+        "TestEncodeToBytes",
+        "TestEncodeToReader",
+        "TestEncodeToReaderPiecewise",
+        "TestEncodeToReaderReturnToPool",
+        "TestIterator",
+        "TestCountValues",
+        "TestSplitTypes",
+        "TestSplitUint64",
+        "TestSplit",
+        "TestReadSize",
+        "TestAppendUint64",
+        "TestAppendUint64Random",
+        "ExampleDecode_structTagTail",
+        "ExampleDecode",
+        "ExampleDecode_structTagNil",
+        "ExampleStream",
+        "ExampleEncoder"
+      ],
+      "skipped_top_level": []
+    },
+    "loops-efsn": {
+      "exit": 0,
+      "package_results": [],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "loops-fsn-recovery": {
+      "exit": 0,
+      "package_results": [],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "test-library-corrected-download": {
+      "exit": 0,
+      "package_results": [],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "test-library-download": {
+      "exit": 0,
+      "package_results": [],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    },
+    "test-library-transitive-download": {
+      "exit": 0,
+      "package_results": [],
+      "passed_top_level": [],
+      "skipped_top_level": []
+    }
+  },
+  "text_upgrade_selected": false
+}

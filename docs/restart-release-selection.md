@@ -102,7 +102,11 @@ F10 and final CI/release acceptance remain open.
 The later [text correction experiment](evidence/restart-release-text-2026-10-04)
 does **not** extend this selection. Its builds, runtime console checks and
 offline scans establish useful evidence, but the required Go 1.25 language
-directive changes compatibility defaults and needs broader review. Both the
+directive changes compatibility defaults. The subsequent
+[language/default review](evidence/restart-release-go-defaults-2026-10-07)
+found no specific consensus-output change in the diagnosed loops and recommends
+continuing upstream qualification. Its core/types fixture repair is test-only;
+state/console/tracer/RPC coverage and historical acceptance remain open. Both the
 workspace module manifests remain at D1, and the selected candidate remains
 P1–P17+B1+D1 with Go 1.27.1 as compiler and `go 1.18` as the main-module language
 directive. These are distinct inputs; the investigation branch still contains

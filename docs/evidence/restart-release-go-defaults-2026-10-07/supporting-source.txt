@@ -1,0 +1,435 @@
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/rpc/subscription.go
+110: 	defer n.mu.Unlock()
+111: 
+112: 	if n.sub != nil {
+113: 		panic("can't create multiple subscriptions with Notifier")
+114: 	} else if n.callReturned {
+115: 		panic("can't create subscription after subscribe call has returned")
+116: 	}
+117: 	n.sub = &Subscription{ID: n.h.idgen(), namespace: n.namespace, err: make(chan error, 1)}
+118: 	return n.sub
+119: }
+120: 
+121: // Notify sends a notification to the client with the given data as payload.
+122: // If an error occurs the RPC connection is closed and the error is returned.
+123: func (n *Notifier) Notify(id ID, data interface{}) error {
+124: 	enc, err := json.Marshal(data)
+125: 	if err != nil {
+126: 		return err
+127: 	}
+128: 
+129: 	n.mu.Lock()
+130: 	defer n.mu.Unlock()
+131: 
+132: 	if n.sub == nil {
+133: 		panic("can't Notify before subscription is created")
+134: 	} else if n.sub.ID != id {
+135: 		panic("Notify with wrong ID")
+136: 	}
+137: 	if n.activated {
+138: 		return n.send(n.sub, enc)
+139: 	}
+140: 	n.buffer = append(n.buffer, enc)
+141: 	return nil
+142: }
+143: 
+144: // Closed returns a channel that is closed when the RPC connection is closed.
+145: // Deprecated: use subscription error channel
+146: func (n *Notifier) Closed() <-chan interface{} {
+147: 	return n.h.conn.closed()
+148: }
+149: 
+150: // takeSubscription returns the subscription (if one has been created). No subscription can
+151: // be created after this call.
+152: func (n *Notifier) takeSubscription() *Subscription {
+153: 	n.mu.Lock()
+154: 	defer n.mu.Unlock()
+155: 	n.callReturned = true
+156: 	return n.sub
+157: }
+158: 
+159: // activate is called after the subscription ID was sent to client. Notifications are
+160: // buffered before activation. This prevents notifications being sent to the client before
+161: // the subscription ID is sent to the client.
+162: func (n *Notifier) activate() error {
+163: 	n.mu.Lock()
+164: 	defer n.mu.Unlock()
+165: 
+166: 	for _, data := range n.buffer {
+167: 		if err := n.send(n.sub, data); err != nil {
+168: 			return err
+169: 		}
+170: 	}
+171: 	n.activated = true
+172: 	return nil
+173: }
+174: 
+175: func (n *Notifier) send(sub *Subscription, data json.RawMessage) error {
+176: 	params, _ := json.Marshal(&subscriptionResult{ID: string(sub.ID), Result: data})
+177: 	ctx := context.Background()
+178: 	return n.h.conn.writeJSON(ctx, &jsonrpcMessage{
+179: 		Version: vsn,
+180: 		Method:  n.namespace + notificationMethodSuffix,
+181: 		Params:  params,
+182: 	})
+183: }
+184: 
+185: // A Subscription is created by a notifier and tied to that notifier. The client can use
+186: // this subscription to wait for an unsubscribe request for the client, see Err().
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/crypto/crypto.go
+74: }
+75: 
+76: // Keccak256 calculates and returns the Keccak256 hash of the input data.
+77: func Keccak256(data ...[]byte) []byte {
+78: 	b := make([]byte, 32)
+79: 	d := NewKeccakState()
+80: 	for _, b := range data {
+81: 		d.Write(b)
+82: 	}
+83: 	d.Read(b)
+84: 	return b
+85: }
+86: 
+87: // Keccak256Hash calculates and returns the Keccak256 hash of the input data,
+88: // converting it to an internal Hash data structure.
+89: func Keccak256Hash(data ...[]byte) (h common.Hash) {
+90: 	d := NewKeccakState()
+91: 	for _, b := range data {
+92: 		d.Write(b)
+93: 	}
+94: 	d.Read(h[:])
+95: 	return h
+96: }
+97: 
+98: // Keccak512 calculates and returns the Keccak512 hash of the input data.
+99: func Keccak512(data ...[]byte) []byte {
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/trie/secure_trie.go
+106: //
+107: // If a node was not found in the database, a MissingNodeError is returned.
+108: func (t *SecureTrie) TryUpdate(key, value []byte) error {
+109: 	hk := t.hashKey(key)
+110: 	err := t.trie.TryUpdate(hk, value)
+111: 	if err != nil {
+112: 		return err
+113: 	}
+114: 	t.getSecKeyCache()[string(hk)] = common.CopyBytes(key)
+115: 	return nil
+116: }
+117: 
+118: // Delete removes any existing value for key from the trie.
+119: func (t *SecureTrie) Delete(key []byte) {
+120: 	if err := t.TryDelete(key); err != nil {
+121: 		log.Error(fmt.Sprintf("Unhandled trie error: %v", err))
+122: 	}
+123: }
+124: 
+125: // TryDelete removes any existing value for key from the trie.
+126: // If a node was not found in the database, a MissingNodeError is returned.
+127: func (t *SecureTrie) TryDelete(key []byte) error {
+128: 	hk := t.hashKey(key)
+129: 	delete(t.getSecKeyCache(), string(hk))
+130: 	return t.trie.TryDelete(hk)
+131: }
+132: 
+133: // GetKey returns the sha3 preimage of a hashed key that was
+134: // previously used to store a value.
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/trie/sync_bloom.go
+160: 
+161: // Add inserts a new trie node hash into the bloom filter.
+162: func (b *SyncBloom) Add(hash []byte) {
+163: 	if atomic.LoadUint32(&b.closed) == 1 {
+164: 		return
+165: 	}
+166: 	b.bloom.AddHash(binary.BigEndian.Uint64(hash))
+167: 	bloomAddMeter.Mark(1)
+168: }
+169: 
+170: // Contains tests if the bloom filter contains the given hash:
+171: //   - false: the bloom definitely does not contain hash
+172: //   - true:  the bloom maybe contains hash
+173: //
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/trie/database.go
+870: 	start := time.Now()
+871: 	err := db.cleans.SaveToFileConcurrent(dir, threads)
+872: 	if err != nil {
+873: 		log.Error("Failed to persist clean trie cache", "error", err)
+874: 		return err
+875: 	}
+876: 	log.Info("Persisted the clean trie cache", "path", dir, "elapsed", common.PrettyDuration(time.Since(start)))
+877: 	return nil
+878: }
+879: 
+880: // SaveCache atomically saves fast cache data to the given dir using all
+881: // available CPU cores.
+882: func (db *Database) SaveCache(dir string) error {
+883: 	return db.saveCache(dir, runtime.GOMAXPROCS(0))
+884: }
+885: 
+886: // SaveCachePeriodically atomically saves fast cache data to the given dir with
+887: // the specified interval. All dump operation will only use a single CPU core.
+888: func (db *Database) SaveCachePeriodically(dir string, interval time.Duration, stopCh <-chan struct{}) {
+889: 	ticker := time.NewTicker(interval)
+890: 	defer ticker.Stop()
+891: 
+892: 	for {
+893: 		select {
+894: 		case <-ticker.C:
+895: 			db.saveCache(dir, 1)
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/node/rpcstack.go
+174: 	for _, path := range paths {
+175: 		name := h.handlerNames[path]
+176: 		if !logged[name] {
+177: 			log.Info(name+" enabled", "url", "http://"+listener.Addr().String()+path)
+178: 			logged[name] = true
+179: 		}
+180: 	}
+181: 	return nil
+182: }
+183: 
+184: func (h *httpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+185: 	// check if ws request and serve if ws enabled
+186: 	ws := h.wsHandler.Load().(*rpcHandler)
+187: 	if ws != nil && isWebsocket(r) {
+188: 		if checkPath(r, h.wsConfig.prefix) {
+189: 			ws.ServeHTTP(w, r)
+190: 		}
+191: 		return
+192: 	}
+193: 	// if http-rpc is enabled, try to serve request
+194: 	rpc := h.httpHandler.Load().(*rpcHandler)
+195: 	if rpc != nil {
+196: 		// First try to route in the mux.
+197: 		// Requests to a path below root are handled by the mux,
+198: 		// which has all the handlers registered via Node.RegisterHandler.
+199: 		// These are made available when RPC is enabled.
+200: 		muxHandler, pattern := h.mux.Handler(r)
+201: 		if pattern != "" {
+202: 			muxHandler.ServeHTTP(w, r)
+203: 			return
+204: 		}
+205: 
+206: 		if checkPath(r, h.httpConfig.prefix) {
+207: 			rpc.ServeHTTP(w, r)
+208: 			return
+209: 		}
+210: 	}
+211: 	w.WriteHeader(http.StatusNotFound)
+212: }
+213: 
+214: // checkPath checks whether a given request URL matches a given path prefix.
+215: func checkPath(r *http.Request, path string) bool {
+216: 	// if no prefix has been specified, request URL must be on root
+217: 	if path == "" {
+218: 		return r.URL.Path == "/"
+219: 	}
+220: 	// otherwise, check to make sure prefix matches
+221: 	return len(r.URL.Path) >= len(path) && r.URL.Path[:len(path)] == path
+222: }
+223: 
+224: // validatePrefix checks if 'path' is a valid configuration value for the RPC prefix option.
+225: func validatePrefix(what, path string) error {
+226: 	if path == "" {
+227: 		return nil
+228: 	}
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/log/handler.go
+39: // StreamHandler wraps itself with LazyHandler and SyncHandler
+40: // to evaluate Lazy objects and perform safe concurrent writes.
+41: func StreamHandler(wr io.Writer, fmtr Format) Handler {
+42: 	h := FuncHandler(func(r *Record) error {
+43: 		_, err := wr.Write(fmtr.Format(r))
+44: 		return err
+45: 	})
+46: 	return LazyHandler(SyncHandler(h))
+47: }
+48: 
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/log/handler.go
+247: // of log messages, it's used by BufferedHandler.
+248: func ChannelHandler(recs chan<- *Record) Handler {
+249: 	return FuncHandler(func(r *Record) error {
+250: 		recs <- r
+251: 		return nil
+252: 	})
+253: }
+254: 
+255: // BufferedHandler writes all records to a buffered
+256: // channel of the given size which flushes into the wrapped
+257: // handler whenever it is available for writing. Since these
+258: // writes happen asynchronously, all writes to a BufferedHandler
+259: // never return an error and any errors from the wrapped handler are ignored.
+260: func BufferedHandler(bufSize int, h Handler) Handler {
+261: 	recs := make(chan *Record, bufSize)
+262: 	go func() {
+263: 		for m := range recs {
+264: 			_ = h.Log(m)
+265: 		}
+266: 	}()
+267: 	return ChannelHandler(recs)
+268: }
+269: 
+270: // LazyHandler writes all values to the wrapped handler after evaluating
+271: // any lazy functions in the record's context. It is already wrapped
+272: // around StreamHandler and SyslogHandler in this library, you'll only need
+273: // it if you write your own Handler.
+274: func LazyHandler(h Handler) Handler {
+275: 	return FuncHandler(func(r *Record) error {
+276: 		// go through the values (odd indices) and reassign
+277: 		// the values of any lazy fn to the result of its execution
+278: 		hadErr := false
+279: 		for i := 1; i < len(r.Ctx); i += 2 {
+280: 			lz, ok := r.Ctx[i].(Lazy)
+281: 			if ok {
+282: 				v, err := evaluateLazy(lz)
+283: 				if err != nil {
+284: 					hadErr = true
+285: 					r.Ctx[i] = err
+286: 				} else {
+287: 					if cs, ok := v.(stack.CallStack); ok {
+288: 						v = cs.TrimBelow(r.Call).TrimRuntime()
+289: 					}
+290: 					r.Ctx[i] = v
+291: 				}
+292: 			}
+293: 		}
+294: 
+295: 		if hadErr {
+296: 			r.Ctx = append(r.Ctx, errorKey, "bad lazy")
+297: 		}
+298: 
+299: 		return h.Log(r)
+300: 	})
+301: }
+302: 
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/internal/debug/flags.go
+116: 	blockprofilerateFlag,
+117: 	cpuprofileFlag,
+118: 	traceFlag,
+119: }
+120: 
+121: var glogger *log.GlogHandler
+122: 
+123: func init() {
+124: 	glogger = log.NewGlogHandler(log.StreamHandler(os.Stderr, log.TerminalFormat(false)))
+125: 	glogger.Verbosity(log.LvlInfo)
+126: 	log.Root().SetHandler(glogger)
+127: }
+128: 
+129: // Setup initializes profiling and logging based on the CLI flags.
+130: // It should be called as early as possible in the program.
+131: func Setup(ctx *cli.Context) error {
+132: 	var ostream log.Handler
+133: 	output := io.Writer(os.Stderr)
+134: 	if ctx.Bool(logjsonFlag.Name) {
+135: 		ostream = log.StreamHandler(output, log.JSONFormat())
+136: 	} else {
+137: 		usecolor := (isatty.IsTerminal(os.Stderr.Fd()) || isatty.IsCygwinTerminal(os.Stderr.Fd())) && os.Getenv("TERM") != "dumb"
+138: 		if usecolor {
+139: 			output = colorable.NewColorableStderr()
+140: 		}
+141: 		ostream = log.StreamHandler(output, log.TerminalFormat(usecolor))
+142: 	}
+143: 	glogger.SetHandler(ostream)
+144: 
+145: 	// logging
+146: 	verbosity := ctx.Int(verbosityFlag.Name)
+147: 	glogger.Verbosity(log.Lvl(verbosity))
+148: 	vmodule := ctx.String(vmoduleFlag.Name)
+149: 	glogger.Vmodule(vmodule)
+150: 
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/p2p/discv5/ticket.go
+430: 		log.Trace("Removing tickets from unknown topic", "topic", topic)
+431: 		return
+432: 	}
+433: 	bucket := timeBucket(ref.t.regTime[ref.idx] / mclock.AbsTime(ticketTimeBucketLen))
+434: 	list := tickets.buckets[bucket]
+435: 	idx := -1
+436: 	for i, bt := range list {
+437: 		if bt.t == ref.t {
+438: 			idx = i
+439: 			break
+440: 		}
+441: 	}
+442: 	if idx == -1 {
+443: 		panic(nil)
+444: 	}
+445: 	list = append(list[:idx], list[idx+1:]...)
+446: 	if len(list) != 0 {
+447: 		tickets.buckets[bucket] = list
+448: 	} else {
+449: 		delete(tickets.buckets, bucket)
+450: 	}
+
+/home/rehearsal/results/restart-release-text-2026-10-04/node/p2p/discv5/ticket.go
+790: 		}
+791: 	}
+792: 	if c == 0 {
+793: 		return -1
+794: 	}
+795: 	rnd := randUint(uint32(c))
+796: 	for i := a; i <= b; i++ {
+797: 		if i >= len(r.buckets) || r.buckets[i].weights[trNoAdjust] < maxNoAdjust {
+798: 			if rnd == 0 {
+799: 				return i
+800: 			}
+801: 			rnd--
+802: 		}
+803: 	}
+804: 	panic(nil) // should never happen
+805: }
+806: 
+807: func (r *topicRadius) needMoreLookups(a, b int, maxValue float64) bool {
+808: 	var max float64
+
+/home/rehearsal/go/pkg/mod/github.com/huin/goupnp@v1.0.3/device.go
+65: 
+66: // VisitDevices calls visitor for the device, and all its descendent devices.
+67: func (device *Device) VisitDevices(visitor func(*Device)) {
+68: 	visitor(device)
+69: 	for i := range device.Devices {
+70: 		device.Devices[i].VisitDevices(visitor)
+71: 	}
+72: }
+73: 
+74: // VisitServices calls visitor for all Services under the device and all its
+75: // descendent devices.
+76: func (device *Device) VisitServices(visitor func(*Service)) {
+77: 	device.VisitDevices(func(d *Device) {
+78: 		for i := range d.Services {
+79: 			visitor(&d.Services[i])
+80: 		}
+81: 	})
+82: }
+83: 
+
+/home/rehearsal/go/pkg/mod/github.com/!victoria!metrics/fastcache@v1.6.0/file.go
+48: 
+49: 	// Save cache data into a temporary directory.
+50: 	tmpDir, err := ioutil.TempDir(dir, "fastcache.tmp.")
+51: 	if err != nil {
+52: 		return fmt.Errorf("cannot create temporary dir inside %q: %s", dir, err)
+53: 	}
+54: 	defer func() {
+55: 		if tmpDir != "" {
+56: 			_ = os.RemoveAll(tmpDir)
+57: 		}
+58: 	}()
+59: 	gomaxprocs := runtime.GOMAXPROCS(-1)
+60: 	if concurrency <= 0 || concurrency > gomaxprocs {
+61: 		concurrency = gomaxprocs
+62: 	}
+63: 	if err := c.save(tmpDir, concurrency); err != nil {
+64: 		return fmt.Errorf("cannot save cache data to temporary dir %q: %s", tmpDir, err)
+65: 	}
+66: 
+67: 	// Remove old filePath contents, since os.Rename may return
+68: 	// error if filePath dir exists.
+69: 	if err := os.RemoveAll(filePath); err != nil {
