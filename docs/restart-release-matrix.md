@@ -23,8 +23,11 @@ source selection or closing final acceptance.
 The [7 October language/default review](evidence/restart-release-go-defaults-2026-10-07)
 records the concrete loop/default effects and repairs two core/types fixtures.
 The complete types package plus common/RLP pass with race detection before/after.
-State compilation and console/tracer/RPC coverage still need resolution before
-upgrade/history acceptance. Test-only patch 10 changes no production input.
+The subsequent [state fixture qualification](evidence/restart-state-tests-2026-10-07)
+repairs compilation but exposes inherited state rollback failures: 15 top-level
+passes and three failures on both builds. F11 records the release hold and the
+unfinished EVM follow-up. Console/tracer/RPC coverage and historical acceptance
+remain open. These test-only changes alter no production input.
 
 ## Scope and evidence rules
 
@@ -93,7 +96,7 @@ copies. Backup/replay probes keep original data read-only.
 ## Findings requiring a recorded disposition
 
 The [release findings ledger](restart-release-findings.md) is the authority for
-F1–F10 decisions, evidence, ownership and closure conditions. It records the
+F1–F11 decisions, evidence, ownership and closure conditions. It records the
 legacy compilation gaps, three corrected networking fixtures, native-call
 behavior, operating limits, compiler compatibility and dependency/CI review.
 The [follow-up package run](evidence/restart-release-followup-2026-10-04) passes

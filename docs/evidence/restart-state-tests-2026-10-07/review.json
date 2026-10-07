@@ -1,0 +1,189 @@
+{
+  "active_test_snapshot": "qualified",
+  "archived_incomplete_evm_probe": "verified",
+  "dump_vector_root": "09c81cf1049993c874a455403e5e8440c32ba09a4356f98bb443a127d6a9f2a2",
+  "full_regression_pass": false,
+  "launch_approved": false,
+  "production_selection": "P1-P17+B1+D1",
+  "selected_production_suicide_calls": [
+    {
+      "line": 839,
+      "path": "core/vm/instructions.go",
+      "source": "interpreter.evm.StateDB.Suicide(scope.Contract.Address())"
+    }
+  ],
+  "status": "state-tests-compile-with-inherited-rollback-failures",
+  "tests": {
+    "api-baseline": {
+      "exit": 1,
+      "failed_top_level": [
+        "TestSnapshotRandom"
+      ],
+      "panic": false,
+      "passed_top_level": [
+        "TestNodeIteratorCoverage",
+        "Test",
+        "TestSnapshot2",
+        "TestUpdateLeaks",
+        "TestIntermediateLeaks",
+        "TestCopy",
+        "TestCopyOfCopy",
+        "TestEmptyStateSync",
+        "TestIterativeStateSyncIndividual",
+        "TestIterativeStateSyncBatched",
+        "TestIterativeDelayedStateSync",
+        "TestIterativeRandomStateSyncIndividual",
+        "TestIterativeRandomStateSyncBatched",
+        "TestIterativeRandomDelayedStateSync",
+        "TestIncompleteStateSync"
+      ],
+      "skipped_top_level": []
+    },
+    "api-candidate": {
+      "exit": 1,
+      "failed_top_level": [
+        "TestSnapshotRandom"
+      ],
+      "panic": false,
+      "passed_top_level": [
+        "TestNodeIteratorCoverage",
+        "Test",
+        "TestSnapshot2",
+        "TestUpdateLeaks",
+        "TestIntermediateLeaks",
+        "TestCopy",
+        "TestCopyOfCopy",
+        "TestEmptyStateSync",
+        "TestIterativeStateSyncIndividual",
+        "TestIterativeStateSyncBatched",
+        "TestIterativeDelayedStateSync",
+        "TestIterativeRandomStateSyncIndividual",
+        "TestIterativeRandomStateSyncBatched",
+        "TestIterativeRandomDelayedStateSync",
+        "TestIncompleteStateSync"
+      ],
+      "skipped_top_level": []
+    },
+    "qualified-baseline": {
+      "exit": 1,
+      "failed_top_level": [
+        "TestSnapshotRandom",
+        "TestSuicideSnapshotRestoresFlag",
+        "TestSuicideSnapshotPreservesTimeLockAsset"
+      ],
+      "panic": false,
+      "passed_top_level": [
+        "TestNodeIteratorCoverage",
+        "Test",
+        "TestSnapshot2",
+        "TestUpdateLeaks",
+        "TestIntermediateLeaks",
+        "TestCopy",
+        "TestCopyOfCopy",
+        "TestEmptyStateSync",
+        "TestIterativeStateSyncIndividual",
+        "TestIterativeStateSyncBatched",
+        "TestIterativeDelayedStateSync",
+        "TestIterativeRandomStateSyncIndividual",
+        "TestIterativeRandomStateSyncBatched",
+        "TestIterativeRandomDelayedStateSync",
+        "TestIncompleteStateSync"
+      ],
+      "skipped_top_level": []
+    },
+    "qualified-candidate": {
+      "exit": 1,
+      "failed_top_level": [
+        "TestSnapshotRandom",
+        "TestSuicideSnapshotRestoresFlag",
+        "TestSuicideSnapshotPreservesTimeLockAsset"
+      ],
+      "panic": false,
+      "passed_top_level": [
+        "TestNodeIteratorCoverage",
+        "Test",
+        "TestSnapshot2",
+        "TestUpdateLeaks",
+        "TestIntermediateLeaks",
+        "TestCopy",
+        "TestCopyOfCopy",
+        "TestEmptyStateSync",
+        "TestIterativeStateSyncIndividual",
+        "TestIterativeStateSyncBatched",
+        "TestIterativeDelayedStateSync",
+        "TestIterativeRandomStateSyncIndividual",
+        "TestIterativeRandomStateSyncBatched",
+        "TestIterativeRandomDelayedStateSync",
+        "TestIncompleteStateSync"
+      ],
+      "skipped_top_level": []
+    },
+    "verified-baseline": {
+      "exit": 1,
+      "failed_top_level": [
+        "TestSnapshotRandom",
+        "TestSuicideSnapshotRestoresFlag",
+        "TestSuicideSnapshotPreservesTimeLockAsset",
+        "TestSelfdestructParentRollback"
+      ],
+      "panic": true,
+      "passed_top_level": [
+        "TestNodeIteratorCoverage",
+        "Test",
+        "TestSnapshot2",
+        "TestUpdateLeaks",
+        "TestIntermediateLeaks",
+        "TestCopy",
+        "TestCopyOfCopy",
+        "TestEmptyStateSync",
+        "TestIterativeStateSyncIndividual",
+        "TestIterativeStateSyncBatched",
+        "TestIterativeDelayedStateSync",
+        "TestIterativeRandomStateSyncIndividual",
+        "TestIterativeRandomStateSyncBatched",
+        "TestIterativeRandomDelayedStateSync",
+        "TestIncompleteStateSync"
+      ],
+      "skipped_top_level": []
+    },
+    "verified-candidate": {
+      "exit": 1,
+      "failed_top_level": [
+        "TestSnapshotRandom",
+        "TestSuicideSnapshotRestoresFlag",
+        "TestSuicideSnapshotPreservesTimeLockAsset",
+        "TestSelfdestructParentRollback"
+      ],
+      "panic": true,
+      "passed_top_level": [
+        "TestNodeIteratorCoverage",
+        "Test",
+        "TestSnapshot2",
+        "TestUpdateLeaks",
+        "TestIntermediateLeaks",
+        "TestCopy",
+        "TestCopyOfCopy",
+        "TestEmptyStateSync",
+        "TestIterativeStateSyncIndividual",
+        "TestIterativeStateSyncBatched",
+        "TestIterativeDelayedStateSync",
+        "TestIterativeRandomStateSyncIndividual",
+        "TestIterativeRandomStateSyncBatched",
+        "TestIterativeRandomDelayedStateSync",
+        "TestIncompleteStateSync"
+      ],
+      "skipped_top_level": []
+    }
+  },
+  "text_upgrade_selected": false,
+  "unchanged_source_sha256": {
+    "common/fork.go": "610eff34ab3622c4cb5974f8e6d24c7738a86775163d57f479a3a5f4c07174be",
+    "core/evm.go": "a92df23db914b3bce47dc0830cfbf8fa699d0d98bce6cfc3cb74a68d5215a88e",
+    "core/state/journal.go": "418986ff0e6e0e7ff2dd7baa9b042429025e05656260974f1f5d55b9379cfe56",
+    "core/state/state_object.go": "61c60916edcf59e1cf9086b5b50d0844689bd1b30b9683aa3ed97a5540a7999c",
+    "core/state/statedb.go": "7ec4647898f14ff844cb1a6e9ef475a4e08d345639687d802373a51d5205b5d6",
+    "core/vm/evm.go": "fc3c7d76fca51a731fbbaaeb11b14a30eed9b1649fb824fdb6db65410798b8d0",
+    "core/vm/instructions.go": "da778a3614f23e8b59de0216cd1a5c5fcb9644f70856a413ecebbfbbf82741fc"
+  },
+  "upstream": "c5f0174d88ab2b9c3086c6a9cc9ccf38a072992f"
+}

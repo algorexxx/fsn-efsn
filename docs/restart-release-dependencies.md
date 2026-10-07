@@ -176,7 +176,21 @@ are retained; no production source or selected manifest changed.
 
 Prefer continuing qualification of the upstream update over maintaining a
 private dependency backport without an identified compatibility blocker.
-Next, repair or precisely replace the relevant state/console/tracer/RPC test
-coverage and verify patched historical/recovery behavior. Actual service
+Next, complete the F11 state rollback disposition below, repair or precisely
+replace the relevant console/tracer/RPC test coverage and verify patched
+historical/recovery behavior. Actual service
 DNS/TLS checks remain part of existing host acceptance. The update stays
 unselected until that evidence is accepted; other F10 findings remain open.
+
+## State coverage follow-up - 7 October
+
+The [state test repairs](evidence/restart-state-tests-2026-10-07) remove the
+inherited compilation barrier without changing runtime code. Each build has
+15 passing top-level tests and three failing snapshot restoration tests.
+The relevant runtime code matches upstream; these failures are not introduced
+by x/text or the newer language directive. F11 now records their required
+runtime disposition. The separate EVM follow-up has unfinished assertions and
+is preserved as incomplete after recurring product content restrictions.
+Neither identical failures nor the passing subset clears F1/F10/F11 or selects
+the text update. No production manifests, binary artifacts or historical data
+were changed by this follow-up.

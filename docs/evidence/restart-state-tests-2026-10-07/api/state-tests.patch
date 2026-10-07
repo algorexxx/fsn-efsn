@@ -1,0 +1,762 @@
+--- a/core/state/state_test.go
++++ b/core/state/state_test.go
+@@ -18,17 +18,19 @@
+ 
+ import (
+ 	"bytes"
++	"encoding/json"
+ 	"math/big"
+ 	"testing"
+ 
+ 	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+ 	"github.com/FusionFoundation/efsn/v5/crypto"
+ 	"github.com/FusionFoundation/efsn/v5/ethdb"
+ 	checker "gopkg.in/check.v1"
+ )
+ 
+ type StateSuite struct {
+-	db    *ethdb.MemDatabase
++	db    ethdb.Database
+ 	state *StateDB
+ }
+ 
+@@ -39,11 +41,11 @@
+ func (s *StateSuite) TestDump(c *checker.C) {
+ 	// generate a few entries
+ 	obj1 := s.state.GetOrNewStateObject(toAddr([]byte{0x01}))
+-	obj1.AddBalance(big.NewInt(22))
++	obj1.AddBalance(common.SystemAssetID, big.NewInt(22))
+ 	obj2 := s.state.GetOrNewStateObject(toAddr([]byte{0x01, 0x02}))
+ 	obj2.SetCode(crypto.Keccak256Hash([]byte{3, 3, 3, 3, 3, 3, 3}), []byte{3, 3, 3, 3, 3, 3, 3})
+ 	obj3 := s.state.GetOrNewStateObject(toAddr([]byte{0x02}))
+-	obj3.SetBalance(big.NewInt(44))
++	obj3.SetBalance(common.SystemAssetID, big.NewInt(44))
+ 
+ 	// write some of them to the trie
+ 	s.state.updateStateObject(obj1)
+@@ -51,44 +53,50 @@
+ 	s.state.Commit(false)
+ 
+ 	// check that dump contains the state objects that are in trie
+-	got := string(s.state.Dump())
++	got := s.state.Dump(nil)
+ 	want := `{
+-    "root": "71edff0130dd2385947095001c73d9e28d862fc286fca2b922ca6f6f3cddfdd2",
+     "accounts": {
+-        "0000000000000000000000000000000000000001": {
+-            "balance": "22",
++        "0x0000000000000000000000000000000000000001": {
++            "balance": {
++                "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": 22
++            },
++            "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
++            "key": "0x1468288056310c82aa4c01a7e12a10f8111a0560e72b700555479031b86c357d",
+             "nonce": 0,
+-            "root": "56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+-            "codeHash": "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+-            "code": "",
+-            "storage": {}
++            "root": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
++            "timelock": {}
+         },
+-        "0000000000000000000000000000000000000002": {
+-            "balance": "44",
++        "0x0000000000000000000000000000000000000002": {
++            "balance": {
++                "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": 44
++            },
++            "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
++            "key": "0xd52688a8f926c816ca1e079067caba944f158e764817b83fc43594370ca9cf62",
+             "nonce": 0,
+-            "root": "56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+-            "codeHash": "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+-            "code": "",
+-            "storage": {}
++            "root": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
++            "timelock": {}
+         },
+-        "0000000000000000000000000000000000000102": {
+-            "balance": "0",
++        "0x0000000000000000000000000000000000000102": {
++            "balance": {},
++            "code": "0x03030303030303",
++            "codeHash": "0x87874902497a5bb968da31a2998d8f22e949d1ef6214bcdedd8bae24cca4b9e3",
++            "key": "0xa17eacbc25cda025e81db9c5c62868822c73ce097cee2a63e33a2e41268358a1",
+             "nonce": 0,
+-            "root": "56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+-            "codeHash": "87874902497a5bb968da31a2998d8f22e949d1ef6214bcdedd8bae24cca4b9e3",
+-            "code": "03030303030303",
+-            "storage": {}
++            "root": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
++            "timelock": {}
+         }
+-    }
++    },
++    "root": "09c81cf1049993c874a455403e5e8440c32ba09a4356f98bb443a127d6a9f2a2"
+ }`
+-	if got != want {
+-		c.Errorf("dump mismatch:\ngot: %s\nwant: %s\n", got, want)
+-	}
++	var gotJSON, wantJSON interface{}
++	c.Assert(json.Unmarshal(got, &gotJSON), checker.IsNil)
++	c.Assert(json.Unmarshal([]byte(want), &wantJSON), checker.IsNil)
++	c.Assert(gotJSON, checker.DeepEquals, wantJSON)
+ }
+ 
+ func (s *StateSuite) SetUpTest(c *checker.C) {
+-	s.db = ethdb.NewMemDatabase()
+-	s.state, _ = New(common.Hash{}, NewDatabase(s.db))
++	s.db = rawdb.NewMemoryDatabase()
++	s.state, _ = New(common.Hash{}, common.Hash{}, NewDatabase(s.db))
+ }
+ 
+ func (s *StateSuite) TestNull(c *checker.C) {
+@@ -141,7 +149,7 @@
+ // use testing instead of checker because checker does not support
+ // printing/logging in tests (-check.vv does not work)
+ func TestSnapshot2(t *testing.T) {
+-	state, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
++	state, _ := New(common.Hash{}, common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+ 
+ 	stateobjaddr0 := toAddr([]byte("so0"))
+ 	stateobjaddr1 := toAddr([]byte("so1"))
+@@ -155,7 +163,7 @@
+ 
+ 	// db, trie are already non-empty values
+ 	so0 := state.getStateObject(stateobjaddr0)
+-	so0.SetBalance(big.NewInt(42))
++	so0.SetBalance(common.SystemAssetID, big.NewInt(42))
+ 	so0.SetNonce(43)
+ 	so0.SetCode(crypto.Keccak256Hash([]byte{'c', 'a', 'f', 'e'}), []byte{'c', 'a', 'f', 'e'})
+ 	so0.suicided = false
+@@ -167,7 +175,7 @@
+ 
+ 	// and one with deleted == true
+ 	so1 := state.getStateObject(stateobjaddr1)
+-	so1.SetBalance(big.NewInt(52))
++	so1.SetBalance(common.SystemAssetID, big.NewInt(52))
+ 	so1.SetNonce(53)
+ 	so1.SetCode(crypto.Keccak256Hash([]byte{'c', 'a', 'f', 'e', '2'}), []byte{'c', 'a', 'f', 'e', '2'})
+ 	so1.suicided = true
+@@ -200,8 +208,8 @@
+ 	if so0.Address() != so1.Address() {
+ 		t.Fatalf("Address mismatch: have %v, want %v", so0.address, so1.address)
+ 	}
+-	if so0.Balance().Cmp(so1.Balance()) != 0 {
+-		t.Fatalf("Balance mismatch: have %v, want %v", so0.Balance(), so1.Balance())
++	if so0.Balance(common.SystemAssetID).Cmp(so1.Balance(common.SystemAssetID)) != 0 {
++		t.Fatalf("Balance mismatch: have %v, want %v", so0.Balance(common.SystemAssetID), so1.Balance(common.SystemAssetID))
+ 	}
+ 	if so0.Nonce() != so1.Nonce() {
+ 		t.Fatalf("Nonce mismatch: have %v, want %v", so0.Nonce(), so1.Nonce())
+--- a/core/state/statedb_test.go
++++ b/core/state/statedb_test.go
+@@ -31,6 +31,7 @@
+ 	check "gopkg.in/check.v1"
+ 
+ 	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+ 	"github.com/FusionFoundation/efsn/v5/core/types"
+ 	"github.com/FusionFoundation/efsn/v5/ethdb"
+ )
+@@ -39,13 +40,13 @@
+ // actually committing the state.
+ func TestUpdateLeaks(t *testing.T) {
+ 	// Create an empty state database
+-	db := ethdb.NewMemDatabase()
+-	state, _ := New(common.Hash{}, NewDatabase(db))
++	db := rawdb.NewMemoryDatabase()
++	state, _ := New(common.Hash{}, common.Hash{}, NewDatabase(db))
+ 
+ 	// Update it with some accounts
+ 	for i := byte(0); i < 255; i++ {
+ 		addr := common.BytesToAddress([]byte{i})
+-		state.AddBalance(addr, big.NewInt(int64(11*i)))
++		state.AddBalance(addr, common.SystemAssetID, big.NewInt(int64(11*i)))
+ 		state.SetNonce(addr, uint64(42*i))
+ 		if i%2 == 0 {
+ 			state.SetState(addr, common.BytesToHash([]byte{i, i, i}), common.BytesToHash([]byte{i, i, i, i}))
+@@ -56,23 +57,37 @@
+ 		state.IntermediateRoot(false)
+ 	}
+ 	// Ensure that no data was leaked into the database
+-	for _, key := range db.Keys() {
++	for _, key := range stateDatabaseKeys(t, db) {
+ 		value, _ := db.Get(key)
+ 		t.Errorf("State leaked into database: %x -> %x", key, value)
+ 	}
++}
++
++func stateDatabaseKeys(t *testing.T, db ethdb.KeyValueStore) [][]byte {
++	t.Helper()
++	it := db.NewIterator(nil, nil)
++	defer it.Release()
++	var keys [][]byte
++	for it.Next() {
++		keys = append(keys, common.CopyBytes(it.Key()))
++	}
++	if err := it.Error(); err != nil {
++		t.Fatal(err)
++	}
++	return keys
+ }
+ 
+ // Tests that no intermediate state of an object is stored into the database,
+ // only the one right before the commit.
+ func TestIntermediateLeaks(t *testing.T) {
+ 	// Create two state databases, one transitioning to the final state, the other final from the beginning
+-	transDb := ethdb.NewMemDatabase()
+-	finalDb := ethdb.NewMemDatabase()
+-	transState, _ := New(common.Hash{}, NewDatabase(transDb))
+-	finalState, _ := New(common.Hash{}, NewDatabase(finalDb))
++	transDb := rawdb.NewMemoryDatabase()
++	finalDb := rawdb.NewMemoryDatabase()
++	transState, _ := New(common.Hash{}, common.Hash{}, NewDatabase(transDb))
++	finalState, _ := New(common.Hash{}, common.Hash{}, NewDatabase(finalDb))
+ 
+ 	modify := func(state *StateDB, addr common.Address, i, tweak byte) {
+-		state.SetBalance(addr, big.NewInt(int64(11*i)+int64(tweak)))
++		state.SetBalance(addr, common.SystemAssetID, big.NewInt(int64(11*i)+int64(tweak)))
+ 		state.SetNonce(addr, uint64(42*i+tweak))
+ 		if i%2 == 0 {
+ 			state.SetState(addr, common.Hash{i, i, i, 0}, common.Hash{})
+@@ -103,13 +118,13 @@
+ 	if _, err := finalState.Commit(false); err != nil {
+ 		t.Fatalf("failed to commit final state: %v", err)
+ 	}
+-	for _, key := range finalDb.Keys() {
++	for _, key := range stateDatabaseKeys(t, finalDb) {
+ 		if _, err := transDb.Get(key); err != nil {
+ 			val, _ := finalDb.Get(key)
+ 			t.Errorf("entry missing from the transition database: %x -> %x", key, val)
+ 		}
+ 	}
+-	for _, key := range transDb.Keys() {
++	for _, key := range stateDatabaseKeys(t, transDb) {
+ 		if _, err := finalDb.Get(key); err != nil {
+ 			val, _ := transDb.Get(key)
+ 			t.Errorf("extra entry in the transition database: %x -> %x", key, val)
+@@ -122,11 +137,11 @@
+ // https://github.com/FusionFoundation/efsn/pull/15549.
+ func TestCopy(t *testing.T) {
+ 	// Create a random state test to copy and modify "independently"
+-	orig, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
++	orig, _ := New(common.Hash{}, common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+ 
+ 	for i := byte(0); i < 255; i++ {
+ 		obj := orig.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
+-		obj.AddBalance(big.NewInt(int64(i)))
++		obj.AddBalance(common.SystemAssetID, big.NewInt(int64(i)))
+ 		orig.updateStateObject(obj)
+ 	}
+ 	orig.Finalise(false)
+@@ -138,8 +153,8 @@
+ 		origObj := orig.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
+ 		copyObj := copy.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
+ 
+-		origObj.AddBalance(big.NewInt(2 * int64(i)))
+-		copyObj.AddBalance(big.NewInt(3 * int64(i)))
++		origObj.AddBalance(common.SystemAssetID, big.NewInt(2*int64(i)))
++		copyObj.AddBalance(common.SystemAssetID, big.NewInt(3*int64(i)))
+ 
+ 		orig.updateStateObject(origObj)
+ 		copy.updateStateObject(copyObj)
+@@ -158,17 +173,17 @@
+ 		origObj := orig.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
+ 		copyObj := copy.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
+ 
+-		if want := big.NewInt(3 * int64(i)); origObj.Balance().Cmp(want) != 0 {
+-			t.Errorf("orig obj %d: balance mismatch: have %v, want %v", i, origObj.Balance(), want)
+-		}
+-		if want := big.NewInt(4 * int64(i)); copyObj.Balance().Cmp(want) != 0 {
+-			t.Errorf("copy obj %d: balance mismatch: have %v, want %v", i, copyObj.Balance(), want)
++		if want := big.NewInt(3 * int64(i)); origObj.Balance(common.SystemAssetID).Cmp(want) != 0 {
++			t.Errorf("orig obj %d: balance mismatch: have %v, want %v", i, origObj.Balance(common.SystemAssetID), want)
++		}
++		if want := big.NewInt(4 * int64(i)); copyObj.Balance(common.SystemAssetID).Cmp(want) != 0 {
++			t.Errorf("copy obj %d: balance mismatch: have %v, want %v", i, copyObj.Balance(common.SystemAssetID), want)
+ 		}
+ 	}
+ }
+ 
+ func TestSnapshotRandom(t *testing.T) {
+-	config := &quick.Config{MaxCount: 1000}
++	config := &quick.Config{MaxCount: 1000, Rand: rand.New(rand.NewSource(1))}
+ 	err := quick.Check((*snapshotTest).run, config)
+ 	if cerr, ok := err.(*quick.CheckError); ok {
+ 		test := cerr.In[0].(*snapshotTest)
+@@ -209,14 +224,14 @@
+ 		{
+ 			name: "SetBalance",
+ 			fn: func(a testAction, s *StateDB) {
+-				s.SetBalance(addr, big.NewInt(a.args[0]))
++				s.SetBalance(addr, common.SystemAssetID, big.NewInt(a.args[0]))
+ 			},
+ 			args: make([]int64, 1),
+ 		},
+ 		{
+ 			name: "AddBalance",
+ 			fn: func(a testAction, s *StateDB) {
+-				s.AddBalance(addr, big.NewInt(a.args[0]))
++				s.AddBalance(addr, common.SystemAssetID, big.NewInt(a.args[0]))
+ 			},
+ 			args: make([]int64, 1),
+ 		},
+@@ -282,8 +297,8 @@
+ 	if !action.noAddr {
+ 		nameargs = append(nameargs, addr.Hex())
+ 	}
+-	for _, i := range action.args {
+-		action.args[i] = rand.Int63n(100)
++	for i := range action.args {
++		action.args[i] = r.Int63n(100)
+ 		nameargs = append(nameargs, fmt.Sprint(action.args[i]))
+ 	}
+ 	action.name += strings.Join(nameargs, ", ")
+@@ -333,7 +348,7 @@
+ func (test *snapshotTest) run() bool {
+ 	// Run all actions and create snapshots.
+ 	var (
+-		state, _     = New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
++		state, _     = New(common.Hash{}, common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+ 		snapshotRevs = make([]int, len(test.snapshots))
+ 		sindex       = 0
+ 	)
+@@ -347,7 +362,7 @@
+ 	// Revert all snapshots in reverse order. Each revert must yield a state
+ 	// that is equivalent to fresh state with all actions up the snapshot applied.
+ 	for sindex--; sindex >= 0; sindex-- {
+-		checkstate, _ := New(common.Hash{}, state.Database())
++		checkstate, _ := New(common.Hash{}, common.Hash{}, state.Database())
+ 		for _, action := range test.actions[:test.snapshots[sindex]] {
+ 			action.fn(action, checkstate)
+ 		}
+@@ -374,7 +389,7 @@
+ 		// Check basic accessor methods.
+ 		checkeq("Exist", state.Exist(addr), checkstate.Exist(addr))
+ 		checkeq("HasSuicided", state.HasSuicided(addr), checkstate.HasSuicided(addr))
+-		checkeq("GetBalance", state.GetBalance(addr), checkstate.GetBalance(addr))
++		checkeq("GetBalance", state.GetBalance(common.SystemAssetID, addr), checkstate.GetBalance(common.SystemAssetID, addr))
+ 		checkeq("GetNonce", state.GetNonce(addr), checkstate.GetNonce(addr))
+ 		checkeq("GetCode", state.GetCode(addr), checkstate.GetCode(addr))
+ 		checkeq("GetCodeHash", state.GetCodeHash(addr), checkstate.GetCodeHash(addr))
+@@ -385,7 +400,7 @@
+ 				return checkeq("GetState("+key.Hex()+")", checkstate.GetState(addr, key), value)
+ 			})
+ 			checkstate.ForEachStorage(addr, func(key, value common.Hash) bool {
+-				return checkeq("GetState("+key.Hex()+")", checkstate.GetState(addr, key), value)
++				return checkeq("GetState("+key.Hex()+")", state.GetState(addr, key), value)
+ 			})
+ 		}
+ 		if err != nil {
+@@ -410,7 +425,7 @@
+ 	s.state.Reset(root)
+ 
+ 	snapshot := s.state.Snapshot()
+-	s.state.AddBalance(common.Address{}, new(big.Int))
++	s.state.AddBalance(common.Address{}, common.SystemAssetID, new(big.Int))
+ 
+ 	if len(s.state.journal.dirties) != 1 {
+ 		c.Fatal("expected one dirty state object")
+@@ -424,14 +439,14 @@
+ // TestCopyOfCopy tests that modified objects are carried over to the copy, and the copy of the copy.
+ // See https://github.com/FusionFoundation/efsn/pull/15225#issuecomment-380191512
+ func TestCopyOfCopy(t *testing.T) {
+-	sdb, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
++	sdb, _ := New(common.Hash{}, common.Hash{}, NewDatabase(rawdb.NewMemoryDatabase()))
+ 	addr := common.HexToAddress("aaaa")
+-	sdb.SetBalance(addr, big.NewInt(42))
+-
+-	if got := sdb.Copy().GetBalance(addr).Uint64(); got != 42 {
++	sdb.SetBalance(addr, common.SystemAssetID, big.NewInt(42))
++
++	if got := sdb.Copy().GetBalance(common.SystemAssetID, addr).Uint64(); got != 42 {
+ 		t.Fatalf("1st copy fail, expected 42, got %v", got)
+ 	}
+-	if got := sdb.Copy().Copy().GetBalance(addr).Uint64(); got != 42 {
++	if got := sdb.Copy().Copy().GetBalance(common.SystemAssetID, addr).Uint64(); got != 42 {
+ 		t.Fatalf("2nd copy fail, expected 42, got %v", got)
+ 	}
+ }
+--- a/core/state/iterator_test.go
++++ b/core/state/iterator_test.go
+@@ -21,7 +21,7 @@
+ 	"testing"
+ 
+ 	"github.com/FusionFoundation/efsn/v5/common"
+-	"github.com/FusionFoundation/efsn/v5/ethdb"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+ )
+ 
+ // Tests that the node iterator indeed walks over the entire database contents.
+@@ -29,20 +29,24 @@
+ 	// Create some arbitrary test state to iterate
+ 	db, root, _ := makeTestState()
+ 
+-	state, err := New(root, db)
++	state, err := New(root, common.Hash{}, db)
+ 	if err != nil {
+ 		t.Fatalf("failed to create state trie at %x: %v", root, err)
+ 	}
+ 	// Gather all the node hashes found by the iterator
+ 	hashes := make(map[common.Hash]struct{})
+-	for it := NewNodeIterator(state); it.Next(); {
++	it := NewNodeIterator(state)
++	for it.Next() {
+ 		if it.Hash != (common.Hash{}) {
+ 			hashes[it.Hash] = struct{}{}
+ 		}
+ 	}
++	if it.Error != nil {
++		t.Fatal(it.Error)
++	}
+ 	// Cross check the iterated hashes and the database/nodepool content
+ 	for hash := range hashes {
+-		if _, err := db.TrieDB().Node(hash); err != nil {
++		if _, err := db.TrieDB().Node(hash); err != nil && len(rawdb.ReadCodeWithPrefix(db.TrieDB().DiskDB(), hash)) == 0 {
+ 			t.Errorf("failed to retrieve reported node %x", hash)
+ 		}
+ 	}
+@@ -51,9 +55,12 @@
+ 			t.Errorf("state entry not reported %x", hash)
+ 		}
+ 	}
+-	for _, key := range db.TrieDB().DiskDB().(*ethdb.MemDatabase).Keys() {
++	for _, key := range stateDatabaseKeys(t, db.TrieDB().DiskDB()) {
+ 		if bytes.HasPrefix(key, []byte("secure-key-")) {
+ 			continue
++		}
++		if ok, codeHash := rawdb.IsCodeKey(key); ok {
++			key = codeHash
+ 		}
+ 		if _, ok := hashes[common.BytesToHash(key)]; !ok {
+ 			t.Errorf("state entry not reported %x", key)
+--- a/core/state/sync_test.go
++++ b/core/state/sync_test.go
+@@ -22,6 +22,7 @@
+ 	"testing"
+ 
+ 	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
+ 	"github.com/FusionFoundation/efsn/v5/crypto"
+ 	"github.com/FusionFoundation/efsn/v5/ethdb"
+ 	"github.com/FusionFoundation/efsn/v5/trie"
+@@ -38,8 +39,8 @@
+ // makeTestState create a sample test state to test node-wise reconstruction.
+ func makeTestState() (Database, common.Hash, []*testAccount) {
+ 	// Create an empty state
+-	db := NewDatabase(ethdb.NewMemDatabase())
+-	state, _ := New(common.Hash{}, db)
++	db := NewDatabase(rawdb.NewMemoryDatabase())
++	state, _ := New(common.Hash{}, common.Hash{}, db)
+ 
+ 	// Fill it with some arbitrary data
+ 	accounts := []*testAccount{}
+@@ -47,7 +48,7 @@
+ 		obj := state.GetOrNewStateObject(common.BytesToAddress([]byte{i}))
+ 		acc := &testAccount{address: common.BytesToAddress([]byte{i})}
+ 
+-		obj.AddBalance(big.NewInt(int64(11 * i)))
++		obj.AddBalance(common.SystemAssetID, big.NewInt(int64(11*i)))
+ 		acc.balance = big.NewInt(int64(11 * i))
+ 
+ 		obj.SetNonce(uint64(42 * i))
+@@ -70,7 +71,7 @@
+ // account array.
+ func checkStateAccounts(t *testing.T, db ethdb.Database, root common.Hash, accounts []*testAccount) {
+ 	// Check root availability and state contents
+-	state, err := New(root, NewDatabase(db))
++	state, err := New(root, common.Hash{}, NewDatabase(db))
+ 	if err != nil {
+ 		t.Fatalf("failed to create state trie at %x: %v", root, err)
+ 	}
+@@ -78,7 +79,7 @@
+ 		t.Fatalf("inconsistent state trie at %x: %v", root, err)
+ 	}
+ 	for i, acc := range accounts {
+-		if balance := state.GetBalance(acc.address); balance.Cmp(acc.balance) != 0 {
++		if balance := state.GetBalance(common.SystemAssetID, acc.address); balance.Cmp(acc.balance) != 0 {
+ 			t.Errorf("account %d: balance mismatch: have %v, want %v", i, balance, acc.balance)
+ 		}
+ 		if nonce := state.GetNonce(acc.address); nonce != acc.nonce {
+@@ -111,7 +112,7 @@
+ 	if _, err := db.Get(root.Bytes()); err != nil {
+ 		return nil // Consider a non existent state consistent.
+ 	}
+-	state, err := New(root, NewDatabase(db))
++	state, err := New(root, common.Hash{}, NewDatabase(db))
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -124,7 +125,7 @@
+ // Tests that an empty state is not scheduled for syncing.
+ func TestEmptyStateSync(t *testing.T) {
+ 	empty := common.HexToHash("56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421")
+-	if req := NewStateSync(empty, ethdb.NewMemDatabase()).Missing(1); len(req) != 0 {
++	if req := stateSyncMissing(NewStateSync(empty, rawdb.NewMemoryDatabase(), nil, nil), 1); len(req) != 0 {
+ 		t.Errorf("content requested for empty state: %v", req)
+ 	}
+ }
+@@ -139,26 +140,18 @@
+ 	srcDb, srcRoot, srcAccounts := makeTestState()
+ 
+ 	// Create a destination state and sync with the scheduler
+-	dstDb := ethdb.NewMemDatabase()
+-	sched := NewStateSync(srcRoot, dstDb)
+-
+-	queue := append([]common.Hash{}, sched.Missing(batch)...)
++	dstDb := rawdb.NewMemoryDatabase()
++	sched := NewStateSync(srcRoot, dstDb, nil, nil)
++
++	queue := append([]common.Hash{}, stateSyncMissing(sched, batch)...)
+ 	for len(queue) > 0 {
+ 		results := make([]trie.SyncResult, len(queue))
+ 		for i, hash := range queue {
+-			data, err := srcDb.TrieDB().Node(hash)
+-			if err != nil {
+-				t.Fatalf("failed to retrieve node data for %x", hash)
+-			}
++			data := loadStateSyncData(t, srcDb, hash)
+ 			results[i] = trie.SyncResult{Hash: hash, Data: data}
+ 		}
+-		if _, index, err := sched.Process(results); err != nil {
+-			t.Fatalf("failed to process result #%d: %v", index, err)
+-		}
+-		if index, err := sched.Commit(dstDb); err != nil {
+-			t.Fatalf("failed to commit data #%d: %v", index, err)
+-		}
+-		queue = append(queue[:0], sched.Missing(batch)...)
++		commitStateSync(t, sched, dstDb, results)
++		queue = append(queue[:0], stateSyncMissing(sched, batch)...)
+ 	}
+ 	// Cross check that the two states are in sync
+ 	checkStateAccounts(t, dstDb, srcRoot, srcAccounts)
+@@ -171,27 +164,19 @@
+ 	srcDb, srcRoot, srcAccounts := makeTestState()
+ 
+ 	// Create a destination state and sync with the scheduler
+-	dstDb := ethdb.NewMemDatabase()
+-	sched := NewStateSync(srcRoot, dstDb)
+-
+-	queue := append([]common.Hash{}, sched.Missing(0)...)
++	dstDb := rawdb.NewMemoryDatabase()
++	sched := NewStateSync(srcRoot, dstDb, nil, nil)
++
++	queue := append([]common.Hash{}, stateSyncMissing(sched, 0)...)
+ 	for len(queue) > 0 {
+ 		// Sync only half of the scheduled nodes
+ 		results := make([]trie.SyncResult, len(queue)/2+1)
+ 		for i, hash := range queue[:len(results)] {
+-			data, err := srcDb.TrieDB().Node(hash)
+-			if err != nil {
+-				t.Fatalf("failed to retrieve node data for %x", hash)
+-			}
++			data := loadStateSyncData(t, srcDb, hash)
+ 			results[i] = trie.SyncResult{Hash: hash, Data: data}
+ 		}
+-		if _, index, err := sched.Process(results); err != nil {
+-			t.Fatalf("failed to process result #%d: %v", index, err)
+-		}
+-		if index, err := sched.Commit(dstDb); err != nil {
+-			t.Fatalf("failed to commit data #%d: %v", index, err)
+-		}
+-		queue = append(queue[len(results):], sched.Missing(0)...)
++		commitStateSync(t, sched, dstDb, results)
++		queue = append(queue[len(results):], stateSyncMissing(sched, 0)...)
+ 	}
+ 	// Cross check that the two states are in sync
+ 	checkStateAccounts(t, dstDb, srcRoot, srcAccounts)
+@@ -208,32 +193,24 @@
+ 	srcDb, srcRoot, srcAccounts := makeTestState()
+ 
+ 	// Create a destination state and sync with the scheduler
+-	dstDb := ethdb.NewMemDatabase()
+-	sched := NewStateSync(srcRoot, dstDb)
++	dstDb := rawdb.NewMemoryDatabase()
++	sched := NewStateSync(srcRoot, dstDb, nil, nil)
+ 
+ 	queue := make(map[common.Hash]struct{})
+-	for _, hash := range sched.Missing(batch) {
++	for _, hash := range stateSyncMissing(sched, batch) {
+ 		queue[hash] = struct{}{}
+ 	}
+ 	for len(queue) > 0 {
+ 		// Fetch all the queued nodes in a random order
+ 		results := make([]trie.SyncResult, 0, len(queue))
+ 		for hash := range queue {
+-			data, err := srcDb.TrieDB().Node(hash)
+-			if err != nil {
+-				t.Fatalf("failed to retrieve node data for %x", hash)
+-			}
++			data := loadStateSyncData(t, srcDb, hash)
+ 			results = append(results, trie.SyncResult{Hash: hash, Data: data})
+ 		}
+ 		// Feed the retrieved results back and queue new tasks
+-		if _, index, err := sched.Process(results); err != nil {
+-			t.Fatalf("failed to process result #%d: %v", index, err)
+-		}
+-		if index, err := sched.Commit(dstDb); err != nil {
+-			t.Fatalf("failed to commit data #%d: %v", index, err)
+-		}
++		commitStateSync(t, sched, dstDb, results)
+ 		queue = make(map[common.Hash]struct{})
+-		for _, hash := range sched.Missing(batch) {
++		for _, hash := range stateSyncMissing(sched, batch) {
+ 			queue[hash] = struct{}{}
+ 		}
+ 	}
+@@ -248,11 +225,11 @@
+ 	srcDb, srcRoot, srcAccounts := makeTestState()
+ 
+ 	// Create a destination state and sync with the scheduler
+-	dstDb := ethdb.NewMemDatabase()
+-	sched := NewStateSync(srcRoot, dstDb)
++	dstDb := rawdb.NewMemoryDatabase()
++	sched := NewStateSync(srcRoot, dstDb, nil, nil)
+ 
+ 	queue := make(map[common.Hash]struct{})
+-	for _, hash := range sched.Missing(0) {
++	for _, hash := range stateSyncMissing(sched, 0) {
+ 		queue[hash] = struct{}{}
+ 	}
+ 	for len(queue) > 0 {
+@@ -261,10 +238,7 @@
+ 		for hash := range queue {
+ 			delete(queue, hash)
+ 
+-			data, err := srcDb.TrieDB().Node(hash)
+-			if err != nil {
+-				t.Fatalf("failed to retrieve node data for %x", hash)
+-			}
++			data := loadStateSyncData(t, srcDb, hash)
+ 			results = append(results, trie.SyncResult{Hash: hash, Data: data})
+ 
+ 			if len(results) >= cap(results) {
+@@ -272,13 +246,8 @@
+ 			}
+ 		}
+ 		// Feed the retrieved results back and queue new tasks
+-		if _, index, err := sched.Process(results); err != nil {
+-			t.Fatalf("failed to process result #%d: %v", index, err)
+-		}
+-		if index, err := sched.Commit(dstDb); err != nil {
+-			t.Fatalf("failed to commit data #%d: %v", index, err)
+-		}
+-		for _, hash := range sched.Missing(0) {
++		commitStateSync(t, sched, dstDb, results)
++		for _, hash := range stateSyncMissing(sched, 0) {
+ 			queue[hash] = struct{}{}
+ 		}
+ 	}
+@@ -292,31 +261,25 @@
+ 	// Create a random state to copy
+ 	srcDb, srcRoot, srcAccounts := makeTestState()
+ 
+-	checkTrieConsistency(srcDb.TrieDB().DiskDB().(ethdb.Database), srcRoot)
+-
+-	// Create a destination state and sync with the scheduler
+-	dstDb := ethdb.NewMemDatabase()
+-	sched := NewStateSync(srcRoot, dstDb)
++	if err := checkTrieConsistency(srcDb.TrieDB().DiskDB().(ethdb.Database), srcRoot); err != nil {
++		t.Fatal(err)
++	}
++
++	// Create a destination state and sync with the scheduler
++	dstDb := rawdb.NewMemoryDatabase()
++	sched := NewStateSync(srcRoot, dstDb, nil, nil)
+ 
+ 	added := []common.Hash{}
+-	queue := append([]common.Hash{}, sched.Missing(1)...)
++	queue := append([]common.Hash{}, stateSyncMissing(sched, 1)...)
+ 	for len(queue) > 0 {
+ 		// Fetch a batch of state nodes
+ 		results := make([]trie.SyncResult, len(queue))
+ 		for i, hash := range queue {
+-			data, err := srcDb.TrieDB().Node(hash)
+-			if err != nil {
+-				t.Fatalf("failed to retrieve node data for %x", hash)
+-			}
++			data := loadStateSyncData(t, srcDb, hash)
+ 			results[i] = trie.SyncResult{Hash: hash, Data: data}
+ 		}
+ 		// Process each of the state nodes
+-		if _, index, err := sched.Process(results); err != nil {
+-			t.Fatalf("failed to process result #%d: %v", index, err)
+-		}
+-		if index, err := sched.Commit(dstDb); err != nil {
+-			t.Fatalf("failed to commit data #%d: %v", index, err)
+-		}
++		commitStateSync(t, sched, dstDb, results)
+ 		for _, result := range results {
+ 			added = append(added, result.Hash)
+ 		}
+@@ -335,17 +298,61 @@
+ 			}
+ 		}
+ 		// Fetch the next batch to retrieve
+-		queue = append(queue[:0], sched.Missing(1)...)
++		queue = append(queue[:0], stateSyncMissing(sched, 1)...)
+ 	}
+ 	// Sanity check that removing any node from the database is detected
+ 	for _, node := range added[1:] {
+ 		key := node.Bytes()
+-		value, _ := dstDb.Get(key)
+-
+-		dstDb.Delete(key)
++		if len(rawdb.ReadCodeWithPrefix(dstDb, node)) != 0 {
++			key = append(append([]byte{}, rawdb.CodePrefix...), key...)
++		}
++		value, err := dstDb.Get(key)
++		if err != nil {
++			t.Fatal(err)
++		}
++
++		if err := dstDb.Delete(key); err != nil {
++			t.Fatal(err)
++		}
+ 		if err := checkStateConsistency(dstDb, added[0]); err == nil {
+ 			t.Fatalf("trie inconsistency not caught, missing: %x", key)
+ 		}
+-		dstDb.Put(key, value)
+-	}
+-}
++		if err := dstDb.Put(key, value); err != nil {
++			t.Fatal(err)
++		}
++	}
++}
++
++func stateSyncMissing(sched *trie.Sync, limit int) []common.Hash {
++	nodes, _, codes := sched.Missing(limit)
++	return append(nodes, codes...)
++}
++
++func loadStateSyncData(t *testing.T, db Database, hash common.Hash) []byte {
++	t.Helper()
++	data, err := db.TrieDB().Node(hash)
++	if err == nil {
++		return data
++	}
++	data = rawdb.ReadCodeWithPrefix(db.TrieDB().DiskDB(), hash)
++	if len(data) == 0 {
++		t.Fatalf("missing fixture node or code %x: %v", hash, err)
++	}
++	return data
++}
++
++func commitStateSync(t *testing.T, sched *trie.Sync, db ethdb.Database, results []trie.SyncResult) {
++	t.Helper()
++	for i, result := range results {
++		if err := sched.Process(result); err != nil {
++			t.Fatalf("failed to process result #%d: %v", i, err)
++		}
++	}
++	batch := db.NewBatch()
++	if err := sched.Commit(batch); err != nil {
++		t.Fatal(err)
++	}
++	if err := batch.Write(); err != nil {
++		t.Fatal(err)
++	}
++}
