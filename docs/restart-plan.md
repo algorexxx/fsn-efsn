@@ -171,11 +171,19 @@ Candidate-patch historical compatibility remains open.
   with independent dump expectations and current state/sync APIs. Both builds
   have 15 passing top-level tests and three inherited rollback failures; the
   suite does not pass. Production code remains unchanged.
+- [x] Complete the bounded [F11 execution observation](restart-state-rollback-findings.md)
+  on both source selections: three controls pass and one case fails; its
+  time lock is independently observed as restored. Retain the initial incomplete
+  probe and the later corrected evidence. The follow-up did not establish
+  private network isolation or independently verify zero network activity;
+  the [evidence correction](evidence/restart-state-rollback-followup-2026-10-07/README.md)
+  qualifies the original network claim. Production code remains unchanged.
 - [ ] Complete F11 runtime impact/disposition and independent consensus review.
-  Preserve the failing snapshot regressions. The incomplete EVM follow-up is
-  archived with its assertion mistake and panic; further reproduction stopped
-  following recurring product content restrictions. Any correction needs a
-  historical boundary and activation decision before production selection.
+  Next: prepare a source-based comparison of preserving current behavior and a
+  narrow correction with an explicit activation boundary. Specify how execution
+  before that boundary remains unchanged and what additional evidence the
+  decision needs. Keep transaction/commit and historical effects unverified;
+  no fix, activation height or waiver is selected. Preserve the failing tests.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
   Demonstrate the selected restore/storage path without promising power-loss

@@ -189,8 +189,9 @@ inherited compilation barrier without changing runtime code. Each build has
 15 passing top-level tests and three failing snapshot restoration tests.
 The relevant runtime code matches upstream; these failures are not introduced
 by x/text or the newer language directive. F11 now records their required
-runtime disposition. The separate EVM follow-up has unfinished assertions and
-is preserved as incomplete after recurring product content restrictions.
+runtime disposition. The initial incomplete EVM probe is preserved; the later
+[bounded follow-up](restart-state-rollback-findings.md) completes the field
+observations on both selections and records the network-isolation limitation.
 Neither identical failures nor the passing subset clears F1/F10/F11 or selects
 the text update. No production manifests, binary artifacts or historical data
 were changed by this follow-up.

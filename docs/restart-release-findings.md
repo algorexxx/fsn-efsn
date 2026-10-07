@@ -93,7 +93,11 @@ No human review or acceptance is inferred from a test pass.
   [evidence/restart-state-rollback-followup-2026-10-07](evidence/restart-state-rollback-followup-2026-10-07).
   Completing this observation does **not** close F11. No runtime change,
   release-input change, consensus activation, or accepted-block/historical claim
-  is made. (`unshare -n` was not permitted; recorded in the run's environment.)
+  is made. The run used the default network namespace; private isolation and
+  zero network activity were not independently established. Go dependency
+  settings do not supply that isolation. The
+  [evidence correction](evidence/restart-state-rollback-followup-2026-10-07/README.md)
+  supersedes the network-use claim while preserving the original artifacts.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

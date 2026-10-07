@@ -36,10 +36,12 @@ state only — not chain reorg, total difficulty, or the restart anchor.
   three relevant runtime files (`statedb.go`, `journal.go`, `state_object.go`)
   are byte-identical between the two trees. Results were identical, so the
   dependency selection introduces no behavioural difference here.
-- Network-namespace isolation (`unshare -n`) is **not permitted** for the
-  rehearsal user; the run used the distro default namespace. The offline flags
-  make network access impossible regardless (cached modules only). This access
-  limit is recorded in the run's `environment.txt`.
+- Dependency downloads were disabled. The run used the distro default network
+  namespace; private network isolation was not established, and zero network
+  activity was not independently verified. The reviewer reported that
+  `unshare -n` was unavailable to the rehearsal user. The original environment
+  record overstates what the Go flags guarantee; see the
+  [evidence correction](evidence/restart-state-rollback-followup-2026-10-07/README.md).
 
 ## Evidence files
 
@@ -265,9 +267,11 @@ both trees. Both selections produced identical results and package exit code 1:
   external fixture records that field as an unavailable observation, not a value.
 - No transaction/commit, accepted-block, historical-chain, or running-node
   effect was tested (out of scope for this pass).
-- Access restriction: `unshare -n` is not permitted for the rehearsal user, so a
-  private network namespace could not be created; recorded in `environment.txt`.
-  Offline flags mean no network was used regardless.
+- The run did not establish private network isolation. Disabling Go dependency
+  downloads does not prevent arbitrary network calls by the test process or
+  its dependencies. Zero network activity was not independently verified; the
+  [evidence correction](evidence/restart-state-rollback-followup-2026-10-07/README.md)
+  supersedes the original environment record's network-use claim.
 
 **Did production files or release inputs change?** No. Only test fixtures,
 runner scripts, evidence and documentation were added. Both source trees were
@@ -276,12 +280,15 @@ unselected text update are unchanged.
 
 ## Open items for Astra
 
-1. Decide disposition of F11-a: whether to establish transaction/commit and
-   accepted-block effects in an authorized testing context. The local diagnosis
-   being convincing does not select a fix.
-2. If correcting runtime behavior, specify the historical boundary and
-   activation height before touching production code, then independent
-   consensus review.
+1. Prepare a source-based F11-a disposition proposal comparing preservation of
+   current behavior with a narrowly scoped correction activated at an explicit
+   future boundary. Document the consequences and uncertainties for each option.
+   No option or activation height is selected by the existing local evidence.
+2. Specify the historical-compatibility requirements and the remaining evidence
+   needed to review that proposal. Any proposed correction must preserve
+   execution before its activation boundary. Keep transaction/commit and
+   accepted-block effects unverified until separately demonstrated, and obtain
+   independent consensus review before selecting a production change.
 3. F11-b: confirm whether any production or RPC path marks a zero-entry account
    for deletion; if not, record as latent/direct-API-only.
 4. Unchanged open items from the original handoff: F1 console/tracer/RPC

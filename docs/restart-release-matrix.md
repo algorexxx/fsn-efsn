@@ -25,9 +25,11 @@ records the concrete loop/default effects and repairs two core/types fixtures.
 The complete types package plus common/RLP pass with race detection before/after.
 The subsequent [state fixture qualification](evidence/restart-state-tests-2026-10-07)
 repairs compilation but exposes inherited state rollback failures: 15 top-level
-passes and three failures on both builds. F11 records the release hold and the
-unfinished EVM follow-up. Console/tracer/RPC coverage and historical acceptance
-remain open. These test-only changes alter no production input.
+passes and three failures on both builds. The later
+[F11 execution observation](restart-state-rollback-findings.md) completes the
+bounded follow-up on both selections, with its network-isolation limitation
+explicitly recorded. F11 disposition, console/tracer/RPC coverage and historical
+acceptance remain open. These test-only changes alter no production input.
 
 ## Scope and evidence rules
 
