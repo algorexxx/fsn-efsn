@@ -64,8 +64,8 @@ These are in-process CLI tests with a synthetic purchase and unsigned block,
 not a production executable/signing rehearsal. Together with the earlier
 approval validation, they complete the bounded configuration-binding checks.
 
-**Next:** phase 3 rollback compatibility/correction, then phase 4 transaction
-and block boundaries. The startup compatibility review, F12 disposition and
+**Next:** phase 4 transaction and block boundaries; phase 3's bounded results
+are recorded below. The startup compatibility review, F12 disposition and
 final service/production-artifact rehearsal remain open as stated above.
 
 Use a synthetic schedule in each fixture, with explicit literal expectations
@@ -88,7 +88,22 @@ the parameter helper alone cannot satisfy these integration assertions. Use
 test doubles only at the external signer boundary, with a call counter for
 the rejection case.
 
-## Phase 3 — rollback compatibility and correction
+## Phase 3 — rollback compatibility and correction (bounded checks complete)
+
+The [execution evidence](evidence/restart-state-rollback-execution-2026-10-07/README.md)
+passes three top-level tests and 50 subtests on each of the selected baseline
+and candidate. Disabled/pre-activation observations match. At/after activation,
+the candidate restores the absent-entry case's raw ordinary-balance structure;
+time locks, deletion flags, beneficiary transfers, other recorded account fields,
+gas and refunds retain their independently specified results. The same checks
+cover Berlin and London refund rules. This is an in-memory EVM/direct-state
+result, not transaction finalization, physical deletion or persistence.
+
+The original follow-up EVM fixture is also rerun unchanged: baseline and
+disabled candidate retain the single absent-entry failure and three passing
+controls; the active candidate passes all four. F11-b's empty-entry deletion
+flag defect remains explicitly observed in both selections. These results
+do not imply that the entire state suite passes or close F11's release hold.
 
 Adapt the retained F11-a fixture and controls to the explicit rule parameter
 without editing the original evidence. Compare disabled/pre-activation

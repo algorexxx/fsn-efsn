@@ -146,8 +146,19 @@ No human review or acceptance is inferred from a test pass.
   output or chain key/value changes. This completes the remaining bounded
   phase-2 configuration check. The fixture uses a synthetic purchase/unsigned
   block in a test executable; it is not a real signing or handover rehearsal.
-  Rollback, commit/block and historical qualification remain open. F11 remains
-  unselected and no production schedule is set.
+  That bundle supplies no rollback, commit/block or historical result; see the
+  subsequent rollback evidence below. F11 remains unselected and no production
+  schedule is set.
+- F11 rollback comparison (7 Oct 2026): the [execution evidence](evidence/restart-state-rollback-execution-2026-10-07/README.md)
+  passes a 50-case matrix on baseline and candidate. All disabled/pre-activation
+  observations match. The only cross-selection differences are the intended
+  absent-entry correction in the active raw-state case and EVM at/after the
+  fixture boundary under Berlin/London rules. Gas/refund and transfer controls
+  retain independently specified results. The unchanged original EVM regression
+  retains its known failure when disabled and passes all four cases when active.
+  F11-b remains observed and unchanged. These are in-memory results; transaction
+  finalization/commit, accepted-block and historical compatibility remain open,
+  as do the recorded dispositions and independent consensus review.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

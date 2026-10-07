@@ -289,10 +289,12 @@ unselected text update are unchanged.
    records passing startup/reader configuration, database reopen and approval
    rejection in the [integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md).
    The [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
-   also passes report/prepare configuration binding; rollback and transaction/block
-   qualification are next. These use a registered synthetic network; the separate
-   default-genesis mismatch is tracked as F12.
-   No new candidate rollback or transaction/block result is claimed.
+   also passes report/prepare configuration binding. The [rollback comparison](evidence/restart-state-rollback-execution-2026-10-07/README.md)
+   now demonstrates bounded pre-activation compatibility and active F11-a
+   correction, with the original EVM regression unchanged. Transaction/commit
+   and block qualification are next. Configuration tests use a registered
+   synthetic network; the separate default-genesis mismatch is tracked as F12.
+   No transaction/block persistence or accepted-history result is claimed.
 2. Complete that qualification and independent consensus review before selecting
    a production change. Transaction/commit and accepted-block effects remain
    unverified; no activation height or waiver is selected.

@@ -1,0 +1,31 @@
+--- a/core/state/statedb_test.go
++++ b/core/state/statedb_test.go
+@@ -271,7 +271,7 @@
+ 		{
+ 			name: "Suicide",
+ 			fn: func(a testAction, s *StateDB) {
+-				s.Suicide(addr)
++				s.Suicide(addr, false)
+ 			},
+ 		},
+ 		{
+--- a/core/state/suicide_test.go
++++ b/core/state/suicide_test.go
+@@ -29,7 +29,7 @@
+ 			}
+ 			snapshot := statedb.Snapshot()
+ 
+-			deleted := statedb.Suicide(address)
++			deleted := statedb.Suicide(address, false)
+ 			statedb.RevertToSnapshot(snapshot)
+ 
+ 			if !deleted {
+@@ -58,7 +58,7 @@
+ 	statedb.SetTimeLockBalance(address, asset, &common.TimeLock{Items: []*common.TimeLockItem{{StartTime: 100, EndTime: 200, Value: big.NewInt(5)}}})
+ 	snapshot := statedb.Snapshot()
+ 
+-	deleted := statedb.Suicide(address)
++	deleted := statedb.Suicide(address, false)
+ 	statedb.RevertToSnapshot(snapshot)
+ 	account := statedb.getStateObject(address).data
+ 

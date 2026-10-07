@@ -199,8 +199,10 @@ now prepared. Configuration tests and both command builds pass. The
 [integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md)
 also passes startup/reader configuration, database reopen and approval-rejection
 checks on a registered synthetic network. The [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
-also passes report/prepare configuration binding. The specified rollback and
-transaction/block boundaries are next. The separate default
+also passes report/prepare configuration binding. The [rollback comparison](evidence/restart-state-rollback-execution-2026-10-07/README.md)
+now demonstrates bounded pre-activation compatibility and the active F11-a
+correction; F11-b remains unchanged. Transaction/commit and block boundaries
+are next. The separate default
 genesis mismatch on both baseline and candidate is F12, not an F11 correction.
 Keep the production selection unchanged until review and qualification are complete.
 The source proposal is complete;

@@ -190,8 +190,11 @@ Candidate-patch historical compatibility remains open.
   passes five top-level tests and 33 subtests with disposable databases and a
   registered synthetic network identity. The [CLI report/prepare follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
   passes four top-level tests and ten subtests, completing bounded configuration
-  binding through the actual CLI entry paths. Next: the specified rollback and
-  transaction/block boundaries. Preserve historical execution and original failing evidence.
+  binding through the actual CLI entry paths. The [rollback comparison](evidence/restart-state-rollback-execution-2026-10-07/README.md)
+  passes 50 bounded cases on each selection and the unchanged original EVM
+  regression passes with activation enabled. Pre-activation behavior and F11-b
+  remain unchanged. Next: transaction finalization/commit and block-processing
+  boundaries. Preserve historical execution and original failing evidence.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
