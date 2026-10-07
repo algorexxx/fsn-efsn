@@ -283,8 +283,11 @@ unselected text update are unchanged.
 1. The [source-based disposition proposal](restart-state-rollback-disposition.md)
    now compares preservation with a narrow correction gated by block height.
    Its configuration, historical-compatibility and qualification requirements
-   are recorded. Next: prepare the isolated candidate diff and bounded
-   qualification specification against the selected release inputs.
+   are recorded. The [isolated candidate](evidence/restart-state-rollback-candidate-2026-10-07/README.md)
+   now builds and passes configuration tests; its
+   [qualification specification](restart-state-rollback-qualification.md)
+   puts startup/recovery integration next. No new candidate rollback or
+   transaction/block result is claimed.
 2. Complete that qualification and independent consensus review before selecting
    a production change. Transaction/commit and accepted-block effects remain
    unverified; no activation height or waiver is selected.

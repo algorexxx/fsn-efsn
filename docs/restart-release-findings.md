@@ -107,6 +107,15 @@ No human review or acceptance is inferred from a test pass.
   F11-b; retain the direct-API defect and its scoped disposition for review.
   This is a source review, with no new test run, runtime change, selected
   activation or release waiver. F11 stays open.
+- F11 isolated candidate (7 Oct 2026):
+  [candidate and evidence](evidence/restart-state-rollback-candidate-2026-10-07/README.md)
+  implement the proposed rule and shared schedule resolution without changing
+  the selected source trees. The configuration suite and both command builds
+  pass; the failed initial JSON expectation and its correction are retained.
+  Follow the [qualification specification](restart-state-rollback-qualification.md)
+  for startup/recovery integration and later execution boundaries. No candidate
+  state/EVM/commit/block or historical pass is claimed. F11 stays open and the
+  candidate remains unselected with no activation height.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

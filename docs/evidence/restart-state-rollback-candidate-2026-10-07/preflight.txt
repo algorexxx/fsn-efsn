@@ -1,0 +1,3 @@
+Initial namespace preflight stopped before formatting, patch generation, tests or builds.
+The rehearsal user could not read /proc/1/ns/net (PermissionError: Errno 13).
+The launcher now captures its own network-namespace ID before unshare and passes it to the unprivileged runner for comparison.

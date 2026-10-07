@@ -193,9 +193,11 @@ run performed by this review or instructions to operate against live peers.
    disposition and actual schedule before selecting a production patch.
    Retain the existing final rehearsal and go/no-go requirements in G8.
 
-**Next concrete work:** prepare the isolated candidate diff and its bounded
-qualification specification against the selected inputs, including config
-resolution and conflict handling. Keep the production selection unchanged
-until review and qualification are complete. The source proposal is complete;
+**Candidate follow-up:** the [isolated diff and initial evidence](evidence/restart-state-rollback-candidate-2026-10-07/README.md)
+and [qualification specification](restart-state-rollback-qualification.md) are
+now prepared. Configuration tests and both command builds pass; startup/recovery
+integration is next, followed by the specified execution boundaries. Keep the
+production selection unchanged until review and qualification are complete.
+The source proposal is complete;
 F11 release acceptance, F1 coverage, F10 dependency acceptance and G1 historical
 replay remain open in the [canonical plan](restart-plan.md).
