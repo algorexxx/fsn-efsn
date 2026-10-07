@@ -24,6 +24,7 @@ No human review or acceptance is inferred from a test pass.
 | F9 — R1 | Go 1.21.3 is outside the current support window. Go 1.27.1 cannot link the inherited optional memsize integration. | Select Go 1.27.1 for qualification and the isolated B1 profiler removal. Remove its unused dependency entries. Keep the baseline replay toolchain unchanged. | Technical correction passes node build, CLI probes and same-host clean-cache binary comparison. Independent patch review and final compiler regression acceptance remain open. |
 | F10 — R1/all affected rows | D1 technically remediates the two JWT findings. The selected candidate retains x/text and an unreviewed WebSocket entry with a disputed fixed version. The text experiment removes its advisory but also changes the main Go language version and compatibility defaults. The bounded language/default review is complete; required regression and history evidence is not. Recovery has WebSocket symbol presence but no source call finding. Lower-level findings remain. Existing CI uses Go 1.19. | Follow the [dependency report](restart-release-dependencies.md). Keep D1 selected and the text experiment unselected pending the recorded coverage/historical acceptance. Prefer qualifying upstream over a private backport without a demonstrated blocker. Resolve the other corrections; replace old CI after inputs are accepted. | **Release hold:** independent D1 review, remaining dependency remediation/dispositions, module/package review, a pinned CI/build image and affected acceptance are required. Successful scans do not constitute complete security acceptance. |
 | F11 - R2/R3/G1 | Restored state tests expose inherited deletion-journal rollback defects: missing flag restoration for accounts without balance entries and a nil ordinary balance after reverting a time-locked asset. Both selected D1 and the text experiment fail identically. | Preserve the minimal failing regressions and unchanged production behavior while completing the bounded impact review. The empty-entry direct-API case alone does not prove EVM reachability. The EVM observation is now a completed bounded check (see the 7 Oct follow-up note below); completing that observation does not close this finding. Any runtime correction needs historical compatibility and an explicit activation decision. | **Release hold:** complete the impact/disposition review and obtain independent consensus review. No runtime fix or waiver is selected. The bounded EVM observation is complete and provenanced; the release finding stays open. |
+| F12 — R2/R3/G5 | Current `DefaultGenesisBlock().ToBlock(nil)` produces a hash different from the registered mainnet genesis on both the selected baseline and F11 candidate. The in-memory probe does not establish the cause, actual CLI initialization behavior or any defect in the backup's stored genesis. | Keep verified restore/full sync as the supported launch path; genesis resync remains excluded. Preserve the failing equality assertion separately from synthetic configuration tests. Review the mismatch and the supported path's empty/mispointed-datadir refusal and restored identity checks. No genesis rewrite is selected. | Open disposition review under the existing G5 launch-path check. Record exact supported-command evidence and independent acceptance of the scope restriction; do not infer a mainnet genesis pass from synthetic initialization tests. |
 
 ## Evidence and source checks
 
@@ -116,6 +117,27 @@ No human review or acceptance is inferred from a test pass.
   for startup/recovery integration and later execution boundaries. No candidate
   state/EVM/commit/block or historical pass is claimed. F11 stays open and the
   candidate remains unselected with no activation height.
+
+- F11 startup/recovery integration (7 Oct 2026):
+  [bounded integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md)
+  passes five top-level tests and 33 subtests with race detection. Rejected
+  configurations make no observed mutation attempts; the read-only reader and
+  startup agree across database close/reopen. Approval checks match independent
+  JSON/hash vectors and reject other schedules before opening a signer. This
+  uses a registered synthetic genesis, not real-mainnet initialization. The
+  actual CLI report/prepare path remains open, as do execution/history phases.
+  The inactive missing-header rejection remains an explicit compatibility-review
+  item. No runtime/source-selection change or production schedule is selected.
+- F12 genesis comparison (7 Oct 2026): the same bundle retains the original
+  failed integration prerequisite, an initial diagnostic JSON-formatting failure,
+  and the executed [baseline](evidence/restart-state-rollback-integration-2026-10-07/genesis-comparison-v2/baseline.txt)
+  / [candidate](evidence/restart-state-rollback-integration-2026-10-07/genesis-comparison-v2/candidate.txt)
+  invariant failures with provenance. Both construct the same different hash
+  and state root. This is demonstrated in the selected recovery source/toolchain,
+  not established for all upstream versions or historical compilers. The
+  [operator kit](restart-operator-kit.md) already requires a verified restore
+  marker and prohibits initializing a missing restored chain; validate these
+  boundaries in the final supported-path check.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

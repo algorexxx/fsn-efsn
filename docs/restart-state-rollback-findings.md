@@ -286,8 +286,11 @@ unselected text update are unchanged.
    are recorded. The [isolated candidate](evidence/restart-state-rollback-candidate-2026-10-07/README.md)
    now builds and passes configuration tests; its
    [qualification specification](restart-state-rollback-qualification.md)
-   puts startup/recovery integration next. No new candidate rollback or
-   transaction/block result is claimed.
+   records passing startup/reader configuration, database reopen and approval
+   rejection in the [integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md).
+   Actual CLI report/prepare binding remains next. These use a registered
+   synthetic network; the separate default-genesis mismatch is tracked as F12.
+   No new candidate rollback or transaction/block result is claimed.
 2. Complete that qualification and independent consensus review before selecting
    a production change. Transaction/commit and accepted-block effects remain
    unverified; no activation height or waiver is selected.

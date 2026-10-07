@@ -39,7 +39,26 @@ isolation, compatibility errors including a zero rewind target, and serialized
 configuration. Both candidate executables build. This establishes neither
 startup database behavior nor correct state rollback.
 
-## Phase 2 — startup and offline recovery integration (next)
+## Phase 2 — startup and offline recovery integration (partially qualified)
+
+The [integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md)
+passes five top-level tests and 33 subtests with race detection. Actual startup,
+reader and approval-validation methods are exercised against disposable
+databases. Rejections leave key/values unchanged and make no observed mutation
+attempts. A LevelDB close/reopen retains the resolved schedule; this is within
+one process, not a complete node-process restart. Full service restart remains
+part of the final rehearsal.
+
+The fixture registers an explicit synthetic genesis identity and restores the
+network globals after each case. The separate real-default-genesis equality
+probe fails on both selected baseline and candidate, now tracked as F12. Do not
+describe these synthetic fresh-initialization cases as a mainnet genesis pass.
+The inactive missing-header rejection is also retained for compatibility review.
+
+**Next:** exercise actual CLI review-report construction/prepare with the
+resolved configuration and independent checksum vectors. The matching approval
+context check and mismatched-approval rejection before signer opening already
+pass; successful signing is not claimed. Then proceed to phases 3 and 4.
 
 Use a synthetic schedule in each fixture, with explicit literal expectations
 at its height minus one, height and height plus one. Mainnet defaults modified
@@ -99,5 +118,5 @@ F11-b disposition and the eventual numeric schedule before selection.
 Candidate historical compatibility remains under G1, with baseline replay
 still at 3,600,000. Actual recovery artifacts, activation approval and final
 rehearsal remain under G3/G8. Keep F11 open until these applicable boundaries
-have evidence or an explicit reviewed disposition; phase 1 alone closes none
-of them.
+have evidence or an explicit reviewed disposition; configuration/integration
+passes alone close none of them.

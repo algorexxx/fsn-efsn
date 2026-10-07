@@ -186,8 +186,10 @@ Candidate-patch historical compatibility remains open.
   The [isolated candidate](evidence/restart-state-rollback-candidate-2026-10-07/README.md)
   and [bounded qualification specification](restart-state-rollback-qualification.md)
   are prepared: configuration tests and both command builds pass against the
-  selected inputs. Next: qualify startup/recovery integration with small
-  disposable databases, then the specified rollback and transaction/block
+  selected inputs. The [startup/recovery integration](evidence/restart-state-rollback-integration-2026-10-07/README.md)
+  passes five top-level tests and 33 subtests with disposable databases and a
+  registered synthetic network identity. Next: qualify actual CLI report/prepare
+  configuration binding, then the specified rollback and transaction/block
   boundaries. Preserve historical execution and original failing evidence.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
@@ -277,6 +279,11 @@ No ongoing finality or automatic economic repair is added by this gate.
 - [ ] Publish the verified recovery package with trust assumptions and a recovery
   download route; demonstrate clean-machine download, hash verification, restore,
   full-sync catch-up and matching anchor/head/state/tickets using release commands.
+  The F12 default-genesis probe fails identically on the selected baseline and
+  F11 candidate. Retain the verified-restore scope; include empty/mispointed
+  datadir refusal and restored-genesis identity in this final path check.
+  See the [finding and bounded evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md).
+  This does not select a genesis rewrite or add genesis resync to launch scope.
 - [ ] Check production storage growth, clean shutdown/backup/restore and public
   read-RPC/explorer behavior across the transition, including native events and
   reorganizations. Retain the historical gateway as a reference.
