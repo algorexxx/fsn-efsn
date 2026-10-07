@@ -1,0 +1,192 @@
+{
+  "Manifest": {
+    "Name": "TestF11BlockImport/before/clean_revert_absent",
+    "Database": "/home/rehearsal/results/restart-state-rollback-block-v2-2026-10-07/tmp/TestF11BlockImportbeforeclean_revert_absent4061415598/001/receiver",
+    "Scheduled": true,
+    "ParentHash": "0x968c87d8413b1fb642fbece9a923d9e852869e859265b31a739093b038e3f86d",
+    "ParentTickets": "0x5fe0e01a82acf5d6ff60e19f9cd8f4930b4c5c61561f7b0834626bf7cc527883",
+    "Block": "+QL0+QKGoJaMh9hBOx+2Qvvs6akj2ehShp6FkmWzGnOQk7A44/htoADKsn5QYb8UNzKAa5jkx3AnWUnIYQa+sLyzRhW+VDCtlH5fRVIJGmkSXV38t7jCZZApOVvfoETgLlUGvsqHkoIrlSMU7zCs4Rc34+9tVeMBcgfpSdjGoFYHLSuxTfpdo//hj8tPPJHO0cX/f33T3LtoH2JWEaIDoCtGQ1KajN9Yk62s81ji/d8s4PHfhoZT/Z5AznDlCLxOuQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWD5t3ggw9CQIJ6GoRlU/F4uIcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE8VIDl7YK1T2wbJHpuBsLo41Jp7XCymq/eH1mxXVyZL8B8tkpmI1jNxTI7SkhWAT4KNf5vywHSs0uw6jwVs4M/2ACg0fYuEGeQBGsEE7ZHExBSGOpz9idun2gShdtEkTzysB6IAAAAAAAAAACEO5rKAPho+GaAhDuaygCDAYaglAMAAAAAAAAAAAAAAAAAAAAAAAAAgICC/0qg9TZI/IQgOC0sxpEhtZqArUiybxJMXoc2/YS52UTJp3igJVJB941VRut4q1kQ/9dnVDrijX+BPJUBgcF36DSjC4PA",
+    "Expected": {
+      "Child": {
+        "Exists": true,
+        "BalanceIDs": [
+          "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ],
+        "Balances": [
+          "11"
+        ],
+        "TimeLockIDs": [
+          "0x0200000000000000000000000000000000000000000000000000000000000000",
+          "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ],
+        "TimeLocks": [
+          {
+            "Items": [
+              {
+                "StartTime": 2000000001,
+                "EndTime": 2000000100,
+                "Value": "5"
+              }
+            ]
+          },
+          {
+            "Items": []
+          }
+        ],
+        "Nonce": 7,
+        "Code": "3615600657005b730500000000000000000000000000000000000000ff",
+        "Storage": "0x0900000000000000000000000000000000000000000000000000000000000000"
+      },
+      "Sender": "968742000000000",
+      "SenderNonce": 1,
+      "Beneficiary": "3",
+      "Miner": "312531258000000000",
+      "Receipts": [
+        {
+          "Status": 0,
+          "Gas": 31258,
+          "Cumulative": 31258,
+          "Index": 0
+        }
+      ],
+      "Tickets": 3,
+      "Difficulty": "5",
+      "Order": 0
+    }
+  },
+  "ProducerPID": 703,
+  "Commands": [
+    [
+      "/home/rehearsal/results/restart-state-rollback-block-v2-2026-10-07/tmp/go-build3406990144/b001/state.test",
+      "-test.run=^TestF11BlockReceiver$",
+      "-test.v",
+      "-test.timeout=45s"
+    ],
+    [
+      "/home/rehearsal/results/restart-state-rollback-block-v2-2026-10-07/tmp/go-build3406990144/b001/state.test",
+      "-test.run=^TestF11BlockReceiver$",
+      "-test.v",
+      "-test.timeout=45s"
+    ]
+  ],
+  "Logs": [
+    "=== RUN   TestF11BlockReceiver\n    f11_block_import_test.go:296: F11RECEIVER TestF11BlockImport/before/clean_revert_absent import pid=753 empty-ticket-cache=true\n--- PASS: TestF11BlockReceiver (0.02s)\nPASS\n",
+    "=== RUN   TestF11BlockReceiver\n    f11_block_import_test.go:296: F11RECEIVER TestF11BlockImport/before/clean_revert_absent cold pid=758 empty-ticket-cache=true\n--- PASS: TestF11BlockReceiver (0.04s)\nPASS\n"
+  ],
+  "Results": [
+    {
+      "Phase": "import",
+      "PID": 753,
+      "Namespace": "net:[4026532195]",
+      "CacheEmpty": true,
+      "Head": "0x97f1a6ad5d591ff2129460b7b7792a8f86c768963da57fce3142ce01623000bd",
+      "Root": "0x44e02e5506beca8792822b952314ef30ace11737e3ef6d55e3017207e949d8c6",
+      "TicketRoot": "0xd1f62e106790046b0413b64713105218ea73f6276e9f681285db44913cf2b01e",
+      "Selected": "0x0100000000000000000000000000000000000000000000000000000000000000",
+      "Actual": {
+        "Child": {
+          "Exists": true,
+          "BalanceIDs": [
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          ],
+          "Balances": [
+            "11"
+          ],
+          "TimeLockIDs": [
+            "0x0200000000000000000000000000000000000000000000000000000000000000",
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          ],
+          "TimeLocks": [
+            {
+              "Items": [
+                {
+                  "StartTime": 2000000001,
+                  "EndTime": 2000000100,
+                  "Value": "5"
+                }
+              ]
+            },
+            {
+              "Items": []
+            }
+          ],
+          "Nonce": 7,
+          "Code": "3615600657005b730500000000000000000000000000000000000000ff",
+          "Storage": "0x0900000000000000000000000000000000000000000000000000000000000000"
+        },
+        "Sender": "968742000000000",
+        "SenderNonce": 1,
+        "Beneficiary": "3",
+        "Miner": "312531258000000000",
+        "Receipts": [
+          {
+            "Status": 0,
+            "Gas": 31258,
+            "Cumulative": 31258,
+            "Index": 0
+          }
+        ],
+        "Tickets": 3,
+        "Difficulty": "5",
+        "Order": 0
+      }
+    },
+    {
+      "Phase": "cold",
+      "PID": 758,
+      "Namespace": "net:[4026532195]",
+      "CacheEmpty": true,
+      "Head": "0x97f1a6ad5d591ff2129460b7b7792a8f86c768963da57fce3142ce01623000bd",
+      "Root": "0x44e02e5506beca8792822b952314ef30ace11737e3ef6d55e3017207e949d8c6",
+      "TicketRoot": "0xd1f62e106790046b0413b64713105218ea73f6276e9f681285db44913cf2b01e",
+      "Selected": "0x0100000000000000000000000000000000000000000000000000000000000000",
+      "Actual": {
+        "Child": {
+          "Exists": true,
+          "BalanceIDs": [
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          ],
+          "Balances": [
+            "11"
+          ],
+          "TimeLockIDs": [
+            "0x0200000000000000000000000000000000000000000000000000000000000000",
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          ],
+          "TimeLocks": [
+            {
+              "Items": [
+                {
+                  "StartTime": 2000000001,
+                  "EndTime": 2000000100,
+                  "Value": "5"
+                }
+              ]
+            },
+            {
+              "Items": []
+            }
+          ],
+          "Nonce": 7,
+          "Code": "3615600657005b730500000000000000000000000000000000000000ff",
+          "Storage": "0x0900000000000000000000000000000000000000000000000000000000000000"
+        },
+        "Sender": "968742000000000",
+        "SenderNonce": 1,
+        "Beneficiary": "3",
+        "Miner": "312531258000000000",
+        "Receipts": [
+          {
+            "Status": 0,
+            "Gas": 31258,
+            "Cumulative": 31258,
+            "Index": 0
+          }
+        ],
+        "Tickets": 3,
+        "Difficulty": "5",
+        "Order": 0
+      }
+    }
+  ]
+}

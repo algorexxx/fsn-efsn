@@ -1,0 +1,216 @@
+{
+  "Manifest": {
+    "Name": "TestF11BlockImport/at/dirty_revert_zero",
+    "Database": "/home/rehearsal/results/restart-state-rollback-block-v2-2026-10-07/tmp/TestF11BlockImportatdirty_revert_zero3172577755/001/receiver",
+    "Scheduled": true,
+    "ParentHash": "0xef7d29bbdab04fb55ea32968cbbacce549840b9ef79b3978d13d6e389fbd390e",
+    "ParentTickets": "0x5fe0e01a82acf5d6ff60e19f9cd8f4930b4c5c61561f7b0834626bf7cc527883",
+    "Block": "+QNc+QKGoO99KbvasE+1XqMpaMu6zOVJhAue95s5eNE9bjifvTkOoNVRkvgDva3ykgUaAj6guR9qjw/UnbutNK9OHNc5aKazlH5fRVIJGmkSXV38t7jCZZApOVvfoLZsNYQtf2TcJ7X5vY1ej0QZfaA4tsaneTVZgiuBm3L7oMqK8jvbrtb8XiFtEAcYoEsV+lljP6voXjHZc0Pq6+dOoC2iXk8VfSTfs5yYOjAVRp1HZTMYAH6A8PAfFz9U6bxAuQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWD5t3hgw9CQILMRIRlU/F4uIcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG/lAyfLCJ0WNJH/YHfu1wm9AKLerS+EEjIp5Csjp/EBsR5ph7yw5LczMFJHRp7yDMQr4913XxruW740W5+N59tDwCgQ/Gz9dOTCBrZ8UCgxzcakhzvTI2/ThUvqB7Ls/IHu/iIAAAAAAAAAACEO5rKAPjQ+GaAhDuaygCDAYaglAIAAAAAAAAAAAAAAAAAAAAAAAAAAQGC/0qgjyRcr8TkAV64hxhOzJShPUdZLEl4hGjuZ1SWh7LPhjOgZZsXS0IvLbTIXgR1QR3B14kqBEBir/LqtQTRz20p5JH4ZgGEO5rKAIMBhqCUAwAAAAAAAAAAAAAAAAAAAAAAAACAgIL/SaCDRwB8bgKdukY/1zkhUvrrPyOnVOWUXWm75ign4s2EDaB4RzKmxHuO/d8g+99W3/C6A8GstpSSo37mlMi4x6Q5gMA=",
+    "Expected": {
+      "Child": {
+        "Exists": true,
+        "BalanceIDs": [
+          "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "0x0200000000000000000000000000000000000000000000000000000000000000"
+        ],
+        "Balances": [
+          "12",
+          "0"
+        ],
+        "TimeLockIDs": [
+          "0x0200000000000000000000000000000000000000000000000000000000000000",
+          "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ],
+        "TimeLocks": [
+          {
+            "Items": [
+              {
+                "StartTime": 2000000001,
+                "EndTime": 2000000100,
+                "Value": "5"
+              }
+            ]
+          },
+          {
+            "Items": []
+          }
+        ],
+        "Nonce": 7,
+        "Code": "3615600657005b730500000000000000000000000000000000000000ff",
+        "Storage": "0x0900000000000000000000000000000000000000000000000000000000000000"
+      },
+      "Sender": "947707999999999",
+      "SenderNonce": 2,
+      "Beneficiary": "3",
+      "Miner": "312552292000000000",
+      "Receipts": [
+        {
+          "Status": 1,
+          "Gas": 21034,
+          "Cumulative": 21034,
+          "Index": 0
+        },
+        {
+          "Status": 0,
+          "Gas": 31258,
+          "Cumulative": 52292,
+          "Index": 1
+        }
+      ],
+      "Tickets": 3,
+      "Difficulty": "5",
+      "Order": 0
+    }
+  },
+  "ProducerPID": 445,
+  "Commands": [
+    [
+      "/home/rehearsal/results/restart-state-rollback-block-v2-2026-10-07/tmp/go-build2792718207/b001/state.test",
+      "-test.run=^TestF11BlockReceiver$",
+      "-test.v",
+      "-test.timeout=45s"
+    ],
+    [
+      "/home/rehearsal/results/restart-state-rollback-block-v2-2026-10-07/tmp/go-build2792718207/b001/state.test",
+      "-test.run=^TestF11BlockReceiver$",
+      "-test.v",
+      "-test.timeout=45s"
+    ]
+  ],
+  "Logs": [
+    "=== RUN   TestF11BlockReceiver\n    f11_block_import_test.go:296: F11RECEIVER TestF11BlockImport/at/dirty_revert_zero import pid=560 empty-ticket-cache=true\n--- PASS: TestF11BlockReceiver (0.02s)\nPASS\n",
+    "=== RUN   TestF11BlockReceiver\n    f11_block_import_test.go:296: F11RECEIVER TestF11BlockImport/at/dirty_revert_zero cold pid=566 empty-ticket-cache=true\n--- PASS: TestF11BlockReceiver (0.02s)\nPASS\n"
+  ],
+  "Results": [
+    {
+      "Phase": "import",
+      "PID": 560,
+      "Namespace": "net:[4026532195]",
+      "CacheEmpty": true,
+      "Head": "0xada5adedfa31842c54ca3bfc88536ae1d2b28f3ae28e03657bc382a34bd241b8",
+      "Root": "0xb66c35842d7f64dc27b5f9bd8d5e8f44197da038b6c6a7793559822b819b72fb",
+      "TicketRoot": "0x43f1b3f5d393081ad9f140a0c7371a921cef4c8dbf4e152fa81ecbb3f207bbf8",
+      "Selected": "0x0300000000000000000000000000000000000000000000000000000000000000",
+      "Actual": {
+        "Child": {
+          "Exists": true,
+          "BalanceIDs": [
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "0x0200000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "Balances": [
+            "12",
+            "0"
+          ],
+          "TimeLockIDs": [
+            "0x0200000000000000000000000000000000000000000000000000000000000000",
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          ],
+          "TimeLocks": [
+            {
+              "Items": [
+                {
+                  "StartTime": 2000000001,
+                  "EndTime": 2000000100,
+                  "Value": "5"
+                }
+              ]
+            },
+            {
+              "Items": []
+            }
+          ],
+          "Nonce": 7,
+          "Code": "3615600657005b730500000000000000000000000000000000000000ff",
+          "Storage": "0x0900000000000000000000000000000000000000000000000000000000000000"
+        },
+        "Sender": "947707999999999",
+        "SenderNonce": 2,
+        "Beneficiary": "3",
+        "Miner": "312552292000000000",
+        "Receipts": [
+          {
+            "Status": 1,
+            "Gas": 21034,
+            "Cumulative": 21034,
+            "Index": 0
+          },
+          {
+            "Status": 0,
+            "Gas": 31258,
+            "Cumulative": 52292,
+            "Index": 1
+          }
+        ],
+        "Tickets": 3,
+        "Difficulty": "5",
+        "Order": 0
+      }
+    },
+    {
+      "Phase": "cold",
+      "PID": 566,
+      "Namespace": "net:[4026532195]",
+      "CacheEmpty": true,
+      "Head": "0xada5adedfa31842c54ca3bfc88536ae1d2b28f3ae28e03657bc382a34bd241b8",
+      "Root": "0xb66c35842d7f64dc27b5f9bd8d5e8f44197da038b6c6a7793559822b819b72fb",
+      "TicketRoot": "0x43f1b3f5d393081ad9f140a0c7371a921cef4c8dbf4e152fa81ecbb3f207bbf8",
+      "Selected": "0x0300000000000000000000000000000000000000000000000000000000000000",
+      "Actual": {
+        "Child": {
+          "Exists": true,
+          "BalanceIDs": [
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "0x0200000000000000000000000000000000000000000000000000000000000000"
+          ],
+          "Balances": [
+            "12",
+            "0"
+          ],
+          "TimeLockIDs": [
+            "0x0200000000000000000000000000000000000000000000000000000000000000",
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          ],
+          "TimeLocks": [
+            {
+              "Items": [
+                {
+                  "StartTime": 2000000001,
+                  "EndTime": 2000000100,
+                  "Value": "5"
+                }
+              ]
+            },
+            {
+              "Items": []
+            }
+          ],
+          "Nonce": 7,
+          "Code": "3615600657005b730500000000000000000000000000000000000000ff",
+          "Storage": "0x0900000000000000000000000000000000000000000000000000000000000000"
+        },
+        "Sender": "947707999999999",
+        "SenderNonce": 2,
+        "Beneficiary": "3",
+        "Miner": "312552292000000000",
+        "Receipts": [
+          {
+            "Status": 1,
+            "Gas": 21034,
+            "Cumulative": 21034,
+            "Index": 0
+          },
+          {
+            "Status": 0,
+            "Gas": 31258,
+            "Cumulative": 52292,
+            "Index": 1
+          }
+        ],
+        "Tickets": 3,
+        "Difficulty": "5",
+        "Order": 0
+      }
+    }
+  ]
+}

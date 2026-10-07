@@ -1,0 +1,55 @@
+--- a/block_import_test.go
++++ b/block_import_test.go
+@@ -164,7 +164,7 @@
+ 	seed.SetCode(parent, programs.Parent)
+ 	seed.SetNonce(child, 7)
+ 	seed.SetState(child, common.Hash{8}, common.Hash{9})
+-	seed.SetBalance(crypto.PubkeyToAddress(f11SyntheticKey(t, 2).PublicKey), common.SystemAssetID, big.NewInt(1000000))
++	seed.SetBalance(crypto.PubkeyToAddress(f11SyntheticKey(t, 2).PublicKey), common.SystemAssetID, big.NewInt(1000000000000000))
+ 	seed.SetBalance(child, common.SystemAssetID, big.NewInt(11))
+ 	seed.SetBalance(beneficiary, common.SystemAssetID, big.NewInt(3))
+ 	if tc.Zero {
+@@ -181,7 +181,7 @@
+ 	seedRoot, err := seed.Commit(true)
+ 	f11Require(t, err)
+ 	f11Require(t, cache.TrieDB().Commit(seedRoot, false, nil))
+-	header := &types.Header{Number: big.NewInt(height - 1), ParentHash: genesis.Hash(), Root: seedRoot, Time: 1700000000, GasLimit: 1000000, Difficulty: big.NewInt(1), BaseFee: big.NewInt(0), MixDigest: tickets, Extra: datong.GenerateGenesisExtraData(nil, 4), Coinbase: owner, UncleHash: types.EmptyUncleHash}
++	header := &types.Header{Number: big.NewInt(height - 1), ParentHash: genesis.Hash(), Root: seedRoot, Time: 1700000000, GasLimit: 1000000, Difficulty: big.NewInt(1), BaseFee: big.NewInt(1000000000), MixDigest: tickets, Extra: datong.GenerateGenesisExtraData(nil, 4), Coinbase: owner, UncleHash: types.EmptyUncleHash}
+ 	parentBlock := types.NewBlockWithHeader(header)
+ 	rawdb.WriteBlock(db, parentBlock)
+ 	rawdb.WriteTd(db, parentBlock.Hash(), parentBlock.NumberU64(), big.NewInt(1))
+@@ -203,18 +203,18 @@
+ 	t.Helper()
+ 	key := f11SyntheticKey(t, 1)
+ 	owner := crypto.PubkeyToAddress(key.PublicKey)
+-	header := &types.Header{Number: new(big.Int).Add(f.Parent.Number(), common.Big1), ParentHash: f.Parent.Hash(), Time: 1700000120, GasLimit: 1000000, BaseFee: big.NewInt(0), Coinbase: owner}
++	header := &types.Header{Number: new(big.Int).Add(f.Parent.Number(), common.Big1), ParentHash: f.Parent.Hash(), Time: 1700000120, GasLimit: 1000000, BaseFee: big.NewInt(1000000000), Coinbase: owner}
+ 	f11Require(t, f.Engine.Prepare(f.Chain, header))
+ 	working, err := f.Chain.StateAt(f.Parent.Root(), f.Parent.MixDigest())
+ 	f11Require(t, err)
+ 	senderKey := f11SyntheticKey(t, 2)
+ 	var txs types.Transactions
+ 	if tc.Prior {
+-		tx, err := types.SignTx(types.NewTransaction(0, common.Address{2}, big.NewInt(1), 100000, big.NewInt(1), []byte{1}), types.NewEIP155Signer(f.Chain.Config().ChainID), senderKey)
++		tx, err := types.SignTx(types.NewTransaction(0, common.Address{2}, big.NewInt(1), 100000, big.NewInt(1000000000), []byte{1}), types.NewEIP155Signer(f.Chain.Config().ChainID), senderKey)
+ 		f11Require(t, err)
+ 		txs = append(txs, tx)
+ 	}
+-	tx, err := types.SignTx(types.NewTransaction(uint64(len(txs)), common.Address{3}, big.NewInt(0), 100000, big.NewInt(1), nil), types.NewEIP155Signer(f.Chain.Config().ChainID), senderKey)
++	tx, err := types.SignTx(types.NewTransaction(uint64(len(txs)), common.Address{3}, big.NewInt(0), 100000, big.NewInt(1000000000), nil), types.NewEIP155Signer(f.Chain.Config().ChainID), senderKey)
+ 	f11Require(t, err)
+ 	txs = append(txs, tx)
+ 	var receipts types.Receipts
+@@ -351,10 +351,10 @@
+ func f11ExpectedBlock(tc f11BlockCase, active bool) f11BlockObservation {
+ 	programs := f11BlockCode(tc.Revert)
+ 	child := state.F11AccountObservation{Exists: true, BalanceIDs: []common.Hash{common.SystemAssetID}, Balances: []string{"11"}, TimeLockIDs: []common.Hash{{2}, common.SystemAssetID}, TimeLocks: []*common.TimeLock{f11PersistenceLock(), {Items: []*common.TimeLockItem{}}}, Nonce: 7, Code: hex.EncodeToString(programs.Child), Storage: common.Hash{9}}
+-	want := f11BlockObservation{Child: child, Sender: "968742", SenderNonce: 1, Beneficiary: "3", Miner: "312500000000031258", Receipts: []f11ReceiptObservation{{Status: 0, Gas: 31258, Cumulative: 31258, Index: 0}}, Tickets: 3, Difficulty: "5", Order: 0}
++	want := f11BlockObservation{Child: child, Sender: "968742000000000", SenderNonce: 1, Beneficiary: "3", Miner: "312531258000000000", Receipts: []f11ReceiptObservation{{Status: 0, Gas: 31258, Cumulative: 31258, Index: 0}}, Tickets: 3, Difficulty: "5", Order: 0}
+ 	if tc.Prior {
+ 		want.Child.Balances = []string{"12"}
+-		want.Sender, want.SenderNonce, want.Miner = "947707", 2, "312500000000052292"
++		want.Sender, want.SenderNonce, want.Miner = "947707999999999", 2, "312552292000000000"
+ 		want.Receipts = []f11ReceiptObservation{{Status: 1, Gas: 21034, Cumulative: 21034, Index: 0}, {Status: 0, Gas: 31258, Cumulative: 52292, Index: 1}}
+ 	}
+ 	if tc.Zero || (tc.Prior && tc.Revert && !active) {

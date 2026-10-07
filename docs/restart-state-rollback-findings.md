@@ -18,8 +18,11 @@ now passes 16 cases per selection through actual transactions, finalization,
 commit/flush and LevelDB close/reopen. When an earlier transaction leaves the
 child pending, the legacy defect durably adds an ordinary zero entry; active
 correction prevents it and changes the resulting state root. The time lock
-remains restored. Full block acceptance and historical occurrence are still
-unverified. The original Opus observations below retain their original scope;
+remains restored. The [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
+additionally passes 16 cases per selection through block construction, normal
+import and fresh-process reopening: the defect reaches accepted synthetic
+blocks, and the active correction changes their roots. Historical occurrence
+remains unverified. The original Opus observations below retain their original scope;
 the current next steps are in [Open items for Astra](#open-items-for-astra).
 
 ## Scope
@@ -230,7 +233,9 @@ assertions or copying failing output into expectations:
 
 The subsequent persistence qualification establishes a transaction-derived
 state-root difference and durable extra zero entry in its synthetic dirty-
-account case. The first three exclusions above still apply to that result.
+account case. The first three exclusions above still apply to that transaction-
+only result. The later block comparison separately establishes synthetic block
+acceptance; historical occurrence and a running mainnet crash remain unproven.
 
 ## Follow-up return report
 
@@ -309,14 +314,16 @@ unselected text update are unchanged.
    correction, with the original EVM regression unchanged. The [persistence comparison](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
    now passes 16 cases per selection through transaction finalization, commit
    and reopening. It establishes a durable extra zero entry and changed active
-   root only for the specified dirty-account case. Block construction/import
-   and supported calls/pending/tracing checks are next. Configuration tests use a
-   registered
-   synthetic network; the separate default-genesis mismatch is tracked as F12.
-   No accepted-block or historical-chain result is claimed.
+   root only for the specified dirty-account case. The [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
+   now also passes 16 cases per selection, including normal import and separate
+   fresh-process reopening, with literal state/receipt/gas/reward expectations
+   and ticket conservation/commitment checks. These are accepted synthetic
+   descendants of directly installed checkpoints, not historical-chain evidence.
+   Supported calls/pending/tracing checks are next. Configuration tests use a
+   registered synthetic network; the separate default-genesis mismatch is F12.
 2. Complete that qualification and independent consensus review before selecting
-   a production change. Accepted-block effects and historical compatibility
-   remain unverified; no activation height or waiver is selected.
+   a production change. Supported-path coverage and historical compatibility
+   remain open; no activation height or waiver is selected.
 3. F11-b source-call review is complete for the inspected production tree: no
    separate production/RPC deletion caller was found. Retain the latent/direct-
    API-only classification and failing regression for independent disposition;

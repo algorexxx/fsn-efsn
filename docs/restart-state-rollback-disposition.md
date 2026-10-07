@@ -18,8 +18,10 @@ asset lacks an ordinary-balance entry. They independently observe the time
 lock as restored. The subsequent [transaction-persistence check](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
 establishes durable extra-zero-entry state when an earlier transaction leaves
 the child pending for commit; active correction changes that fixture's root.
-It does not establish an accepted-block effect, historical occurrence or a
-running-node failure. See the findings and linked qualification bundles for
+The subsequent [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
+establishes the same difference in normally imported synthetic blocks and
+fresh-process reopening. Neither establishes historical occurrence or a
+running-mainnet-node failure. See the findings and linked qualification bundles for
 the exact controls, failed observations and execution limits. The original
 proposal was source analysis; subsequent qualification is recorded below.
 
@@ -208,7 +210,10 @@ correction; F11-b remains unchanged. The [persistence comparison](evidence/resta
 now passes 16 cases per selection through transaction finalization, durable
 commit and LevelDB reopen. Dirty absent-entry cases have different roots under
 the active rule, reinforcing the need to preserve historical execution.
-Block construction/import and supported execution-path checks are next.
+The [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
+also passes 16 cases per selection through construction, import and fresh-process
+reopening from synthetic checkpoints. Supported calls/pending/tracing checks
+are next; historical compatibility remains unverified.
 The separate default
 genesis mismatch on both baseline and candidate is F12, not an F11 correction.
 Keep the production selection unchanged until review and qualification are complete.

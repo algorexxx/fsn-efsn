@@ -1,0 +1,56 @@
+{
+  "Manifest": {
+    "Name": "TestF11BlockImport/before/dirty_success_absent",
+    "Database": "/home/rehearsal/results/restart-state-rollback-block-2026-10-07/tmp/TestF11BlockImportbeforedirty_success_absent464970765/001/receiver",
+    "Scheduled": true,
+    "ParentHash": "0xcc979f6d1d51cc970d20a014e5e3ff738b9678a780684eaddbd2b6290f540ba8",
+    "ParentTickets": "0x5fe0e01a82acf5d6ff60e19f9cd8f4930b4c5c61561f7b0834626bf7cc527883",
+    "Block": "+QNQ+QKCoMyXn20dUcyXDSCgFOXj/3OLlningGhOrdvStikPVAuooADKsn5QYb8UNzKAa5jkx3AnWUnIYQa+sLyzRhW+VDCtlH5fRVIJGmkSXV38t7jCZZApOVvfoHn7pEQZQa2Ka8IpcD5kHSvqToIz7/rA/nm2+xT6pNVnoHRGzLq9UwBlBRkxb4ykjYp03FGWsOeYqHONcEXZr33AoDI9/4PjJnOvci3e/JEQk42jc8pHD2MLmd+PmO+SUw2guQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWD5t3ggw9CQILMRIRlU/F4uIcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE8I/0BqXwjp6OQ+pq5vdFlo1ydH0BmgP0lkErrsFWknQBFwzyGjU8rqZqNJbzIcGY6JiBfDzYk4cAQFkz1dAEgfACg0fYuEGeQBGsEE7ZHExBSGOpz9idun2gShdtEkTzysB6IAAAAAAAAAACA+Mj4YoABgwGGoJQCAAAAAAAAAAAAAAAAAAAAAAAAAAEBgv9KoHooZ9OrLPN55Ch0B7BonWK/Am96TohJt2TMjxzRFQHKoAX1l+OqotS1vBbKSJTJFyrXVkxYHWZFCpZxq6Batau8+GIBAYMBhqCUAwAAAAAAAAAAAAAAAAAAAAAAAACAgIL/SaCFiw7tRGGWhKf+hPlXj/p2YcGIiZwuIOoHxHrBtHoYeKBTnz/dhX3VXYHi/sDfztbZM2Gxhsa0me0PBIPfi3u8qcA=",
+    "Expected": {
+      "Child": {
+        "Exists": false,
+        "BalanceIDs": null,
+        "Balances": null,
+        "TimeLockIDs": null,
+        "TimeLocks": null,
+        "Nonce": 0,
+        "Code": "",
+        "Storage": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "Sender": "947707",
+      "SenderNonce": 2,
+      "Beneficiary": "15",
+      "Miner": "312500000000052292",
+      "Receipts": [
+        {
+          "Status": 1,
+          "Gas": 21034,
+          "Cumulative": 21034,
+          "Index": 0
+        },
+        {
+          "Status": 1,
+          "Gas": 31258,
+          "Cumulative": 52292,
+          "Index": 1
+        }
+      ],
+      "Tickets": 3,
+      "Difficulty": "5",
+      "Order": 0
+    }
+  },
+  "ProducerPID": 442,
+  "Commands": [
+    [
+      "/home/rehearsal/results/restart-state-rollback-block-2026-10-07/tmp/go-build2210561277/b001/state.test",
+      "-test.run=^TestF11BlockReceiver$",
+      "-test.v",
+      "-test.timeout=45s"
+    ]
+  ],
+  "Logs": [
+    "=== RUN   TestF11BlockReceiver\n    f11_block_import_test.go:267: invalid baseFee: have 0, want 1000000000, parentBaseFee 0, parentGasUsed 0\n--- FAIL: TestF11BlockReceiver (0.02s)\nFAIL\n"
+  ],
+  "Results": null
+}

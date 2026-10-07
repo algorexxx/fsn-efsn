@@ -64,8 +64,8 @@ These are in-process CLI tests with a synthetic purchase and unsigned block,
 not a production executable/signing rehearsal. Together with the earlier
 approval validation, they complete the bounded configuration-binding checks.
 
-**Next:** phase 4 block-processing and supported execution paths; the bounded
-transaction-persistence result is recorded below. The startup compatibility
+**Next:** phase 4 supported calls, pending execution and tracing; the bounded
+transaction and block results are recorded below. The startup compatibility
 review, F12 disposition and
 final service/production-artifact rehearsal remain open as stated above.
 
@@ -133,13 +133,22 @@ results match. Time locks, gas, receipts and transfers meet literal expectations
 The first failed attempt and its single nil-versus-empty-list expectation
 correction are preserved. No runtime change was introduced by these tests.
 
-**Still open:** block construction/import, supported calls/pending/tracing and
-historical compatibility. The transaction fixture installs its synthetic parent
-directly; it does not validate or accept a block. Extend the existing restart
-block-fixture approach through Prepare, ApplyTransaction, DaTong.Finalize,
-serialized InsertChain on a separate database and receiver close/reopen. Check
-the canonical head, raw account state, receipts/gas and ticket commitments
-with explicit activation-boundary cases. Record synthetic-checkpoint scope.
+**Block boundary complete within the stated fixture scope.** The
+[block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
+passes 16 cases per selection through Prepare, ApplyTransaction, DaTong.Finalize,
+synthetic signing and serialized InsertChain into an independently seeded
+database. Import and reopening each use a new process with an initially empty
+ticket cache: 64 receiver processes total. Account state, canonical heads,
+receipts/gas, fees/reward and ticket commitments match specified expectations.
+Fourteen pairs have identical block bytes; only dirty absent-entry cases
+at/after activation differ in account structure and state root. The failed
+zero-base-fee attempt and exact fixture correction are retained.
+
+The parent checkpoint is installed directly. These are accepted synthetic
+descendants, not executed historical prefixes or a continuous activation-crossing
+chain. The miner worker/Seal timer and mixed-version import were not exercised.
+**Still open:** supported calls/pending/tracing, historical compatibility,
+independent consensus review and final release/service rehearsal.
 
 Establish finalization/commit outcomes separately from EVM-call observations.
 Then establish the relevant supported block-processing outcomes, comparing

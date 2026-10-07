@@ -197,9 +197,13 @@ Candidate-patch historical compatibility remains open.
   passes 16 cases per selection through finalization, commit and LevelDB reopen.
   A child changed by an earlier transaction can durably retain the extra zero
   entry; the active fix changes that case's root. Clean-child and existing-zero
-  controls behave as specified. Next: block construction/import and supported
-  calls/pending/tracing paths. Preserve historical execution and original
-  failing evidence; no accepted-block or historical result is claimed yet.
+  controls behave as specified. The [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
+  now passes 16 cases per selection through block construction, normal import
+  and fresh-process reopening (64 receiver processes). It confirms the same
+  dirty-account difference in accepted synthetic descendants; receipts, gas,
+  rewards and tickets match expectations. Next: supported calls/pending/tracing
+  rule selection. Preserve historical execution and original failing evidence;
+  the synthetic checkpoint does not establish historical compatibility.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.
