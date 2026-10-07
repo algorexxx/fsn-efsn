@@ -39,7 +39,7 @@ isolation, compatibility errors including a zero rewind target, and serialized
 configuration. Both candidate executables build. This establishes neither
 startup database behavior nor correct state rollback.
 
-## Phase 2 — startup and offline recovery integration (partially qualified)
+## Phase 2 — startup and offline recovery integration (bounded checks complete)
 
 The [integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md)
 passes five top-level tests and 33 subtests with race detection. Actual startup,
@@ -55,10 +55,18 @@ probe fails on both selected baseline and candidate, now tracked as F12. Do not
 describe these synthetic fresh-initialization cases as a mainnet genesis pass.
 The inactive missing-header rejection is also retained for compatibility review.
 
-**Next:** exercise actual CLI review-report construction/prepare with the
-resolved configuration and independent checksum vectors. The matching approval
-context check and mismatched-approval rejection before signer opening already
-pass; successful signing is not claimed. Then proceed to phases 3 and 4.
+The [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
+passes four top-level tests and ten subtests through the actual command
+dispatcher, report builder and prepare paths. Reports/approvals bind the
+independently expected effective configuration; changed report schedules and
+prior-policy checksums are rejected without output or chain key/value changes.
+These are in-process CLI tests with a synthetic purchase and unsigned block,
+not a production executable/signing rehearsal. Together with the earlier
+approval validation, they complete the bounded configuration-binding checks.
+
+**Next:** phase 3 rollback compatibility/correction, then phase 4 transaction
+and block boundaries. The startup compatibility review, F12 disposition and
+final service/production-artifact rehearsal remain open as stated above.
 
 Use a synthetic schedule in each fixture, with explicit literal expectations
 at its height minus one, height and height plus one. Mainnet defaults modified

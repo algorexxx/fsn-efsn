@@ -188,9 +188,10 @@ Candidate-patch historical compatibility remains open.
   are prepared: configuration tests and both command builds pass against the
   selected inputs. The [startup/recovery integration](evidence/restart-state-rollback-integration-2026-10-07/README.md)
   passes five top-level tests and 33 subtests with disposable databases and a
-  registered synthetic network identity. Next: qualify actual CLI report/prepare
-  configuration binding, then the specified rollback and transaction/block
-  boundaries. Preserve historical execution and original failing evidence.
+  registered synthetic network identity. The [CLI report/prepare follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
+  passes four top-level tests and ten subtests, completing bounded configuration
+  binding through the actual CLI entry paths. Next: the specified rollback and
+  transaction/block boundaries. Preserve historical execution and original failing evidence.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.

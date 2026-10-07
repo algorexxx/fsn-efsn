@@ -125,7 +125,8 @@ No human review or acceptance is inferred from a test pass.
   startup agree across database close/reopen. Approval checks match independent
   JSON/hash vectors and reject other schedules before opening a signer. This
   uses a registered synthetic genesis, not real-mainnet initialization. The
-  actual CLI report/prepare path remains open, as do execution/history phases.
+  actual CLI report/prepare path was not covered in that bundle; the follow-up
+  below closes that bounded gap. Execution/history phases remain open.
   The inactive missing-header rejection remains an explicit compatibility-review
   item. No runtime/source-selection change or production schedule is selected.
 - F12 genesis comparison (7 Oct 2026): the same bundle retains the original
@@ -138,6 +139,15 @@ No human review or acceptance is inferred from a test pass.
   [operator kit](restart-operator-kit.md) already requires a verified restore
   marker and prohibits initializing a missing restored chain; validate these
   boundaries in the final supported-path check.
+- F11 CLI configuration binding (7 Oct 2026): the [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
+  passes four top-level tests and ten subtests through actual report/prepare
+  command dispatch. Reports and approval checksums match independent vectors;
+  changed report schedules and prior-policy checksums are rejected without
+  output or chain key/value changes. This completes the remaining bounded
+  phase-2 configuration check. The fixture uses a synthetic purchase/unsigned
+  block in a test executable; it is not a real signing or handover rehearsal.
+  Rollback, commit/block and historical qualification remain open. F11 remains
+  unselected and no production schedule is set.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

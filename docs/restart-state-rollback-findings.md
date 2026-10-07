@@ -288,8 +288,10 @@ unselected text update are unchanged.
    [qualification specification](restart-state-rollback-qualification.md)
    records passing startup/reader configuration, database reopen and approval
    rejection in the [integration evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md).
-   Actual CLI report/prepare binding remains next. These use a registered
-   synthetic network; the separate default-genesis mismatch is tracked as F12.
+   The [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
+   also passes report/prepare configuration binding; rollback and transaction/block
+   qualification are next. These use a registered synthetic network; the separate
+   default-genesis mismatch is tracked as F12.
    No new candidate rollback or transaction/block result is claimed.
 2. Complete that qualification and independent consensus review before selecting
    a production change. Transaction/commit and accepted-block effects remain

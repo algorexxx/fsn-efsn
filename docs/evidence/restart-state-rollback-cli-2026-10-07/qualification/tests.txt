@@ -1,0 +1,44 @@
+=== RUN   TestF11CLIReportAndPrepareConfiguration
+=== RUN   TestF11CLIReportAndPrepareConfiguration/legacy_resolved
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+Prepared approval for review. SHA256=3c8b57760af5ff4e3981c258b0fcf744c0b8cfc35415a79c4f5c6658ce84e6e9
+=== RUN   TestF11CLIReportAndPrepareConfiguration/matching_stored
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+Prepared approval for review. SHA256=3c8b57760af5ff4e3981c258b0fcf744c0b8cfc35415a79c4f5c6658ce84e6e9
+=== RUN   TestF11CLIReportAndPrepareConfiguration/unselected
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+Prepared approval for review. SHA256=69c0033f69918ab053adada146c03ef672ca8cf1dc8a3b1e0607fd255d3fb288
+=== RUN   TestF11CLIReportAndPrepareConfiguration/custom_same_id
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+Prepared approval for review. SHA256=69c0033f69918ab053adada146c03ef672ca8cf1dc8a3b1e0607fd255d3fb288
+=== RUN   TestF11CLIReportAndPrepareConfiguration/custom_schedule
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+Prepared approval for review. SHA256=437e8ee4ef41f619e89b496ccda57fb3312b036c6f3fa663e80c9e7b8b28ddd9
+--- PASS: TestF11CLIReportAndPrepareConfiguration (0.45s)
+    --- PASS: TestF11CLIReportAndPrepareConfiguration/legacy_resolved (0.08s)
+    --- PASS: TestF11CLIReportAndPrepareConfiguration/matching_stored (0.09s)
+    --- PASS: TestF11CLIReportAndPrepareConfiguration/unselected (0.10s)
+    --- PASS: TestF11CLIReportAndPrepareConfiguration/custom_same_id (0.10s)
+    --- PASS: TestF11CLIReportAndPrepareConfiguration/custom_schedule (0.08s)
+=== RUN   TestF11CLIRejectsChangedReportSchedule
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+=== RUN   TestF11CLIRejectsChangedReportSchedule/removed
+=== RUN   TestF11CLIRejectsChangedReportSchedule/changed
+--- PASS: TestF11CLIRejectsChangedReportSchedule (0.06s)
+    --- PASS: TestF11CLIRejectsChangedReportSchedule/removed (0.01s)
+    --- PASS: TestF11CLIRejectsChangedReportSchedule/changed (0.02s)
+=== RUN   TestF11CLIPriorApprovalConfiguration
+Prepared unsigned recovery candidate. No block signature, database commit or network publication occurred.
+Prepared approval for review. SHA256=3c8b57760af5ff4e3981c258b0fcf744c0b8cfc35415a79c4f5c6658ce84e6e9
+=== RUN   TestF11CLIPriorApprovalConfiguration/matching
+Prepared approval for review. SHA256=3c8b57760af5ff4e3981c258b0fcf744c0b8cfc35415a79c4f5c6658ce84e6e9
+=== RUN   TestF11CLIPriorApprovalConfiguration/legacy
+=== RUN   TestF11CLIPriorApprovalConfiguration/different
+--- PASS: TestF11CLIPriorApprovalConfiguration (0.16s)
+    --- PASS: TestF11CLIPriorApprovalConfiguration/matching (0.03s)
+    --- PASS: TestF11CLIPriorApprovalConfiguration/legacy (0.03s)
+    --- PASS: TestF11CLIPriorApprovalConfiguration/different (0.03s)
+=== RUN   TestF11CLIRejectsConflictingStoredSchedule
+--- PASS: TestF11CLIRejectsConflictingStoredSchedule (0.03s)
+PASS
+ok  	github.com/FusionFoundation/efsn/v5/cmd/fsn-recovery	1.719s
