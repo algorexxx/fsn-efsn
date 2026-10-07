@@ -193,8 +193,13 @@ Candidate-patch historical compatibility remains open.
   binding through the actual CLI entry paths. The [rollback comparison](evidence/restart-state-rollback-execution-2026-10-07/README.md)
   passes 50 bounded cases on each selection and the unchanged original EVM
   regression passes with activation enabled. Pre-activation behavior and F11-b
-  remain unchanged. Next: transaction finalization/commit and block-processing
-  boundaries. Preserve historical execution and original failing evidence.
+  remain unchanged. The [transaction-persistence comparison](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+  passes 16 cases per selection through finalization, commit and LevelDB reopen.
+  A child changed by an earlier transaction can durably retain the extra zero
+  entry; the active fix changes that case's root. Clean-child and existing-zero
+  controls behave as specified. Next: block construction/import and supported
+  calls/pending/tracing paths. Preserve historical execution and original
+  failing evidence; no accepted-block or historical result is claimed yet.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.

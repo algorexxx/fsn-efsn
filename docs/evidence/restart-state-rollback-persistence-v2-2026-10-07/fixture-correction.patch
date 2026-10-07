@@ -1,0 +1,11 @@
+--- a/transaction_persistence_test.go
++++ b/transaction_persistence_test.go
+@@ -130,7 +130,7 @@
+ 					childBalance, senderBalance, fees = "12", "947707", "52292"
+ 					wantReceipts = []f11ReceiptObservation{{Status: 1, Gas: 21034, Cumulative: 21034, Index: 0}, {Status: 0, Gas: 31258, Cumulative: 52292, Index: 1}}
+ 				}
+-				wantChild := state.F11AccountObservation{Exists: true, BalanceIDs: []common.Hash{common.SystemAssetID}, Balances: []string{childBalance}, TimeLockIDs: []common.Hash{asset, common.SystemAssetID}, TimeLocks: []*common.TimeLock{f11PersistenceLock(), new(common.TimeLock)}, Nonce: 7, Code: hex.EncodeToString(childCode), Storage: common.Hash{9}}
++				wantChild := state.F11AccountObservation{Exists: true, BalanceIDs: []common.Hash{common.SystemAssetID}, Balances: []string{childBalance}, TimeLockIDs: []common.Hash{asset, common.SystemAssetID}, TimeLocks: []*common.TimeLock{f11PersistenceLock(), {Items: []*common.TimeLockItem{}}}, Nonce: 7, Code: hex.EncodeToString(childCode), Storage: common.Hash{9}}
+ 				if tc.zeroEntry {
+ 					wantChild.BalanceIDs = append(wantChild.BalanceIDs, asset)
+ 					wantChild.Balances = append(wantChild.Balances, "0")

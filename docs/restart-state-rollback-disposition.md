@@ -15,10 +15,13 @@ the evidence and independent review below.
 
 The retained tests establish an in-memory rollback defect when a time-locked
 asset lacks an ordinary-balance entry. They independently observe the time
-lock as restored. They do not establish persistence, an accepted-block effect,
-historical occurrence or a running-node failure. See the findings for the
-exact controls, failed observations and network qualification; this proposal
-adds source analysis only. No tests were run for this document.
+lock as restored. The subsequent [transaction-persistence check](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+establishes durable extra-zero-entry state when an earlier transaction leaves
+the child pending for commit; active correction changes that fixture's root.
+It does not establish an accepted-block effect, historical occurrence or a
+running-node failure. See the findings and linked qualification bundles for
+the exact controls, failed observations and execution limits. The original
+proposal was source analysis; subsequent qualification is recorded below.
 
 | Option | Historical execution | Remaining consequence | Recommendation |
 | --- | --- | --- | --- |
@@ -201,8 +204,12 @@ also passes startup/reader configuration, database reopen and approval-rejection
 checks on a registered synthetic network. The [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
 also passes report/prepare configuration binding. The [rollback comparison](evidence/restart-state-rollback-execution-2026-10-07/README.md)
 now demonstrates bounded pre-activation compatibility and the active F11-a
-correction; F11-b remains unchanged. Transaction/commit and block boundaries
-are next. The separate default
+correction; F11-b remains unchanged. The [persistence comparison](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+now passes 16 cases per selection through transaction finalization, durable
+commit and LevelDB reopen. Dirty absent-entry cases have different roots under
+the active rule, reinforcing the need to preserve historical execution.
+Block construction/import and supported execution-path checks are next.
+The separate default
 genesis mismatch on both baseline and candidate is F12, not an F11 correction.
 Keep the production selection unchanged until review and qualification are complete.
 The source proposal is complete;

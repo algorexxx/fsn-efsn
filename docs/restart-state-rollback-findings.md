@@ -13,6 +13,15 @@ requested in
 is incorporated throughout and summarised in
 [Follow-up return report](#follow-up-return-report).
 
+**Latest qualification:** the [transaction-persistence comparison](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+now passes 16 cases per selection through actual transactions, finalization,
+commit/flush and LevelDB close/reopen. When an earlier transaction leaves the
+child pending, the legacy defect durably adds an ordinary zero entry; active
+correction prevents it and changes the resulting state root. The time lock
+remains restored. Full block acceptance and historical occurrence are still
+unverified. The original Opus observations below retain their original scope;
+the current next steps are in [Open items for Astra](#open-items-for-astra).
+
 ## Scope
 
 Verify that cancelling (reverting) an operation restores the account state that
@@ -164,8 +173,10 @@ suicide_evm_test.go:134: restored time lock independently observed as unchanged:
 `0x80` (the empty/zero RLP string). This is an *encoding* property only. It does
 **not** show the corrupted account reaches database persistence: journal
 rollback also changes dirty tracking, and finalization selects which accounts
-are processed. Actual transaction/commit, accepted-block and historical effects
-remain explicitly open and were not tested in this pass.
+are processed. Transaction/commit, accepted-block and historical effects were
+not tested in the Opus pass. The later [persistence experiment](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+separately establishes the dirty-account commit case; this does not enlarge
+what the encoding observation alone proves.
 
 **Candidate correction (NOT applied, not selected).** Adding `isTimeLock: true`
 to the `suicideChange` literal in the time-lock loop would make `revert` restore
@@ -209,13 +220,17 @@ assertions or copying failing output into expectations:
    is observed as **restored** in every revert case; the earlier "lost time
    lock" line was an artifact of the shared nil replacement, not an observation.
 
-## Boundaries — what is NOT established
+## Boundaries of the original Opus observation
 
 - Not an accepted-block reproduction.
 - Not evidence the defect occurred on the historical chain.
 - Not a demonstration of a running mainnet node crashing.
 - No transaction/commit-level consensus impact proven; reproduced at the
   StateDB / EVM-`Call` level with an in-memory DB and synthetic inputs.
+
+The subsequent persistence qualification establishes a transaction-derived
+state-root difference and durable extra zero entry in its synthetic dirty-
+account case. The first three exclusions above still apply to that result.
 
 ## Follow-up return report
 
@@ -291,13 +306,17 @@ unselected text update are unchanged.
    The [CLI follow-up](evidence/restart-state-rollback-cli-2026-10-07/README.md)
    also passes report/prepare configuration binding. The [rollback comparison](evidence/restart-state-rollback-execution-2026-10-07/README.md)
    now demonstrates bounded pre-activation compatibility and active F11-a
-   correction, with the original EVM regression unchanged. Transaction/commit
-   and block qualification are next. Configuration tests use a registered
+   correction, with the original EVM regression unchanged. The [persistence comparison](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+   now passes 16 cases per selection through transaction finalization, commit
+   and reopening. It establishes a durable extra zero entry and changed active
+   root only for the specified dirty-account case. Block construction/import
+   and supported calls/pending/tracing checks are next. Configuration tests use a
+   registered
    synthetic network; the separate default-genesis mismatch is tracked as F12.
-   No transaction/block persistence or accepted-history result is claimed.
+   No accepted-block or historical-chain result is claimed.
 2. Complete that qualification and independent consensus review before selecting
-   a production change. Transaction/commit and accepted-block effects remain
-   unverified; no activation height or waiver is selected.
+   a production change. Accepted-block effects and historical compatibility
+   remain unverified; no activation height or waiver is selected.
 3. F11-b source-call review is complete for the inspected production tree: no
    separate production/RPC deletion caller was found. Retain the latent/direct-
    API-only classification and failing regression for independent disposition;

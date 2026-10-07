@@ -64,8 +64,9 @@ These are in-process CLI tests with a synthetic purchase and unsigned block,
 not a production executable/signing rehearsal. Together with the earlier
 approval validation, they complete the bounded configuration-binding checks.
 
-**Next:** phase 4 transaction and block boundaries; phase 3's bounded results
-are recorded below. The startup compatibility review, F12 disposition and
+**Next:** phase 4 block-processing and supported execution paths; the bounded
+transaction-persistence result is recorded below. The startup compatibility
+review, F12 disposition and
 final service/production-artifact rehearsal remain open as stated above.
 
 Use a synthetic schedule in each fixture, with explicit literal expectations
@@ -119,6 +120,26 @@ Keep F11-b classified separately: an F11-a correction is not a claim that the
 zero-entry direct-API failure or the entire state suite now passes.
 
 ## Phase 4 — transaction and block boundary
+
+**Transaction boundary complete within the stated fixture scope.** The
+[persistence evidence](evidence/restart-state-rollback-persistence-v2-2026-10-07/README.md)
+passes one top-level test and 16 subtests per selection. Actual transactions,
+finalization, trie commit/flush, LevelDB close/reopen and a new state cache
+establish that a child already pending from an earlier transaction can retain
+the extra ordinary zero entry durably. A clean child's in-memory defect does
+not persist in this fixture. Active correction changes only the expected
+absent-entry observations and the dirty cases' roots; disabled/pre-activation
+results match. Time locks, gas, receipts and transfers meet literal expectations.
+The first failed attempt and its single nil-versus-empty-list expectation
+correction are preserved. No runtime change was introduced by these tests.
+
+**Still open:** block construction/import, supported calls/pending/tracing and
+historical compatibility. The transaction fixture installs its synthetic parent
+directly; it does not validate or accept a block. Extend the existing restart
+block-fixture approach through Prepare, ApplyTransaction, DaTong.Finalize,
+serialized InsertChain on a separate database and receiver close/reopen. Check
+the canonical head, raw account state, receipts/gas and ticket commitments
+with explicit activation-boundary cases. Record synthetic-checkpoint scope.
 
 Establish finalization/commit outcomes separately from EVM-call observations.
 Then establish the relevant supported block-processing outcomes, comparing
