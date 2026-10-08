@@ -17,9 +17,12 @@ now finds seven available blobs among 24 requested heights: all seven match the
 old encoder and a modern-compiler/old-flate diagnostic; unchanged Go 1.27.1
 matches none. The [encoder-only candidate](restart-ticket-encoding.md) now passes
 those seven samples, 55 synthetic payloads, six expiry cases and actual historical
-genesis startup/restart. Next are affected integration regressions and bounded
-cost measurement, then candidate history and independent review. Seventeen
-missing blobs remain unqualified; the restore-identity safeguard remains open.
+genesis startup/restart. The [affected regressions and cost check](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
+also pass: 20 top-level tests and 32 subtests per selection, including synthetic
+recovery handover, with no measured encoding-cost increase over the legacy
+comparator in three bounded inputs. Next is the [separate first candidate replay](restart-ticket-encoder-replay.md)
+through 100,000, then further history and independent review. That replay has
+not started. Seventeen missing blobs and the restore-identity safeguard remain open.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence
@@ -139,8 +142,9 @@ Candidate-patch historical compatibility remains open.
   The bounded [preserved-vector comparison](evidence/restart-ticket-compression-2026-10-08/README.md)
   is complete for seven available samples; 17 requested blobs were unavailable.
   The [encoder-only candidate](restart-ticket-encoding.md) passes its bounded
-  encoding, expiry, state/cache, build and genesis startup checks. Complete the
-  affected regressions/cost check, candidate history and independent review. The current
+  encoding, expiry, state/cache, build, genesis startup and affected
+  regression/cost checks. Complete [candidate history](restart-ticket-encoder-replay.md)
+  and independent review. The current
   Go 1.27.1 artifacts are blocked from release; successful same-compiler fixtures
   do not close this difference. Keep the registered genesis and backup unchanged.
 - [x] Close the bounded [unknown-heavier automatic-sync gap](restart-automatic-sync.md):

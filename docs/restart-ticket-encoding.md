@@ -55,14 +55,19 @@ replay comparator, not an accepted production solution.
    the old encoder, including repeated/concurrent calls with race detection.
    Six expiry cases meet independently constructed survivor-RLP expectations.
    These derived cases remain synthetic, not accepted historical roots.
-3. **Integration partly complete.** Real decoder/update/cache paths, initial
-   and restarted node genesis, and node/recovery builds pass their stated
-   checks. Next run affected selected regressions and a bounded encoding-cost
-   measurement. A recovery help invocation does not qualify recovery execution.
-4. Resume bounded candidate-history qualification with the reviewed encoding
-   candidate and compare cold state/ticket/receipt commitments to preserved
-   history. Missing sampled blobs and seven passing byte vectors cannot replace
-   this requirement. Keep baseline replay and candidate replay results distinct.
+3. **Bounded integration and cost checks complete.** Real decoder/update/cache
+   paths, initial/restarted genesis and builds pass. The [affected regressions](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
+   add 20 top-level tests and 32 subtests per selection, with race detection,
+   including synthetic guarded recovery and journal handover. Three preserved
+   RLP inputs show no encoding-cost increase against the legacy comparator in
+   five bounded rounds. This does not qualify the production CLI recovery
+   workflow or the full suite.
+4. Run the [prepared first candidate replay](restart-ticket-encoder-replay.md)
+   from genesis through 100,000 in a new identity-bound target, then continue
+   bounded historical qualification. Compare cold state/ticket/receipt
+   commitments to preserved history. This first range has not started and lies
+   within legacy checkpoint shortcuts. Missing sampled blobs and seven passing
+   vectors cannot replace history. Keep baseline and candidate results distinct.
 5. Obtain independent codec/consensus and maintenance review before selection.
    If a historical mismatch is found, stop and resolve its cause; do not add an
    activation boundary by assumption. A byte-compatible implementation should

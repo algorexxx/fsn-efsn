@@ -121,9 +121,12 @@ build using a diagnostic old-flate overlay reproduces them and the genesis
 header; unchanged Go 1.27.1 reproduces none. Seventeen blobs are unavailable.
 The subsequent [encoder-only candidate](restart-ticket-encoding.md) passes its
 bounded seven-vector/55-payload/six-expiry comparison and actual genesis
-startup/restart, with the maintained decoder. Affected regressions/cost checks,
-candidate history, independent review and the restored-identity safeguard remain
-open. Neither the diagnostic overlay nor the unselected patch is a release.
+startup/restart, with the maintained decoder. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
+also pass: 20 top-level tests and 32 subtests per selection, including synthetic
+recovery execution, plus bounded compression measurements. Candidate history,
+independent review and the restored-identity safeguard remain open. The
+[first candidate replay](restart-ticket-encoder-replay.md) is prepared but has
+not started. Neither the diagnostic overlay nor the unselected patch is a release.
 
 ## Independent reviewer packet and completion
 

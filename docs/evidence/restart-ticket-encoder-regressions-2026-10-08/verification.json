@@ -1,0 +1,520 @@
+{
+  "pass": true,
+  "commands": 62,
+  "started": "2026-10-08T15:41:22.070207+00:00",
+  "finished": "2026-10-08T15:43:05.550518+00:00",
+  "previous_files_verified": 815,
+  "passed_test_names": {
+    "old": [
+      "TestDefaultHistoricalPurchaseFailsPoolAdmission",
+      "TestFinalizeParentIsolatedFromConcurrentImport",
+      "TestHeaderBatchUsesUnstoredParents",
+      "TestHistoricalBridgeImportsOnIndependentState",
+      "TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission",
+      "TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund",
+      "TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund",
+      "TestPresentDayPurchaseStartRejectedOnHistoricalHead",
+      "TestPresentDaySuccessorRejectsExpiredTicket",
+      "TestReconstructionAcrossMissingStates",
+      "TestReconstructionAcrossMissingStates/step_1_missing_1",
+      "TestReconstructionAcrossMissingStates/step_2_missing_1",
+      "TestReconstructionAcrossMissingStates/step_2_missing_2",
+      "TestReconstructionAcrossMissingStates/step_3_missing_1",
+      "TestReconstructionAcrossMissingStates/step_3_missing_2",
+      "TestReconstructionAcrossMissingStates/step_3_missing_3",
+      "TestReconstructionAcrossMissingStates/step_4_missing_1",
+      "TestReconstructionAcrossMissingStates/step_4_missing_2",
+      "TestReconstructionAcrossMissingStates/step_4_missing_3",
+      "TestReconstructionAcrossMissingStates/step_4_missing_4",
+      "TestReconstructionAtHistoricalExpiryBoundary",
+      "TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749",
+      "TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750",
+      "TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751",
+      "TestReconstructionWithMissingAncestorReturnsError",
+      "TestRecoveryGuard",
+      "TestRecoveryGuardInsufficientReplacement",
+      "TestRecoveryGuardRejects",
+      "TestRecoveryGuardRejects/backward_time",
+      "TestRecoveryGuardRejects/expires_at_next",
+      "TestRecoveryGuardRejects/expires_before_next",
+      "TestRecoveryGuardRejects/extra",
+      "TestRecoveryGuardRejects/missing_next_time",
+      "TestRecoveryGuardRejects/nil",
+      "TestRecoveryGuardRejects/omitted",
+      "TestRecoveryGuardRejects/too_short_interval",
+      "TestRecoveryGuardRejects/wrong_chain",
+      "TestRecoveryGuardRejects/wrong_genesis",
+      "TestRecoveryGuardRejects/wrong_hash",
+      "TestRecoveryGuardRejects/wrong_height",
+      "TestRecoveryGuardRejects/wrong_interval",
+      "TestRecoveryGuardRejects/wrong_nonce",
+      "TestRecoveryGuardRejects/wrong_owner",
+      "TestRecoveryGuardRejects/wrong_parent",
+      "TestRecoveryGuardRejects/zero_signer",
+      "TestRecoveryJournalHandover",
+      "TestSingleBackupBlockHandover",
+      "TestSingleBackupBlockRejectsShortSuccessorTicket",
+      "TestSingleRemainingTicketRequiresReplacement",
+      "TestSnapshotPreservesValidEncoding",
+      "TestSnapshotRejectsInvalidFraming",
+      "TestSnapshotRejectsTruncatedCount"
+    ],
+    "candidate": [
+      "TestDefaultHistoricalPurchaseFailsPoolAdmission",
+      "TestFinalizeParentIsolatedFromConcurrentImport",
+      "TestHeaderBatchUsesUnstoredParents",
+      "TestHistoricalBridgeImportsOnIndependentState",
+      "TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission",
+      "TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/after_refund",
+      "TestLongPurchaseRequiresHistoricalRefundDespitePoolAdmission/before_refund",
+      "TestPresentDayPurchaseStartRejectedOnHistoricalHead",
+      "TestPresentDaySuccessorRejectsExpiredTicket",
+      "TestReconstructionAcrossMissingStates",
+      "TestReconstructionAcrossMissingStates/step_1_missing_1",
+      "TestReconstructionAcrossMissingStates/step_2_missing_1",
+      "TestReconstructionAcrossMissingStates/step_2_missing_2",
+      "TestReconstructionAcrossMissingStates/step_3_missing_1",
+      "TestReconstructionAcrossMissingStates/step_3_missing_2",
+      "TestReconstructionAcrossMissingStates/step_3_missing_3",
+      "TestReconstructionAcrossMissingStates/step_4_missing_1",
+      "TestReconstructionAcrossMissingStates/step_4_missing_2",
+      "TestReconstructionAcrossMissingStates/step_4_missing_3",
+      "TestReconstructionAcrossMissingStates/step_4_missing_4",
+      "TestReconstructionAtHistoricalExpiryBoundary",
+      "TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826749",
+      "TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826750",
+      "TestReconstructionAtHistoricalExpiryBoundary/expiry_1759826751",
+      "TestReconstructionWithMissingAncestorReturnsError",
+      "TestRecoveryGuard",
+      "TestRecoveryGuardInsufficientReplacement",
+      "TestRecoveryGuardRejects",
+      "TestRecoveryGuardRejects/backward_time",
+      "TestRecoveryGuardRejects/expires_at_next",
+      "TestRecoveryGuardRejects/expires_before_next",
+      "TestRecoveryGuardRejects/extra",
+      "TestRecoveryGuardRejects/missing_next_time",
+      "TestRecoveryGuardRejects/nil",
+      "TestRecoveryGuardRejects/omitted",
+      "TestRecoveryGuardRejects/too_short_interval",
+      "TestRecoveryGuardRejects/wrong_chain",
+      "TestRecoveryGuardRejects/wrong_genesis",
+      "TestRecoveryGuardRejects/wrong_hash",
+      "TestRecoveryGuardRejects/wrong_height",
+      "TestRecoveryGuardRejects/wrong_interval",
+      "TestRecoveryGuardRejects/wrong_nonce",
+      "TestRecoveryGuardRejects/wrong_owner",
+      "TestRecoveryGuardRejects/wrong_parent",
+      "TestRecoveryGuardRejects/zero_signer",
+      "TestRecoveryJournalHandover",
+      "TestSingleBackupBlockHandover",
+      "TestSingleBackupBlockRejectsShortSuccessorTicket",
+      "TestSingleRemainingTicketRequiresReplacement",
+      "TestSnapshotPreservesValidEncoding",
+      "TestSnapshotRejectsInvalidFraming",
+      "TestSnapshotRejectsTruncatedCount"
+    ]
+  },
+  "top_level_tests_per_selection": 20,
+  "subtests_per_selection": 32,
+  "deterministic_log_comparisons": {
+    "TestHistoricalBridgeImportsOnIndependentState": [
+      "step=1 height=15130081 time=1759826750 tickets=484 owned=1 liquid=3225855808109480158626",
+      "step=2 height=15130082 time=1759826870 tickets=480 owned=1 liquid=3226168308109480158626",
+      "step=3 height=15130083 time=1790121600 tickets=475 owned=1 liquid=3226480808109480158626",
+      "step=4 height=15130084 time=1790121720 tickets=1 owned=1 liquid=3226793308109480158626",
+      "step=5 height=15130085 time=1790121840 tickets=1 owned=1 liquid=3227105808109480158626",
+      "step=6 height=15130086 time=1790121960 tickets=1 owned=1 liquid=3227418308109480158626",
+      "step=7 height=15130087 time=1790122080 tickets=1 owned=1 liquid=3227730808109480158626",
+      "step=8 height=15130088 time=1790122200 tickets=1 owned=1 liquid=3228043308109480158626"
+    ],
+    "TestSingleBackupBlockHandover": [
+      "single backup block height=15130081 time=1759826750 originalTickets=1 successorTickets=1 selected=0xe9d35cbc573308b366497a6f6b63e88b177652cd8696f7be6ed5a352cf89aceb refund=5000FSN-time-lock successorFirst=0x08a7d3629f563a40bcc76bcdcfe856aa83c9fd259df3f08aa896de3b4dc0400c remainingOriginal=0x7ac0cdfed0c0337f910fcaafadbab8bb34fdf43a5b62cf446095a2f59501c293 expires=1762415390",
+      "successor step=1 height=15130082 time=1790121600 tickets=480 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=true root=0x57fb2154cb85a2bd6f6a7e0ef145dba6dc29124b915a206ecd1ef166d1146b35",
+      "successor step=2 height=15130083 time=1790121720 tickets=1 originalTickets=0 successorTickets=1 retreatCount=5 originalRetreated=false root=0x241a4a127ba250613cd24e4e3b4d3991f5ccea8e986a4f7e964d148938697d6e",
+      "successor step=3 height=15130084 time=1790121840 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x8aac752fb801f69f95feff50c8e25b9e89b25073011b7a487f13622546e33a91",
+      "successor step=4 height=15130085 time=1790121960 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0xd0ac17de08afc8fe3475d79aa250f9896b03a2db3276a999846f261781e9007d",
+      "successor step=5 height=15130086 time=1790122080 tickets=1 originalTickets=0 successorTickets=1 retreatCount=0 originalRetreated=false root=0x2f9d8a080152645d98fd444143e74bb91ae91dc6f62a0d80860b0cc1fe8f55bd",
+      "one original signature and no original purchases; five successor blocks; original account unchanged after initial selection refund, with no second-ticket refund"
+    ],
+    "TestRecoveryGuard": [
+      "guarded stage=1 number=15130081 selected=0xe9d35cbc573308b366497a6f6b63e88b177652cd8696f7be6ed5a352cf89aceb successor=0x08a7d3629f563a40bcc76bcdcfe856aa83c9fd259df3f08aa896de3b4dc0400c",
+      "guarded stage=2 number=15130082 selected=0x08a7d3629f563a40bcc76bcdcfe856aa83c9fd259df3f08aa896de3b4dc0400c successor=0xe9115c900b8f3da5fa7c88602106f6a0b7d2c33bee7942be8d783d36c5a58a86",
+      "guarded stage=3 number=15130083 selected=0xe9115c900b8f3da5fa7c88602106f6a0b7d2c33bee7942be8d783d36c5a58a86 successor=0x90817af334e837d73621b6aebb0116676eb17e92b0f68e50e6209b808ae1b4f8"
+    ],
+    "TestRecoveryJournalHandover": [
+      "stage=1 height=15130081 signer=0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf signatures=1 hash=0xd9fd675271d97015f3aaa637f1d3a96b40d1a7096f03bd1fd2731c724bc47dfe",
+      "stage=2 height=15130082 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF signatures=1 hash=0x09723c3036c31b0eb6d3be9a966988f1a255c7efe53fb4a2d32592b4a236a114",
+      "stage=3 height=15130083 signer=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF signatures=1 hash=0x3b8f3d38e52732ad599473fa628de1af9b975f1067ec2fb261280ea344cd931e"
+    ]
+  },
+  "benchmark_samples": {
+    "old": {
+      "0": [
+        {
+          "round": 1,
+          "ns_per_op": 96084.0,
+          "bytes_per_op": 814704,
+          "allocs_per_op": 21
+        },
+        {
+          "round": 2,
+          "ns_per_op": 100349.0,
+          "bytes_per_op": 814704,
+          "allocs_per_op": 21
+        },
+        {
+          "round": 3,
+          "ns_per_op": 105493.0,
+          "bytes_per_op": 814704,
+          "allocs_per_op": 21
+        },
+        {
+          "round": 4,
+          "ns_per_op": 107245.0,
+          "bytes_per_op": 814704,
+          "allocs_per_op": 21
+        },
+        {
+          "round": 5,
+          "ns_per_op": 94001.0,
+          "bytes_per_op": 814704,
+          "allocs_per_op": 21
+        }
+      ],
+      "15130080": [
+        {
+          "round": 1,
+          "ns_per_op": 478553.0,
+          "bytes_per_op": 879264,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 2,
+          "ns_per_op": 427435.0,
+          "bytes_per_op": 879264,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 3,
+          "ns_per_op": 441099.0,
+          "bytes_per_op": 879264,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 4,
+          "ns_per_op": 415856.0,
+          "bytes_per_op": 879264,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 5,
+          "ns_per_op": 418758.0,
+          "bytes_per_op": 879264,
+          "allocs_per_op": 27
+        }
+      ],
+      "12000000": [
+        {
+          "round": 1,
+          "ns_per_op": 3987333.0,
+          "bytes_per_op": 1338016,
+          "allocs_per_op": 30
+        },
+        {
+          "round": 2,
+          "ns_per_op": 3965853.0,
+          "bytes_per_op": 1338016,
+          "allocs_per_op": 30
+        },
+        {
+          "round": 3,
+          "ns_per_op": 3929442.0,
+          "bytes_per_op": 1338016,
+          "allocs_per_op": 30
+        },
+        {
+          "round": 4,
+          "ns_per_op": 3818610.0,
+          "bytes_per_op": 1338016,
+          "allocs_per_op": 30
+        },
+        {
+          "round": 5,
+          "ns_per_op": 3865325.0,
+          "bytes_per_op": 1338016,
+          "allocs_per_op": 30
+        }
+      ]
+    },
+    "modern": {
+      "0": [
+        {
+          "round": 1,
+          "ns_per_op": 96463.0,
+          "bytes_per_op": 1076368,
+          "allocs_per_op": 17
+        },
+        {
+          "round": 2,
+          "ns_per_op": 88664.0,
+          "bytes_per_op": 1076368,
+          "allocs_per_op": 17
+        },
+        {
+          "round": 3,
+          "ns_per_op": 91838.0,
+          "bytes_per_op": 1076368,
+          "allocs_per_op": 17
+        },
+        {
+          "round": 4,
+          "ns_per_op": 92556.0,
+          "bytes_per_op": 1076368,
+          "allocs_per_op": 17
+        },
+        {
+          "round": 5,
+          "ns_per_op": 83362.0,
+          "bytes_per_op": 1076368,
+          "allocs_per_op": 17
+        }
+      ],
+      "15130080": [
+        {
+          "round": 1,
+          "ns_per_op": 385398.0,
+          "bytes_per_op": 1141392,
+          "allocs_per_op": 24
+        },
+        {
+          "round": 2,
+          "ns_per_op": 380560.0,
+          "bytes_per_op": 1141392,
+          "allocs_per_op": 24
+        },
+        {
+          "round": 3,
+          "ns_per_op": 364685.0,
+          "bytes_per_op": 1141392,
+          "allocs_per_op": 24
+        },
+        {
+          "round": 4,
+          "ns_per_op": 365464.0,
+          "bytes_per_op": 1141392,
+          "allocs_per_op": 24
+        },
+        {
+          "round": 5,
+          "ns_per_op": 368385.0,
+          "bytes_per_op": 1141392,
+          "allocs_per_op": 24
+        }
+      ],
+      "12000000": [
+        {
+          "round": 1,
+          "ns_per_op": 2558003.0,
+          "bytes_per_op": 1729904,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 2,
+          "ns_per_op": 2549562.0,
+          "bytes_per_op": 1729904,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 3,
+          "ns_per_op": 2443235.0,
+          "bytes_per_op": 1729904,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 4,
+          "ns_per_op": 2442696.0,
+          "bytes_per_op": 1729904,
+          "allocs_per_op": 27
+        },
+        {
+          "round": 5,
+          "ns_per_op": 2436550.0,
+          "bytes_per_op": 1729904,
+          "allocs_per_op": 27
+        }
+      ]
+    },
+    "candidate": {
+      "0": [
+        {
+          "round": 1,
+          "ns_per_op": 80774.0,
+          "bytes_per_op": 814528,
+          "allocs_per_op": 20
+        },
+        {
+          "round": 2,
+          "ns_per_op": 77489.0,
+          "bytes_per_op": 814528,
+          "allocs_per_op": 20
+        },
+        {
+          "round": 3,
+          "ns_per_op": 84487.0,
+          "bytes_per_op": 814528,
+          "allocs_per_op": 20
+        },
+        {
+          "round": 4,
+          "ns_per_op": 81644.0,
+          "bytes_per_op": 814528,
+          "allocs_per_op": 20
+        },
+        {
+          "round": 5,
+          "ns_per_op": 69655.0,
+          "bytes_per_op": 814528,
+          "allocs_per_op": 20
+        }
+      ],
+      "15130080": [
+        {
+          "round": 1,
+          "ns_per_op": 428125.0,
+          "bytes_per_op": 879088,
+          "allocs_per_op": 26
+        },
+        {
+          "round": 2,
+          "ns_per_op": 392674.0,
+          "bytes_per_op": 879088,
+          "allocs_per_op": 26
+        },
+        {
+          "round": 3,
+          "ns_per_op": 409044.0,
+          "bytes_per_op": 879088,
+          "allocs_per_op": 26
+        },
+        {
+          "round": 4,
+          "ns_per_op": 409356.0,
+          "bytes_per_op": 879088,
+          "allocs_per_op": 26
+        },
+        {
+          "round": 5,
+          "ns_per_op": 407867.0,
+          "bytes_per_op": 879088,
+          "allocs_per_op": 26
+        }
+      ],
+      "12000000": [
+        {
+          "round": 1,
+          "ns_per_op": 3807750.0,
+          "bytes_per_op": 1337840,
+          "allocs_per_op": 29
+        },
+        {
+          "round": 2,
+          "ns_per_op": 3901400.0,
+          "bytes_per_op": 1337840,
+          "allocs_per_op": 29
+        },
+        {
+          "round": 3,
+          "ns_per_op": 3747012.0,
+          "bytes_per_op": 1337840,
+          "allocs_per_op": 29
+        },
+        {
+          "round": 4,
+          "ns_per_op": 3773181.0,
+          "bytes_per_op": 1337840,
+          "allocs_per_op": 29
+        },
+        {
+          "round": 5,
+          "ns_per_op": 3717943.0,
+          "bytes_per_op": 1337840,
+          "allocs_per_op": 29
+        }
+      ]
+    }
+  },
+  "benchmark_medians": {
+    "old": {
+      "0": {
+        "ns_per_op": 100349.0,
+        "bytes_per_op": 814704,
+        "allocs_per_op": 21
+      },
+      "15130080": {
+        "ns_per_op": 427435.0,
+        "bytes_per_op": 879264,
+        "allocs_per_op": 27
+      },
+      "12000000": {
+        "ns_per_op": 3929442.0,
+        "bytes_per_op": 1338016,
+        "allocs_per_op": 30
+      }
+    },
+    "modern": {
+      "0": {
+        "ns_per_op": 91838.0,
+        "bytes_per_op": 1076368,
+        "allocs_per_op": 17
+      },
+      "15130080": {
+        "ns_per_op": 368385.0,
+        "bytes_per_op": 1141392,
+        "allocs_per_op": 24
+      },
+      "12000000": {
+        "ns_per_op": 2443235.0,
+        "bytes_per_op": 1729904,
+        "allocs_per_op": 27
+      }
+    },
+    "candidate": {
+      "0": {
+        "ns_per_op": 80774.0,
+        "bytes_per_op": 814528,
+        "allocs_per_op": 20
+      },
+      "15130080": {
+        "ns_per_op": 409044.0,
+        "bytes_per_op": 879088,
+        "allocs_per_op": 26
+      },
+      "12000000": {
+        "ns_per_op": 3773181.0,
+        "bytes_per_op": 1337840,
+        "allocs_per_op": 29
+      }
+    }
+  },
+  "candidate_over_old": {
+    "0": {
+      "ns_per_op": 0.804930791537534,
+      "bytes_per_op": 0.9997839706200043,
+      "allocs_per_op": 0.9523809523809523
+    },
+    "15130080": {
+      "ns_per_op": 0.9569735749295214,
+      "bytes_per_op": 0.9997998325872548,
+      "allocs_per_op": 0.9629629629629629
+    },
+    "12000000": {
+      "ns_per_op": 0.9602332850313098,
+      "bytes_per_op": 0.9998684619615908,
+      "allocs_per_op": 0.9666666666666667
+    }
+  },
+  "remaining_bytes": {
+    "/home/rehearsal/results": 47060975616,
+    "/mnt/d": 98351644672
+  }
+}
