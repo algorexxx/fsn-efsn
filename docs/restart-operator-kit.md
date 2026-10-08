@@ -87,6 +87,15 @@ the datadir with account/filesystem permissions. A fresh datadir generates its
 own P2P key; preserve it for later restarts. Once generated, record its actual
 path and use the explicit `--nodekey` path in the reviewed service invocation.
 
+**Unresolved startup gate (8 October):** the [actual CLI check](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+shows that the current executable initializes an empty datadir with a genesis
+different from registered mainnet and restarts it successfully. The template
+above is therefore incomplete for release until a tested pre-start check refuses
+missing/incomplete or mispointed data and verifies the authenticated restored
+identity. Do not rely on the earlier marker check, chain ID or “mainnet” log label
+alone. This operational check also does not resolve F12's separate compiler
+ticket-encoding compatibility hold.
+
 Do not carry over old easy-node/Docker entrypoints: they include inherited
 Foundation images, endpoints and telemetry defaults. See the
 [network profile](restart-network-profile.md) for DNS changes, TCP/UDP and NAT.

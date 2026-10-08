@@ -6,6 +6,14 @@ the real recovery anchor, historical compatibility, dependency review, final
 acceptance and independent approval remain open. See the
 [findings ledger](restart-release-findings.md) for explicit decisions and holds.
 
+**8 October compatibility hold:** [F12 startup/compression evidence](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+shows that the selected Go 1.27.1 artifacts change genesis ticket commitments.
+The identical ticket RLP compresses differently under Go 1.21.3 and 1.27.1;
+substituting only the former's compressed bytes reproduces the historical header.
+The source selection remains frozen for comparison, but these binaries are
+blocked from release pending ticket-encoding compatibility. No compiler downgrade
+or production compatibility patch is selected.
+
 ## Source decisions
 
 | Component | Selection | Reason |
@@ -40,7 +48,8 @@ applies after patch 01; it must accompany the selected compiler.
 
 ## Build direction and observations
 
-Select **Go 1.27.1, Linux amd64 v1, CGO enabled** for candidate qualification.
+Retain **Go 1.27.1, Linux amd64 v1, CGO enabled** as the recorded candidate
+qualification toolchain, subject to the F12 compatibility blocker above.
 The compiler archive is verified against its official SHA-256 and size before
 use. On 4 October the [official download metadata](https://go.dev/dl/?mode=json)
 lists it as stable. Go's [support policy](https://go.dev/doc/devel/release)

@@ -1,0 +1,28 @@
+--- a/run.py
++++ b/run.py
+@@ -8,7 +8,7 @@
+ import sys
+ 
+ HERE = Path(__file__).resolve().parent
+-RUN = Path('/home/rehearsal/results/restart-genesis-startup-2026-10-08')
++RUN = Path('/home/rehearsal/results/restart-genesis-startup-v2-2026-10-08')
+ SELECTED = Path('/home/rehearsal/results/restart-release-jwt-2026-10-04')
+ SOURCE = SELECTED / 'node'
+ CANDIDATE = HERE.parent / 'restart-state-rollback-candidate-2026-10-07'
+@@ -52,6 +52,7 @@
+     assert capacity['/home/rehearsal/results'] > 30 * 1024**3 and capacity['/mnt/d'] > 60 * 1024**3
+     prior = read_json(API / 'qualification/run.json')['previous_manifest_sha256']
+     prior[API.name] = sha(API / 'SHA256SUMS')
++    prior['restart-genesis-startup-2026-10-08'] = sha(HERE.parent / 'restart-genesis-startup-2026-10-08/SHA256SUMS')
+     for name, expected in prior.items():
+         directory = HERE.parent / name
+         assert sha(directory / 'SHA256SUMS') == expected
+@@ -104,7 +105,7 @@
+         data = RUN / (selection + '-empty-datadir')
+         data.mkdir()
+         console = 'console.log("F12CLI "+JSON.stringify({genesis:eth.getBlock(0),head:eth.blockNumber,network:net.version,mining:eth.mining,autoBuy:fsn.isAutoBuyTicket()}))'
+-        command = ['timeout', '--kill-after=10s', '45s', str(binary), '--config', str(HERE / 'profile.toml'), '--datadir', str(data), '--syncmode', 'full', '--networkid', '32659', '--cache', '128', '--maxpeers', '0', '--port', '0', '--nat', 'none', '--nodiscover', '--v5disc=false', '--bootnodesv4=', '--bootnodesv5=', '--ipcdisable', '--authrpc.port', '0', '--mine=false', '--autobt=false', '--usb=false', '--exec', console, 'console']
++        command = ['timeout', '--kill-after=10s', '45s', str(binary), '--config', str(HERE / 'profile.toml'), '--datadir', str(data), '--syncmode', 'full', '--networkid', '32659', '--cache', '128', '--maxpeers', '0', '--port', '0', '--nat', 'none', '--nodiscover', '--v5disc=false', '--ipcdisable', '--authrpc.port', '0', '--mine=false', '--autobt=false', '--usb=false', '--exec', console, 'console']
+         for phase in ['empty', 'restart']:
+             if not execute(selection + '-' + phase, command, record, env):
+                 unexpected = True

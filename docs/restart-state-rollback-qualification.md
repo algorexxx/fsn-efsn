@@ -64,7 +64,8 @@ These are in-process CLI tests with a synthetic purchase and unsigned block,
 not a production executable/signing rehearsal. Together with the earlier
 approval validation, they complete the bounded configuration-binding checks.
 
-**Next:** reconcile the remaining supported-path/F1 exclusions and startup/F12
+**Next:** the [F12 compiler/compression blocker](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+takes priority, followed by remaining supported-path/F1 exclusions and startup
 compatibility dispositions with the launch scope. The bounded transaction,
 block and API results are recorded below. Candidate historical compatibility,
 independent review and final service/production-artifact rehearsal remain open.

@@ -330,8 +330,9 @@ unselected text update are unchanged.
    default-genesis mismatch is F12.
 2. Complete that qualification and independent consensus review before selecting
    a production change. Reconcile remaining supported-path/F1 exclusions and
-   startup/F12 compatibility dispositions with the launch scope. Candidate
-   historical compatibility remains open; no activation height or waiver is selected.
+   startup compatibility dispositions with the launch scope. The [F12 compression blocker](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+   now takes priority. Candidate historical compatibility remains open; no
+   activation height or waiver is selected.
 3. F11-b source-call review is complete for the inspected production tree: no
    separate production/RPC deletion caller was found. Retain the latent/direct-
    API-only classification and failing regression for independent disposition;

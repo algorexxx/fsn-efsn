@@ -98,13 +98,22 @@ copies. Backup/replay probes keep original data read-only.
 ## Findings requiring a recorded disposition
 
 The [release findings ledger](restart-release-findings.md) is the authority for
-F1–F11 decisions, evidence, ownership and closure conditions. It records the
+F1–F12 decisions, evidence, ownership and closure conditions. It records the
 legacy compilation gaps, three corrected networking fixtures, native-call
 behavior, operating limits, compiler compatibility and dependency/CI review.
 The [follow-up package run](evidence/restart-release-followup-2026-10-04) passes
 with race detection, with two opt-in live tests explicitly skipped. The
 [dependency audit](restart-release-dependencies.md) identifies concrete F10
 remediation work. Neither result completes the final matrix or independent approval.
+
+The [8 October F12 result](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+adds a demonstrated compiler-compatibility hold to R1/R2/R3: ticket gzip output
+differs between the baseline replay compiler and Go 1.27.1, changing genesis
+state/ticket commitments. Exact old compressed bytes reproduce the historical
+header. Resolve that compatibility before candidate-history acceptance. R9 must
+also demonstrate refusal of empty/mispointed datadirs before startup; both current
+executables instead create and restart the wrong genesis. This does not invalidate
+the scoped same-compiler fixture observations or qualify a replacement encoding.
 
 ## Independent reviewer packet and completion
 
@@ -131,7 +140,8 @@ compatibility of the selected candidate are still open; neither this matrix
 nor synthetic passes replace them. No new range has started, and the baseline
 result does not validate the candidate patches.
 
-Next technical order: close the recorded findings and qualify the selected
+Next technical order: resolve F12's ticket-compression compatibility first;
+close the other recorded findings and qualify the selected
 candidate/build image; continue bounded G1 replay after fresh capacity checks;
 close the clean-machine operator-kit gap; then run the final artifact/host
 rehearsal, including R8 against the selected release. Public endpoints, custody,

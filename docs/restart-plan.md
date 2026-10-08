@@ -6,6 +6,14 @@ This is the current checklist, not permission to sign or launch. The
 plan, rationale and chronology. Linked reports retain their dated findings;
 their old next-step lists do not add separate requirements to this checklist.
 
+**Current technical priority (8 October):** F12 now identifies a compiler
+compatibility blocker. Go 1.27.1 changes the compressed ticket bytes used in
+genesis commitments; substituting Go 1.21.3's bytes alone reproduces the exact
+historical genesis. Qualify legacy ticket-encoding compatibility before further
+release acceptance. The [startup/compression evidence](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+also shows that an empty datadir starts without the required restore safeguard.
+No runtime fix, compiler downgrade or new genesis is selected.
+
 ## Agreed outcome and sequence
 
 Restart from accepted, verifiable Fusion history with the smallest reviewed
@@ -78,6 +86,8 @@ can be waived merely to meet a date.
   shortcuts explicitly and compare cold state/ticket/receipt commitments.
 - [ ] Verify historical compatibility of the selected candidate changes; do not
   cite the unchanged baseline replay as proof of the patched executable.
+  Resolve F12's compiler-dependent ticket encoding first; restore alone does
+  not qualify the new compiler's subsequent ticket commitments.
 - [ ] Close the surviving-operator evidence window and accept the exact parent
   and verification/trust limits before construction. Investigate any mismatch.
 
@@ -117,6 +127,11 @@ Candidate-patch historical compatibility remains open.
 - [ ] Complete those groups against the selected release and hosts, including
   the clean-machine operator kit and final handover rehearsal. Reuse existing
   passing evidence; do not rerun unchanged investigations by default.
+- [ ] Resolve [F12 ticket-compression compatibility](evidence/restart-genesis-startup-v2-2026-10-08/README.md).
+  Compare a bounded set of preserved compressed/RLP ticket vectors and qualify a
+  minimal legacy-compatible encoding path on a maintained toolchain. The current
+  Go 1.27.1 artifacts are blocked from release; successful same-compiler fixtures
+  do not close this difference. Keep the registered genesis and backup unchanged.
 - [x] Close the bounded [unknown-heavier automatic-sync gap](restart-automatic-sync.md):
   complete ancestry, compatible catch-up, explicit anchored refusal and an
   unanchored control all pass with cold heads/lookups intact. Final release/host
@@ -206,10 +221,11 @@ Candidate-patch historical compatibility remains open.
   available-state tracing paths. Disabled/pre-activation pairs match; active
   pairs differ only in raw child balance structure. Pending snapshot creation,
   missing-state reconstruction and the other stated exclusions remain untested.
-  Next: reconcile remaining supported-path/F1 exclusions and startup/F12
-  compatibility dispositions with the launch scope, then G1 candidate-history
-  evidence and independent review. Preserve historical execution and original
-  failing evidence; the synthetic checkpoint does not establish historical
+  The F12 compiler/compression blocker now takes priority. Then reconcile
+  remaining supported-path/F1 exclusions and startup compatibility with the
+  launch scope, followed by G1 candidate-history evidence and independent review.
+  Preserve historical execution and original failing evidence; the synthetic
+  checkpoint does not establish historical
   compatibility.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
@@ -299,10 +315,12 @@ No ongoing finality or automatic economic repair is added by this gate.
 - [ ] Publish the verified recovery package with trust assumptions and a recovery
   download route; demonstrate clean-machine download, hash verification, restore,
   full-sync catch-up and matching anchor/head/state/tickets using release commands.
-  The F12 default-genesis probe fails identically on the selected baseline and
-  F11 candidate. Retain the verified-restore scope; include empty/mispointed
-  datadir refusal and restored-genesis identity in this final path check.
-  See the [finding and bounded evidence](evidence/restart-state-rollback-integration-2026-10-07/README.md).
+  The [F12 actual-startup check](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+  confirms both executables initialize an empty datadir with a non-mainnet
+  genesis and restart it successfully. Retain the verified-restore scope;
+  require empty/mispointed datadir refusal before node startup and authenticated
+  restored-genesis/anchor/configuration checks. A marker or chain ID is insufficient.
+  The separate G1/G2 compression compatibility hold also remains mandatory.
   This does not select a genesis rewrite or add genesis resync to launch scope.
 - [ ] Check production storage growth, clean shutdown/backup/restore and public
   read-RPC/explorer behavior across the transition, including native events and

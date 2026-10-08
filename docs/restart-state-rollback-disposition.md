@@ -219,8 +219,10 @@ balance structure; disabled/pre-activation observations match. Its explicit
 constructor seams and coverage limits remain in the report. Next: reconcile
 remaining supported-path/F1 exclusions and startup/F12 compatibility dispositions;
 candidate historical compatibility remains unverified.
-The separate default
-genesis mismatch on both baseline and candidate is F12, not an F11 correction.
+The separate [F12 follow-up](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
+now identifies compiler-dependent ticket compression as the cause of the genesis
+mismatch and reproduces it through both actual executables. That compatibility
+blocker takes priority; it is not an F11 correction.
 Keep the production selection unchanged until review and qualification are complete.
 The source proposal is complete;
 F11 release acceptance, F1 coverage, F10 dependency acceptance and G1 historical
