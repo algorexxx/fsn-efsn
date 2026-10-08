@@ -15,8 +15,11 @@ also shows that an empty datadir starts without the required restore safeguard.
 The [historical follow-up](evidence/restart-ticket-compression-2026-10-08/README.md)
 now finds seven available blobs among 24 requested heights: all seven match the
 old encoder and a modern-compiler/old-flate diagnostic; unchanged Go 1.27.1
-matches none. Next is the bounded [encoder-only candidate](restart-ticket-encoding.md),
-then affected history/regressions. Seventeen missing blobs remain unqualified.
+matches none. The [encoder-only candidate](restart-ticket-encoding.md) now passes
+those seven samples, 55 synthetic payloads, six expiry cases and actual historical
+genesis startup/restart. Next are affected integration regressions and bounded
+cost measurement, then candidate history and independent review. Seventeen
+missing blobs remain unqualified; the restore-identity safeguard remains open.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence
@@ -135,8 +138,9 @@ Candidate-patch historical compatibility remains open.
 - [ ] Resolve [F12 ticket-compression compatibility](evidence/restart-genesis-startup-v2-2026-10-08/README.md).
   The bounded [preserved-vector comparison](evidence/restart-ticket-compression-2026-10-08/README.md)
   is complete for seven available samples; 17 requested blobs were unavailable.
-  Qualify the [encoder-only candidate](restart-ticket-encoding.md) on a maintained
-  toolchain, followed by affected history and regressions. The current
+  The [encoder-only candidate](restart-ticket-encoding.md) passes its bounded
+  encoding, expiry, state/cache, build and genesis startup checks. Complete the
+  affected regressions/cost check, candidate history and independent review. The current
   Go 1.27.1 artifacts are blocked from release; successful same-compiler fixtures
   do not close this difference. Keep the registered genesis and backup unchanged.
 - [x] Close the bounded [unknown-heavier automatic-sync gap](restart-automatic-sync.md):

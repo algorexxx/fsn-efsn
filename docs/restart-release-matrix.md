@@ -119,8 +119,11 @@ The [historical follow-up](evidence/restart-ticket-compression-2026-10-08/README
 extends this to all seven available ticket blobs in a 24-height sample. A modern
 build using a diagnostic old-flate overlay reproduces them and the genesis
 header; unchanged Go 1.27.1 reproduces none. Seventeen blobs are unavailable.
-Qualify the proposed [encoder-only boundary](restart-ticket-encoding.md), then
-affected history/regressions. The overlay itself is not a shipping solution.
+The subsequent [encoder-only candidate](restart-ticket-encoding.md) passes its
+bounded seven-vector/55-payload/six-expiry comparison and actual genesis
+startup/restart, with the maintained decoder. Affected regressions/cost checks,
+candidate history, independent review and the restored-identity safeguard remain
+open. Neither the diagnostic overlay nor the unselected patch is a release.
 
 ## Independent reviewer packet and completion
 

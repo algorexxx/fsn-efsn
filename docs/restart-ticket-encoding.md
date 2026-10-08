@@ -18,24 +18,25 @@ The test isolates a viable algorithm-preservation direction without requiring
 the entire node to remain on an old compiler. It does not prove all-history
 compatibility or qualify a production implementation.
 
-## Proposed implementation boundary
+## Unselected implementation candidate
 
-Prepare an isolated candidate that freezes only the writer used for ticket
-commitments, with exact source provenance and the upstream license. Keep
-decompression on the maintained standard library. Route calcTicketsStorageData
-through that encoder so normal updates and AddCachedTickets use the same bytes.
-Preserve existing RLP, ordering, expiry logic, error handling and one-Write/Close
-behavior. Specify the default gzip envelope explicitly rather than relying on
-future standard-library encoder defaults.
+The [isolated candidate](evidence/restart-ticket-encoder-candidate-v2-2026-10-08/README.md)
+now freezes only the writer used for ticket commitments, with exact source
+provenance and the upstream license. It keeps decompression on the maintained
+standard library and routes calcTicketsStorageData through the encoder, covering
+normal updates and AddCachedTickets. RLP, ordering, expiry logic, compression
+error text and one-Write/Close behavior are preserved. The default gzip envelope
+is explicit. It changes one existing runtime file and adds the isolated codec.
 
 The conservative writer boundary in the inspected Go 1.21.3 source is five
 files: deflate.go, deflatefast.go, huffman_bit_writer.go, huffman_code.go and
 token.go, plus required shared definitions and a small gzip envelope. Those
-five files contain 62,796 bytes / 2,198 lines before any packaging adjustments.
+five files contain 62,796 bytes / 2,198 lines and are copied unchanged.
 This is a small Fusion integration change with a meaningful amount of copied
 upstream encoder code. Keep algorithm code mechanically traceable; do not
-hand-simplify it merely to reduce line count. Confirm the precise dependency
-boundary by building the candidate. Preserve copyright and license notices.
+hand-simplify it merely to reduce line count. Successful node and recovery builds
+confirm this dependency boundary. Copyright and
+license notices are preserved. No old decoder or GOROOT overlay is included.
 
 Do not distribute the diagnostic GOROOT overlay or silently replace the general
 gzip implementation. Changing compression level, copying modern output hashes
@@ -45,19 +46,19 @@ replay comparator, not an accepted production solution.
 
 ## Finite qualification work
 
-1. Build the encoder-only candidate on the selected modern toolchain. Compare
-   it against all seven retained historical byte vectors and the full genesis
-   header, with the existing encoder kept as a negative control. Preserve the
-   candidate patch and its exact source/license provenance separately from the
-   frozen production selection.
-2. Specify a bounded matrix for the wrapper and ticket use: deterministic
-   output, empty/small inputs, compressor window/block boundaries and ticket
-   expiry transitions. For derived cases use the old encoder as a differential
-   comparator and independently check the intended surviving ticket set. Label
-   derived vectors as synthetic; they are not accepted historical roots.
-3. Exercise the real state update/cache and genesis/startup paths, then the
-   affected node/recovery builds and selected regressions. Measure the affected
-   encoding cost without extending into unrelated performance work.
+1. **Bounded candidate comparison complete.** The modern candidate reproduces
+   all seven historical ticket byte vectors and the complete genesis header.
+   The unchanged modern encoder remains a failing compatibility control. The
+   candidate patch and source/license provenance are separate from the frozen
+   production selection.
+2. **Bounded encoding/expiry matrix complete.** All 55 synthetic payloads match
+   the old encoder, including repeated/concurrent calls with race detection.
+   Six expiry cases meet independently constructed survivor-RLP expectations.
+   These derived cases remain synthetic, not accepted historical roots.
+3. **Integration partly complete.** Real decoder/update/cache paths, initial
+   and restarted node genesis, and node/recovery builds pass their stated
+   checks. Next run affected selected regressions and a bounded encoding-cost
+   measurement. A recovery help invocation does not qualify recovery execution.
 4. Resume bounded candidate-history qualification with the reviewed encoding
    candidate and compare cold state/ticket/receipt commitments to preserved
    history. Missing sampled blobs and seven passing byte vectors cannot replace

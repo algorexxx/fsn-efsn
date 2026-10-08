@@ -1,0 +1,51 @@
+{
+  "upstream": {
+    "deflate.go": {
+      "path": "/opt/fusion-toolchain/go/src/compress/flate/deflate.go",
+      "sha256": "a4f7b2a64573172c9a8a56607c8c17262d31aafe61ced16e82568e5f674ba406"
+    },
+    "deflatefast.go": {
+      "path": "/opt/fusion-toolchain/go/src/compress/flate/deflatefast.go",
+      "sha256": "61740d7f30b157947e3b8984cc5cf4c2aaff5e087ccf906886d77a1a351cf483"
+    },
+    "huffman_bit_writer.go": {
+      "path": "/opt/fusion-toolchain/go/src/compress/flate/huffman_bit_writer.go",
+      "sha256": "285f8541f26bf1982e0d5ed09ab7f7db0864b50ba93ba2cbe4562c5772743963"
+    },
+    "huffman_code.go": {
+      "path": "/opt/fusion-toolchain/go/src/compress/flate/huffman_code.go",
+      "sha256": "c7fe4f18bb12c30631c91506e458ee3b0056449806fa5de46e3c0bfe8a486197"
+    },
+    "token.go": {
+      "path": "/opt/fusion-toolchain/go/src/compress/flate/token.go",
+      "sha256": "bc96536b4ca6e946a5094c3c60a085485cf6e25be1fc74914bdefcf4352f1516"
+    }
+  },
+  "base_statedb_sha256": {
+    "node": "7ec4647898f14ff844cb1a6e9ef475a4e08d345639687d802373a51d5205b5d6",
+    "recovery": "7ec4647898f14ff844cb1a6e9ef475a4e08d345639687d802373a51d5205b5d6"
+  },
+  "candidate_sha256": {
+    "core/state/statedb.go": "14c105c68d29de2d1673d4471f08a0cb8978ac54e0019c79b2cf3f2062d9693a",
+    "internal/ticketgzip/encode.go": "254ff86d16f8c45d4c002a52c047a9d1d1816524c9203c2728ec941376a1a7bf",
+    "internal/ticketgzip/internal/flate/LICENSE": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "internal/ticketgzip/internal/flate/README.md": "b0adf47377a666e2a56b914a3779b7d88210bb36e5699668e5dcb31d778a40cf",
+    "internal/ticketgzip/internal/flate/deflate.go": "a4f7b2a64573172c9a8a56607c8c17262d31aafe61ced16e82568e5f674ba406",
+    "internal/ticketgzip/internal/flate/deflatefast.go": "61740d7f30b157947e3b8984cc5cf4c2aaff5e087ccf906886d77a1a351cf483",
+    "internal/ticketgzip/internal/flate/huffman_bit_writer.go": "285f8541f26bf1982e0d5ed09ab7f7db0864b50ba93ba2cbe4562c5772743963",
+    "internal/ticketgzip/internal/flate/huffman_code.go": "c7fe4f18bb12c30631c91506e458ee3b0056449806fa5de46e3c0bfe8a486197",
+    "internal/ticketgzip/internal/flate/shared.go": "abd424e966b9d3515eb58db1a94246ded9c675b2cdb26068ec00d1ace479f5b7",
+    "internal/ticketgzip/internal/flate/token.go": "bc96536b4ca6e946a5094c3c60a085485cf6e25be1fc74914bdefcf4352f1516"
+  },
+  "shared_definitions": {
+    "path": "/opt/fusion-toolchain/go/src/compress/flate/inflate.go",
+    "sha256": "01ffcc2bc8073ddd811483a8d2725ee1cb06ba30df5bd369165717155a04533f",
+    "constant": "maxNumLit  = 286",
+    "definition": "type InternalError string\n\nfunc (e InternalError) Error() string { return \"flate: internal error: \" + string(e) }"
+  },
+  "license": {
+    "path": "/opt/fusion-toolchain/go/LICENSE",
+    "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+  },
+  "patch_sha256": "a95f89d892855c47db00b07ec0695c672325f29efcc603c5b473dc34317862af"
+}

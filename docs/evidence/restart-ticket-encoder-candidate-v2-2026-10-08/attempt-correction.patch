@@ -1,0 +1,12 @@
+--- a/prepare.py
++++ b/prepare.py
+@@ -62,0 +63,2 @@
++        if not original.exists():
++            patch.append('new file mode 100644\n')
+--- a/run.py
++++ b/run.py
+@@ -14 +14 @@
+-RUN = Path('/home/rehearsal/results/restart-ticket-encoder-candidate-2026-10-08')
++RUN = Path('/home/rehearsal/results/restart-ticket-encoder-candidate-v2-2026-10-08')
+@@ -66,0 +67 @@
++        previous['restart-ticket-encoder-candidate-2026-10-08'] = sha(HERE.parent / 'restart-ticket-encoder-candidate-2026-10-08/SHA256SUMS')

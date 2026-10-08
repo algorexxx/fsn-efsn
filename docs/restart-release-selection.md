@@ -22,6 +22,14 @@ none. Seventeen requested blobs are unavailable. This supports preparing the
 not select it or qualify full historical execution. The shipping compiler and
 runtime source are unchanged.
 
+The subsequent [encoder-only candidate](evidence/restart-ticket-encoder-candidate-v2-2026-10-08/README.md)
+passes the seven historical vectors, 55 synthetic inputs, six expiry cases,
+real state/cache paths, node/recovery builds and actual historical-genesis
+startup/restart. It copies only the old writer and keeps the modern decoder.
+This is an unselected patch against D1; affected regression/cost checks,
+historical replay and independent consensus/maintenance review remain open.
+The separate empty/mispointed-datadir safeguard is still required.
+
 ## Source decisions
 
 | Component | Selection | Reason |

@@ -1,0 +1,2352 @@
+diff --git a/core/state/statedb.go b/core/state/statedb.go
+--- a/core/state/statedb.go
++++ b/core/state/statedb.go
+@@ -32,6 +32,7 @@
+ 	"github.com/FusionFoundation/efsn/v5/common"
+ 	"github.com/FusionFoundation/efsn/v5/core/types"
+ 	"github.com/FusionFoundation/efsn/v5/crypto"
++	"github.com/FusionFoundation/efsn/v5/internal/ticketgzip"
+ 	"github.com/FusionFoundation/efsn/v5/log"
+ 	"github.com/FusionFoundation/efsn/v5/rlp"
+ 	"github.com/FusionFoundation/efsn/v5/trie"
+@@ -163,16 +164,7 @@
+ 		return nil, fmt.Errorf("Unable to encode tickets. err: %v", err)
+ 	}
+ 
+-	var buf bytes.Buffer
+-	zw := gzip.NewWriter(&buf)
+-	if _, err := zw.Write(blob); err != nil {
+-		return nil, fmt.Errorf("Unable to zip tickets data")
+-	}
+-	if err := zw.Close(); err != nil {
+-		return nil, fmt.Errorf("Unable to zip tickets")
+-	}
+-	data := buf.Bytes()
+-	return data, nil
++	return ticketgzip.Encode(blob)
+ }
+ 
+ func AddCachedTickets(hash common.Hash, tickets common.TicketsDataSlice) error {
+diff --git a/internal/ticketgzip/encode.go b/internal/ticketgzip/encode.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/encode.go
+@@ -0,0 +1,30 @@
++package ticketgzip
++
++import (
++	"bytes"
++	"encoding/binary"
++	"errors"
++	"hash/crc32"
++
++	"github.com/FusionFoundation/efsn/v5/internal/ticketgzip/internal/flate"
++)
++
++func Encode(payload []byte) ([]byte, error) {
++	var buffer bytes.Buffer
++	buffer.Write([]byte{0x1f, 0x8b, 0x08, 0, 0, 0, 0, 0, 0, 0xff})
++	writer, err := flate.NewWriter(&buffer, flate.DefaultCompression)
++	if err != nil {
++		return nil, err
++	}
++	if _, err := writer.Write(payload); err != nil {
++		return nil, errors.New("Unable to zip tickets data")
++	}
++	if err := writer.Close(); err != nil {
++		return nil, errors.New("Unable to zip tickets")
++	}
++	var trailer [8]byte
++	binary.LittleEndian.PutUint32(trailer[:4], crc32.ChecksumIEEE(payload))
++	binary.LittleEndian.PutUint32(trailer[4:], uint32(len(payload)))
++	buffer.Write(trailer[:])
++	return buffer.Bytes(), nil
++}
+diff --git a/internal/ticketgzip/internal/flate/LICENSE b/internal/ticketgzip/internal/flate/LICENSE
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/LICENSE
+@@ -0,0 +1,27 @@
++Copyright (c) 2009 The Go Authors. All rights reserved.
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted provided that the following conditions are
++met:
++
++   * Redistributions of source code must retain the above copyright
++notice, this list of conditions and the following disclaimer.
++   * Redistributions in binary form must reproduce the above
++copyright notice, this list of conditions and the following disclaimer
++in the documentation and/or other materials provided with the
++distribution.
++   * Neither the name of Google Inc. nor the names of its
++contributors may be used to endorse or promote products derived from
++this software without specific prior written permission.
++
++THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+diff --git a/internal/ticketgzip/internal/flate/README.md b/internal/ticketgzip/internal/flate/README.md
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/README.md
+@@ -0,0 +1,12 @@
++# Historical ticket DEFLATE writer
++
++Unselected F12 compatibility candidate. The five writer files are unchanged
++copies from Go 1.21.3 src/compress/flate, covered by the included Go BSD license.
++shared.go contains its maxNumLit constant and InternalError definition/method,
++extracted from inflate.go. No decompressor is included.
++
++Keep this implementation private to ticketgzip. Ticket commitments depend on
++exact encoded bytes, so an encoder update requires historical-byte qualification
++and consensus review. The package is intentionally not a general compression
++replacement. Mechanical upstream provenance and retained golden vectors are
++part of the review input; do not silently regenerate them with this encoder.
+diff --git a/internal/ticketgzip/internal/flate/deflate.go b/internal/ticketgzip/internal/flate/deflate.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/deflate.go
+@@ -0,0 +1,746 @@
++// Copyright 2009 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package flate
++
++import (
++	"errors"
++	"fmt"
++	"io"
++	"math"
++)
++
++const (
++	NoCompression      = 0
++	BestSpeed          = 1
++	BestCompression    = 9
++	DefaultCompression = -1
++
++	// HuffmanOnly disables Lempel-Ziv match searching and only performs Huffman
++	// entropy encoding. This mode is useful in compressing data that has
++	// already been compressed with an LZ style algorithm (e.g. Snappy or LZ4)
++	// that lacks an entropy encoder. Compression gains are achieved when
++	// certain bytes in the input stream occur more frequently than others.
++	//
++	// Note that HuffmanOnly produces a compressed output that is
++	// RFC 1951 compliant. That is, any valid DEFLATE decompressor will
++	// continue to be able to decompress this output.
++	HuffmanOnly = -2
++)
++
++const (
++	logWindowSize = 15
++	windowSize    = 1 << logWindowSize
++	windowMask    = windowSize - 1
++
++	// The LZ77 step produces a sequence of literal tokens and <length, offset>
++	// pair tokens. The offset is also known as distance. The underlying wire
++	// format limits the range of lengths and offsets. For example, there are
++	// 256 legitimate lengths: those in the range [3, 258]. This package's
++	// compressor uses a higher minimum match length, enabling optimizations
++	// such as finding matches via 32-bit loads and compares.
++	baseMatchLength = 3       // The smallest match length per the RFC section 3.2.5
++	minMatchLength  = 4       // The smallest match length that the compressor actually emits
++	maxMatchLength  = 258     // The largest match length
++	baseMatchOffset = 1       // The smallest match offset
++	maxMatchOffset  = 1 << 15 // The largest match offset
++
++	// The maximum number of tokens we put into a single flate block, just to
++	// stop things from getting too large.
++	maxFlateBlockTokens = 1 << 14
++	maxStoreBlockSize   = 65535
++	hashBits            = 17 // After 17 performance degrades
++	hashSize            = 1 << hashBits
++	hashMask            = (1 << hashBits) - 1
++	maxHashOffset       = 1 << 24
++
++	skipNever = math.MaxInt32
++)
++
++type compressionLevel struct {
++	level, good, lazy, nice, chain, fastSkipHashing int
++}
++
++var levels = []compressionLevel{
++	{0, 0, 0, 0, 0, 0}, // NoCompression.
++	{1, 0, 0, 0, 0, 0}, // BestSpeed uses a custom algorithm; see deflatefast.go.
++	// For levels 2-3 we don't bother trying with lazy matches.
++	{2, 4, 0, 16, 8, 5},
++	{3, 4, 0, 32, 32, 6},
++	// Levels 4-9 use increasingly more lazy matching
++	// and increasingly stringent conditions for "good enough".
++	{4, 4, 4, 16, 16, skipNever},
++	{5, 8, 16, 32, 32, skipNever},
++	{6, 8, 16, 128, 128, skipNever},
++	{7, 8, 32, 128, 256, skipNever},
++	{8, 32, 128, 258, 1024, skipNever},
++	{9, 32, 258, 258, 4096, skipNever},
++}
++
++type compressor struct {
++	compressionLevel
++
++	w          *huffmanBitWriter
++	bulkHasher func([]byte, []uint32)
++
++	// compression algorithm
++	fill      func(*compressor, []byte) int // copy data to window
++	step      func(*compressor)             // process window
++	sync      bool                          // requesting flush
++	bestSpeed *deflateFast                  // Encoder for BestSpeed
++
++	// Input hash chains
++	// hashHead[hashValue] contains the largest inputIndex with the specified hash value
++	// If hashHead[hashValue] is within the current window, then
++	// hashPrev[hashHead[hashValue] & windowMask] contains the previous index
++	// with the same hash value.
++	chainHead  int
++	hashHead   [hashSize]uint32
++	hashPrev   [windowSize]uint32
++	hashOffset int
++
++	// input window: unprocessed data is window[index:windowEnd]
++	index         int
++	window        []byte
++	windowEnd     int
++	blockStart    int  // window index where current tokens start
++	byteAvailable bool // if true, still need to process window[index-1].
++
++	// queued output tokens
++	tokens []token
++
++	// deflate state
++	length         int
++	offset         int
++	maxInsertIndex int
++	err            error
++
++	// hashMatch must be able to contain hashes for the maximum match length.
++	hashMatch [maxMatchLength - 1]uint32
++}
++
++func (d *compressor) fillDeflate(b []byte) int {
++	if d.index >= 2*windowSize-(minMatchLength+maxMatchLength) {
++		// shift the window by windowSize
++		copy(d.window, d.window[windowSize:2*windowSize])
++		d.index -= windowSize
++		d.windowEnd -= windowSize
++		if d.blockStart >= windowSize {
++			d.blockStart -= windowSize
++		} else {
++			d.blockStart = math.MaxInt32
++		}
++		d.hashOffset += windowSize
++		if d.hashOffset > maxHashOffset {
++			delta := d.hashOffset - 1
++			d.hashOffset -= delta
++			d.chainHead -= delta
++
++			// Iterate over slices instead of arrays to avoid copying
++			// the entire table onto the stack (Issue #18625).
++			for i, v := range d.hashPrev[:] {
++				if int(v) > delta {
++					d.hashPrev[i] = uint32(int(v) - delta)
++				} else {
++					d.hashPrev[i] = 0
++				}
++			}
++			for i, v := range d.hashHead[:] {
++				if int(v) > delta {
++					d.hashHead[i] = uint32(int(v) - delta)
++				} else {
++					d.hashHead[i] = 0
++				}
++			}
++		}
++	}
++	n := copy(d.window[d.windowEnd:], b)
++	d.windowEnd += n
++	return n
++}
++
++func (d *compressor) writeBlock(tokens []token, index int) error {
++	if index > 0 {
++		var window []byte
++		if d.blockStart <= index {
++			window = d.window[d.blockStart:index]
++		}
++		d.blockStart = index
++		d.w.writeBlock(tokens, false, window)
++		return d.w.err
++	}
++	return nil
++}
++
++// fillWindow will fill the current window with the supplied
++// dictionary and calculate all hashes.
++// This is much faster than doing a full encode.
++// Should only be used after a reset.
++func (d *compressor) fillWindow(b []byte) {
++	// Do not fill window if we are in store-only mode.
++	if d.compressionLevel.level < 2 {
++		return
++	}
++	if d.index != 0 || d.windowEnd != 0 {
++		panic("internal error: fillWindow called with stale data")
++	}
++
++	// If we are given too much, cut it.
++	if len(b) > windowSize {
++		b = b[len(b)-windowSize:]
++	}
++	// Add all to window.
++	n := copy(d.window, b)
++
++	// Calculate 256 hashes at the time (more L1 cache hits)
++	loops := (n + 256 - minMatchLength) / 256
++	for j := 0; j < loops; j++ {
++		index := j * 256
++		end := index + 256 + minMatchLength - 1
++		if end > n {
++			end = n
++		}
++		toCheck := d.window[index:end]
++		dstSize := len(toCheck) - minMatchLength + 1
++
++		if dstSize <= 0 {
++			continue
++		}
++
++		dst := d.hashMatch[:dstSize]
++		d.bulkHasher(toCheck, dst)
++		for i, val := range dst {
++			di := i + index
++			hh := &d.hashHead[val&hashMask]
++			// Get previous value with the same hash.
++			// Our chain should point to the previous value.
++			d.hashPrev[di&windowMask] = *hh
++			// Set the head of the hash chain to us.
++			*hh = uint32(di + d.hashOffset)
++		}
++	}
++	// Update window information.
++	d.windowEnd = n
++	d.index = n
++}
++
++// Try to find a match starting at index whose length is greater than prevSize.
++// We only look at chainCount possibilities before giving up.
++func (d *compressor) findMatch(pos int, prevHead int, prevLength int, lookahead int) (length, offset int, ok bool) {
++	minMatchLook := maxMatchLength
++	if lookahead < minMatchLook {
++		minMatchLook = lookahead
++	}
++
++	win := d.window[0 : pos+minMatchLook]
++
++	// We quit when we get a match that's at least nice long
++	nice := len(win) - pos
++	if d.nice < nice {
++		nice = d.nice
++	}
++
++	// If we've got a match that's good enough, only look in 1/4 the chain.
++	tries := d.chain
++	length = prevLength
++	if length >= d.good {
++		tries >>= 2
++	}
++
++	wEnd := win[pos+length]
++	wPos := win[pos:]
++	minIndex := pos - windowSize
++
++	for i := prevHead; tries > 0; tries-- {
++		if wEnd == win[i+length] {
++			n := matchLen(win[i:], wPos, minMatchLook)
++
++			if n > length && (n > minMatchLength || pos-i <= 4096) {
++				length = n
++				offset = pos - i
++				ok = true
++				if n >= nice {
++					// The match is good enough that we don't try to find a better one.
++					break
++				}
++				wEnd = win[pos+n]
++			}
++		}
++		if i == minIndex {
++			// hashPrev[i & windowMask] has already been overwritten, so stop now.
++			break
++		}
++		i = int(d.hashPrev[i&windowMask]) - d.hashOffset
++		if i < minIndex || i < 0 {
++			break
++		}
++	}
++	return
++}
++
++func (d *compressor) writeStoredBlock(buf []byte) error {
++	if d.w.writeStoredHeader(len(buf), false); d.w.err != nil {
++		return d.w.err
++	}
++	d.w.writeBytes(buf)
++	return d.w.err
++}
++
++const hashmul = 0x1e35a7bd
++
++// hash4 returns a hash representation of the first 4 bytes
++// of the supplied slice.
++// The caller must ensure that len(b) >= 4.
++func hash4(b []byte) uint32 {
++	return ((uint32(b[3]) | uint32(b[2])<<8 | uint32(b[1])<<16 | uint32(b[0])<<24) * hashmul) >> (32 - hashBits)
++}
++
++// bulkHash4 will compute hashes using the same
++// algorithm as hash4.
++func bulkHash4(b []byte, dst []uint32) {
++	if len(b) < minMatchLength {
++		return
++	}
++	hb := uint32(b[3]) | uint32(b[2])<<8 | uint32(b[1])<<16 | uint32(b[0])<<24
++	dst[0] = (hb * hashmul) >> (32 - hashBits)
++	end := len(b) - minMatchLength + 1
++	for i := 1; i < end; i++ {
++		hb = (hb << 8) | uint32(b[i+3])
++		dst[i] = (hb * hashmul) >> (32 - hashBits)
++	}
++}
++
++// matchLen returns the number of matching bytes in a and b
++// up to length 'max'. Both slices must be at least 'max'
++// bytes in size.
++func matchLen(a, b []byte, max int) int {
++	a = a[:max]
++	b = b[:len(a)]
++	for i, av := range a {
++		if b[i] != av {
++			return i
++		}
++	}
++	return max
++}
++
++// encSpeed will compress and store the currently added data,
++// if enough has been accumulated or we at the end of the stream.
++// Any error that occurred will be in d.err
++func (d *compressor) encSpeed() {
++	// We only compress if we have maxStoreBlockSize.
++	if d.windowEnd < maxStoreBlockSize {
++		if !d.sync {
++			return
++		}
++
++		// Handle small sizes.
++		if d.windowEnd < 128 {
++			switch {
++			case d.windowEnd == 0:
++				return
++			case d.windowEnd <= 16:
++				d.err = d.writeStoredBlock(d.window[:d.windowEnd])
++			default:
++				d.w.writeBlockHuff(false, d.window[:d.windowEnd])
++				d.err = d.w.err
++			}
++			d.windowEnd = 0
++			d.bestSpeed.reset()
++			return
++		}
++
++	}
++	// Encode the block.
++	d.tokens = d.bestSpeed.encode(d.tokens[:0], d.window[:d.windowEnd])
++
++	// If we removed less than 1/16th, Huffman compress the block.
++	if len(d.tokens) > d.windowEnd-(d.windowEnd>>4) {
++		d.w.writeBlockHuff(false, d.window[:d.windowEnd])
++	} else {
++		d.w.writeBlockDynamic(d.tokens, false, d.window[:d.windowEnd])
++	}
++	d.err = d.w.err
++	d.windowEnd = 0
++}
++
++func (d *compressor) initDeflate() {
++	d.window = make([]byte, 2*windowSize)
++	d.hashOffset = 1
++	d.tokens = make([]token, 0, maxFlateBlockTokens+1)
++	d.length = minMatchLength - 1
++	d.offset = 0
++	d.byteAvailable = false
++	d.index = 0
++	d.chainHead = -1
++	d.bulkHasher = bulkHash4
++}
++
++func (d *compressor) deflate() {
++	if d.windowEnd-d.index < minMatchLength+maxMatchLength && !d.sync {
++		return
++	}
++
++	d.maxInsertIndex = d.windowEnd - (minMatchLength - 1)
++
++Loop:
++	for {
++		if d.index > d.windowEnd {
++			panic("index > windowEnd")
++		}
++		lookahead := d.windowEnd - d.index
++		if lookahead < minMatchLength+maxMatchLength {
++			if !d.sync {
++				break Loop
++			}
++			if d.index > d.windowEnd {
++				panic("index > windowEnd")
++			}
++			if lookahead == 0 {
++				// Flush current output block if any.
++				if d.byteAvailable {
++					// There is still one pending token that needs to be flushed
++					d.tokens = append(d.tokens, literalToken(uint32(d.window[d.index-1])))
++					d.byteAvailable = false
++				}
++				if len(d.tokens) > 0 {
++					if d.err = d.writeBlock(d.tokens, d.index); d.err != nil {
++						return
++					}
++					d.tokens = d.tokens[:0]
++				}
++				break Loop
++			}
++		}
++		if d.index < d.maxInsertIndex {
++			// Update the hash
++			hash := hash4(d.window[d.index : d.index+minMatchLength])
++			hh := &d.hashHead[hash&hashMask]
++			d.chainHead = int(*hh)
++			d.hashPrev[d.index&windowMask] = uint32(d.chainHead)
++			*hh = uint32(d.index + d.hashOffset)
++		}
++		prevLength := d.length
++		prevOffset := d.offset
++		d.length = minMatchLength - 1
++		d.offset = 0
++		minIndex := d.index - windowSize
++		if minIndex < 0 {
++			minIndex = 0
++		}
++
++		if d.chainHead-d.hashOffset >= minIndex &&
++			(d.fastSkipHashing != skipNever && lookahead > minMatchLength-1 ||
++				d.fastSkipHashing == skipNever && lookahead > prevLength && prevLength < d.lazy) {
++			if newLength, newOffset, ok := d.findMatch(d.index, d.chainHead-d.hashOffset, minMatchLength-1, lookahead); ok {
++				d.length = newLength
++				d.offset = newOffset
++			}
++		}
++		if d.fastSkipHashing != skipNever && d.length >= minMatchLength ||
++			d.fastSkipHashing == skipNever && prevLength >= minMatchLength && d.length <= prevLength {
++			// There was a match at the previous step, and the current match is
++			// not better. Output the previous match.
++			if d.fastSkipHashing != skipNever {
++				d.tokens = append(d.tokens, matchToken(uint32(d.length-baseMatchLength), uint32(d.offset-baseMatchOffset)))
++			} else {
++				d.tokens = append(d.tokens, matchToken(uint32(prevLength-baseMatchLength), uint32(prevOffset-baseMatchOffset)))
++			}
++			// Insert in the hash table all strings up to the end of the match.
++			// index and index-1 are already inserted. If there is not enough
++			// lookahead, the last two strings are not inserted into the hash
++			// table.
++			if d.length <= d.fastSkipHashing {
++				var newIndex int
++				if d.fastSkipHashing != skipNever {
++					newIndex = d.index + d.length
++				} else {
++					newIndex = d.index + prevLength - 1
++				}
++				index := d.index
++				for index++; index < newIndex; index++ {
++					if index < d.maxInsertIndex {
++						hash := hash4(d.window[index : index+minMatchLength])
++						// Get previous value with the same hash.
++						// Our chain should point to the previous value.
++						hh := &d.hashHead[hash&hashMask]
++						d.hashPrev[index&windowMask] = *hh
++						// Set the head of the hash chain to us.
++						*hh = uint32(index + d.hashOffset)
++					}
++				}
++				d.index = index
++
++				if d.fastSkipHashing == skipNever {
++					d.byteAvailable = false
++					d.length = minMatchLength - 1
++				}
++			} else {
++				// For matches this long, we don't bother inserting each individual
++				// item into the table.
++				d.index += d.length
++			}
++			if len(d.tokens) == maxFlateBlockTokens {
++				// The block includes the current character
++				if d.err = d.writeBlock(d.tokens, d.index); d.err != nil {
++					return
++				}
++				d.tokens = d.tokens[:0]
++			}
++		} else {
++			if d.fastSkipHashing != skipNever || d.byteAvailable {
++				i := d.index - 1
++				if d.fastSkipHashing != skipNever {
++					i = d.index
++				}
++				d.tokens = append(d.tokens, literalToken(uint32(d.window[i])))
++				if len(d.tokens) == maxFlateBlockTokens {
++					if d.err = d.writeBlock(d.tokens, i+1); d.err != nil {
++						return
++					}
++					d.tokens = d.tokens[:0]
++				}
++			}
++			d.index++
++			if d.fastSkipHashing == skipNever {
++				d.byteAvailable = true
++			}
++		}
++	}
++}
++
++func (d *compressor) fillStore(b []byte) int {
++	n := copy(d.window[d.windowEnd:], b)
++	d.windowEnd += n
++	return n
++}
++
++func (d *compressor) store() {
++	if d.windowEnd > 0 && (d.windowEnd == maxStoreBlockSize || d.sync) {
++		d.err = d.writeStoredBlock(d.window[:d.windowEnd])
++		d.windowEnd = 0
++	}
++}
++
++// storeHuff compresses and stores the currently added data
++// when the d.window is full or we are at the end of the stream.
++// Any error that occurred will be in d.err
++func (d *compressor) storeHuff() {
++	if d.windowEnd < len(d.window) && !d.sync || d.windowEnd == 0 {
++		return
++	}
++	d.w.writeBlockHuff(false, d.window[:d.windowEnd])
++	d.err = d.w.err
++	d.windowEnd = 0
++}
++
++func (d *compressor) write(b []byte) (n int, err error) {
++	if d.err != nil {
++		return 0, d.err
++	}
++	n = len(b)
++	for len(b) > 0 {
++		d.step(d)
++		b = b[d.fill(d, b):]
++		if d.err != nil {
++			return 0, d.err
++		}
++	}
++	return n, nil
++}
++
++func (d *compressor) syncFlush() error {
++	if d.err != nil {
++		return d.err
++	}
++	d.sync = true
++	d.step(d)
++	if d.err == nil {
++		d.w.writeStoredHeader(0, false)
++		d.w.flush()
++		d.err = d.w.err
++	}
++	d.sync = false
++	return d.err
++}
++
++func (d *compressor) init(w io.Writer, level int) (err error) {
++	d.w = newHuffmanBitWriter(w)
++
++	switch {
++	case level == NoCompression:
++		d.window = make([]byte, maxStoreBlockSize)
++		d.fill = (*compressor).fillStore
++		d.step = (*compressor).store
++	case level == HuffmanOnly:
++		d.window = make([]byte, maxStoreBlockSize)
++		d.fill = (*compressor).fillStore
++		d.step = (*compressor).storeHuff
++	case level == BestSpeed:
++		d.compressionLevel = levels[level]
++		d.window = make([]byte, maxStoreBlockSize)
++		d.fill = (*compressor).fillStore
++		d.step = (*compressor).encSpeed
++		d.bestSpeed = newDeflateFast()
++		d.tokens = make([]token, maxStoreBlockSize)
++	case level == DefaultCompression:
++		level = 6
++		fallthrough
++	case 2 <= level && level <= 9:
++		d.compressionLevel = levels[level]
++		d.initDeflate()
++		d.fill = (*compressor).fillDeflate
++		d.step = (*compressor).deflate
++	default:
++		return fmt.Errorf("flate: invalid compression level %d: want value in range [-2, 9]", level)
++	}
++	return nil
++}
++
++func (d *compressor) reset(w io.Writer) {
++	d.w.reset(w)
++	d.sync = false
++	d.err = nil
++	switch d.compressionLevel.level {
++	case NoCompression:
++		d.windowEnd = 0
++	case BestSpeed:
++		d.windowEnd = 0
++		d.tokens = d.tokens[:0]
++		d.bestSpeed.reset()
++	default:
++		d.chainHead = -1
++		for i := range d.hashHead {
++			d.hashHead[i] = 0
++		}
++		for i := range d.hashPrev {
++			d.hashPrev[i] = 0
++		}
++		d.hashOffset = 1
++		d.index, d.windowEnd = 0, 0
++		d.blockStart, d.byteAvailable = 0, false
++		d.tokens = d.tokens[:0]
++		d.length = minMatchLength - 1
++		d.offset = 0
++		d.maxInsertIndex = 0
++	}
++}
++
++func (d *compressor) close() error {
++	if d.err == errWriterClosed {
++		return nil
++	}
++	if d.err != nil {
++		return d.err
++	}
++	d.sync = true
++	d.step(d)
++	if d.err != nil {
++		return d.err
++	}
++	if d.w.writeStoredHeader(0, true); d.w.err != nil {
++		return d.w.err
++	}
++	d.w.flush()
++	if d.w.err != nil {
++		return d.w.err
++	}
++	d.err = errWriterClosed
++	return nil
++}
++
++// NewWriter returns a new Writer compressing data at the given level.
++// Following zlib, levels range from 1 (BestSpeed) to 9 (BestCompression);
++// higher levels typically run slower but compress more. Level 0
++// (NoCompression) does not attempt any compression; it only adds the
++// necessary DEFLATE framing.
++// Level -1 (DefaultCompression) uses the default compression level.
++// Level -2 (HuffmanOnly) will use Huffman compression only, giving
++// a very fast compression for all types of input, but sacrificing considerable
++// compression efficiency.
++//
++// If level is in the range [-2, 9] then the error returned will be nil.
++// Otherwise the error returned will be non-nil.
++func NewWriter(w io.Writer, level int) (*Writer, error) {
++	var dw Writer
++	if err := dw.d.init(w, level); err != nil {
++		return nil, err
++	}
++	return &dw, nil
++}
++
++// NewWriterDict is like NewWriter but initializes the new
++// Writer with a preset dictionary. The returned Writer behaves
++// as if the dictionary had been written to it without producing
++// any compressed output. The compressed data written to w
++// can only be decompressed by a Reader initialized with the
++// same dictionary.
++func NewWriterDict(w io.Writer, level int, dict []byte) (*Writer, error) {
++	dw := &dictWriter{w}
++	zw, err := NewWriter(dw, level)
++	if err != nil {
++		return nil, err
++	}
++	zw.d.fillWindow(dict)
++	zw.dict = append(zw.dict, dict...) // duplicate dictionary for Reset method.
++	return zw, err
++}
++
++type dictWriter struct {
++	w io.Writer
++}
++
++func (w *dictWriter) Write(b []byte) (n int, err error) {
++	return w.w.Write(b)
++}
++
++var errWriterClosed = errors.New("flate: closed writer")
++
++// A Writer takes data written to it and writes the compressed
++// form of that data to an underlying writer (see NewWriter).
++type Writer struct {
++	d    compressor
++	dict []byte
++}
++
++// Write writes data to w, which will eventually write the
++// compressed form of data to its underlying writer.
++func (w *Writer) Write(data []byte) (n int, err error) {
++	return w.d.write(data)
++}
++
++// Flush flushes any pending data to the underlying writer.
++// It is useful mainly in compressed network protocols, to ensure that
++// a remote reader has enough data to reconstruct a packet.
++// Flush does not return until the data has been written.
++// Calling Flush when there is no pending data still causes the Writer
++// to emit a sync marker of at least 4 bytes.
++// If the underlying writer returns an error, Flush returns that error.
++//
++// In the terminology of the zlib library, Flush is equivalent to Z_SYNC_FLUSH.
++func (w *Writer) Flush() error {
++	// For more about flushing:
++	// https://www.bolet.org/~pornin/deflate-flush.html
++	return w.d.syncFlush()
++}
++
++// Close flushes and closes the writer.
++func (w *Writer) Close() error {
++	return w.d.close()
++}
++
++// Reset discards the writer's state and makes it equivalent to
++// the result of NewWriter or NewWriterDict called with dst
++// and w's level and dictionary.
++func (w *Writer) Reset(dst io.Writer) {
++	if dw, ok := w.d.w.writer.(*dictWriter); ok {
++		// w was created with NewWriterDict
++		dw.w = dst
++		w.d.reset(dw)
++		w.d.fillWindow(w.dict)
++	} else {
++		// w was created with NewWriter
++		w.d.reset(dst)
++	}
++}
+diff --git a/internal/ticketgzip/internal/flate/deflatefast.go b/internal/ticketgzip/internal/flate/deflatefast.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/deflatefast.go
+@@ -0,0 +1,309 @@
++// Copyright 2016 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package flate
++
++import "math"
++
++// This encoding algorithm, which prioritizes speed over output size, is
++// based on Snappy's LZ77-style encoder: github.com/golang/snappy
++
++const (
++	tableBits  = 14             // Bits used in the table.
++	tableSize  = 1 << tableBits // Size of the table.
++	tableMask  = tableSize - 1  // Mask for table indices. Redundant, but can eliminate bounds checks.
++	tableShift = 32 - tableBits // Right-shift to get the tableBits most significant bits of a uint32.
++
++	// Reset the buffer offset when reaching this.
++	// Offsets are stored between blocks as int32 values.
++	// Since the offset we are checking against is at the beginning
++	// of the buffer, we need to subtract the current and input
++	// buffer to not risk overflowing the int32.
++	bufferReset = math.MaxInt32 - maxStoreBlockSize*2
++)
++
++func load32(b []byte, i int32) uint32 {
++	b = b[i : i+4 : len(b)] // Help the compiler eliminate bounds checks on the next line.
++	return uint32(b[0]) | uint32(b[1])<<8 | uint32(b[2])<<16 | uint32(b[3])<<24
++}
++
++func load64(b []byte, i int32) uint64 {
++	b = b[i : i+8 : len(b)] // Help the compiler eliminate bounds checks on the next line.
++	return uint64(b[0]) | uint64(b[1])<<8 | uint64(b[2])<<16 | uint64(b[3])<<24 |
++		uint64(b[4])<<32 | uint64(b[5])<<40 | uint64(b[6])<<48 | uint64(b[7])<<56
++}
++
++func hash(u uint32) uint32 {
++	return (u * 0x1e35a7bd) >> tableShift
++}
++
++// These constants are defined by the Snappy implementation so that its
++// assembly implementation can fast-path some 16-bytes-at-a-time copies. They
++// aren't necessary in the pure Go implementation, as we don't use those same
++// optimizations, but using the same thresholds doesn't really hurt.
++const (
++	inputMargin            = 16 - 1
++	minNonLiteralBlockSize = 1 + 1 + inputMargin
++)
++
++type tableEntry struct {
++	val    uint32 // Value at destination
++	offset int32
++}
++
++// deflateFast maintains the table for matches,
++// and the previous byte block for cross block matching.
++type deflateFast struct {
++	table [tableSize]tableEntry
++	prev  []byte // Previous block, zero length if unknown.
++	cur   int32  // Current match offset.
++}
++
++func newDeflateFast() *deflateFast {
++	return &deflateFast{cur: maxStoreBlockSize, prev: make([]byte, 0, maxStoreBlockSize)}
++}
++
++// encode encodes a block given in src and appends tokens
++// to dst and returns the result.
++func (e *deflateFast) encode(dst []token, src []byte) []token {
++	// Ensure that e.cur doesn't wrap.
++	if e.cur >= bufferReset {
++		e.shiftOffsets()
++	}
++
++	// This check isn't in the Snappy implementation, but there, the caller
++	// instead of the callee handles this case.
++	if len(src) < minNonLiteralBlockSize {
++		e.cur += maxStoreBlockSize
++		e.prev = e.prev[:0]
++		return emitLiteral(dst, src)
++	}
++
++	// sLimit is when to stop looking for offset/length copies. The inputMargin
++	// lets us use a fast path for emitLiteral in the main loop, while we are
++	// looking for copies.
++	sLimit := int32(len(src) - inputMargin)
++
++	// nextEmit is where in src the next emitLiteral should start from.
++	nextEmit := int32(0)
++	s := int32(0)
++	cv := load32(src, s)
++	nextHash := hash(cv)
++
++	for {
++		// Copied from the C++ snappy implementation:
++		//
++		// Heuristic match skipping: If 32 bytes are scanned with no matches
++		// found, start looking only at every other byte. If 32 more bytes are
++		// scanned (or skipped), look at every third byte, etc.. When a match
++		// is found, immediately go back to looking at every byte. This is a
++		// small loss (~5% performance, ~0.1% density) for compressible data
++		// due to more bookkeeping, but for non-compressible data (such as
++		// JPEG) it's a huge win since the compressor quickly "realizes" the
++		// data is incompressible and doesn't bother looking for matches
++		// everywhere.
++		//
++		// The "skip" variable keeps track of how many bytes there are since
++		// the last match; dividing it by 32 (ie. right-shifting by five) gives
++		// the number of bytes to move ahead for each iteration.
++		skip := int32(32)
++
++		nextS := s
++		var candidate tableEntry
++		for {
++			s = nextS
++			bytesBetweenHashLookups := skip >> 5
++			nextS = s + bytesBetweenHashLookups
++			skip += bytesBetweenHashLookups
++			if nextS > sLimit {
++				goto emitRemainder
++			}
++			candidate = e.table[nextHash&tableMask]
++			now := load32(src, nextS)
++			e.table[nextHash&tableMask] = tableEntry{offset: s + e.cur, val: cv}
++			nextHash = hash(now)
++
++			offset := s - (candidate.offset - e.cur)
++			if offset > maxMatchOffset || cv != candidate.val {
++				// Out of range or not matched.
++				cv = now
++				continue
++			}
++			break
++		}
++
++		// A 4-byte match has been found. We'll later see if more than 4 bytes
++		// match. But, prior to the match, src[nextEmit:s] are unmatched. Emit
++		// them as literal bytes.
++		dst = emitLiteral(dst, src[nextEmit:s])
++
++		// Call emitCopy, and then see if another emitCopy could be our next
++		// move. Repeat until we find no match for the input immediately after
++		// what was consumed by the last emitCopy call.
++		//
++		// If we exit this loop normally then we need to call emitLiteral next,
++		// though we don't yet know how big the literal will be. We handle that
++		// by proceeding to the next iteration of the main loop. We also can
++		// exit this loop via goto if we get close to exhausting the input.
++		for {
++			// Invariant: we have a 4-byte match at s, and no need to emit any
++			// literal bytes prior to s.
++
++			// Extend the 4-byte match as long as possible.
++			//
++			s += 4
++			t := candidate.offset - e.cur + 4
++			l := e.matchLen(s, t, src)
++
++			// matchToken is flate's equivalent of Snappy's emitCopy. (length,offset)
++			dst = append(dst, matchToken(uint32(l+4-baseMatchLength), uint32(s-t-baseMatchOffset)))
++			s += l
++			nextEmit = s
++			if s >= sLimit {
++				goto emitRemainder
++			}
++
++			// We could immediately start working at s now, but to improve
++			// compression we first update the hash table at s-1 and at s. If
++			// another emitCopy is not our next move, also calculate nextHash
++			// at s+1. At least on GOARCH=amd64, these three hash calculations
++			// are faster as one load64 call (with some shifts) instead of
++			// three load32 calls.
++			x := load64(src, s-1)
++			prevHash := hash(uint32(x))
++			e.table[prevHash&tableMask] = tableEntry{offset: e.cur + s - 1, val: uint32(x)}
++			x >>= 8
++			currHash := hash(uint32(x))
++			candidate = e.table[currHash&tableMask]
++			e.table[currHash&tableMask] = tableEntry{offset: e.cur + s, val: uint32(x)}
++
++			offset := s - (candidate.offset - e.cur)
++			if offset > maxMatchOffset || uint32(x) != candidate.val {
++				cv = uint32(x >> 8)
++				nextHash = hash(cv)
++				s++
++				break
++			}
++		}
++	}
++
++emitRemainder:
++	if int(nextEmit) < len(src) {
++		dst = emitLiteral(dst, src[nextEmit:])
++	}
++	e.cur += int32(len(src))
++	e.prev = e.prev[:len(src)]
++	copy(e.prev, src)
++	return dst
++}
++
++func emitLiteral(dst []token, lit []byte) []token {
++	for _, v := range lit {
++		dst = append(dst, literalToken(uint32(v)))
++	}
++	return dst
++}
++
++// matchLen returns the match length between src[s:] and src[t:].
++// t can be negative to indicate the match is starting in e.prev.
++// We assume that src[s-4:s] and src[t-4:t] already match.
++func (e *deflateFast) matchLen(s, t int32, src []byte) int32 {
++	s1 := int(s) + maxMatchLength - 4
++	if s1 > len(src) {
++		s1 = len(src)
++	}
++
++	// If we are inside the current block
++	if t >= 0 {
++		b := src[t:]
++		a := src[s:s1]
++		b = b[:len(a)]
++		// Extend the match to be as long as possible.
++		for i := range a {
++			if a[i] != b[i] {
++				return int32(i)
++			}
++		}
++		return int32(len(a))
++	}
++
++	// We found a match in the previous block.
++	tp := int32(len(e.prev)) + t
++	if tp < 0 {
++		return 0
++	}
++
++	// Extend the match to be as long as possible.
++	a := src[s:s1]
++	b := e.prev[tp:]
++	if len(b) > len(a) {
++		b = b[:len(a)]
++	}
++	a = a[:len(b)]
++	for i := range b {
++		if a[i] != b[i] {
++			return int32(i)
++		}
++	}
++
++	// If we reached our limit, we matched everything we are
++	// allowed to in the previous block and we return.
++	n := int32(len(b))
++	if int(s+n) == s1 {
++		return n
++	}
++
++	// Continue looking for more matches in the current block.
++	a = src[s+n : s1]
++	b = src[:len(a)]
++	for i := range a {
++		if a[i] != b[i] {
++			return int32(i) + n
++		}
++	}
++	return int32(len(a)) + n
++}
++
++// Reset resets the encoding history.
++// This ensures that no matches are made to the previous block.
++func (e *deflateFast) reset() {
++	e.prev = e.prev[:0]
++	// Bump the offset, so all matches will fail distance check.
++	// Nothing should be >= e.cur in the table.
++	e.cur += maxMatchOffset
++
++	// Protect against e.cur wraparound.
++	if e.cur >= bufferReset {
++		e.shiftOffsets()
++	}
++}
++
++// shiftOffsets will shift down all match offset.
++// This is only called in rare situations to prevent integer overflow.
++//
++// See https://golang.org/issue/18636 and https://github.com/golang/go/issues/34121.
++func (e *deflateFast) shiftOffsets() {
++	if len(e.prev) == 0 {
++		// We have no history; just clear the table.
++		for i := range e.table[:] {
++			e.table[i] = tableEntry{}
++		}
++		e.cur = maxMatchOffset + 1
++		return
++	}
++
++	// Shift down everything in the table that isn't already too far away.
++	for i := range e.table[:] {
++		v := e.table[i].offset - e.cur + maxMatchOffset + 1
++		if v < 0 {
++			// We want to reset e.cur to maxMatchOffset + 1, so we need to shift
++			// all table entries down by (e.cur - (maxMatchOffset + 1)).
++			// Because we ignore matches > maxMatchOffset, we can cap
++			// any negative offsets at 0.
++			v = 0
++		}
++		e.table[i].offset = v
++	}
++	e.cur = maxMatchOffset + 1
++}
+diff --git a/internal/ticketgzip/internal/flate/huffman_bit_writer.go b/internal/ticketgzip/internal/flate/huffman_bit_writer.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/huffman_bit_writer.go
+@@ -0,0 +1,701 @@
++// Copyright 2009 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package flate
++
++import (
++	"io"
++)
++
++const (
++	// The largest offset code.
++	offsetCodeCount = 30
++
++	// The special code used to mark the end of a block.
++	endBlockMarker = 256
++
++	// The first length code.
++	lengthCodesStart = 257
++
++	// The number of codegen codes.
++	codegenCodeCount = 19
++	badCode          = 255
++
++	// bufferFlushSize indicates the buffer size
++	// after which bytes are flushed to the writer.
++	// Should preferably be a multiple of 6, since
++	// we accumulate 6 bytes between writes to the buffer.
++	bufferFlushSize = 240
++
++	// bufferSize is the actual output byte buffer size.
++	// It must have additional headroom for a flush
++	// which can contain up to 8 bytes.
++	bufferSize = bufferFlushSize + 8
++)
++
++// The number of extra bits needed by length code X - LENGTH_CODES_START.
++var lengthExtraBits = []int8{
++	/* 257 */ 0, 0, 0,
++	/* 260 */ 0, 0, 0, 0, 0, 1, 1, 1, 1, 2,
++	/* 270 */ 2, 2, 2, 3, 3, 3, 3, 4, 4, 4,
++	/* 280 */ 4, 5, 5, 5, 5, 0,
++}
++
++// The length indicated by length code X - LENGTH_CODES_START.
++var lengthBase = []uint32{
++	0, 1, 2, 3, 4, 5, 6, 7, 8, 10,
++	12, 14, 16, 20, 24, 28, 32, 40, 48, 56,
++	64, 80, 96, 112, 128, 160, 192, 224, 255,
++}
++
++// offset code word extra bits.
++var offsetExtraBits = []int8{
++	0, 0, 0, 0, 1, 1, 2, 2, 3, 3,
++	4, 4, 5, 5, 6, 6, 7, 7, 8, 8,
++	9, 9, 10, 10, 11, 11, 12, 12, 13, 13,
++}
++
++var offsetBase = []uint32{
++	0x000000, 0x000001, 0x000002, 0x000003, 0x000004,
++	0x000006, 0x000008, 0x00000c, 0x000010, 0x000018,
++	0x000020, 0x000030, 0x000040, 0x000060, 0x000080,
++	0x0000c0, 0x000100, 0x000180, 0x000200, 0x000300,
++	0x000400, 0x000600, 0x000800, 0x000c00, 0x001000,
++	0x001800, 0x002000, 0x003000, 0x004000, 0x006000,
++}
++
++// The odd order in which the codegen code sizes are written.
++var codegenOrder = []uint32{16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15}
++
++type huffmanBitWriter struct {
++	// writer is the underlying writer.
++	// Do not use it directly; use the write method, which ensures
++	// that Write errors are sticky.
++	writer io.Writer
++
++	// Data waiting to be written is bytes[0:nbytes]
++	// and then the low nbits of bits.  Data is always written
++	// sequentially into the bytes array.
++	bits            uint64
++	nbits           uint
++	bytes           [bufferSize]byte
++	codegenFreq     [codegenCodeCount]int32
++	nbytes          int
++	literalFreq     []int32
++	offsetFreq      []int32
++	codegen         []uint8
++	literalEncoding *huffmanEncoder
++	offsetEncoding  *huffmanEncoder
++	codegenEncoding *huffmanEncoder
++	err             error
++}
++
++func newHuffmanBitWriter(w io.Writer) *huffmanBitWriter {
++	return &huffmanBitWriter{
++		writer:          w,
++		literalFreq:     make([]int32, maxNumLit),
++		offsetFreq:      make([]int32, offsetCodeCount),
++		codegen:         make([]uint8, maxNumLit+offsetCodeCount+1),
++		literalEncoding: newHuffmanEncoder(maxNumLit),
++		codegenEncoding: newHuffmanEncoder(codegenCodeCount),
++		offsetEncoding:  newHuffmanEncoder(offsetCodeCount),
++	}
++}
++
++func (w *huffmanBitWriter) reset(writer io.Writer) {
++	w.writer = writer
++	w.bits, w.nbits, w.nbytes, w.err = 0, 0, 0, nil
++}
++
++func (w *huffmanBitWriter) flush() {
++	if w.err != nil {
++		w.nbits = 0
++		return
++	}
++	n := w.nbytes
++	for w.nbits != 0 {
++		w.bytes[n] = byte(w.bits)
++		w.bits >>= 8
++		if w.nbits > 8 { // Avoid underflow
++			w.nbits -= 8
++		} else {
++			w.nbits = 0
++		}
++		n++
++	}
++	w.bits = 0
++	w.write(w.bytes[:n])
++	w.nbytes = 0
++}
++
++func (w *huffmanBitWriter) write(b []byte) {
++	if w.err != nil {
++		return
++	}
++	_, w.err = w.writer.Write(b)
++}
++
++func (w *huffmanBitWriter) writeBits(b int32, nb uint) {
++	if w.err != nil {
++		return
++	}
++	w.bits |= uint64(b) << w.nbits
++	w.nbits += nb
++	if w.nbits >= 48 {
++		bits := w.bits
++		w.bits >>= 48
++		w.nbits -= 48
++		n := w.nbytes
++		bytes := w.bytes[n : n+6]
++		bytes[0] = byte(bits)
++		bytes[1] = byte(bits >> 8)
++		bytes[2] = byte(bits >> 16)
++		bytes[3] = byte(bits >> 24)
++		bytes[4] = byte(bits >> 32)
++		bytes[5] = byte(bits >> 40)
++		n += 6
++		if n >= bufferFlushSize {
++			w.write(w.bytes[:n])
++			n = 0
++		}
++		w.nbytes = n
++	}
++}
++
++func (w *huffmanBitWriter) writeBytes(bytes []byte) {
++	if w.err != nil {
++		return
++	}
++	n := w.nbytes
++	if w.nbits&7 != 0 {
++		w.err = InternalError("writeBytes with unfinished bits")
++		return
++	}
++	for w.nbits != 0 {
++		w.bytes[n] = byte(w.bits)
++		w.bits >>= 8
++		w.nbits -= 8
++		n++
++	}
++	if n != 0 {
++		w.write(w.bytes[:n])
++	}
++	w.nbytes = 0
++	w.write(bytes)
++}
++
++// RFC 1951 3.2.7 specifies a special run-length encoding for specifying
++// the literal and offset lengths arrays (which are concatenated into a single
++// array).  This method generates that run-length encoding.
++//
++// The result is written into the codegen array, and the frequencies
++// of each code is written into the codegenFreq array.
++// Codes 0-15 are single byte codes. Codes 16-18 are followed by additional
++// information. Code badCode is an end marker
++//
++//	numLiterals      The number of literals in literalEncoding
++//	numOffsets       The number of offsets in offsetEncoding
++//	litenc, offenc   The literal and offset encoder to use
++func (w *huffmanBitWriter) generateCodegen(numLiterals int, numOffsets int, litEnc, offEnc *huffmanEncoder) {
++	for i := range w.codegenFreq {
++		w.codegenFreq[i] = 0
++	}
++	// Note that we are using codegen both as a temporary variable for holding
++	// a copy of the frequencies, and as the place where we put the result.
++	// This is fine because the output is always shorter than the input used
++	// so far.
++	codegen := w.codegen // cache
++	// Copy the concatenated code sizes to codegen. Put a marker at the end.
++	cgnl := codegen[:numLiterals]
++	for i := range cgnl {
++		cgnl[i] = uint8(litEnc.codes[i].len)
++	}
++
++	cgnl = codegen[numLiterals : numLiterals+numOffsets]
++	for i := range cgnl {
++		cgnl[i] = uint8(offEnc.codes[i].len)
++	}
++	codegen[numLiterals+numOffsets] = badCode
++
++	size := codegen[0]
++	count := 1
++	outIndex := 0
++	for inIndex := 1; size != badCode; inIndex++ {
++		// INVARIANT: We have seen "count" copies of size that have not yet
++		// had output generated for them.
++		nextSize := codegen[inIndex]
++		if nextSize == size {
++			count++
++			continue
++		}
++		// We need to generate codegen indicating "count" of size.
++		if size != 0 {
++			codegen[outIndex] = size
++			outIndex++
++			w.codegenFreq[size]++
++			count--
++			for count >= 3 {
++				n := 6
++				if n > count {
++					n = count
++				}
++				codegen[outIndex] = 16
++				outIndex++
++				codegen[outIndex] = uint8(n - 3)
++				outIndex++
++				w.codegenFreq[16]++
++				count -= n
++			}
++		} else {
++			for count >= 11 {
++				n := 138
++				if n > count {
++					n = count
++				}
++				codegen[outIndex] = 18
++				outIndex++
++				codegen[outIndex] = uint8(n - 11)
++				outIndex++
++				w.codegenFreq[18]++
++				count -= n
++			}
++			if count >= 3 {
++				// count >= 3 && count <= 10
++				codegen[outIndex] = 17
++				outIndex++
++				codegen[outIndex] = uint8(count - 3)
++				outIndex++
++				w.codegenFreq[17]++
++				count = 0
++			}
++		}
++		count--
++		for ; count >= 0; count-- {
++			codegen[outIndex] = size
++			outIndex++
++			w.codegenFreq[size]++
++		}
++		// Set up invariant for next time through the loop.
++		size = nextSize
++		count = 1
++	}
++	// Marker indicating the end of the codegen.
++	codegen[outIndex] = badCode
++}
++
++// dynamicSize returns the size of dynamically encoded data in bits.
++func (w *huffmanBitWriter) dynamicSize(litEnc, offEnc *huffmanEncoder, extraBits int) (size, numCodegens int) {
++	numCodegens = len(w.codegenFreq)
++	for numCodegens > 4 && w.codegenFreq[codegenOrder[numCodegens-1]] == 0 {
++		numCodegens--
++	}
++	header := 3 + 5 + 5 + 4 + (3 * numCodegens) +
++		w.codegenEncoding.bitLength(w.codegenFreq[:]) +
++		int(w.codegenFreq[16])*2 +
++		int(w.codegenFreq[17])*3 +
++		int(w.codegenFreq[18])*7
++	size = header +
++		litEnc.bitLength(w.literalFreq) +
++		offEnc.bitLength(w.offsetFreq) +
++		extraBits
++
++	return size, numCodegens
++}
++
++// fixedSize returns the size of dynamically encoded data in bits.
++func (w *huffmanBitWriter) fixedSize(extraBits int) int {
++	return 3 +
++		fixedLiteralEncoding.bitLength(w.literalFreq) +
++		fixedOffsetEncoding.bitLength(w.offsetFreq) +
++		extraBits
++}
++
++// storedSize calculates the stored size, including header.
++// The function returns the size in bits and whether the block
++// fits inside a single block.
++func (w *huffmanBitWriter) storedSize(in []byte) (int, bool) {
++	if in == nil {
++		return 0, false
++	}
++	if len(in) <= maxStoreBlockSize {
++		return (len(in) + 5) * 8, true
++	}
++	return 0, false
++}
++
++func (w *huffmanBitWriter) writeCode(c hcode) {
++	if w.err != nil {
++		return
++	}
++	w.bits |= uint64(c.code) << w.nbits
++	w.nbits += uint(c.len)
++	if w.nbits >= 48 {
++		bits := w.bits
++		w.bits >>= 48
++		w.nbits -= 48
++		n := w.nbytes
++		bytes := w.bytes[n : n+6]
++		bytes[0] = byte(bits)
++		bytes[1] = byte(bits >> 8)
++		bytes[2] = byte(bits >> 16)
++		bytes[3] = byte(bits >> 24)
++		bytes[4] = byte(bits >> 32)
++		bytes[5] = byte(bits >> 40)
++		n += 6
++		if n >= bufferFlushSize {
++			w.write(w.bytes[:n])
++			n = 0
++		}
++		w.nbytes = n
++	}
++}
++
++// Write the header of a dynamic Huffman block to the output stream.
++//
++//	numLiterals  The number of literals specified in codegen
++//	numOffsets   The number of offsets specified in codegen
++//	numCodegens  The number of codegens used in codegen
++func (w *huffmanBitWriter) writeDynamicHeader(numLiterals int, numOffsets int, numCodegens int, isEof bool) {
++	if w.err != nil {
++		return
++	}
++	var firstBits int32 = 4
++	if isEof {
++		firstBits = 5
++	}
++	w.writeBits(firstBits, 3)
++	w.writeBits(int32(numLiterals-257), 5)
++	w.writeBits(int32(numOffsets-1), 5)
++	w.writeBits(int32(numCodegens-4), 4)
++
++	for i := 0; i < numCodegens; i++ {
++		value := uint(w.codegenEncoding.codes[codegenOrder[i]].len)
++		w.writeBits(int32(value), 3)
++	}
++
++	i := 0
++	for {
++		var codeWord int = int(w.codegen[i])
++		i++
++		if codeWord == badCode {
++			break
++		}
++		w.writeCode(w.codegenEncoding.codes[uint32(codeWord)])
++
++		switch codeWord {
++		case 16:
++			w.writeBits(int32(w.codegen[i]), 2)
++			i++
++		case 17:
++			w.writeBits(int32(w.codegen[i]), 3)
++			i++
++		case 18:
++			w.writeBits(int32(w.codegen[i]), 7)
++			i++
++		}
++	}
++}
++
++func (w *huffmanBitWriter) writeStoredHeader(length int, isEof bool) {
++	if w.err != nil {
++		return
++	}
++	var flag int32
++	if isEof {
++		flag = 1
++	}
++	w.writeBits(flag, 3)
++	w.flush()
++	w.writeBits(int32(length), 16)
++	w.writeBits(int32(^uint16(length)), 16)
++}
++
++func (w *huffmanBitWriter) writeFixedHeader(isEof bool) {
++	if w.err != nil {
++		return
++	}
++	// Indicate that we are a fixed Huffman block
++	var value int32 = 2
++	if isEof {
++		value = 3
++	}
++	w.writeBits(value, 3)
++}
++
++// writeBlock will write a block of tokens with the smallest encoding.
++// The original input can be supplied, and if the huffman encoded data
++// is larger than the original bytes, the data will be written as a
++// stored block.
++// If the input is nil, the tokens will always be Huffman encoded.
++func (w *huffmanBitWriter) writeBlock(tokens []token, eof bool, input []byte) {
++	if w.err != nil {
++		return
++	}
++
++	tokens = append(tokens, endBlockMarker)
++	numLiterals, numOffsets := w.indexTokens(tokens)
++
++	var extraBits int
++	storedSize, storable := w.storedSize(input)
++	if storable {
++		// We only bother calculating the costs of the extra bits required by
++		// the length of offset fields (which will be the same for both fixed
++		// and dynamic encoding), if we need to compare those two encodings
++		// against stored encoding.
++		for lengthCode := lengthCodesStart + 8; lengthCode < numLiterals; lengthCode++ {
++			// First eight length codes have extra size = 0.
++			extraBits += int(w.literalFreq[lengthCode]) * int(lengthExtraBits[lengthCode-lengthCodesStart])
++		}
++		for offsetCode := 4; offsetCode < numOffsets; offsetCode++ {
++			// First four offset codes have extra size = 0.
++			extraBits += int(w.offsetFreq[offsetCode]) * int(offsetExtraBits[offsetCode])
++		}
++	}
++
++	// Figure out smallest code.
++	// Fixed Huffman baseline.
++	var literalEncoding = fixedLiteralEncoding
++	var offsetEncoding = fixedOffsetEncoding
++	var size = w.fixedSize(extraBits)
++
++	// Dynamic Huffman?
++	var numCodegens int
++
++	// Generate codegen and codegenFrequencies, which indicates how to encode
++	// the literalEncoding and the offsetEncoding.
++	w.generateCodegen(numLiterals, numOffsets, w.literalEncoding, w.offsetEncoding)
++	w.codegenEncoding.generate(w.codegenFreq[:], 7)
++	dynamicSize, numCodegens := w.dynamicSize(w.literalEncoding, w.offsetEncoding, extraBits)
++
++	if dynamicSize < size {
++		size = dynamicSize
++		literalEncoding = w.literalEncoding
++		offsetEncoding = w.offsetEncoding
++	}
++
++	// Stored bytes?
++	if storable && storedSize < size {
++		w.writeStoredHeader(len(input), eof)
++		w.writeBytes(input)
++		return
++	}
++
++	// Huffman.
++	if literalEncoding == fixedLiteralEncoding {
++		w.writeFixedHeader(eof)
++	} else {
++		w.writeDynamicHeader(numLiterals, numOffsets, numCodegens, eof)
++	}
++
++	// Write the tokens.
++	w.writeTokens(tokens, literalEncoding.codes, offsetEncoding.codes)
++}
++
++// writeBlockDynamic encodes a block using a dynamic Huffman table.
++// This should be used if the symbols used have a disproportionate
++// histogram distribution.
++// If input is supplied and the compression savings are below 1/16th of the
++// input size the block is stored.
++func (w *huffmanBitWriter) writeBlockDynamic(tokens []token, eof bool, input []byte) {
++	if w.err != nil {
++		return
++	}
++
++	tokens = append(tokens, endBlockMarker)
++	numLiterals, numOffsets := w.indexTokens(tokens)
++
++	// Generate codegen and codegenFrequencies, which indicates how to encode
++	// the literalEncoding and the offsetEncoding.
++	w.generateCodegen(numLiterals, numOffsets, w.literalEncoding, w.offsetEncoding)
++	w.codegenEncoding.generate(w.codegenFreq[:], 7)
++	size, numCodegens := w.dynamicSize(w.literalEncoding, w.offsetEncoding, 0)
++
++	// Store bytes, if we don't get a reasonable improvement.
++	if ssize, storable := w.storedSize(input); storable && ssize < (size+size>>4) {
++		w.writeStoredHeader(len(input), eof)
++		w.writeBytes(input)
++		return
++	}
++
++	// Write Huffman table.
++	w.writeDynamicHeader(numLiterals, numOffsets, numCodegens, eof)
++
++	// Write the tokens.
++	w.writeTokens(tokens, w.literalEncoding.codes, w.offsetEncoding.codes)
++}
++
++// indexTokens indexes a slice of tokens, and updates
++// literalFreq and offsetFreq, and generates literalEncoding
++// and offsetEncoding.
++// The number of literal and offset tokens is returned.
++func (w *huffmanBitWriter) indexTokens(tokens []token) (numLiterals, numOffsets int) {
++	for i := range w.literalFreq {
++		w.literalFreq[i] = 0
++	}
++	for i := range w.offsetFreq {
++		w.offsetFreq[i] = 0
++	}
++
++	for _, t := range tokens {
++		if t < matchType {
++			w.literalFreq[t.literal()]++
++			continue
++		}
++		length := t.length()
++		offset := t.offset()
++		w.literalFreq[lengthCodesStart+lengthCode(length)]++
++		w.offsetFreq[offsetCode(offset)]++
++	}
++
++	// get the number of literals
++	numLiterals = len(w.literalFreq)
++	for w.literalFreq[numLiterals-1] == 0 {
++		numLiterals--
++	}
++	// get the number of offsets
++	numOffsets = len(w.offsetFreq)
++	for numOffsets > 0 && w.offsetFreq[numOffsets-1] == 0 {
++		numOffsets--
++	}
++	if numOffsets == 0 {
++		// We haven't found a single match. If we want to go with the dynamic encoding,
++		// we should count at least one offset to be sure that the offset huffman tree could be encoded.
++		w.offsetFreq[0] = 1
++		numOffsets = 1
++	}
++	w.literalEncoding.generate(w.literalFreq, 15)
++	w.offsetEncoding.generate(w.offsetFreq, 15)
++	return
++}
++
++// writeTokens writes a slice of tokens to the output.
++// codes for literal and offset encoding must be supplied.
++func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode) {
++	if w.err != nil {
++		return
++	}
++	for _, t := range tokens {
++		if t < matchType {
++			w.writeCode(leCodes[t.literal()])
++			continue
++		}
++		// Write the length
++		length := t.length()
++		lengthCode := lengthCode(length)
++		w.writeCode(leCodes[lengthCode+lengthCodesStart])
++		extraLengthBits := uint(lengthExtraBits[lengthCode])
++		if extraLengthBits > 0 {
++			extraLength := int32(length - lengthBase[lengthCode])
++			w.writeBits(extraLength, extraLengthBits)
++		}
++		// Write the offset
++		offset := t.offset()
++		offsetCode := offsetCode(offset)
++		w.writeCode(oeCodes[offsetCode])
++		extraOffsetBits := uint(offsetExtraBits[offsetCode])
++		if extraOffsetBits > 0 {
++			extraOffset := int32(offset - offsetBase[offsetCode])
++			w.writeBits(extraOffset, extraOffsetBits)
++		}
++	}
++}
++
++// huffOffset is a static offset encoder used for huffman only encoding.
++// It can be reused since we will not be encoding offset values.
++var huffOffset *huffmanEncoder
++
++func init() {
++	offsetFreq := make([]int32, offsetCodeCount)
++	offsetFreq[0] = 1
++	huffOffset = newHuffmanEncoder(offsetCodeCount)
++	huffOffset.generate(offsetFreq, 15)
++}
++
++// writeBlockHuff encodes a block of bytes as either
++// Huffman encoded literals or uncompressed bytes if the
++// results only gains very little from compression.
++func (w *huffmanBitWriter) writeBlockHuff(eof bool, input []byte) {
++	if w.err != nil {
++		return
++	}
++
++	// Clear histogram
++	for i := range w.literalFreq {
++		w.literalFreq[i] = 0
++	}
++
++	// Add everything as literals
++	histogram(input, w.literalFreq)
++
++	w.literalFreq[endBlockMarker] = 1
++
++	const numLiterals = endBlockMarker + 1
++	w.offsetFreq[0] = 1
++	const numOffsets = 1
++
++	w.literalEncoding.generate(w.literalFreq, 15)
++
++	// Figure out smallest code.
++	// Always use dynamic Huffman or Store
++	var numCodegens int
++
++	// Generate codegen and codegenFrequencies, which indicates how to encode
++	// the literalEncoding and the offsetEncoding.
++	w.generateCodegen(numLiterals, numOffsets, w.literalEncoding, huffOffset)
++	w.codegenEncoding.generate(w.codegenFreq[:], 7)
++	size, numCodegens := w.dynamicSize(w.literalEncoding, huffOffset, 0)
++
++	// Store bytes, if we don't get a reasonable improvement.
++	if ssize, storable := w.storedSize(input); storable && ssize < (size+size>>4) {
++		w.writeStoredHeader(len(input), eof)
++		w.writeBytes(input)
++		return
++	}
++
++	// Huffman.
++	w.writeDynamicHeader(numLiterals, numOffsets, numCodegens, eof)
++	encoding := w.literalEncoding.codes[:257]
++	n := w.nbytes
++	for _, t := range input {
++		// Bitwriting inlined, ~30% speedup
++		c := encoding[t]
++		w.bits |= uint64(c.code) << w.nbits
++		w.nbits += uint(c.len)
++		if w.nbits < 48 {
++			continue
++		}
++		// Store 6 bytes
++		bits := w.bits
++		w.bits >>= 48
++		w.nbits -= 48
++		bytes := w.bytes[n : n+6]
++		bytes[0] = byte(bits)
++		bytes[1] = byte(bits >> 8)
++		bytes[2] = byte(bits >> 16)
++		bytes[3] = byte(bits >> 24)
++		bytes[4] = byte(bits >> 32)
++		bytes[5] = byte(bits >> 40)
++		n += 6
++		if n < bufferFlushSize {
++			continue
++		}
++		w.write(w.bytes[:n])
++		if w.err != nil {
++			return // Return early in the event of write failures
++		}
++		n = 0
++	}
++	w.nbytes = n
++	w.writeCode(encoding[endBlockMarker])
++}
++
++// histogram accumulates a histogram of b in h.
++//
++// len(h) must be >= 256, and h's elements must be all zeroes.
++func histogram(b []byte, h []int32) {
++	h = h[:256]
++	for _, t := range b {
++		h[t]++
++	}
++}
+diff --git a/internal/ticketgzip/internal/flate/huffman_code.go b/internal/ticketgzip/internal/flate/huffman_code.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/huffman_code.go
+@@ -0,0 +1,345 @@
++// Copyright 2009 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package flate
++
++import (
++	"math"
++	"math/bits"
++	"sort"
++)
++
++// hcode is a huffman code with a bit code and bit length.
++type hcode struct {
++	code, len uint16
++}
++
++type huffmanEncoder struct {
++	codes     []hcode
++	freqcache []literalNode
++	bitCount  [17]int32
++	lns       byLiteral // stored to avoid repeated allocation in generate
++	lfs       byFreq    // stored to avoid repeated allocation in generate
++}
++
++type literalNode struct {
++	literal uint16
++	freq    int32
++}
++
++// A levelInfo describes the state of the constructed tree for a given depth.
++type levelInfo struct {
++	// Our level.  for better printing
++	level int32
++
++	// The frequency of the last node at this level
++	lastFreq int32
++
++	// The frequency of the next character to add to this level
++	nextCharFreq int32
++
++	// The frequency of the next pair (from level below) to add to this level.
++	// Only valid if the "needed" value of the next lower level is 0.
++	nextPairFreq int32
++
++	// The number of chains remaining to generate for this level before moving
++	// up to the next level
++	needed int32
++}
++
++// set sets the code and length of an hcode.
++func (h *hcode) set(code uint16, length uint16) {
++	h.len = length
++	h.code = code
++}
++
++func maxNode() literalNode { return literalNode{math.MaxUint16, math.MaxInt32} }
++
++func newHuffmanEncoder(size int) *huffmanEncoder {
++	return &huffmanEncoder{codes: make([]hcode, size)}
++}
++
++// Generates a HuffmanCode corresponding to the fixed literal table.
++func generateFixedLiteralEncoding() *huffmanEncoder {
++	h := newHuffmanEncoder(maxNumLit)
++	codes := h.codes
++	var ch uint16
++	for ch = 0; ch < maxNumLit; ch++ {
++		var bits uint16
++		var size uint16
++		switch {
++		case ch < 144:
++			// size 8, 000110000  .. 10111111
++			bits = ch + 48
++			size = 8
++		case ch < 256:
++			// size 9, 110010000 .. 111111111
++			bits = ch + 400 - 144
++			size = 9
++		case ch < 280:
++			// size 7, 0000000 .. 0010111
++			bits = ch - 256
++			size = 7
++		default:
++			// size 8, 11000000 .. 11000111
++			bits = ch + 192 - 280
++			size = 8
++		}
++		codes[ch] = hcode{code: reverseBits(bits, byte(size)), len: size}
++	}
++	return h
++}
++
++func generateFixedOffsetEncoding() *huffmanEncoder {
++	h := newHuffmanEncoder(30)
++	codes := h.codes
++	for ch := range codes {
++		codes[ch] = hcode{code: reverseBits(uint16(ch), 5), len: 5}
++	}
++	return h
++}
++
++var fixedLiteralEncoding *huffmanEncoder = generateFixedLiteralEncoding()
++var fixedOffsetEncoding *huffmanEncoder = generateFixedOffsetEncoding()
++
++func (h *huffmanEncoder) bitLength(freq []int32) int {
++	var total int
++	for i, f := range freq {
++		if f != 0 {
++			total += int(f) * int(h.codes[i].len)
++		}
++	}
++	return total
++}
++
++const maxBitsLimit = 16
++
++// bitCounts computes the number of literals assigned to each bit size in the Huffman encoding.
++// It is only called when list.length >= 3.
++// The cases of 0, 1, and 2 literals are handled by special case code.
++//
++// list is an array of the literals with non-zero frequencies
++// and their associated frequencies. The array is in order of increasing
++// frequency and has as its last element a special element with frequency
++// MaxInt32.
++//
++// maxBits is the maximum number of bits that should be used to encode any literal.
++// It must be less than 16.
++//
++// bitCounts returns an integer slice in which slice[i] indicates the number of literals
++// that should be encoded in i bits.
++func (h *huffmanEncoder) bitCounts(list []literalNode, maxBits int32) []int32 {
++	if maxBits >= maxBitsLimit {
++		panic("flate: maxBits too large")
++	}
++	n := int32(len(list))
++	list = list[0 : n+1]
++	list[n] = maxNode()
++
++	// The tree can't have greater depth than n - 1, no matter what. This
++	// saves a little bit of work in some small cases
++	if maxBits > n-1 {
++		maxBits = n - 1
++	}
++
++	// Create information about each of the levels.
++	// A bogus "Level 0" whose sole purpose is so that
++	// level1.prev.needed==0.  This makes level1.nextPairFreq
++	// be a legitimate value that never gets chosen.
++	var levels [maxBitsLimit]levelInfo
++	// leafCounts[i] counts the number of literals at the left
++	// of ancestors of the rightmost node at level i.
++	// leafCounts[i][j] is the number of literals at the left
++	// of the level j ancestor.
++	var leafCounts [maxBitsLimit][maxBitsLimit]int32
++
++	for level := int32(1); level <= maxBits; level++ {
++		// For every level, the first two items are the first two characters.
++		// We initialize the levels as if we had already figured this out.
++		levels[level] = levelInfo{
++			level:        level,
++			lastFreq:     list[1].freq,
++			nextCharFreq: list[2].freq,
++			nextPairFreq: list[0].freq + list[1].freq,
++		}
++		leafCounts[level][level] = 2
++		if level == 1 {
++			levels[level].nextPairFreq = math.MaxInt32
++		}
++	}
++
++	// We need a total of 2*n - 2 items at top level and have already generated 2.
++	levels[maxBits].needed = 2*n - 4
++
++	level := maxBits
++	for {
++		l := &levels[level]
++		if l.nextPairFreq == math.MaxInt32 && l.nextCharFreq == math.MaxInt32 {
++			// We've run out of both leafs and pairs.
++			// End all calculations for this level.
++			// To make sure we never come back to this level or any lower level,
++			// set nextPairFreq impossibly large.
++			l.needed = 0
++			levels[level+1].nextPairFreq = math.MaxInt32
++			level++
++			continue
++		}
++
++		prevFreq := l.lastFreq
++		if l.nextCharFreq < l.nextPairFreq {
++			// The next item on this row is a leaf node.
++			n := leafCounts[level][level] + 1
++			l.lastFreq = l.nextCharFreq
++			// Lower leafCounts are the same of the previous node.
++			leafCounts[level][level] = n
++			l.nextCharFreq = list[n].freq
++		} else {
++			// The next item on this row is a pair from the previous row.
++			// nextPairFreq isn't valid until we generate two
++			// more values in the level below
++			l.lastFreq = l.nextPairFreq
++			// Take leaf counts from the lower level, except counts[level] remains the same.
++			copy(leafCounts[level][:level], leafCounts[level-1][:level])
++			levels[l.level-1].needed = 2
++		}
++
++		if l.needed--; l.needed == 0 {
++			// We've done everything we need to do for this level.
++			// Continue calculating one level up. Fill in nextPairFreq
++			// of that level with the sum of the two nodes we've just calculated on
++			// this level.
++			if l.level == maxBits {
++				// All done!
++				break
++			}
++			levels[l.level+1].nextPairFreq = prevFreq + l.lastFreq
++			level++
++		} else {
++			// If we stole from below, move down temporarily to replenish it.
++			for levels[level-1].needed > 0 {
++				level--
++			}
++		}
++	}
++
++	// Somethings is wrong if at the end, the top level is null or hasn't used
++	// all of the leaves.
++	if leafCounts[maxBits][maxBits] != n {
++		panic("leafCounts[maxBits][maxBits] != n")
++	}
++
++	bitCount := h.bitCount[:maxBits+1]
++	bits := 1
++	counts := &leafCounts[maxBits]
++	for level := maxBits; level > 0; level-- {
++		// chain.leafCount gives the number of literals requiring at least "bits"
++		// bits to encode.
++		bitCount[bits] = counts[level] - counts[level-1]
++		bits++
++	}
++	return bitCount
++}
++
++// Look at the leaves and assign them a bit count and an encoding as specified
++// in RFC 1951 3.2.2
++func (h *huffmanEncoder) assignEncodingAndSize(bitCount []int32, list []literalNode) {
++	code := uint16(0)
++	for n, bits := range bitCount {
++		code <<= 1
++		if n == 0 || bits == 0 {
++			continue
++		}
++		// The literals list[len(list)-bits] .. list[len(list)-bits]
++		// are encoded using "bits" bits, and get the values
++		// code, code + 1, ....  The code values are
++		// assigned in literal order (not frequency order).
++		chunk := list[len(list)-int(bits):]
++
++		h.lns.sort(chunk)
++		for _, node := range chunk {
++			h.codes[node.literal] = hcode{code: reverseBits(code, uint8(n)), len: uint16(n)}
++			code++
++		}
++		list = list[0 : len(list)-int(bits)]
++	}
++}
++
++// Update this Huffman Code object to be the minimum code for the specified frequency count.
++//
++// freq is an array of frequencies, in which freq[i] gives the frequency of literal i.
++// maxBits  The maximum number of bits to use for any literal.
++func (h *huffmanEncoder) generate(freq []int32, maxBits int32) {
++	if h.freqcache == nil {
++		// Allocate a reusable buffer with the longest possible frequency table.
++		// Possible lengths are codegenCodeCount, offsetCodeCount and maxNumLit.
++		// The largest of these is maxNumLit, so we allocate for that case.
++		h.freqcache = make([]literalNode, maxNumLit+1)
++	}
++	list := h.freqcache[:len(freq)+1]
++	// Number of non-zero literals
++	count := 0
++	// Set list to be the set of all non-zero literals and their frequencies
++	for i, f := range freq {
++		if f != 0 {
++			list[count] = literalNode{uint16(i), f}
++			count++
++		} else {
++			h.codes[i].len = 0
++		}
++	}
++
++	list = list[:count]
++	if count <= 2 {
++		// Handle the small cases here, because they are awkward for the general case code. With
++		// two or fewer literals, everything has bit length 1.
++		for i, node := range list {
++			// "list" is in order of increasing literal value.
++			h.codes[node.literal].set(uint16(i), 1)
++		}
++		return
++	}
++	h.lfs.sort(list)
++
++	// Get the number of literals for each bit count
++	bitCount := h.bitCounts(list, maxBits)
++	// And do the assignment
++	h.assignEncodingAndSize(bitCount, list)
++}
++
++type byLiteral []literalNode
++
++func (s *byLiteral) sort(a []literalNode) {
++	*s = byLiteral(a)
++	sort.Sort(s)
++}
++
++func (s byLiteral) Len() int { return len(s) }
++
++func (s byLiteral) Less(i, j int) bool {
++	return s[i].literal < s[j].literal
++}
++
++func (s byLiteral) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
++
++type byFreq []literalNode
++
++func (s *byFreq) sort(a []literalNode) {
++	*s = byFreq(a)
++	sort.Sort(s)
++}
++
++func (s byFreq) Len() int { return len(s) }
++
++func (s byFreq) Less(i, j int) bool {
++	if s[i].freq == s[j].freq {
++		return s[i].literal < s[j].literal
++	}
++	return s[i].freq < s[j].freq
++}
++
++func (s byFreq) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
++
++func reverseBits(number uint16, bitLength byte) uint16 {
++	return bits.Reverse16(number << (16 - bitLength))
++}
+diff --git a/internal/ticketgzip/internal/flate/shared.go b/internal/ticketgzip/internal/flate/shared.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/shared.go
+@@ -0,0 +1,11 @@
++// Copyright 2009 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package flate
++
++const maxNumLit = 286
++
++type InternalError string
++
++func (e InternalError) Error() string { return "flate: internal error: " + string(e) }
+diff --git a/internal/ticketgzip/internal/flate/token.go b/internal/ticketgzip/internal/flate/token.go
+new file mode 100644
+--- /dev/null
++++ b/internal/ticketgzip/internal/flate/token.go
+@@ -0,0 +1,97 @@
++// Copyright 2009 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package flate
++
++const (
++	// 2 bits:   type   0 = literal  1=EOF  2=Match   3=Unused
++	// 8 bits:   xlength = length - MIN_MATCH_LENGTH
++	// 22 bits   xoffset = offset - MIN_OFFSET_SIZE, or literal
++	lengthShift = 22
++	offsetMask  = 1<<lengthShift - 1
++	typeMask    = 3 << 30
++	literalType = 0 << 30
++	matchType   = 1 << 30
++)
++
++// The length code for length X (MIN_MATCH_LENGTH <= X <= MAX_MATCH_LENGTH)
++// is lengthCodes[length - MIN_MATCH_LENGTH]
++var lengthCodes = [...]uint32{
++	0, 1, 2, 3, 4, 5, 6, 7, 8, 8,
++	9, 9, 10, 10, 11, 11, 12, 12, 12, 12,
++	13, 13, 13, 13, 14, 14, 14, 14, 15, 15,
++	15, 15, 16, 16, 16, 16, 16, 16, 16, 16,
++	17, 17, 17, 17, 17, 17, 17, 17, 18, 18,
++	18, 18, 18, 18, 18, 18, 19, 19, 19, 19,
++	19, 19, 19, 19, 20, 20, 20, 20, 20, 20,
++	20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
++	21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
++	21, 21, 21, 21, 21, 21, 22, 22, 22, 22,
++	22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
++	22, 22, 23, 23, 23, 23, 23, 23, 23, 23,
++	23, 23, 23, 23, 23, 23, 23, 23, 24, 24,
++	24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
++	24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
++	24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
++	25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
++	25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
++	25, 25, 25, 25, 25, 25, 25, 25, 25, 25,
++	25, 25, 26, 26, 26, 26, 26, 26, 26, 26,
++	26, 26, 26, 26, 26, 26, 26, 26, 26, 26,
++	26, 26, 26, 26, 26, 26, 26, 26, 26, 26,
++	26, 26, 26, 26, 27, 27, 27, 27, 27, 27,
++	27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
++	27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
++	27, 27, 27, 27, 27, 28,
++}
++
++var offsetCodes = [...]uint32{
++	0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
++	8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9,
++	10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
++	11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
++	12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
++	12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
++	13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
++	13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
++	14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
++	14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
++	14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
++	14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
++	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
++	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
++	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
++	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
++}
++
++type token uint32
++
++// Convert a literal into a literal token.
++func literalToken(literal uint32) token { return token(literalType + literal) }
++
++// Convert a < xlength, xoffset > pair into a match token.
++func matchToken(xlength uint32, xoffset uint32) token {
++	return token(matchType + xlength<<lengthShift + xoffset)
++}
++
++// Returns the literal of a literal token.
++func (t token) literal() uint32 { return uint32(t - literalType) }
++
++// Returns the extra offset of a match token.
++func (t token) offset() uint32 { return uint32(t) & offsetMask }
++
++func (t token) length() uint32 { return uint32((t - matchType) >> lengthShift) }
++
++func lengthCode(len uint32) uint32 { return lengthCodes[len] }
++
++// Returns the offset code corresponding to a specific offset.
++func offsetCode(off uint32) uint32 {
++	if off < uint32(len(offsetCodes)) {
++		return offsetCodes[off]
++	}
++	if off>>7 < uint32(len(offsetCodes)) {
++		return offsetCodes[off>>7] + 14
++	}
++	return offsetCodes[off>>14] + 28
++}
