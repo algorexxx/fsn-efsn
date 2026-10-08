@@ -1,26 +1,26 @@
 # Candidate historical replay
 
-Updated 8 October 2026. **Completed through 300,000 with both cold checks.**
-The [latest evidence](evidence/restart-ticket-encoder-replay-300000-2026-10-08/README.md)
+Updated 8 October 2026. **Completed through 600,000 with both cold checks.**
+The [latest evidence](evidence/restart-ticket-encoder-replay-600000-2026-10-08/README.md)
 records exact historical agreement and preservation checks. This follows the
 [affected regressions](evidence/restart-ticket-encoder-regressions-2026-10-08/spec.md).
 It does not select the encoder for release or change the accepted history.
 The original first-range scope below is retained for reference and preserved
 verbatim in the [first run's plan at start](evidence/restart-ticket-encoder-replay-100000-2026-10-08/plan-at-start.md).
-No continuation beyond 300,000 has started.
+No continuation beyond 600,000 has started.
 
-Next bounded range: 300,001 through 600,000, after fresh capacity/path checks.
-Preserve the verified 300,000 checkpoint and use a verified copy in a new target
-named candidate-ticket-encoding-600000. The current checkpoint occupies
-435.78 MiB; measure actual space before copying. Continue with the exact retained
+Next bounded range: 600,001 through 900,000, after fresh capacity/path checks.
+Preserve the verified 600,000 checkpoint and use a verified copy in a new target
+named candidate-ticket-encoding-900000. The current checkpoint occupies
+705.54 MiB; measure actual space before copying. Continue with the exact retained
 replay executable and identity checks, with a fresh result directory, the same
 space/time stops and exact-height cold verification. Its replay/cold-head helpers
 take the endpoint from the environment; its built-in details tests remain fixed
-at 100,000, and the separate observer is fixed at 300,000. Neither is a detailed
+at 100,000, and the latest separate observer is fixed at 600,000. Neither is a detailed
 check of the next endpoint. Build the next detailed observer separately, capture
 the source reference before replay and use it for the final comparison.
-Do not rebuild the replay executable
-or weaken identity checks to accommodate an observer change.
+Do not rebuild the replay executable or weaken identity checks to accommodate
+an observer change.
 
 ## Original first-range inputs and boundary
 
