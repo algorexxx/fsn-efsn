@@ -115,6 +115,13 @@ also demonstrate refusal of empty/mispointed datadirs before startup; both curre
 executables instead create and restart the wrong genesis. This does not invalidate
 the scoped same-compiler fixture observations or qualify a replacement encoding.
 
+The [historical follow-up](evidence/restart-ticket-compression-2026-10-08/README.md)
+extends this to all seven available ticket blobs in a 24-height sample. A modern
+build using a diagnostic old-flate overlay reproduces them and the genesis
+header; unchanged Go 1.27.1 reproduces none. Seventeen blobs are unavailable.
+Qualify the proposed [encoder-only boundary](restart-ticket-encoding.md), then
+affected history/regressions. The overlay itself is not a shipping solution.
+
 ## Independent reviewer packet and completion
 
 Prepare one packet with: upstream and selected release commits; the small

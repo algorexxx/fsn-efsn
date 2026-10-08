@@ -1,0 +1,5 @@
+--- a/verify.py
++++ b/verify.py
+@@ -60 +60 @@
+-        assert env['GOPROXY'] == env['GOSUMDB'] == env['GOENV'] == 'off'
++        assert env['GOPROXY'] == env['GOSUMDB'] == 'off' and env['GOENV'] == ''

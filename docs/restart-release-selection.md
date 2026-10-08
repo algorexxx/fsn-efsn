@@ -14,6 +14,14 @@ The source selection remains frozen for comparison, but these binaries are
 blocked from release pending ticket-encoding compatibility. No compiler downgrade
 or production compatibility patch is selected.
 
+The [historical follow-up](evidence/restart-ticket-compression-2026-10-08/README.md)
+reproduces all seven available preserved ticket blobs with the old encoder and
+with Go 1.27.1 plus a test-only old-flate overlay; unchanged Go 1.27.1 matches
+none. Seventeen requested blobs are unavailable. This supports preparing the
+[encoder-only compatibility candidate](restart-ticket-encoding.md), but does
+not select it or qualify full historical execution. The shipping compiler and
+runtime source are unchanged.
+
 ## Source decisions
 
 | Component | Selection | Reason |

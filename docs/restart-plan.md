@@ -12,6 +12,11 @@ genesis commitments; substituting Go 1.21.3's bytes alone reproduces the exact
 historical genesis. Qualify legacy ticket-encoding compatibility before further
 release acceptance. The [startup/compression evidence](evidence/restart-genesis-startup-v2-2026-10-08/README.md)
 also shows that an empty datadir starts without the required restore safeguard.
+The [historical follow-up](evidence/restart-ticket-compression-2026-10-08/README.md)
+now finds seven available blobs among 24 requested heights: all seven match the
+old encoder and a modern-compiler/old-flate diagnostic; unchanged Go 1.27.1
+matches none. Next is the bounded [encoder-only candidate](restart-ticket-encoding.md),
+then affected history/regressions. Seventeen missing blobs remain unqualified.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence
@@ -128,8 +133,10 @@ Candidate-patch historical compatibility remains open.
   the clean-machine operator kit and final handover rehearsal. Reuse existing
   passing evidence; do not rerun unchanged investigations by default.
 - [ ] Resolve [F12 ticket-compression compatibility](evidence/restart-genesis-startup-v2-2026-10-08/README.md).
-  Compare a bounded set of preserved compressed/RLP ticket vectors and qualify a
-  minimal legacy-compatible encoding path on a maintained toolchain. The current
+  The bounded [preserved-vector comparison](evidence/restart-ticket-compression-2026-10-08/README.md)
+  is complete for seven available samples; 17 requested blobs were unavailable.
+  Qualify the [encoder-only candidate](restart-ticket-encoding.md) on a maintained
+  toolchain, followed by affected history and regressions. The current
   Go 1.27.1 artifacts are blocked from release; successful same-compiler fixtures
   do not close this difference. Keep the registered genesis and backup unchanged.
 - [x] Close the bounded [unknown-heavier automatic-sync gap](restart-automatic-sync.md):

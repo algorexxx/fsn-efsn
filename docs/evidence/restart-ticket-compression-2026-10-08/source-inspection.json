@@ -1,0 +1,42 @@
+{
+  "observed_at": "2026-10-08T06:47:28.178912+00:00",
+  "writer_files": {
+    "deflate.go": {
+      "sha256": "a4f7b2a64573172c9a8a56607c8c17262d31aafe61ced16e82568e5f674ba406",
+      "bytes": 20801,
+      "lines": 746
+    },
+    "deflatefast.go": {
+      "sha256": "61740d7f30b157947e3b8984cc5cf4c2aaff5e087ccf906886d77a1a351cf483",
+      "bytes": 9580,
+      "lines": 309
+    },
+    "huffman_bit_writer.go": {
+      "sha256": "285f8541f26bf1982e0d5ed09ab7f7db0864b50ba93ba2cbe4562c5772743963",
+      "bytes": 18824,
+      "lines": 701
+    },
+    "huffman_code.go": {
+      "sha256": "c7fe4f18bb12c30631c91506e458ee3b0056449806fa5de46e3c0bfe8a486197",
+      "bytes": 9911,
+      "lines": 345
+    },
+    "token.go": {
+      "sha256": "bc96536b4ca6e946a5094c3c60a085485cf6e25be1fc74914bdefcf4352f1516",
+      "bytes": 3680,
+      "lines": 97
+    }
+  },
+  "goenv_implementation": {
+    "old": {
+      "path": "/opt/fusion-toolchain/go/src/cmd/go/internal/cfg/cfg.go",
+      "sha256": "fe0f7eb33ee0efe3ec8e5f1bbb73ad24af5702496898ba470b0ef9073e1afdad",
+      "function": "func EnvFile() (string, error) {\n\tif file := os.Getenv(\"GOENV\"); file != \"\" {\n\t\tif file == \"off\" {\n\t\t\treturn \"\", fmt.Errorf(\"GOENV=off\")\n\t\t}\n\t\treturn file, nil\n\t}\n\tdir, err := os.UserConfigDir()\n\tif err != nil {\n\t\treturn \"\", err\n\t}\n\tif dir == \"\" {\n\t\treturn \"\", fmt.Errorf(\"missing user-config dir\")\n\t}\n\treturn filepath.Join(dir, \"go/env\"), nil\n}\n"
+    },
+    "new": {
+      "path": "/home/rehearsal/results/restart-release-selection-2026-10-04/toolchain/go/src/cmd/go/internal/cfg/cfg.go",
+      "sha256": "8eb038ac6df168fe5af971cd768d99dd3c64224273072a4160dcc5f51eacae9d",
+      "function": "func EnvFile() (string, bool, error) {\n\tif file := os.Getenv(\"GOENV\"); file != \"\" {\n\t\tif file == \"off\" {\n\t\t\treturn \"\", false, fmt.Errorf(\"GOENV=off\")\n\t\t}\n\t\treturn file, true, nil\n\t}\n\tdir, err := os.UserConfigDir()\n\tif err != nil {\n\t\treturn \"\", false, err\n\t}\n\tif dir == \"\" {\n\t\treturn \"\", false, fmt.Errorf(\"missing user-config dir\")\n\t}\n\treturn filepath.Join(dir, \"go/env\"), false, nil\n}\n"
+    }
+  }
+}
