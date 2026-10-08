@@ -20,10 +20,10 @@ those seven samples, 55 synthetic payloads, six expiry cases and actual historic
 genesis startup/restart. The [affected regressions and cost check](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery handover, with no measured encoding-cost increase over the legacy
-comparator in three bounded inputs. The [first candidate replay through 100,000](evidence/restart-ticket-encoder-replay-100000-2026-10-08/README.md)
+comparator in three bounded inputs. The [candidate replay through 300,000](evidence/restart-ticket-encoder-replay-300000-2026-10-08/README.md)
 and both cold checks now match preserved history. Next is the bounded
-[continuation through 300,000](restart-ticket-encoder-replay.md), then further
-history and independent review. The initial range retains legacy checkpoint
+[continuation through 600,000](restart-ticket-encoder-replay.md), then further
+history and independent review. These ranges retain legacy checkpoint
 shortcuts. Seventeen missing exported blobs and the restore-identity safeguard
 remain open.
 No runtime fix, compiler downgrade or new genesis is selected.
@@ -123,13 +123,14 @@ the documented legacy shortcuts through 2,680,000. Closed allocation is
 7,534,972,928 bytes; final capture found 45.84 GiB Linux / 93.02 GiB D: free.
 The monitor now makes three bounded measurement attempts; disk reserves remain
 unchanged and no new bulk copy was needed. No further baseline range has started.
-The [separate encoder-candidate replay](evidence/restart-ticket-encoder-replay-100000-2026-10-08/README.md)
-now completes genesis through **100,000**, with cold state/ticket/receipt and
-TD agreement. Its closed target occupies 216.85 MiB; final capacity was
-43.57 GiB Linux / 91.09 GiB D:. Both baseline directories and backup metadata
-remain unchanged. This candidate range also retains legacy checkpoint shortcuts.
+The [separate encoder-candidate replay](evidence/restart-ticket-encoder-replay-300000-2026-10-08/README.md)
+now completes genesis through **300,000**, with cold state/ticket/receipt and
+TD agreement. Its closed target occupies 435.78 MiB; final capacity was
+43.10 GiB Linux / 89.48 GiB D:. The original 100,000 checkpoint, both baseline
+directories and backup metadata remain unchanged. These candidate ranges
+retain legacy checkpoint shortcuts.
 Further candidate historical compatibility remains open; no continuation beyond
-100,000 has started.
+300,000 has started.
 
 ## G2 — Client and supported operation
 
