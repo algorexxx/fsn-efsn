@@ -1,0 +1,21 @@
+{
+  "failed_attempt": {
+    "purpose": "read-only inline Python capacity/process/path check before launch",
+    "exit": 1,
+    "outcome": "Python syntax error caused by doubled quotation marks passed through PowerShell/WSL; no code executed and no replay started",
+    "error": "SyntaxError: leading zeros in decimal integer literals are not permitted; use an 0o prefix for octal integers"
+  },
+  "replacement": {
+    "commands": [
+      "wsl.exe -d FusionRehearsal -u rehearsal -- df -B1 /home/rehearsal/results /mnt/d",
+      "wsl.exe -d FusionRehearsal -u rehearsal -- ps -eo pid,uid,comm,args",
+      "wsl.exe -d FusionRehearsal -u rehearsal -- ls -ld /home/rehearsal/replay/candidate-ticket-encoding-1200000"
+    ],
+    "exit": 0,
+    "linux_available_bytes": 42789572608,
+    "d_available_bytes": 92911632384,
+    "conflicting_node_or_replay_process": false,
+    "checkpoint_exists": true
+  },
+  "scope": "Launcher will separately refuse existing result/target paths and hold locks; runner repeats capacity checks and verifies checkpoint contents before copying."
+}
