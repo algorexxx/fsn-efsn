@@ -123,10 +123,11 @@ The subsequent [encoder-only candidate](restart-ticket-encoding.md) passes its
 bounded seven-vector/55-payload/six-expiry comparison and actual genesis
 startup/restart, with the maintained decoder. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
-recovery execution, plus bounded compression measurements. Candidate history,
-independent review and the restored-identity safeguard remain open. The
-[first candidate replay](restart-ticket-encoder-replay.md) is prepared but has
-not started. Neither the diagnostic overlay nor the unselected patch is a release.
+recovery execution, plus bounded compression measurements. The [first candidate
+replay](evidence/restart-ticket-encoder-replay-100000-2026-10-08/README.md) now passes
+through 100,000 with both cold checks, retaining legacy checkpoint shortcuts.
+Further candidate history, independent review and the restored-identity safeguard
+remain open. Neither the diagnostic overlay nor the unselected patch is a release.
 
 ## Independent reviewer packet and completion
 
@@ -150,8 +151,9 @@ retains the monitor-requested clean stop, read-only inspection at 3,521,056 and
 successful continuation. The unchanged baseline retains legacy shortcuts
 through 2,680,000. Execution through the accepted parent and historical
 compatibility of the selected candidate are still open; neither this matrix
-nor synthetic passes replace them. No new range has started, and the baseline
-result does not validate the candidate patches.
+nor synthetic passes replace them. The baseline has not advanced beyond
+3,600,000; the separate encoder candidate has now passed through 100,000.
+The baseline result does not validate the candidate patches.
 
 Next technical order: resolve F12's ticket-compression compatibility first;
 close the other recorded findings and qualify the selected

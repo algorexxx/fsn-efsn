@@ -62,12 +62,13 @@ replay comparator, not an accepted production solution.
    RLP inputs show no encoding-cost increase against the legacy comparator in
    five bounded rounds. This does not qualify the production CLI recovery
    workflow or the full suite.
-4. Run the [prepared first candidate replay](restart-ticket-encoder-replay.md)
-   from genesis through 100,000 in a new identity-bound target, then continue
-   bounded historical qualification. Compare cold state/ticket/receipt
-   commitments to preserved history. This first range has not started and lies
-   within legacy checkpoint shortcuts. Missing sampled blobs and seven passing
-   vectors cannot replace history. Keep baseline and candidate results distinct.
+4. **First candidate historical range complete.** The [replay through 100,000](evidence/restart-ticket-encoder-replay-100000-2026-10-08/README.md)
+   and both cold checks match preserved history, including state/ticket/receipt
+   commitments and TD. It lies entirely within legacy checkpoint shortcuts.
+   Next is the [bounded continuation through 300,000](restart-ticket-encoder-replay.md),
+   retaining the checkpoint and exact replay executable. Further history remains
+   open; this range does not replace all-history qualification or recover the
+   17 missing exported samples. Keep baseline and candidate results distinct.
 5. Obtain independent codec/consensus and maintenance review before selection.
    If a historical mismatch is found, stop and resolve its cause; do not add an
    activation boundary by assumption. A byte-compatible implementation should

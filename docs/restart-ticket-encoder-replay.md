@@ -1,8 +1,23 @@
 # First candidate historical replay
 
-Prepared 8 October 2026. **Not executed.** This is the next bounded G1/F12
-qualification after the [affected regressions](evidence/restart-ticket-encoder-regressions-2026-10-08/spec.md).
+Updated 8 October 2026. **Completed through 100,000 with both cold checks.**
+The [evidence](evidence/restart-ticket-encoder-replay-100000-2026-10-08/README.md)
+records exact historical agreement and preservation checks. This follows the
+[affected regressions](evidence/restart-ticket-encoder-regressions-2026-10-08/spec.md).
 It does not select the encoder for release or change the accepted history.
+The original execution scope below is preserved verbatim in the evidence's
+plan-at-start.md; no further range has started.
+
+Next bounded range: 100,001 through 300,000, after fresh capacity/path checks.
+Preserve the verified 100,000 checkpoint and use a verified copy in a new target
+named candidate-ticket-encoding-300000. The current checkpoint occupies only
+216.85 MiB; measure actual space before copying. Continue with the exact retained
+replay executable and identity checks, with a fresh result directory, the same
+space/time stops and exact-height cold verification. Its replay/cold-head helpers
+take the endpoint from the environment; the additional details tests are fixed
+at 100,000 and must not be mistaken for checks of the next endpoint. Build any
+additional detailed observer separately. Do not rebuild the replay executable
+or weaken identity checks to accommodate an observer change.
 
 ## Inputs and boundary
 
