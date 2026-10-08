@@ -212,8 +212,13 @@ commit and LevelDB reopen. Dirty absent-entry cases have different roots under
 the active rule, reinforcing the need to preserve historical execution.
 The [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
 also passes 16 cases per selection through construction, import and fresh-process
-reopening from synthetic checkpoints. Supported calls/pending/tracing checks
-are next; historical compatibility remains unverified.
+reopening from synthetic checkpoints. The [API comparison](evidence/restart-state-rollback-api-2026-10-08/README.md)
+passes 84 cases per selection through actual call, injected-pending and
+available-state tracing methods. The active rule changes only the expected raw
+balance structure; disabled/pre-activation observations match. Its explicit
+constructor seams and coverage limits remain in the report. Next: reconcile
+remaining supported-path/F1 exclusions and startup/F12 compatibility dispositions;
+candidate historical compatibility remains unverified.
 The separate default
 genesis mismatch on both baseline and candidate is F12, not an F11 correction.
 Keep the production selection unchanged until review and qualification are complete.

@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 7 October 2026. Working branch: `codex/restart-investigation-wip`.
+Updated 8 October 2026. Working branch: `codex/restart-investigation-wip`.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -201,9 +201,16 @@ Candidate-patch historical compatibility remains open.
   now passes 16 cases per selection through block construction, normal import
   and fresh-process reopening (64 receiver processes). It confirms the same
   dirty-account difference in accepted synthetic descendants; receipts, gas,
-  rewards and tickets match expectations. Next: supported calls/pending/tracing
-  rule selection. Preserve historical execution and original failing evidence;
-  the synthetic checkpoint does not establish historical compatibility.
+  rewards and tickets match expectations. The [API comparison](evidence/restart-state-rollback-api-2026-10-08/README.md)
+  passes 84 cases per selection through actual call, injected-pending and
+  available-state tracing paths. Disabled/pre-activation pairs match; active
+  pairs differ only in raw child balance structure. Pending snapshot creation,
+  missing-state reconstruction and the other stated exclusions remain untested.
+  Next: reconcile remaining supported-path/F1 exclusions and startup/F12
+  compatibility dispositions with the launch scope, then G1 candidate-history
+  evidence and independent review. Preserve historical execution and original
+  failing evidence; the synthetic checkpoint does not establish historical
+  compatibility.
   No production fix, activation height or waiver is selected; F11 stays open.
 - [ ] State operating limits: equal-weight forks may require intervention;
   purchase nonce gaps and retreat losses can require manual repair and funding.

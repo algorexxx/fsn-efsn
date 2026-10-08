@@ -1,6 +1,6 @@
 # Release findings and dispositions
 
-Updated 7 October 2026. This is the decision ledger for the
+Updated 8 October 2026. This is the decision ledger for the
 [selected candidate](restart-release-selection.md), under the existing
 [R1–R10 acceptance matrix](restart-release-matrix.md). It replaces the matrix's
 unclassified findings list. A disposition describes what to do; it is not a
@@ -23,7 +23,7 @@ No human review or acceptance is inferred from a test pass.
 | F8 — R3/R7/R9 | Sparse historical state, header-only reconstruction limits, storage durability and inbound-only discovery leave supported-path boundaries. | Support Linux restored LevelDB without freezer, full sync and enabled outbound dialing. Keep read-only preservation and verified restore. Do not infer power-loss safety from process exits. | Scope restriction selected; final storage/host, restart/restore, advertised TCP/UDP and DNS checks remain required. |
 | F9 — R1 | Go 1.21.3 is outside the current support window. Go 1.27.1 cannot link the inherited optional memsize integration. | Select Go 1.27.1 for qualification and the isolated B1 profiler removal. Remove its unused dependency entries. Keep the baseline replay toolchain unchanged. | Technical correction passes node build, CLI probes and same-host clean-cache binary comparison. Independent patch review and final compiler regression acceptance remain open. |
 | F10 — R1/all affected rows | D1 technically remediates the two JWT findings. The selected candidate retains x/text and an unreviewed WebSocket entry with a disputed fixed version. The text experiment removes its advisory but also changes the main Go language version and compatibility defaults. The bounded language/default review is complete; required regression and history evidence is not. Recovery has WebSocket symbol presence but no source call finding. Lower-level findings remain. Existing CI uses Go 1.19. | Follow the [dependency report](restart-release-dependencies.md). Keep D1 selected and the text experiment unselected pending the recorded coverage/historical acceptance. Prefer qualifying upstream over a private backport without a demonstrated blocker. Resolve the other corrections; replace old CI after inputs are accepted. | **Release hold:** independent D1 review, remaining dependency remediation/dispositions, module/package review, a pinned CI/build image and affected acceptance are required. Successful scans do not constitute complete security acceptance. |
-| F11 - R2/R3/G1 | Restored state tests expose inherited deletion-journal rollback defects: missing flag restoration for accounts without balance entries and a nil ordinary balance after reverting a time-locked asset. Both selected D1 and the text experiment fail identically. Later transaction and synthetic-block tests establish a durable extra zero entry when an earlier transaction leaves the child pending; active correction changes the accepted fixture block's root. | Preserve the minimal failing regressions and unchanged production selection while completing the impact review. The empty-entry direct-API case alone does not prove EVM reachability. Bounded EVM, transaction-persistence and synthetic block-import checks are complete; supported RPC/pending/tracing coverage and historical effects remain open. Any runtime correction needs historical compatibility and an explicit activation decision. | **Release hold:** complete the impact/disposition review and obtain independent consensus review. No runtime fix or waiver is selected. The completed bounded checks do not close this finding. |
+| F11 - R2/R3/G1 | Restored state tests expose inherited deletion-journal rollback defects: missing flag restoration for accounts without balance entries and a nil ordinary balance after reverting a time-locked asset. Both selected D1 and the text experiment fail identically. Later transaction and synthetic-block tests establish a durable extra zero entry when an earlier transaction leaves the child pending; active correction changes the accepted fixture block's root. | Preserve the minimal failing regressions and unchanged production selection while completing the impact review. The empty-entry direct-API case alone does not prove EVM reachability. Bounded EVM, transaction-persistence, synthetic block-import and call/injected-pending/available-state tracing checks pass; remaining supported-path exclusions and historical effects need disposition. Any runtime correction needs historical compatibility and an explicit activation decision. | **Release hold:** complete the impact/disposition review and obtain independent consensus review. No runtime fix or waiver is selected. The completed bounded checks do not close this finding. |
 | F12 — R2/R3/G5 | Current `DefaultGenesisBlock().ToBlock(nil)` produces a hash different from the registered mainnet genesis on both the selected baseline and F11 candidate. The in-memory probe does not establish the cause, actual CLI initialization behavior or any defect in the backup's stored genesis. | Keep verified restore/full sync as the supported launch path; genesis resync remains excluded. Preserve the failing equality assertion separately from synthetic configuration tests. Review the mismatch and the supported path's empty/mispointed-datadir refusal and restored identity checks. No genesis rewrite is selected. | Open disposition review under the existing G5 launch-path check. Record exact supported-command evidence and independent acceptance of the scope restriction; do not infer a mainnet genesis pass from synthetic initialization tests. |
 
 ## Evidence and source checks
@@ -181,9 +181,24 @@ No human review or acceptance is inferred from a test pass.
   receipts, gas, fees/rewards and ticket commitments meet expectations. Receiver
   ticket caches start empty. The initial invalid-base-fee fixture and exact
   correction are preserved; no runtime validation was weakened. The checkpoint
-  prefix is synthetic and directly installed. Historical compatibility, RPC/
-  pending/tracing coverage, independent review and final service rehearsal remain
-  open. No production fix or activation height is selected.
+  prefix is synthetic and directly installed. The subsequent API result is below;
+  historical compatibility, remaining coverage dispositions, independent review
+  and final service rehearsal remain open. No production fix or activation
+  height is selected.
+- F11 API rule selection (8 Oct 2026): the [API comparison](evidence/restart-state-rollback-api-2026-10-08/README.md)
+  passes two top-level tests and 84 subtests per selection with race detection.
+  Actual call/estimate and default structured-trace methods preserve the
+  disabled/pre-activation observations; only the expected child balance arrays
+  differ in the 42 active pairs. Recorded contexts, gas and return data match;
+  database key/values and the injected pending snapshots remain unchanged.
+  Test-only constructors supply the real backend/miner structs. This covers
+  snapshot lookup/copy, not miner snapshot creation, and available parent state,
+  not missing-state reconstruction. Block-trace raw-state assertions observe
+  serial preparation; worker results cover gas and return data. Intermediate
+  roots match across selections but are not an accepted-block root oracle.
+  Exact F1/F8 exclusions and provenance are retained. Next are the remaining
+  supported-path/startup dispositions, G1 candidate-history evidence and independent
+  review. F11 remains open and no production fix or activation is selected.
 
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main

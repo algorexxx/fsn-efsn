@@ -1,6 +1,6 @@
 # F11 candidate qualification specification
 
-7 October 2026. Implements the remaining review steps in the
+Updated 8 October 2026. Implements the remaining review steps in the
 [disposition proposal](restart-state-rollback-disposition.md). The
 [isolated candidate](evidence/restart-state-rollback-candidate-2026-10-07/README.md)
 is unselected and has no production activation height. This specification
@@ -64,10 +64,10 @@ These are in-process CLI tests with a synthetic purchase and unsigned block,
 not a production executable/signing rehearsal. Together with the earlier
 approval validation, they complete the bounded configuration-binding checks.
 
-**Next:** phase 4 supported calls, pending execution and tracing; the bounded
-transaction and block results are recorded below. The startup compatibility
-review, F12 disposition and
-final service/production-artifact rehearsal remain open as stated above.
+**Next:** reconcile the remaining supported-path/F1 exclusions and startup/F12
+compatibility dispositions with the launch scope. The bounded transaction,
+block and API results are recorded below. Candidate historical compatibility,
+independent review and final service/production-artifact rehearsal remain open.
 
 Use a synthetic schedule in each fixture, with explicit literal expectations
 at its height minus one, height and height plus one. Mainnet defaults modified
@@ -147,8 +147,28 @@ zero-base-fee attempt and exact fixture correction are retained.
 The parent checkpoint is installed directly. These are accepted synthetic
 descendants, not executed historical prefixes or a continuous activation-crossing
 chain. The miner worker/Seal timer and mixed-version import were not exercised.
-**Still open:** supported calls/pending/tracing, historical compatibility,
-independent consensus review and final release/service rehearsal.
+
+**API rule selection complete within the stated fixture scope.** The
+[API comparison](evidence/restart-state-rollback-api-2026-10-08/README.md)
+passes two top-level tests and 84 subtests per selection: 68 calls/pending cases
+and 16 historical tracing/intermediate-root cases. Disabled/pre-activation
+observations match. The 42 active pairs differ only in the intended raw child
+balance structure; recorded contexts, gas and return data match. Stored database
+key/values and injected pending snapshots remain unchanged by the operations.
+
+These are in-process API methods using available state. The pending snapshot
+is injected; miner construction is not exercised. Block-trace raw-state checks
+observe serial preparation, while worker results are checked for gas/revert
+data. Missing-state reconstruction, custom tracers, transport and the other
+explicit exclusions remain under F1/F8. Intermediate-root equality here is not
+an accepted-block root oracle: that API flushes pending objects after every
+transaction and omits consensus finalization. The linked report records the
+precise methods, constructor seams, observations and exclusions.
+
+**Still open:** remaining supported-path/F1 dispositions, startup/F12
+compatibility review, candidate historical compatibility, independent consensus
+review and final release/service rehearsal. The bounded API pass closes none
+of those broader gates.
 
 Establish finalization/commit outcomes separately from EVM-call observations.
 Then establish the relevant supported block-processing outcomes, comparing

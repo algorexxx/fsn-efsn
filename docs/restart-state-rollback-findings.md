@@ -21,8 +21,11 @@ correction prevents it and changes the resulting state root. The time lock
 remains restored. The [block comparison](evidence/restart-state-rollback-block-v2-2026-10-07/README.md)
 additionally passes 16 cases per selection through block construction, normal
 import and fresh-process reopening: the defect reaches accepted synthetic
-blocks, and the active correction changes their roots. Historical occurrence
-remains unverified. The original Opus observations below retain their original scope;
+blocks, and the active correction changes their roots. The [API comparison](evidence/restart-state-rollback-api-2026-10-08/README.md)
+now passes 84 cases per selection through call, injected-pending and
+available-state tracing methods, with only the expected active raw-balance
+differences. Historical occurrence remains unverified. The original Opus
+observations below retain their original scope;
 the current next steps are in [Open items for Astra](#open-items-for-astra).
 
 ## Scope
@@ -319,11 +322,16 @@ unselected text update are unchanged.
    fresh-process reopening, with literal state/receipt/gas/reward expectations
    and ticket conservation/commitment checks. These are accepted synthetic
    descendants of directly installed checkpoints, not historical-chain evidence.
-   Supported calls/pending/tracing checks are next. Configuration tests use a
-   registered synthetic network; the separate default-genesis mismatch is F12.
+   The [API comparison](evidence/restart-state-rollback-api-2026-10-08/README.md)
+   now passes 84 cases per selection for call, injected-pending and
+   available-state tracing rule selection. The report distinguishes serial
+   block-trace state from worker results and lists the untested paths.
+   Configuration tests use a registered synthetic network; the separate
+   default-genesis mismatch is F12.
 2. Complete that qualification and independent consensus review before selecting
-   a production change. Supported-path coverage and historical compatibility
-   remain open; no activation height or waiver is selected.
+   a production change. Reconcile remaining supported-path/F1 exclusions and
+   startup/F12 compatibility dispositions with the launch scope. Candidate
+   historical compatibility remains open; no activation height or waiver is selected.
 3. F11-b source-call review is complete for the inspected production tree: no
    separate production/RPC deletion caller was found. Retain the latent/direct-
    API-only classification and failing regression for independent disposition;
