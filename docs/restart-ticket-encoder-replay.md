@@ -100,8 +100,10 @@ the identical retained replay executable, validated its starting inventory and
 advanced in place without a new database copy. The separate 2,400,000 recovery
 checkpoint remains intact. Both cold checks and all nine preservation checks pass.
 
-The next justified interval is **3,600,000 to 4,500,000**, subject to restored
-capacity. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
+The next justified interval is **3,600,000 to 4,500,000**. Its [inputs are prepared](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md), but its read-only preflight refused D: capacity.
+No writer launched. The 15:02:59 UTC check found 54.19 GiB D: free; the required
+starting floor remains above 60 GiB. Await the user's capacity response; do not
+retry dispatch or repeat the question while capacity is unresolved. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
 external timeout plus 20-second kill grace. Plan an 11 GiB sampled target ceiling:
 the completed 900,000-block job grew the target from 3.73 to 7.06 GiB, and the new
 ceiling leaves about 3.94 GiB growth allowance. This is a finite stop threshold,

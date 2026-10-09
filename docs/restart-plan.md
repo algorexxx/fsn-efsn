@@ -27,7 +27,9 @@ The 900,000-block in-place job took 182.972 minutes and finished verification at
 retained baseline endpoint. All preservation checks pass, including the separate
 2,400,000 recovery checkpoint. The next range is blocked on capacity: D: has
 53.78 GiB free versus the unchanged 60 GiB starting floor. No new writer or
-automatic cleanup has started. See the
+automatic cleanup has started. The [4,500,000 inputs](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md) are prepared, with a preserved
+capacity refusal and no dispatch. Await the user's capacity response before
+further replay; useful small independent acceptance checks may continue. See the
 [replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
 capacity accounting, finite limits and autonomous continuation.
 Further history, independent review, 17 missing exported blobs and the
