@@ -1,0 +1,58 @@
+{
+  "recorded_utc": "2026-10-09T23:30:54.816377+00:00",
+  "status": "proposal only; no archive, removal or replay launched",
+  "capacity_source": "qualification/run.json remaining_bytes from completed read-only inspection",
+  "capacity_bytes": {
+    "/home/rehearsal/results": 23312556032,
+    "/mnt/d": 62967844864
+  },
+  "closed_allocated_bytes": 11828121600,
+  "previous_target_ceiling_bytes": 11811160064,
+  "replay_d_starting_floor_bytes": 64424509440,
+  "blockers": [
+    "target exceeds previous declared ceiling",
+    "D: free capacity below unchanged replay starting floor"
+  ],
+  "windows_fixture_observation": "PowerShell recursive file metadata; no fixture content read or hash",
+  "windows_fixtures": [
+    {
+      "path": "D:/FusionRehearsal/abandonment-reorg-2026-09-27",
+      "files": 1149,
+      "logical_bytes": 1185671227
+    },
+    {
+      "path": "D:/FusionRehearsal/equal-weight-2026-09-27",
+      "files": 740,
+      "logical_bytes": 1182987280
+    },
+    {
+      "path": "D:/FusionRehearsal/stale-intent-2026-09-27",
+      "files": 815,
+      "logical_bytes": 1183572109
+    },
+    {
+      "path": "D:/FusionRehearsal/live-abandonment-repair-2026-09-27",
+      "files": 1001,
+      "logical_bytes": 1185425749
+    }
+  ],
+  "linux_checkpoint_observation": "bounded du -sB1, exit 0; no checkpoint content read or hash",
+  "linux_checkpoints": [
+    {
+      "path": "/home/rehearsal/replay/candidate-ticket-encoding-2000000",
+      "allocated_bytes": 2282467328
+    },
+    {
+      "path": "/home/rehearsal/replay/candidate-ticket-encoding-2200000",
+      "allocated_bytes": 2596163584
+    }
+  ],
+  "w_observation": {
+    "mapping": "\\\\192.168.1.250\\mnemosyne1",
+    "free_bytes": 3846512762880,
+    "FusionRestart_exists": true,
+    "source": "escalated PowerShell Get-PSDrive and Test-Path, read only"
+  },
+  "proposal_file": "../../restart-storage-next-step.md",
+  "proposal_sha256": "25dfd74fdbe8dd8edb7814b5b31bd6ebaf57987eb19b4dad4e9a0c33101c1eee"
+}

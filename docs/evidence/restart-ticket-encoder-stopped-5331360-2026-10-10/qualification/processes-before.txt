@@ -1,0 +1,53 @@
+    PID ELAPSED COMMAND
+      1       2 /sbin/init
+      2       2 /init
+      8       2 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+     51       1 /usr/lib/systemd/systemd-journald
+    103       1 /usr/lib/systemd/systemd-udevd
+    109       1 (udev-worker)
+    110       1 (udev-worker)
+    111       1 (udev-worker)
+    112       1 (udev-worker)
+    113       1 (udev-worker)
+    114       1 (udev-worker)
+    115       1 (udev-worker)
+    116       1 (udev-worker)
+    117       1 (udev-worker)
+    118       1 (udev-worker)
+    119       1 (udev-worker)
+    120       1 (udev-worker)
+    121       1 (udev-worker)
+    122       1 (udev-worker)
+    123       1 (udev-worker)
+    124       1 (udev-worker)
+    125       1 (udev-worker)
+    126       1 (udev-worker)
+    127       1 (udev-worker)
+    128       1 (udev-worker)
+    129       1 (udev-worker)
+    130       1 (udev-worker)
+    131       1 (udev-worker)
+    132       1 (udev-worker)
+    155       1 /usr/lib/systemd/systemd-resolved
+    156       1 /usr/lib/systemd/systemd-timesyncd
+    162       1 /usr/sbin/cron -f -P
+    163       1 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    169       1 /usr/lib/snapd/snapd
+    170       1 /usr/lib/systemd/systemd-logind
+    172       1 /usr/libexec/wsl-pro-service
+    177       1 /usr/sbin/rsyslogd -n -iNONE
+    197       1 /sbin/agetty -o -p -- \u --noclear - linux
+    198       1 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+    236       1 /usr/lib/systemd/systemd-timedated
+    264       0 /init
+    265       0 /init
+    267       0 timeout --kill-after=20s 20m python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/launch.py
+    274       0 /bin/login -f
+    278       0 /bin/journalctl --boot 0 --dmesg --output short-monotonic --quiet --no-pager --no-hostname
+    322       0 /usr/lib/systemd/systemd --user
+    323       0 (sd-pam)
+    334       0 -bash
+    386       0 python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/launch.py net:[4026531833] mnt:[4026532583]
+    394       0 runuser -u rehearsal -- python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/run.py net:[4026531833] mnt:[4026532583] /tmp/f12-stopped-source-l3ljomoy /tmp/f12-stopped-checkpoint-q7qdg7m5 /tmp/f12-stopped-closed-nthhj_1v
+    395       0 python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/run.py net:[4026531833] mnt:[4026532583] /tmp/f12-stopped-source-l3ljomoy /tmp/f12-stopped-checkpoint-q7qdg7m5 /tmp/f12-stopped-closed-nthhj_1v
+    400       0 ps -eo pid,etimes,args

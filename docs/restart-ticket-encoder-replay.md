@@ -1,6 +1,17 @@
 # Candidate historical replay
 
-Updated 9 October 2026. **Completed through 4,500,000 with both cold checks.**
+Updated 10 October 2026. **Cold-verified through 5,331,360; replay stopped for storage.**
+The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
+stopped at its declared sampled 11 GiB allocation ceiling. Its requested range
+remains incomplete. The [separate read-only inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
+passes at 5,331,360, with complete header, state/ticket/receipt commitments, bloom
+and TD matching the backup. It reconstructs 3,728 tickets with four transactions/
+receipts. All twelve preservation checks and the evidence verifier pass; all
+5,591 target hashes stay unchanged and 1,616 prior evidence files verify.
+Candidate post-legacy coverage is 2,651,360 blocks. There is no final warm ticket
+count from the stopped attempt. F12/G1 remain open.
+
+**Last fully completed requested range: 4,500,000.**
 The [latest 900,000-block job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/RESULTS.md)
 passes all seven commands, all nine additional preservation checks and automatic
 verification. Replay took 181.781 minutes; verified completion was 19:20:56 UTC.
@@ -12,12 +23,12 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Closed allocation is 8,907,165,696 bytes (8.295 GiB). Final free capacity is
-24.45 GiB Linux / 63.68 GiB D:. The separate verified 2,400,000 recovery checkpoint
+Current closed allocation is 11,828,121,600 bytes (11.016 GiB). Final inspection
+free capacity is 21.71 GiB Linux / 58.64 GiB D:. The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working-database
 inventories are historical records, not separate retained copies.
 
-The former D: capacity blocker is resolved. At Peter's request, the
+The earlier D: capacity blocker was resolved. At Peter's request, the
 [verified old-fixture archive](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md)
 preserves 9,134 files / 11.532 GiB on W: and retires only the ten named September
 D: fixture roots. D: free space increased by 11.517 GiB. Actual protected working/
@@ -26,7 +37,7 @@ identities match sealed evidence. The container timestamp discrepancy remains
 recorded; it was not used as a substitute for those actual-file checks.
 [Fresh capacity preflight](evidence/restart-ticket-encoder-job-4500000-2026-10-09/preflight-ready-after-archive-2026-10-09.json)
 passes at 25.805 GiB Linux / 65.787 GiB D:. No compaction or further cleanup is
-needed for the next range. The first dispatch refused an observer input's CRLF
+needed for that range. The first dispatch refused an observer input's CRLF
 bytes before running any test command or replay. Its [sealed failure](evidence/restart-ticket-encoder-job-4500000-2026-10-09/STATUS.md)
 remains preserved. The [fresh corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
 uses exact prior LF bytes with one endpoint substitution. Its fresh preflight
@@ -34,11 +45,15 @@ passes at 16:14:05 UTC. The [corrected job](evidence/restart-ticket-encoder-job-
 was dispatched at 16:15:14 UTC and completed verification at 19:20:56 UTC.
 Its immutable preparation/status files retain their original pending wording;
 the completion, verification and linked result supersede that status.
-No limit, runtime or release selection changed. The subsequent [5,400,000 job](evidence/restart-ticket-encoder-job-5400000-2026-10-09/STATUS.md)
+No limit, runtime or release selection changed. The subsequent [5,400,000 job](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
 was dispatched at 19:32:26 UTC following the passing complete-backup preflight.
 All startup checks passed; replay began at 19:34:33 UTC with a passing first
-allocation sample. Completion remains pending; do not duplicate the writer
-or hash its working database while live.
+allocation sample. It stopped for size at 23:05 UTC. The read-only follow-up
+completed evidence verification at 23:27:58 UTC. No writer is running now.
+Another replay is blocked by the unchanged 60 GiB D: starting floor and the
+existing target exceeding the old ceiling. The [storage proposal](restart-storage-next-step.md)
+names six cold roots for verified archival and retirement; additional local
+removal requires Peter's approval. Do not change the stopped job or retry it.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
@@ -57,7 +72,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through 4,500,000 and passes cold checks, including 1,820,000 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 4,500,000 remains open. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through the cold-verified stopped checkpoint at 5,331,360, including 2,651,360 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 5,331,360 remains open; the requested 5,400,000 range is incomplete. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
@@ -117,30 +132,39 @@ checks and all nine preservation checks pass. The subsequent
 also passes at 15,130,080 with unchanged backup metadata and candidate source.
 No extra backup copy or writable startup was needed.
 
-The next justified historical interval is **4,500,000 to 5,400,000**, in place,
-with the same retained executable/controller and separate 2,400,000 recovery
-checkpoint. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
-external timeout plus 20-second kill grace, and retain the **11 GiB sampled target
-ceiling**. The last interval grew by about 1.24 GiB; the current 8.295 GiB leaves
-about 2.70 GiB below that ceiling. Growth may differ, so this remains a finite
-stop threshold, not a storage guarantee. Fresh capacity and exact prior endpoint/
-identity/inventory checks are required before dispatch. Further candidate history
-is justified; extending the unchanged baseline again is unnecessary without a
-specific diagnostic question. The [prepared range](evidence/restart-ticket-encoder-job-5400000-2026-10-09/STATUS.md)
-was dispatched at 19:32:26 UTC. Fresh capacity passed at 19:31:25 UTC with
-24.51 GiB Linux / 63.68 GiB D: free, above required 23.70/60 GiB starting floors.
-Replay started at 19:34:33 UTC (PID 635); the first allocation sample passed at
-8.295 GiB. No verified endpoint beyond 4,500,000 is claimed until its cold checks pass.
+The attempted **4,500,000 to 5,400,000** continuation used the same retained
+executable/controller, separate 2,400,000 recovery checkpoint, six-hour clean
+stop, 6h15m Go timeout, 6h30m external timeout plus 20-second grace, and an
+11 GiB sampled target ceiling. Fresh capacity passed at 19:31:25 UTC with
+24.51 GiB Linux / 63.68 GiB D: free. The size monitor later requested a stop;
+normal cleanup persisted exactly **5,331,360**, independently verified by both
+cold checks. The failed requested range and original STOP remain intact.
 
-Before any writer starts, require the preceding job's successful completion and
-evidence verification, exact endpoint, complete cold file inventory and unchanged
+Next resolve the [specific storage proposal](restart-storage-next-step.md).
+Its four older Windows fixture roots could free about 4.4 GiB of host space;
+two older Linux checkpoints could free about 4.5 GiB inside the filesystem.
+These are estimated gains subject to full cold archival and actual post-removal
+checks. No removal, compaction or limit extension is automatic. While the
+decision is pending, do not start a writer or repeat unchanged passing tests.
+
+After capacity is available, declare a fresh bounded job from the verified
+stopped checkpoint, explicitly validating its inspection rather than requiring
+or fabricating a success result for the failed job. Check exact endpoint,
+inventory, identity, source and toolchain; retain the separate recovery checkpoint.
+Select finite endpoint/growth/time limits from fresh capacity and evidence value.
+Further candidate history is useful; another unchanged baseline pass is not
+justified without a diagnostic question. No next replay job is prepared or running.
+
+Before any writer starts, require successful completion/evidence verification
+of its accepted checkpoint, or an explicitly qualified stopped-checkpoint
+inspection with the failed attempt preserved. Require exact endpoint, complete cold file inventory and unchanged
 identity/source/toolchain. Keep the separate verified recovery checkpoint at
 /home/rehearsal/replay/candidate-ticket-encoding-2400000-v2. In-place continuation
 intentionally changes the working database; it must not claim to preserve the
 previous working checkpoint's bytes after execution.
 
-Capacity is charged for **remaining growth**, because the existing 8.295 GiB
-working database is already allocated. The resume preflight requires Linux
+Capacity is charged for **remaining growth**, because the existing working
+database is already allocated. The resume preflight requires Linux
 free space greater than 20 GiB reserve + remaining growth to the declared target ceiling + 1 GiB
 preparation margin. D: must exceed both 60 GiB and its 50 GiB reserve + remaining
 growth + 1 GiB margin. Copy mode retains its original 30/60 GiB minimums.
@@ -163,15 +187,16 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-The active job's runtime status is
+The stopped job's runtime status is
 /home/rehearsal/results/restart-ticket-encoder-job-5400000-2026-10-09/status.json.
 Host dispatch logs are under repo tmp/replay-job-5400000-2026-10-09.
 The hourly continuation id is continue-fusion-restart-testing.
-The hidden Windows dispatcher keeps WSL attached after the launching shell
-returns. Keep Windows awake and the app running for scheduled follow-up.
-While replay runs, useful independent work is the documented restored-startup/
-identity-refusal and recovery/handover acceptance gaps. Do not compete with the
-replay for large disk workloads. Further candidate history and independent
+The dispatcher has exited and the stopped-checkpoint inspection has completed.
+Future hidden Windows dispatchers keep WSL attached after the launching shell
+returns. Keep Windows awake and the app running during scheduled work.
+While a future replay runs, useful independent work is limited to documented
+acceptance gaps that do not repeat passing checks or compete for large disk
+workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.
 
 The independent [reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)

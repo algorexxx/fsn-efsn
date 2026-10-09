@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 9 October 2026. Working branch: `codex/restart-investigation-wip`.
+Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -35,13 +35,22 @@ The first 4,500,000 job's CRLF input refusal remains preserved; the corrected
 job's completed evidence passes. Its preparation/status files retain historical
 pending wording, superseded by the linked result and completion/verification.
 The [complete-backup read-only startup check](evidence/restart-restored-backup-preflight-v2-2026-10-09/RESULTS.md)
-now passes with unchanged backup metadata and runtime source. Next prepare
-4,500,000–5,400,000 in place with the existing six-hour clean stop and
-11 GiB sampled ceiling after fresh capacity/identity checks. The [next job](evidence/restart-ticket-encoder-job-5400000-2026-10-09/STATUS.md)
-was dispatched at 19:32:26 UTC after fresh capacity passed. All starting checks
-passed; replay began at 19:34:33 UTC with a passing first size sample. Completion
-remains pending; do not duplicate its writer or hash its
-working database while live. See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
+now passes with unchanged backup metadata and runtime source. The subsequent
+[5,400,000 job](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
+stopped at its declared 11 GiB sampled allocation ceiling and remains incomplete.
+A separate [cold inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
+verifies the saved head at **5,331,360**: header, state/tickets, receipts, bloom
+and TD match preserved history; all 5,591 target files remain unchanged. All
+twelve inspection preservation checks and evidence verification pass. Candidate
+post-legacy coverage is now 2,651,360 blocks; the last fully completed requested
+range remains 4,500,000. Closed allocation is 11.016 GiB, with about 21.71 GiB
+Linux / 58.64 GiB D: free. No replay writer is running. D: is below the unchanged
+60 GiB starting floor, and the target exceeds the old job's ceiling.
+The [specific storage proposal](restart-storage-next-step.md) identifies six older
+cold roots for verified W: archival and retirement, subject to Peter's approval
+of the additional local removals. Preserve the failed run, working state and
+separate recovery checkpoint; no limits were changed and no retry started.
+See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
 Further history, independent review, 17 missing exported blobs and the
 restore-identity safeguard remain open.
 The [restored-reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)
@@ -178,11 +187,18 @@ All seven commands, both cold checks and nine preservation checks pass. Its
 endpoint matches the fresh backup reference; all 4,182 target hashes remain
 unchanged during inspection. Candidate post-legacy coverage is 1,820,000 blocks.
 Allocation is 8.295 GiB; final free capacity is 24.45 GiB Linux / 63.68 GiB D:.
-The retained working database can advance only after exact closed-inventory and
-capacity checks. Prior working bytes then remain historical evidence rather
-than a separate checkpoint. The separate 2,400,000 recovery checkpoint, stopped
-2,356,032 attempt and original STOP remain preserved. Prepare the next range only
-after the now-passing complete-backup read-only startup check; recheck capacity.
+The later 5,400,000 attempt stopped at its declared allocation ceiling; its
+[independent cold inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
+passes at 5,331,360. That saved checkpoint is verified, while the requested range
+remains incomplete. Current candidate post-legacy coverage is 2,651,360 blocks.
+The retained working database can advance only through a fresh job that verifies
+that inspection's exact closed inventory/identity and has sufficient capacity.
+Prior working bytes then remain historical evidence rather than a separate
+checkpoint. The separate 2,400,000 recovery checkpoint, stopped 2,356,032 attempt
+and original STOP remain preserved. The complete-backup read-only startup check
+already passes. The remaining immediate blocker is the
+[storage decision](restart-storage-next-step.md); do not repeat passing checks
+or start a writer while that decision is pending.
 The later user request permits the linked exact old-fixture archival/removal.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.

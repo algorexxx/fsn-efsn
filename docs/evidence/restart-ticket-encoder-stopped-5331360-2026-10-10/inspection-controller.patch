@@ -1,0 +1,251 @@
+--- a/run.py
++++ b/run.py
+@@ -10,7 +10,7 @@
+ sys.dont_write_bytecode = True
+ HERE = Path(__file__).resolve().parent
+ RUN = Path('/home/rehearsal/results')/HERE.name
+-ATTEMPT = HERE.parent/'restart-ticket-encoder-replay-2400000-2026-10-09'
++ATTEMPT = HERE.parent/'restart-ticket-encoder-job-5400000-2026-10-09'
+ PRIOR_RUN = Path('/home/rehearsal/results')/ATTEMPT.name
+ BASE = HERE.parent/'restart-ticket-encoder-replay-100000-2026-10-08'
+ REPLAY_SHA = 'b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245'
+@@ -18,17 +18,29 @@
+ r = importlib.util.module_from_spec(module)
+ module.loader.exec_module(r)
+ r.HERE,r.RUN = HERE,RUN
++original_execute = r.execute
++
++
++def execute_with_reserve(name, argv, cwd, env):
++    free = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
++    r.record.setdefault('command_capacity', []).append({'name':name,'time':r.now(),'free_bytes':free})
++    assert free['/home/rehearsal/results'] > 20*1024**3 and free['/mnt/d'] > 50*1024**3
++    r.save()
++    original_execute(name, argv, cwd, env)
++
++
++r.execute = execute_with_reserve
+ 
+ 
+ def inspect(backup,checkpoint,closed):
+     prior = json.loads((ATTEMPT/'qualification/run.json').read_text(encoding='utf-8'))
+-    assert prior['completed'] is False and prior['stop_reason'] == '30-minute initial range allowance reached'
++    assert prior['completed'] is False and prior['stop_reason'] == 'declared target allocation allowance reached'
+     assert prior['commands'][-1]['exit'] == 1 and prior['commands'][-1]['name'] == 'replay'
+     output = (ATTEMPT/'qualification/replay.stdout.txt').read_text(encoding='utf-8')
+-    assert re.findall(r'replay stopped by stop file before block (\d+);',output) == ['2356033']
++    assert re.findall(r'replay stopped by stop file before block (\d+);',output) == ['5331361']
+     assert 'replay matched:' not in output
+     for name,digest in prior['input_sha256'].items():
+-        assert r.sha(ATTEMPT/name) == digest
++        assert r.sha(ATTEMPT/'inputs'/name) == digest
+     manifests = dict(prior['previous_manifest_sha256'],**{ATTEMPT.name:r.sha(ATTEMPT/'SHA256SUMS')})
+     count = 0
+     for name,digest in manifests.items():
+@@ -44,7 +56,7 @@
+     assert r.record['backup_before'] == prior['backup_after']
+     assert r.record['baseline_before'] == prior['baseline_after']
+     r.record['checkpoint_before_sha256'] = r.inventory(checkpoint)
+-    assert r.record['checkpoint_before_sha256'] == prior['checkpoint_before_sha256']
++    assert r.record['checkpoint_before_sha256'] == prior['recovery_checkpoint_sha256']
+     r.record['target_before_cold_sha256'] = r.inventory(closed)
+     r.record['selected_inventory'] = r.inventory(r.SELECTED)
+     r.record['candidate_inventory'] = r.inventory(PRIOR_RUN/'node')
+@@ -61,12 +73,13 @@
+     assert r.sha(closed/'replay-identity.json') == prior['checkpoint_identity_sha256']
+     (RUN/'replay-identity.json').write_bytes(identity)
+     r.record['checkpoint_identity_sha256'] = prior['checkpoint_identity_sha256']
+-    old = (ATTEMPT/'details_test.go').read_bytes()
+-    assert old.count(b'const height = uint64(2400000)') == 1
+-    assert (HERE/'details_test.go').read_bytes() == old.replace(b'const height = uint64(2400000)',b'const height = uint64(2356032)',1)
++    r.record['recovery_bundle'] = 'restart-ticket-encoder-replay-2400000-v2-2026-10-09'
++    old = (ATTEMPT/'inputs/details_test.go').read_bytes()
++    assert old.count(b'const height = uint64(5400000)') == 1
++    assert (HERE/'details_test.go').read_bytes() == old.replace(b'const height = uint64(5400000)',b'const height = uint64(5331360)',1)
+     env = r.environment(backup)
+     env.pop('FUSION_RESTART_REPLAY_END')
+-    env.update(FUSION_RESTART_INSPECT_REPLAY_DIR=str(closed),FUSION_RESTART_INSPECT_REPLAY_HEIGHT='2356032')
++    env.update(FUSION_RESTART_INSPECT_REPLAY_DIR=str(closed),FUSION_RESTART_INSPECT_REPLAY_HEIGHT='5331360')
+     r.record['runtime_environment'] = {k:v for k,v in env.items() if k.startswith(('GO','FUSION_')) or k in ['CGO_ENABLED','TMPDIR']}
+     r.record['toolchain'] = {'go_binary_sha256':r.sha(r.TOOLCHAIN/'bin/go'),'go_env':json.loads(subprocess.check_output(['go','env','-json'],cwd=PRIOR_RUN/'node',env=env,text=True))}
+     assert r.record['toolchain']['go_binary_sha256'] == prior['toolchain']['go_binary_sha256']
+@@ -86,7 +99,7 @@
+         observations[name] = json.loads(matches[0])
+     cold = observations['cold-details'].copy()
+     tickets = cold.pop('TicketCount')
+-    assert tickets > 0 and cold == observations['reference'] and cold['Number'] == 2356032
++    assert tickets > 0 and cold == observations['reference'] and cold['Number'] == 5331360
+     r.record['endpoint_observations'] = observations
+     r.record['inspect_passed'] = True
+ 
+@@ -112,7 +125,8 @@
+     r.record['remaining_bytes'] = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
+     measured = subprocess.run(['timeout','--kill-after=2s','15s','du','-sB1',str(closed)],capture_output=True,text=True)
+     r.record['closed_size_measurement'] = {'exit':measured.returncode,'stdout':measured.stdout,'stderr':measured.stderr}
+-    r.record['completed'] = r.record.get('inspect_passed',False) and all(checks.values()) and not r.record.get('failures') and measured.returncode == 0
++    r.record['result_logical_bytes'] = sum(p.stat().st_size for p in RUN.rglob('*') if p.is_file())
++    r.record['completed'] = r.record['result_logical_bytes'] < 256*1024**2 and r.record.get('inspect_passed',False) and all(checks.values()) and not r.record.get('failures') and measured.returncode == 0
+     r.record['finished'] = r.now()
+     r.save()
+     shutil.copytree(RUN,HERE/'qualification',ignore=shutil.ignore_patterns('bin','tmp'))
+@@ -128,13 +142,15 @@
+ links = subprocess.check_output(['ip','-brief','link'],text=True)
+ assert len(links.splitlines()) == 1 and links.startswith('lo ') and 'DOWN' in links
+ mounts = {name:r.mount_description(path) for name,path in [('backup_mount',backup),('checkpoint_mount',checkpoint),('closed_mount',closed)]}
++capacity = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
++assert capacity['/home/rehearsal/results'] > 21*1024**3 and capacity['/mnt/d'] > 51*1024**3
+ RUN.mkdir()
+ (RUN/'bin').mkdir()
+ (RUN/'tmp').mkdir()
+ processes = subprocess.check_output(['ps','-eo','pid,etimes,args'],text=True)
+ (RUN/'processes-before.txt').write_text(processes,encoding='utf-8')
+ assert not re.search(r'^\s*\d+\s+\d+\s+/\S*/(?:replay-tests|efsn)(?:\s|$)',processes,re.M)
+-r.record = dict(mounts,started=r.now(),uid=os.getuid(),namespace=os.readlink('/proc/self/ns/net'),mount_namespace=os.readlink('/proc/self/ns/mnt'),parent_namespace=parent_net,parent_mount_namespace=parent_mount,links=links,input_sha256=r.inventory(HERE),commands=[],requested_attempt_height=2400000,inspection_height=2356032)
++r.record = dict(mounts,starting_capacity_bytes=capacity,started=r.now(),uid=os.getuid(),namespace=os.readlink('/proc/self/ns/net'),mount_namespace=os.readlink('/proc/self/ns/mnt'),parent_namespace=parent_net,parent_mount_namespace=parent_mount,links=links,input_sha256=r.inventory(HERE),commands=[],requested_attempt_height=5400000,inspection_height=5331360)
+ r.save()
+ try:
+     inspect(backup,checkpoint,closed)
+--- a/launch.py
++++ b/launch.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+ import fcntl
++import hashlib
+ import os
+ import subprocess
+ import sys
+@@ -7,7 +8,11 @@
+ 
+ HERE = Path(__file__).resolve().parent
+ RUN = Path('/home/rehearsal/results')/HERE.name
+-PATHS = [Path('/home/rehearsal/data/efsn/chaindata'), Path('/home/rehearsal/replay/candidate-ticket-encoding-2200000'), Path('/home/rehearsal/replay/candidate-ticket-encoding-2400000')]
++PATHS = [Path('/home/rehearsal/data/efsn/chaindata'), Path('/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2'), Path('/home/rehearsal/replay/candidate-ticket-encoding-working')]
++
++for line in (HERE/'INPUT_SHA256SUMS').read_text(encoding='utf-8').splitlines():
++    digest,name = line.split(None,1)
++    assert hashlib.sha256((HERE/name).read_bytes()).hexdigest() == digest,name
+ 
+ assert os.getuid() == 0 and not RUN.exists() and not (HERE/'qualification').exists()
+ if len(sys.argv) == 1:
+@@ -19,6 +24,15 @@
+ locks = [open(str(path)+'.run.lock','a',encoding='utf-8') for path in PATHS[1:]]
+ for lock in locks:
+     fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
++database_locks = [(path/'LOCK').open('rb') for path in PATHS]
++for lock in database_locks:
++    fcntl.flock(lock,fcntl.LOCK_SH|fcntl.LOCK_NB)
++for folder in Path('/proc').iterdir():
++    if folder.name.isdigit():
++        try:
++            assert (folder/'comm').read_text(encoding='utf-8').strip() not in ['efsn','replay-tests','observer']
++        except (FileNotFoundError,ProcessLookupError):
++            pass
+ subprocess.run(['mount','--make-rprivate','/'],check=True)
+ directories = [tempfile.mkdtemp(prefix='f12-stopped-'+name+'-') for name in ['source','checkpoint','closed']]
+ mounted = []
+--- a/verify.py
++++ b/verify.py
+@@ -7,7 +7,7 @@
+ 
+ HERE = Path(__file__).resolve().parent
+ Q = HERE/'qualification'
+-ATTEMPT = HERE.parent/'restart-ticket-encoder-replay-2400000-2026-10-09'
++ATTEMPT = HERE.parent/'restart-ticket-encoder-job-5400000-2026-10-09'
+ BASE = HERE.parent/'restart-ticket-encoder-replay-100000-2026-10-08'
+ REPLAY_SHA = 'b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245'
+ 
+@@ -21,21 +21,21 @@
+ assert r['completed'] and r['inspect_passed'] and not r.get('failures')
+ assert len(r['preservation_checks']) == 12 and all(r['preservation_checks'].values())
+ assert not prior['completed'] and not prior.get('replay_passed')
+-assert prior['stop_reason'] == '30-minute initial range allowance reached'
++assert prior['stop_reason'] == 'declared target allocation allowance reached'
+ assert [c['exit'] for c in prior['commands']] == [0,0,0,0,1]
+-assert all(prior[n] for n in ['backup_unchanged','baselines_unchanged','selected_unchanged','candidate_unchanged','inputs_unchanged','copy_verified'])
+-assert len(prior['additional_preservation_checks']) == 7 and all(prior['additional_preservation_checks'].values())
++assert all(prior[n] for n in ['backup_unchanged','baselines_unchanged','selected_unchanged','candidate_unchanged','inputs_unchanged','resume_verified'])
++assert len(prior['additional_preservation_checks']) == 9 and all(prior['additional_preservation_checks'].values())
+ output = (ATTEMPT/'qualification/replay.stdout.txt').read_text(encoding='utf-8')
+-assert re.findall(r'replay stopped by stop file before block (\d+);',output) == ['2356033']
++assert re.findall(r'replay stopped by stop file before block (\d+);',output) == ['5331361']
+ assert output.endswith('FAIL\n') and 'replay matched:' not in output
+ assert re.findall(r'^--- FAIL: (\S+)',output,re.M) == ['TestPreservedHistoryReplay']
+ assert 'legacyCheckpointRangeEnd=2680000' in output
+-assert r['inspection_height'] == 2356032 and r['requested_attempt_height'] == 2400000
++assert r['inspection_height'] == 5331360 and r['requested_attempt_height'] == 5400000
+ assert r['uid'] == 1000 and r['namespace'] != r['parent_namespace'] and r['mount_namespace'] != r['parent_mount_namespace']
+ assert len(r['links'].splitlines()) == 1 and r['links'].startswith('lo ') and 'DOWN' in r['links']
+ for name in ['backup_mount','checkpoint_mount','closed_mount']:
+     assert 'ro' in r[name]['options'].split(',')
+-for record,directory in [(prior,ATTEMPT),(r,HERE)]:
++for record,directory in [(prior,ATTEMPT/'inputs'),(r,HERE)]:
+     for name,digest in record['input_sha256'].items():
+         assert sha(directory/name) == digest,name
+ count = 0
+@@ -46,10 +46,11 @@
+         expected,relative = line.split(None,1)
+         assert sha(directory/relative) == expected,(name,relative)
+         count += 1
+-assert count == r['previous_files_verified'] == prior['previous_files_verified']+29
++assert count == r['previous_files_verified'] == prior['previous_files_verified']+len((ATTEMPT/'SHA256SUMS').read_text(encoding='utf-8').splitlines())
+ assert r['imported_runner_sha256'] == sha(BASE/'run.py')
+-assert r['checkpoint_before_sha256'] == prior['checkpoint_before_sha256']
+-assert len(r['checkpoint_before_sha256']) == 1157
++assert r['checkpoint_before_sha256'] == prior['recovery_checkpoint_sha256']
++recovery = json.loads((HERE.parent/r['recovery_bundle']/'qualification/run.json').read_text(encoding='utf-8'))
++assert r['checkpoint_before_sha256'] == recovery['target_before_cold_sha256']
+ assert r['selected_inventory'] == prior['selected_inventory'] and r['candidate_inventory'] == prior['candidate_inventory']
+ assert r['binary_sha256'] == prior['binary_sha256'] == REPLAY_SHA
+ assert r['toolchain']['go_binary_sha256'] == prior['toolchain']['go_binary_sha256']
+@@ -57,15 +58,15 @@
+ assert env['GOVERSION'] == 'go1.27.1' and env['GOENV'] == '' and env['GOFLAGS'] == '-mod=readonly'
+ assert env['GOPROXY'] == env['GOSUMDB'] == 'off' and env['GOTOOLCHAIN'] == 'local'
+ runtime = r['runtime_environment']
+-assert runtime['GOMAXPROCS'] == '2' and runtime['FUSION_RESTART_INSPECT_REPLAY_HEIGHT'] == '2356032'
++assert runtime['GOMAXPROCS'] == '2' and runtime['FUSION_RESTART_INSPECT_REPLAY_HEIGHT'] == '5331360'
+ assert 'FUSION_RESTART_REPLAY_RESUME' not in runtime and 'FUSION_RESTART_REPLAY_END' not in runtime
+ identity = (Q/'replay-identity.json').read_bytes()
+ assert sha(Q/'replay-identity.json') == r['checkpoint_identity_sha256'] == prior['checkpoint_identity_sha256']
+ assert r['target_before_cold_sha256']['replay-identity.json'] == r['checkpoint_identity_sha256']
+ assert json.loads(identity)['ExecutableHash'] == REPLAY_SHA
+ assert sha(Q/'attempt-STOP') == sha(ATTEMPT/'qualification/STOP') == r['stop_sha256']
+-old = (ATTEMPT/'details_test.go').read_bytes()
+-new = old.replace(b'const height = uint64(2400000)',b'const height = uint64(2356032)',1)
++old = (ATTEMPT/'inputs/details_test.go').read_bytes()
++new = old.replace(b'const height = uint64(5400000)',b'const height = uint64(5331360)',1)
+ assert (HERE/'details_test.go').read_bytes() == new and old != new
+ assert (HERE/'observer-change.patch').read_text(encoding='utf-8') == ''.join(difflib.unified_diff(old.decode().splitlines(keepends=True),new.decode().splitlines(keepends=True),fromfile='a/details_test.go',tofile='b/details_test.go'))
+ assert sha(Q/'observer-overlay.json') == r['observer_overlay_sha256']
+@@ -85,12 +86,12 @@
+ reference = r['endpoint_observations']['reference']
+ cold = r['endpoint_observations']['cold-details'].copy()
+ tickets = cold.pop('TicketCount')
+-assert tickets > 0 and cold == reference and reference['Number'] == 2356032
++assert tickets > 0 and cold == reference and reference['Number'] == 5331360
+ assert reference['Transactions'] == reference['Receipts']
+ for name in ['reference','cold-details']:
+     log = (Q/(name+'.stdout.txt')).read_text(encoding='utf-8')
+     assert json.loads(re.search(r'candidate endpoint observation: (\{.*\})',log)[1]) == r['endpoint_observations'][name]
+-assert 'closed replay matched: height=2356032 hash='+reference['Hash']+' root='+reference['Root']+' ticketCommitment='+reference['TicketCommitment'] in (Q/'cold-head.stdout.txt').read_text(encoding='utf-8')
++assert 'closed replay matched: height=5331360 hash='+reference['Hash']+' root='+reference['Root']+' ticketCommitment='+reference['TicketCommitment'] in (Q/'cold-head.stdout.txt').read_text(encoding='utf-8')
+ for label,observed in [('backup-before',r['backup_before']),('backup-after',r['backup_after'])]+[('baseline-'+h+'-'+phase,r['baseline_'+phase][h]) for phase in ['before','after'] for h in ['3300000','3600000']]:
+     raw = gzip.decompress((Q/(label+'.json.gz')).read_bytes())
+     rows = json.loads(raw)
+@@ -103,9 +104,13 @@
+ fields = size['stdout'].split()
+ assert len(fields) == 2 and fields[1] == r['closed_mount']['target']
+ allocated = int(fields[0])
+-assert allocated < 4*1024**3
+-assert r['remaining_bytes']['/home/rehearsal/results'] > 30*1024**3 and r['remaining_bytes']['/mnt/d'] > 60*1024**3
+-result = {'pass':True,'scope':'read-only stopped-checkpoint inspection; requested replay remains incomplete','attempt_completed':False,'requested_height':2400000,'cold_verified_height':2356032,'commands':len(commands),'previous_files_verified':count,'checkpoint_files_verified':len(r['checkpoint_before_sha256']),'target_files_hashed':len(r['target_before_cold_sha256']),'replay_binary_sha256':REPLAY_SHA,'observer_binary_sha256':r['observer_binary_sha256'],'endpoint':dict(reference,TicketCount=tickets),'closed_allocated_bytes':allocated,'remaining_bytes':r['remaining_bytes'],'started':r['started'],'finished':r['finished'],'legacy_checkpoint_end':2680000}
+-(HERE/'verification.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
++assert allocated > 0
++assert r['result_logical_bytes'] < 256*1024**2
++assert r['starting_capacity_bytes']['/home/rehearsal/results'] > 21*1024**3 and r['starting_capacity_bytes']['/mnt/d'] > 51*1024**3
++assert [c['name'] for c in r['command_capacity']] == [c['name'] for c in commands]
++assert all(c['free_bytes']['/home/rehearsal/results'] > 20*1024**3 and c['free_bytes']['/mnt/d'] > 50*1024**3 for c in r['command_capacity'])
++assert r['remaining_bytes']['/home/rehearsal/results'] > 20*1024**3 and r['remaining_bytes']['/mnt/d'] > 50*1024**3
++result = {'pass':True,'scope':'read-only stopped-checkpoint inspection; requested replay remains incomplete','attempt_completed':False,'requested_height':5400000,'cold_verified_height':5331360,'commands':len(commands),'previous_files_verified':count,'checkpoint_files_verified':len(r['checkpoint_before_sha256']),'target_files_hashed':len(r['target_before_cold_sha256']),'replay_binary_sha256':REPLAY_SHA,'observer_binary_sha256':r['observer_binary_sha256'],'endpoint':dict(reference,TicketCount=tickets),'closed_allocated_bytes':allocated,'remaining_bytes':r['remaining_bytes'],'started':r['started'],'finished':r['finished'],'legacy_checkpoint_end':2680000}
++(HERE/'verification.json').write_bytes((json.dumps(result,indent=2)+'\n').encode('utf-8'))
+ print(json.dumps({k:v for k,v in result.items() if k!='endpoint'},indent=2))
+ print(json.dumps({k:v for k,v in result['endpoint'].items() if k not in ['Bloom','HeaderRLP']},indent=2))
