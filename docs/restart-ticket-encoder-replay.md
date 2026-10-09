@@ -149,9 +149,12 @@ consensus review remain open; no snapshot-trust acceptance is inferred.
 The independent [reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)
 passes ten in-memory cases against retained encoder-candidate recovery source.
 It establishes which identity/readiness checks cannot be delegated to the
-existing reader alone. Its linked next steps target actual pre-start refusal
-and a valid restored restart with small fixtures; no historical database was
-opened and no runtime/source selection changed.
+existing reader alone. The [subsequent unselected startup candidate](evidence/restart-restored-startup-positive-2026-10-09/README.md)
+passes fifteen actual CLI refusals and four synthetic archive-mode startup/import/
+restart phases. The initial positive fixture's pruning-shutdown failure is retained;
+complete-history/pruning acceptance remains open. No historical database was
+opened and no runtime/source selection changed. Continue only the listed uncovered
+startup cases while replay remains healthy.
 
 Retained executable SHA256:
 b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245.

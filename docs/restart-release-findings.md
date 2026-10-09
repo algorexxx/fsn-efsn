@@ -544,6 +544,18 @@ No human review or acceptance is inferred from a test pass.
   guard. The linked plan scopes actual pre-start identity refusal and a valid
   restored restart; F12 stays open. No historical DB or runtime source was changed.
 
+- F12 restored-startup candidate (9 Oct 2026): the [actual CLI follow-up](evidence/restart-restored-startup-positive-2026-10-09/README.md)
+  retains fifteen refusals with unchanged chain-data files, plus four passing
+  synthetic archive-mode startup/import/restart phases using identical binaries.
+  The first positive attempt reached the right console head but panicked during
+  pruning shutdown because its sparse fixture lacks required ancestors. That
+  failed evidence remains intact; only the unresolved positive path was repeated
+  with the fixture's archive setting. The three-file patch preflights configured
+  anchored networks before writable chain opening and reuses existing ancestry
+  validation. It is unselected. Complete restore/pruning and selected-host cost,
+  package/profile authentication and independent review stay open; G1 assurance
+  is unchanged. No historical DB was touched and no production anchor was set.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

@@ -1,0 +1,135 @@
+--- /dev/null
++++ b/core/restored_startup.go
+@@ -0,0 +1,70 @@
++package core
++
++import (
++	"bytes"
++	"encoding/json"
++	"fmt"
++
++	"github.com/FusionFoundation/efsn/v5/common"
++	"github.com/FusionFoundation/efsn/v5/core/rawdb"
++	"github.com/FusionFoundation/efsn/v5/core/state"
++	"github.com/FusionFoundation/efsn/v5/crypto"
++	"github.com/FusionFoundation/efsn/v5/ethdb"
++	"github.com/FusionFoundation/efsn/v5/params"
++)
++
++func CheckRestoredState(db ethdb.Database, expected *params.ChainConfig, genesis common.Hash) error {
++	if rawdb.ReadCanonicalHash(db, 0) != genesis {
++		return fmt.Errorf("restored startup: genesis mismatch")
++	}
++	stored := rawdb.ReadChainConfig(db, genesis)
++	if stored == nil || stored.DaTong == nil || expected == nil || expected.DaTong == nil {
++		return fmt.Errorf("restored startup: missing DaTong configuration")
++	}
++	want, err := json.Marshal(expected)
++	if err != nil {
++		return err
++	}
++	have, err := json.Marshal(stored)
++	if err != nil {
++		return err
++	}
++	if !bytes.Equal(have, want) {
++		return fmt.Errorf("restored startup: stored configuration mismatch")
++	}
++	anchor, err := newRestartAnchor(db, expected)
++	if err != nil {
++		return err
++	}
++	if anchor == nil {
++		return fmt.Errorf("restored startup: missing restart anchor")
++	}
++	if err := anchor.preflight(); err != nil {
++		return err
++	}
++	hash := rawdb.ReadHeadBlockHash(db)
++	number := rawdb.ReadHeaderNumber(db, hash)
++	if number == nil || *number == 0 || rawdb.ReadCanonicalHash(db, *number) != hash {
++		return fmt.Errorf("restored startup: full head is not a restored canonical block")
++	}
++	head := rawdb.ReadHeader(db, hash, *number)
++	statedb, err := state.New(head.Root, head.MixDigest, state.NewDatabase(db))
++	if err != nil {
++		return fmt.Errorf("restored startup: head state unavailable: %w", err)
++	}
++	blob := statedb.GetData(common.TicketKeyAddress)
++	if err := statedb.Error(); err != nil {
++		return fmt.Errorf("restored startup: ticket data unavailable: %w", err)
++	}
++	if crypto.Keccak256Hash(blob) != head.MixDigest {
++		return fmt.Errorf("restored startup: ticket storage commitment mismatch")
++	}
++	tickets, err := statedb.AllTickets()
++	if err != nil {
++		return fmt.Errorf("restored startup: tickets unavailable: %w", err)
++	}
++	if err := state.AddCachedTickets(head.MixDigest, tickets); err != nil {
++		return fmt.Errorf("restored startup: ticket encoding mismatch: %w", err)
++	}
++	return statedb.Error()
++}
+--- /dev/null
++++ b/eth/restored_startup.go
+@@ -0,0 +1,47 @@
++package eth
++
++import (
++	"fmt"
++	"os"
++	"path/filepath"
++
++	"github.com/FusionFoundation/efsn/v5/core"
++	"github.com/FusionFoundation/efsn/v5/eth/downloader"
++	"github.com/FusionFoundation/efsn/v5/eth/ethconfig"
++	"github.com/FusionFoundation/efsn/v5/node"
++	"github.com/FusionFoundation/efsn/v5/params"
++)
++
++func checkRestoredStartup(stack *node.Node, config *ethconfig.Config) error {
++	expected, genesis := params.MainnetChainConfig, params.MainnetGenesisHash
++	if config.Genesis != nil {
++		expected = config.Genesis.Config
++		if expected == nil {
++			return fmt.Errorf("restored startup: missing genesis configuration")
++		}
++		genesis = config.Genesis.ToBlock(nil).Hash()
++	}
++	anchor, err := expected.RestartAnchorForGenesis(genesis)
++	if err != nil || anchor == nil {
++		return err
++	}
++	if config.SyncMode != downloader.FullSync {
++		return fmt.Errorf("restored startup: full sync required")
++	}
++	if stack.Config().DataDir == "" {
++		return fmt.Errorf("restored startup: persistent restored datadir required")
++	}
++	if _, err := os.Stat(filepath.Join(stack.ResolvePath("chaindata"), "CURRENT")); err != nil {
++		return fmt.Errorf("restored startup: existing database required: %w", err)
++	}
++	db, err := stack.OpenDatabase("chaindata", config.DatabaseCache, config.DatabaseHandles, "eth/db/preflight/", true)
++	if err != nil {
++		return fmt.Errorf("restored startup: read-only database open: %w", err)
++	}
++	checkErr := core.CheckRestoredState(db, expected, genesis)
++	closeErr := db.Close()
++	if checkErr != nil {
++		return checkErr
++	}
++	return closeErr
++}
+--- a/eth/backend.go
++++ b/eth/backend.go
+@@ -89,6 +89,9 @@
+ // New creates a new Ethereum object (including the
+ // initialisation of the common Ethereum object)
+ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
++	if err := checkRestoredStartup(stack, config); err != nil {
++		return nil, err
++	}
+ 	// Ensure configuration values are compatible and sane
+ 	if config.SyncMode == downloader.LightSync {
+ 		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
