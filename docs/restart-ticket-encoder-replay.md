@@ -1,33 +1,41 @@
 # Candidate historical replay
 
-Updated 9 October 2026. **Completed through 2,000,000 with both cold checks.**
-The [latest evidence](evidence/restart-ticket-encoder-replay-2000000-2026-10-09/README.md)
+Updated 9 October 2026. **Completed through 2,200,000 with both cold checks.**
+The [latest evidence](evidence/restart-ticket-encoder-replay-2200000-2026-10-09/README.md)
 records exact historical agreement and preservation checks. This follows the
 [affected regressions](evidence/restart-ticket-encoder-regressions-2026-10-08/spec.md).
 It does not select the encoder for release or change the accepted history.
 The original first-range scope below is retained for reference and preserved
 verbatim in the [first run's plan at start](evidence/restart-ticket-encoder-replay-100000-2026-10-08/plan-at-start.md).
-No continuation beyond 2,000,000 has started.
+No continuation beyond 2,200,000 has started.
 
-Next bounded range: 2,000,001 through 2,200,000, after fresh capacity/path checks.
-The latest 200,000-block command took 19 minutes 30 seconds. Keep that range
-size and the unchanged 30-minute allowance; runtime still depends on the
-historical workload. Preserve the verified 2,000,000 checkpoint and use a
-verified copy in a new target named candidate-ticket-encoding-2200000.
-The current checkpoint occupies 2,176.73 MiB; measure actual space before
+**Next step: resolve storage before another range.** Final free capacity was
+29.89 GiB Linux / 66.82 GiB D:. Linux is 0.11 GiB below the unchanged 30 GiB
+starting requirement, while the completed run remained above its 20 GiB
+continuation reserve. Preserve checkpoints and evidence; assess additional
+Linux capacity or verified archival to the already-authorized W: storage.
+Verify paths, available capacity and the transfer/preservation procedure before
+any migration. No migration has occurred; do not lower the reserve or delete
+preserved evidence to permit another run.
+
+Once capacity is resolved, the next bounded range is 2,200,001 through 2,400,000.
+The latest command's UTC timestamps span about 27 minutes; its Go test
+separately reports 24 minutes 48 seconds. Both measurements are retained in the
+evidence; their difference has not been attributed to a specific cause.
+Keep the 200,000-block range and unchanged 30-minute monotonic allowance;
+runtime still depends on the historical workload. Preserve the verified
+2,200,000 checkpoint and use a verified copy in a new target named
+candidate-ticket-encoding-2400000.
+
+The current checkpoint occupies 2,475.89 MiB; measure actual space before
 copying. Continue with the exact retained replay executable and identity checks,
 with a fresh result directory, the same space/time stops and exact-height cold
 verification. Its replay/cold-head helpers take the endpoint from the environment;
 its built-in details tests remain fixed at 100,000, and the latest separate
-observer is fixed at 2,000,000. Neither is a detailed check of the next endpoint.
+observer is fixed at 2,200,000. Neither is a detailed check of the next endpoint.
 Build the next observer separately, capture the source reference before replay
 and use it for the final comparison. Do not rebuild the replay executable or
 weaken identity checks to accommodate an observer change.
-
-The last measured free capacity was 32.36 GiB Linux / 69.97 GiB D:.
-Linux is only 2.36 GiB above the unchanged 30 GiB starting requirement.
-Recheck before the next copy; if below that floor, resolve storage first
-without lowering the reserve or deleting preserved evidence.
 
 ## Original first-range inputs and boundary
 

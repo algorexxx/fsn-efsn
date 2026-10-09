@@ -124,8 +124,8 @@ bounded seven-vector/55-payload/six-expiry comparison and actual genesis
 startup/restart, with the maintained decoder. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, plus bounded compression measurements. The [candidate
-replay](evidence/restart-ticket-encoder-replay-2000000-2026-10-09/README.md) now passes
-through 2,000,000 with both cold checks, retaining legacy checkpoint shortcuts.
+replay](evidence/restart-ticket-encoder-replay-2200000-2026-10-09/README.md) now passes
+through 2,200,000 with both cold checks, retaining legacy checkpoint shortcuts.
 Further candidate history, independent review and the restored-identity safeguard
 remain open. Neither the diagnostic overlay nor the unselected patch is a release.
 
@@ -152,8 +152,10 @@ successful continuation. The unchanged baseline retains legacy shortcuts
 through 2,680,000. Execution through the accepted parent and historical
 compatibility of the selected candidate are still open; neither this matrix
 nor synthetic passes replace them. The baseline has not advanced beyond
-3,600,000; the separate encoder candidate has now passed through 2,000,000.
-The baseline result does not validate the candidate patches.
+3,600,000; the separate encoder candidate has now passed through 2,200,000.
+The baseline result does not validate the candidate patches. The candidate
+run leaves 29.89 GiB free in Linux, below the 30 GiB starting floor; resolve
+storage before its next range without lowering reserves or deleting evidence.
 
 Next technical order: resolve F12's ticket-compression compatibility first;
 close the other recorded findings and qualify the selected
