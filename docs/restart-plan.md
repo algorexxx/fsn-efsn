@@ -21,25 +21,23 @@ genesis startup/restart. The [affected regressions and cost check](evidence/rest
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery handover, with no measured encoding-cost increase over the legacy
 comparator in three bounded inputs. Candidate replay now [completes through
-3,600,000](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json) with both cold checks and automatic evidence verification.
-The 900,000-block in-place job took 182.972 minutes and finished verification at
-14:56:56 UTC. Its head hash, state root and ticket commitment also match the
-retained baseline endpoint. All preservation checks pass, including the separate
-2,400,000 recovery checkpoint. The D: capacity blocker is resolved by the
-[verified old-fixture archival](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md):
-9,134 files / 11.532 GiB remain on W: and their ten D: roots are retired.
-Actual protected database/source checks pass. The fresh [preflight](evidence/restart-ticket-encoder-job-4500000-2026-10-09/preflight-ready-after-archive-2026-10-09.json)
-passes at 25.805 GiB Linux / 65.787 GiB D: free. The first 4,500,000 dispatch
-refused CRLF observer bytes before executing any test or replay; its result is
-preserved. The [fresh corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
-preserves the prior LF bytes and changes exactly one endpoint literal. Its
-16:14:05 UTC capacity preflight passes. It was [dispatched at 16:15:14 UTC](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/STATUS.md);
-all starting checks passed and replay began at 16:18:06 UTC (PID 653).
-Completion remains pending. All limits, source,
-release selection and the retained replay executable remain unchanged. Do not
-start another writer or hash the working database while it is live. See the
-[replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
-capacity accounting, finite limits and autonomous continuation.
+4,500,000](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/RESULTS.md) with
+both cold checks and automatic evidence verification. The latest 900,000-block
+interval took 181.781 minutes and completed verification at 19:20:56 UTC. All
+seven commands and nine preservation checks pass, including the separate
+2,400,000 recovery checkpoint. State/tickets/receipts match preserved history.
+The unchanged baseline remains at 3,600,000; candidate post-legacy coverage is
+1,820,000 blocks. Closed allocation is 8.295 GiB; free capacity is 24.45 GiB
+Linux / 63.68 GiB D:.
+The [verified old-fixture archival](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md)
+preserves 9,134 files / 11.532 GiB on W: and retired only their ten D: roots.
+The first 4,500,000 job's CRLF input refusal remains preserved; the corrected
+job's completed evidence passes. Its preparation/status files retain historical
+pending wording, superseded by the linked result and completion/verification.
+Next run the bounded read-only startup check against the complete backup, then
+prepare 4,500,000–5,400,000 in place with the existing six-hour clean stop and
+11 GiB sampled ceiling after fresh capacity/identity checks. No next-range writer
+has started yet. See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
 Further history, independent review, 17 missing exported blobs and the
 restore-identity safeguard remain open.
 The [restored-reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)
@@ -58,8 +56,8 @@ Four additional [database-open refusal cases](evidence/restart-restored-startup-
 pass for locks, permissions and malformed/corrupt metadata with unchanged files.
 The patch is evidence only; no production startup guard is selected.
 The existing CLI was reused; no runtime patch was added for the pruning test.
-Its first seeder-log decoding failure is preserved separately. Let the historical
-job finish before a bounded read-only startup check of the complete backup; no
+Its first seeder-log decoding failure is preserved separately. The historical
+job has finished; next run the bounded read-only startup check of the complete backup. No
 further unchanged small refusal/archive/pruning reruns are needed.
 No runtime fix, compiler downgrade or new genesis is selected.
 
@@ -170,18 +168,16 @@ the documented legacy shortcuts through 2,680,000. Closed allocation is
 7,534,972,928 bytes; final capture found 45.84 GiB Linux / 93.02 GiB D: free.
 The monitor now makes three bounded measurement attempts; disk reserves remain
 unchanged and no new bulk copy was needed. No further baseline range has started.
-The separate encoder candidate now [completes through **3,600,000**](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json).
-All seven commands and evidence verification pass, including both cold checks;
-the complete endpoint matches the fresh backup reference and all 3,514
-closed-target hashes remain unchanged during inspection. Candidate assurance
-includes 920,000 blocks beyond the legacy boundary. Allocation is 7.06 GiB;
-final free capacity was 25.81 GiB Linux / 53.78 GiB D:. The candidate endpoint
-also matches the preserved baseline's head/state/ticket commitments.
-The retained working database can advance only after verifying its exact closed
-inventory and capacity. Its prior bytes then become historical evidence, not a
-separately retained checkpoint. The separate 2,400,000 recovery checkpoint,
-stopped 2,356,032 attempt and original STOP remain preserved. The next range now
-passes both starting capacity floors following the scoped old-fixture archival.
+The separate encoder candidate now [completes through **4,500,000**](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/verification.json).
+All seven commands, both cold checks and nine preservation checks pass. Its
+endpoint matches the fresh backup reference; all 4,182 target hashes remain
+unchanged during inspection. Candidate post-legacy coverage is 1,820,000 blocks.
+Allocation is 8.295 GiB; final free capacity is 24.45 GiB Linux / 63.68 GiB D:.
+The retained working database can advance only after exact closed-inventory and
+capacity checks. Prior working bytes then remain historical evidence rather
+than a separate checkpoint. The separate 2,400,000 recovery checkpoint, stopped
+2,356,032 attempt and original STOP remain preserved. Prepare the next range only
+after the small complete-backup read-only startup check; recheck capacity then.
 The later user request permits the linked exact old-fixture archival/removal.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
