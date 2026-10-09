@@ -1,52 +1,57 @@
 # Candidate historical replay
 
-Updated 9 October 2026. **Cold-verified through 2,356,032; the requested
-2,400,000 range is incomplete.** The [attempt](evidence/restart-ticket-encoder-replay-2400000-2026-10-09/README.md)
-reached its unchanged 30-minute allowance and stopped before block 2,356,033.
-A separate [read-only inspection](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md)
-confirmed the persisted endpoint against preserved history, including state,
-ticket and receipt commitments and TD. All 1,299 target files retained their
-hashes. This does not turn the incomplete range into a pass or select a release.
-The completed ranges through 2,200,000 remain sealed. These heights retain
-legacy checkpoint shortcuts through 2,680,000.
+Updated 9 October 2026. **Completed through 2,400,000 with both cold checks.**
+The [43,968-block continuation](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
+resumed a verified copy of the stopped 2,356,032 checkpoint with the unchanged
+executable. All seven commands and evidence verification pass. Full endpoint
+header, state/ticket/receipt commitments, bloom and TD match the backup reference
+captured before this continuation. The cold ticket count agrees with replay at
+6,425; all 1,383 closed-target file hashes remain unchanged during inspection.
+
+The earlier [200,000-block attempt](evidence/restart-ticket-encoder-replay-2400000-2026-10-09/README.md)
+remains recorded as incomplete at its 30-minute limit. Its [cold inspection](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md),
+stopped checkpoint and original STOP are preserved. The new result completes the
+remaining work without rewriting that outcome or extending its limits.
+Legacy checkpoint shortcuts remain active through 2,680,000. F12 is still open.
 
 The original first-range scope below is retained for reference and preserved
 verbatim in the [first run's plan at start](evidence/restart-ticket-encoder-replay-100000-2026-10-08/plan-at-start.md).
-No replay continuation after the time stop has started.
+No replay beyond 2,400,000 has started.
 
 **Storage:** the [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 relocated eight older candidate checkpoints, 100,000 through 1,800,000, preserving
 all 4,051 files against their sealed hashes. The 2,000,000 and 2,200,000
-checkpoints remain on Linux ext4, as does the new stopped target. Backup,
-baselines, binaries, source and sealed evidence retain their locations.
-Earlier reports' old paths are historical; the archive manifest identifies
-their W: copies. Active replay remains on local Linux ext4.
+checkpoints, stopped 2,356,032 target and new 2,400,000 target remain on Linux
+ext4. Backup, baselines, binaries, source and sealed evidence retain their
+locations. Older reports' paths are historical; the relocation manifest
+identifies their W: copies. Active replay remains on local Linux ext4.
 
-Final inspection free capacity is **35.98 GiB Linux / 66.97 GiB D:**, above the
-unchanged 30/60 GiB starting floors. Recheck before any new copy. No further
-archival or capacity extension is automatic.
+Final free capacity is **33.10 GiB Linux / 66.97 GiB D:**, above the unchanged
+30/60 GiB starting floors. Recheck before any new copy. No further archival or
+capacity extension is automatic.
 
-**Next bounded range: 2,356,033 through 2,400,000 (43,968 blocks).** The previous
-200,000-block request exceeded its time allowance. Reduce the remaining work;
-keep the 30-minute monotonic allowance, 4 GiB sampled target stop and 20/50 GiB
-continuation reserves. No next run is authorized to silently extend those bounds.
+**Next bounded range: 2,400,001 through 2,500,000 (100,000 blocks).** Reduce the
+previous 200,000-block range after its measured time stop. The latest 43,968
+blocks took about 11 minutes (663.39 seconds by command timestamps; 658.05
+seconds reported by Go). Retain both timing measurements without assuming a
+cause for their difference. Future workload can differ; keep the 30-minute
+monotonic allowance, 4 GiB sampled target stop and 20/50 GiB continuation
+reserves. No silent extension is permitted.
 
-Preserve the verified stopped directory
-/home/rehearsal/replay/candidate-ticket-encoding-2400000. Its actual head is
-2,356,032, despite its name; closed allocation is 2,770.10 MiB. Use a verified
-copy in a distinct target, candidate-ticket-encoding-2400000-v2, with a fresh
-specification and result directory. Preserve the original 2,200,000 checkpoint,
-incomplete attempt and its STOP; use a new absent stop-file path for continuation.
+Preserve /home/rehearsal/replay/candidate-ticket-encoding-2400000-v2, whose
+verified head is 2,400,000 and closed allocation is 2,894.80 MiB. Use a verified
+copy in a new candidate-ticket-encoding-2500000 target and fresh result directory,
+after declaring the next specification. The older directory ending in 2400000
+still has head 2,356,032; do not confuse it with the new checkpoint.
 
 Reuse the exact retained replay executable and unchanged executable/source/config
 identity validation. Its SHA256 remains
 b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245.
-The replay/cold-head helpers take the height from the environment; built-in
-details tests remain fixed at 100,000. The latest separate observer is fixed
-at 2,356,032; the preceding attempt's observer is fixed at 2,400,000. Verify any
-observer used for the next endpoint and capture a fresh backup reference before
-replay, then perform both exact-height cold checks. Do not rebuild the replay
-executable or weaken identity checks to accommodate an observer change.
+The replay/cold-head helpers take height from the environment; built-in details
+tests remain fixed at 100,000, while the latest separate observer is fixed at
+2,400,000. Build the next endpoint observer separately and capture its backup
+reference before replay, then perform both exact-height cold checks. Do not
+rebuild the replay executable or weaken identity checks for an observer change.
 
 ## Original first-range inputs and boundary
 

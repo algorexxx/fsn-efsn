@@ -29,11 +29,11 @@ startup/restart. It copies only the old writer and keeps the modern decoder.
 This is an unselected patch against D1. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 now pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, with bounded compression measurements. The [candidate
-history](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md)
-is now cold-verified through 2,356,032. The declared range toward 2,400,000 hit
-its unchanged time allowance and remains incomplete; the stopped checkpoint
-passed separate read-only checks. It retains legacy checkpoint shortcuts.
-Further historical execution and independent consensus/maintenance review remain open.
+history](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
+now completes through 2,400,000 with both cold checks. The separately declared
+43,968-block continuation passes; the original time-stopped attempt remains
+recorded as incomplete. Legacy checkpoint shortcuts still apply. Further
+historical execution and independent consensus/maintenance review remain open.
 The separate empty/mispointed-datadir safeguard is still required.
 
 ## Source decisions

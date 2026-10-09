@@ -20,13 +20,12 @@ those seven samples, 55 synthetic payloads, six expiry cases and actual historic
 genesis startup/restart. The [affected regressions and cost check](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery handover, with no measured encoding-cost increase over the legacy
-comparator in three bounded inputs. Candidate history is now [cold-verified
-through 2,356,032](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md).
-The requested 2,400,000 range hit its unchanged 30-minute allowance and remains
-incomplete; its saved checkpoint matches preserved history. Following the
-earlier verified W: archival and this run, 35.98 GiB Linux / 66.97 GiB D:
-remains, above the unchanged starting floors. Next is only the
-[remaining 43,968 blocks to 2,400,000](restart-ticket-encoder-replay.md), followed
+comparator in three bounded inputs. Candidate replay now [completes through
+2,400,000](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
+with both cold checks. A separately declared 43,968-block continuation passes;
+the earlier time-stopped attempt and its verified checkpoint remain preserved.
+Final capacity is 33.10 GiB Linux / 66.97 GiB D:, above the unchanged starting
+floors. Next is a smaller [100,000-block range to 2,500,000](restart-ticket-encoder-replay.md), followed
 by further history and independent review. These ranges retain legacy checkpoint
 shortcuts. Seventeen missing exported blobs and the restore-identity safeguard
 remain open.
@@ -127,25 +126,25 @@ the documented legacy shortcuts through 2,680,000. Closed allocation is
 7,534,972,928 bytes; final capture found 45.84 GiB Linux / 93.02 GiB D: free.
 The monitor now makes three bounded measurement attempts; disk reserves remain
 unchanged and no new bulk copy was needed. No further baseline range has started.
-The separate encoder candidate completed declared ranges through 2,200,000.
-Its [next attempt toward 2,400,000](evidence/restart-ticket-encoder-replay-2400000-2026-10-09/README.md)
-stopped at the unchanged 30-minute limit; it remains incomplete. A separate
-[read-only inspection](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md)
-confirms persisted history through **2,356,032**, including full header,
-state/ticket/receipt commitments and TD. All 1,299 target file hashes remain
-unchanged during inspection; the original 2,200,000 checkpoint, source inputs,
-backup metadata and both baseline metadata inventories are preserved.
-Closed allocation is 2,770.10 MiB. These candidate heights still retain legacy
-checkpoint shortcuts. Further historical compatibility remains open.
+The separate encoder candidate now [completes through **2,400,000**](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md).
+The earlier [attempt](evidence/restart-ticket-encoder-replay-2400000-2026-10-09/README.md)
+remains recorded as incomplete at its 30-minute limit, with separately verified
+persisted height 2,356,032. The new continuation copied that checkpoint and
+completed the remaining 43,968 blocks using the identical executable. Both cold
+checks match a fresh pre-replay backup reference, including full header,
+state/ticket/receipt commitments and TD; all 1,383 closed-target files retain
+their hashes. The prior checkpoint, STOP, source/binary identities and
+backup/baseline metadata are preserved. Closed allocation is 2,894.80 MiB.
+Legacy shortcuts still apply; further historical compatibility remains open.
 
 Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 relocated eight closed candidate checkpoints through 1,800,000 after full
-copy/readback and separate revalidation. The 2,000,000 and 2,200,000 checkpoints
-and the new stopped target remain local. Final inspection capacity is
-35.98 GiB Linux / 66.97 GiB D:. Next is a verified copy and only the remaining
-43,968 blocks to 2,400,000, with fresh capacity checks and unchanged limits.
-No continuation after the time stop has started. Older sealed reports retain
-their historical paths.
+copy/readback and separate revalidation. The 2,000,000 and 2,200,000 checkpoints,
+stopped 2,356,032 target and new 2,400,000 target remain local. Final capacity
+is 33.10 GiB Linux / 66.97 GiB D:. Next is a smaller 100,000-block range through
+2,500,000 with a fresh specification, capacity checks and unchanged limits.
+No range beyond 2,400,000 has started. Older sealed reports retain their
+historical paths.
 The September W: restore directory was not present during the fresh share check;
 locate or re-establish that separate package before closing G1 preservation.
 
