@@ -1,25 +1,25 @@
 # Candidate historical replay
 
-Updated 9 October 2026. **Completed through 1,400,000 with both cold checks.**
-The [latest evidence](evidence/restart-ticket-encoder-replay-1400000-2026-10-09/README.md)
+Updated 9 October 2026. **Completed through 1,600,000 with both cold checks.**
+The [latest evidence](evidence/restart-ticket-encoder-replay-1600000-2026-10-09/README.md)
 records exact historical agreement and preservation checks. This follows the
 [affected regressions](evidence/restart-ticket-encoder-regressions-2026-10-08/spec.md).
 It does not select the encoder for release or change the accepted history.
 The original first-range scope below is retained for reference and preserved
 verbatim in the [first run's plan at start](evidence/restart-ticket-encoder-replay-100000-2026-10-08/plan-at-start.md).
-No continuation beyond 1,400,000 has started.
+No continuation beyond 1,600,000 has started.
 
-Next bounded range: 1,400,001 through 1,600,000, after fresh capacity/path checks.
-The latest 200,000-block command took 18 minutes 33 seconds. Keep that range
+Next bounded range: 1,600,001 through 1,800,000, after fresh capacity/path checks.
+The latest 200,000-block command took 18 minutes 46 seconds. Keep that range
 size and the unchanged 30-minute allowance; runtime still depends on the
-historical workload. Preserve the verified 1,400,000 checkpoint and use a
-verified copy in a new target named candidate-ticket-encoding-1600000.
-The current checkpoint occupies 1,571.04 MiB; measure actual space before
+historical workload. Preserve the verified 1,600,000 checkpoint and use a
+verified copy in a new target named candidate-ticket-encoding-1800000.
+The current checkpoint occupies 1,753.82 MiB; measure actual space before
 copying. Continue with the exact retained replay executable and identity checks,
 with a fresh result directory, the same space/time stops and exact-height cold
 verification. Its replay/cold-head helpers take the endpoint from the environment;
 its built-in details tests remain fixed at 100,000, and the latest separate
-observer is fixed at 1,400,000. Neither is a detailed check of the next endpoint.
+observer is fixed at 1,600,000. Neither is a detailed check of the next endpoint.
 Build the next observer separately, capture the source reference before replay
 and use it for the final comparison. Do not rebuild the replay executable or
 weaken identity checks to accommodate an observer change.
