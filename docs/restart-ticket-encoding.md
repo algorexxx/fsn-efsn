@@ -62,12 +62,13 @@ replay comparator, not an accepted production solution.
    RLP inputs show no encoding-cost increase against the legacy comparator in
    five bounded rounds. This does not qualify the production CLI recovery
    workflow or the full suite.
-4. **Candidate historical replay through 2,700,000 is complete.** The
-   [300,000-block job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) passes all seven commands, both cold checks and
-   automatic evidence verification. It crosses the legacy boundary at 2,680,000
-   by 20,000 blocks. The separate 2,400,000 recovery checkpoint and original
-   stopped attempt are preserved. The running finite job targets 3,600,000 using
-   the verified working database in place; see the [runner/capacity policy](restart-ticket-encoder-replay.md#next-engineering-work).
+4. **Candidate historical replay through 3,600,000 is complete.** The
+   [900,000-block job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json) passes all seven commands, both cold checks and
+   automatic evidence verification. It extends candidate assurance to 920,000
+   blocks beyond the legacy boundary and matches the baseline endpoint.
+   The separate 2,400,000 recovery checkpoint and original stopped attempt are
+   preserved. Further in-place replay is blocked by D: capacity below the unchanged
+   starting floor; see the [runner/capacity policy](restart-ticket-encoder-replay.md#next-engineering-work).
    Prefer one candidate pass with the baseline retained for diagnosis.
    Further history remains open; this does not replace all-history qualification,
    recover 17 missing exported samples or qualify later source changes.

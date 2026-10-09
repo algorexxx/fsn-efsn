@@ -1,26 +1,28 @@
 # Candidate historical replay
 
-Updated 9 October 2026. **Completed through 2,700,000 with both cold checks.**
-The [300,000-block job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) passes all seven commands and automatic evidence
-verification. Its 76.003-minute replay crosses the legacy checkpoint boundary
-at 2,680,000 and executes 20,000 later blocks with ordinary validation.
-Full header, state/ticket/receipt commitments, bloom and TD match the fresh
-pre-replay reference. Warm and cold ticket counts agree at 4,851. All 1,832
-closed-target files remain unchanged during inspection. All 1,422 previously
-manifested evidence files and all nine preservation checks pass. Final
-input/output/bundle manifests were rechecked. F12 and G1 remain open.
+Updated 9 October 2026. **Completed through 3,600,000 with both cold checks.**
+The [900,000-block in-place job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json)
+passes all seven commands, all nine additional preservation checks and automatic
+evidence verification. Replay took 182.972 minutes; verified completion was
+14:56:56 UTC. Full header, state/ticket/receipt commitments, bloom and TD match
+the fresh pre-replay reference. Warm/cold ticket counts agree at 4,549, with ten
+transactions and receipts. All 3,514 closed-target files stay unchanged during
+inspection, and all 1,470 previously manifested files verify. Input/output/bundle
+manifests were independently rechecked. The retained baseline at the same height
+also has identical head hash, state root and ticket commitment. F12/G1 remain open.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-It occupies 4,004,995,072 bytes (3.73 GiB). The separate verified 2,400,000 recovery
-checkpoint and the earlier stopped 2,356,032 attempt/STOP remain unchanged.
-The [43,968-block continuation](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
-and earlier failed attempt retain their original dated evidence.
+Closed allocation is 7,580,307,456 bytes (7.06 GiB). The separate verified
+2,400,000 recovery checkpoint and earlier stopped 2,356,032 attempt/STOP remain
+unchanged. Earlier job inventories retain their historical meaning; the working
+database has advanced in place and is not a separate retained 2,700,000 copy.
 
-Final capacity at 2,700,000 was 29.31 GiB Linux / 66.03 GiB D:.
-Fresh preflight is mandatory; another full copy is unnecessary. The [next finite job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/README.md) is now running in place through 3,600,000,
-where a retained baseline offers a comparator. It verified every closed file
-and prior completion before writing; the separate recovery checkpoint is preserved.
-No in-place runtime pass is claimed before that job completes.
+Final capacity is 25.81 GiB Linux / 53.78 GiB D:. **The next writer is blocked
+by the unchanged 60 GiB D: starting floor.** W: is available for verified cold
+archival, but copying there alone does not reclaim host D: space. The unattended
+authorization excludes automatic destructive cleanup. No new archival, deletion,
+disk compaction or replay has been started. Resolve capacity and recheck all
+floors before the next bounded range.
 
 **Storage:** the [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
@@ -39,7 +41,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through 2,700,000 and passes cold checks, including 20,000 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 2,700,000 remains open. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through 3,600,000 and passes cold checks, including 920,000 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 3,600,000 remains open. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
@@ -93,16 +95,21 @@ are distinct from the transaction execution that supplies the actual evidence.
 
 ### Next engineering work
 
-The 2,700,000 job is complete. The **2,700,000 to 3,600,000** in-place
-continuation was dispatched at 11:52:26 UTC on 9 October with the identical
-retained replay executable. All four preparation commands pass, 1,470 earlier
-manifested files verify and all 1,832 closed working files match. The run records
-copy_verified=false and resume_verified=true: no new database copy was made.
-Its historical result is pending; verified assurance remains 2,700,000. The separate
-observer changes only its endpoint literal. The immutable input bundle
-declares six hours to request a clean stop, 6h15m Go timeout and 6h30m external
-timeout, with the same 20-second kill grace, 30-second size sampling and
-8 GiB target threshold. Original sealed jobs retain their original limits.
+The **2,700,000 to 3,600,000** continuation is complete and verified. It used
+the identical retained replay executable, validated its starting inventory and
+advanced in place without a new database copy. The separate 2,400,000 recovery
+checkpoint remains intact. Both cold checks and all nine preservation checks pass.
+
+The next justified interval is **3,600,000 to 4,500,000**, subject to restored
+capacity. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
+external timeout plus 20-second kill grace. Plan an 11 GiB sampled target ceiling:
+the completed 900,000-block job grew the target from 3.73 to 7.06 GiB, and the new
+ceiling leaves about 3.94 GiB growth allowance. This is a finite stop threshold,
+not a guarantee that another 900,000 blocks fit. Stop and inspect if growth or
+execution reaches a limit. All original sealed jobs keep their original bounds.
+Further history is justified because the ticket-encoder candidate still needs
+verification beyond the retained baseline; extending that baseline again is
+unnecessary without a specific diagnostic question.
 
 Before any writer starts, require the preceding job's successful completion and
 evidence verification, exact endpoint, complete cold file inventory and unchanged
@@ -111,9 +118,9 @@ identity/source/toolchain. Keep the separate verified recovery checkpoint at
 intentionally changes the working database; it must not claim to preserve the
 previous working checkpoint's bytes after execution.
 
-Capacity is charged for **remaining growth**, because the existing 3.73 GiB
+Capacity is charged for **remaining growth**, because the existing 7.06 GiB
 working database is already allocated. The resume preflight requires Linux
-free space greater than 20 GiB reserve + remaining growth to 8 GiB + 1 GiB
+free space greater than 20 GiB reserve + remaining growth to the declared target ceiling + 1 GiB
 preparation margin. D: must exceed both 60 GiB and its 50 GiB reserve + remaining
 growth + 1 GiB margin. Copy mode retains its original 30/60 GiB minimums.
 The unchanged Go executable still checks the 20/50 GiB reserves every batch.
@@ -135,7 +142,7 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-Active runtime status is
+The completed job's runtime status is
 /home/rehearsal/results/restart-ticket-encoder-job-3600000-2026-10-09/status.json.
 Host dispatch logs are under repo tmp/replay-job-3600000-2026-10-09.
 The hourly continuation id is continue-fusion-restart-testing.
@@ -154,11 +161,11 @@ passes fifteen actual CLI refusals and four synthetic archive-mode startup/impor
 restart phases. The initial positive fixture's pruning-shutdown failure is retained;
 complete-history/pruning acceptance remains open. No historical database was
 opened and no runtime/source selection changed. Continue only the listed uncovered
-startup cases while replay remains healthy.
+startup cases; the additional lock/permission/corruption slice now [passes four cases](evidence/restart-restored-startup-open-refusal-2026-10-09/README.md).
 
 Retained executable SHA256:
 b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245.
-The separate 2,700,000 observer is not substituted for that executable.
+The separate endpoint observer is not substituted for that executable.
 
 ## Original first-range inputs and boundary
 

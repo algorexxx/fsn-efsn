@@ -556,6 +556,25 @@ No human review or acceptance is inferred from a test pass.
   package/profile authentication and independent review stay open; G1 assurance
   is unchanged. No historical DB was touched and no production anchor was set.
 
+- F12 database-open refusal (9 Oct 2026): [four additional CLI cases](evidence/restart-restored-startup-open-refusal-2026-10-09/README.md)
+  pass for locked/unreadable databases and malformed CURRENT/corrupt manifest.
+  Exact chain-file bytes and restored permissions match before/after refusal.
+  The same startup candidate binary is used; earlier passing cases are reused.
+  Complete-history pruning and final snapshot/host acceptance remain open.
+
+- G1/F12 3,600,000 completion (9 Oct 2026): the [900,000-block in-place job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json)
+  completes verification at 14:56:56 UTC. Replay takes 182.972 minutes. All seven
+  commands, both cold checks, nine preservation checks, 1,470 earlier manifested
+  files and final manifests pass. The 3,514-file target occupies 7.06 GiB, with
+  4,549 tickets and ten endpoint transactions/receipts. The preserved baseline
+  has identical head/state/ticket commitments. No source or executable changed;
+  the 2,400,000 recovery checkpoint remains verified. Candidate assurance now
+  includes 920,000 blocks beyond the legacy boundary. Final capacity is 25.81 GiB
+  Linux / 53.78 GiB D:, below the unchanged 60 GiB D: starting floor. The next
+  proposed range is 3,600,000–4,500,000 with a declared 11 GiB size ceiling and
+  the same time/reserve controls, pending capacity. No cleanup or next writer
+  starts automatically. G1/F12 remain open.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

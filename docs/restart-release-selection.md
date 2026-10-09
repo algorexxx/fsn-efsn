@@ -29,12 +29,12 @@ startup/restart. It copies only the old writer and keeps the modern decoder.
 This is an unselected patch against D1. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 now pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, with bounded compression measurements. The [candidate
-history](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) now completes through 2,700,000 with both cold checks and
-automatic evidence verification. It includes 20,000 blocks beyond the legacy
-checkpoint boundary. The recovery checkpoint, source identities and original
-stopped evidence remain preserved. The running finite continuation targets
-3,600,000 in place; this changes neither the replay executable nor the selected
-release source. Further history, independent review and restored-identity
+history](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json) now completes through 3,600,000 with both cold checks and
+automatic evidence verification. It includes 920,000 blocks beyond the legacy
+checkpoint boundary and matches the retained baseline endpoint. The recovery
+checkpoint, source identities and original stopped evidence remain preserved.
+The next range awaits capacity above the unchanged starting floors; neither the
+replay executable nor the selected release source changes. Further history, independent review and restored-identity
 refusal remain open under G1/F12.
 
 ## Source decisions

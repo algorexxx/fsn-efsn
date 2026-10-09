@@ -124,9 +124,9 @@ bounded seven-vector/55-payload/six-expiry comparison and actual genesis
 startup/restart, with the maintained decoder. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, plus bounded compression measurements. The [candidate
-history](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) now completes through 2,700,000 with both cold checks and
-automatic evidence verification, including 20,000 blocks beyond the legacy
-boundary. Further candidate history, independent review and restored-identity
+history](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json) now completes through 3,600,000 with both cold checks and
+automatic evidence verification, including 920,000 blocks beyond the legacy
+boundary. The next range awaits capacity above the unchanged starting floors. Further candidate history, independent review and restored-identity
 refusal remain open. This is not a selected release.
 
 ## Independent reviewer packet and completion
