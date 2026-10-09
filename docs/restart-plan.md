@@ -21,9 +21,10 @@ genesis startup/restart. The [affected regressions and cost check](evidence/rest
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery handover, with no measured encoding-cost increase over the legacy
 comparator in three bounded inputs. The [candidate replay through 2,200,000](evidence/restart-ticket-encoder-replay-2200000-2026-10-09/README.md)
-and both cold checks now match preserved history. Resolve Linux storage first:
-29.89 GiB remains, below the unchanged 30 GiB starting floor. Then prepare the
-bounded [continuation through 2,400,000](restart-ticket-encoder-replay.md), followed
+and both cold checks now match preserved history. The [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
+resolves the immediate storage prerequisite: 38.74 GiB Linux / 66.97 GiB D:
+remains, above the unchanged starting floors. Next is the bounded
+[continuation through 2,400,000](restart-ticket-encoder-replay.md), followed
 by further history and independent review. These ranges retain legacy checkpoint
 shortcuts. Seventeen missing exported blobs and the restore-identity safeguard
 remain open.
@@ -131,9 +132,13 @@ TD agreement. Its closed target occupies 2,475.89 MiB; final capacity was
 directories and backup metadata remain unchanged. These candidate ranges
 retain legacy checkpoint shortcuts.
 Further candidate historical compatibility remains open; no continuation beyond
-2,200,000 has started. Linux is below the 30 GiB starting floor: resolve
-storage before another copy or range, preserving checkpoints and evidence.
-W: remains an authorized option, subject to path/capacity and verification checks.
+2,200,000 has started. Subsequent [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
+relocated the eight closed candidate checkpoints through 1,800,000 after full
+copy/readback and separate revalidation. Both latest checkpoints remain local.
+Linux now has 38.74 GiB and D: 66.97 GiB free; keep the same reserves and recheck
+before the next range. Older sealed reports retain their historical paths.
+The September W: restore directory was not present during the fresh share check;
+locate or re-establish that separate package before closing G1 preservation.
 
 ## G2 — Client and supported operation
 

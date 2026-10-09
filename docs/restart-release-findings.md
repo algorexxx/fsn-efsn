@@ -432,6 +432,20 @@ No human review or acceptance is inferred from a test pass.
   migration or next range has started. Further history, independent review
   and restored-identity startup refusal remain open; production selection is unchanged.
 
+- G1 candidate replay storage (9 Oct 2026): the [W: relocation](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
+  preserves all eight older candidate checkpoints, 100,000 through 1,800,000,
+  against 4,051 previously sealed file hashes. A separate revalidation passes
+  before their exact local copies are removed. Both latest checkpoints remain
+  local and byte-identical; evidence and runtime/build inputs are unchanged.
+  Final free capacity is 38.74 GiB Linux / 66.97 GiB D:, above the unchanged
+  30/60 GiB starting floors. The first attempt refused a missing mount before
+  copying; its evidence is retained, and the corrected launcher keeps the W:
+  mount alive throughout each phase. No new replay ran. Next remains the
+  bounded continuation through 2,400,000 after fresh checks. The previously
+  documented September W: restore directory was absent on the fresh share
+  inspection; locate or re-establish that separate package under G1 preservation.
+  This does not change F12's compatibility hold or any consensus decision.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

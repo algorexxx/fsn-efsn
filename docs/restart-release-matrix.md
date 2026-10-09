@@ -153,9 +153,11 @@ through 2,680,000. Execution through the accepted parent and historical
 compatibility of the selected candidate are still open; neither this matrix
 nor synthetic passes replace them. The baseline has not advanced beyond
 3,600,000; the separate encoder candidate has now passed through 2,200,000.
-The baseline result does not validate the candidate patches. The candidate
-run leaves 29.89 GiB free in Linux, below the 30 GiB starting floor; resolve
-storage before its next range without lowering reserves or deleting evidence.
+The baseline result does not validate the candidate patches. Subsequent
+[verified archival to W:](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md) relocates eight
+older candidate checkpoints, retaining the two latest locally and preserving
+their bytes. Free capacity is now 38.74 GiB Linux / 66.97 GiB D:, above the
+unchanged starting floors. Recheck before the next bounded range.
 
 Next technical order: resolve F12's ticket-compression compatibility first;
 close the other recorded findings and qualify the selected

@@ -9,16 +9,20 @@ The original first-range scope below is retained for reference and preserved
 verbatim in the [first run's plan at start](evidence/restart-ticket-encoder-replay-100000-2026-10-08/plan-at-start.md).
 No continuation beyond 2,200,000 has started.
 
-**Next step: resolve storage before another range.** Final free capacity was
-29.89 GiB Linux / 66.82 GiB D:. Linux is 0.11 GiB below the unchanged 30 GiB
-starting requirement, while the completed run remained above its 20 GiB
-continuation reserve. Preserve checkpoints and evidence; assess additional
-Linux capacity or verified archival to the already-authorized W: storage.
-Verify paths, available capacity and the transfer/preservation procedure before
-any migration. No migration has occurred; do not lower the reserve or delete
-preserved evidence to permit another run.
+**Storage prerequisite resolved.** The [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
+relocated the eight older candidate checkpoints from 100,000 through 1,800,000,
+preserving all 4,051 files against their sealed hashes before local copies were
+removed. The 2,000,000 and 2,200,000 checkpoints remain on Linux ext4 and pass
+before/after hash checks. Sealed evidence, source trees, binaries, the original
+backup and both baselines retain their locations. Earlier reports' old candidate
+paths are historical; the relocation manifest identifies their W: copies.
 
-Once capacity is resolved, the next bounded range is 2,200,001 through 2,400,000.
+Final free capacity is 38.74 GiB Linux / 66.97 GiB D:, above the unchanged
+30/60 GiB starting floors. Recheck before each new copy or range. W: holds closed
+archives; active replay remains on local Linux ext4. No further archival or
+capacity extension is automatic.
+
+Next bounded range: 2,200,001 through 2,400,000, after fresh path/capacity checks.
 The latest command's UTC timestamps span about 27 minutes; its Go test
 separately reports 24 minutes 48 seconds. Both measurements are retained in the
 evidence; their difference has not been attributed to a specific cause.

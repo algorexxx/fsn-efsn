@@ -65,8 +65,9 @@ replay comparator, not an accepted production solution.
 4. **Candidate historical replay through 2,200,000 complete.** The [latest range](evidence/restart-ticket-encoder-replay-2200000-2026-10-09/README.md)
    and both cold checks match preserved history, including state/ticket/receipt
    commitments and TD. It lies entirely within legacy checkpoint shortcuts.
-   Resolve storage first: Linux has 29.89 GiB free, below the 30 GiB starting
-   floor. Then prepare the [bounded continuation through 2,400,000](restart-ticket-encoder-replay.md),
+   The [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md) restores
+   capacity to 38.74 GiB Linux / 66.97 GiB D:. Next is the
+   [bounded continuation through 2,400,000](restart-ticket-encoder-replay.md),
    retaining the checkpoint and exact replay executable. Further history remains
    open; this range does not replace all-history qualification or recover the
    17 missing exported samples. Keep baseline and candidate results distinct.
