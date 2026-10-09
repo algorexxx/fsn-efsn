@@ -25,11 +25,13 @@ comparator in three bounded inputs. Candidate replay now [completes through
 The 900,000-block in-place job took 182.972 minutes and finished verification at
 14:56:56 UTC. Its head hash, state root and ticket commitment also match the
 retained baseline endpoint. All preservation checks pass, including the separate
-2,400,000 recovery checkpoint. The next range is blocked on capacity: D: has
-53.78 GiB free versus the unchanged 60 GiB starting floor. No new writer or
-automatic cleanup has started. The [4,500,000 inputs](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md) are prepared, with a preserved
-capacity refusal and no dispatch. Await the user's capacity response before
-further replay; useful small independent acceptance checks may continue. See the
+2,400,000 recovery checkpoint. The D: capacity blocker is resolved by the
+[verified old-fixture archival](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md):
+9,134 files / 11.532 GiB remain on W: and their ten D: roots are retired.
+Actual protected database/source checks pass. The fresh [preflight](evidence/restart-ticket-encoder-job-4500000-2026-10-09/preflight-ready-after-archive-2026-10-09.json)
+passes at 25.805 GiB Linux / 65.787 GiB D: free. The [4,500,000 inputs](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md)
+remain unchanged; dispatch is the next action. No disk compaction or release
+selection change occurred. See the
 [replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
 capacity accounting, finite limits and autonomous continuation.
 Further history, independent review, 17 missing exported blobs and the
@@ -164,14 +166,16 @@ also matches the preserved baseline's head/state/ticket commitments.
 The retained working database can advance only after verifying its exact closed
 inventory and capacity. Its prior bytes then become historical evidence, not a
 separately retained checkpoint. The separate 2,400,000 recovery checkpoint,
-stopped 2,356,032 attempt and original STOP remain preserved. No further writer
-has started: the next range needs D: above the unchanged 60 GiB starting floor.
-Preserve current data while the user resolves capacity; do not remove local
-copies or compact the backing disk automatically.
+stopped 2,356,032 attempt and original STOP remain preserved. The next range now
+passes both starting capacity floors following the scoped old-fixture archival.
+The later user request permits the linked exact old-fixture archival/removal.
+Preserve backup, current replay/recovery databases and sealed evidence; no disk
+compaction or general cleanup is authorized by that operation.
 
 Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
-holds eight old candidate checkpoints through 1,800,000. No new cleanup has
-occurred; older sealed reports retain their historical paths.
+holds eight old candidate checkpoints through 1,800,000. The later old-fixture
+archive relocates only the named ten September D: test roots. Older sealed
+reports retain their historical paths; the relocation records locate the bytes.
 The September W: restore directory was not present during the fresh share check;
 locate or re-establish that separate package before closing G1 preservation.
 

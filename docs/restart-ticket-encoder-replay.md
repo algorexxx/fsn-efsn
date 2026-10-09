@@ -17,18 +17,22 @@ Closed allocation is 7,580,307,456 bytes (7.06 GiB). The separate verified
 unchanged. Earlier job inventories retain their historical meaning; the working
 database has advanced in place and is not a separate retained 2,700,000 copy.
 
-Final capacity is 25.81 GiB Linux / 53.78 GiB D:. **The next writer is blocked
-by the unchanged 60 GiB D: starting floor.** W: is available for verified cold
-archival, but copying there alone does not reclaim host D: space. The unattended
-authorization excludes automatic destructive cleanup. No new archival, deletion,
-disk compaction or replay has been started. Resolve capacity and recheck all
-floors before the next bounded range.
+The former D: capacity blocker is resolved. At Peter's request, the
+[verified old-fixture archive](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md)
+preserves 9,134 files / 11.532 GiB on W: and retires only the ten named September
+D: fixture roots. D: free space increased by 11.517 GiB. Actual protected working/
+recovery file hashes, backup/baseline metadata and retained executable/source
+identities match sealed evidence. The container timestamp discrepancy remains
+recorded; it was not used as a substitute for those actual-file checks.
+[Fresh capacity preflight](evidence/restart-ticket-encoder-job-4500000-2026-10-09/preflight-ready-after-archive-2026-10-09.json)
+passes at 25.805 GiB Linux / 65.787 GiB D:. No compaction or further cleanup is
+needed for the prepared next range. Dispatch follows under unchanged limits.
 
-**Storage:** the [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
+**Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
 2,200,000 and 2,400,000 checkpoints and stopped 2,356,032 attempt remain local.
-Backup, baseline and sealed evidence paths are preserved. No new archival,
-deletion or W: workload is included in the current continuation.
+Backup, baselines and sealed evidence remain preserved. The newer archive is
+limited to the named old D: fixtures; it grants no general cleanup permission.
 
 ## Purpose and revised execution strategy — 9 October
 
@@ -100,10 +104,10 @@ the identical retained replay executable, validated its starting inventory and
 advanced in place without a new database copy. The separate 2,400,000 recovery
 checkpoint remains intact. Both cold checks and all nine preservation checks pass.
 
-The next justified interval is **3,600,000 to 4,500,000**. Its [inputs are prepared](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md), but its read-only preflight refused D: capacity.
-No writer launched. The 15:02:59 UTC check found 54.19 GiB D: free; the required
-starting floor remains above 60 GiB. Await the user's capacity response; do not
-retry dispatch or repeat the question while capacity is unresolved. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
+The next justified interval is **3,600,000 to 4,500,000**. Its [prepared inputs](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md)
+are unchanged. Preserve the initial D: capacity refusal; the subsequent
+16:09:21 UTC preflight passes following verified reclamation. Dispatch is now
+permitted under the existing autonomous-testing authorization. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
 external timeout plus 20-second kill grace. Plan an 11 GiB sampled target ceiling:
 the completed 900,000-block job grew the target from 3.73 to 7.06 GiB, and the new
 ceiling leaves about 3.94 GiB growth allowance. This is a finite stop threshold,
