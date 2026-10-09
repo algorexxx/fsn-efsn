@@ -37,8 +37,11 @@ pending wording, superseded by the linked result and completion/verification.
 The [complete-backup read-only startup check](evidence/restart-restored-backup-preflight-v2-2026-10-09/RESULTS.md)
 now passes with unchanged backup metadata and runtime source. Next prepare
 4,500,000–5,400,000 in place with the existing six-hour clean stop and
-11 GiB sampled ceiling after fresh capacity/identity checks. No next-range writer
-has started yet. See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
+11 GiB sampled ceiling after fresh capacity/identity checks. The [next job](evidence/restart-ticket-encoder-job-5400000-2026-10-09/STATUS.md)
+was dispatched at 19:32:26 UTC after fresh capacity passed. All starting checks
+passed; replay began at 19:34:33 UTC with a passing first size sample. Completion
+remains pending; do not duplicate its writer or hash its
+working database while live. See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
 Further history, independent review, 17 missing exported blobs and the
 restore-identity safeguard remain open.
 The [restored-reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)

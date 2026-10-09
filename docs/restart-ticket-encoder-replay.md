@@ -34,8 +34,11 @@ passes at 16:14:05 UTC. The [corrected job](evidence/restart-ticket-encoder-job-
 was dispatched at 16:15:14 UTC and completed verification at 19:20:56 UTC.
 Its immutable preparation/status files retain their original pending wording;
 the completion, verification and linked result supersede that status.
-No limit, runtime or release selection changed. No replay writer remains active
-at this completion review. Recheck before any subsequent database work.
+No limit, runtime or release selection changed. The subsequent [5,400,000 job](evidence/restart-ticket-encoder-job-5400000-2026-10-09/STATUS.md)
+was dispatched at 19:32:26 UTC following the passing complete-backup preflight.
+All startup checks passed; replay began at 19:34:33 UTC with a passing first
+allocation sample. Completion remains pending; do not duplicate the writer
+or hash its working database while live.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
@@ -123,7 +126,11 @@ about 2.70 GiB below that ceiling. Growth may differ, so this remains a finite
 stop threshold, not a storage guarantee. Fresh capacity and exact prior endpoint/
 identity/inventory checks are required before dispatch. Further candidate history
 is justified; extending the unchanged baseline again is unnecessary without a
-specific diagnostic question. No next-range writer has been launched yet.
+specific diagnostic question. The [prepared range](evidence/restart-ticket-encoder-job-5400000-2026-10-09/STATUS.md)
+was dispatched at 19:32:26 UTC. Fresh capacity passed at 19:31:25 UTC with
+24.51 GiB Linux / 63.68 GiB D: free, above required 23.70/60 GiB starting floors.
+Replay started at 19:34:33 UTC (PID 635); the first allocation sample passed at
+8.295 GiB. No verified endpoint beyond 4,500,000 is claimed until its cold checks pass.
 
 Before any writer starts, require the preceding job's successful completion and
 evidence verification, exact endpoint, complete cold file inventory and unchanged
@@ -156,9 +163,9 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-The completed job's runtime status is
-/home/rehearsal/results/restart-ticket-encoder-job-4500000-v2-2026-10-09/status.json.
-Host dispatch logs are under repo tmp/replay-job-4500000-v2-2026-10-09.
+The active job's runtime status is
+/home/rehearsal/results/restart-ticket-encoder-job-5400000-2026-10-09/status.json.
+Host dispatch logs are under repo tmp/replay-job-5400000-2026-10-09.
 The hourly continuation id is continue-fusion-restart-testing.
 The hidden Windows dispatcher keeps WSL attached after the launching shell
 returns. Keep Windows awake and the app running for scheduled follow-up.

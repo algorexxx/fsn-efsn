@@ -1,0 +1,28 @@
+{
+  "checked_at_utc": "2026-10-09T19:34:44.153502+00:00",
+  "status": {
+    "phase": "replay",
+    "started": "2026-10-09T19:32:30.488337+00:00",
+    "updated": "2026-10-09T19:34:33.712154+00:00",
+    "observed_height": 4500000,
+    "observed_height_is_provisional": true,
+    "target_height": 5400000,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 635
+  },
+  "replay_started": "2026-10-09T19:34:33.697492+00:00",
+  "replay_pid": 635,
+  "latest_size_sample": [
+    {
+      "time": "2026-10-09T19:34:33.709425+00:00",
+      "attempt": 1,
+      "exit": 0,
+      "stdout": "8907165696\t/home/rehearsal/replay/candidate-ticket-encoding-working\n",
+      "stderr": ""
+    }
+  ],
+  "failures": [],
+  "process": "timeout --kill-after=20s 23400s /home/rehearsal/results/restart-ticket-encoder-job-5400000-2026-10-09/bin/replay-tests -test.run=^TestPreservedHistoryReplay$ -test.v -test.count=1 -test.timeout=22500s "
+}
