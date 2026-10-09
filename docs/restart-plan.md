@@ -33,8 +33,11 @@ passes at 25.805 GiB Linux / 65.787 GiB D: free. The first 4,500,000 dispatch
 refused CRLF observer bytes before executing any test or replay; its result is
 preserved. The [fresh corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
 preserves the prior LF bytes and changes exactly one endpoint literal. Its
-16:14:05 UTC capacity preflight passes; dispatch follows. All limits, source,
-release selection and the retained replay executable remain unchanged. See the
+16:14:05 UTC capacity preflight passes. It was [dispatched at 16:15:14 UTC](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/STATUS.md);
+all starting checks passed and replay began at 16:18:06 UTC (PID 653).
+Completion remains pending. All limits, source,
+release selection and the retained replay executable remain unchanged. Do not
+start another writer or hash the working database while it is live. See the
 [replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
 capacity accounting, finite limits and autonomous continuation.
 Further history, independent review, 17 missing exported blobs and the

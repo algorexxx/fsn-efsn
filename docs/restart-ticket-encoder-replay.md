@@ -30,7 +30,12 @@ needed for the next range. The first dispatch refused an observer input's CRLF
 bytes before running any test command or replay. Its [sealed failure](evidence/restart-ticket-encoder-job-4500000-2026-10-09/STATUS.md)
 remains preserved. The [fresh corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
 uses exact prior LF bytes with one endpoint substitution. Its fresh preflight
-passes at 16:14:05 UTC; no limit, runtime or release selection changes.
+passes at 16:14:05 UTC. The [corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/STATUS.md)
+was dispatched at 16:15:14 UTC; all starting checks passed and replay began
+at 16:18:06 UTC (PID 653). The first size sample passes at 7.06 GiB; no stop or
+failure is recorded. Completion remains pending.
+No limit, runtime or release selection changes. Do not duplicate its writer or
+hash the working database while it is live.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
@@ -113,8 +118,8 @@ preserve the original executable/controller and differ from the refused job only
 in job identity and observer CRLF correction. The endpoint observer now differs
 from the verified prior by exactly one literal substitution. Preserve the first
 capacity refusal and the later before-execution byte-identity refusal. The
-16:14:05 UTC corrected-job preflight passes; dispatch follows under the existing
-autonomous-testing authorization. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
+16:14:05 UTC corrected-job preflight passes; dispatch occurred at 16:15:14 UTC
+under the existing autonomous-testing authorization. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
 external timeout plus 20-second kill grace. Plan an 11 GiB sampled target ceiling:
 the completed 900,000-block job grew the target from 3.73 to 7.06 GiB, and the new
 ceiling leaves about 3.94 GiB growth allowance. This is a finite stop threshold,
