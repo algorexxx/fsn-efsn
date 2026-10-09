@@ -124,12 +124,10 @@ bounded seven-vector/55-payload/six-expiry comparison and actual genesis
 startup/restart, with the maintained decoder. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, plus bounded compression measurements. The [candidate
-history](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
-now completes through 2,400,000 with both cold checks. The separately declared
-43,968-block continuation passes; the earlier time-stopped attempt and its
-verified checkpoint remain preserved. Legacy checkpoint shortcuts still apply.
-Further candidate history, independent review and the restored-identity safeguard
-remain open. Neither the diagnostic overlay nor the unselected patch is a release.
+history](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) now completes through 2,700,000 with both cold checks and
+automatic evidence verification, including 20,000 blocks beyond the legacy
+boundary. Further candidate history, independent review and restored-identity
+refusal remain open. This is not a selected release.
 
 ## Independent reviewer packet and completion
 
@@ -154,19 +152,13 @@ successful continuation. The unchanged baseline retains legacy shortcuts
 through 2,680,000. Execution through the accepted parent and historical
 compatibility of the selected candidate are still open; neither this matrix
 nor synthetic passes replace them. The baseline has not advanced beyond
-3,600,000; the separate encoder candidate now completes through 2,400,000.
-The baseline result does not validate the candidate patches. Earlier
-[verified archival to W:](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
-relocated eight older checkpoints. The 2,000,000 and 2,200,000 checkpoints,
-stopped 2,356,032 target and new 2,400,000 target remain local. Pre-launch capacity
-was 33.10 GiB Linux / 66.97 GiB D:, above unchanged starting floors. The [replay
-strategy review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
-supersedes further manually prepared 100,000-block stages. The [finite job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md)
-has been dispatched to 2,700,000 with automatic cold checks, a four-hour
-clean-stop budget and 8 GiB sampled-target threshold. Ten controller tests pass;
-the historical result remains pending. Retain the baseline for diagnosis rather
-than automatically replaying both clients to the tip. G1 remains open; no
-snapshot-trust disposition is inferred. Disk reserves remain unchanged.
+3,600,000; the separate encoder candidate now completes through 2,700,000.
+The baseline does not validate the candidate patches. The [completed job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json)
+preserves the separate 2,400,000 recovery checkpoint and all sealed evidence.
+The next useful milestone is 3,600,000, reusing the working database after
+complete cold-inventory and prior-verification checks. See the
+[capacity/continuation policy](restart-ticket-encoder-replay.md#next-engineering-work).
+No snapshot-trust acceptance or release-gate closure is inferred.
 
 Next technical order: resolve F12's ticket-compression compatibility first;
 close the other recorded findings and qualify the selected

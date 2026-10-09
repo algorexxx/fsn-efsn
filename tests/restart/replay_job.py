@@ -38,6 +38,8 @@ def prepare(backup,checkpoint,env):
     prior = json.loads((PRIOR/'qualification/run.json').read_text(encoding='utf-8'))
     assert prior['completed'] and prior['inspect_passed'] and prior['binary_sha256'] == REPLAY_SHA
     assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
+    if (PRIOR/'inputs').is_dir():
+        monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
     assert not r.STOP.exists()
     manifests = dict(prior['previous_manifest_sha256'],**{PRIOR.name:r.sha(PRIOR/'SHA256SUMS')})
     count = 0
@@ -185,11 +187,17 @@ if __name__ == '__main__':
         assert not RUN.exists() and not (BUNDLE/'qualification').exists()
         assert TARGET.exists() == (CONFIG['mode'] == 'resume')
         capacity = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
-        assert capacity['/home/rehearsal/results'] > 30*1024**3 and capacity['/mnt/d'] > 60*1024**3
+        existing_bytes = 0
+        if CONFIG['mode'] == 'resume':
+            fields = subprocess.check_output(['timeout','--kill-after=2s','15s','du','-sB1',str(TARGET)],text=True).split()
+            assert len(fields) == 2 and fields[0].isdigit() and fields[1] == str(TARGET)
+            existing_bytes = int(fields[0])
+        required_capacity = monitor.require_starting_capacity(CONFIG,capacity,existing_bytes)
         RUN.mkdir()
         (RUN/'bin').mkdir()
         (RUN/'tmp').mkdir()
         r.record = dict(mounts,started=r.now(),uid=os.getuid(),namespace=os.readlink('/proc/self/ns/net'),mount_namespace=os.readlink('/proc/self/ns/mnt'),parent_namespace=parent_net,parent_mount_namespace=parent_mount,links=links,target=str(TARGET),capacity_bytes=capacity,input_sha256=r.inventory(HERE),commands=[],size_measurements=[],preservation_marker=Path('/home/rehearsal/results/backup-copy-2026-09-23/verified.txt').read_text(encoding='utf-8'))
+        r.record.update(existing_allocated_bytes=existing_bytes,required_capacity_bytes=required_capacity)
         r.save()
     else:
         r.record = json.loads((RUN/'run.json').read_text(encoding='utf-8'))

@@ -57,6 +57,8 @@ assert r['selected_inventory'] == prior['selected_inventory']
 assert r['candidate_inventory'] == prior['candidate_inventory']
 assert r['binary_sha256'] == prior['binary_sha256'] == REPLAY_SHA
 assert prior['completed'] and prior['inspect_passed'] and all(prior['additional_preservation_checks'].values())
+if (PRIOR/'inputs').is_dir():
+    monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
 assert not prior.get('failures') and not prior.get('stop_reason')
 recovery = json.loads((RECOVERY/'qualification/run.json').read_text(encoding='utf-8'))
 assert recovery['completed'] and recovery['inspect_passed'] and RECOVERY.name in r['previous_manifest_sha256']
@@ -135,7 +137,7 @@ assert r['closed_allocated_bytes'] < CONFIG['limits']['max_bytes']
 assert str(CONFIG['limits']['outer_seconds'])+'s' in commands[4]['argv']
 assert '-test.timeout='+str(CONFIG['limits']['go_seconds'])+'s' in commands[4]['argv']
 assert commands[4]['monotonic_seconds'] < CONFIG['limits']['go_seconds']
-assert r['capacity_bytes']['/home/rehearsal/results'] > 30*1024**3 and r['capacity_bytes']['/mnt/d'] > 60*1024**3
+assert r['required_capacity_bytes'] == monitor.require_starting_capacity(CONFIG,r['capacity_bytes'],r['existing_allocated_bytes'])
 assert r['remaining_bytes']['/home/rehearsal/results'] > 20*1024**3 and r['remaining_bytes']['/mnt/d'] > 50*1024**3
 next_attempt = 1
 monitor_retries = 0

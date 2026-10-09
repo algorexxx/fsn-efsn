@@ -1,0 +1,125 @@
+--- a/replay_job.py
++++ b/replay_job.py
+@@ -38,6 +38,8 @@
+     prior = json.loads((PRIOR/'qualification/run.json').read_text(encoding='utf-8'))
+     assert prior['completed'] and prior['inspect_passed'] and prior['binary_sha256'] == REPLAY_SHA
+     assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
++    if (PRIOR/'inputs').is_dir():
++        monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
+     assert not r.STOP.exists()
+     manifests = dict(prior['previous_manifest_sha256'],**{PRIOR.name:r.sha(PRIOR/'SHA256SUMS')})
+     count = 0
+@@ -185,11 +187,17 @@
+         assert not RUN.exists() and not (BUNDLE/'qualification').exists()
+         assert TARGET.exists() == (CONFIG['mode'] == 'resume')
+         capacity = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
+-        assert capacity['/home/rehearsal/results'] > 30*1024**3 and capacity['/mnt/d'] > 60*1024**3
++        existing_bytes = 0
++        if CONFIG['mode'] == 'resume':
++            fields = subprocess.check_output(['timeout','--kill-after=2s','15s','du','-sB1',str(TARGET)],text=True).split()
++            assert len(fields) == 2 and fields[0].isdigit() and fields[1] == str(TARGET)
++            existing_bytes = int(fields[0])
++        required_capacity = monitor.require_starting_capacity(CONFIG,capacity,existing_bytes)
+         RUN.mkdir()
+         (RUN/'bin').mkdir()
+         (RUN/'tmp').mkdir()
+         r.record = dict(mounts,started=r.now(),uid=os.getuid(),namespace=os.readlink('/proc/self/ns/net'),mount_namespace=os.readlink('/proc/self/ns/mnt'),parent_namespace=parent_net,parent_mount_namespace=parent_mount,links=links,target=str(TARGET),capacity_bytes=capacity,input_sha256=r.inventory(HERE),commands=[],size_measurements=[],preservation_marker=Path('/home/rehearsal/results/backup-copy-2026-09-23/verified.txt').read_text(encoding='utf-8'))
++        r.record.update(existing_allocated_bytes=existing_bytes,required_capacity_bytes=required_capacity)
+         r.save()
+     else:
+         r.record = json.loads((RUN/'run.json').read_text(encoding='utf-8'))
+--- a/replay_monitor.py
++++ b/replay_monitor.py
+@@ -32,6 +32,28 @@
+             output.write(reason+'\n')
+     helper.record.setdefault('stop_reason', reason)
+     helper.save()
++
++
++def require_starting_capacity(config, capacity, existing_bytes):
++    if existing_bytes < 0 or existing_bytes >= config['limits']['max_bytes']:
++        raise ValueError('existing target leaves no declared growth allowance')
++    if config['mode'] == 'copy' and existing_bytes:
++        raise ValueError('copy mode requires an absent target')
++    growth = config['limits']['max_bytes']-existing_bytes
++    gib = 1024**3
++    required = {'/home/rehearsal/results':max(30*gib if config['mode'] == 'copy' else 0, 21*gib+growth),
++                '/mnt/d':max(60*gib, 51*gib+growth)}
++    for path, floor in required.items():
++        if capacity[path] <= floor:
++            raise ValueError('insufficient starting capacity: '+path)
++    return required
++
++
++def require_verified_prior(config, completion, verification):
++    if not completion.get('verified_pass') or completion.get('exit') != 0 or not verification.get('pass'):
++        raise ValueError('prior job must have passed its evidence verifier')
++    if completion.get('requested_end') != config['start_height'] or verification.get('end_height') != config['start_height']:
++        raise ValueError('prior verified endpoint must equal requested start')
+ 
+ 
+ def run_monitored(helper, command, cwd, env, limits):
+--- a/replay_monitor_test.py
++++ b/replay_monitor_test.py
+@@ -90,6 +90,41 @@
+             with self.assertRaises(ValueError):
+                 monitor.validate_configuration(changed)
+ 
++    def test_resume_capacity_charges_only_remaining_growth(self):
++        gib = 1024**3
++        config = {'mode':'resume', 'limits':{'max_bytes':8*gib}}
++        capacity = {'/home/rehearsal/results':29*gib, '/mnt/d':64*gib}
++        required = monitor.require_starting_capacity(config, capacity, 4*gib)
++        self.assertEqual({'/home/rehearsal/results':25*gib, '/mnt/d':60*gib}, required)
++
++    def test_capacity_refuses_exhausted_margin_on_either_drive(self):
++        gib = 1024**3
++        config = {'mode':'resume', 'limits':{'max_bytes':8*gib}}
++        for capacity in [{'/home/rehearsal/results':25*gib, '/mnt/d':64*gib}, {'/home/rehearsal/results':29*gib, '/mnt/d':60*gib}]:
++            with self.assertRaisesRegex(ValueError, 'insufficient starting capacity'):
++                monitor.require_starting_capacity(config, capacity, 4*gib)
++
++    def test_copy_keeps_original_floors_and_refuses_existing_target(self):
++        gib = 1024**3
++        config = {'mode':'copy', 'limits':{'max_bytes':8*gib}}
++        capacity = {'/home/rehearsal/results':31*gib, '/mnt/d':64*gib}
++        self.assertEqual({'/home/rehearsal/results':30*gib, '/mnt/d':60*gib}, monitor.require_starting_capacity(config, capacity, 0))
++        for size in [-1, 4*gib, 8*gib]:
++            with self.assertRaises(ValueError):
++                monitor.require_starting_capacity(config, capacity, size)
++
++    def test_resume_refuses_unverified_or_wrong_prior_endpoint(self):
++        config = {'start_height':2700000}
++        completion = {'verified_pass':True, 'exit':0, 'requested_end':2700000}
++        verification = {'pass':True, 'end_height':2700000}
++        monitor.require_verified_prior(config, completion, verification)
++        for changed in [dict(completion, verified_pass=False), dict(completion, exit=1), dict(completion, requested_end=2400000)]:
++            with self.assertRaises(ValueError):
++                monitor.require_verified_prior(config, changed, verification)
++        for changed in [dict(verification, **{'pass':False}), dict(verification, end_height=2400000)]:
++            with self.assertRaises(ValueError):
++                monitor.require_verified_prior(config, completion, changed)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+--- a/replay_verify.py
++++ b/replay_verify.py
+@@ -57,6 +57,8 @@
+ assert r['candidate_inventory'] == prior['candidate_inventory']
+ assert r['binary_sha256'] == prior['binary_sha256'] == REPLAY_SHA
+ assert prior['completed'] and prior['inspect_passed'] and all(prior['additional_preservation_checks'].values())
++if (PRIOR/'inputs').is_dir():
++    monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
+ assert not prior.get('failures') and not prior.get('stop_reason')
+ recovery = json.loads((RECOVERY/'qualification/run.json').read_text(encoding='utf-8'))
+ assert recovery['completed'] and recovery['inspect_passed'] and RECOVERY.name in r['previous_manifest_sha256']
+@@ -135,7 +137,7 @@
+ assert str(CONFIG['limits']['outer_seconds'])+'s' in commands[4]['argv']
+ assert '-test.timeout='+str(CONFIG['limits']['go_seconds'])+'s' in commands[4]['argv']
+ assert commands[4]['monotonic_seconds'] < CONFIG['limits']['go_seconds']
+-assert r['capacity_bytes']['/home/rehearsal/results'] > 30*1024**3 and r['capacity_bytes']['/mnt/d'] > 60*1024**3
++assert r['required_capacity_bytes'] == monitor.require_starting_capacity(CONFIG,r['capacity_bytes'],r['existing_allocated_bytes'])
+ assert r['remaining_bytes']['/home/rehearsal/results'] > 20*1024**3 and r['remaining_bytes']['/mnt/d'] > 50*1024**3
+ next_attempt = 1
+ monitor_retries = 0

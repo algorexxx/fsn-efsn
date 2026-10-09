@@ -21,19 +21,15 @@ genesis startup/restart. The [affected regressions and cost check](evidence/rest
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery handover, with no measured encoding-cost increase over the legacy
 comparator in three bounded inputs. Candidate replay now [completes through
-2,400,000](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
-with both cold checks. A separately declared 43,968-block continuation passes;
-the earlier time-stopped attempt and its verified checkpoint remain preserved.
-Pre-launch capacity was 33.10 GiB Linux / 66.97 GiB D:, above the unchanged starting
-floors. The [9 October replay review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
-supersedes repeated 100,000-block stages. The [finite background job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md)
-was dispatched on 9 October at 09:52:55 UTC, targeting 2,700,000 with an
-unchanged replay executable, a preserved 2,400,000 recovery checkpoint and
-automatic cold verification. Its declared limits are four hours to request a
-clean stop and an 8 GiB sampled target threshold; disk reserves are unchanged.
-The result is pending. Further history and independent
-review remain open; existing legacy shortcuts still apply. Seventeen missing
-exported blobs and the restore-identity safeguard remain open.
+2,700,000](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) with both cold checks and automatic evidence verification.
+The 300,000-block job took 76 minutes and crossed the legacy checkpoint boundary
+by 20,000 blocks. All source/data preservation checks pass. The next useful
+history milestone is 3,600,000 using the verified working database in place
+and keeping the separate 2,400,000 recovery checkpoint. See the
+[replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
+capacity accounting, finite limits and autonomous continuation.
+Further history, independent review, 17 missing exported blobs and the
+restore-identity safeguard remain open.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence
@@ -83,6 +79,13 @@ whether they block the declared launch, need an operating restriction, or belong
 in the later backlog. No unresolved accounting mismatch, reproducible accepted-
 history replacement, uncontrolled signing, or unusable supported onboarding path
 can be waived merely to meet a date.
+
+**Autonomous testing (9 October):** Peter authorized useful tests to continue
+without repeated prompts. An hourly follow-up in this chat reviews finished
+jobs and starts the next justified bounded test. Preserve evidence and a
+verified recovery checkpoint, check capacity, and avoid redundant reruns or
+large competing workloads. Ask when a substantive decision, unresolved blocker
+or question about test value needs Peter; do not infer release approval.
 
 ## Gate summary
 
@@ -136,26 +139,20 @@ the documented legacy shortcuts through 2,680,000. Closed allocation is
 7,534,972,928 bytes; final capture found 45.84 GiB Linux / 93.02 GiB D: free.
 The monitor now makes three bounded measurement attempts; disk reserves remain
 unchanged and no new bulk copy was needed. No further baseline range has started.
-The separate encoder candidate now [completes through **2,400,000**](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md).
-The earlier [attempt](evidence/restart-ticket-encoder-replay-2400000-2026-10-09/README.md)
-remains recorded as incomplete at its 30-minute limit, with separately verified
-persisted height 2,356,032. The new continuation copied that checkpoint and
-completed the remaining 43,968 blocks using the identical executable. Both cold
-checks match a fresh pre-replay backup reference, including full header,
-state/ticket/receipt commitments and TD; all 1,383 closed-target files retain
-their hashes. The prior checkpoint, STOP, source/binary identities and
-backup/baseline metadata are preserved. Closed allocation is 2,894.80 MiB.
-Legacy shortcuts still apply; further historical compatibility remains open.
+The separate encoder candidate now [completes through **2,700,000**](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json).
+All seven commands and evidence verification pass, including both cold checks;
+the complete endpoint matches the fresh backup reference and all 1,832
+closed-target hashes remain unchanged during inspection. This exercises 20,000
+blocks beyond the legacy boundary. Allocation is 3.73 GiB; final free capacity
+was 29.31 GiB Linux / 66.03 GiB D:. The retained working database can advance
+only after verifying its exact closed inventory. Its prior bytes then become
+historical evidence, not a separately retained checkpoint. The separate
+2,400,000 recovery checkpoint, stopped 2,356,032 attempt and original STOP
+remain preserved. Next is the finite in-place continuation to 3,600,000.
 
 Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
-relocated eight closed candidate checkpoints through 1,800,000 after full
-copy/readback and separate revalidation. The 2,000,000 and 2,200,000 checkpoints,
-stopped 2,356,032 target and new 2,400,000 target remain local. Capacity
-before the new job was 33.10 GiB Linux / 66.97 GiB D:. The
-[monitored job to 2,700,000](restart-ticket-encoder-replay.md#next-engineering-work)
-uses one working copy and retains the completed 2,400,000 recovery checkpoint.
-Its result is pending and does not extend verified history yet. No additional
-storage cleanup has occurred; older sealed reports retain their historical paths.
+holds eight old candidate checkpoints through 1,800,000. No new cleanup has
+occurred; older sealed reports retain their historical paths.
 The September W: restore directory was not present during the fresh share check;
 locate or re-establish that separate package before closing G1 preservation.
 

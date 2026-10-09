@@ -90,6 +90,41 @@ class ReplayMonitorTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 monitor.validate_configuration(changed)
 
+    def test_resume_capacity_charges_only_remaining_growth(self):
+        gib = 1024**3
+        config = {'mode':'resume', 'limits':{'max_bytes':8*gib}}
+        capacity = {'/home/rehearsal/results':29*gib, '/mnt/d':64*gib}
+        required = monitor.require_starting_capacity(config, capacity, 4*gib)
+        self.assertEqual({'/home/rehearsal/results':25*gib, '/mnt/d':60*gib}, required)
+
+    def test_capacity_refuses_exhausted_margin_on_either_drive(self):
+        gib = 1024**3
+        config = {'mode':'resume', 'limits':{'max_bytes':8*gib}}
+        for capacity in [{'/home/rehearsal/results':25*gib, '/mnt/d':64*gib}, {'/home/rehearsal/results':29*gib, '/mnt/d':60*gib}]:
+            with self.assertRaisesRegex(ValueError, 'insufficient starting capacity'):
+                monitor.require_starting_capacity(config, capacity, 4*gib)
+
+    def test_copy_keeps_original_floors_and_refuses_existing_target(self):
+        gib = 1024**3
+        config = {'mode':'copy', 'limits':{'max_bytes':8*gib}}
+        capacity = {'/home/rehearsal/results':31*gib, '/mnt/d':64*gib}
+        self.assertEqual({'/home/rehearsal/results':30*gib, '/mnt/d':60*gib}, monitor.require_starting_capacity(config, capacity, 0))
+        for size in [-1, 4*gib, 8*gib]:
+            with self.assertRaises(ValueError):
+                monitor.require_starting_capacity(config, capacity, size)
+
+    def test_resume_refuses_unverified_or_wrong_prior_endpoint(self):
+        config = {'start_height':2700000}
+        completion = {'verified_pass':True, 'exit':0, 'requested_end':2700000}
+        verification = {'pass':True, 'end_height':2700000}
+        monitor.require_verified_prior(config, completion, verification)
+        for changed in [dict(completion, verified_pass=False), dict(completion, exit=1), dict(completion, requested_end=2400000)]:
+            with self.assertRaises(ValueError):
+                monitor.require_verified_prior(config, changed, verification)
+        for changed in [dict(verification, **{'pass':False}), dict(verification, end_height=2400000)]:
+            with self.assertRaises(ValueError):
+                monitor.require_verified_prior(config, completion, changed)
+
 
 if __name__ == '__main__':
     unittest.main()

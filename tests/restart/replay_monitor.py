@@ -34,6 +34,28 @@ def request_stop(helper, reason):
     helper.save()
 
 
+def require_starting_capacity(config, capacity, existing_bytes):
+    if existing_bytes < 0 or existing_bytes >= config['limits']['max_bytes']:
+        raise ValueError('existing target leaves no declared growth allowance')
+    if config['mode'] == 'copy' and existing_bytes:
+        raise ValueError('copy mode requires an absent target')
+    growth = config['limits']['max_bytes']-existing_bytes
+    gib = 1024**3
+    required = {'/home/rehearsal/results':max(30*gib if config['mode'] == 'copy' else 0, 21*gib+growth),
+                '/mnt/d':max(60*gib, 51*gib+growth)}
+    for path, floor in required.items():
+        if capacity[path] <= floor:
+            raise ValueError('insufficient starting capacity: '+path)
+    return required
+
+
+def require_verified_prior(config, completion, verification):
+    if not completion.get('verified_pass') or completion.get('exit') != 0 or not verification.get('pass'):
+        raise ValueError('prior job must have passed its evidence verifier')
+    if completion.get('requested_end') != config['start_height'] or verification.get('end_height') != config['start_height']:
+        raise ValueError('prior verified endpoint must equal requested start')
+
+
 def run_monitored(helper, command, cwd, env, limits):
     validate_limits(limits)
     if helper.STOP.exists():

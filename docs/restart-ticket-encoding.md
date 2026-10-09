@@ -62,21 +62,15 @@ replay comparator, not an accepted production solution.
    RLP inputs show no encoding-cost increase against the legacy comparator in
    five bounded rounds. This does not qualify the production CLI recovery
    workflow or the full suite.
-4. **Candidate historical replay through 2,400,000 is complete.** The [43,968-block
-   continuation](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
-   passes replay and both cold checks against a fresh backup reference. The
-   earlier time-stopped attempt and verified 2,356,032 checkpoint remain sealed.
-   Legacy checkpoint shortcuts still apply. Pre-launch free capacity was 33.10 GiB Linux /
-   66.97 GiB D:. The [revised execution strategy](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
-   replaces repeated small manual stages with a [finite background job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md)
-   dispatched to 2,700,000, beyond the legacy boundary. Its four-hour clean-stop
-   and 8 GiB sampled-target bounds are declared separately; disk reserves and
-   the retained replay executable are unchanged. The result remains pending.
-   Prefer one candidate pass with the baseline retained
-   for diagnosis, not two automatic full-history passes.
-   Further history remains open; these results do not replace all-history
-   qualification or recover the 17 missing exported samples. Keep baseline,
-   completed-range and stopped-inspection results distinct.
+4. **Candidate historical replay through 2,700,000 is complete.** The
+   [300,000-block job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) passes all seven commands, both cold checks and
+   automatic evidence verification. It crosses the legacy boundary at 2,680,000
+   by 20,000 blocks. The separate 2,400,000 recovery checkpoint and original
+   stopped attempt are preserved. The next finite job targets 3,600,000 using
+   the verified working database in place; see the [runner/capacity policy](restart-ticket-encoder-replay.md#next-engineering-work).
+   Prefer one candidate pass with the baseline retained for diagnosis.
+   Further history remains open; this does not replace all-history qualification,
+   recover 17 missing exported samples or qualify later source changes.
 5. Obtain independent codec/consensus and maintenance review before selection.
    If a historical mismatch is found, stop and resolve its cause; do not add an
    activation boundary by assumption. A byte-compatible implementation should

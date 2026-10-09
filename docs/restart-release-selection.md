@@ -29,17 +29,13 @@ startup/restart. It copies only the old writer and keeps the modern decoder.
 This is an unselected patch against D1. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 now pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, with bounded compression measurements. The [candidate
-history](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
-now completes through 2,400,000 with both cold checks. The separately declared
-43,968-block continuation passes; the original time-stopped attempt remains
-recorded as incomplete. Legacy checkpoint shortcuts still apply. Further
-historical execution and independent consensus/maintenance review remain open.
-The [execution strategy review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
-changes how further replay should be scheduled, not what executable has been
-qualified. The [2,700,000 background job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md) is pending and uses the retained
-candidate replay binary; ten controller tests pass but do not extend historical
-qualification. Current evidence does not automatically cover later source changes;
-G1 and F12 remain open. The separate empty/mispointed-datadir safeguard is still required.
+history](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) now completes through 2,700,000 with both cold checks and
+automatic evidence verification. It includes 20,000 blocks beyond the legacy
+checkpoint boundary. The recovery checkpoint, source identities and original
+stopped evidence remain preserved. The next finite continuation targets
+3,600,000 in place; this changes neither the replay executable nor the selected
+release source. Further history, independent review and restored-identity
+refusal remain open under G1/F12.
 
 ## Source decisions
 
