@@ -146,6 +146,13 @@ identity-refusal and recovery/handover acceptance gaps. Do not compete with the
 replay for large disk workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.
 
+The independent [reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)
+passes ten in-memory cases against retained encoder-candidate recovery source.
+It establishes which identity/readiness checks cannot be delegated to the
+existing reader alone. Its linked next steps target actual pre-start refusal
+and a valid restored restart with small fixtures; no historical database was
+opened and no runtime/source selection changed.
+
 Retained executable SHA256:
 b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245.
 The separate 2,700,000 observer is not substituted for that executable.

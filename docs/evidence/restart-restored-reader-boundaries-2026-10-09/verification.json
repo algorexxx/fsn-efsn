@@ -1,0 +1,110 @@
+{
+  "verified_pass": true,
+  "scope": "candidate recovery Reader characterization only; no service startup gate implemented",
+  "case_count": 10,
+  "observations": [
+    {
+      "case": "complete_mainnet",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": true,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "empty_database",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": false,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "missing_datong",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": false,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "split_heads",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": false,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "missing_head_header",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": false,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "foreign_genesis_same_chain_id",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": true,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": true,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "wrong_chain_id",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": true,
+      "wrong_chain_id": true
+    },
+    {
+      "case": "changed_fork_config",
+      "changed_fork_config": true,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": false,
+      "reader_accepted": true,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "missing_head_state",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": false,
+      "missing_head_state": true,
+      "reader_accepted": true,
+      "wrong_chain_id": false
+    },
+    {
+      "case": "missing_head_body",
+      "changed_fork_config": false,
+      "database_unchanged": true,
+      "foreign_genesis": false,
+      "missing_head_body": true,
+      "missing_head_state": false,
+      "reader_accepted": true,
+      "wrong_chain_id": false
+    }
+  ],
+  "source_file_count": 1211,
+  "prior_files_verified": 352,
+  "run_sha256": "66cf69e4df8330bb1a79478af7709f5ec4c1732349d123f7b1180d3c0fbacede"
+}

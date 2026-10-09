@@ -1,0 +1,33 @@
+=== RUN   TestRestoredStartupReaderBoundaries
+=== RUN   TestRestoredStartupReaderBoundaries/complete_mainnet
+    reader_test.go:111: reader boundary observation: {"case":"complete_mainnet","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":true,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/empty_database
+    reader_test.go:111: reader boundary observation: {"case":"empty_database","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":false,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/missing_datong
+    reader_test.go:111: reader boundary observation: {"case":"missing_datong","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":false,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/split_heads
+    reader_test.go:111: reader boundary observation: {"case":"split_heads","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":false,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/missing_head_header
+    reader_test.go:111: reader boundary observation: {"case":"missing_head_header","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":false,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/foreign_genesis_same_chain_id
+    reader_test.go:111: reader boundary observation: {"case":"foreign_genesis_same_chain_id","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":true,"missing_head_body":false,"missing_head_state":false,"reader_accepted":true,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/wrong_chain_id
+    reader_test.go:111: reader boundary observation: {"case":"wrong_chain_id","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":true,"wrong_chain_id":true}
+=== RUN   TestRestoredStartupReaderBoundaries/changed_fork_config
+    reader_test.go:111: reader boundary observation: {"case":"changed_fork_config","changed_fork_config":true,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":false,"reader_accepted":true,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/missing_head_state
+    reader_test.go:111: reader boundary observation: {"case":"missing_head_state","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":false,"missing_head_state":true,"reader_accepted":true,"wrong_chain_id":false}
+=== RUN   TestRestoredStartupReaderBoundaries/missing_head_body
+    reader_test.go:111: reader boundary observation: {"case":"missing_head_body","changed_fork_config":false,"database_unchanged":true,"foreign_genesis":false,"missing_head_body":true,"missing_head_state":false,"reader_accepted":true,"wrong_chain_id":false}
+--- PASS: TestRestoredStartupReaderBoundaries (0.01s)
+    --- PASS: TestRestoredStartupReaderBoundaries/complete_mainnet (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/empty_database (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/missing_datong (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/split_heads (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/missing_head_header (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/foreign_genesis_same_chain_id (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/wrong_chain_id (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/changed_fork_config (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/missing_head_state (0.00s)
+    --- PASS: TestRestoredStartupReaderBoundaries/missing_head_body (0.00s)
+PASS

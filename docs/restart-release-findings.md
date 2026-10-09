@@ -534,6 +534,16 @@ No human review or acceptance is inferred from a test pass.
   unchanged replay identity remain preserved. Results are pending; this
   launch does not yet qualify in-place completion or later history.
 
+- F12 restored-reader boundary (9 Oct 2026): [ten in-memory cases](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)
+  pass against the retained encoder-candidate recovery source. Reader construction
+  refuses empty/missing-DaTong and inconsistent-head data, but does not authenticate
+  genesis, chain ID or fork configuration, nor require head state/body availability.
+  Subsequent state/body reads detect the tested missing data. All key/value contents
+  stay unchanged; all 1,211 retained source files verify before and after. This
+  characterizes a low-level reader, not a signing bypass or an implemented startup
+  guard. The linked plan scopes actual pre-start identity refusal and a valid
+  restored restart; F12 stays open. No historical DB or runtime source was changed.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

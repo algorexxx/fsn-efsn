@@ -30,6 +30,11 @@ Its result is pending. See the
 capacity accounting, finite limits and autonomous continuation.
 Further history, independent review, 17 missing exported blobs and the
 restore-identity safeguard remain open.
+The [restored-reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)
+now passes ten small cases: the existing read-only reader does not itself
+authenticate genesis/configuration or establish head state/body availability.
+The linked acceptance work defines the remaining pre-start service refusal and
+valid-restored-restart checks; no startup guard is implemented or selected yet.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence
