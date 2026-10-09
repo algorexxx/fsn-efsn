@@ -48,11 +48,19 @@ authenticate genesis/configuration or establish head state/body availability.
 An unselected [startup candidate](evidence/restart-restored-startup-positive-2026-10-09/README.md)
 now passes fifteen actual CLI refusal cases and four synthetic archive-mode
 startup/import/restart phases. Refused chain data stays byte-identical. The first
-positive attempt's sparse-history pruning-shutdown failure is retained; complete
-restored-history/pruning acceptance and final profile/anchor review remain open.
+positive attempt's sparse-history pruning-shutdown failure is retained. A
+[complete small synthetic ancestry follow-up](evidence/restart-restored-startup-pruning-v2-2026-10-09/RESULTS.md)
+now passes normal-pruning startup, local child import, clean shutdown and fresh
+restart. A separate read-only process verifies all three retained shutdown state
+roots with unchanged database bytes. This closes that fixture case; full-backup
+startup/recovery acceptance and final profile/anchor review remain open.
 Four additional [database-open refusal cases](evidence/restart-restored-startup-open-refusal-2026-10-09/README.md)
 pass for locks, permissions and malformed/corrupt metadata with unchanged files.
 The patch is evidence only; no production startup guard is selected.
+The existing CLI was reused; no runtime patch was added for the pruning test.
+Its first seeder-log decoding failure is preserved separately. Let the historical
+job finish before a bounded read-only startup check of the complete backup; no
+further unchanged small refusal/archive/pruning reruns are needed.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence

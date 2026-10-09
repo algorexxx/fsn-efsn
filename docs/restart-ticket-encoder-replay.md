@@ -176,10 +176,19 @@ passes ten in-memory cases against retained encoder-candidate recovery source.
 It establishes which identity/readiness checks cannot be delegated to the
 existing reader alone. The [subsequent unselected startup candidate](evidence/restart-restored-startup-positive-2026-10-09/README.md)
 passes fifteen actual CLI refusals and four synthetic archive-mode startup/import/
-restart phases. The initial positive fixture's pruning-shutdown failure is retained;
-complete-history/pruning acceptance remains open. No historical database was
-opened and no runtime/source selection changed. Continue only the listed uncovered
-startup cases; the additional lock/permission/corruption slice now [passes four cases](evidence/restart-restored-startup-open-refusal-2026-10-09/README.md).
+restart phases. The initial positive fixture's pruning-shutdown failure is retained.
+The [complete small synthetic ancestry follow-up](evidence/restart-restored-startup-pruning-v2-2026-10-09/RESULTS.md)
+now passes three actual CLI phases under normal pruning: restored startup, local
+child import and fresh restart, each with clean shutdown. Independent cold reads
+confirm the three shutdown state roots and ticket commitments; database files
+remain unchanged during inspection. This is lifecycle evidence, not candidate
+historical coverage or complete-backup acceptance. No historical database was
+opened and no runtime/source selection changed. The additional lock/permission/
+corruption slice already [passes four cases](evidence/restart-restored-startup-open-refusal-2026-10-09/README.md).
+Do not repeat these unchanged small tests. After this historical job finishes,
+prepare a bounded read-only startup-candidate check against the complete backup
+with read-only mounts and database locks. Full restored startup/recovery and
+final profile/anchor/independent review remain open.
 
 Retained executable SHA256:
 b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245.
