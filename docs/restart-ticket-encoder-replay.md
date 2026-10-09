@@ -109,9 +109,10 @@ are distinct from the transaction execution that supplies the actual evidence.
 ### Next engineering work
 
 The **3,600,000 to 4,500,000** continuation is complete and verified. Both cold
-checks and all nine preservation checks pass. First run the bounded read-only
-startup-candidate check against the complete backup described below; it does not
-need another backup copy or writable startup.
+checks and all nine preservation checks pass. The subsequent
+[complete-backup read-only startup check](evidence/restart-restored-backup-preflight-v2-2026-10-09/RESULTS.md)
+also passes at 15,130,080 with unchanged backup metadata and candidate source.
+No extra backup copy or writable startup was needed.
 
 The next justified historical interval is **4,500,000 to 5,400,000**, in place,
 with the same retained executable/controller and separate 2,400,000 recovery
@@ -180,8 +181,11 @@ remain unchanged during inspection. This is lifecycle evidence, not candidate
 historical coverage or complete-backup acceptance. No historical database was
 opened and no runtime/source selection changed. The additional lock/permission/
 corruption slice already [passes four cases](evidence/restart-restored-startup-open-refusal-2026-10-09/README.md).
-Do not repeat these unchanged small tests. The historical job has finished; next prepare a bounded read-only startup-candidate check against the complete backup
-with read-only mounts and database locks. Full restored startup/recovery and
+Do not repeat these unchanged small tests. The [complete-backup read-only check](evidence/restart-restored-backup-preflight-v2-2026-10-09/RESULTS.md)
+now passes using a read-only mount and database locks. The preserved first refusal
+came from test-profile wiring; mainnet intentionally trusts the global profile.
+No runtime fix or production anchor change was made. Full writable restored
+startup/recovery and
 final profile/anchor/independent review remain open.
 
 Retained executable SHA256:

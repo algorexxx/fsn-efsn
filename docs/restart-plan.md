@@ -34,8 +34,9 @@ preserves 9,134 files / 11.532 GiB on W: and retired only their ten D: roots.
 The first 4,500,000 job's CRLF input refusal remains preserved; the corrected
 job's completed evidence passes. Its preparation/status files retain historical
 pending wording, superseded by the linked result and completion/verification.
-Next run the bounded read-only startup check against the complete backup, then
-prepare 4,500,000–5,400,000 in place with the existing six-hour clean stop and
+The [complete-backup read-only startup check](evidence/restart-restored-backup-preflight-v2-2026-10-09/RESULTS.md)
+now passes with unchanged backup metadata and runtime source. Next prepare
+4,500,000–5,400,000 in place with the existing six-hour clean stop and
 11 GiB sampled ceiling after fresh capacity/identity checks. No next-range writer
 has started yet. See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
 Further history, independent review, 17 missing exported blobs and the
@@ -56,8 +57,9 @@ Four additional [database-open refusal cases](evidence/restart-restored-startup-
 pass for locks, permissions and malformed/corrupt metadata with unchanged files.
 The patch is evidence only; no production startup guard is selected.
 The existing CLI was reused; no runtime patch was added for the pruning test.
-Its first seeder-log decoding failure is preserved separately. The historical
-job has finished; next run the bounded read-only startup check of the complete backup. No
+Its first seeder-log decoding failure is preserved separately. The complete-backup
+read-only preflight now passes at 15,130,080. Its test-only trusted global profile
+corrects a preserved initial fixture refusal; no production anchor is selected. No
 further unchanged small refusal/archive/pruning reruns are needed.
 No runtime fix, compiler downgrade or new genesis is selected.
 
@@ -177,7 +179,7 @@ The retained working database can advance only after exact closed-inventory and
 capacity checks. Prior working bytes then remain historical evidence rather
 than a separate checkpoint. The separate 2,400,000 recovery checkpoint, stopped
 2,356,032 attempt and original STOP remain preserved. Prepare the next range only
-after the small complete-backup read-only startup check; recheck capacity then.
+after the now-passing complete-backup read-only startup check; recheck capacity.
 The later user request permits the linked exact old-fixture archival/removal.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
