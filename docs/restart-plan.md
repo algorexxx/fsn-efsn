@@ -25,10 +25,13 @@ comparator in three bounded inputs. Candidate replay now [completes through
 with both cold checks. A separately declared 43,968-block continuation passes;
 the earlier time-stopped attempt and its verified checkpoint remain preserved.
 Final capacity is 33.10 GiB Linux / 66.97 GiB D:, above the unchanged starting
-floors. Next is a smaller [100,000-block range to 2,500,000](restart-ticket-encoder-replay.md), followed
-by further history and independent review. These ranges retain legacy checkpoint
-shortcuts. Seventeen missing exported blobs and the restore-identity safeguard
-remain open.
+floors. The [9 October replay review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
+supersedes repeated 100,000-block stages: prepare a finite monitored campaign
+with meaningful checkpoints, first proposing a crossing through 2,700,000,
+rather than requiring another chat turn and database copy for every short range.
+No larger run or changed limit has started. Further history and independent
+review remain open; existing legacy shortcuts still apply. Seventeen missing
+exported blobs and the restore-identity safeguard remain open.
 No runtime fix, compiler downgrade or new genesis is selected.
 
 ## Agreed outcome and sequence
@@ -97,10 +100,15 @@ can be waived merely to meet a date.
 - [ ] Confirm immutable preservation and a separate verified recoverable copy;
   record provenance, hashes, storage health and restore ownership. Resolve the
   earlier ESXi storage-controller concern before making it a launch dependency.
-- [ ] Continue bounded baseline replay from 3,600,000 through the accepted
-  historical parent (backup head 15,130,080 unless better verified history is
-  selected). Check capacity before each range. Record legacy checkpoint
-  shortcuts explicitly and compare cold state/ticket/receipt commitments.
+- [ ] Complete execution-history verification or record an explicitly accepted
+  alternative for the history through
+  the accepted parent (backup head 15,130,080 unless better verified history is
+  selected). Prefer one reviewed candidate replay job; preserve the baseline at
+  3,600,000 as a comparator and extend it only for a specific diagnostic need.
+  Do not require two complete passes by default. Record exact source/configuration
+  coverage, legacy shortcuts and cold state/ticket/receipt agreement. G1 remains
+  open; accepting the restored snapshot instead of full reconstruction requires
+  an explicit documented trust decision.
 - [ ] Verify historical compatibility of the selected candidate changes; do not
   cite the unchanged baseline replay as proof of the patched executable.
   Resolve F12's compiler-dependent ticket encoding first; restore alone does
@@ -141,10 +149,12 @@ Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README
 relocated eight closed candidate checkpoints through 1,800,000 after full
 copy/readback and separate revalidation. The 2,000,000 and 2,200,000 checkpoints,
 stopped 2,356,032 target and new 2,400,000 target remain local. Final capacity
-is 33.10 GiB Linux / 66.97 GiB D:. Next is a smaller 100,000-block range through
-2,500,000 with a fresh specification, capacity checks and unchanged limits.
-No range beyond 2,400,000 has started. Older sealed reports retain their
-historical paths.
+is 33.10 GiB Linux / 66.97 GiB D:. Next is the [revised runner/capacity work](restart-ticket-encoder-replay.md#next-engineering-work),
+not another manually prepared 100,000-block interval. Keep the current limits
+until a new finite specification and checked runner are ready. One working
+database with a documented checkpoint policy should replace accumulation of
+full copies at every small interval. No range beyond 2,400,000 or storage
+cleanup has started; older sealed reports retain their historical paths.
 The September W: restore directory was not present during the fresh share check;
 locate or re-establish that separate package before closing G1 preservation.
 

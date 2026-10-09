@@ -34,7 +34,10 @@ now completes through 2,400,000 with both cold checks. The separately declared
 43,968-block continuation passes; the original time-stopped attempt remains
 recorded as incomplete. Legacy checkpoint shortcuts still apply. Further
 historical execution and independent consensus/maintenance review remain open.
-The separate empty/mispointed-datadir safeguard is still required.
+The [execution strategy review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
+changes how further replay should be scheduled, not what executable has been
+qualified. Current evidence does not automatically cover later source changes;
+G1 and F12 remain open. The separate empty/mispointed-datadir safeguard is still required.
 
 ## Source decisions
 

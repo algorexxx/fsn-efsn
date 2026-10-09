@@ -67,8 +67,12 @@ replay comparator, not an accepted production solution.
    passes replay and both cold checks against a fresh backup reference. The
    earlier time-stopped attempt and verified 2,356,032 checkpoint remain sealed.
    Legacy checkpoint shortcuts still apply. Free capacity is 33.10 GiB Linux /
-   66.97 GiB D:. Next is a smaller [100,000-block range through 2,500,000](restart-ticket-encoder-replay.md),
-   with a verified copy, unchanged executable and unchanged stop limits.
+   66.97 GiB D:. The [revised execution strategy](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
+   replaces repeated small manual stages with preparation for a finite monitored
+   candidate replay job and meaningful cold checkpoints. The next proposed
+   milestone is 2,700,000, beyond the legacy boundary; no larger run or changed
+   limit is active yet. Prefer one candidate pass with the baseline retained
+   for diagnosis, not two automatic full-history passes.
    Further history remains open; these results do not replace all-history
    qualification or recover the 17 missing exported samples. Keep baseline,
    completed-range and stopped-inspection results distinct.

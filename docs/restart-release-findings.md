@@ -486,6 +486,22 @@ No human review or acceptance is inferred from a test pass.
   No further range has started. Legacy shortcuts, independent review and
   restored-identity requirements remain open; production selection is unchanged.
 
+- G1/F12 replay efficiency review (9 Oct 2026): the user questioned whether
+  repeated small ranges justify their cost. The [source/evidence review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
+  separates complete structural/current-state checks, execution-history
+  assurance and snapshot-launch acceptance. Candidate replay has a real purpose,
+  but 30-minute/4 GiB limits originate in the initial pilot wrapper, not
+  consensus. Repeating 100,000-block stages would require 128 further stages
+  for the remaining 12,730,080 blocks. The latest rate extrapolates to about
+  53.35 machine hours, explicitly not an ETA or bound on later workload.
+  Prepare a finite monitored candidate replay job and checkpoint policy, with
+  2,700,000 as the next proposed milestone beyond the legacy validation boundary.
+  Preserve the baseline as a diagnostic comparator instead of automatically
+  requiring a second full pass. No larger run, limit change, data removal or
+  gate closure occurred. Full-history assurance remains open; substituting
+  snapshot trust requires an explicit recorded acceptance decision. Earlier
+  sealed evidence and its dated next-step wording remain unchanged.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

@@ -30,28 +30,118 @@ Final free capacity is **33.10 GiB Linux / 66.97 GiB D:**, above the unchanged
 30/60 GiB starting floors. Recheck before any new copy. No further archival or
 capacity extension is automatic.
 
-**Next bounded range: 2,400,001 through 2,500,000 (100,000 blocks).** Reduce the
-previous 200,000-block range after its measured time stop. The latest 43,968
-blocks took about 11 minutes (663.39 seconds by command timestamps; 658.05
-seconds reported by Go). Retain both timing measurements without assuming a
-cause for their difference. Future workload can differ; keep the 30-minute
-monotonic allowance, 4 GiB sampled target stop and 20/50 GiB continuation
-reserves. No silent extension is permitted.
+## Purpose and revised execution strategy — 9 October
 
-Preserve /home/rehearsal/replay/candidate-ticket-encoding-2400000-v2, whose
-verified head is 2,400,000 and closed allocation is 2,894.80 MiB. Use a verified
-copy in a new candidate-ticket-encoding-2500000 target and fresh result directory,
-after declaring the next specification. The older directory ending in 2400000
-still has head 2,356,032; do not confuse it with the new checkpoint.
+The user questioned the cost and value of repeated small runs. The completed
+evidence remains valid, but manually prepared 100,000-block stages are no
+longer the default next action. No additional replay started during this review.
 
-Reuse the exact retained replay executable and unchanged executable/source/config
-identity validation. Its SHA256 remains
+Three different questions must remain separate:
+
+| Question | Existing evidence | What remains unproven |
+| --- | --- | --- |
+| Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through 2,400,000 and passes cold checks; the unchanged baseline separately reaches 3,600,000. | Later candidate history, including ordinary seal validation beyond 2,680,000, remains open. |
+| Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
+
+The replay has a concrete purpose. The modern compiler's default gzip changed
+consensus ticket bytes; the candidate preserves the legacy writer. Re-execution
+tests how that implementation behaves on real evolving state, rather than only
+the seven available saved ticket vectors. In [the importer](../core/blockchain.go),
+each block reads its parent's state, executes its transactions, then calls
+[ValidateState](../core/block_validator.go), which compares gas, bloom, receipts
+and the resulting state root against the historical header. This is much more
+than reading another block number.
+
+Replaying all intermediate blocks is needed for an end-to-end reconstruction
+from genesis unless we deliberately trust an intermediate state checkpoint.
+A saved complete state allows forward operation without first reconstructing
+its entire past. Using it as the acceptance basis is a different trust decision,
+not equivalent historical evidence. Sparse old state in this backup also means
+we cannot assume arbitrary historical intervals can be jumped into. Keep G1 open:
+a snapshot-based alternative needs an explicit documented acceptance decision.
+No existing history requirement is silently waived by this review.
+
+Full replay is still this client's validation, not an independent implementation
+or proof of globally agreed canonical history. The existing shortcuts through
+2,680,000 remain relevant even after reaching the tip. Do not count the baseline's
+progress as candidate execution or join their databases by altering identity files.
+
+### Cost and avoidable overhead
+
+There are 12,730,080 blocks between the verified candidate height and backup
+head 15,130,080. At 100,000 per stage this would require 128 more stages.
+The [latest measurement](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/verification.json)
+is 43,968 blocks in 663.394139 seconds by command timestamps. Applying that
+rate mechanically gives about 53.35 hours of machine execution for the remaining
+blocks. This is an illustration, **not an ETA or a lower/upper bound**:
+later transaction load, state size, compaction and storage can differ greatly.
+The complete stored history contains 419,409,946 transactions. No extrapolated
+full-replay storage requirement is established.
+
+The 30-minute/4 GiB limits are hardcoded in the [initial pilot wrapper](evidence/restart-ticket-encoder-replay-100000-2026-10-08/run.py),
+not chain rules. The [replay test](../tests/restart/replay_linux_test.go) uses
+128-block internal batches and checks disk reserves before each batch; these
+internal batches do not require a separate chat turn, directory or commit.
+The previous [baseline range](evidence/restart-replay-3600000-2026-10-04/README.md)
+already used a declared 12-hour/20 GiB envelope. That does not automatically
+authorize those bounds for the candidate, but demonstrates the old pilot limit
+is not a protocol constraint.
+
+Repeated copies, observer builds, manifest checks and progress polling add
+operator/assistant overhead. More importantly, retaining a new complete database
+for every short interval produces unnecessary storage pressure. Those costs
+are distinct from the transaction execution that supplies the actual evidence.
+
+### Next engineering work
+
+1. Prepare a reusable, resumable runner for one finite candidate replay job,
+   rather than another one-off 100,000-block bundle. Keep the current source,
+   executable and accepted-history identities fixed; record new wrapper inputs
+   separately without editing sealed evidence.
+2. Make **2,700,000** the next proposed validation milestone: it crosses the
+   existing 2,680,000 validation boundary and exercises 20,000 blocks beyond it.
+   This is not a declaration that 20,000 later blocks suffice for full acceptance.
+   Capture expected references before execution and require cold verification
+   at the declared milestone.
+3. Declare a realistic finite time/storage envelope after fresh capacity checks.
+   The current pilot wrapper will stop after 30 minutes and its Go test after
+   55 minutes; all layered timeouts must be reconciled before a longer job.
+   Preserve disk reserves, process/identity locks, offline isolation, automatic
+   stop on mismatch/low space/monitor failure and stopped-checkpoint inspection.
+   A known partial stop must not become an automatic blind retry.
+4. Use one working database and a verified recovery checkpoint, with a documented
+   checkpoint/retention policy. Preserve the original backup and existing sealed
+   failures. Do not delete old copies during this review or hash a live LevelDB
+   as though it were a stopped checkpoint. W: can hold verified cold archives;
+   active replay should remain on Linux ext4.
+5. Let the finite job run without a model turn for each internal batch. Record
+   logs, resource samples, exact start/end and failure status automatically;
+   review at meaningful checkpoints or actionable changes. No recurring task,
+   detached job or larger replay has been created by this document.
+6. Prefer one reviewed candidate execution-history pass as the main evidence,
+   retaining the baseline as a diagnostic comparator. Do not commission two
+   complete passes by default. Any source/toolchain change requires a scoped
+   compatibility assessment; do not claim current replay qualifies an altered
+   final executable or loosen the existing identity checks to reuse its target.
+   Review the evidence/disposition under G1 before closing that gate.
+7. Continue the finite restored-startup/identity-refusal and recovery/handover
+   acceptance work under F12/G3. These address the intended snapshot launch
+   directly and need not wait for every historical block to finish.
+
+No new runtime or runner limit is active yet. The existing pilot's limits remain
+unchanged until a new concrete specification and checked runner replace it.
+The previous next-step instruction to create a 2,500,000 range is superseded by
+this runner/capacity preparation. This review does not approve activation,
+resolve F11/F12 or assert that full historical execution is complete.
+
+Retain /home/rehearsal/replay/candidate-ticket-encoding-2400000-v2 at verified
+height 2,400,000 (2,894.80 MiB) and its exact replay executable:
 b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245.
-The replay/cold-head helpers take height from the environment; built-in details
-tests remain fixed at 100,000, while the latest separate observer is fixed at
-2,400,000. Build the next endpoint observer separately and capture its backup
-reference before replay, then perform both exact-height cold checks. Do not
-rebuild the replay executable or weaken identity checks for an observer change.
+The older directory ending in 2400000 still has head 2,356,032. The current
+separate observer is fixed at 2,400,000; the executable's original details tests
+remain fixed at 100,000. Prepare new endpoint observation without rebuilding or
+substituting the replay executable.
 
 ## Original first-range inputs and boundary
 
