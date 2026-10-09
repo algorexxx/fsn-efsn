@@ -124,8 +124,10 @@ bounded seven-vector/55-payload/six-expiry comparison and actual genesis
 startup/restart, with the maintained decoder. The [affected regression/cost checks](evidence/restart-ticket-encoder-regressions-2026-10-08/README.md)
 also pass: 20 top-level tests and 32 subtests per selection, including synthetic
 recovery execution, plus bounded compression measurements. The [candidate
-replay](evidence/restart-ticket-encoder-replay-2200000-2026-10-09/README.md) now passes
-through 2,200,000 with both cold checks, retaining legacy checkpoint shortcuts.
+history](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md) is
+cold-verified through 2,356,032. The requested 2,400,000 range hit its unchanged
+time allowance and remains incomplete; separate inspection confirms the
+stopped checkpoint. Legacy checkpoint shortcuts still apply.
 Further candidate history, independent review and the restored-identity safeguard
 remain open. Neither the diagnostic overlay nor the unselected patch is a release.
 
@@ -152,12 +154,14 @@ successful continuation. The unchanged baseline retains legacy shortcuts
 through 2,680,000. Execution through the accepted parent and historical
 compatibility of the selected candidate are still open; neither this matrix
 nor synthetic passes replace them. The baseline has not advanced beyond
-3,600,000; the separate encoder candidate has now passed through 2,200,000.
-The baseline result does not validate the candidate patches. Subsequent
-[verified archival to W:](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md) relocates eight
-older candidate checkpoints, retaining the two latest locally and preserving
-their bytes. Free capacity is now 38.74 GiB Linux / 66.97 GiB D:, above the
-unchanged starting floors. Recheck before the next bounded range.
+3,600,000; the separate encoder candidate is cold-verified through 2,356,032,
+with its requested 2,400,000 range still incomplete. The baseline result does
+not validate the candidate patches. Earlier [verified archival to W:](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
+relocated eight older checkpoints. The 2,000,000 and 2,200,000 checkpoints and
+the new stopped target remain local. Free capacity is 35.98 GiB Linux /
+66.97 GiB D:, above unchanged starting floors. Next is only the remaining
+43,968 blocks to 2,400,000, on a verified copy with fresh capacity checks and
+unchanged limits. No continuation after the time stop has started.
 
 Next technical order: resolve F12's ticket-compression compatibility first;
 close the other recorded findings and qualify the selected

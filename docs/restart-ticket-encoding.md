@@ -62,15 +62,18 @@ replay comparator, not an accepted production solution.
    RLP inputs show no encoding-cost increase against the legacy comparator in
    five bounded rounds. This does not qualify the production CLI recovery
    workflow or the full suite.
-4. **Candidate historical replay through 2,200,000 complete.** The [latest range](evidence/restart-ticket-encoder-replay-2200000-2026-10-09/README.md)
-   and both cold checks match preserved history, including state/ticket/receipt
-   commitments and TD. It lies entirely within legacy checkpoint shortcuts.
-   The [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md) restores
-   capacity to 38.74 GiB Linux / 66.97 GiB D:. Next is the
-   [bounded continuation through 2,400,000](restart-ticket-encoder-replay.md),
-   retaining the checkpoint and exact replay executable. Further history remains
-   open; this range does not replace all-history qualification or recover the
-   17 missing exported samples. Keep baseline and candidate results distinct.
+4. **Candidate history is cold-verified through 2,356,032.** The [attempt toward
+   2,400,000](evidence/restart-ticket-encoder-replay-2400000-2026-10-09/README.md)
+   hit its unchanged 30-minute allowance and remains incomplete. A separate
+   [cold inspection](evidence/restart-ticket-encoder-stopped-2356032-2026-10-09/README.md)
+   matches preserved header, state/ticket/receipt commitments and TD at the
+   stopped height. Legacy checkpoint shortcuts still apply. Free capacity is
+   35.98 GiB Linux / 66.97 GiB D: after the earlier verified W: archival.
+   Next is only the [remaining 43,968 blocks to 2,400,000](restart-ticket-encoder-replay.md),
+   using a verified copy, unchanged executable and unchanged stop limits.
+   Further history remains open; these results do not replace all-history
+   qualification or recover the 17 missing exported samples. Keep baseline,
+   completed-range and stopped-inspection results distinct.
 5. Obtain independent codec/consensus and maintenance review before selection.
    If a historical mismatch is found, stop and resolve its cause; do not add an
    activation boundary by assumption. A byte-compatible implementation should
