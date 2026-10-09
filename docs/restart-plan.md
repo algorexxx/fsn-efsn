@@ -29,9 +29,12 @@ retained baseline endpoint. All preservation checks pass, including the separate
 [verified old-fixture archival](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md):
 9,134 files / 11.532 GiB remain on W: and their ten D: roots are retired.
 Actual protected database/source checks pass. The fresh [preflight](evidence/restart-ticket-encoder-job-4500000-2026-10-09/preflight-ready-after-archive-2026-10-09.json)
-passes at 25.805 GiB Linux / 65.787 GiB D: free. The [4,500,000 inputs](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md)
-remain unchanged; dispatch is the next action. No disk compaction or release
-selection change occurred. See the
+passes at 25.805 GiB Linux / 65.787 GiB D: free. The first 4,500,000 dispatch
+refused CRLF observer bytes before executing any test or replay; its result is
+preserved. The [fresh corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
+preserves the prior LF bytes and changes exactly one endpoint literal. Its
+16:14:05 UTC capacity preflight passes; dispatch follows. All limits, source,
+release selection and the retained replay executable remain unchanged. See the
 [replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
 capacity accounting, finite limits and autonomous continuation.
 Further history, independent review, 17 missing exported blobs and the

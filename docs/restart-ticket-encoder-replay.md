@@ -26,7 +26,11 @@ identities match sealed evidence. The container timestamp discrepancy remains
 recorded; it was not used as a substitute for those actual-file checks.
 [Fresh capacity preflight](evidence/restart-ticket-encoder-job-4500000-2026-10-09/preflight-ready-after-archive-2026-10-09.json)
 passes at 25.805 GiB Linux / 65.787 GiB D:. No compaction or further cleanup is
-needed for the prepared next range. Dispatch follows under unchanged limits.
+needed for the next range. The first dispatch refused an observer input's CRLF
+bytes before running any test command or replay. Its [sealed failure](evidence/restart-ticket-encoder-job-4500000-2026-10-09/STATUS.md)
+remains preserved. The [fresh corrected job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
+uses exact prior LF bytes with one endpoint substitution. Its fresh preflight
+passes at 16:14:05 UTC; no limit, runtime or release selection changes.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
@@ -104,10 +108,13 @@ the identical retained replay executable, validated its starting inventory and
 advanced in place without a new database copy. The separate 2,400,000 recovery
 checkpoint remains intact. Both cold checks and all nine preservation checks pass.
 
-The next justified interval is **3,600,000 to 4,500,000**. Its [prepared inputs](evidence/restart-ticket-encoder-job-4500000-2026-10-09/README.md)
-are unchanged. Preserve the initial D: capacity refusal; the subsequent
-16:09:21 UTC preflight passes following verified reclamation. Dispatch is now
-permitted under the existing autonomous-testing authorization. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
+The next justified interval is **3,600,000 to 4,500,000**. The [corrected inputs](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/README.md)
+preserve the original executable/controller and differ from the refused job only
+in job identity and observer CRLF correction. The endpoint observer now differs
+from the verified prior by exactly one literal substitution. Preserve the first
+capacity refusal and the later before-execution byte-identity refusal. The
+16:14:05 UTC corrected-job preflight passes; dispatch follows under the existing
+autonomous-testing authorization. Keep six hours to request a clean stop, 6h15m Go timeout and 6h30m
 external timeout plus 20-second kill grace. Plan an 11 GiB sampled target ceiling:
 the completed 900,000-block job grew the target from 3.73 to 7.06 GiB, and the new
 ceiling leaves about 3.94 GiB growth allowance. This is a finite stop threshold,
