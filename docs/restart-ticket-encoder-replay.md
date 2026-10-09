@@ -16,7 +16,9 @@ Legacy checkpoint shortcuts remain active through 2,680,000. F12 is still open.
 
 The original first-range scope below is retained for reference and preserved
 verbatim in the [first run's plan at start](evidence/restart-ticket-encoder-replay-100000-2026-10-08/plan-at-start.md).
-No replay beyond 2,400,000 has started.
+The [finite background job to 2,700,000](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md) was dispatched at
+09:52:55 UTC on 9 October. Its result is pending; completed assurance remains
+2,400,000 until replay, both cold checks and evidence verification pass.
 
 **Storage:** the [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 relocated eight older candidate checkpoints, 100,000 through 1,800,000, preserving
@@ -26,9 +28,9 @@ ext4. Backup, baselines, binaries, source and sealed evidence retain their
 locations. Older reports' paths are historical; the relocation manifest
 identifies their W: copies. Active replay remains on local Linux ext4.
 
-Final free capacity is **33.10 GiB Linux / 66.97 GiB D:**, above the unchanged
-30/60 GiB starting floors. Recheck before any new copy. No further archival or
-capacity extension is automatic.
+Pre-launch free capacity was **33.10 GiB Linux / 66.97 GiB D:**, above the
+unchanged 30/60 GiB starting floors. The new working copy consumes additional
+space. No further archival or capacity extension is automatic.
 
 ## Purpose and revised execution strategy — 9 October
 
@@ -95,45 +97,59 @@ are distinct from the transaction execution that supplies the actual evidence.
 
 ### Next engineering work
 
-1. Prepare a reusable, resumable runner for one finite candidate replay job,
-   rather than another one-off 100,000-block bundle. Keep the current source,
-   executable and accepted-history identities fixed; record new wrapper inputs
-   separately without editing sealed evidence.
-2. Make **2,700,000** the next proposed validation milestone: it crosses the
-   existing 2,680,000 validation boundary and exercises 20,000 blocks beyond it.
-   This is not a declaration that 20,000 later blocks suffice for full acceptance.
-   Capture expected references before execution and require cold verification
-   at the declared milestone.
-3. Declare a realistic finite time/storage envelope after fresh capacity checks.
-   The current pilot wrapper will stop after 30 minutes and its Go test after
-   55 minutes; all layered timeouts must be reconciled before a longer job.
-   Preserve disk reserves, process/identity locks, offline isolation, automatic
-   stop on mismatch/low space/monitor failure and stopped-checkpoint inspection.
-   A known partial stop must not become an automatic blind retry.
-4. Use one working database and a verified recovery checkpoint, with a documented
-   checkpoint/retention policy. Preserve the original backup and existing sealed
-   failures. Do not delete old copies during this review or hash a live LevelDB
-   as though it were a stopped checkpoint. W: can hold verified cold archives;
-   active replay should remain on Linux ext4.
-5. Let the finite job run without a model turn for each internal batch. Record
-   logs, resource samples, exact start/end and failure status automatically;
-   review at meaningful checkpoints or actionable changes. No recurring task,
-   detached job or larger replay has been created by this document.
-6. Prefer one reviewed candidate execution-history pass as the main evidence,
-   retaining the baseline as a diagnostic comparator. Do not commission two
-   complete passes by default. Any source/toolchain change requires a scoped
-   compatibility assessment; do not claim current replay qualifies an altered
-   final executable or loosen the existing identity checks to reuse its target.
-   Review the evidence/disposition under G1 before closing that gate.
-7. Continue the finite restored-startup/identity-refusal and recovery/handover
-   acceptance work under F12/G3. These address the intended snapshot launch
-   directly and need not wait for every historical block to finish.
+The reusable runner and first finite job are now running. All four preparation
+commands passed: observer build, build identity, the cold 2,400,000 head check
+and a fresh pre-replay 2,700,000 backup reference. All 1,422 previously manifested
+files and the 1,383-file checkpoint inventory verified. The working copy passed
+hash comparison, the unchanged replay executable confirmed its resume identity,
+and live progress advanced beyond 2,400,000. The detached dispatcher remained
+alive after the launching shell returned.
+See the [sealed specification](evidence/restart-ticket-encoder-job-2700000-2026-10-09/inputs/spec.md),
+[configuration](evidence/restart-ticket-encoder-job-2700000-2026-10-09/inputs/config.json)
+and [ten passing controller tests](evidence/restart-ticket-encoder-job-2700000-2026-10-09/inputs/control-tests.stderr.txt).
+The controller tests exercise real short subprocesses: success, nonzero exit,
+clean stop, a child ignoring STOP, unavailable/excessive size, existing STOP,
+external STOP and invalid interval/path/timeout configurations.
 
-No new runtime or runner limit is active yet. The existing pilot's limits remain
-unchanged until a new concrete specification and checked runner replace it.
-The previous next-step instruction to create a 2,500,000 range is superseded by
-this runner/capacity preparation. This review does not approve activation,
-resolve F11/F12 or assert that full historical execution is complete.
+- **Current finite interval:** verified 2,400,000 to requested 2,700,000.
+  The last 20,000 blocks cross the existing legacy validation boundary.
+  Progress is provisional; the candidate is still only qualified through 2,400,000.
+- **Declared replay envelope:** four-hour clean stop, 4h15m Go timeout and
+  4h30m outer timeout with 20-second kill grace. Preparation and cold checks
+  add time. Target allocation is sampled every 30 seconds with an 8 GiB stop
+  threshold and three bounded measurement attempts. The retained Go test's
+  20 GiB Linux / 50 GiB D: disk reserves remain unchanged.
+- **Storage:** make one verified working copy of 2,400,000 on local ext4.
+  Preserve that completed checkpoint separately, along with all original
+  backup, baseline and failed-run evidence. No deletion or W: workload is
+  part of this job. Later successful jobs can reuse the working database only
+  after checking its complete cold inventory and retaining a separate recovery
+  checkpoint; that in-place path has not yet completed a real-data qualification.
+- **Identity and isolation:** use the same retained replay executable and source
+  inventories. Only the separate observer's height literal changes. A private
+  network/mount namespace has read-only backup and recovery views.
+- **Automatic finish:** after successful replay, run both cold checks and the
+  evidence verifier, write completion/verification records and seal output
+  manifests. A failed/stopped job is retained for diagnosis; there is no
+  automatic retry or next interval. Do not edit the active job bundle.
+- **Background lifetime:** the hidden Windows dispatcher keeps WSL attached
+  after the initiating shell exits. It does not disable sleep or survive a
+  reboot. Runtime status is at
+  /home/rehearsal/results/restart-ticket-encoder-job-2700000-2026-10-09/status.json;
+  host dispatch logs are under repo tmp/replay-job-2700000-2026-10-09.
+  A missing completion.json means pending, never success.
+
+Next review is the completed 2,700,000 result or an actionable stop. Keep
+independent review, further historical execution and the finite restored-startup/
+identity-refusal and recovery/handover acceptance work open under F12/G3.
+Prefer one candidate pass with the baseline available for diagnosis, rather
+than commissioning two full passes. Any later source/toolchain change needs
+a scoped compatibility review; changing identity files cannot qualify it.
+
+The original pilot wrapper and sealed failures retain their original bounds.
+Only this new job uses the newly declared envelope. No runtime selection,
+production activation, snapshot-trust disposition or release-gate closure is
+implied.
 
 Retain /home/rehearsal/replay/candidate-ticket-encoding-2400000-v2 at verified
 height 2,400,000 (2,894.80 MiB) and its exact replay executable:

@@ -502,6 +502,16 @@ No human review or acceptance is inferred from a test pass.
   snapshot trust requires an explicit recorded acceptance decision. Earlier
   sealed evidence and its dated next-step wording remain unchanged.
 
+- G1/F12 background runner (9 Oct 2026): ten subprocess/controller tests pass,
+  including hard timeout of an uncooperative child. The [new finite job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md)
+  was dispatched at 09:52:55 UTC from the completed 2,400,000 checkpoint toward
+  2,700,000. It preserves the same replay executable and recovery checkpoint.
+  The new job declares a four-hour clean-stop budget and 8 GiB sampled target
+  threshold, retaining existing disk reserves. Cold checks, verification and
+  manifest capture run automatically after successful replay. There is no
+  automatic retry/next range. Its result is pending; verified candidate history
+  is still 2,400,000 and the production selection is unchanged.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

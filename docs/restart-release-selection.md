@@ -36,7 +36,9 @@ recorded as incomplete. Legacy checkpoint shortcuts still apply. Further
 historical execution and independent consensus/maintenance review remain open.
 The [execution strategy review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
 changes how further replay should be scheduled, not what executable has been
-qualified. Current evidence does not automatically cover later source changes;
+qualified. The [2,700,000 background job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md) is pending and uses the retained
+candidate replay binary; ten controller tests pass but do not extend historical
+qualification. Current evidence does not automatically cover later source changes;
 G1 and F12 remain open. The separate empty/mispointed-datadir safeguard is still required.
 
 ## Source decisions

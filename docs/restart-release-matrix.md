@@ -158,15 +158,15 @@ nor synthetic passes replace them. The baseline has not advanced beyond
 The baseline result does not validate the candidate patches. Earlier
 [verified archival to W:](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 relocated eight older checkpoints. The 2,000,000 and 2,200,000 checkpoints,
-stopped 2,356,032 target and new 2,400,000 target remain local. Free capacity
-is 33.10 GiB Linux / 66.97 GiB D:, above unchanged starting floors. The [replay
+stopped 2,356,032 target and new 2,400,000 target remain local. Pre-launch capacity
+was 33.10 GiB Linux / 66.97 GiB D:, above unchanged starting floors. The [replay
 strategy review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
-supersedes further manually prepared 100,000-block stages. Prepare a finite
-monitored candidate replay job, with a first proposed milestone at 2,700,000 and
-cold checks at meaningful boundaries. Retain the baseline for diagnosis rather
+supersedes further manually prepared 100,000-block stages. The [finite job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md)
+has been dispatched to 2,700,000 with automatic cold checks, a four-hour
+clean-stop budget and 8 GiB sampled-target threshold. Ten controller tests pass;
+the historical result remains pending. Retain the baseline for diagnosis rather
 than automatically replaying both clients to the tip. G1 remains open; no
-snapshot-trust disposition is inferred. Existing bounds remain until a new
-checked specification is ready. No further replay has started.
+snapshot-trust disposition is inferred. Disk reserves remain unchanged.
 
 Next technical order: resolve F12's ticket-compression compatibility first;
 close the other recorded findings and qualify the selected

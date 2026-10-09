@@ -24,12 +24,14 @@ comparator in three bounded inputs. Candidate replay now [completes through
 2,400,000](evidence/restart-ticket-encoder-replay-2400000-v2-2026-10-09/README.md)
 with both cold checks. A separately declared 43,968-block continuation passes;
 the earlier time-stopped attempt and its verified checkpoint remain preserved.
-Final capacity is 33.10 GiB Linux / 66.97 GiB D:, above the unchanged starting
+Pre-launch capacity was 33.10 GiB Linux / 66.97 GiB D:, above the unchanged starting
 floors. The [9 October replay review](restart-ticket-encoder-replay.md#purpose-and-revised-execution-strategy--9-october)
-supersedes repeated 100,000-block stages: prepare a finite monitored campaign
-with meaningful checkpoints, first proposing a crossing through 2,700,000,
-rather than requiring another chat turn and database copy for every short range.
-No larger run or changed limit has started. Further history and independent
+supersedes repeated 100,000-block stages. The [finite background job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/README.md)
+was dispatched on 9 October at 09:52:55 UTC, targeting 2,700,000 with an
+unchanged replay executable, a preserved 2,400,000 recovery checkpoint and
+automatic cold verification. Its declared limits are four hours to request a
+clean stop and an 8 GiB sampled target threshold; disk reserves are unchanged.
+The result is pending. Further history and independent
 review remain open; existing legacy shortcuts still apply. Seventeen missing
 exported blobs and the restore-identity safeguard remain open.
 No runtime fix, compiler downgrade or new genesis is selected.
@@ -148,13 +150,12 @@ Legacy shortcuts still apply; further historical compatibility remains open.
 Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 relocated eight closed candidate checkpoints through 1,800,000 after full
 copy/readback and separate revalidation. The 2,000,000 and 2,200,000 checkpoints,
-stopped 2,356,032 target and new 2,400,000 target remain local. Final capacity
-is 33.10 GiB Linux / 66.97 GiB D:. Next is the [revised runner/capacity work](restart-ticket-encoder-replay.md#next-engineering-work),
-not another manually prepared 100,000-block interval. Keep the current limits
-until a new finite specification and checked runner are ready. One working
-database with a documented checkpoint policy should replace accumulation of
-full copies at every small interval. No range beyond 2,400,000 or storage
-cleanup has started; older sealed reports retain their historical paths.
+stopped 2,356,032 target and new 2,400,000 target remain local. Capacity
+before the new job was 33.10 GiB Linux / 66.97 GiB D:. The
+[monitored job to 2,700,000](restart-ticket-encoder-replay.md#next-engineering-work)
+uses one working copy and retains the completed 2,400,000 recovery checkpoint.
+Its result is pending and does not extend verified history yet. No additional
+storage cleanup has occurred; older sealed reports retain their historical paths.
 The September W: restore directory was not present during the fresh share check;
 locate or re-establish that separate package before closing G1 preservation.
 
