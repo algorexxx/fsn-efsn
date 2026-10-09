@@ -526,6 +526,14 @@ No human review or acceptance is inferred from a test pass.
   an hourly chat follow-up; substantive decisions and unnecessary work must be
   raised with him. Further history and independent review remain open.
 
+- G1/F12 in-place launch (9 Oct 2026): the [3,600,000 job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/README.md)
+  was dispatched at 11:52:26 UTC. All four preparation commands passed; 1,470
+  earlier manifested files and all 1,832 closed working files matched.
+  The prior 2,700,000 completion/verification passed the resume gate.
+  No database copy was made. The separate 2,400,000 recovery checkpoint and
+  unchanged replay identity remain preserved. Results are pending; this
+  launch does not yet qualify in-place completion or later history.
+
 The missing production anchor, release version, accepted history, public
 endpoints and signing approvals remain explicit release inputs in the main
 plan. They are not additional runtime defects or reasons to expand this ledger

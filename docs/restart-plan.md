@@ -23,9 +23,9 @@ recovery handover, with no measured encoding-cost increase over the legacy
 comparator in three bounded inputs. Candidate replay now [completes through
 2,700,000](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) with both cold checks and automatic evidence verification.
 The 300,000-block job took 76 minutes and crossed the legacy checkpoint boundary
-by 20,000 blocks. All source/data preservation checks pass. The next useful
-history milestone is 3,600,000 using the verified working database in place
-and keeping the separate 2,400,000 recovery checkpoint. See the
+by 20,000 blocks. All source/data preservation checks pass. The [next finite job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/README.md) is running to 3,600,000 using the verified
+working database in place and keeping the separate 2,400,000 recovery checkpoint.
+Its result is pending. See the
 [replay policy](restart-ticket-encoder-replay.md#next-engineering-work) for
 capacity accounting, finite limits and autonomous continuation.
 Further history, independent review, 17 missing exported blobs and the
@@ -148,7 +148,8 @@ was 29.31 GiB Linux / 66.03 GiB D:. The retained working database can advance
 only after verifying its exact closed inventory. Its prior bytes then become
 historical evidence, not a separately retained checkpoint. The separate
 2,400,000 recovery checkpoint, stopped 2,356,032 attempt and original STOP
-remain preserved. Next is the finite in-place continuation to 3,600,000.
+remain preserved. The finite in-place continuation to 3,600,000 is running;
+all four preparation commands passed, with no new database copy.
 
 Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints through 1,800,000. No new cleanup has

@@ -155,7 +155,7 @@ nor synthetic passes replace them. The baseline has not advanced beyond
 3,600,000; the separate encoder candidate now completes through 2,700,000.
 The baseline does not validate the candidate patches. The [completed job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json)
 preserves the separate 2,400,000 recovery checkpoint and all sealed evidence.
-The next useful milestone is 3,600,000, reusing the working database after
+The running finite job targets 3,600,000, reusing the working database after
 complete cold-inventory and prior-verification checks. See the
 [capacity/continuation policy](restart-ticket-encoder-replay.md#next-engineering-work).
 No snapshot-trust acceptance or release-gate closure is inferred.

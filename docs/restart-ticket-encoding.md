@@ -66,7 +66,7 @@ replay comparator, not an accepted production solution.
    [300,000-block job](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) passes all seven commands, both cold checks and
    automatic evidence verification. It crosses the legacy boundary at 2,680,000
    by 20,000 blocks. The separate 2,400,000 recovery checkpoint and original
-   stopped attempt are preserved. The next finite job targets 3,600,000 using
+   stopped attempt are preserved. The running finite job targets 3,600,000 using
    the verified working database in place; see the [runner/capacity policy](restart-ticket-encoder-replay.md#next-engineering-work).
    Prefer one candidate pass with the baseline retained for diagnosis.
    Further history remains open; this does not replace all-history qualification,

@@ -32,7 +32,7 @@ recovery execution, with bounded compression measurements. The [candidate
 history](evidence/restart-ticket-encoder-job-2700000-2026-10-09/verification.json) now completes through 2,700,000 with both cold checks and
 automatic evidence verification. It includes 20,000 blocks beyond the legacy
 checkpoint boundary. The recovery checkpoint, source identities and original
-stopped evidence remain preserved. The next finite continuation targets
+stopped evidence remain preserved. The running finite continuation targets
 3,600,000 in place; this changes neither the replay executable nor the selected
 release source. Further history, independent review and restored-identity
 refusal remain open under G1/F12.

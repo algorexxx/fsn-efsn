@@ -17,10 +17,9 @@ The [43,968-block continuation](evidence/restart-ticket-encoder-replay-2400000-v
 and earlier failed attempt retain their original dated evidence.
 
 Final capacity at 2,700,000 was 29.31 GiB Linux / 66.03 GiB D:.
-Fresh preflight is mandatory; another full copy is unnecessary. The next
-declared job will reuse the working database through 3,600,000, where a retained
-baseline offers a comparator. It must verify every closed file and prior
-completion before writing; preserve the separate recovery checkpoint.
+Fresh preflight is mandatory; another full copy is unnecessary. The [next finite job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/README.md) is now running in place through 3,600,000,
+where a retained baseline offers a comparator. It verified every closed file
+and prior completion before writing; the separate recovery checkpoint is preserved.
 No in-place runtime pass is claimed before that job completes.
 
 **Storage:** the [verified W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
@@ -94,9 +93,13 @@ are distinct from the transaction execution that supplies the actual evidence.
 
 ### Next engineering work
 
-The 2,700,000 job is complete. Prepare one **2,700,000 to 3,600,000** in-place
-continuation with the identical retained replay executable. The separate
-observer changes only its endpoint literal. A new immutable input bundle
+The 2,700,000 job is complete. The **2,700,000 to 3,600,000** in-place
+continuation was dispatched at 11:52:26 UTC on 9 October with the identical
+retained replay executable. All four preparation commands pass, 1,470 earlier
+manifested files verify and all 1,832 closed working files match. The run records
+copy_verified=false and resume_verified=true: no new database copy was made.
+Its historical result is pending; verified assurance remains 2,700,000. The separate
+observer changes only its endpoint literal. The immutable input bundle
 declares six hours to request a clean stop, 6h15m Go timeout and 6h30m external
 timeout, with the same 20-second kill grace, 30-second size sampling and
 8 GiB target threshold. Original sealed jobs retain their original limits.
@@ -132,6 +135,10 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
+Active runtime status is
+/home/rehearsal/results/restart-ticket-encoder-job-3600000-2026-10-09/status.json.
+Host dispatch logs are under repo tmp/replay-job-3600000-2026-10-09.
+The hourly continuation id is continue-fusion-restart-testing.
 The hidden Windows dispatcher keeps WSL attached after the launching shell
 returns. Keep Windows awake and the app running for scheduled follow-up.
 While replay runs, useful independent work is the documented restored-startup/
