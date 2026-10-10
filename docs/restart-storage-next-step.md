@@ -1,6 +1,11 @@
 # Authorized archival before the next historical replay
 
 10 October 2026. **All six authorized obsolete-copy retirements passed.**
+The subsequent replay stopped at its declared allocation ceiling and its saved
+state is [verified at 5,600,032](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md).
+No writer is running. The next step is the [capacity decision](restart-storage-capacity-review.md),
+not another cleanup: proposed expansion of the FusionRehearsal virtual disk from
+200 to 220 GiB, with reserves unchanged. Await Peter before resizing or resuming.
 His message was: "If there is something not needed any more you can delete it."
 The [four-root copy](evidence/restart-old-fixtures-copy-w-2026-10-10/RESULTS.md)
 completed at 09:52:08 UTC. The [separate retirement](evidence/restart-old-fixtures-retire-w-2026-10-10/RESULTS.md)
@@ -22,12 +27,12 @@ was dispatched at 12:50:50 UTC and began replay at 12:53:26 UTC after passing
 inventory/identity checks. Earlier storage records remain
 dated observations, not current capacity claims.
 The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
-passes independent cold checks at 5,331,360. The original requested 5,400,000 job
+passed independent cold checks at 5,331,360. The original requested 5,400,000 job
 remains incomplete. Its size stop worked as declared.
 
-D: was at approximately 58.64 GiB free during the stopped-state inspection,
+D: was at approximately 58.64 GiB free during that earlier stopped-state inspection,
 below the unchanged 60 GiB replay starting floor. Linux then had about 21.71 GiB free, leaving little room above its 20 GiB reserve
-plus preparation margin. The working target is 11.016 GiB and already exceeds
+plus preparation margin. The working target then occupied 11.016 GiB and exceeded
 the old job's 11 GiB ceiling. Do not rerun that job, lower reserves, remove STOP
 or reinterpret failure as success.
 
@@ -72,7 +77,7 @@ and capacity rather than assuming successful cleanup. Keep finite per-phase
 limits and the existing D:/W: reserve checks; use Linux reserve checks too.
 
 The original backup, both baseline comparators, the 2,400,000-v2 recovery
-checkpoint, the current 5,331,360 working state, the earlier stopped 2,356,032
+checkpoint, the current 5,600,032 working state, the earlier stopped 2,356,032
 attempt, toolchain/executables and all sealed repository evidence remain local.
 Existing W: archives remain untouched. Archive references are relocation records;
 old evidence retains its historical paths and meaning.
@@ -81,14 +86,14 @@ Peter's later explicit message authorizes removing unnecessary test copies.
 Apply that permission to these six already-reviewed sources, after verified W:
 archival. It does not justify deleting backup, evidence or recovery data.
 
-After verified reclamation, evaluate the actual new capacity and
-prepare a fresh bounded historical continuation from 5,331,360. Require the
-stopped-checkpoint inspection's exact hashes/identity, preserve failure records,
-and declare new finite growth/time limits before launch. The failed job and its
-limits stay immutable. No production activation, real-key use or release
-selection is included. The [prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
-targets 6,300,000, with a fresh 15 GiB sampled ceiling and unchanged time/reserve
-limits. Storage work, fresh capacity and exact cold inventory/identity checks
-passed; the writer has resumed. See its STATUS.md for finite limits and logs. The
-old failed job and its 11 GiB ceiling remain immutable. No unchanged acceptance
-reruns are needed while archival is healthy.
+After verified reclamation, the fresh capacity and exact cold inventory/identity
+checks passed. The [continuation toward 6,300,000](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
+ran with a fresh 15 GiB sampled ceiling and unchanged time/reserve limits. It
+stopped at that ceiling and its saved state is independently verified at 5,600,032.
+Closed allocation is now 15.028 GiB; free capacity is 22.177 GiB Linux / 63.653 GiB
+D:. Both failed jobs and their original STOP/limits remain immutable.
+
+No further archival/removal is proposed. Await the linked capacity decision;
+another small interval would consume the remaining Linux margin without useful
+progress. No production activation, real-key use or release selection is included.
+Do not repeat unchanged acceptance checks while that decision is pending.

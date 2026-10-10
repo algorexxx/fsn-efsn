@@ -1,13 +1,24 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,331,360; offline continuation toward 6,300,000 launched.**
-The new finite job was dispatched at **12:50:50 UTC**, after verified storage
-reclamation and fresh capacity checks. [Replay began at 12:53:26 UTC](evidence/restart-ticket-encoder-job-6300000-2026-10-10/STATUS.md)
-after four successful startup commands, exact 5,591-file working and 1,383-file
-recovery inventory checks, and unchanged source/executable identities. Initial
-progress exceeds 5,335,000 with no reported error and a passing size sample.
-Launch/progress is provisional until both
-cold checks and the evidence verifier pass; it does not extend verified coverage.
+Updated 10 October 2026. **Cold-verified through 5,600,032; replay stopped pending a capacity decision.**
+The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
+was dispatched at 12:50:50 UTC and stopped at 14:32 UTC at its declared sampled
+15 GiB allocation ceiling. Its original failure record and STOP remain intact.
+The [separate cold inspection](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md)
+verifies the saved 5,600,032 endpoint: complete header, state/ticket/receipt
+commitments, bloom and TD match the backup. It reconstructs 2,370 tickets with
+one transaction/receipt. All five commands, twelve preservation checks and the
+evidence verifier pass; 7,625 working-file hashes remain unchanged and 1,698 prior
+evidence files verify. The additional coverage is 268,672 blocks, giving 2,920,032
+post-legacy blocks in total. No final warm ticket count is available. The requested
+6,300,000 range remains incomplete; F12/G1 remain open.
+
+No writer is running. Await Peter's decision on the [200 to 220 GiB WSL capacity
+proposal](restart-storage-capacity-review.md), with existing disk reserves unchanged.
+Do not resize, resume, lower reserves or spend the remaining margin on another
+tiny interval before that decision. Stay quiet while the decision is unanswered.
+
+The preceding stopped checkpoint remains historical evidence:
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
 stopped at its declared sampled 11 GiB allocation ceiling. Its requested range
 remains incomplete. The [separate read-only inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
@@ -15,7 +26,7 @@ passes at 5,331,360, with complete header, state/ticket/receipt commitments, blo
 and TD matching the backup. It reconstructs 3,728 tickets with four transactions/
 receipts. All twelve preservation checks and the evidence verifier pass; all
 5,591 target hashes stay unchanged and 1,616 prior evidence files verify.
-Candidate post-legacy coverage is 2,651,360 blocks. There is no final warm ticket
+That inspection established 2,651,360 post-legacy blocks. There is no final warm ticket
 count from the stopped attempt. F12/G1 remain open.
 
 **Last fully completed requested range: 4,500,000.**
@@ -30,8 +41,8 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Current closed allocation is 11,828,121,600 bytes (11.016 GiB). Final inspection
-free capacity is 21.71 GiB Linux / 58.64 GiB D:. The separate verified 2,400,000 recovery checkpoint
+Current closed allocation is 16,136,085,504 bytes (15.028 GiB). Latest inspection
+free capacity is 22.177 GiB Linux / 63.653 GiB D:. The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working-database
 inventories are historical records, not separate retained copies.
 
@@ -65,9 +76,10 @@ completed and passed independent record/provenance verification at 2,161 files /
 completed at 11:52:51 UTC after rechecking both complete copies, reclaiming
 4.544 GiB inside Linux. Actual filesystem and independent evidence checks pass.
 The prepared 6,300,000 job's [fresh capacity preflight](evidence/restart-ticket-encoder-job-6300000-2026-10-10/preflight-ready-2026-10-10.json)
-passes at 12:49:43 UTC: about 26.26 GiB Linux / 63.68 GiB D: free, no active node
-or replay process, and the correct verified stopped-state provenance. Do not change
-the old job or retry it.
+passed at 12:49:43 UTC: about 26.26 GiB Linux / 63.68 GiB D: free, no active node
+or replay process, and the correct verified stopped-state provenance. That is
+the starting observation, superseded by the latest stopped-state capacity above.
+Do not change either failed job or retry it.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The new verified
@@ -87,7 +99,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through the cold-verified stopped checkpoint at 5,331,360, including 2,651,360 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 5,331,360 remains open; the requested 5,400,000 range is incomplete. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through the cold-verified stopped checkpoint at 5,600,032, including 2,920,032 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 5,600,032 remains open; the requested 5,400,000 and 6,300,000 ranges remain incomplete. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
@@ -171,13 +183,22 @@ inventory, identity, source and toolchain; retain the separate recovery checkpoi
 Select finite endpoint/growth/time limits from fresh capacity and evidence value.
 Further candidate history is useful; another unchanged baseline pass is not
 justified without a diagnostic question. A [fresh continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
-is prepared for 5,331,360 to 6,300,000 (968,640 new blocks), with a new 15 GiB
+was prepared for 5,331,360 to 6,300,000 (968,640 new blocks), with a new 15 GiB
 sampled ceiling, 30-second samples and unchanged six-hour/6h15/6h30 time limits.
 The [controller provenance/refusal checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Storage completion and fresh capacity pass. The finite continuation was
 dispatched at 12:50:50 UTC and began replay at 12:53:26 UTC after exact closed
-inventory/identity checks. Its first progress/resource observation is healthy. Original
-failed-attempt records and limits remain immutable.
+inventory/identity checks. It subsequently stopped at its size ceiling; the
+[independent cold inspection](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md)
+verifies 5,600,032. The original failed-attempt records and limits remain immutable.
+
+The latest 268,672 blocks added 4.012 GiB of allocation. With only 22.177 GiB
+available inside the 200 GiB virtual disk, another tiny range is not justified.
+The [capacity review](restart-storage-capacity-review.md) proposes expanding only
+FusionRehearsal to 220 GiB. Await Peter's decision before that change or another
+writer. After approval and verified capacity, a fresh job must name the 5,600,032
+inspection as its stopped checkpoint and the failed 6,300,000 job as its attempt.
+No full-history size forecast or acceptance waiver follows from that proposal.
 
 Before any writer starts, require successful completion/evidence verification
 of its accepted checkpoint, or an explicitly qualified stopped-checkpoint
@@ -211,11 +232,13 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-The active job's runtime status is
+The most recent, now stopped job's runtime status is
 /home/rehearsal/results/restart-ticket-encoder-job-6300000-2026-10-10/status.json.
-Host dispatch logs are under repo tmp/replay-job-6300000-2026-10-10. Bundle
-completion.json and verification.json establish completion, not progress logs.
-The failed 5,400,000 job's original status/logs remain preserved separately.
+Host dispatch logs are under repo tmp/replay-job-6300000-2026-10-10. Its
+completion.json records exit 1 and verified_pass false; no passing job
+verification.json exists. The separate stopped-checkpoint inspection establishes
+the verified saved endpoint. The earlier failed 5,400,000 job's original
+status/logs also remain preserved.
 The hourly continuation id is continue-fusion-restart-testing.
 The new hidden Windows dispatcher keeps WSL attached after the launching shell
 returns. Keep Windows awake and the app running during scheduled work.

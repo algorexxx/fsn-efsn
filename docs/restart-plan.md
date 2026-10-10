@@ -1,6 +1,11 @@
 # Fusion restart launch plan
 
 Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
+**Current state: cold-verified through 5,600,032; no replay writer is running.**
+The latest attempt reached its declared storage ceiling. The next step is the
+[capacity decision](restart-storage-capacity-review.md): proposed expansion of
+FusionRehearsal's virtual disk from 200 to 220 GiB, with reserves unchanged.
+Await Peter's answer before resizing or starting another replay.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -60,9 +65,16 @@ node/replay process. The [fresh prepared continuation](evidence/restart-ticket-e
 was dispatched at **12:50:50 UTC** toward 6,300,000, using a new 15 GiB sampled
 ceiling and unchanged time/reserve limits. [Replay began at 12:53:26 UTC](evidence/restart-ticket-encoder-job-6300000-2026-10-10/STATUS.md)
 after four successful startup commands and exact working/recovery/source/identity
-checks. The initial observation confirms progress beyond 5,335,000, no reported
-errors and a passing allocation sample. Progress is provisional; verified history
-remains 5,331,360 until completion/cold checks/evidence verification pass.
+checks. It [stopped at the declared size ceiling](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
+at 14:32 UTC and remains an incomplete requested range. The separate
+[cold inspection](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md)
+verifies **5,600,032**, adding 268,672 blocks and bringing candidate post-legacy
+coverage to 2,920,032 blocks. All five commands, twelve preservation checks and
+evidence verification pass; 7,625 working-file hashes remain unchanged. Closed
+allocation is 15.028 GiB, with 22.177 GiB Linux / 63.653 GiB D: free. No writer
+has resumed. Only about 1.177 GiB remains above the Linux reserve and preparation
+margin, so another tiny continuation is not justified. The virtual disk is
+currently capped at 200 GiB; the linked capacity proposal requires Peter's decision.
 The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
@@ -206,19 +218,21 @@ Allocation is 8.295 GiB; final free capacity is 24.45 GiB Linux / 63.68 GiB D:.
 The later 5,400,000 attempt stopped at its declared allocation ceiling; its
 [independent cold inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
 passes at 5,331,360. That saved checkpoint is verified, while the requested range
-remains incomplete. Current candidate post-legacy coverage is 2,651,360 blocks.
+remains incomplete. That inspection established 2,651,360 post-legacy blocks.
 The retained working database can advance only through a fresh job that verifies
 that inspection's exact closed inventory/identity and has sufficient capacity.
 Prior working bytes then remain historical evidence rather than a separate
 checkpoint. The separate 2,400,000 recovery checkpoint, stopped 2,356,032 attempt
 and original STOP remain preserved. The complete-backup read-only startup check
-already passes. Complete the authorized [storage operation](restart-storage-next-step.md)
-and fresh capacity preflight before launching the prepared continuation; do not
-repeat unchanged passing checks. The four Windows roots are archived/retired;
-the two old Linux checkpoint archives and local retirement are verified. Fresh
-capacity passes, and the 6,300,000 continuation was dispatched at 12:50:50 UTC.
-Inspect its status/completion, verification and resource records next. No competing
-bulk workload or unchanged passing reruns are needed while it is healthy.
+already passes. The authorized [storage operation](restart-storage-next-step.md)
+is complete: all six copies are archived and retired. The subsequent 6,300,000
+attempt reached its declared 15 GiB ceiling and stopped. Its separate
+[inspection](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md)
+verifies 5,600,032 and 2,920,032 post-legacy blocks; the requested range remains
+incomplete. No writer is active. Await the [capacity decision](restart-storage-capacity-review.md)
+before preparing another useful-sized continuation. Keep the old jobs/STOPs
+immutable and avoid unchanged passing reruns or repeated checks while awaiting
+that answer.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 
@@ -721,12 +735,16 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
+| Rehearsal disk capacity | Proposed FusionRehearsal 200 to 220 GiB expansion; awaiting Peter, reserves unchanged | Before further G1 replay |
 
 Current technical order (efsn):
 
-1. G1: resume bounded historical execution after fresh capacity/path checks,
-   preserving completed checkpoints and the original backup. Keep baseline and
-   candidate-patch validation distinct.
+1. G1: await the [rehearsal capacity decision](restart-storage-capacity-review.md).
+   If approved, verify the resized filesystem and preserved checkpoint, then
+   declare a fresh bounded continuation from 5,600,032 after capacity/path checks.
+   Keep the original backup and separate recovery; retain the incomplete jobs.
+   Keep baseline and candidate-patch validation distinct. Do not restart the
+   writer or repeat unchanged tests while awaiting the answer.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the
