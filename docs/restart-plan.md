@@ -25,13 +25,15 @@ The [first phase](evidence/restart-wsl-compact-2026-10-11/STATUS.md) launched at
 disk to W: with a source read lock and full source/archive SHA256 verification. No
 compaction or new replay has started. Do not ask for that storage permission again;
 inspect the archival records before any WSL startup or dependent disk work.
+The [logical preservation check](evidence/restart-wsl-compact-2026-10-11/PRESERVATION.md)
+is prepared against the 6,300,000 evidence, but has not been executed.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
 their old next-step lists do not add separate requirements to this checklist.
 
-**Historical investigation record (8–10 October):** F12 now identifies a compiler
+**Historical investigation record (8â€“10 October):** F12 now identifies a compiler
 compatibility blocker. Go 1.27.1 changes the compressed ticket bytes used in
 genesis commitments; substituting Go 1.21.3's bytes alone reproduces the exact
 historical genesis. Qualify legacy ticket-encoding compatibility before further
@@ -194,7 +196,7 @@ or question about test value needs Peter; do not infer release approval.
 | Gate | Evidence already available | Remaining boundary |
 | --- | --- | --- |
 | G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,600,000; complete local package/restore | Accepted history and trust record before final construction |
-| G2 Client and supported operation | P1–P17 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
+| G2 Client and supported operation | P1â€“P17 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Supervised launch and response | SSH and self-hosted fsn-stats selected; optional observer diagnostics available | Rehearsed manual checks and operator response before public use |
 | G5 Release infrastructure and data | Network profile, DNS recovery and local restore/service checks | Real download/restore/connect path before public use |
@@ -202,7 +204,7 @@ or question about test value needs Peter; do not infer release approval.
 | G7 Independent producers | Funded test-key entrant already buys and mines with donation node | Tested entry kit before release; actual independent entry after recovery |
 | G8 Review, final rehearsal and activation | Extensive retained evidence; final release not selected | Explicit go/no-go and recorded launch |
 
-## G1 — History and preservation
+## G1 â€” History and preservation
 
 - [ ] Confirm immutable preservation and a separate verified recoverable copy;
   record provenance, hashes, storage health and restore ownership. Resolve the
@@ -278,14 +280,14 @@ reports retain their historical paths; the relocation records locate the bytes.
 The September W: restore directory was not present during the fresh share check;
 locate or re-establish that separate package before closing G1 preservation.
 
-## G2 — Client and supported operation
+## G2 â€” Client and supported operation
 
 - [x] Assemble the [proposed source patches](restart-release-extraction.md) from
-  pinned upstream: P1–P17 node changes, optional O1 and separate recovery tooling.
+  pinned upstream: P1â€“P17 node changes, optional O1 and separate recovery tooling.
   All 109 node hunks have review IDs; observer and gateway changes are excluded.
   This prepares the review input, not approval of the release selection below.
 - [x] Freeze the [pre-activation source selection](restart-release-selection.md):
-  P1–P17 plus the separate B1 compiler-compatibility deletion; exclude optional
+  P1â€“P17 plus the separate B1 compiler-compatibility deletion; exclude optional
   O1 and observer/gateway changes; build recovery separately. All 109 node hunks
   are mapped and exact inputs are pinned. Independent approval remains open.
 - [x] Freeze the [ten-group release matrix and reviewer handoff](restart-release-matrix.md)
@@ -344,7 +346,7 @@ locate or re-establish that separate package before closing G1 preservation.
   both command builds and offline scans. Keep the update unselected: it also
   raises the main Go language version and changes compatibility defaults.
   The follow-up below reviews those effects; historical and inherited-test
-  acceptance remain under F1/F10. P1–P17+B1+D1 is unchanged.
+  acceptance remain under F1/F10. P1â€“P17+B1+D1 is unchanged.
 - [x] Complete the [Go language/default review](evidence/restart-release-go-defaults-2026-10-07):
   inspect all compiler-diagnosed loops and 22 changed compatibility defaults.
   No specific consensus-output change was identified by this bounded review.
@@ -409,7 +411,7 @@ Evidence: [anchor](restart-anchor-implementation.md),
 [operator recovery](restart-operator-recovery.md),
 [native decode finding](native-call-decode-errors.md).
 
-## G3 — Recovery and custody
+## G3 â€” Recovery and custody
 
 - [ ] Recheck both real wallets' balances, time-lock intervals, gas and ticket
   runway. Publish the exact Candidate A sequence and complete economic ledger,
@@ -430,7 +432,7 @@ Evidence: [wallet handover](restart-wallet-handover.md),
 Passing public-test-key rehearsals does not authorize real signing or use of
 the backup owner's funds for another participant.
 
-## G4 — Supervised launch and operator response
+## G4 â€” Supervised launch and operator response
 
 4 October scope decision: Peter will use SSH checks during the actively
 supervised initial blocks and the self-hosted fsn-stats dashboard for visibility.
@@ -475,7 +477,7 @@ Evidence: [observer](restart-observer.md),
 [sparse backup state](restart-observer-preserved-inventory.md).
 No ongoing finality or automatic economic repair is added by this gate.
 
-## G5 — Release infrastructure and data
+## G5 â€” Release infrastructure and data
 
 - [ ] Choose organization maintainers, domains, hosts and release ownership;
   preserve upstream ancestry/license notices and review requirements. Produce
@@ -502,7 +504,7 @@ Evidence: [network profile](restart-network-profile.md),
 [complete local restore](restart-snapshot-restore.md).
 More discovery operators/domains can be added as participation grows.
 
-## G6 — Public dashboard
+## G6 â€” Public dashboard
 
 Target repository: `C:/Users/Peter/Documents/CODING/fsn-stats`, branch
 `codex/recovery-readiness`. See the [repository handoff](restart-dashboard-handoff.md).
@@ -574,7 +576,7 @@ now validates known block/stats/pending fields and retains only scalar chart
 records and transaction/uncle counts. Current-head hashes remain in both API
 routes and match direct RPC. All 159 contracts, 12 socket tests, six database
 scenarios and four actual-node/browser checkpoints pass. An offline eight-identity,
-2,000-height, 18,000-variant run measures about 13–14 MiB retained heap growth
+2,000-height, 18,000-variant run measures about 13â€“14 MiB retained heap growth
 for both one and 714 transactions per block; this is not concurrent load or peak
 RAM. An earlier freshness assertion failure is preserved with its cause unproven;
 the successful run adds complete-report readiness and receipt diagnostics without
@@ -715,7 +717,7 @@ acceptance and the coordinated manifest remain open. No chain or application cod
 This gate complements G4's supervised checks and response procedure. A visible
 node list alone does not close either gate.
 
-## G7 — Independent producers after bootstrap
+## G7 â€” Independent producers after bootstrap
 
 - [x] Assemble the [draft operator kit](restart-operator-kit.md) and its bounded
   [fresh-restore/console-entry rehearsal](restart-operator-kit-rehearsal.md).
@@ -742,10 +744,10 @@ mechanism, not public package usability, a real volunteer or an authorized
 funding contribution. Multiple Peter-operated nodes do not count as independence.
 The last two items are post-bootstrap milestones; the first two precede release.
 
-## G8 — Independent review, final rehearsal and activation
+## G8 â€” Independent review, final rehearsal and activation
 
 - [ ] Supply reviewers with the selected small production diff, exact artifacts,
-  tests and dispositions from G1–G7. Resolve findings; consensus/validation changes
+  tests and dispositions from G1â€“G7. Resolve findings; consensus/validation changes
   require independent human review. Additional AI review can support that review.
 - [ ] Complete a final rehearsal using the selected release, network profile,
   dashboard, monitoring and operator instructions. Record source/build hashes,
