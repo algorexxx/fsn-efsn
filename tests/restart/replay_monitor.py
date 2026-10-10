@@ -79,8 +79,17 @@ def require_verified_stopped(config, run, verification, attempt_completion):
         raise ValueError('stopped attempt identity or requested height differs')
     if verification.get('endpoint') != run.get('endpoint_observations', {}).get('cold-details'):
         raise ValueError('stopped checkpoint endpoint differs from verified observation')
-    if not run.get('target_before_cold_sha256') or not re.fullmatch(r'[0-9a-f]{64}', run.get('stop_sha256', '')):
-        raise ValueError('stopped checkpoint inventory and STOP identity are required')
+    if not run.get('target_before_cold_sha256'):
+        raise ValueError('stopped checkpoint inventory is required')
+    if run.get('stop_kind') == 'host-reserve':
+        evidence = run.get('stop_evidence_sha256', {})
+        if set(evidence) != {'completion.json', 'qualification/replay.stdout.txt', 'qualification/run.json'} or not all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value) for value in evidence.values()):
+            raise ValueError('native reserve stop requires exact failure evidence identities')
+        if run.get('stop_sha256') or verification.get('stop_kind') != 'host-reserve' or run.get('discovery_expected_refusal') is not True or verification.get('discovery_expected_refusal') is not True:
+            raise ValueError('native reserve stop must preserve its distinct discovery provenance')
+        return
+    if run.get('stop_kind') is not None or not re.fullmatch(r'[0-9a-f]{64}', run.get('stop_sha256', '')):
+        raise ValueError('stopped checkpoint STOP identity is required')
 
 
 def run_monitored(helper, command, cwd, env, limits):

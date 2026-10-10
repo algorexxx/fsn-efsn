@@ -173,6 +173,50 @@ class ReplayMonitorTests(unittest.TestCase):
             with self.subTest(preservation=key), self.assertRaises(ValueError):
                 monitor.require_verified_stopped(config, changed, verified, completion)
 
+    def test_native_reserve_stop_uses_verified_failure_records_without_fabricated_stop(self):
+        fixture = self.load_native_reserve_fixture()
+
+        monitor.require_verified_stopped(**fixture)
+
+        self.assertFalse(fixture['attempt_completion']['verified_pass'])
+        self.assertNotIn('stop_sha256', fixture['run'])
+        self.assertEqual('host-reserve', fixture['verification']['stop_kind'])
+
+    def test_native_reserve_resume_refuses_missing_or_mixed_stop_provenance(self):
+        fixture = self.load_native_reserve_fixture()
+        mutations = [
+            ('run', 'stop_kind', 'unknown'), ('run', 'stop_kind', None),
+            ('run', 'stop_sha256', 'a' * 64),
+            ('run', 'stop_evidence_sha256', {}),
+            ('run', 'discovery_expected_refusal', False),
+            ('verification', 'stop_kind', 'stop-file'),
+            ('verification', 'discovery_expected_refusal', False),
+        ]
+        evidence = fixture['run']['stop_evidence_sha256']
+        for name in evidence:
+            mutations.append(('run', 'stop_evidence_sha256', {key:value for key,value in evidence.items() if key != name}))
+            mutations.append(('run', 'stop_evidence_sha256', dict(evidence, **{name:'invalid'})))
+            mutations.append(('run', 'stop_evidence_sha256', dict(evidence, **{name:None})))
+        mutations.append(('run', 'stop_evidence_sha256', dict(evidence, **{'STOP':'a' * 64})))
+
+        for section, key, value in mutations:
+            changed = copy.deepcopy(fixture)
+            changed[section][key] = value
+            with self.subTest(section=section, key=key), self.assertRaises(ValueError):
+                monitor.require_verified_stopped(**changed)
+
+    def load_native_reserve_fixture(self):
+        evidence = Path(__file__).resolve().parents[2]/'docs/evidence'
+        prior = evidence/'restart-ticket-encoder-stopped-reserve-2026-10-10'
+        attempt = evidence/'restart-ticket-encoder-job-6300000-v2-2026-10-10'
+        verified = json.loads((prior/'verification.json').read_bytes())
+        return {
+            'config':{'start_height':verified['cold_verified_height'], 'stopped_attempt':attempt.name},
+            'run':json.loads((prior/'qualification/run.json').read_bytes()),
+            'verification':verified,
+            'attempt_completion':json.loads((attempt/'completion.json').read_bytes()),
+        }
+
 
 if __name__ == '__main__':
     unittest.main()

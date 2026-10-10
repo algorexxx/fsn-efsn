@@ -1,23 +1,22 @@
 # Fusion restart launch plan
 
 Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: cold-verified through 5,600,032; replay stopped at D:'s 50 GiB reserve.**
-Peter approved the [200 to 220 GiB disk expansion](restart-storage-capacity-review.md).
-It completed with passing preservation checks and unchanged reserves. The
-[fresh 6,300,000-v2 continuation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/README.md)
-was dispatched at 15:14:00 UTC after passing capacity/provenance preflight.
-Replay began at 15:17:23 UTC after four passing startup commands and exact
-working/recovery inventories. It [exited 1 at 17:45 UTC](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
-after the native per-batch host-space check stopped it. Last logged progress is
-5,976,608; the saved endpoint still needs cold verification. Preservation checks
-and failure-evidence integrity pass. D: has about 49.385 GiB free, below the
-existing cold-inspection starting floor. The [capacity review](restart-storage-capacity-review.md)
-identifies 12.695 GiB in 14 older fixture folders. Peter explicitly approved
-archiving/removing unnecessary copies; the W: archive completed and verified at
-18:26:32 UTC. The separately verified retirement started at 18:27:09 UTC and
-rechecks both complete copies before local removal. Keep reserves unchanged and hold dependent database
-work until that operation completes. Verified coverage
-remains 5,600,032 until cold checks and evidence verification.
+**Current state: cold-verified through 5,976,864; the next bounded continuation is prepared.**
+The [native-reserve stopped-state inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
+passes both exact-height cold checks and all twelve preservation checks. Header,
+state/tickets, receipts, bloom and TD match the backup; 10,895 working and 1,383
+recovery-file hashes stay unchanged. This adds 376,832 blocks, bringing candidate
+post-legacy coverage to 3,296,864. The prior requested 6,300,000-v2 job remains
+failed/incomplete; its reserve failure records are preserved without a fabricated STOP.
+
+The [authorized archival/retirement](restart-storage-capacity-review.md) completed:
+all 9,191 files remain verified on W:, and D: gained 12.715 GiB, leaving 62.100 GiB
+free. The separate recovery and original backup remain intact. Four targeted
+[controller provenance checks](evidence/restart-reserve-stop-controller-2026-10-10/RESULTS.md)
+pass. Only offline test-controller handling changed; the retained node/replay
+executable and release selection are unchanged. The [fresh 6,300,000-v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/README.md)
+is prepared for 323,136 new blocks with a 28 GiB sampled ceiling and unchanged
+timeouts/reserves. Fresh capacity must pass before launch; no writer has resumed.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -759,17 +758,17 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. The 14-folder W: archive is verified; its separately checked D: retirement is running, with replay reserves unchanged | Before cold inspection or another finite G1 replay |
+| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. Archive/retirement and cold inspection passed; 62.100 GiB free on D:. Fresh 6,300,000-v3 continuation prepared | Before cold inspection or another finite G1 replay |
 
 Current technical order (efsn):
 
-1. G1: preserve the [host-reserve stop](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
-   and complete the [authorized archival/reclaim](restart-storage-capacity-review.md). After
-   sufficient capacity is available, independently establish the saved endpoint
-   and inspect it with unchanged identity/preservation gates. This stop has no
-   new STOP file; qualify its actual failure provenance before any resume.
-   Review evidence value and capacity before declaring another finite range.
-   Keep the original backup, separate recovery and all incomplete-job evidence.
+1. G1: preserve the [native reserve-stop inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
+   and completed [archival/reclaim](restart-storage-capacity-review.md). Pass fresh
+   capacity for the prepared 5,976,864 to 6,300,000 continuation, then run it with
+   the qualified native-failure provenance path. Inspect completion, both cold
+   checks, preservation and resources before further work. Keep the original
+   backup, separate recovery and all incomplete-job evidence; re-evaluate
+   capacity and evidence value before declaring another range.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the

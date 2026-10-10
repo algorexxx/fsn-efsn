@@ -42,9 +42,16 @@ def prepare(backup,checkpoint,env):
         failed = REPO/'docs/evidence'/CONFIG['stopped_attempt']
         monitor.require_verified_stopped(CONFIG,prior,json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')),json.loads((failed/'completion.json').read_text(encoding='utf-8')))
         assert CONFIG['stopped_attempt'] in prior['previous_manifest_sha256']
-        assert r.sha(PRIOR_RUN/'STOP') == r.sha(failed/'qualification/STOP') == prior['stop_sha256']
-        (RUN/'prior-STOP').write_bytes((PRIOR_RUN/'STOP').read_bytes())
-        r.record['prior_stop_sha256'] = prior['stop_sha256']
+        if prior.get('stop_kind') == 'host-reserve':
+            assert not (PRIOR_RUN/'STOP').exists() and not (failed/'qualification/STOP').exists()
+            evidence = {name:r.sha(failed/name) for name in ['completion.json','qualification/replay.stdout.txt','qualification/run.json']}
+            assert evidence == prior['stop_evidence_sha256']
+            r.record['prior_stop_evidence_sha256'] = evidence
+            (RUN/'prior-stop-evidence.json').write_bytes((json.dumps(evidence,indent=2)+'\n').encode('utf-8'))
+        else:
+            assert r.sha(PRIOR_RUN/'STOP') == r.sha(failed/'qualification/STOP') == prior['stop_sha256']
+            (RUN/'prior-STOP').write_bytes((PRIOR_RUN/'STOP').read_bytes())
+            r.record['prior_stop_sha256'] = prior['stop_sha256']
     else:
         assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
     if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
@@ -161,7 +168,12 @@ def finalize(backup,checkpoint):
         'runner_snapshot_unchanged':all(r.sha(HERE/name) == digest for name,digest in r.record.get('runner_snapshot_sha256',{}).items()) and bool(r.record.get('runner_snapshot_sha256'))
     }
     if 'stopped_attempt' in CONFIG:
-        checks['prior_stop_unchanged'] = r.sha(PRIOR_RUN/'STOP') == r.sha(RUN/'prior-STOP') == r.record.get('prior_stop_sha256')
+        if 'prior_stop_evidence_sha256' in r.record:
+            failed = REPO/'docs/evidence'/CONFIG['stopped_attempt']
+            evidence = {name:r.sha(failed/name) for name in ['completion.json','qualification/replay.stdout.txt','qualification/run.json']}
+            checks['prior_stop_unchanged'] = not (PRIOR_RUN/'STOP').exists() and not (failed/'qualification/STOP').exists() and evidence == r.record['prior_stop_evidence_sha256'] == json.loads((RUN/'prior-stop-evidence.json').read_bytes())
+        else:
+            checks['prior_stop_unchanged'] = r.sha(PRIOR_RUN/'STOP') == r.sha(RUN/'prior-STOP') == r.record.get('prior_stop_sha256')
     r.record['additional_preservation_checks'] = checks
     r.record['backup_unchanged'] = r.record.get('backup_before') == r.record['backup_after']
     r.record['baselines_unchanged'] = r.record.get('baseline_before') == r.record['baseline_after']

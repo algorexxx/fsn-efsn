@@ -1,18 +1,25 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,600,032; continuation stopped at D:'s reserve.**
-The [6,300,000-v2 result](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
-records exit 1 at 17:45 UTC after the native 50 GiB host-space check. Last logged
-progress is 5,976,608; no exact saved endpoint is established yet. No new STOP
-file was created because this is a per-batch reserve refusal. Preservation checks
-and failure-evidence integrity pass; no consensus mismatch is reported. D: now
-has about 49.385 GiB free, below the existing 51 GiB cold-inspection starting
-floor. The [capacity proposal](restart-storage-capacity-review.md) identifies
-14 old fixture folders (12.695 GiB). Peter explicitly authorized their archival
-and local retirement. The archive completed and verified at 18:26:32 UTC; the
-separate retirement started at 18:27:09 UTC and rechecks both complete copies. Hold dependent database
-inspection and replay until completion; keep reserves and failed evidence intact.
+Updated 10 October 2026. **Cold-verified through 5,976,864; fresh continuation prepared.**
+The [native-reserve stopped-state inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
+completed at 18:35:25 UTC and independently verifies. Its discovery command
+records the specific expected exact-height refusal; the following five commands
+pass, including both exact-height cold checks. Header/RLP, state/tickets,
+receipts, bloom and TD match the backup, with 2,564 tickets and 70 transactions/
+receipts. All twelve preservation checks pass: 10,895 working and 1,383 recovery
+hashes stay unchanged, and 1,780 prior evidence files verify. This adds 376,832
+blocks and brings post-legacy coverage to 3,296,864. The requested 6,300,000-v2
+attempt remains failed/incomplete; no new STOP file is created or required.
 
+The [14-folder archival/retirement](restart-storage-capacity-review.md) passed.
+All 9,191 files remain verified on W:; D: gained 12.715 GiB and has 62.100 GiB free
+at inspection completion. Four targeted [controller provenance checks](evidence/restart-reserve-stop-controller-2026-10-10/RESULTS.md)
+pass for existing STOP-based and new native-reserve records. The [6,300,000-v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/README.md)
+is prepared from 5,976,864 for 323,136 additional blocks. Its fresh 28 GiB ceiling
+allows about 6.731 GiB growth; timeouts and 20/50 GiB per-batch reserves stay
+unchanged. Fresh launch capacity must pass. No writer has resumed yet.
+
+Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
 was dispatched at 12:50:50 UTC and stopped at 14:32 UTC at its declared sampled
 15 GiB allocation ceiling. Its original failure record and STOP remain intact.
@@ -62,13 +69,12 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-The last verified closed allocation, before this continuation, was
-16,136,085,504 bytes (15.028 GiB). The stopped job's final live sample was
-22,800,744,448 bytes (21.235 GiB); current closed allocation is unmeasured.
-The inspection
-free capacity before expansion was 22.177 GiB Linux / 63.653 GiB D:. The separate verified 2,400,000 recovery checkpoint
-and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working-database
-inventories are historical records, not separate retained copies.
+Its latest verified closed allocation is 22,837,567,488 bytes (21.269 GiB) at
+5,976,864. Inspection finished with 37,095,866,368 bytes free in Linux and
+66,679,324,672 bytes on D:. The separate verified 2,400,000 recovery checkpoint
+and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working
+inventories are historical records, not separate retained copies. Another
+in-place continuation intentionally changes these current working bytes.
 
 The earlier D: capacity blocker was resolved. At Peter's request, the
 [verified old-fixture archive](evidence/restart-old-tests-archive-w-v2-2026-10-09/README.md)
@@ -123,7 +129,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through the cold-verified stopped checkpoint at 5,600,032, including 2,920,032 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 5,600,032 remains open; the requested 5,400,000 and 6,300,000 ranges remain incomplete. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through the cold-verified stopped checkpoint at 5,976,864, including 3,296,864 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 5,976,864 remains open; the requested 5,400,000 and 6,300,000 ranges remain incomplete. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
@@ -223,9 +229,9 @@ complete with passing preservation checks. The fresh 6,300,000-v2 job names the
 5,600,032 inspection as its stopped checkpoint and the failed 6,300,000 job as
 its attempt. Launch capacity passed for the declared 26 GiB ceiling and unchanged
 timeouts/reserves. The job later stopped at the host-space reserve, below its
-sampled allocation ceiling. Complete the authorized archival/retirement before cold
-inspection; neither resizing again nor reusing old STOP-based provenance closes
-this new failure. No full-history size forecast or acceptance waiver follows.
+sampled allocation ceiling. The authorized archival/retirement and native-reserve cold inspection now pass.
+The fresh v3 continuation uses that distinct verified failure provenance; it
+does not reinterpret the old STOP-based failure. No full-history size forecast or acceptance waiver follows.
 
 Before any writer starts, require successful completion/evidence verification
 of its accepted checkpoint, or an explicitly qualified stopped-checkpoint
@@ -270,9 +276,11 @@ bulk workload. The preceding
 verification.json exists for it. The separate stopped-checkpoint inspection
 establishes 5,600,032. The earlier 5,400,000 failure is also preserved.
 The hourly continuation id is continue-fusion-restart-testing.
-The hidden Windows dispatcher has exited. The last capacity observation found
-FusionRehearsal stopped. Do not relaunch it for repeated status checks while the
-archive/retirement is running. Useful independent work is limited to documented
+The failed replay dispatcher has exited. Archival/retirement has also completed.
+The cold-inspection dispatcher finished successfully; its host records are
+retained under repo tmp/reserve-inspection-2026-10-10 and in its sealed bundle.
+The next prepared job is restart-ticket-encoder-job-6300000-v3-2026-10-10; check
+fresh capacity before launch and its completion/resources before further work. Useful independent work is limited to documented
 acceptance gaps that do not repeat passing checks or compete for large disk
 workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.

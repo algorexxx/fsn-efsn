@@ -1,0 +1,135 @@
+diff --git a/tests/restart/replay_job.py b/tests/restart/replay_job.py
+index afbba0a6..f740694f 100644
+--- a/tests/restart/replay_job.py
++++ b/tests/restart/replay_job.py
+@@ -42,9 +42,16 @@ def prepare(backup,checkpoint,env):
+         failed = REPO/'docs/evidence'/CONFIG['stopped_attempt']
+         monitor.require_verified_stopped(CONFIG,prior,json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')),json.loads((failed/'completion.json').read_text(encoding='utf-8')))
+         assert CONFIG['stopped_attempt'] in prior['previous_manifest_sha256']
+-        assert r.sha(PRIOR_RUN/'STOP') == r.sha(failed/'qualification/STOP') == prior['stop_sha256']
+-        (RUN/'prior-STOP').write_bytes((PRIOR_RUN/'STOP').read_bytes())
+-        r.record['prior_stop_sha256'] = prior['stop_sha256']
++        if prior.get('stop_kind') == 'host-reserve':
++            assert not (PRIOR_RUN/'STOP').exists() and not (failed/'qualification/STOP').exists()
++            evidence = {name:r.sha(failed/name) for name in ['completion.json','qualification/replay.stdout.txt','qualification/run.json']}
++            assert evidence == prior['stop_evidence_sha256']
++            r.record['prior_stop_evidence_sha256'] = evidence
++            (RUN/'prior-stop-evidence.json').write_bytes((json.dumps(evidence,indent=2)+'\n').encode('utf-8'))
++        else:
++            assert r.sha(PRIOR_RUN/'STOP') == r.sha(failed/'qualification/STOP') == prior['stop_sha256']
++            (RUN/'prior-STOP').write_bytes((PRIOR_RUN/'STOP').read_bytes())
++            r.record['prior_stop_sha256'] = prior['stop_sha256']
+     else:
+         assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
+     if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
+@@ -161,7 +168,12 @@ def finalize(backup,checkpoint):
+         'runner_snapshot_unchanged':all(r.sha(HERE/name) == digest for name,digest in r.record.get('runner_snapshot_sha256',{}).items()) and bool(r.record.get('runner_snapshot_sha256'))
+     }
+     if 'stopped_attempt' in CONFIG:
+-        checks['prior_stop_unchanged'] = r.sha(PRIOR_RUN/'STOP') == r.sha(RUN/'prior-STOP') == r.record.get('prior_stop_sha256')
++        if 'prior_stop_evidence_sha256' in r.record:
++            failed = REPO/'docs/evidence'/CONFIG['stopped_attempt']
++            evidence = {name:r.sha(failed/name) for name in ['completion.json','qualification/replay.stdout.txt','qualification/run.json']}
++            checks['prior_stop_unchanged'] = not (PRIOR_RUN/'STOP').exists() and not (failed/'qualification/STOP').exists() and evidence == r.record['prior_stop_evidence_sha256'] == json.loads((RUN/'prior-stop-evidence.json').read_bytes())
++        else:
++            checks['prior_stop_unchanged'] = r.sha(PRIOR_RUN/'STOP') == r.sha(RUN/'prior-STOP') == r.record.get('prior_stop_sha256')
+     r.record['additional_preservation_checks'] = checks
+     r.record['backup_unchanged'] = r.record.get('backup_before') == r.record['backup_after']
+     r.record['baselines_unchanged'] = r.record.get('baseline_before') == r.record['baseline_after']
+diff --git a/tests/restart/replay_monitor.py b/tests/restart/replay_monitor.py
+index d464dee9..292a43c2 100644
+--- a/tests/restart/replay_monitor.py
++++ b/tests/restart/replay_monitor.py
+@@ -79,8 +79,17 @@ def require_verified_stopped(config, run, verification, attempt_completion):
+         raise ValueError('stopped attempt identity or requested height differs')
+     if verification.get('endpoint') != run.get('endpoint_observations', {}).get('cold-details'):
+         raise ValueError('stopped checkpoint endpoint differs from verified observation')
+-    if not run.get('target_before_cold_sha256') or not re.fullmatch(r'[0-9a-f]{64}', run.get('stop_sha256', '')):
+-        raise ValueError('stopped checkpoint inventory and STOP identity are required')
++    if not run.get('target_before_cold_sha256'):
++        raise ValueError('stopped checkpoint inventory is required')
++    if run.get('stop_kind') == 'host-reserve':
++        evidence = run.get('stop_evidence_sha256', {})
++        if set(evidence) != {'completion.json', 'qualification/replay.stdout.txt', 'qualification/run.json'} or not all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value) for value in evidence.values()):
++            raise ValueError('native reserve stop requires exact failure evidence identities')
++        if run.get('stop_sha256') or verification.get('stop_kind') != 'host-reserve' or run.get('discovery_expected_refusal') is not True or verification.get('discovery_expected_refusal') is not True:
++            raise ValueError('native reserve stop must preserve its distinct discovery provenance')
++        return
++    if run.get('stop_kind') is not None or not re.fullmatch(r'[0-9a-f]{64}', run.get('stop_sha256', '')):
++        raise ValueError('stopped checkpoint STOP identity is required')
+ 
+ 
+ def run_monitored(helper, command, cwd, env, limits):
+diff --git a/tests/restart/replay_monitor_test.py b/tests/restart/replay_monitor_test.py
+index d3949849..0dc7faf9 100644
+--- a/tests/restart/replay_monitor_test.py
++++ b/tests/restart/replay_monitor_test.py
+@@ -173,6 +173,50 @@ class ReplayMonitorTests(unittest.TestCase):
+             with self.subTest(preservation=key), self.assertRaises(ValueError):
+                 monitor.require_verified_stopped(config, changed, verified, completion)
+ 
++    def test_native_reserve_stop_uses_verified_failure_records_without_fabricated_stop(self):
++        fixture = self.load_native_reserve_fixture()
++
++        monitor.require_verified_stopped(**fixture)
++
++        self.assertFalse(fixture['attempt_completion']['verified_pass'])
++        self.assertNotIn('stop_sha256', fixture['run'])
++        self.assertEqual('host-reserve', fixture['verification']['stop_kind'])
++
++    def test_native_reserve_resume_refuses_missing_or_mixed_stop_provenance(self):
++        fixture = self.load_native_reserve_fixture()
++        mutations = [
++            ('run', 'stop_kind', 'unknown'), ('run', 'stop_kind', None),
++            ('run', 'stop_sha256', 'a' * 64),
++            ('run', 'stop_evidence_sha256', {}),
++            ('run', 'discovery_expected_refusal', False),
++            ('verification', 'stop_kind', 'stop-file'),
++            ('verification', 'discovery_expected_refusal', False),
++        ]
++        evidence = fixture['run']['stop_evidence_sha256']
++        for name in evidence:
++            mutations.append(('run', 'stop_evidence_sha256', {key:value for key,value in evidence.items() if key != name}))
++            mutations.append(('run', 'stop_evidence_sha256', dict(evidence, **{name:'invalid'})))
++            mutations.append(('run', 'stop_evidence_sha256', dict(evidence, **{name:None})))
++        mutations.append(('run', 'stop_evidence_sha256', dict(evidence, **{'STOP':'a' * 64})))
++
++        for section, key, value in mutations:
++            changed = copy.deepcopy(fixture)
++            changed[section][key] = value
++            with self.subTest(section=section, key=key), self.assertRaises(ValueError):
++                monitor.require_verified_stopped(**changed)
++
++    def load_native_reserve_fixture(self):
++        evidence = Path(__file__).resolve().parents[2]/'docs/evidence'
++        prior = evidence/'restart-ticket-encoder-stopped-reserve-2026-10-10'
++        attempt = evidence/'restart-ticket-encoder-job-6300000-v2-2026-10-10'
++        verified = json.loads((prior/'verification.json').read_bytes())
++        return {
++            'config':{'start_height':verified['cold_verified_height'], 'stopped_attempt':attempt.name},
++            'run':json.loads((prior/'qualification/run.json').read_bytes()),
++            'verification':verified,
++            'attempt_completion':json.loads((attempt/'completion.json').read_bytes()),
++        }
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/tests/restart/replay_verify.py b/tests/restart/replay_verify.py
+index a322c9a5..b078306a 100644
+--- a/tests/restart/replay_verify.py
++++ b/tests/restart/replay_verify.py
+@@ -36,7 +36,12 @@ if 'stopped_attempt' in CONFIG:
+     expected_checks.add('prior_stop_unchanged')
+     failed = BUNDLE.parent/CONFIG['stopped_attempt']
+     monitor.require_verified_stopped(CONFIG,prior,json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')),json.loads((failed/'completion.json').read_text(encoding='utf-8')))
+-    assert sha(Q/'prior-STOP') == sha(failed/'qualification/STOP') == prior['stop_sha256'] == r['prior_stop_sha256']
++    if prior.get('stop_kind') == 'host-reserve':
++        assert not (Q/'prior-STOP').exists() and not (failed/'qualification/STOP').exists()
++        evidence = {name:sha(failed/name) for name in ['completion.json','qualification/replay.stdout.txt','qualification/run.json']}
++        assert evidence == prior['stop_evidence_sha256'] == r['prior_stop_evidence_sha256'] == json.loads((Q/'prior-stop-evidence.json').read_bytes())
++    else:
++        assert sha(Q/'prior-STOP') == sha(failed/'qualification/STOP') == prior['stop_sha256'] == r['prior_stop_sha256']
+ assert set(r['additional_preservation_checks']) == expected_checks and all(r['additional_preservation_checks'].values())
+ assert set(r['runner_snapshot_sha256']) == {'replay_job.py','replay_monitor.py','replay_launch.py','replay_verify.py'}
+ for name,digest in r['runner_snapshot_sha256'].items():

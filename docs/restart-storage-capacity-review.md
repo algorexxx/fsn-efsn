@@ -1,6 +1,17 @@
-# Capacity after the host-space stop
+# Capacity after verified archival and retirement
 
-**Current decision, 10 October 2026, after 17:45 UTC:** the
+**Current state, 10 October 2026:** [archival](evidence/restart-remaining-fixtures-copy-w-2026-10-10/RESULTS.md)
+and [separate local retirement](evidence/restart-remaining-fixtures-retire-w-2026-10-10/RESULTS.md)
+passed. The exact 14 D: roots are absent, all 9,191 files remain on W:, other root
+names are unchanged and protected-VHD metadata stayed unchanged during both
+operations. D: gained **12.715 GiB**, leaving **62.100 GiB free** at completion.
+The immediate capacity blocker is resolved. The [bounded cold inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/spec.md)
+passed at 5,976,864, with 21.269 GiB closed working allocation and 62.100 GiB
+still free on D:. The fresh 6,300,000-v3 continuation is prepared with a 28 GiB
+ceiling (6.731 GiB remaining growth); it needs fresh Linux >27.731 GiB and
+D: >60 GiB capacity before launch. No replay writer has resumed.
+
+**Earlier reserve-stop observation, 10 October 2026, after 17:45 UTC:** the
 [6,300,000-v2 replay](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
 stopped at the unchanged 50 GiB D: reserve. D: now has 53,026,660,352 bytes
 (49.385 GiB) free; Linux's final record has 37,115,981,824 bytes (34.567 GiB).
@@ -15,14 +26,14 @@ and other host use can differ from the measured live database size; the records
 do not attribute the whole host-space decrease to the working database. No
 reliable full-history storage forecast follows from these observations.
 
-## Concrete archival and reclaim proposal
+## Completed archival and reclaim scope
 
 The [read-only inventory](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/capacity-review.json)
-identifies these exact folders under `D:\FusionRehearsal`, totaling **9,191 files /
+identified these exact folders formerly under `D:\FusionRehearsal`, totaling **9,191 files /
 13,630,973,746 logical bytes (12.695 GiB)**. These are old fixtures, including
 failed attempts whose contents must remain preserved. Evidence mappings are
-recorded; no source or archive byte verification has yet been performed for this
-proposal. No root or descendant reparse entries were observed. W: has about
+recorded. Both complete copies passed byte verification during archival and
+again before retirement. No root or descendant reparse entries were observed. W: has about
 3.49 TiB free at the expected share.
 
 | Folder under D:\FusionRehearsal | Logical bytes |
@@ -42,36 +53,32 @@ proposal. No root or descendant reparse entries were observed. W: has about
 | retry-partition-2026-09-27-attempt-02 | 1,183,508,673 |
 | retry-partition-2026-09-27-displaced | 607,956,334 |
 
-Proposed destination: `W:\FusionRestart\remaining-fixtures-copy-2026-10-10`.
+Verified archive destination: `W:\FusionRestart\remaining-fixtures-copy-2026-10-10`.
 Require a fresh destination, bounded copy operation, stopped rehearsal services,
 actual database locks, exact path/reparse checks, source and destination SHA256
 verification, preserved evidence manifests and a separate final re-verification
 before any D: removal. Keep the backup, VHD, swap, current replay, separate
 recovery and all other paths. W: is cold storage, not a live LevelDB location.
 
-**Archive verified; retirement running.** Peter subsequently said: "Archive whatever folders
+**Completed under explicit authorization.** Peter said: "Archive whatever folders
 you think is necessary. If they arent needed for future testing you can outright
-remove them." This authorizes the reviewed 14-folder archival and removal of
-verified duplicate local copies. The [copy-only job](evidence/restart-remaining-fixtures-copy-w-2026-10-10/spec.md)
-completed at 18:26:32 UTC: all 9,191 files / 12.695 GiB match, with unchanged
-protected-VHD metadata and D: root names. Its [separate retirement](evidence/restart-remaining-fixtures-retire-w-2026-10-10/spec.md)
-started at 18:27:09 UTC after independent copy verification and sealing. It
-rechecks both complete copies before any local removal.
-Do not ask for the same cleanup permission again.
+remove them." The copy completed at 18:26:32 UTC and the separately verified
+retirement at 18:31:52 UTC. Preserve the W: archive and all evidence. No additional
+cleanup is currently needed for the prepared continuation; re-evaluate actual
+capacity at its fresh preflight and completion. Do not ask for the same cleanup permission again.
 
 The earlier copy helper required 50 GiB on D: despite only reading there. This
 explicit replacement reads D: and writes only to C:/W:, reserving 5/100 GiB on
 those output volumes. It requires the rehearsal distro stopped and records
 unchanged protected-VHD metadata. It leaves the original 20/50 GiB replay
-reserves and cold-inspection starting floors intact. Do not start WSL, another
-bulk workload or a database writer during the archive or retirement.
+reserves and cold-inspection starting floors intact. Both operations are complete; their stopped-distro requirement has been
+satisfied. Database work now follows its own unchanged isolation/capacity gates.
 
-Reclaim is an estimate from logical sizes, not a promised free-space increase.
-At the current observation it would bring D: to roughly 62.08 GiB if all logical
-bytes become free and no other usage changes. Recheck actual capacity afterward.
-This may permit cold inspection and another bounded interval; it does not prove
-that all remaining history, or even the proposed 6,300,000 endpoint, will fit.
-Do not spend that space on another tiny run without reviewing its evidence value.
+The measured 12.715 GiB gain differs from 12.695 GiB of logical file sizes because
+filesystem allocation differs. Cold inspection has passed; declare
+another replay only after fresh capacity passes for its documented finite bounds.
+This does not establish a full-history size requirement or guarantee the next
+requested endpoint will fit. Keep the finite stops and separate recovery copy.
 
 ## Earlier approved expansion and launch
 
