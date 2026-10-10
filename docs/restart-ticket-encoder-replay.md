@@ -147,6 +147,15 @@ These are estimated gains subject to full cold archival and actual post-removal
 checks. No removal, compaction or limit extension is automatic. While the
 decision is pending, do not start a writer or repeat unchanged passing tests.
 
+The standing W: archival permission does allow preparing the copies before
+removal approval. The [four-root Windows copy-only job](evidence/restart-old-fixtures-copy-w-2026-10-10/STATUS.md)
+was dispatched at 09:45:48 UTC on 10 October. Check its completion, failure and
+per-root verification records next; no competing bulk job should run while it
+is healthy. Copying does not reclaim local space. Keep every local root, and
+prepare the two Linux checkpoint copies sequentially after the Windows phase.
+Only local retirement still needs Peter's answer; no approval is inferred from
+scheduled heartbeat messages.
+
 After capacity is available, declare a fresh bounded job from the verified
 stopped checkpoint, explicitly validating its inspection rather than requiring
 or fabricating a success result for the failed job. Check exact endpoint,

@@ -1,7 +1,12 @@
 # Proposed archival before the next historical replay
 
-10 October 2026. **Proposal only; no copy, deletion, compaction or replay launch
-has run under this proposal.** The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
+10 October 2026. **Removal approval pending; copy-only preparation launched.**
+The standing permission for verified W: archival permits preparing the copies
+without deleting their sources. The [four-root Windows copy-only job](evidence/restart-old-fixtures-copy-w-2026-10-10/STATUS.md)
+started at 09:45:48 UTC. The two Linux checkpoints remain a later sequential
+phase. No source deletion, compaction or replay launch has occurred. The original
+storage-review record remains a dated pre-copy observation.
+The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
 passes independent cold checks at 5,331,360. The original requested 5,400,000 job
 remains incomplete. Its size stop worked as declared.
 
@@ -11,8 +16,9 @@ plus preparation margin. The working target is 11.016 GiB and already exceeds
 the old job's 11 GiB ceiling. Do not rerun that job, lower reserves, remove STOP
 or reinterpret failure as success.
 
-The proposed destination is a new directory under the existing
-`W:\FusionRestart` archive, on `\\192.168.1.250\mnemosyne1`. The mapping and about
+The Windows copy destination is the new
+`W:\FusionRestart\old-fixtures-copy-2026-10-10` archive, on
+`\\192.168.1.250\mnemosyne1`. The mapping and about
 3.50 TiB free were observed during this review; verify both again before use.
 Do not run LevelDB directly on the network share.
 
@@ -67,4 +73,5 @@ stopped-checkpoint inspection's exact hashes/identity, preserve failure records,
 and declare new finite growth/time limits before launch. The failed job and its
 limits stay immutable. No production activation, real-key use or release
 selection is included. Until that storage decision, leave replay stopped and
-avoid repeated polling or unchanged acceptance reruns.
+avoid repeated polling or unchanged acceptance reruns. Preparing and verifying
+the W: copies is permitted; deleting any source copy is not yet approved.

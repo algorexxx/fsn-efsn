@@ -48,7 +48,12 @@ Linux / 58.64 GiB D: free. No replay writer is running. D: is below the unchange
 60 GiB starting floor, and the target exceeds the old job's ceiling.
 The [specific storage proposal](restart-storage-next-step.md) identifies six older
 cold roots for verified W: archival and retirement, subject to Peter's approval
-of the additional local removals. Preserve the failed run, working state and
+of the additional local removals. The already-authorized
+[copy-only preparation](evidence/restart-old-fixtures-copy-w-2026-10-10/STATUS.md)
+was dispatched at 09:45:48 UTC on 10 October for the four Windows roots. All
+sources remain local; no removal is included. Inspect that finite copy job next,
+and do not run a competing bulk workload. The two Linux checkpoint copies follow
+only after it finishes. Preserve the failed run, working state and
 separate recovery checkpoint; no limits were changed and no retry started.
 See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
 Further history, independent review, 17 missing exported blobs and the
