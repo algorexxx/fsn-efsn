@@ -1,6 +1,13 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,331,360; space reclaimed and continuation preflight passes.**
+Updated 10 October 2026. **Cold-verified through 5,331,360; offline continuation toward 6,300,000 launched.**
+The new finite job was dispatched at **12:50:50 UTC**, after verified storage
+reclamation and fresh capacity checks. [Replay began at 12:53:26 UTC](evidence/restart-ticket-encoder-job-6300000-2026-10-10/STATUS.md)
+after four successful startup commands, exact 5,591-file working and 1,383-file
+recovery inventory checks, and unchanged source/executable identities. Initial
+progress exceeds 5,335,000 with no reported error and a passing size sample.
+Launch/progress is provisional until both
+cold checks and the evidence verifier pass; it does not extend verified coverage.
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
 stopped at its declared sampled 11 GiB allocation ceiling. Its requested range
 remains incomplete. The [separate read-only inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
@@ -49,7 +56,7 @@ No limit, runtime or release selection changed. The subsequent [5,400,000 job](e
 was dispatched at 19:32:26 UTC following the passing complete-backup preflight.
 All startup checks passed; replay began at 19:34:33 UTC with a passing first
 allocation sample. It stopped for size at 23:05 UTC. The read-only follow-up
-completed evidence verification at 23:27:58 UTC. No writer is running now.
+completed evidence verification at 23:27:58 UTC. That attempt remains stopped.
 Peter has authorized removing obsolete copies. The [storage operation](restart-storage-next-step.md)
 has verified and retired the four Windows fixtures, reclaiming 4.391 GiB and
 leaving 63.689 GiB free on D:. The [two older Linux checkpoint archives](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md)
@@ -167,8 +174,9 @@ justified without a diagnostic question. A [fresh continuation](evidence/restart
 is prepared for 5,331,360 to 6,300,000 (968,640 new blocks), with a new 15 GiB
 sampled ceiling, 30-second samples and unchanged six-hour/6h15/6h30 time limits.
 The [controller provenance/refusal checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
-pass. Storage completion and fresh capacity now pass; startup must still validate
-exact closed inventories and identities before its writer starts. Original
+pass. Storage completion and fresh capacity pass. The finite continuation was
+dispatched at 12:50:50 UTC and began replay at 12:53:26 UTC after exact closed
+inventory/identity checks. Its first progress/resource observation is healthy. Original
 failed-attempt records and limits remain immutable.
 
 Before any writer starts, require successful completion/evidence verification
@@ -203,14 +211,15 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-The stopped job's runtime status is
-/home/rehearsal/results/restart-ticket-encoder-job-5400000-2026-10-09/status.json.
-Host dispatch logs are under repo tmp/replay-job-5400000-2026-10-09.
+The active job's runtime status is
+/home/rehearsal/results/restart-ticket-encoder-job-6300000-2026-10-10/status.json.
+Host dispatch logs are under repo tmp/replay-job-6300000-2026-10-10. Bundle
+completion.json and verification.json establish completion, not progress logs.
+The failed 5,400,000 job's original status/logs remain preserved separately.
 The hourly continuation id is continue-fusion-restart-testing.
-The dispatcher has exited and the stopped-checkpoint inspection has completed.
-Future hidden Windows dispatchers keep WSL attached after the launching shell
+The new hidden Windows dispatcher keeps WSL attached after the launching shell
 returns. Keep Windows awake and the app running during scheduled work.
-While a future replay runs, useful independent work is limited to documented
+While replay runs, useful independent work is limited to documented
 acceptance gaps that do not repeat passing checks or compete for large disk
 workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.

@@ -17,7 +17,9 @@ completed at 11:52:51 UTC after rechecking both complete copies, reclaiming
 an actual-filesystem check confirm the intended source directories absent and
 archives/retained database directories present. No compaction occurred.
 The prepared continuation's fresh capacity preflight passes at 12:49:43 UTC,
-with about 26.26 GiB Linux / 63.68 GiB D: free. Earlier storage records remain
+with about 26.26 GiB Linux / 63.68 GiB D: free. The prepared offline continuation
+was dispatched at 12:50:50 UTC and began replay at 12:53:26 UTC after passing
+inventory/identity checks. Earlier storage records remain
 dated observations, not current capacity claims.
 The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
 passes independent cold checks at 5,331,360. The original requested 5,400,000 job
@@ -86,7 +88,7 @@ and declare new finite growth/time limits before launch. The failed job and its
 limits stay immutable. No production activation, real-key use or release
 selection is included. The [prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
 targets 6,300,000, with a fresh 15 GiB sampled ceiling and unchanged time/reserve
-limits. Storage work and fresh capacity now pass. Require exact cold inventory
-and identity checks at startup before its writer opens the working database. The
+limits. Storage work, fresh capacity and exact cold inventory/identity checks
+passed; the writer has resumed. See its STATUS.md for finite limits and logs. The
 old failed job and its 11 GiB ceiling remain immutable. No unchanged acceptance
 reruns are needed while archival is healthy.

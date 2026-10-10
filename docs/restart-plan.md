@@ -57,8 +57,13 @@ inside Linux. Independent record and actual-filesystem checks pass. Fresh
 [capacity preflight](evidence/restart-ticket-encoder-job-6300000-2026-10-10/preflight-ready-2026-10-10.json)
 passes at 12:49:43 UTC, with about 26.26 GiB Linux / 63.68 GiB D: free and no
 node/replay process. The [fresh prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
-targets 6,300,000, using a new 15 GiB sampled ceiling
-and unchanged time/reserve limits. The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
+was dispatched at **12:50:50 UTC** toward 6,300,000, using a new 15 GiB sampled
+ceiling and unchanged time/reserve limits. [Replay began at 12:53:26 UTC](evidence/restart-ticket-encoder-job-6300000-2026-10-10/STATUS.md)
+after four successful startup commands and exact working/recovery/source/identity
+checks. The initial observation confirms progress beyond 5,335,000, no reported
+errors and a passing allocation sample. Progress is provisional; verified history
+remains 5,331,360 until completion/cold checks/evidence verification pass.
+The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
 See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
@@ -211,8 +216,9 @@ already passes. Complete the authorized [storage operation](restart-storage-next
 and fresh capacity preflight before launching the prepared continuation; do not
 repeat unchanged passing checks. The four Windows roots are archived/retired;
 the two old Linux checkpoint archives and local retirement are verified. Fresh
-capacity passes for the prepared 6,300,000 continuation. Startup must still
-validate the exact working/recovery inventories before allowing its writer.
+capacity passes, and the 6,300,000 continuation was dispatched at 12:50:50 UTC.
+Inspect its status/completion, verification and resource records next. No competing
+bulk workload or unchanged passing reruns are needed while it is healthy.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 
