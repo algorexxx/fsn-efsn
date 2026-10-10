@@ -1,0 +1,88 @@
+--- prior/copy.ps1
++++ current/copy.ps1
+@@ -1,9 +1,11 @@
+ $ErrorActionPreference = 'Stop'
+ Set-StrictMode -Version Latest
+ $sourceRoot = 'D:\FusionRehearsal'
+-$archiveRoot = 'W:\FusionRestart\old-fixtures-copy-2026-10-10'
++$archiveRoot = 'W:\FusionRestart\remaining-fixtures-copy-2026-10-10'
+ $repository = 'C:\Users\Peter\Documents\CODING\fsn-efsn'
+-$names = @('abandonment-reorg-2026-09-27', 'equal-weight-2026-09-27', 'stale-intent-2026-09-27', 'live-abandonment-repair-2026-09-27')
++$proposal = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'proposal.json') -Raw -Encoding UTF8 | ConvertFrom-Json
++$names = @($proposal.Entries.Name)
++if ($names.Count -ne 14 -or @($names | Select-Object -Unique).Count -ne 14) { throw 'Unexpected source allowlist.' }
+ $encoding = [Text.UTF8Encoding]::new($false)
+ $locks = [Collections.Generic.List[IO.FileStream]]::new()
+ $deadline = [DateTime]::UtcNow.AddHours(2)
+@@ -21,7 +23,7 @@
+     $active = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -match '^(efsn|replay-tests|restart-tests|observer)$' })
+     if ($active.Count) { throw 'A native rehearsal executable is running.' }
+     if ((Get-PSDrive W).DisplayRoot -ne '\\192.168.1.250\mnemosyne1') { throw 'Unexpected W: mapping.' }
+-    if ((Get-PSDrive D).Free -lt 50GB -or (Get-PSDrive W).Free -lt 100GB) { throw 'Storage reserve failed.' }
++    if ((Get-PSDrive C).Free -lt 5GB -or (Get-PSDrive W).Free -lt 100GB) { throw 'Storage reserve failed.' }
+ }
+ 
+ function Assert-Path($path, $root) {
+@@ -61,8 +63,11 @@
+ }
+ 
+ function Assert-Evidence($name) {
+-    $bundle = Join-Path $repository ('docs\evidence\restart-' + $name)
++    $entry = @($proposal.Entries | Where-Object { $_.Name -ceq $name })
++    if ($entry.Count -ne 1 -or $entry[0].EvidenceBundle -notmatch '^restart-[a-z0-9-]+$') { throw 'Invalid evidence mapping.' }
++    $bundle = Join-Path $repository ('docs\evidence\' + $entry[0].EvidenceBundle)
+     $manifest = Join-Path $bundle 'SHA256SUMS'
++    if ((Get-Digest $manifest) -cne $entry[0].EvidenceManifestSHA256) { throw 'Evidence manifest differs from the reviewed proposal.' }
+     foreach ($line in [IO.File]::ReadAllLines($manifest, $encoding)) {
+         if ($line -notmatch '^([0-9a-f]{64})\s+(.+)$') { throw "Malformed evidence manifest: $name" }
+         $digest = $Matches[1]
+@@ -77,6 +82,9 @@
+ $record = [ordered]@{ Mode='CopyOnly'; Started=[DateTime]::UtcNow.ToString('o'); ScriptSHA256=(Get-Digest $PSCommandPath); DFreeBefore=(Get-PSDrive D).Free; WFreeBefore=(Get-PSDrive W).Free; Entries=@(); Completed=$false; RemovedSources=@() }
+ try {
+     Assert-Idle
++    $vhd = Get-Item -LiteralPath 'D:\FusionRehearsal\Ubuntu\ext4.vhdx'
++    $record.ProtectedVhdBefore = [ordered]@{ Length=$vhd.Length; ModifiedUtcTicks=$vhd.LastWriteTimeUtc.Ticks }
++    $record.OtherRootsBefore = @(Get-ChildItem -LiteralPath $sourceRoot -Force | Sort-Object Name | ForEach-Object { $_.Name })
+     if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'copy.json')) { throw 'Operation already recorded.' }
+     foreach ($line in [IO.File]::ReadAllLines((Join-Path $PSScriptRoot 'INPUT_SHA256SUMS'), $encoding)) {
+         if ($line -notmatch '^([0-9a-f]{64})\s+(.+)$') { throw 'Malformed input manifest.' }
+@@ -93,7 +101,7 @@
+             $locks.Add([IO.File]::Open($file.FullName, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read))
+         }
+     }
+-    if ($locks.Count -eq 0) { throw 'No database lock handles found.' }
++    if ($locks.Count -lt 14) { throw 'No database lock handles found.' }
+     $record.LockHandles = $locks.Count
+     foreach ($name in $names) {
+         Assert-Idle
+@@ -101,6 +109,11 @@
+         $destination = Join-Path $archiveRoot $name
+         $evidence = Assert-Evidence $name
+         $inventory = Get-Inventory $source
++        $review = @($proposal.Entries | Where-Object { $_.Name -ceq $name })[0]
++        $observedFiles = @($inventory.Values | Where-Object { -not $_.Directory })
++        $observedBytes = 0L
++        foreach ($item in $observedFiles) { $observedBytes += [long]$item.Bytes }
++        if ($review.Source -cne $source -or $observedFiles.Count -ne $review.Files -or $observedBytes -ne $review.LogicalBytes) { throw 'Source differs from reviewed inventory.' }
+         $staging = $destination + '.incomplete'
+         if (Test-Path -LiteralPath $staging) { throw 'Staging exists.' }
+         [IO.Directory]::CreateDirectory($staging) | Out-Null
+@@ -136,11 +149,17 @@
+             if (-not $item.Directory) { $bytes += [long]$item.Bytes; $files++ }
+         }
+     }
+-    if ($bytes -ne 4737656365L -or $files -ne 3705L) { throw 'Fixture size/count differs from the reviewed proposal.' }
++    if ($bytes -ne 13630973746L -or $files -ne 9191L) { throw 'Fixture size/count differs from the reviewed proposal.' }
+     $record.Bytes = $bytes
+     $record.Files = $files
+     $record.SourceRootsStillPresent = @($names | ForEach-Object { Test-Path -LiteralPath (Join-Path $sourceRoot $_) })
+     if ($record.SourceRootsStillPresent -contains $false) { throw 'Source root missing after copy.' }
++    Assert-Idle
++    $vhd = Get-Item -LiteralPath 'D:\FusionRehearsal\Ubuntu\ext4.vhdx'
++    $record.ProtectedVhdAfter = [ordered]@{ Length=$vhd.Length; ModifiedUtcTicks=$vhd.LastWriteTimeUtc.Ticks }
++    if ($record.ProtectedVhdBefore.Length -ne $record.ProtectedVhdAfter.Length -or $record.ProtectedVhdBefore.ModifiedUtcTicks -ne $record.ProtectedVhdAfter.ModifiedUtcTicks) { throw 'Protected VHD changed during archive.' }
++    $record.OtherRootsAfter = @(Get-ChildItem -LiteralPath $sourceRoot -Force | Sort-Object Name | ForEach-Object { $_.Name })
++    if (($record.OtherRootsBefore -join '|') -cne ($record.OtherRootsAfter -join '|')) { throw 'Source root names changed.' }
+     $record.Completed = $true
+     $record.Finished = [DateTime]::UtcNow.ToString('o')
+     $record.DFreeAfter = (Get-PSDrive D).Free

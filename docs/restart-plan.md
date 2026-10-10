@@ -12,9 +12,11 @@ after the native per-batch host-space check stopped it. Last logged progress is
 5,976,608; the saved endpoint still needs cold verification. Preservation checks
 and failure-evidence integrity pass. D: has about 49.385 GiB free, below the
 existing cold-inspection starting floor. The [capacity review](restart-storage-capacity-review.md)
-identifies 12.695 GiB in 14 older fixture folders for possible verified W: archival
-and local retirement; no additional copy or deletion has occurred. Keep reserves
-unchanged and hold dependent work for that storage decision. Verified coverage
+identifies 12.695 GiB in 14 older fixture folders. Peter explicitly approved
+archiving/removing unnecessary copies; the W: archive completed and verified at
+18:26:32 UTC. The separately verified retirement started at 18:27:09 UTC and
+rechecks both complete copies before local removal. Keep reserves unchanged and hold dependent database
+work until that operation completes. Verified coverage
 remains 5,600,032 until cold checks and evidence verification.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
@@ -757,12 +759,12 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. A 14-folder W: archival/reclaim proposal is pending; keep reserves unchanged | Before cold inspection or another finite G1 replay |
+| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. The 14-folder W: archive is verified; its separately checked D: retirement is running, with replay reserves unchanged | Before cold inspection or another finite G1 replay |
 
 Current technical order (efsn):
 
 1. G1: preserve the [host-reserve stop](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
-   and resolve the [capacity decision](restart-storage-capacity-review.md). After
+   and complete the [authorized archival/reclaim](restart-storage-capacity-review.md). After
    sufficient capacity is available, independently establish the saved endpoint
    and inspect it with unchanged identity/preservation gates. This stop has no
    new STOP file; qualify its actual failure provenance before any resume.

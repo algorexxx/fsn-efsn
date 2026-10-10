@@ -8,9 +8,10 @@ file was created because this is a per-batch reserve refusal. Preservation check
 and failure-evidence integrity pass; no consensus mismatch is reported. D: now
 has about 49.385 GiB free, below the existing 51 GiB cold-inspection starting
 floor. The [capacity proposal](restart-storage-capacity-review.md) identifies
-14 old fixture folders (12.695 GiB) for possible verified W: archival and local
-retirement. Nothing has been copied or removed. Hold dependent inspection and
-replay, retain the failed job, and keep reserves unchanged.
+14 old fixture folders (12.695 GiB). Peter explicitly authorized their archival
+and local retirement. The archive completed and verified at 18:26:32 UTC; the
+separate retirement started at 18:27:09 UTC and rechecks both complete copies. Hold dependent database
+inspection and replay until completion; keep reserves and failed evidence intact.
 
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
 was dispatched at 12:50:50 UTC and stopped at 14:32 UTC at its declared sampled
@@ -222,7 +223,7 @@ complete with passing preservation checks. The fresh 6,300,000-v2 job names the
 5,600,032 inspection as its stopped checkpoint and the failed 6,300,000 job as
 its attempt. Launch capacity passed for the declared 26 GiB ceiling and unchanged
 timeouts/reserves. The job later stopped at the host-space reserve, below its
-sampled allocation ceiling. Resolve the current storage decision before cold
+sampled allocation ceiling. Complete the authorized archival/retirement before cold
 inspection; neither resizing again nor reusing old STOP-based provenance closes
 this new failure. No full-history size forecast or acceptance waiver follows.
 
@@ -271,7 +272,7 @@ establishes 5,600,032. The earlier 5,400,000 failure is also preserved.
 The hourly continuation id is continue-fusion-restart-testing.
 The hidden Windows dispatcher has exited. The last capacity observation found
 FusionRehearsal stopped. Do not relaunch it for repeated status checks while the
-storage decision is pending. Useful independent work is limited to documented
+archive/retirement is running. Useful independent work is limited to documented
 acceptance gaps that do not repeat passing checks or compete for large disk
 workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.

@@ -49,14 +49,22 @@ verification, preserved evidence manifests and a separate final re-verification
 before any D: removal. Keep the backup, VHD, swap, current replay, separate
 recovery and all other paths. W: is cold storage, not a live LevelDB location.
 
-**Decision pending; nothing copied or deleted.** Peter earlier allowed removing
-unneeded data, but the current scheduled instruction explicitly says not to
-perform destructive cleanup automatically. Ask for the concrete 14-folder
-archival/retirement decision before executing it. The earlier copy helper also
-requires 50 GiB on D: and would refuse current capacity; do not silently weaken
-that guard. Any approved replacement must explicitly isolate the read-only
-D:-to-W: copy from database work, use C:/W: for outputs, and keep the original
-20/50 GiB replay reserves and cold-inspection starting floors intact.
+**Archive verified; retirement running.** Peter subsequently said: "Archive whatever folders
+you think is necessary. If they arent needed for future testing you can outright
+remove them." This authorizes the reviewed 14-folder archival and removal of
+verified duplicate local copies. The [copy-only job](evidence/restart-remaining-fixtures-copy-w-2026-10-10/spec.md)
+completed at 18:26:32 UTC: all 9,191 files / 12.695 GiB match, with unchanged
+protected-VHD metadata and D: root names. Its [separate retirement](evidence/restart-remaining-fixtures-retire-w-2026-10-10/spec.md)
+started at 18:27:09 UTC after independent copy verification and sealing. It
+rechecks both complete copies before any local removal.
+Do not ask for the same cleanup permission again.
+
+The earlier copy helper required 50 GiB on D: despite only reading there. This
+explicit replacement reads D: and writes only to C:/W:, reserving 5/100 GiB on
+those output volumes. It requires the rehearsal distro stopped and records
+unchanged protected-VHD metadata. It leaves the original 20/50 GiB replay
+reserves and cold-inspection starting floors intact. Do not start WSL, another
+bulk workload or a database writer during the archive or retirement.
 
 Reclaim is an estimate from logical sizes, not a promised free-space increase.
 At the current observation it would bring D: to roughly 62.08 GiB if all logical
