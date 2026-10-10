@@ -13,9 +13,11 @@ is preserved below as a dated result; its 62.100 GiB figure is historical.
 If the backup is needed, otherwise delete." The [execution scope](evidence/restart-wsl-compact-2026-10-11/spec.md)
 records the exact disk, fresh W: destination, finite archive limits and subsequent
 qualification. Keep the verified disk archive as needed rollback through full
-post-compaction checks. Both FusionRehearsal and Docker were already stopped;
-Get-DiskImage confirmed the 220 GiB virtual disk is detached. No service needs
-to be stopped for the initial copy. Do not repeat the permission question.
+post-compaction checks. The [copy-only phase launched](evidence/restart-wsl-compact-2026-10-11/STATUS.md)
+at 22:11:02 UTC (00:11 locally). FusionRehearsal is stopped and its 220 GiB disk
+is detached and read-locked. Docker was running again at dispatch; no service
+action was performed. Do not start FusionRehearsal during archival or repeat
+the permission question.
 
 
 The existing controller refuses a proposed 6,300,000 to 6,600,000 continuation
@@ -86,7 +88,7 @@ The earlier choice, now resolved in favor of option 2:
   little space, report that result and hold further testing rather than reduce
   reserves or run repeated tiny jobs.
 
-The copy-only phase is prepared and its stream/hash/lock checks pass. Inspect
+The copy-only phase is running and its stream/hash/lock checks pass. Inspect
 its dispatch and completion records before dependent work. Trim and compaction
 have not started; verify the complete archive first. The required rollback copy
 must not be deleted before full post-compaction qualification. The next history range
