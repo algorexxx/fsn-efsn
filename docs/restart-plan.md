@@ -48,8 +48,11 @@ Linux / 58.64 GiB D: free at that inspection. Peter subsequently authorized
 deleting obsolete test copies. The [six-source storage operation](restart-storage-next-step.md)
 has completed the four Windows archives and their separately verified retirement,
 reclaiming 4.391 GiB and leaving 63.689 GiB D: free. Other D: root names remain
-unchanged. The two old Linux checkpoint copies started at 10:38:20 UTC; verify
-their completion before the authorized local retirement. No replay writer is
+unchanged. The [two old Linux checkpoint copies](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md)
+completed at 10:52:40 UTC: 2,161 files / 4,874,392,642 logical bytes, with full
+cold hash verification and unchanged working/recovery metadata. Their evidence
+is committed as `8da95c87`. Authorized local retirement started at 11:46:30 UTC
+and rechecks both complete copies before removal. No replay writer is
 running yet. The [fresh prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
 targets 6,300,000 after storage/capacity checks, using a new 15 GiB sampled ceiling
 and unchanged time/reserve limits. The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
@@ -204,8 +207,8 @@ and original STOP remain preserved. The complete-backup read-only startup check
 already passes. Complete the authorized [storage operation](restart-storage-next-step.md)
 and fresh capacity preflight before launching the prepared continuation; do not
 repeat unchanged passing checks. The four Windows roots are archived/retired;
-the two old Linux checkpoint copies are running, with retirement authorized only
-after verification.
+the two old Linux checkpoint copies are verified and their local retirement is
+running. Inspect its completion and resource records before launching replay.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 

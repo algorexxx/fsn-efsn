@@ -52,8 +52,10 @@ allocation sample. It stopped for size at 23:05 UTC. The read-only follow-up
 completed evidence verification at 23:27:58 UTC. No writer is running now.
 Peter has authorized removing obsolete copies. The [storage operation](restart-storage-next-step.md)
 has verified and retired the four Windows fixtures, reclaiming 4.391 GiB and
-leaving 63.689 GiB free on D:. The two older Linux checkpoint archives are running;
-retire their local copies only after verification. The prepared 6,300,000 job
+leaving 63.689 GiB free on D:. The [two older Linux checkpoint archives](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md)
+completed and passed independent record/provenance verification at 2,161 files /
+4,874,392,642 logical bytes. Their authorized retirement started at 11:46:30 UTC
+and rechecks both complete copies before local removal. The prepared 6,300,000 job
 still requires fresh capacity and exact stopped-state provenance. Do not change
 the old job or retry it.
 
@@ -145,8 +147,9 @@ cold checks. The failed requested range and original STOP remain intact.
 Peter's explicit message now authorizes the [six-source archival/removal](restart-storage-next-step.md).
 The four Windows copies completed at 09:52:08 UTC and separate full re-verification/
 retirement completed at 10:37:32 UTC, freeing 4.391 GiB. The two Linux checkpoint
-copies started at 10:38:20 UTC; inspect their finite-job result before local
-retirement. Keep all other data and evidence. Do not run a competing bulk workload,
+copies completed at 10:52:40 UTC with full cold byte verification and unchanged
+protected metadata. Their separately authorized retirement started at 11:46:30 UTC;
+inspect its result before replay. Keep all other data and evidence. Do not run a competing bulk workload,
 compact the VHD or repeat unchanged passing tests.
 
 After capacity is available, declare a fresh bounded job from the verified

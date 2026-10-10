@@ -8,8 +8,11 @@ reverified every source/archive file and removed only those four D: roots at
 10:37:32 UTC. All other root names remain present. D: free increased by
 4,714,328,064 bytes to 68,385,763,328 bytes (63.689 GiB).
 The [two-checkpoint archive](evidence/restart-checkpoint-archive-w-2026-10-10/spec.md)
-started at 10:38:20 UTC, after Windows verification. Its local retirement still
-requires successful copy and re-verification, but no further user approval.
+completed at 10:52:40 UTC, after Windows verification: 2,161 files /
+4,874,392,642 logical bytes. Its full byte checks and independent provenance
+verification pass; see [archive results](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md).
+The separate authorized retirement started at 11:46:30 UTC. It rechecks both
+complete copies before deletion. No further user approval is needed.
 No compaction or replay launch has occurred yet. Earlier storage records remain
 dated observations, not current capacity claims.
 The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
