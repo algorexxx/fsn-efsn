@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Verified through 6,300,000; no replay is running.**
+Updated 11 October 2026. **Verified through 6,300,000; no replay is running.**
 The [v3 completion](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
 passed automatic evidence verification at 21:24:13 UTC. All seven commands,
 both cold checks and ten additional preservation checks pass. Header/RLP,
@@ -24,8 +24,11 @@ Closed working allocation is 27.068 GiB. The later capacity review found
 60 GiB. No new job was prepared or launched. All old D: fixture copies have
 already been archived and retired; preserve their W: copies and all evidence.
 The [capacity decision](restart-storage-capacity-review.md#next-capacity-decision)
-is additional host space or verified cold disk archival followed by possible
-offline compaction. Do not retry unchanged capacity or lower reserves. F12/G1
+is now resolved in favor of [verified cold disk archival and compaction](evidence/restart-wsl-compact-2026-10-11/spec.md),
+explicitly authorized by Peter on 11 October. The first copy-only phase is prepared;
+WSL and Docker are already stopped. Keep the rollback archive until storage
+qualification passes. Do not start WSL during archival, retry unchanged capacity
+or lower reserves. F12/G1
 and final selected-binary restored startup/recovery/handover acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:

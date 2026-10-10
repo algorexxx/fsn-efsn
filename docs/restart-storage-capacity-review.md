@@ -9,6 +9,15 @@ is preserved below as a dated result; its 62.100 GiB figure is historical.
 
 ## Next capacity decision
 
+**Decision received, 11 October 2026:** Peter authorized "Archive to W and compact.
+If the backup is needed, otherwise delete." The [execution scope](evidence/restart-wsl-compact-2026-10-11/spec.md)
+records the exact disk, fresh W: destination, finite archive limits and subsequent
+qualification. Keep the verified disk archive as needed rollback through full
+post-compaction checks. Both FusionRehearsal and Docker were already stopped;
+Get-DiskImage confirmed the 220 GiB virtual disk is detached. No service needs
+to be stopped for the initial copy. Do not repeat the permission question.
+
+
 The existing controller refuses a proposed 6,300,000 to 6,600,000 continuation
 with a 34 GiB sampled ceiling. It would allow 6.932 GiB of working growth and
 require more than 27.932 GiB Linux / 60 GiB D: free. Linux currently passes;
@@ -24,7 +33,7 @@ Deleting swap cannot solve this shortfall. Expanding the 220 GiB virtual capacit
 again would not create host space. No unrelated user folders were inspected
 or proposed for removal.
 
-Two concrete options remain:
+The earlier choice, now resolved in favor of option 2:
 
 1. Peter frees about 10 GiB elsewhere on D:, after which the existing controller
    can recheck capacity for the proposed bounded continuation. This avoids a
@@ -37,7 +46,7 @@ Two concrete options remain:
    explicitly excluded compaction; permission to retire obsolete folders does
    not by itself approve rewriting this protected disk.
 
-### Concrete scope if offline compaction is chosen
+### Approved offline-compaction scope
 
 - Exact source/target: D:/FusionRehearsal/Ubuntu/ext4.vhdx. Preserve its 220 GiB
   virtual geometry; no shrinking partition/filesystem capacity, distro removal,
@@ -48,7 +57,7 @@ Two concrete options remain:
   allowed only after confirming no other active workload would be interrupted.
   Active unrelated workloads require a separate decision.
 - Use a fresh cold destination
-  W:/FusionRestart/rehearsal-vhd-before-compact-2026-10-10/ext4.vhdx at the verified
+  W:/FusionRestart/rehearsal-vhd-before-compact-2026-10-11/ext4.vhdx at the verified
   W: mapping to `\\192.168.1.250\mnemosyne1`. Check exact paths/reparse points and
   at least 100 GiB of archive-volume reserve beyond the actual source size.
   Copy only while the disk is stopped and detached. Record source size, geometry
@@ -77,9 +86,10 @@ Two concrete options remain:
   little space, report that result and hold further testing rather than reduce
   reserves or run repeated tiny jobs.
 
-No VHD copy, trim, compaction or further disk mutation has started. The result
-is ready for Peter's storage choice. While it is pending, do not repeat this
-question or poll unchanged capacity on each heartbeat. The next history range
+The copy-only phase is prepared and its stream/hash/lock checks pass. Inspect
+its dispatch and completion records before dependent work. Trim and compaction
+have not started; verify the complete archive first. The required rollback copy
+must not be deleted before full post-compaction qualification. The next history range
 still has evidence value; no snapshot-trust waiver or release acceptance follows
 from this capacity pause. All currently passing small startup/refusal fixtures
 remain valid and do not need blanket reruns.
