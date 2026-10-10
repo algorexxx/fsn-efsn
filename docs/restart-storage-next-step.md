@@ -1,6 +1,6 @@
 # Authorized archival before the next historical replay
 
-10 October 2026. **Peter authorized obsolete-copy removal; Windows retirement passed.**
+10 October 2026. **All six authorized obsolete-copy retirements passed.**
 His message was: "If there is something not needed any more you can delete it."
 The [four-root copy](evidence/restart-old-fixtures-copy-w-2026-10-10/RESULTS.md)
 completed at 09:52:08 UTC. The [separate retirement](evidence/restart-old-fixtures-retire-w-2026-10-10/RESULTS.md)
@@ -11,9 +11,13 @@ The [two-checkpoint archive](evidence/restart-checkpoint-archive-w-2026-10-10/sp
 completed at 10:52:40 UTC, after Windows verification: 2,161 files /
 4,874,392,642 logical bytes. Its full byte checks and independent provenance
 verification pass; see [archive results](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md).
-The separate authorized retirement started at 11:46:30 UTC. It rechecks both
-complete copies before deletion. No further user approval is needed.
-No compaction or replay launch has occurred yet. Earlier storage records remain
+The separate [authorized retirement](evidence/restart-checkpoint-archive-w-2026-10-10/RESULTS.md)
+completed at 11:52:51 UTC after rechecking both complete copies, reclaiming
+4,878,532,608 bytes (4.544 GiB) inside Linux. Independent record verification and
+an actual-filesystem check confirm the intended source directories absent and
+archives/retained database directories present. No compaction occurred.
+The prepared continuation's fresh capacity preflight passes at 12:49:43 UTC,
+with about 26.26 GiB Linux / 63.68 GiB D: free. Earlier storage records remain
 dated observations, not current capacity claims.
 The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
 passes independent cold checks at 5,331,360. The original requested 5,400,000 job
@@ -82,6 +86,7 @@ and declare new finite growth/time limits before launch. The failed job and its
 limits stay immutable. No production activation, real-key use or release
 selection is included. The [prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
 targets 6,300,000, with a fresh 15 GiB sampled ceiling and unchanged time/reserve
-limits. Require completed storage work and fresh capacity before launch. The
+limits. Storage work and fresh capacity now pass. Require exact cold inventory
+and identity checks at startup before its writer opens the working database. The
 old failed job and its 11 GiB ceiling remain immutable. No unchanged acceptance
 reruns are needed while archival is healthy.

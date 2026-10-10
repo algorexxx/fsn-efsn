@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,331,360; authorized space reclamation underway.**
+Updated 10 October 2026. **Cold-verified through 5,331,360; space reclaimed and continuation preflight passes.**
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
 stopped at its declared sampled 11 GiB allocation ceiling. Its requested range
 remains incomplete. The [separate read-only inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
@@ -54,16 +54,20 @@ Peter has authorized removing obsolete copies. The [storage operation](restart-s
 has verified and retired the four Windows fixtures, reclaiming 4.391 GiB and
 leaving 63.689 GiB free on D:. The [two older Linux checkpoint archives](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md)
 completed and passed independent record/provenance verification at 2,161 files /
-4,874,392,642 logical bytes. Their authorized retirement started at 11:46:30 UTC
-and rechecks both complete copies before local removal. The prepared 6,300,000 job
-still requires fresh capacity and exact stopped-state provenance. Do not change
+4,874,392,642 logical bytes. Their [authorized retirement](evidence/restart-checkpoint-archive-w-2026-10-10/RESULTS.md)
+completed at 11:52:51 UTC after rechecking both complete copies, reclaiming
+4.544 GiB inside Linux. Actual filesystem and independent evidence checks pass.
+The prepared 6,300,000 job's [fresh capacity preflight](evidence/restart-ticket-encoder-job-6300000-2026-10-10/preflight-ready-2026-10-10.json)
+passes at 12:49:43 UTC: about 26.26 GiB Linux / 63.68 GiB D: free, no active node
+or replay process, and the correct verified stopped-state provenance. Do not change
 the old job or retry it.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
-holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
-2,200,000 and 2,400,000 checkpoints and stopped 2,356,032 attempt remain local.
-Backup, baselines and sealed evidence remain preserved. The newer archive is
-limited to the named old D: fixtures; it grants no general cleanup permission.
+holds eight old candidate checkpoints, 100,000 through 1,800,000. The new verified
+archive additionally holds 2,000,000 and 2,200,000; their local copies are retired.
+The 2,400,000-v2 recovery and stopped 2,356,032 attempt remain local. Backup,
+baselines and sealed evidence remain preserved. The six-source cleanup is
+complete; no additional removal or compaction is part of this continuation.
 
 ## Purpose and revised execution strategy — 9 October
 
@@ -148,8 +152,9 @@ Peter's explicit message now authorizes the [six-source archival/removal](restar
 The four Windows copies completed at 09:52:08 UTC and separate full re-verification/
 retirement completed at 10:37:32 UTC, freeing 4.391 GiB. The two Linux checkpoint
 copies completed at 10:52:40 UTC with full cold byte verification and unchanged
-protected metadata. Their separately authorized retirement started at 11:46:30 UTC;
-inspect its result before replay. Keep all other data and evidence. Do not run a competing bulk workload,
+protected metadata. Their separately authorized retirement completed at 11:52:51 UTC
+and independently verifies, with 4.544 GiB reclaimed inside Linux. Keep all other
+data and evidence. Do not run a competing bulk workload,
 compact the VHD or repeat unchanged passing tests.
 
 After capacity is available, declare a fresh bounded job from the verified
@@ -162,8 +167,9 @@ justified without a diagnostic question. A [fresh continuation](evidence/restart
 is prepared for 5,331,360 to 6,300,000 (968,640 new blocks), with a new 15 GiB
 sampled ceiling, 30-second samples and unchanged six-hour/6h15/6h30 time limits.
 The [controller provenance/refusal checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
-pass. Launch only after storage completion and fresh capacity; no writer is
-running yet. Original failed-attempt records and limits remain immutable.
+pass. Storage completion and fresh capacity now pass; startup must still validate
+exact closed inventories and identities before its writer starts. Original
+failed-attempt records and limits remain immutable.
 
 Before any writer starts, require successful completion/evidence verification
 of its accepted checkpoint, or an explicitly qualified stopped-checkpoint

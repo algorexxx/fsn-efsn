@@ -51,10 +51,13 @@ reclaiming 4.391 GiB and leaving 63.689 GiB D: free. Other D: root names remain
 unchanged. The [two old Linux checkpoint copies](evidence/restart-checkpoint-archive-w-2026-10-10/ARCHIVE-RESULTS.md)
 completed at 10:52:40 UTC: 2,161 files / 4,874,392,642 logical bytes, with full
 cold hash verification and unchanged working/recovery metadata. Their evidence
-is committed as `8da95c87`. Authorized local retirement started at 11:46:30 UTC
-and rechecks both complete copies before removal. No replay writer is
-running yet. The [fresh prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
-targets 6,300,000 after storage/capacity checks, using a new 15 GiB sampled ceiling
+is committed as `8da95c87`. [Authorized local retirement](evidence/restart-checkpoint-archive-w-2026-10-10/RESULTS.md)
+completed at 11:52:51 UTC, reverified both complete copies and reclaimed 4.544 GiB
+inside Linux. Independent record and actual-filesystem checks pass. Fresh
+[capacity preflight](evidence/restart-ticket-encoder-job-6300000-2026-10-10/preflight-ready-2026-10-10.json)
+passes at 12:49:43 UTC, with about 26.26 GiB Linux / 63.68 GiB D: free and no
+node/replay process. The [fresh prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
+targets 6,300,000, using a new 15 GiB sampled ceiling
 and unchanged time/reserve limits. The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
@@ -207,8 +210,9 @@ and original STOP remain preserved. The complete-backup read-only startup check
 already passes. Complete the authorized [storage operation](restart-storage-next-step.md)
 and fresh capacity preflight before launching the prepared continuation; do not
 repeat unchanged passing checks. The four Windows roots are archived/retired;
-the two old Linux checkpoint copies are verified and their local retirement is
-running. Inspect its completion and resource records before launching replay.
+the two old Linux checkpoint archives and local retirement are verified. Fresh
+capacity passes for the prepared 6,300,000 continuation. Startup must still
+validate the exact working/recovery inventories before allowing its writer.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 
