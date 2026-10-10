@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,976,864; fresh continuation prepared.**
+Updated 10 October 2026. **Cold-verified through 5,976,864; fresh continuation running.**
 The [native-reserve stopped-state inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
 completed at 18:35:25 UTC and independently verifies. Its discovery command
 records the specific expected exact-height refusal; the following five commands
@@ -15,9 +15,14 @@ The [14-folder archival/retirement](restart-storage-capacity-review.md) passed.
 All 9,191 files remain verified on W:; D: gained 12.715 GiB and has 62.100 GiB free
 at inspection completion. Four targeted [controller provenance checks](evidence/restart-reserve-stop-controller-2026-10-10/RESULTS.md)
 pass for existing STOP-based and new native-reserve records. The [6,300,000-v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/README.md)
-is prepared from 5,976,864 for 323,136 additional blocks. Its fresh 28 GiB ceiling
+is running from 5,976,864 for up to 323,136 additional blocks. Its fresh 28 GiB ceiling
 allows about 6.731 GiB growth; timeouts and 20/50 GiB per-batch reserves stay
-unchanged. Fresh launch capacity must pass. No writer has resumed yet.
+unchanged. Fresh preflight passed at 18:40:20 UTC with about 34.548 GiB Linux /
+62.725 GiB D: free. The hidden dispatcher launched at 18:41:04 UTC from `e74cd524`.
+[Replay began at 18:45:49 UTC](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/STATUS.md)
+after four passing startup commands, 10,895 working/1,383 recovery hashes and
+1,826 prior evidence files verified. The initial allocation sample passes.
+Coverage remains 5,976,864 until both cold checks and evidence verification pass.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
@@ -279,8 +284,11 @@ The hourly continuation id is continue-fusion-restart-testing.
 The failed replay dispatcher has exited. Archival/retirement has also completed.
 The cold-inspection dispatcher finished successfully; its host records are
 retained under repo tmp/reserve-inspection-2026-10-10 and in its sealed bundle.
-The next prepared job is restart-ticket-encoder-job-6300000-v3-2026-10-10; check
-fresh capacity before launch and its completion/resources before further work. Useful independent work is limited to documented
+The current dispatched job is restart-ticket-encoder-job-6300000-v3-2026-10-10.
+Its runtime status is /home/rehearsal/results/restart-ticket-encoder-job-6300000-v3-2026-10-10/status.json;
+host dispatch logs are under repo tmp/replay-job-6300000-v3-2026-10-10. Inspect
+completion, verification and resources before further work; no duplicate writer
+or hashing of live LevelDB files. Useful independent work is limited to documented
 acceptance gaps that do not repeat passing checks or compete for large disk
 workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.

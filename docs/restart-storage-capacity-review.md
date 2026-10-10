@@ -7,9 +7,12 @@ names are unchanged and protected-VHD metadata stayed unchanged during both
 operations. D: gained **12.715 GiB**, leaving **62.100 GiB free** at completion.
 The immediate capacity blocker is resolved. The [bounded cold inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/spec.md)
 passed at 5,976,864, with 21.269 GiB closed working allocation and 62.100 GiB
-still free on D:. The fresh 6,300,000-v3 continuation is prepared with a 28 GiB
-ceiling (6.731 GiB remaining growth); it needs fresh Linux >27.731 GiB and
-D: >60 GiB capacity before launch. No replay writer has resumed.
+still free on D:. The fresh 6,300,000-v3 continuation uses a 28 GiB ceiling
+(6.731 GiB remaining growth). Its required starting floors were Linux >27.731 GiB
+and D: >60 GiB. Fresh preflight passed at 18:40:20 UTC with about 34.548/62.725 GiB
+free; the dispatcher launched at 18:41:04 UTC and replay began at 18:45:49 UTC
+after passing startup checks. Its initial allocation sample passes.
+No further archival or bulk workload should compete with this finite job.
 
 **Earlier reserve-stop observation, 10 October 2026, after 17:45 UTC:** the
 [6,300,000-v2 replay](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
@@ -137,7 +140,7 @@ mount/network namespaces, loopback DOWN, actual database/run locks and read-only
 views. Metadata verification is not a fresh full hash of the 117 GB backup.
 No cleanup, VHD compaction, data relocation or reserve reduction occurred.
 
-## Authorized next finite replay
+## Earlier finite replay after expansion
 
 The fresh 6,300,000-v2 job was dispatched at 15:14:00 UTC from commit `40551639`.
 It starts at 5,600,032: up to 699,968 additional blocks.
@@ -155,8 +158,11 @@ per-batch 20/50 GiB reserve checks. Preparation/capacity are not launch or verif
 completion. Inspect the job's launch, completion and verification records before
 any dependent action; no duplicate writer or hashing of a live LevelDB.
 
-No further cleanup or disk expansion is authorized by this completed operation.
-W: remains available for verified cold archival; do not run live LevelDB on SMB.
+The expansion approval itself did not authorize further cleanup. Peter later
+explicitly authorized obsolete-folder archival/removal; the 14-folder operation
+summarized above completed under that authorization. No further disk expansion
+has been performed. W: remains available for verified cold archival; do not run
+live LevelDB on SMB.
 The separate complete-backup package remains a G1 preservation gap. Review
 capacity and evidence value again on verified completion or a finite stop.
 G1/F12 and final selected-binary startup/recovery/handover acceptance remain open.

@@ -1,0 +1,102 @@
+{
+  "observed_utc": "2026-10-10T18:46:14.753263+00:00",
+  "runtime": "/home/rehearsal/results/restart-ticket-encoder-job-6300000-v3-2026-10-10",
+  "source_commit": "e74cd524881052c43c724fdd8e7deb9cfc54ed5c",
+  "run_record_sha256": "d896e335136951d76c0c9c49ff0a6a71322830a976d144bcce80e7cf92829fcd",
+  "status_record_sha256": "dfefba9da2499790d272210c25766656b87fc3ad8f2b46575081a7c280d0d8f7",
+  "status": {
+    "phase": "replay",
+    "started": "2026-10-10T18:41:10.154272+00:00",
+    "updated": "2026-10-10T18:45:49.111049+00:00",
+    "observed_height": 5976864,
+    "observed_height_is_provisional": true,
+    "target_height": 6300000,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 633
+  },
+  "replay_started": "2026-10-10T18:45:49.083504+00:00",
+  "replay_pid": 633,
+  "process_stat": "633 (timeout) S 353 633 282 34816 282 4194304 78 0 3 0 0 0 0 0 20 0 1 0 42263 3219456 449 18446744073709551615 110418032230400 110418032248465 140722214420704 0 0 0 0 3145728 90119 1 0 0 17 3 0 0 0 0 0 110418032261744 110418032263768 110418501644288 140722214427164 140722214427368 140722214427368 140722214428647 0\n",
+  "process_command": "timeout --kill-after=20s 23400s /home/rehearsal/results/restart-ticket-encoder-job-6300000-v3-2026-10-10/bin/replay-tests -test.run=^TestPreservedHistoryReplay$ -test.v -test.count=1 -test.timeout=22500s ",
+  "startup_commands": [
+    {
+      "name": "observer-build",
+      "started": "2026-10-10T18:42:27.530739+00:00",
+      "finished": "2026-10-10T18:42:34.722707+00:00",
+      "exit": 0
+    },
+    {
+      "name": "observer-build-info",
+      "started": "2026-10-10T18:42:34.738918+00:00",
+      "finished": "2026-10-10T18:42:34.743268+00:00",
+      "exit": 0
+    },
+    {
+      "name": "checkpoint-cold-head",
+      "started": "2026-10-10T18:42:34.751142+00:00",
+      "finished": "2026-10-10T18:42:42.071594+00:00",
+      "exit": 0
+    },
+    {
+      "name": "reference",
+      "started": "2026-10-10T18:43:29.562383+00:00",
+      "finished": "2026-10-10T18:43:35.867147+00:00",
+      "exit": 0
+    }
+  ],
+  "resume_verified": true,
+  "working_files_verified": 10895,
+  "recovery_files_verified": 1383,
+  "previous_files_verified": 1826,
+  "binary_sha256": "b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245",
+  "checkpoint_identity_sha256": "733848a7e2aaed7027305d21aacdd46cf84c48d363bc505c2dc25dd9fb163b11",
+  "prior_stop_evidence_sha256": {
+    "completion.json": "e55715963979dd7767e5d7c7cc6a28734e5b2e829e4af029a2d5bf48f104f13b",
+    "qualification/replay.stdout.txt": "c53180bccb477e97f77178cd06f905f7d75a6e42ff79fe3f64d6e84d2aa76e54",
+    "qualification/run.json": "441b0f1db8346c10b8a1796946a9fc95b1e534450b898b58d2b6f4e3107bd2e6"
+  },
+  "startup_capacity_bytes": {
+    "/home/rehearsal/results": 37095407616,
+    "/mnt/d": 67350413312
+  },
+  "latest_size_measurement": {
+    "time": "2026-10-10T18:45:49.106222+00:00",
+    "attempt": 1,
+    "exit": 0,
+    "stdout": "22837567488\t/home/rehearsal/replay/candidate-ticket-encoding-working\n",
+    "stderr": ""
+  },
+  "isolation": {
+    "namespace": "net:[4026532369]",
+    "mount_namespace": "mnt:[4026532368]",
+    "parent_namespace": "net:[4026531833]",
+    "parent_mount_namespace": "mnt:[4026532348]",
+    "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+    "backup_mount": {
+      "target": "/tmp/f12-job-source-jkm687ld",
+      "source": "/dev/sdf[/home/rehearsal/data/efsn/chaindata]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "checkpoint_mount": {
+      "target": "/tmp/f12-job-checkpoint-9q0nlnwy",
+      "source": "/dev/sdf[/home/rehearsal/replay/candidate-ticket-encoding-working]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "recovery_mount": {
+      "target": "/tmp/f12-job-recovery-qt_6ws_r",
+      "source": "/dev/sdf[/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    }
+  },
+  "replay_stdout_tail": [
+    "=== RUN   TestPreservedHistoryReplay",
+    "    replay_linux_test.go:30: read-only resume preflight matched height=5976864 hash=0xf86325bbac132805a04c7f39a7a2e9b97341b0008ce36f29378530dab8121d95",
+    "    replay_linux_test.go:43: baseline replay: end=6300000 legacyCheckpointRangeEnd=2680000; ticket-seal and raw-transaction shortcuts remain active in that historical range",
+    "    replay_linux_test.go:53: replay starting at height=5976864 hash=0xf86325bbac132805a04c7f39a7a2e9b97341b0008ce36f29378530dab8121d95 resume=true"
+  ],
+  "replay_stderr_tail": [],
+  "coverage_remains_cold_verified_height": 5976864,
+  "database_files_read_or_hashed_by_this_observation": false
+}

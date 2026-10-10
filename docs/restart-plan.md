@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: cold-verified through 5,976,864; the next bounded continuation is prepared.**
+**Current state: cold-verified through 5,976,864; the next bounded continuation is running.**
 The [native-reserve stopped-state inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
 passes both exact-height cold checks and all twelve preservation checks. Header,
 state/tickets, receipts, bloom and TD match the backup; 10,895 working and 1,383
@@ -15,8 +15,13 @@ free. The separate recovery and original backup remain intact. Four targeted
 [controller provenance checks](evidence/restart-reserve-stop-controller-2026-10-10/RESULTS.md)
 pass. Only offline test-controller handling changed; the retained node/replay
 executable and release selection are unchanged. The [fresh 6,300,000-v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/README.md)
-is prepared for 323,136 new blocks with a 28 GiB sampled ceiling and unchanged
-timeouts/reserves. Fresh capacity must pass before launch; no writer has resumed.
+is running for up to 323,136 new blocks with a 28 GiB sampled ceiling and unchanged
+timeouts/reserves. Fresh preflight passed at 18:40:20 UTC with about 34.548 GiB Linux / 62.725 GiB
+D: free. The hidden dispatcher launched at 18:41:04 UTC from `e74cd524`.
+[Replay began at 18:45:49 UTC](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/STATUS.md)
+after all four startup commands, cold working/recovery inventories and identity
+checks passed. The initial resource sample passes. Coverage remains 5,976,864
+until verified completion; inspect status before any dependent work.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -95,8 +100,8 @@ geometry is 220 GiB; Linux/D: free space is about 40.87/63.64 GiB. The fresh
 its hidden dispatcher launched at 15:14:00 UTC from commit `40551639`. Replay
 began at 15:17:23 UTC; its initial progress and allocation checks passed. It later
 [stopped at the D: reserve](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
-at 17:45 UTC. No writer remains. Its last logged 5,976,608 height is provisional;
-the exact saved endpoint has not yet been inspected. No live LevelDB hashing.
+at 17:45 UTC. The later cold inspection, summarized above, verifies its saved
+endpoint at 5,976,864. The failed job remains incomplete; v3 is the current job.
 The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
@@ -253,11 +258,14 @@ attempt reached its declared 15 GiB ceiling and stopped. Its separate
 verifies 5,600,032 and 2,920,032 post-legacy blocks; the requested range remains
 incomplete. The [authorized expansion](restart-storage-capacity-review.md) now
 passes at 220 GiB, with working/recovery bytes and protected metadata unchanged.
-The fresh 6,300,000-v2 continuation was dispatched at 15:14:00 UTC after passing
-capacity. Inspect its startup/status and subsequent completion/verification
-records next. Keep old jobs/STOPs immutable and avoid unchanged passing reruns.
-Preserve backup, current replay/recovery databases and sealed evidence; no disk
-compaction or general cleanup is authorized by that operation.
+The 6,300,000-v2 continuation stopped at the D: reserve. The later authorized
+14-folder retirement and cold inspection passed, reclaiming 12.715 GiB and
+verifying 5,976,864. The fresh v3 continuation was dispatched at 18:41:04 UTC
+after passing capacity checks. Inspect its status and subsequent completion/
+verification records next. Keep old jobs/STOPs immutable and avoid unchanged
+passing reruns. Preserve backup, current replay/recovery databases and sealed
+evidence. Peter authorized obsolete-folder archival/removal; no additional
+bulk workload should compete with the active job.
 
 Earlier [W: archival](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints through 1,800,000. The later old-fixture
@@ -758,13 +766,13 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. Archive/retirement and cold inspection passed; 62.100 GiB free on D:. Fresh 6,300,000-v3 continuation prepared | Before cold inspection or another finite G1 replay |
+| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. Archive/retirement and cold inspection passed; 62.100 GiB free on D:. Fresh preflight passed; 6,300,000-v3 running since 18:45 UTC | On completion or finite stop, before another G1 replay |
 
 Current technical order (efsn):
 
 1. G1: preserve the [native reserve-stop inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
-   and completed [archival/reclaim](restart-storage-capacity-review.md). Pass fresh
-   capacity for the prepared 5,976,864 to 6,300,000 continuation, then run it with
+   and completed [archival/reclaim](restart-storage-capacity-review.md). The fresh
+   5,976,864 to 6,300,000 continuation passed capacity and was dispatched with
    the qualified native-failure provenance path. Inspect completion, both cold
    checks, preservation and resources before further work. Keep the original
    backup, separate recovery and all incomplete-job evidence; re-evaluate
