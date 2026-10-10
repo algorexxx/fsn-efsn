@@ -1,18 +1,104 @@
-# Capacity after verified archival and retirement
+# Capacity after verified replay through 6,300,000
 
-**Current state, 10 October 2026:** [archival](evidence/restart-remaining-fixtures-copy-w-2026-10-10/RESULTS.md)
+**Current observation, 10 October 2026 at 21:58 UTC:** the
+[6,300,000-v3 replay](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
+completed all replay, cold and evidence checks. No replay/observer/node process
+remained at the post-completion review. Working allocation is 27.068 GiB;
+Linux has 28.689 GiB free and D: has 55.271 GiB. The prior successful cleanup
+is preserved below as a dated result; its 62.100 GiB figure is historical.
+
+## Next capacity decision
+
+The existing controller refuses a proposed 6,300,000 to 6,600,000 continuation
+with a 34 GiB sampled ceiling. It would allow 6.932 GiB of working growth and
+require more than 27.932 GiB Linux / 60 GiB D: free. Linux currently passes;
+D: is 4.729 GiB short of the minimum. A practical target is about 65 GiB D: free,
+allowing more margin than barely clearing the gate. Fresh measurements must
+still pass at launch. No next job is prepared or launched; the 20/50 GiB
+per-batch reserves, preparation margin and finite time limits stay unchanged.
+
+All obsolete fixture roots under D:/FusionRehearsal are already archived and
+retired. Its only remaining roots are Ubuntu and swap. The ext4.vhdx file is
+211,278,626,816 bytes (196.769 GiB); swap is only 37,748,736 bytes (36 MiB).
+Deleting swap cannot solve this shortfall. Expanding the 220 GiB virtual capacity
+again would not create host space. No unrelated user folders were inspected
+or proposed for removal.
+
+Two concrete options remain:
+
+1. Peter frees about 10 GiB elsewhere on D:, after which the existing controller
+   can recheck capacity for the proposed bounded continuation. This avoids a
+   large rehearsal-disk archive and compaction operation.
+2. Archive a byte-verified copy of the stopped rehearsal virtual disk to W:,
+   then attempt offline compaction of unused virtual-disk storage. This may
+   reclaim host space, but the amount has not been established and success is
+   not promised. This changes the disk containing the preserved backup and
+   requires a separate storage decision. The previous expansion authorization
+   explicitly excluded compaction; permission to retire obsolete folders does
+   not by itself approve rewriting this protected disk.
+
+### Concrete scope if offline compaction is chosen
+
+- Exact source/target: D:/FusionRehearsal/Ubuntu/ext4.vhdx. Preserve its 220 GiB
+  virtual geometry; no shrinking partition/filesystem capacity, distro removal,
+  reinstallation, database pruning, evidence deletion or release change.
+- Require current manifests/identities, no rehearsal writer, actual run/database
+  locks before shutdown and zero active container workloads. Stop only the
+  rehearsal distro; if its disk stays attached, an idle Docker/WSL shutdown is
+  allowed only after confirming no other active workload would be interrupted.
+  Active unrelated workloads require a separate decision.
+- Use a fresh cold destination
+  W:/FusionRestart/rehearsal-vhd-before-compact-2026-10-10/ext4.vhdx at the verified
+  W: mapping to `\\192.168.1.250\mnemosyne1`. Check exact paths/reparse points and
+  at least 100 GiB of archive-volume reserve beyond the actual source size.
+  Copy only while the disk is stopped and detached. Record source size, geometry
+  and SHA256, flush the copy, and rehash the complete source and destination.
+  Any mismatch or space failure stops the operation with both copies retained.
+  The approximately 197 GiB copy and verification may take hours on the slow share.
+- Only after the full cold archive verifies, qualify the installed native
+  compaction command against its local help and device state. diskpart.exe is
+  present; Optimize-VHD was not found in this session. A discard/trim step, if
+  the native method needs it, is limited to unused filesystem blocks after the
+  archive exists; then stop and detach again. Retain the command and output.
+  Never use a zero-fill operation that consumes the remaining host reserve.
+- Perform one native offline compaction of that exact VHD, retaining logs and
+  its exit status. Do not kill a storage rewrite merely because a tool call
+  yields. Failure blocks further mutation and replay; preserve the archived
+  disk and the failed compacted result for diagnosis. Restoring over the original
+  is a separate recovery action, not an automatic cleanup.
+- Recheck actual geometry, filesystem health, full protected-backup content
+  against the verified archive and the sealed working/recovery hashes, identities,
+  toolchain and source. Reuse existing preservation helpers where they cover
+  these checks. Do not equate unchanged metadata with full content equality.
+  Keep the W: rollback copy; it is a cold archive, never a live LevelDB on SMB.
+- Restart any idle service deliberately stopped, record actual D:/Linux free
+  space, and rerun the existing capacity/provenance gate. Only a passing gate
+  permits preparing the next finite offline replay. If compaction gains too
+  little space, report that result and hold further testing rather than reduce
+  reserves or run repeated tiny jobs.
+
+No VHD copy, trim, compaction or further disk mutation has started. The result
+is ready for Peter's storage choice. While it is pending, do not repeat this
+question or poll unchanged capacity on each heartbeat. The next history range
+still has evidence value; no snapshot-trust waiver or release acceptance follows
+from this capacity pause. All currently passing small startup/refusal fixtures
+remain valid and do not need blanket reruns.
+
+## Earlier completed archival and retirement
+
+**Earlier completion, 10 October 2026:** [archival](evidence/restart-remaining-fixtures-copy-w-2026-10-10/RESULTS.md)
 and [separate local retirement](evidence/restart-remaining-fixtures-retire-w-2026-10-10/RESULTS.md)
 passed. The exact 14 D: roots are absent, all 9,191 files remain on W:, other root
 names are unchanged and protected-VHD metadata stayed unchanged during both
 operations. D: gained **12.715 GiB**, leaving **62.100 GiB free** at completion.
-The immediate capacity blocker is resolved. The [bounded cold inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/spec.md)
+That immediate capacity blocker was resolved for the v3 run. The [bounded cold inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/spec.md)
 passed at 5,976,864, with 21.269 GiB closed working allocation and 62.100 GiB
 still free on D:. The fresh 6,300,000-v3 continuation uses a 28 GiB ceiling
 (6.731 GiB remaining growth). Its required starting floors were Linux >27.731 GiB
 and D: >60 GiB. Fresh preflight passed at 18:40:20 UTC with about 34.548/62.725 GiB
 free; the dispatcher launched at 18:41:04 UTC and replay began at 18:45:49 UTC
-after passing startup checks. Its initial allocation sample passes.
-No further archival or bulk workload should compete with this finite job.
+after passing startup checks. The job subsequently completed at 21:24:13 UTC;
+the next capacity decision is now recorded above.
 
 **Earlier reserve-stop observation, 10 October 2026, after 17:45 UTC:** the
 [6,300,000-v2 replay](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)

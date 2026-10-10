@@ -1,28 +1,32 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,976,864; fresh continuation running.**
-The [native-reserve stopped-state inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
-completed at 18:35:25 UTC and independently verifies. Its discovery command
-records the specific expected exact-height refusal; the following five commands
-pass, including both exact-height cold checks. Header/RLP, state/tickets,
-receipts, bloom and TD match the backup, with 2,564 tickets and 70 transactions/
-receipts. All twelve preservation checks pass: 10,895 working and 1,383 recovery
-hashes stay unchanged, and 1,780 prior evidence files verify. This adds 376,832
-blocks and brings post-legacy coverage to 3,296,864. The requested 6,300,000-v2
-attempt remains failed/incomplete; no new STOP file is created or required.
+Updated 10 October 2026. **Verified through 6,300,000; no replay is running.**
+The [v3 completion](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
+passed automatic evidence verification at 21:24:13 UTC. All seven commands,
+both cold checks and ten additional preservation checks pass. Header/RLP,
+state/ticket commitments, receipts, bloom and TD match the backup. Warm/cold
+ticket counts agree at 4,621; the endpoint has zero transactions and receipts.
+All 13,794 cold working-file hashes remain unchanged; the 1,383 recovery hashes,
+backup/baseline metadata and source/executable identities are preserved. The
+1,826 preceding evidence files verify. Original input/output/bundle manifests
+were independently rechecked and remain unchanged.
 
-The [14-folder archival/retirement](restart-storage-capacity-review.md) passed.
-All 9,191 files remain verified on W:; D: gained 12.715 GiB and has 62.100 GiB free
-at inspection completion. Four targeted [controller provenance checks](evidence/restart-reserve-stop-controller-2026-10-10/RESULTS.md)
-pass for existing STOP-based and new native-reserve records. The [6,300,000-v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/README.md)
-is running from 5,976,864 for up to 323,136 additional blocks. Its fresh 28 GiB ceiling
-allows about 6.731 GiB growth; timeouts and 20/50 GiB per-batch reserves stay
-unchanged. Fresh preflight passed at 18:40:20 UTC with about 34.548 GiB Linux /
-62.725 GiB D: free. The hidden dispatcher launched at 18:41:04 UTC from `e74cd524`.
-[Replay began at 18:45:49 UTC](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/STATUS.md)
-after four passing startup commands, 10,895 working/1,383 recovery hashes and
-1,826 prior evidence files verified. The initial allocation sample passes.
-Coverage remains 5,976,864 until both cold checks and evidence verification pass.
+This run adds 323,136 blocks, giving 3,620,000 candidate-executed blocks beyond
+the legacy boundary. The unchanged baseline remains at 3,600,000. Earlier
+failed jobs remain failed; successful continuation does not alter their records.
+Replay took 154.956 minutes by command timestamps and 143.667 minutes by its
+monotonic record; the clock difference is unexplained and both are retained.
+Four transient allocation-read retries recovered within the existing policy.
+
+Closed working allocation is 27.068 GiB. The later capacity review found
+28.689 GiB Linux / 55.271 GiB D: free. The unchanged controller refuses a proposed
+6,300,000 to 6,600,000 continuation with a 34 GiB ceiling because D: must exceed
+60 GiB. No new job was prepared or launched. All old D: fixture copies have
+already been archived and retired; preserve their W: copies and all evidence.
+The [capacity decision](restart-storage-capacity-review.md#next-capacity-decision)
+is additional host space or verified cold disk archival followed by possible
+offline compaction. Do not retry unchanged capacity or lower reserves. F12/G1
+and final selected-binary restored startup/recovery/handover acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
@@ -62,7 +66,7 @@ receipts. All twelve preservation checks and the evidence verifier pass; all
 That inspection established 2,651,360 post-legacy blocks. There is no final warm ticket
 count from the stopped attempt. F12/G1 remain open.
 
-**Last fully completed requested range: 4,500,000.**
+**Earlier fully completed requested range: 4,500,000.**
 The [latest 900,000-block job](evidence/restart-ticket-encoder-job-4500000-v2-2026-10-09/RESULTS.md)
 passes all seven commands, all nine additional preservation checks and automatic
 verification. Replay took 181.781 minutes; verified completion was 19:20:56 UTC.
@@ -74,9 +78,9 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Its latest verified closed allocation is 22,837,567,488 bytes (21.269 GiB) at
-5,976,864. Inspection finished with 37,095,866,368 bytes free in Linux and
-66,679,324,672 bytes on D:. The separate verified 2,400,000 recovery checkpoint
+Its latest verified closed allocation is 29,064,523,776 bytes (27.068 GiB) at
+6,300,000. Verification recorded 30,804,459,520 bytes free in Linux and
+58,641,989,632 bytes on D:; the later review above records fresh capacity. The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working
 inventories are historical records, not separate retained copies. Another
 in-place continuation intentionally changes these current working bytes.
@@ -134,7 +138,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through the cold-verified stopped checkpoint at 5,976,864, including 3,296,864 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 5,976,864 remains open; the requested 5,400,000 and 6,300,000 ranges remain incomplete. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through verified completion at 6,300,000, including 3,620,000 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 6,300,000 remains open; earlier failed attempts stay preserved as incomplete runs. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
@@ -284,7 +288,8 @@ The hourly continuation id is continue-fusion-restart-testing.
 The failed replay dispatcher has exited. Archival/retirement has also completed.
 The cold-inspection dispatcher finished successfully; its host records are
 retained under repo tmp/reserve-inspection-2026-10-10 and in its sealed bundle.
-The current dispatched job is restart-ticket-encoder-job-6300000-v3-2026-10-10.
+The latest completed job is restart-ticket-encoder-job-6300000-v3-2026-10-10.
+Its dispatcher exited zero. No writer remains; the next range is capacity-blocked.
 Its runtime status is /home/rehearsal/results/restart-ticket-encoder-job-6300000-v3-2026-10-10/status.json;
 host dispatch logs are under repo tmp/replay-job-6300000-v3-2026-10-10. Inspect
 completion, verification and resources before further work; no duplicate writer

@@ -1,33 +1,34 @@
 # Fusion restart launch plan
 
 Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: cold-verified through 5,976,864; the next bounded continuation is running.**
-The [native-reserve stopped-state inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
-passes both exact-height cold checks and all twelve preservation checks. Header,
-state/tickets, receipts, bloom and TD match the backup; 10,895 working and 1,383
-recovery-file hashes stay unchanged. This adds 376,832 blocks, bringing candidate
-post-legacy coverage to 3,296,864. The prior requested 6,300,000-v2 job remains
-failed/incomplete; its reserve failure records are preserved without a fabricated STOP.
+**Current state: replay and cold verification pass through 6,300,000; no test is running.**
+The [completed v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
+finished automatic verification at 21:24:13 UTC. All seven commands, both cold
+checks and ten additional preservation checks pass. Header, state/tickets,
+receipts, bloom and TD match the backup, with 4,621 tickets at the endpoint.
+All 13,794 closed working-file hashes remain unchanged during inspection;
+the original backup and separate recovery remain preserved. This adds 323,136
+blocks and brings candidate post-legacy coverage to 3,620,000. Earlier failed
+attempts remain failed, with their original evidence and limits intact.
 
-The [authorized archival/retirement](restart-storage-capacity-review.md) completed:
-all 9,191 files remain verified on W:, and D: gained 12.715 GiB, leaving 62.100 GiB
-free. The separate recovery and original backup remain intact. Four targeted
-[controller provenance checks](evidence/restart-reserve-stop-controller-2026-10-10/RESULTS.md)
-pass. Only offline test-controller handling changed; the retained node/replay
-executable and release selection are unchanged. The [fresh 6,300,000-v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/README.md)
-is running for up to 323,136 new blocks with a 28 GiB sampled ceiling and unchanged
-timeouts/reserves. Fresh preflight passed at 18:40:20 UTC with about 34.548 GiB Linux / 62.725 GiB
-D: free. The hidden dispatcher launched at 18:41:04 UTC from `e74cd524`.
-[Replay began at 18:45:49 UTC](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/STATUS.md)
-after all four startup commands, cold working/recovery inventories and identity
-checks passed. The initial resource sample passes. Coverage remains 5,976,864
-until verified completion; inspect status before any dependent work.
+The [post-completion capacity review](restart-storage-capacity-review.md#next-capacity-decision)
+found 27.068 GiB working allocation and 28.689 GiB Linux / 55.271 GiB D: free.
+A proposed next range to 6,600,000 with a 34 GiB sampled ceiling fails the existing
+D: starting floor of more than 60 GiB. No next writer is prepared or launched;
+reserves and finite limits are unchanged. All obsolete D: fixture copies have
+already been archived and retired. More folder cleanup there will not resolve
+this shortfall. The concrete choice is additional host space or a verified
+cold archive of the rehearsal VHD followed by offline compaction. The latter
+changes the virtual disk containing the backup and needs a separate storage
+decision. Do not repeat a capacity refusal or ask the same pending question on
+every heartbeat; wait for that decision or an actual capacity change.
+
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
 their old next-step lists do not add separate requirements to this checklist.
 
-**Current technical priority (8 October):** F12 now identifies a compiler
+**Historical investigation record (8–10 October):** F12 now identifies a compiler
 compatibility blocker. Go 1.27.1 changes the compressed ticket bytes used in
 genesis commitments; substituting Go 1.21.3's bytes alone reproduces the exact
 historical genesis. Qualify legacy ticket-encoding compatibility before further
@@ -101,7 +102,7 @@ its hidden dispatcher launched at 15:14:00 UTC from commit `40551639`. Replay
 began at 15:17:23 UTC; its initial progress and allocation checks passed. It later
 [stopped at the D: reserve](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
 at 17:45 UTC. The later cold inspection, summarized above, verifies its saved
-endpoint at 5,976,864. The failed job remains incomplete; v3 is the current job.
+endpoint at 5,976,864. The failed job remains incomplete; v3 later completed successfully.
 The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
@@ -261,8 +262,8 @@ passes at 220 GiB, with working/recovery bytes and protected metadata unchanged.
 The 6,300,000-v2 continuation stopped at the D: reserve. The later authorized
 14-folder retirement and cold inspection passed, reclaiming 12.715 GiB and
 verifying 5,976,864. The fresh v3 continuation was dispatched at 18:41:04 UTC
-after passing capacity checks. Inspect its status and subsequent completion/
-verification records next. Keep old jobs/STOPs immutable and avoid unchanged
+after passing capacity checks. It completed verification at 21:24:13 UTC.
+The current capacity decision is summarized at the top of this plan. Keep old jobs/STOPs immutable and avoid unchanged
 passing reruns. Preserve backup, current replay/recovery databases and sealed
 evidence. Peter authorized obsolete-folder archival/removal; no additional
 bulk workload should compete with the active job.
@@ -766,17 +767,16 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Approved 220 GiB expansion passed; D: reserve subsequently stopped replay. Archive/retirement and cold inspection passed; 62.100 GiB free on D:. Fresh preflight passed; 6,300,000-v3 running since 18:45 UTC | On completion or finite stop, before another G1 replay |
+| Rehearsal disk capacity | 6,300,000-v3 passed; D: has 55.271 GiB, below the next starting floor. All obsolete D: fixtures are retired. Additional host space or verified archive plus offline VHD compaction needs resolution | Before another G1 replay |
 
 Current technical order (efsn):
 
-1. G1: preserve the [native reserve-stop inspection](evidence/restart-ticket-encoder-stopped-reserve-2026-10-10/RESULTS.md)
-   and completed [archival/reclaim](restart-storage-capacity-review.md). The fresh
-   5,976,864 to 6,300,000 continuation passed capacity and was dispatched with
-   the qualified native-failure provenance path. Inspect completion, both cold
-   checks, preservation and resources before further work. Keep the original
-   backup, separate recovery and all incomplete-job evidence; re-evaluate
-   capacity and evidence value before declaring another range.
+1. G1: preserve the [completed 6,300,000 evidence](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
+   and resolve the [host-capacity decision](restart-storage-capacity-review.md#next-capacity-decision).
+   A 6,300,000 to 6,600,000 continuation is useful, but its proposed 34 GiB
+   ceiling fails current D: capacity. Do not lower reserves or launch a tiny
+   retry. Preserve backup, separate recovery, completed and failed evidence;
+   require fresh capacity and exact identities before preparing another writer.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the
