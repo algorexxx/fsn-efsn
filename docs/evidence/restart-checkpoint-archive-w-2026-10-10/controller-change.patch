@@ -1,0 +1,86 @@
+--- previous/archive.py
++++ archive.py
+@@ -10,14 +10,16 @@
+ import stat
+ import subprocess
+ import sys
++import time
+ 
+ sys.dont_write_bytecode = True
+ HERE = Path(__file__).resolve().parent
+ REPO = HERE.parents[2]
+ SOURCE = Path('/home/rehearsal/replay')
+-DEST = Path('/mnt/w/FusionRestart/checkpoint-archive-2026-10-09')
+-HEIGHTS = [100000, 300000, 600000, 900000, 1200000, 1400000, 1600000, 1800000]
+-KEEP = [2000000, 2200000]
++DEST = Path('/mnt/w/FusionRestart/checkpoint-archive-2026-10-10')
++HEIGHTS = [2000000, 2200000]
++KEEP = []
++DEADLINE = time.monotonic() + 7200
+ BLOCK = 4 * 1024**2
+ spec = importlib.util.spec_from_file_location('snapshot_helpers', REPO/'tests/restart/snapshot_package.py')
+ helpers = importlib.util.module_from_spec(spec)
+@@ -29,7 +31,12 @@
+ 
+ 
+ def save(name, data):
++    assert not (HERE/name).exists(), 'Preserve existing evidence'
+     helpers.write_json(HERE/name, data)
++
++
++def within_limit():
++    assert time.monotonic() < DEADLINE, 'Two-hour operation limit exceeded'
+ 
+ 
+ def capacity():
+@@ -46,6 +53,7 @@
+     assert path.resolve() == path and path.is_dir() and not path.is_symlink()
+     result = {}
+     for item in sorted(path.iterdir()):
++        within_limit()
+         info = item.lstat()
+         assert stat.S_ISREG(info.st_mode) and not item.is_symlink(), str(item)
+         assert helpers.FILE_NAME.fullmatch(item.name) or item.name == 'replay-identity.json'
+@@ -83,6 +91,7 @@
+         digest = hashlib.sha256()
+         with (source/name).open('rb') as reader, (staging/name).open('xb') as writer:
+             while chunk := reader.read(BLOCK):
++                within_limit()
+                 writer.write(chunk)
+                 digest.update(chunk)
+             writer.flush()
+@@ -106,12 +115,23 @@
+     mount = json.loads(subprocess.check_output(['findmnt', '-J', '-o', 'TARGET,SOURCE,FSTYPE,OPTIONS', '-T', '/mnt/w'], text=True))['filesystems'][0]
+     assert mount['target'] == '/mnt/w' and mount['source'] == 'W:' and mount['fstype'] == '9p'
+     assert DEST.parent.resolve() == DEST.parent and SOURCE.resolve() == SOURCE
++    for line in (HERE/'INPUT_SHA256SUMS').read_text(encoding='utf-8').splitlines():
++        expected_sha, name = line.split(None, 1)
++        assert helpers.digest(HERE/name) == expected_sha, name
++    assert not (HERE/(mode+'.json')).exists()
+     expected = expectations()
+-    record = {'mode': mode, 'started': now(), 'mount': mount, 'capacity_before': capacity(), 'script_sha256': helpers.digest(Path(__file__)), 'helper_sha256': helpers.digest(REPO/'tests/restart/snapshot_package.py'), 'checkpoints': [], 'preserved': {}}
++    record = {'mode': mode, 'started': now(), 'mount': mount, 'capacity_before': capacity(), 'script_sha256': helpers.digest(Path(__file__)), 'helper_sha256': helpers.digest(REPO/'tests/restart/snapshot_package.py'), 'checkpoints': [], 'preserved': {}, 'network_namespace': os.readlink('/proc/self/ns/net'), 'links': subprocess.check_output(['ip', '-brief', 'link'], text=True)}
+     assert record['capacity_before'][str(SOURCE)] > 20*1024**3
+     assert record['capacity_before']['/mnt/d'] > 50*1024**3
+     assert record['capacity_before']['/mnt/w'] > 100*1024**3
+     with ExitStack() as stack:
++        retained_names = sorted(p.name for p in SOURCE.iterdir() if p.name not in ['candidate-ticket-encoding-'+str(h) for h in HEIGHTS])
++        protected = [SOURCE/'candidate-ticket-encoding-working', SOURCE/'candidate-ticket-encoding-2400000-v2']
++        for path in protected:
++            for lock_path in [Path(str(path)+'.run.lock'), path/'LOCK']:
++                lock = stack.enter_context(lock_path.open('rb'))
++                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        protected_before = {str(p): files(p) for p in protected}
+         for height in HEIGHTS+KEEP:
+             path = SOURCE/('candidate-ticket-encoding-'+str(height))
+             require_source(path)
+@@ -159,6 +179,9 @@
+                 print(json.dumps(record['checkpoints'][-1]), flush=True)
+         for height in KEEP:
+             assert hashes(SOURCE/('candidate-ticket-encoding-'+str(height))) == expected[height]['hashes']
++        assert protected_before == {str(p): files(p) for p in protected}
++        assert retained_names == sorted(p.name for p in SOURCE.iterdir() if p.name not in ['candidate-ticket-encoding-'+str(h) for h in HEIGHTS])
++        record.update(protected_metadata_unchanged=True, retained_root_names_unchanged=True, protected_roots=[str(p) for p in protected])
+         record.update(completed=True, finished=now(), capacity_after=capacity())
+         save(mode+'.json', record)
+         helpers.write_json(DEST/(mode+'.json'), record)

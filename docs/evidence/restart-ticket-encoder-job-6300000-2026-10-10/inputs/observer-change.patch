@@ -1,0 +1,11 @@
+--- a/details_test.go
++++ b/details_test.go
+@@ -57,7 +57,7 @@
+ 
+ func observeReplayBlock(t *testing.T, db ethdb.Database, withTickets bool) replayObservation {
+ 	t.Helper()
+-	const height = uint64(5331360)
++	const height = uint64(6300000)
+ 	hash := rawdb.ReadCanonicalHash(db, height)
+ 	block := rawdb.ReadBlock(db, hash, height)
+ 	if block == nil || block.Hash() != hash || block.NumberU64() != height {

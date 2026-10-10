@@ -1,4 +1,6 @@
 import datetime
+import copy
+import json
 import os
 from pathlib import Path
 import sys
@@ -124,6 +126,52 @@ class ReplayMonitorTests(unittest.TestCase):
         for changed in [dict(verification, **{'pass':False}), dict(verification, end_height=2400000)]:
             with self.assertRaises(ValueError):
                 monitor.require_verified_prior(config, completion, changed)
+
+
+    def test_verified_stopped_checkpoint_keeps_failed_attempt_distinct(self):
+        evidence = Path(__file__).resolve().parents[2]/'docs/evidence'
+        prior = evidence/'restart-ticket-encoder-stopped-5331360-2026-10-10'
+        attempt = evidence/'restart-ticket-encoder-job-5400000-2026-10-09'
+        config = {'start_height':5331360, 'stopped_attempt':attempt.name}
+        run = json.loads((prior/'qualification/run.json').read_bytes())
+        verified = json.loads((prior/'verification.json').read_bytes())
+        completion = json.loads((attempt/'completion.json').read_bytes())
+
+        monitor.require_verified_stopped(config, run, verified, completion)
+
+        self.assertFalse(completion['verified_pass'])
+        self.assertEqual(5331360, verified['cold_verified_height'])
+        self.assertEqual(5400000, completion['requested_end'])
+
+    def test_stopped_resume_refuses_incomplete_or_mismatched_provenance(self):
+        evidence = Path(__file__).resolve().parents[2]/'docs/evidence'
+        prior = evidence/'restart-ticket-encoder-stopped-5331360-2026-10-10'
+        attempt = evidence/'restart-ticket-encoder-job-5400000-2026-10-09'
+        config = {'start_height':5331360, 'stopped_attempt':attempt.name}
+        run = json.loads((prior/'qualification/run.json').read_bytes())
+        verified = json.loads((prior/'verification.json').read_bytes())
+        completion = json.loads((attempt/'completion.json').read_bytes())
+        mutations = [
+            (0, 'start_height', 5331361), (0, 'stopped_attempt', 'another-attempt'),
+            (1, 'completed', False), (1, 'inspect_passed', False),
+            (1, 'failures', ['incomplete']), (1, 'inspection_height', 5400000),
+            (1, 'preservation_checks', {}), (1, 'target_before_cold_sha256', {}),
+            (1, 'stop_sha256', ''), (1, 'requested_attempt_height', 5400001),
+            (2, 'pass', False), (2, 'attempt_completed', True),
+            (2, 'cold_verified_height', 5400000), (2, 'endpoint', {}),
+            (2, 'requested_height', 5400001), (3, 'verified_pass', True),
+            (3, 'exit', 0), (3, 'job', 'another-attempt'),
+            (3, 'requested_end', 5400001)]
+        for index, key, value in mutations:
+            changed = copy.deepcopy([config, run, verified, completion])
+            changed[index][key] = value
+            with self.subTest(index=index, key=key), self.assertRaises(ValueError):
+                monitor.require_verified_stopped(*changed)
+        for key in run['preservation_checks']:
+            changed = copy.deepcopy(run)
+            changed['preservation_checks'][key] = False
+            with self.subTest(preservation=key), self.assertRaises(ValueError):
+                monitor.require_verified_stopped(config, changed, verified, completion)
 
 
 if __name__ == '__main__':

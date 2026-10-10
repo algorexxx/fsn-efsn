@@ -36,6 +36,9 @@ assert Path('/home/rehearsal/results/backup-copy-2026-09-23/verified.txt').is_fi
 locks = [open(str(path)+'.run.lock','a',encoding='utf-8') for path in sorted(set([CHECKPOINT,TARGET,RECOVERY]))]
 for lock in locks:
     fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+database_locks = [open(path/'LOCK','rb') for path in sorted(set([SOURCE,RECOVERY]+([CHECKPOINT] if CONFIG['mode'] == 'copy' else [])))]
+for lock in database_locks:
+    fcntl.flock(lock,fcntl.LOCK_SH|fcntl.LOCK_NB)
 subprocess.run(['mount','--make-rprivate','/'],check=True)
 directories = [tempfile.mkdtemp(prefix='f12-job-'+name+'-') for name in ['source','checkpoint','recovery','closed']]
 source,checkpoint,recovery,closed = directories

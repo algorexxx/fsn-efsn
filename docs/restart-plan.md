@@ -44,17 +44,17 @@ and TD match preserved history; all 5,591 target files remain unchanged. All
 twelve inspection preservation checks and evidence verification pass. Candidate
 post-legacy coverage is now 2,651,360 blocks; the last fully completed requested
 range remains 4,500,000. Closed allocation is 11.016 GiB, with about 21.71 GiB
-Linux / 58.64 GiB D: free. No replay writer is running. D: is below the unchanged
-60 GiB starting floor, and the target exceeds the old job's ceiling.
-The [specific storage proposal](restart-storage-next-step.md) identifies six older
-cold roots for verified W: archival and retirement, subject to Peter's approval
-of the additional local removals. The already-authorized
-[copy-only preparation](evidence/restart-old-fixtures-copy-w-2026-10-10/STATUS.md)
-was dispatched at 09:45:48 UTC on 10 October for the four Windows roots. All
-sources remain local; no removal is included. Inspect that finite copy job next,
-and do not run a competing bulk workload. The two Linux checkpoint copies follow
-only after it finishes. Preserve the failed run, working state and
-separate recovery checkpoint; no limits were changed and no retry started.
+Linux / 58.64 GiB D: free at that inspection. Peter subsequently authorized
+deleting obsolete test copies. The [six-source storage operation](restart-storage-next-step.md)
+has completed the four Windows archives and their separately verified retirement,
+reclaiming 4.391 GiB and leaving 63.689 GiB D: free. Other D: root names remain
+unchanged. The two old Linux checkpoint copies started at 10:38:20 UTC; verify
+their completion before the authorized local retirement. No replay writer is
+running yet. The [fresh prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
+targets 6,300,000 after storage/capacity checks, using a new 15 GiB sampled ceiling
+and unchanged time/reserve limits. The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
+pass. Preserve the failed run, working state and separate recovery checkpoint;
+the old job/STOP/limits remain immutable. No runtime or release selection changed.
 See the [replay policy](restart-ticket-encoder-replay.md#next-engineering-work).
 Further history, independent review, 17 missing exported blobs and the
 restore-identity safeguard remain open.
@@ -201,10 +201,11 @@ that inspection's exact closed inventory/identity and has sufficient capacity.
 Prior working bytes then remain historical evidence rather than a separate
 checkpoint. The separate 2,400,000 recovery checkpoint, stopped 2,356,032 attempt
 and original STOP remain preserved. The complete-backup read-only startup check
-already passes. The remaining immediate blocker is the
-[storage decision](restart-storage-next-step.md); do not repeat passing checks
-or start a writer while that decision is pending.
-The later user request permits the linked exact old-fixture archival/removal.
+already passes. Complete the authorized [storage operation](restart-storage-next-step.md)
+and fresh capacity preflight before launching the prepared continuation; do not
+repeat unchanged passing checks. The four Windows roots are archived/retired;
+the two old Linux checkpoint copies are running, with retirement authorized only
+after verification.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 

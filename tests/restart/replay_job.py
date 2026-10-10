@@ -1,5 +1,6 @@
 from pathlib import Path
 import importlib.util
+import fcntl
 import json
 import os
 import re
@@ -19,7 +20,7 @@ assert BUNDLE.name == CONFIG['job']
 PRIOR = REPO/'docs/evidence'/CONFIG['prior_bundle']
 RECOVERY = REPO/'docs/evidence'/CONFIG['recovery_bundle']
 BASE = REPO/'docs/evidence/restart-ticket-encoder-replay-100000-2026-10-08'
-PRIOR_RUN = Path('/home/rehearsal/results')/CONFIG['prior_bundle']
+PRIOR_RUN = Path('/home/rehearsal/results')/CONFIG.get('stopped_attempt',CONFIG['prior_bundle'])
 RUN = Path('/home/rehearsal/results')/CONFIG['job']
 TARGET = Path('/home/rehearsal/replay')/CONFIG['target']
 START,END = CONFIG['start_height'],CONFIG['end_height']
@@ -37,8 +38,16 @@ def run_test(name,binary,test,env):
 def prepare(backup,checkpoint,env):
     prior = json.loads((PRIOR/'qualification/run.json').read_text(encoding='utf-8'))
     assert prior['completed'] and prior['inspect_passed'] and prior['binary_sha256'] == REPLAY_SHA
-    assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
-    if (PRIOR/'inputs').is_dir():
+    if 'stopped_attempt' in CONFIG:
+        failed = REPO/'docs/evidence'/CONFIG['stopped_attempt']
+        monitor.require_verified_stopped(CONFIG,prior,json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')),json.loads((failed/'completion.json').read_text(encoding='utf-8')))
+        assert CONFIG['stopped_attempt'] in prior['previous_manifest_sha256']
+        assert r.sha(PRIOR_RUN/'STOP') == r.sha(failed/'qualification/STOP') == prior['stop_sha256']
+        (RUN/'prior-STOP').write_bytes((PRIOR_RUN/'STOP').read_bytes())
+        r.record['prior_stop_sha256'] = prior['stop_sha256']
+    else:
+        assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
+    if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
         monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
     assert not r.STOP.exists()
     manifests = dict(prior['previous_manifest_sha256'],**{PRIOR.name:r.sha(PRIOR/'SHA256SUMS')})
@@ -108,6 +117,8 @@ def prepare(backup,checkpoint,env):
     r.record['checkpoint_identity_sha256'] = r.sha(checkpoint/'replay-identity.json')
     assert r.sha(TARGET/'replay-identity.json') == r.record['checkpoint_identity_sha256']
     r.save()
+    fcntl.flock(target_lock,fcntl.LOCK_UN)
+    target_lock.close()
     monitor.run_replay(r,env,CONFIG['limits'])
     assert r.sha(TARGET/'replay-identity.json') == r.record['checkpoint_identity_sha256']
 
@@ -149,6 +160,8 @@ def finalize(backup,checkpoint):
         'imported_runner_unchanged':r.sha(BASE/'run.py') == r.record.get('imported_runner_sha256'),
         'runner_snapshot_unchanged':all(r.sha(HERE/name) == digest for name,digest in r.record.get('runner_snapshot_sha256',{}).items()) and bool(r.record.get('runner_snapshot_sha256'))
     }
+    if 'stopped_attempt' in CONFIG:
+        checks['prior_stop_unchanged'] = r.sha(PRIOR_RUN/'STOP') == r.sha(RUN/'prior-STOP') == r.record.get('prior_stop_sha256')
     r.record['additional_preservation_checks'] = checks
     r.record['backup_unchanged'] = r.record.get('backup_before') == r.record['backup_after']
     r.record['baselines_unchanged'] = r.record.get('baseline_before') == r.record['baseline_after']
@@ -183,6 +196,8 @@ if __name__ == '__main__':
     links = subprocess.check_output(['ip','-brief','link'],text=True)
     assert len(links.splitlines()) == 1 and links.startswith('lo ') and 'DOWN' in links
     r.save = save_status
+    target_lock = (TARGET/'LOCK' if TARGET.exists() else checkpoint/'LOCK').open('rb')
+    fcntl.flock(target_lock,fcntl.LOCK_SH|fcntl.LOCK_NB)
     if phase == 'replay':
         assert not RUN.exists() and not (BUNDLE/'qualification').exists()
         assert TARGET.exists() == (CONFIG['mode'] == 'resume')
@@ -217,4 +232,5 @@ if __name__ == '__main__':
         r.record.setdefault('failures',[]).append({'phase':phase,'error':repr(exc),'time':r.now()})
         raise
     finally:
+        target_lock.close()
         r.save()

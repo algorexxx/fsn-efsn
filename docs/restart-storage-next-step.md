@@ -1,17 +1,23 @@
-# Proposed archival before the next historical replay
+# Authorized archival before the next historical replay
 
-10 October 2026. **Removal approval pending; copy-only preparation launched.**
-The standing permission for verified W: archival permits preparing the copies
-without deleting their sources. The [four-root Windows copy-only job](evidence/restart-old-fixtures-copy-w-2026-10-10/STATUS.md)
-started at 09:45:48 UTC. The two Linux checkpoints remain a later sequential
-phase. No source deletion, compaction or replay launch has occurred. The original
-storage-review record remains a dated pre-copy observation.
+10 October 2026. **Peter authorized obsolete-copy removal; Windows retirement passed.**
+His message was: "If there is something not needed any more you can delete it."
+The [four-root copy](evidence/restart-old-fixtures-copy-w-2026-10-10/RESULTS.md)
+completed at 09:52:08 UTC. The [separate retirement](evidence/restart-old-fixtures-retire-w-2026-10-10/RESULTS.md)
+reverified every source/archive file and removed only those four D: roots at
+10:37:32 UTC. All other root names remain present. D: free increased by
+4,714,328,064 bytes to 68,385,763,328 bytes (63.689 GiB).
+The [two-checkpoint archive](evidence/restart-checkpoint-archive-w-2026-10-10/spec.md)
+started at 10:38:20 UTC, after Windows verification. Its local retirement still
+requires successful copy and re-verification, but no further user approval.
+No compaction or replay launch has occurred yet. Earlier storage records remain
+dated observations, not current capacity claims.
 The [stopped checkpoint](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
 passes independent cold checks at 5,331,360. The original requested 5,400,000 job
 remains incomplete. Its size stop worked as declared.
 
-D: has approximately 58.64 GiB free, below the unchanged 60 GiB replay starting
-floor. Linux has about 21.71 GiB free, leaving little room above its 20 GiB reserve
+D: was at approximately 58.64 GiB free during the stopped-state inspection,
+below the unchanged 60 GiB replay starting floor. Linux then had about 21.71 GiB free, leaving little room above its 20 GiB reserve
 plus preparation margin. The working target is 11.016 GiB and already exceeds
 the old job's 11 GiB ceiling. Do not rerun that job, lower reserves, remove STOP
 or reinterpret failure as success.
@@ -22,7 +28,7 @@ The Windows copy destination is the new
 3.50 TiB free were observed during this review; verify both again before use.
 Do not run LevelDB directly on the network share.
 
-## Exact proposed sources
+## Exact authorized sources
 
 | Source | Measured bytes | Effect of retiring the verified local copy |
 | --- | ---: | --- |
@@ -39,7 +45,7 @@ observations, not guaranteed free-space gains or archive hashes. Removing Linux
 files does not promise a smaller VHDX or more host D: space. No VHD compaction
 is proposed. Exact inventories and archive requirements must be captured cold.
 
-## Preservation and approval boundary
+## Preservation boundary
 
 Reuse the established verified-copy-then-retire procedures, with these exact
 six source roots as the entire allowlist. Preserve every diagnostic and failed
@@ -52,7 +58,7 @@ are idle, verify their sealed evidence and full cold inventories, and copy to W:
 Flush/read back and fully hash the archive; compare it with the unchanged source
 again. Save checksummed relocation records and an exact restore map. Stop on any
 failure without removing source bytes. Retire only verified allowlisted copies
-after Peter approves this specific removal. Check the actual final filesystem
+under Peter's current removal authorization. Check the actual final filesystem
 and capacity rather than assuming successful cleanup. Keep finite per-phase
 limits and the existing D:/W: reserve checks; use Linux reserve checks too.
 
@@ -62,16 +68,17 @@ attempt, toolchain/executables and all sealed repository evidence remain local.
 Existing W: archives remain untouched. Archive references are relocation records;
 old evidence retains its historical paths and meaning.
 
-Peter's heartbeat explicitly says **“do not perform destructive cleanup
-automatically.”** Earlier authorization covered a different named set of ten
-Windows fixtures. That is why removing these six additional local copies needs
-one specific approval, despite W: archival itself already being permitted.
+Peter's later explicit message authorizes removing unnecessary test copies.
+Apply that permission to these six already-reviewed sources, after verified W:
+archival. It does not justify deleting backup, evidence or recovery data.
 
-After approval and verified reclamation, evaluate the actual new capacity and
+After verified reclamation, evaluate the actual new capacity and
 prepare a fresh bounded historical continuation from 5,331,360. Require the
 stopped-checkpoint inspection's exact hashes/identity, preserve failure records,
 and declare new finite growth/time limits before launch. The failed job and its
 limits stay immutable. No production activation, real-key use or release
-selection is included. Until that storage decision, leave replay stopped and
-avoid repeated polling or unchanged acceptance reruns. Preparing and verifying
-the W: copies is permitted; deleting any source copy is not yet approved.
+selection is included. The [prepared continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
+targets 6,300,000, with a fresh 15 GiB sampled ceiling and unchanged time/reserve
+limits. Require completed storage work and fresh capacity before launch. The
+old failed job and its 11 GiB ceiling remain immutable. No unchanged acceptance
+reruns are needed while archival is healthy.

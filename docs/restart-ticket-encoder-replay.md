@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,331,360; replay stopped for storage.**
+Updated 10 October 2026. **Cold-verified through 5,331,360; authorized space reclamation underway.**
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
 stopped at its declared sampled 11 GiB allocation ceiling. Its requested range
 remains incomplete. The [separate read-only inspection](evidence/restart-ticket-encoder-stopped-5331360-2026-10-10/RESULTS.md)
@@ -50,10 +50,12 @@ was dispatched at 19:32:26 UTC following the passing complete-backup preflight.
 All startup checks passed; replay began at 19:34:33 UTC with a passing first
 allocation sample. It stopped for size at 23:05 UTC. The read-only follow-up
 completed evidence verification at 23:27:58 UTC. No writer is running now.
-Another replay is blocked by the unchanged 60 GiB D: starting floor and the
-existing target exceeding the old ceiling. The [storage proposal](restart-storage-next-step.md)
-names six cold roots for verified archival and retirement; additional local
-removal requires Peter's approval. Do not change the stopped job or retry it.
+Peter has authorized removing obsolete copies. The [storage operation](restart-storage-next-step.md)
+has verified and retired the four Windows fixtures, reclaiming 4.391 GiB and
+leaving 63.689 GiB free on D:. The two older Linux checkpoint archives are running;
+retire their local copies only after verification. The prepared 6,300,000 job
+still requires fresh capacity and exact stopped-state provenance. Do not change
+the old job or retry it.
 
 **Storage:** the [earlier W: archive](evidence/restart-checkpoint-archive-w-v2-2026-10-09/README.md)
 holds eight old candidate checkpoints, 100,000 through 1,800,000. The 2,000,000,
@@ -140,21 +142,12 @@ stop, 6h15m Go timeout, 6h30m external timeout plus 20-second grace, and an
 normal cleanup persisted exactly **5,331,360**, independently verified by both
 cold checks. The failed requested range and original STOP remain intact.
 
-Next resolve the [specific storage proposal](restart-storage-next-step.md).
-Its four older Windows fixture roots could free about 4.4 GiB of host space;
-two older Linux checkpoints could free about 4.5 GiB inside the filesystem.
-These are estimated gains subject to full cold archival and actual post-removal
-checks. No removal, compaction or limit extension is automatic. While the
-decision is pending, do not start a writer or repeat unchanged passing tests.
-
-The standing W: archival permission does allow preparing the copies before
-removal approval. The [four-root Windows copy-only job](evidence/restart-old-fixtures-copy-w-2026-10-10/STATUS.md)
-was dispatched at 09:45:48 UTC on 10 October. Check its completion, failure and
-per-root verification records next; no competing bulk job should run while it
-is healthy. Copying does not reclaim local space. Keep every local root, and
-prepare the two Linux checkpoint copies sequentially after the Windows phase.
-Only local retirement still needs Peter's answer; no approval is inferred from
-scheduled heartbeat messages.
+Peter's explicit message now authorizes the [six-source archival/removal](restart-storage-next-step.md).
+The four Windows copies completed at 09:52:08 UTC and separate full re-verification/
+retirement completed at 10:37:32 UTC, freeing 4.391 GiB. The two Linux checkpoint
+copies started at 10:38:20 UTC; inspect their finite-job result before local
+retirement. Keep all other data and evidence. Do not run a competing bulk workload,
+compact the VHD or repeat unchanged passing tests.
 
 After capacity is available, declare a fresh bounded job from the verified
 stopped checkpoint, explicitly validating its inspection rather than requiring
@@ -162,7 +155,12 @@ or fabricating a success result for the failed job. Check exact endpoint,
 inventory, identity, source and toolchain; retain the separate recovery checkpoint.
 Select finite endpoint/growth/time limits from fresh capacity and evidence value.
 Further candidate history is useful; another unchanged baseline pass is not
-justified without a diagnostic question. No next replay job is prepared or running.
+justified without a diagnostic question. A [fresh continuation](evidence/restart-ticket-encoder-job-6300000-2026-10-10/README.md)
+is prepared for 5,331,360 to 6,300,000 (968,640 new blocks), with a new 15 GiB
+sampled ceiling, 30-second samples and unchanged six-hour/6h15/6h30 time limits.
+The [controller provenance/refusal checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
+pass. Launch only after storage completion and fresh capacity; no writer is
+running yet. Original failed-attempt records and limits remain immutable.
 
 Before any writer starts, require successful completion/evidence verification
 of its accepted checkpoint, or an explicitly qualified stopped-checkpoint

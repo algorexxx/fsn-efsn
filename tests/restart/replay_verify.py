@@ -32,6 +32,11 @@ assert r['copy_verified'] == (CONFIG['mode'] == 'copy') and r['resume_verified']
 for name in ['replay_passed','inspect_passed','cold_target_bytes_unchanged','backup_unchanged','baselines_unchanged','selected_unchanged','candidate_unchanged','inputs_unchanged']:
     assert r[name],name
 expected_checks = {'recovery_checkpoint_unchanged','checkpoint_preserved_or_validated_resume','prior_candidate_source_unchanged','prior_replay_binary_unchanged','replay_binary_unchanged','observer_binary_unchanged','observer_overlay_unchanged','imported_runner_unchanged','runner_snapshot_unchanged'}
+if 'stopped_attempt' in CONFIG:
+    expected_checks.add('prior_stop_unchanged')
+    failed = BUNDLE.parent/CONFIG['stopped_attempt']
+    monitor.require_verified_stopped(CONFIG,prior,json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')),json.loads((failed/'completion.json').read_text(encoding='utf-8')))
+    assert sha(Q/'prior-STOP') == sha(failed/'qualification/STOP') == prior['stop_sha256'] == r['prior_stop_sha256']
 assert set(r['additional_preservation_checks']) == expected_checks and all(r['additional_preservation_checks'].values())
 assert set(r['runner_snapshot_sha256']) == {'replay_job.py','replay_monitor.py','replay_launch.py','replay_verify.py'}
 for name,digest in r['runner_snapshot_sha256'].items():
@@ -56,8 +61,10 @@ assert r['imported_runner_sha256'] == sha(BASE/'run.py')
 assert r['selected_inventory'] == prior['selected_inventory']
 assert r['candidate_inventory'] == prior['candidate_inventory']
 assert r['binary_sha256'] == prior['binary_sha256'] == REPLAY_SHA
-assert prior['completed'] and prior['inspect_passed'] and all(prior['additional_preservation_checks'].values())
-if (PRIOR/'inputs').is_dir():
+assert prior['completed'] and prior['inspect_passed']
+if 'stopped_attempt' not in CONFIG:
+    assert all(prior['additional_preservation_checks'].values())
+if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
     monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
 assert not prior.get('failures') and not prior.get('stop_reason')
 recovery = json.loads((RECOVERY/'qualification/run.json').read_text(encoding='utf-8'))
