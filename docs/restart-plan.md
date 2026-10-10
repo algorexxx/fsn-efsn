@@ -1,11 +1,14 @@
 # Fusion restart launch plan
 
 Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: cold-verified through 5,600,032; the next finite replay is ready.**
+**Current state: cold-verified through 5,600,032; offline replay toward 6,300,000 is running.**
 Peter approved the [200 to 220 GiB disk expansion](restart-storage-capacity-review.md).
 It completed with passing preservation checks and unchanged reserves. The
 [fresh 6,300,000-v2 continuation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/README.md)
-has passing capacity/provenance preflight; preparation is not launch or completion.
+was dispatched at 15:14:00 UTC after passing capacity/provenance preflight.
+Replay began at 15:17:23 UTC after four passing startup commands and exact
+working/recovery inventories. Its initial progress/resource sample is healthy.
+Verified coverage remains 5,600,032 until cold checks and evidence verification.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -71,8 +74,8 @@ at 14:32 UTC and remains an incomplete requested range. The separate
 verifies **5,600,032**, adding 268,672 blocks and bringing candidate post-legacy
 coverage to 2,920,032 blocks. All five commands, twelve preservation checks and
 evidence verification pass; 7,625 working-file hashes remain unchanged. Closed
-allocation is 15.028 GiB, with 22.177 GiB Linux / 63.653 GiB D: free. No writer
-has resumed. Only about 1.177 GiB remains above the Linux reserve and preparation
+allocation was 15.028 GiB, with 22.177 GiB Linux / 63.653 GiB D: free. At that
+point no writer had resumed. Only about 1.177 GiB remained above the Linux reserve and preparation
 margin at that inspection, so another tiny continuation was not justified. Peter
 subsequently approved expanding the virtual disk from 200 to 220 GiB. The
 [completed expansion](evidence/restart-wsl-expand-220gib-2026-10-10/RESULTS.md)
@@ -80,7 +83,10 @@ passes all working/recovery hashes and protected metadata/identity checks.
 Docker had no running containers; its idle backend was briefly stopped and
 restarted after the distro-only resize refused an attached VHD. Actual disk
 geometry is 220 GiB; Linux/D: free space is about 40.87/63.64 GiB. The fresh
-6,300,000-v2 preflight passes with a 26 GiB ceiling and unchanged finite limits.
+6,300,000-v2 preflight passes with a 26 GiB ceiling and unchanged finite limits;
+its hidden dispatcher launched at 15:14:00 UTC from commit `40551639`. Replay
+began at 15:17:23 UTC; [initial progress](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/STATUS.md)
+and allocation checks pass. No duplicate writer or live LevelDB hashing.
 The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
@@ -237,8 +243,9 @@ attempt reached its declared 15 GiB ceiling and stopped. Its separate
 verifies 5,600,032 and 2,920,032 post-legacy blocks; the requested range remains
 incomplete. The [authorized expansion](restart-storage-capacity-review.md) now
 passes at 220 GiB, with working/recovery bytes and protected metadata unchanged.
-The fresh 6,300,000-v2 continuation is prepared and capacity passes. Keep the
-old jobs/STOPs immutable and avoid unchanged passing reruns.
+The fresh 6,300,000-v2 continuation was dispatched at 15:14:00 UTC after passing
+capacity. Inspect its startup/status and subsequent completion/verification
+records next. Keep old jobs/STOPs immutable and avoid unchanged passing reruns.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 

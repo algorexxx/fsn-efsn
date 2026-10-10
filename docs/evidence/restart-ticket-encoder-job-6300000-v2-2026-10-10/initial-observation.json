@@ -1,0 +1,80 @@
+{
+  "phase": "replay",
+  "started": "2026-10-10T15:14:07.686400+00:00",
+  "replay_started": "2026-10-10T15:17:23.755086+00:00",
+  "replay_pid": 638,
+  "replay_passed": null,
+  "completed": null,
+  "stop_reason": null,
+  "failures": null,
+  "binary_sha256": "b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245",
+  "observer_binary_sha256": "3bc574f6dea42e700c59ed3148a0ef3fa78c79f239a90559f4989b9093f685bc",
+  "prior_stop_sha256": "10023457c597b6c4c31fb42d72b15eb98e02bc00e5e22f3f1587252be891a8a0",
+  "capacity_bytes": {
+    "/home/rehearsal/results": 43874533376,
+    "/mnt/d": 68333772800
+  },
+  "required_capacity_bytes": {
+    "/home/rehearsal/results": 34329780224,
+    "/mnt/d": 66542034944
+  },
+  "existing_allocated_bytes": 16136085504,
+  "resume_verified": true,
+  "copy_verified": false,
+  "previous_files_verified": 1738,
+  "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+  "namespace": "net:[4026532521]",
+  "parent_namespace": "net:[4026531833]",
+  "mount_namespace": "mnt:[4026532520]",
+  "parent_mount_namespace": "mnt:[4026532501]",
+  "observed": "2026-10-10T15:18:41.296102+00:00",
+  "status": {
+    "phase": "replay",
+    "started": "2026-10-10T15:14:07.686400+00:00",
+    "updated": "2026-10-10T15:18:29.052988+00:00",
+    "observed_height": 5602080,
+    "observed_height_is_provisional": true,
+    "target_height": 6300000,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 638
+  },
+  "commands": [
+    {
+      "name": "observer-build",
+      "exit": 0
+    },
+    {
+      "name": "observer-build-info",
+      "exit": 0
+    },
+    {
+      "name": "checkpoint-cold-head",
+      "exit": 0
+    },
+    {
+      "name": "reference",
+      "exit": 0
+    }
+  ],
+  "last_size_sample": [
+    {
+      "time": "2026-10-10T15:18:29.048250+00:00",
+      "attempt": 1,
+      "exit": 0,
+      "stdout": "16163786752\t/home/rehearsal/replay/candidate-ticket-encoding-working\n",
+      "stderr": ""
+    }
+  ],
+  "checkpoint_files": 7625,
+  "recovery_files": 1383,
+  "ready_for_observation": true,
+  "replay_pid_alive": true,
+  "log_tail": [
+    "    replay_linux_test.go:53: replay starting at height=5600032 hash=0x4fc7c1548035526ea0bb573128b79f16cdf9e0ba99a9888cecc17be619364102 resume=true",
+    "    replay_linux_test.go:85: replay progress: height=5600672 root=0x4676816c206a6b7aba6c729a6c07ea6da5868a06813b6296eed390ed50fcb967",
+    "    replay_linux_test.go:85: replay progress: height=5602080 root=0xb28a7fd6c7ffbea0545eb217989c2d64064e124b71e7eeb60c3d3b138756b725",
+    "    replay_linux_test.go:85: replay progress: height=5603488 root=0x172a39d8b11e9e69df33a79def288b8530ef59415f53843301a25f670aec9d2c"
+  ]
+}

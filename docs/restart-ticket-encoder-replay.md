@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,600,032; disk expansion verified and fresh continuation prepared.**
+Updated 10 October 2026. **Cold-verified through 5,600,032; disk expansion verified and continuation toward 6,300,000 running.**
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
 was dispatched at 12:50:50 UTC and stopped at 14:32 UTC at its declared sampled
 15 GiB allocation ceiling. Its original failure record and STOP remain intact.
@@ -20,7 +20,12 @@ source/executable/toolchain/STOP and replay identities unchanged. The fresh
 is prepared with passing capacity/provenance preflight at 15:10:44 UTC. Linux/D:
 free space is about 40.86/63.64 GiB. Its new 26 GiB sampled ceiling allows about
 10.972 GiB growth; the old job's 15 GiB limit is immutable. Timeouts and per-batch
-20/50 GiB reserves remain unchanged. Preparation does not establish launch.
+20/50 GiB reserves remain unchanged. The hidden dispatcher launched at
+15:14:00 UTC from commit `40551639`. Replay began at 15:17:23 UTC after four
+passing startup commands, 7,625 working/1,383 recovery hashes, 1,738 prior evidence
+files and unchanged identity/source/executable/toolchain. Its [initial observation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/STATUS.md)
+is healthy, with progress beyond 5,602,000 and a passing allocation sample. This
+is provisional progress, not verified completion or extended cold coverage.
 
 The preceding stopped checkpoint remains historical evidence:
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
@@ -236,13 +241,14 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-The most recent, now stopped job's runtime status is
-/home/rehearsal/results/restart-ticket-encoder-job-6300000-2026-10-10/status.json.
-Host dispatch logs are under repo tmp/replay-job-6300000-2026-10-10. Its
-completion.json records exit 1 and verified_pass false; no passing job
-verification.json exists. The separate stopped-checkpoint inspection establishes
-the verified saved endpoint. The earlier failed 5,400,000 job's original
-status/logs also remain preserved.
+The active job's runtime status is
+/home/rehearsal/results/restart-ticket-encoder-job-6300000-v2-2026-10-10/status.json.
+Host dispatch logs are under repo tmp/replay-job-6300000-v2-2026-10-10. Inspect its
+completion, verification and resource records before any dependent work. No
+duplicate writer, live LevelDB hashing or competing bulk workload. The preceding
+6,300,000 job without v2 retains exit 1 and verified_pass false; no passing job
+verification.json exists for it. The separate stopped-checkpoint inspection
+establishes 5,600,032. The earlier 5,400,000 failure is also preserved.
 The hourly continuation id is continue-fusion-restart-testing.
 The new hidden Windows dispatcher keeps WSL attached after the launching shell
 returns. Keep Windows awake and the app running during scheduled work.

@@ -57,7 +57,8 @@ No cleanup, VHD compaction, data relocation or reserve reduction occurred.
 
 ## Authorized next finite replay
 
-The fresh 6,300,000-v2 job starts at 5,600,032: up to 699,968 additional blocks.
+The fresh 6,300,000-v2 job was dispatched at 15:14:00 UTC from commit `40551639`.
+It starts at 5,600,032: up to 699,968 additional blocks.
 Its preflight passed at 15:10:44 UTC with no active node/replay process and valid
 stopped-checkpoint provenance. A 26 GiB sampled ceiling permits about 10.972 GiB
 remaining allocation growth. The actual required starting floors are
