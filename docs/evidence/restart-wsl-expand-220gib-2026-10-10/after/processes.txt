@@ -1,0 +1,50 @@
+    PID ELAPSED COMMAND
+      1       2 /sbin/init
+      2       2 /init
+      8       2 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+     51       1 /usr/lib/systemd/systemd-journald
+     99       1 /usr/lib/systemd/systemd-udevd
+    107       1 (udev-worker)
+    108       1 (udev-worker)
+    109       1 (udev-worker)
+    110       1 (udev-worker)
+    111       1 (udev-worker)
+    112       1 (udev-worker)
+    113       1 (udev-worker)
+    114       1 (udev-worker)
+    115       1 (udev-worker)
+    116       1 (udev-worker)
+    118       1 (udev-worker)
+    119       1 (udev-worker)
+    120       1 (udev-worker)
+    121       1 (udev-worker)
+    122       1 (udev-worker)
+    123       1 (udev-worker)
+    124       1 (udev-worker)
+    125       1 (udev-worker)
+    140       1 (udev-worker)
+    141       1 (udev-worker)
+    142       1 (udev-worker)
+    143       1 (udev-worker)
+    144       1 (udev-worker)
+    145       1 (udev-worker)
+    155       1 /usr/lib/systemd/systemd-resolved
+    156       1 /usr/lib/systemd/systemd-timesyncd
+    162       1 /usr/sbin/cron -f -P
+    163       1 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    169       1 /usr/lib/snapd/snapd
+    170       1 /usr/lib/systemd/systemd-logind
+    172       1 /usr/libexec/wsl-pro-service
+    181       1 /usr/sbin/rsyslogd -n -iNONE
+    192       1 /sbin/agetty -o -p -- \u --noclear - linux
+    194       1 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+    242       1 /usr/lib/systemd/systemd-timedated
+    285       0 /init
+    286       0 /init
+    287       0 timeout --kill-after=20s 10m python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-wsl-expand-220gib-2026-10-10/check.py after
+    288       0 /bin/login -f
+    332       0 /usr/lib/systemd/systemd --user
+    333       0 (sd-pam)
+    344       0 -bash
+    361       0 python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-wsl-expand-220gib-2026-10-10/check.py after net:[4026531833] mnt:[4026532348]
+    363       0 ps -eo pid,etimes,args

@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,600,032; replay stopped pending a capacity decision.**
+Updated 10 October 2026. **Cold-verified through 5,600,032; disk expansion verified and fresh continuation prepared.**
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
 was dispatched at 12:50:50 UTC and stopped at 14:32 UTC at its declared sampled
 15 GiB allocation ceiling. Its original failure record and STOP remain intact.
@@ -13,10 +13,14 @@ evidence files verify. The additional coverage is 268,672 blocks, giving 2,920,0
 post-legacy blocks in total. No final warm ticket count is available. The requested
 6,300,000 range remains incomplete; F12/G1 remain open.
 
-No writer is running. Await Peter's decision on the [200 to 220 GiB WSL capacity
-proposal](restart-storage-capacity-review.md), with existing disk reserves unchanged.
-Do not resize, resume, lower reserves or spend the remaining margin on another
-tiny interval before that decision. Stay quiet while the decision is unanswered.
+Peter approved the [200 to 220 GiB WSL expansion](restart-storage-capacity-review.md).
+It completed with all 7,625 working and 1,383 recovery hashes, protected metadata,
+source/executable/toolchain/STOP and replay identities unchanged. The fresh
+[6,300,000-v2 continuation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/README.md)
+is prepared with passing capacity/provenance preflight at 15:10:44 UTC. Linux/D:
+free space is about 40.86/63.64 GiB. Its new 26 GiB sampled ceiling allows about
+10.972 GiB growth; the old job's 15 GiB limit is immutable. Timeouts and per-batch
+20/50 GiB reserves remain unchanged. Preparation does not establish launch.
 
 The preceding stopped checkpoint remains historical evidence:
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
@@ -42,7 +46,7 @@ F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
 Current closed allocation is 16,136,085,504 bytes (15.028 GiB). Latest inspection
-free capacity is 22.177 GiB Linux / 63.653 GiB D:. The separate verified 2,400,000 recovery checkpoint
+free capacity before expansion was 22.177 GiB Linux / 63.653 GiB D:. The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working-database
 inventories are historical records, not separate retained copies.
 
@@ -193,12 +197,12 @@ inventory/identity checks. It subsequently stopped at its size ceiling; the
 verifies 5,600,032. The original failed-attempt records and limits remain immutable.
 
 The latest 268,672 blocks added 4.012 GiB of allocation. With only 22.177 GiB
-available inside the 200 GiB virtual disk, another tiny range is not justified.
-The [capacity review](restart-storage-capacity-review.md) proposes expanding only
-FusionRehearsal to 220 GiB. Await Peter's decision before that change or another
-writer. After approval and verified capacity, a fresh job must name the 5,600,032
-inspection as its stopped checkpoint and the failed 6,300,000 job as its attempt.
-No full-history size forecast or acceptance waiver follows from that proposal.
+available inside the then-200 GiB virtual disk, another tiny range was not justified.
+Peter approved the [expansion to 220 GiB](restart-storage-capacity-review.md), now
+complete with passing preservation checks. The fresh 6,300,000-v2 job names the
+5,600,032 inspection as its stopped checkpoint and the failed 6,300,000 job as
+its attempt. Capacity passes for the declared 26 GiB ceiling and unchanged
+timeouts/reserves. No full-history size forecast or acceptance waiver follows.
 
 Before any writer starts, require successful completion/evidence verification
 of its accepted checkpoint, or an explicitly qualified stopped-checkpoint

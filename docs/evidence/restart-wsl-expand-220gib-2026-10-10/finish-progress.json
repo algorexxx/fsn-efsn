@@ -1,0 +1,97 @@
+{
+  "started": "2026-10-10T15:08:40.155454+00:00",
+  "commands": [
+    {
+      "name": "docker-running-before",
+      "argv": [
+        "docker",
+        "ps",
+        "--quiet"
+      ],
+      "started": "2026-10-10T15:08:40.157177+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:08:40.370565+00:00"
+    },
+    {
+      "name": "wsl-running-before",
+      "argv": [
+        "wsl.exe",
+        "--list",
+        "--running",
+        "--quiet"
+      ],
+      "started": "2026-10-10T15:08:40.371621+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:08:40.425432+00:00"
+    },
+    {
+      "name": "docker-stop",
+      "argv": [
+        "docker",
+        "desktop",
+        "stop"
+      ],
+      "started": "2026-10-10T15:08:40.432021+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:08:52.384524+00:00"
+    },
+    {
+      "name": "wsl-stop-idle",
+      "argv": [
+        "wsl.exe",
+        "--shutdown"
+      ],
+      "started": "2026-10-10T15:08:52.391925+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:08:52.931030+00:00"
+    },
+    {
+      "name": "resize-idle",
+      "argv": [
+        "wsl.exe",
+        "--manage",
+        "FusionRehearsal",
+        "--resize",
+        "236223201280B"
+      ],
+      "started": "2026-10-10T15:08:52.932682+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:08:55.870774+00:00"
+    },
+    {
+      "name": "docker-restart",
+      "argv": [
+        "docker",
+        "desktop",
+        "start"
+      ],
+      "started": "2026-10-10T15:08:55.872779+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:09:00.164015+00:00"
+    },
+    {
+      "name": "docker-status-after",
+      "argv": [
+        "docker",
+        "desktop",
+        "status"
+      ],
+      "started": "2026-10-10T15:09:00.173982+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:09:00.667368+00:00"
+    },
+    {
+      "name": "docker-running-after",
+      "argv": [
+        "docker",
+        "ps",
+        "--quiet"
+      ],
+      "started": "2026-10-10T15:09:00.677463+00:00",
+      "exit": 0,
+      "finished": "2026-10-10T15:09:01.610633+00:00"
+    }
+  ],
+  "target_virtual_bytes": 236223201280,
+  "reason": "Native resize refused attached VHD; brief restart of idle Docker backend permits approved expansion."
+}

@@ -1,0 +1,51 @@
+    PID ELAPSED COMMAND
+      1       2 /sbin/init
+      2       2 /init
+      8       2 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+     51       2 /usr/lib/systemd/systemd-journald
+    101       2 /usr/lib/systemd/systemd-udevd
+    108       2 (udev-worker)
+    109       2 (udev-worker)
+    110       2 (udev-worker)
+    111       2 (udev-worker)
+    112       2 (udev-worker)
+    113       2 (udev-worker)
+    114       2 (udev-worker)
+    115       2 (udev-worker)
+    116       2 (udev-worker)
+    117       2 (udev-worker)
+    118       2 (udev-worker)
+    119       2 (udev-worker)
+    121       2 (udev-worker)
+    122       2 (udev-worker)
+    124       2 (udev-worker)
+    125       2 (udev-worker)
+    126       2 (udev-worker)
+    127       2 (udev-worker)
+    128       2 (udev-worker)
+    129       2 (udev-worker)
+    132       2 (udev-worker)
+    133       2 (udev-worker)
+    135       2 (udev-worker)
+    137       2 (udev-worker)
+    155       2 /usr/lib/systemd/systemd-resolved
+    156       2 /usr/lib/systemd/systemd-timesyncd
+    162       2 /usr/sbin/cron -f -P
+    163       2 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    169       2 /usr/lib/snapd/snapd
+    170       2 /usr/lib/systemd/systemd-logind
+    172       2 /usr/libexec/wsl-pro-service
+    180       2 /usr/sbin/rsyslogd -n -iNONE
+    185       2 /sbin/agetty -o -p -- \u --noclear - linux
+    192       2 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+    241       1 /usr/lib/systemd/systemd-timedated
+    265       1 /init
+    267       1 /init
+    271       1 timeout --kill-after=20s 10m python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-wsl-expand-220gib-2026-10-10/check.py before
+    274       1 /bin/login -f
+    283       1 /bin/journalctl --boot 0 --dmesg --output short-monotonic --quiet --no-pager --no-hostname
+    327       0 /usr/lib/systemd/systemd --user
+    328       0 (sd-pam)
+    341       0 -bash
+    358       0 python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-wsl-expand-220gib-2026-10-10/check.py before net:[4026531833] mnt:[4026532501]
+    360       0 ps -eo pid,etimes,args

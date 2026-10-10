@@ -3,9 +3,9 @@
 10 October 2026. **All six authorized obsolete-copy retirements passed.**
 The subsequent replay stopped at its declared allocation ceiling and its saved
 state is [verified at 5,600,032](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md).
-No writer is running. The next step is the [capacity decision](restart-storage-capacity-review.md),
-not another cleanup: proposed expansion of the FusionRehearsal virtual disk from
-200 to 220 GiB, with reserves unchanged. Await Peter before resizing or resuming.
+Peter approved the subsequent [200 to 220 GiB expansion](restart-storage-capacity-review.md).
+It is complete with passing preservation checks and unchanged reserves. A fresh
+finite continuation is prepared with passing capacity; no more cleanup is needed.
 His message was: "If there is something not needed any more you can delete it."
 The [four-root copy](evidence/restart-old-fixtures-copy-w-2026-10-10/RESULTS.md)
 completed at 09:52:08 UTC. The [separate retirement](evidence/restart-old-fixtures-retire-w-2026-10-10/RESULTS.md)
@@ -93,7 +93,8 @@ stopped at that ceiling and its saved state is independently verified at 5,600,0
 Closed allocation is now 15.028 GiB; free capacity is 22.177 GiB Linux / 63.653 GiB
 D:. Both failed jobs and their original STOP/limits remain immutable.
 
-No further archival/removal is proposed. Await the linked capacity decision;
-another small interval would consume the remaining Linux margin without useful
-progress. No production activation, real-key use or release selection is included.
-Do not repeat unchanged acceptance checks while that decision is pending.
+No further archival/removal is proposed. The approved disk expansion now provides
+about 40.87 GiB Linux / 63.64 GiB D: free. The fresh 6,300,000-v2 job's capacity
+preflight passes with a 26 GiB sampled ceiling. Existing reserves/time limits
+remain unchanged. No production activation, real-key use or release selection is
+included. Do not repeat unchanged acceptance checks.

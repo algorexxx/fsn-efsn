@@ -1,93 +1,79 @@
-# Capacity decision after the 5,600,032 checkpoint
+# Capacity after the approved WSL expansion
 
-10 October 2026. **Awaiting Peter's decision. No resize or new replay has started.**
+10 October 2026. **Expansion to 220 GiB and preservation checks passed.** Peter
+approved the proposal: "question somehow went away bet yes, feel free to expand it".
+The [execution evidence](evidence/restart-wsl-expand-220gib-2026-10-10/RESULTS.md)
+records the native operation, first refusal, actual geometry and protected-data
+checks. No release selection or node runtime changed.
 
-The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
-stopped at its declared sampled 15 GiB allocation ceiling. The separate
-[cold inspection](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md)
-verifies the saved checkpoint at **5,600,032**. All five inspection commands,
-twelve preservation checks and evidence verification pass. The requested range
-remains incomplete; its completion record, STOP, logs and limits stay immutable.
+The replay is cold-verified through **5,600,032**. Its preceding requested
+6,300,000 attempt remains incomplete after reaching its declared sampled 15 GiB
+ceiling. Preserve that attempt's original STOP, limits, logs and manifests.
+The [fresh continuation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/README.md)
+uses a new job directory and the verified stopped-checkpoint provenance.
 
-The [six obsolete test copies](restart-storage-next-step.md) have already been
-archived, fully verified and retired under Peter's authorization. That reclaimed
-4.391 GiB on D: and 4.544 GiB inside Linux. Do not repeat that cleanup.
+## Why expansion was useful
 
-## Measured constraint and proposed change
+The [six obsolete test copies](restart-storage-next-step.md) were already
+archived, fully verified and retired under Peter's authorization, reclaiming
+4.391 GiB on D: and 4.544 GiB inside Linux. That cleanup is complete.
 
-The [geometry observation](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/storage-geometry.json)
-and [capacity review](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/storage-review.json)
-record these values; they are observations, not reservations:
+The latest 268,672 replayed blocks added 4.012 GiB of working allocation. Before
+expansion, Linux had only 22.177 GiB free inside its 200 GiB virtual disk, leaving
+about 1.177 GiB above its 20 GiB reserve plus 1 GiB preparation margin. Another
+tiny range would have been poor value. D: still had about 63.65 GiB free.
 
-| Item | Observed value |
+| Item | After expansion / fresh preflight |
 | --- | ---: |
-| FusionRehearsal virtual disk capacity | 200 GiB (214,748,364,800 bytes) |
-| Linux available space after cold inspection | 22.177 GiB |
-| D: available space | 63.653 GiB |
-| Working replay allocation | 15.028 GiB |
-| Growth across the latest 268,672 blocks | 4.012 GiB |
-| Existing per-batch Linux / D: reserves | 20 / 50 GiB |
-| Existing preparation margin | 1 GiB |
+| FusionRehearsal virtual disk | 220 GiB (236,223,201,280 bytes) |
+| Linux filesystem total | 231,379,542,016 bytes |
+| Linux available space at preflight | 43,870,941,184 bytes (40.858 GiB) |
+| D: available space | 68,333,772,800 bytes (63.641 GiB) |
+| Current working allocation | 16,136,085,504 bytes (15.028 GiB) |
+| Per-batch Linux / D: reserves | 20 / 50 GiB, unchanged |
+| Preparation margin | 1 GiB, unchanged |
 
-Only about 1.177 GiB of Linux growth fits above the reserve and preparation
-margin. Another tiny continuation would provide little progress before another
-capacity stop. The virtual disk limit is currently tighter than host D: capacity.
+The dynamic VHDX remains at `D:\FusionRehearsal\Ubuntu\ext4.vhdx`. Expanding its
+virtual capacity does not reserve host space or prove that all history through
+15,130,080 will fit. D:'s reserve continues to constrain actual growth.
 
-**Proposal:** expand only FusionRehearsal's virtual disk from **200 to 220 GiB**
-(236,223,201,280 bytes), keeping all existing reserve checks. Its backing file is
-`D:\FusionRehearsal\Ubuntu\ext4.vhdx`. This is a capacity change to the shared
-rehearsal disk containing the preserved data, beyond the completed removal of
-obsolete test copies; obtain Peter's decision before performing it.
+## Operation and preservation
 
-The dynamically allocated VHDX's recorded host file length is 194,186,838,016
-bytes, distinct from its virtual capacity. A larger virtual capacity does not
-reserve host space. D:'s 50 GiB reserve will still limit actual future growth.
-Recheck both filesystems before declaring another finite job. This proposal
-does not establish that all remaining history through 15,130,080 will fit.
+The initial distro-only termination left the disk attached. Native resize
+refused with `WSL_E_DISTRO_NOT_STOPPED` before mutation; the failure is preserved.
+A fresh check found zero running Docker containers and no running distributions
+outside FusionRehearsal/docker-desktop. The idle Docker backend was briefly
+stopped, WSL shut down, only FusionRehearsal's disk expanded with the exact byte
+size, and Docker restarted. Its final status is running, still with zero running
+containers. This was the necessary operational adjustment to the initial
+proposal's distro-only stop. No container workload was interrupted.
 
-## Execution boundary if approved
+Post-expansion checks verified all 7,625 working and 1,383 recovery-file hashes
+against sealed inventories, plus unchanged original-backup/baseline metadata,
+replay identity, source, executable, toolchain and STOP. Checks used private
+mount/network namespaces, loopback DOWN, actual database/run locks and read-only
+views. Metadata verification is not a fresh full hash of the 117 GB backup.
+No cleanup, VHD compaction, data relocation or reserve reduction occurred.
 
-1. Recheck that the replay, observers, archival and retirement jobs have ended.
-   Verify sealed checkpoint/evidence identities and hold the existing run/database
-   locks for any cold inventory checks. Preserve the original backup, failed runs,
-   current working checkpoint, separate 2,400,000-v2 recovery and baseline data.
-2. Capture current disk geometry, D: capacity and the exact distro/VHDX mapping.
-   The installed `wsl.exe --help` exposes `--manage <Distro> --resize <MemoryString>`.
-   Use that distro-specific supported operation, with an exact 220 GiB target;
-   verify the accepted size syntax before mutation. The intended command family
-   is `wsl.exe --manage FusionRehearsal --resize ...`.
-3. Stop only the idle FusionRehearsal distro as required by that operation.
-   Do not globally shut down WSL, stop Docker, compact or move the VHDX, reduce
-   filesystem reserves or introduce network access. If the supported operation
-   requires disrupting another distro/service, stop and ask before that change.
-4. Record the command, exit status and actual post-operation block-device and
-   filesystem sizes. Require the intended 236,223,201,280-byte virtual capacity
-   and a usable filesystem; verify the preserved checkpoint identities before
-   any writer resumes. A failed resize is not permission to repair destructively.
-5. Prepare a **fresh** bounded continuation from 5,600,032, using the verified
-   stopped-checkpoint inspection and retaining the failed 6,300,000 attempt as
-   its provenance. Re-evaluate capacity and evidence value. Preserve the retained
-   executable, offline isolation, separate recovery, finite timeout and
-   per-batch 20/50 GiB reserve checks. Do not edit or reuse the old STOP/limits.
+## Authorized next finite replay
 
-A possible next envelope is a 26 GiB sampled target ceiling and the same
-6,300,000 endpoint: about 10.972 GiB of remaining allocation growth from the
-current checkpoint. This is only a sizing illustration, not a prepared or
-authorized job. It would require Linux free above 31.972 GiB and D: free above
-62.972 GiB under the existing starting rules. Select the actual finite bounds
-only after the approved resize and fresh capacity measurements. Keep the
-six-hour clean stop and existing outer deadlines unless separately justified.
+The fresh 6,300,000-v2 job starts at 5,600,032: up to 699,968 additional blocks.
+Its preflight passed at 15:10:44 UTC with no active node/replay process and valid
+stopped-checkpoint provenance. A 26 GiB sampled ceiling permits about 10.972 GiB
+remaining allocation growth. The actual required starting floors are
+34,329,780,224 bytes Linux (31.972 GiB) and 66,542,034,944 bytes D: (61.972 GiB).
+The earlier proposal's 62.972 GiB D: illustration was an arithmetic error; the
+unchanged controller correctly applies 51 GiB plus remaining growth.
 
-W: remains suitable for verified cold archives. Do not run live LevelDB on SMB
-or relocate the original backup/baselines as an automatic alternative. No further
-cleanup is proposed here. The missing separate complete-backup package remains
-an open G1 preservation issue; checkpoint archives do not replace that package.
+Keep the retained executable, private offline isolation, separate 2,400,000-v2
+recovery and original failed records. Keep the six-hour clean stop, 6h15 Go
+and 6h30 outer deadline plus 20-second grace, with 30-second size samples and
+per-batch 20/50 GiB reserve checks. Preparation/capacity are not launch or verified
+completion. Inspect the job's launch, completion and verification records before
+any dependent action; no duplicate writer or hashing of a live LevelDB.
 
-## While the decision is pending
-
-Keep replay stopped. Do not retry the failed job, lower reserves, launch another
-tiny range, resize the disk, or repeat unchanged passing acceptance tests. The
-heartbeat should stay quiet while this decision remains unanswered; elapsed time
-is not approval. If Peter declines expansion, review storage placement or the
-historical acceptance basis with him before dependent work. G1/F12 and the final
-selected-binary startup/recovery/handover review remain open.
+No further cleanup or disk expansion is authorized by this completed operation.
+W: remains available for verified cold archival; do not run live LevelDB on SMB.
+The separate complete-backup package remains a G1 preservation gap. Review
+capacity and evidence value again on verified completion or a finite stop.
+G1/F12 and final selected-binary startup/recovery/handover acceptance remain open.

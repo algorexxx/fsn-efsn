@@ -1,11 +1,11 @@
 # Fusion restart launch plan
 
 Updated 10 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: cold-verified through 5,600,032; no replay writer is running.**
-The latest attempt reached its declared storage ceiling. The next step is the
-[capacity decision](restart-storage-capacity-review.md): proposed expansion of
-FusionRehearsal's virtual disk from 200 to 220 GiB, with reserves unchanged.
-Await Peter's answer before resizing or starting another replay.
+**Current state: cold-verified through 5,600,032; the next finite replay is ready.**
+Peter approved the [200 to 220 GiB disk expansion](restart-storage-capacity-review.md).
+It completed with passing preservation checks and unchanged reserves. The
+[fresh 6,300,000-v2 continuation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/README.md)
+has passing capacity/provenance preflight; preparation is not launch or completion.
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
 plan, rationale and chronology. Linked reports retain their dated findings;
@@ -73,8 +73,14 @@ coverage to 2,920,032 blocks. All five commands, twelve preservation checks and
 evidence verification pass; 7,625 working-file hashes remain unchanged. Closed
 allocation is 15.028 GiB, with 22.177 GiB Linux / 63.653 GiB D: free. No writer
 has resumed. Only about 1.177 GiB remains above the Linux reserve and preparation
-margin, so another tiny continuation is not justified. The virtual disk is
-currently capped at 200 GiB; the linked capacity proposal requires Peter's decision.
+margin at that inspection, so another tiny continuation was not justified. Peter
+subsequently approved expanding the virtual disk from 200 to 220 GiB. The
+[completed expansion](evidence/restart-wsl-expand-220gib-2026-10-10/RESULTS.md)
+passes all working/recovery hashes and protected metadata/identity checks.
+Docker had no running containers; its idle backend was briefly stopped and
+restarted after the distro-only resize refused an attached VHD. Actual disk
+geometry is 220 GiB; Linux/D: free space is about 40.87/63.64 GiB. The fresh
+6,300,000-v2 preflight passes with a 26 GiB ceiling and unchanged finite limits.
 The [stopped-state controller checks](evidence/restart-stopped-resume-controller-2026-10-10/RESULTS.md)
 pass. Preserve the failed run, working state and separate recovery checkpoint;
 the old job/STOP/limits remain immutable. No runtime or release selection changed.
@@ -229,10 +235,10 @@ is complete: all six copies are archived and retired. The subsequent 6,300,000
 attempt reached its declared 15 GiB ceiling and stopped. Its separate
 [inspection](evidence/restart-ticket-encoder-stopped-5600032-2026-10-10/RESULTS.md)
 verifies 5,600,032 and 2,920,032 post-legacy blocks; the requested range remains
-incomplete. No writer is active. Await the [capacity decision](restart-storage-capacity-review.md)
-before preparing another useful-sized continuation. Keep the old jobs/STOPs
-immutable and avoid unchanged passing reruns or repeated checks while awaiting
-that answer.
+incomplete. The [authorized expansion](restart-storage-capacity-review.md) now
+passes at 220 GiB, with working/recovery bytes and protected metadata unchanged.
+The fresh 6,300,000-v2 continuation is prepared and capacity passes. Keep the
+old jobs/STOPs immutable and avoid unchanged passing reruns.
 Preserve backup, current replay/recovery databases and sealed evidence; no disk
 compaction or general cleanup is authorized by that operation.
 
@@ -735,16 +741,15 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Proposed FusionRehearsal 200 to 220 GiB expansion; awaiting Peter, reserves unchanged | Before further G1 replay |
+| Rehearsal disk capacity | Peter approved 200 to 220 GiB; expansion and preservation checks passed, reserves unchanged | Recheck before each finite G1 replay |
 
 Current technical order (efsn):
 
-1. G1: await the [rehearsal capacity decision](restart-storage-capacity-review.md).
-   If approved, verify the resized filesystem and preserved checkpoint, then
-   declare a fresh bounded continuation from 5,600,032 after capacity/path checks.
-   Keep the original backup and separate recovery; retain the incomplete jobs.
-   Keep baseline and candidate-patch validation distinct. Do not restart the
-   writer or repeat unchanged tests while awaiting the answer.
+1. G1: the [authorized disk expansion](restart-storage-capacity-review.md) and
+   preservation checks pass. Advance the fresh bounded continuation from 5,600,032
+   toward 6,300,000, after its exact launch gates. Keep the original backup and
+   separate recovery; retain the incomplete jobs. Keep baseline and candidate
+   validation distinct. Inspect completion/resources before another finite job.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the
