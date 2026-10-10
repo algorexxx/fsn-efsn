@@ -1,4 +1,71 @@
-# Capacity after the approved WSL expansion
+# Capacity after the host-space stop
+
+**Current decision, 10 October 2026, after 17:45 UTC:** the
+[6,300,000-v2 replay](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
+stopped at the unchanged 50 GiB D: reserve. D: now has 53,026,660,352 bytes
+(49.385 GiB) free; Linux's final record has 37,115,981,824 bytes (34.567 GiB).
+The expansion succeeded, but expanding virtual capacity again would not supply
+host space. Cold inspection requires more than 51 GiB on D:; a resumed writer
+requires more than max(60 GiB, 51 GiB plus remaining allowed growth).
+
+The last live working allocation was 21.235 GiB. Since launch it increased by
+about 6.207 GiB, while host free space decreased by about 14.255 GiB. The current
+VHD file length is 205,171,720,192 bytes. Dynamic VHD allocation, compaction churn
+and other host use can differ from the measured live database size; the records
+do not attribute the whole host-space decrease to the working database. No
+reliable full-history storage forecast follows from these observations.
+
+## Concrete archival and reclaim proposal
+
+The [read-only inventory](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/capacity-review.json)
+identifies these exact folders under `D:\FusionRehearsal`, totaling **9,191 files /
+13,630,973,746 logical bytes (12.695 GiB)**. These are old fixtures, including
+failed attempts whose contents must remain preserved. Evidence mappings are
+recorded; no source or archive byte verification has yet been performed for this
+proposal. No root or descendant reparse entries were observed. W: has about
+3.49 TiB free at the expected share.
+
+| Folder under D:\FusionRehearsal | Logical bytes |
+| --- | ---: |
+| delivered-partition-2026-09-27 | 1,182,070,861 |
+| delivered-partition-2026-09-27-attempt-02 | 1,181,917,028 |
+| delivered-partition-2026-09-27-attempt-03 | 1,182,960,561 |
+| delivered-partition-2026-09-27-attempt-04 | 1,186,616,109 |
+| injected-manual-delivery-2026-09-27 | 1,186,537,103 |
+| live-funded-partition-2026-09-27-admission | 607,706,428 |
+| manual-purchase-live-2026-09-27 | 1,184,067,299 |
+| manual-purchase-live-2026-09-27-attempt-02 | 1,184,042,076 |
+| manual-purchase-protocol-2026-09-27 | 593,796,391 |
+| manual-purchase-protocol-2026-09-27-attempt-02 | 593,848,584 |
+| peer-purchase-retry-2026-09-27 | 574,038,931 |
+| retry-partition-2026-09-27 | 1,181,907,368 |
+| retry-partition-2026-09-27-attempt-02 | 1,183,508,673 |
+| retry-partition-2026-09-27-displaced | 607,956,334 |
+
+Proposed destination: `W:\FusionRestart\remaining-fixtures-copy-2026-10-10`.
+Require a fresh destination, bounded copy operation, stopped rehearsal services,
+actual database locks, exact path/reparse checks, source and destination SHA256
+verification, preserved evidence manifests and a separate final re-verification
+before any D: removal. Keep the backup, VHD, swap, current replay, separate
+recovery and all other paths. W: is cold storage, not a live LevelDB location.
+
+**Decision pending; nothing copied or deleted.** Peter earlier allowed removing
+unneeded data, but the current scheduled instruction explicitly says not to
+perform destructive cleanup automatically. Ask for the concrete 14-folder
+archival/retirement decision before executing it. The earlier copy helper also
+requires 50 GiB on D: and would refuse current capacity; do not silently weaken
+that guard. Any approved replacement must explicitly isolate the read-only
+D:-to-W: copy from database work, use C:/W: for outputs, and keep the original
+20/50 GiB replay reserves and cold-inspection starting floors intact.
+
+Reclaim is an estimate from logical sizes, not a promised free-space increase.
+At the current observation it would bring D: to roughly 62.08 GiB if all logical
+bytes become free and no other usage changes. Recheck actual capacity afterward.
+This may permit cold inspection and another bounded interval; it does not prove
+that all remaining history, or even the proposed 6,300,000 endpoint, will fit.
+Do not spend that space on another tiny run without reviewing its evidence value.
+
+## Earlier approved expansion and launch
 
 10 October 2026. **Expansion to 220 GiB and preservation checks passed.** Peter
 approved the proposal: "question somehow went away bet yes, feel free to expand it".

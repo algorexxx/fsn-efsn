@@ -1,6 +1,17 @@
 # Candidate historical replay
 
-Updated 10 October 2026. **Cold-verified through 5,600,032; disk expansion verified and continuation toward 6,300,000 running.**
+Updated 10 October 2026. **Cold-verified through 5,600,032; continuation stopped at D:'s reserve.**
+The [6,300,000-v2 result](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/RESULTS.md)
+records exit 1 at 17:45 UTC after the native 50 GiB host-space check. Last logged
+progress is 5,976,608; no exact saved endpoint is established yet. No new STOP
+file was created because this is a per-batch reserve refusal. Preservation checks
+and failure-evidence integrity pass; no consensus mismatch is reported. D: now
+has about 49.385 GiB free, below the existing 51 GiB cold-inspection starting
+floor. The [capacity proposal](restart-storage-capacity-review.md) identifies
+14 old fixture folders (12.695 GiB) for possible verified W: archival and local
+retirement. Nothing has been copied or removed. Hold dependent inspection and
+replay, retain the failed job, and keep reserves unchanged.
+
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
 was dispatched at 12:50:50 UTC and stopped at 14:32 UTC at its declared sampled
 15 GiB allocation ceiling. Its original failure record and STOP remain intact.
@@ -24,8 +35,8 @@ free space is about 40.86/63.64 GiB. Its new 26 GiB sampled ceiling allows about
 15:14:00 UTC from commit `40551639`. Replay began at 15:17:23 UTC after four
 passing startup commands, 7,625 working/1,383 recovery hashes, 1,738 prior evidence
 files and unchanged identity/source/executable/toolchain. Its [initial observation](evidence/restart-ticket-encoder-job-6300000-v2-2026-10-10/STATUS.md)
-is healthy, with progress beyond 5,602,000 and a passing allocation sample. This
-is provisional progress, not verified completion or extended cold coverage.
+was healthy, with progress beyond 5,602,000 and a passing allocation sample.
+That historical observation is superseded by the reserve-stop result above.
 
 The preceding stopped checkpoint remains historical evidence:
 The [5,400,000 attempt](evidence/restart-ticket-encoder-job-5400000-2026-10-09/RESULTS.md)
@@ -50,7 +61,10 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Current closed allocation is 16,136,085,504 bytes (15.028 GiB). Latest inspection
+The last verified closed allocation, before this continuation, was
+16,136,085,504 bytes (15.028 GiB). The stopped job's final live sample was
+22,800,744,448 bytes (21.235 GiB); current closed allocation is unmeasured.
+The inspection
 free capacity before expansion was 22.177 GiB Linux / 63.653 GiB D:. The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working-database
 inventories are historical records, not separate retained copies.
@@ -206,8 +220,11 @@ available inside the then-200 GiB virtual disk, another tiny range was not justi
 Peter approved the [expansion to 220 GiB](restart-storage-capacity-review.md), now
 complete with passing preservation checks. The fresh 6,300,000-v2 job names the
 5,600,032 inspection as its stopped checkpoint and the failed 6,300,000 job as
-its attempt. Capacity passes for the declared 26 GiB ceiling and unchanged
-timeouts/reserves. No full-history size forecast or acceptance waiver follows.
+its attempt. Launch capacity passed for the declared 26 GiB ceiling and unchanged
+timeouts/reserves. The job later stopped at the host-space reserve, below its
+sampled allocation ceiling. Resolve the current storage decision before cold
+inspection; neither resizing again nor reusing old STOP-based provenance closes
+this new failure. No full-history size forecast or acceptance waiver follows.
 
 Before any writer starts, require successful completion/evidence verification
 of its accepted checkpoint, or an explicitly qualified stopped-checkpoint
@@ -241,18 +258,20 @@ Stop dependent work and ask if a substantive decision, unresolved blocker or
 doubt about a test's value needs the user. Production activation, real keys and
 public mining remain outside this testing authorization.
 
-The active job's runtime status is
+The stopped job's retained runtime status is
 /home/rehearsal/results/restart-ticket-encoder-job-6300000-v2-2026-10-10/status.json.
 Host dispatch logs are under repo tmp/replay-job-6300000-v2-2026-10-10. Inspect its
-completion, verification and resource records before any dependent work. No
-duplicate writer, live LevelDB hashing or competing bulk workload. The preceding
+completion and resource records before any dependent work. It has no passing
+job verification; the separate failure-evidence integrity check does not extend
+historical coverage. No duplicate writer, live LevelDB hashing or competing
+bulk workload. The preceding
 6,300,000 job without v2 retains exit 1 and verified_pass false; no passing job
 verification.json exists for it. The separate stopped-checkpoint inspection
 establishes 5,600,032. The earlier 5,400,000 failure is also preserved.
 The hourly continuation id is continue-fusion-restart-testing.
-The new hidden Windows dispatcher keeps WSL attached after the launching shell
-returns. Keep Windows awake and the app running during scheduled work.
-While replay runs, useful independent work is limited to documented
+The hidden Windows dispatcher has exited. The last capacity observation found
+FusionRehearsal stopped. Do not relaunch it for repeated status checks while the
+storage decision is pending. Useful independent work is limited to documented
 acceptance gaps that do not repeat passing checks or compete for large disk
 workloads. Further candidate history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.
