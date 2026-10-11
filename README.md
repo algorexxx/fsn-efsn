@@ -4,15 +4,21 @@
 
 FUSION would like to extend its gratitude to the Ethereum Foundation. FUSION has used the official open-source golang implementation of the Ethereum protocol.
 
-# Automatic node setup 
+# Node setup
 
-The fastest way to get a node up and running and to start staking automatically is by using the FUSION Node Manager script.  
-Just execute the following command on Ubuntu 18.04 (or newer), press 1 and answer the questions:
+Run the node manager from this checkout as your normal Ubuntu user:
 
-``bash -c "$(curl -fsSL https://raw.githubusercontent.com/FUSIONFoundation/efsn/master/QuickNodeSetup/fsnNode.sh)"``
+```bash
+bash QuickNodeSetup/fsnNode.sh
+```
 
-The Node Manager script and an example video can also be found under this link: [Quick Setup](https://github.com/FUSIONFoundation/efsn/tree/master/QuickNodeSetup)  
-The video shows how to quickly setup a staking node.
+For backup recovery, choose **Set up isolated historical gateway**. This builds
+this checkout and prepares a stopped, non-mining gateway with private RPC.
+Follow the [recovery and node manager instructions](QuickNodeSetup/README.md)
+for prerequisites, copying chaindata and verification before the first start.
+
+The miner and ordinary gateway modes below describe the original network setup;
+they are not the isolated recovery workflow.
 
 # Manual node setup
 

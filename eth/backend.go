@@ -268,12 +268,12 @@ func (s *Ethereum) APIs() []rpc.API {
 			Version:   "1.0",
 			Service:   NewPrivateAdminAPI(s),
 		}, {
-			Namespace: "debug",
+			Namespace: "debugadmin",
 			Version:   "1.0",
 			Service:   NewPublicDebugAPI(s),
 			Public:    true,
 		}, {
-			Namespace: "debug",
+			Namespace: "debugadmin",
 			Version:   "1.0",
 			Service:   NewPrivateDebugAPI(s),
 		}, {
