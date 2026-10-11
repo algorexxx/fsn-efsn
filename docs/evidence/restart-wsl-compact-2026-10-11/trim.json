@@ -1,0 +1,43 @@
+{
+  "started": "2026-10-11T00:09:58.086343+00:00",
+  "pass": true,
+  "commands": [
+    {
+      "name": "sync",
+      "argv": [
+        "timeout",
+        "120s",
+        "sync",
+        "-f",
+        "/"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "trim",
+      "argv": [
+        "timeout",
+        "--kill-after=20s",
+        "300s",
+        "fstrim",
+        "--verbose",
+        "/"
+      ],
+      "exit": 0
+    }
+  ],
+  "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+  "locks_acquired": true,
+  "free_before": {
+    "/": 30818897920,
+    "/mnt/d": 59259588608,
+    "/mnt/c": 13367894016
+  },
+  "root_device": "/dev/sdd",
+  "free_after": {
+    "/": 30818897920,
+    "/mnt/d": 59259588608,
+    "/mnt/c": 13367894016
+  },
+  "finished": "2026-10-11T00:09:58.995639+00:00"
+}
