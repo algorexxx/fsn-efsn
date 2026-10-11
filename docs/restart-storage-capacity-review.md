@@ -1,42 +1,37 @@
 # Capacity after verified replay through 6,300,000
 
-**Current observation, 11 October 2026 at 00:20 UTC:** the
-[authorized W: archival and native compaction are complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
-All 77,856 protected database files verify before/after; the 220 GiB virtual disk,
-source and executable identities are preserved. Native compaction reclaimed
-267 MiB, followed by 32 MiB of growth during verification startup. Working
-allocation remains 27.068 GiB. Linux has about 28.70 GiB free; D: has 55.42 GiB.
-The observed filesystem/kernel checks pass. All workers exited and the
-rehearsal disk is stopped/detached. No next replay is prepared or running.
+**Current observation, 11 October 2026 at 21:43 UTC:** Peter freed host space
+and rebooted. The [fresh finite-job preflight](evidence/restart-ticket-encoder-job-6600000-2026-10-11/preflight-ready-2026-10-11.json)
+passes with 31,685,795,840 bytes (29.51 GiB) free in Linux and 77,590,134,784
+bytes (72.26 GiB) free on D:. Working allocation remains 29,064,523,776 bytes
+(27.068 GiB). The rehearsal was stopped/detached before preflight; the verified
+W: image is present. Prior completion and storage evidence manifests reverify.
+
+The [authorized W: archival and native compaction](evidence/restart-wsl-compact-2026-10-11/RESULTS.md)
+remain complete. Their 77,856-file preservation result and unchanged 220 GiB
+geometry are retained. Compaction reclaimed 267 MiB; verification startup used
+32 MiB of that. This earlier operation is not repeated after the reboot.
 
 ## Next capacity decision
 
-The previous approval, "Archive to W and compact. If the backup is needed,
-otherwise delete," has been carried out. Keep the W: archive as a separate
-complete disk recovery copy of the original backup, current checkpoint and
-evidence; no other separately qualified complete image was established here.
-Deleting it cannot solve the D: shortage. Independent restore/portable-package
-acceptance remains open; whole-image copy equality does not close that gate.
+The host-space blocker is resolved for the [prepared 6,300,000 to 6,600,000 job](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md).
+Its 34 GiB sampled ceiling allows 6.932 GiB growth. Fresh capacity exceeds the
+unchanged Linux >27.932 GiB and D: >60 GiB starting floors. Retain 20/50 GiB
+per-batch reserves, preparation margin and finite stop limits. The controller
+rechecks capacity and exact checkpoint/source/executable identities at launch.
+Do not infer that all remaining history will fit: review actual growth and
+capacity after the bounded result before proposing another range.
 
-The next decision is to free roughly 10 GiB on D: for useful starting margin,
-or choose a revised storage arrangement. Do not repeat native compaction,
-zero-fill, reduce reserves or run repeated small jobs to bypass the floor.
-Hold dependent work until the capacity evidence changes; do not ask again for
-the already-completed archival/compaction approval.
-
-The existing controller refuses a proposed 6,300,000 to 6,600,000 continuation
-with a 34 GiB sampled ceiling. It would allow 6.932 GiB of working growth and
-require more than 27.932 GiB Linux / 60 GiB D: free. Linux currently passes;
-D: is about 4.581 GiB short of the minimum. A practical target is about 65 GiB D: free,
-allowing more margin than barely clearing the gate. Fresh measurements must
-still pass at launch. No next job is prepared or launched; the 20/50 GiB
-per-batch reserves, preparation margin and finite time limits stay unchanged.
+The earlier request to free space has been acted on; no new storage decision is
+needed for this job. Keep the W: image as a separate complete disk recovery copy.
+Independent restore/portable-package acceptance remains open. Do not repeat
+compaction, zero-fill, lower reserves or remove protected data to extend a run.
 
 All obsolete fixture roots under D:/FusionRehearsal are already archived and
 retired. Its only remaining roots are Ubuntu and swap. The ext4.vhdx file is
 211,032,211,456 bytes after verification; swap is only 37,748,736 bytes (36 MiB).
-Deleting swap cannot solve this shortfall. Expanding the 220 GiB virtual capacity
-again would not create host space. No unrelated user folders were inspected
+Deleting swap was not a solution to the earlier shortfall. Expanding the 220 GiB
+virtual capacity would not create host space. No unrelated user folders were inspected
 or proposed for removal.
 
 The earlier choice, resolved in favor of option 2 and now completed:

@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 11 October 2026. **Verified through 6,300,000; no replay is running.**
+Updated 11 October 2026. **Verified through 6,300,000; continuation toward 6,600,000 prepared with passing capacity.**
 The [v3 completion](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
 passed automatic evidence verification at 21:24:13 UTC. All seven commands,
 both cold checks and ten additional preservation checks pass. Header/RLP,
@@ -24,15 +24,16 @@ including full before/after preservation of 77,856 database files and unchanged
 source/executable/toolchain identities. Retain the verified W: disk image as a
 separate recovery copy. No runtime or release selection changed.
 
-Only 267 MiB was reclaimed by native compaction; verification startup used
-32 MiB of that. Fresh free space is about 28.70 GiB Linux / 55.42 GiB D:.
-The unchanged controller still refuses the proposed 6,300,000 to 6,600,000 range
-with its 34 GiB ceiling because D: must exceed 60 GiB. No next job was prepared
-or launched. All workers exited; FusionRehearsal is stopped and detached.
-The [next storage decision](restart-storage-capacity-review.md#next-capacity-decision)
-is roughly 10 GiB freed on D: for useful margin, or a revised storage arrangement.
-Hold dependent history work. Do not repeat compaction, lower reserves or rerun
-unchanged passing fixtures. F12/G1 and final selected-binary restored
+Peter subsequently freed D: space and rebooted. The fresh [6,600,000 preflight](evidence/restart-ticket-encoder-job-6600000-2026-10-11/preflight-ready-2026-10-11.json)
+passes at 21:43:20 UTC with about 29.51 GiB Linux / 72.26 GiB D: free.
+The [prepared job](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md)
+resumes the successful 6,300,000 endpoint and permits up to 300,000 additional
+blocks under a 34 GiB sampled ceiling. The unchanged controller, retained replay
+binary, six-hour clean stop, 6h15/6h30 timeouts and 20/50 GiB reserves remain.
+Startup must verify exact cold inventories, identity, source and toolchain before
+execution. No new coverage is established until both cold checks and the evidence
+verifier pass. The W: recovery image remains; no additional compaction or bulk
+archival is needed for this job. F12/G1 and final selected-binary restored
 startup/recovery/handover acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:
@@ -296,7 +297,7 @@ The failed replay dispatcher has exited. Archival/retirement has also completed.
 The cold-inspection dispatcher finished successfully; its host records are
 retained under repo tmp/reserve-inspection-2026-10-10 and in its sealed bundle.
 The latest completed job is restart-ticket-encoder-job-6300000-v3-2026-10-10.
-Its dispatcher exited zero. No writer remains; the next range is capacity-blocked.
+Its dispatcher exited zero. Freed space now permits the prepared 6,600,000 continuation.
 Its runtime status is /home/rehearsal/results/restart-ticket-encoder-job-6300000-v3-2026-10-10/status.json;
 host dispatch logs are under repo tmp/replay-job-6300000-v3-2026-10-10. Inspect
 completion, verification and resources before further work; no duplicate writer

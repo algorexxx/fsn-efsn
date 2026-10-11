@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 11 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: replay is verified through 6,300,000; archive/compaction checks pass, but further replay is held for D: capacity.**
+**Current state: replay is verified through 6,300,000; freed host space permits a prepared continuation toward 6,600,000.**
 The [completed v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
 finished automatic verification at 21:24:13 UTC. All seven commands, both cold
 checks and ten additional preservation checks pass. Header, state/tickets,
@@ -18,16 +18,16 @@ separate recovery checkpoint are preserved. Retain the W: image as a separate
 complete disk recovery copy; an independent restore/portable backup package
 still needs acceptance. No other qualifying complete image was established here.
 
-Compaction reclaimed only 267 MiB; verification startup used 32 MiB of that.
-Fresh capacity at 00:20:18 UTC is about 28.70 GiB Linux / 55.42 GiB D:, with
-27.068 GiB working allocation. The unchanged controller refuses the proposed
-6,300,000 to 6,600,000 continuation with a 34 GiB ceiling because D: must exceed
-60 GiB. The [capacity decision](restart-storage-capacity-review.md#next-capacity-decision)
-now needs roughly 10 GiB freed on D: for practical margin, or a revised storage
-arrangement. No next job is prepared or running. All storage workers exited;
-FusionRehearsal is stopped and detached. Do not repeat compaction, lower reserves,
-retry the unchanged failed capacity gate or rerun passing small tests while
-waiting for that decision. The prior storage approval was fully acted on.
+Peter freed space on D: and rebooted on 11 October. Fresh [capacity preflight](evidence/restart-ticket-encoder-job-6600000-2026-10-11/preflight-ready-2026-10-11.json)
+passes at 21:43:20 UTC with about 29.51 GiB Linux / 72.26 GiB D: free and
+27.068 GiB working allocation. The [prepared continuation](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md)
+resumes 6,300,000 to 6,600,000 with the previously proposed 34 GiB sampled ceiling.
+Keep the unchanged six-hour clean stop, 6h15 Go / 6h30 outer timeouts, 20/50 GiB
+Linux/D: reserves, exact checkpoint/source/executable checks and offline isolation.
+The capacity block is resolved for this bounded job; full-history storage needs
+are still unproven. No new coverage is claimed before completion and cold checks.
+The completed compaction reclaimed 267 MiB, with 32 MiB reused during verification;
+do not repeat it or rerun unchanged passing small tests. The W: image is retained.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
@@ -773,17 +773,16 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | 6,300,000-v3 passed; archive/compaction and preservation pass. D: has 55.42 GiB, below the strict 60 GiB next starting floor. Await additional D: space or a revised storage arrangement | Before another G1 replay |
+| Rehearsal disk capacity | Freed host space resolves the next starting gate: 29.51 GiB Linux / 72.26 GiB D: at fresh preflight. Prepared 6,300,000 to 6,600,000 with a 34 GiB ceiling and unchanged reserves | Review again after this bounded G1 replay |
 
 Current technical order (efsn):
 
 1. G1: keep the [completed 6,300,000 evidence](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
-   sealed. Resume history only after additional host space or a revised storage
-   arrangement; the [archive/compaction](evidence/restart-wsl-compact-2026-10-11/RESULTS.md) is complete.
-   A 6,300,000 to 6,600,000 continuation is useful, but its proposed 34 GiB
-   ceiling fails current D: capacity. Do not lower reserves or launch a tiny
-   retry. Preserve backup, separate recovery, completed and failed evidence;
-   require fresh capacity and exact identities before preparing another writer.
+   sealed. Fresh post-reboot capacity passes for the [6,600,000 continuation](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md).
+   Resume only through its exact checkpoint/identity checks and unchanged
+   controller. Preserve backup, separate recovery, completed and failed evidence.
+   Require both endpoint cold checks and automatic evidence verification, then
+   review capacity and evidence value before another finite range.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the
