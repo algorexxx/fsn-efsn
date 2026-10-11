@@ -13,11 +13,10 @@ is preserved below as a dated result; its 62.100 GiB figure is historical.
 If the backup is needed, otherwise delete." The [execution scope](evidence/restart-wsl-compact-2026-10-11/spec.md)
 records the exact disk, fresh W: destination, finite archive limits and subsequent
 qualification. Keep the verified disk archive as needed rollback through full
-post-compaction checks. The [copy-only phase launched](evidence/restart-wsl-compact-2026-10-11/STATUS.md)
-at 22:11:02 UTC (00:11 locally). FusionRehearsal is stopped and its 220 GiB disk
-is detached and read-locked. Docker was running again at dispatch; no service
-action was performed. Do not start FusionRehearsal during archival or repeat
-the permission question.
+post-compaction checks. The [cold archive is verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md);
+at 00:02:29 UTC both workers had exited, no distro was running and the original
+220 GiB disk remained detached and unchanged. The next phase may now start its
+read-only preservation checks. Do not repeat the permission question.
 
 
 The existing controller refuses a proposed 6,300,000 to 6,600,000 continuation
@@ -88,9 +87,10 @@ The earlier choice, now resolved in favor of option 2:
   little space, report that result and hold further testing rather than reduce
   reserves or run repeated tiny jobs.
 
-The copy-only phase is running and its stream/hash/lock checks pass. Inspect
-its dispatch and completion records before dependent work. Trim and compaction
-have not started; verify the complete archive first. The required rollback copy
+The [cold archive is now verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md),
+with full source/archive equality, unchanged source inventory and both workers
+exited. Read-only logical preservation checks precede the authorized compaction.
+Trim and compaction have not started. The required rollback copy
 must not be deleted before full post-compaction qualification. The next history range
 still has evidence value; no snapshot-trust waiver or release acceptance follows
 from this capacity pause. All currently passing small startup/refusal fixtures

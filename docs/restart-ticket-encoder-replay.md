@@ -25,12 +25,12 @@ Closed working allocation is 27.068 GiB. The later capacity review found
 already been archived and retired; preserve their W: copies and all evidence.
 The [capacity decision](restart-storage-capacity-review.md#next-capacity-decision)
 is now resolved in favor of [verified cold disk archival and compaction](evidence/restart-wsl-compact-2026-10-11/spec.md),
-explicitly authorized by Peter on 11 October. The [copy-only phase is running](evidence/restart-wsl-compact-2026-10-11/STATUS.md)
-since 22:11:02 UTC (00:11 locally). FusionRehearsal remains stopped and its disk
-is read-locked. Docker's backend was running again at dispatch; no Docker action
-was performed. Keep the rollback archive until storage
-qualification passes. Do not start WSL during archival, retry unchanged capacity
-or lower reserves. F12/G1
+explicitly authorized by Peter on 11 October. The [cold archive is verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md),
+including full source/archive byte equality and a detached, unchanged source.
+Both workers exited. The next authorized step is the prepared read-only
+preservation check, then native compaction and post-compaction qualification.
+Keep the rollback archive until qualification passes. Do not lower reserves
+or retry unchanged capacity. F12/G1
 and final selected-binary restored startup/recovery/handover acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:

@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 11 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: replay is verified through 6,300,000; cold disk archival to W: is running.**
+**Current state: replay is verified through 6,300,000; cold disk archival to W: is verified; compaction is pending.**
 The [completed v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
 finished automatic verification at 21:24:13 UTC. All seven commands, both cold
 checks and ten additional preservation checks pass. Header, state/tickets,
@@ -20,13 +20,13 @@ already been archived and retired. More folder cleanup there will not resolve
 this shortfall. Peter has now authorized [cold VHD archival and compaction](evidence/restart-wsl-compact-2026-10-11/spec.md):
 "Archive to W and compact. If the backup is needed, otherwise delete."
 The archive is needed as rollback until the compacted disk is fully qualified.
-The [first phase](evidence/restart-wsl-compact-2026-10-11/STATUS.md) launched at
-22:11:02 UTC (00:11 on 11 October locally), copying the stopped, detached 197 GiB
-disk to W: with a source read lock and full source/archive SHA256 verification. No
-compaction or new replay has started. Do not ask for that storage permission again;
-inspect the archival records before any WSL startup or dependent disk work.
+The [cold archive is verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md):
+all 211,278,626,816 bytes match, both workers exited and the source remains
+unchanged and detached. Independent checks passed at 00:02:29 UTC on 11 October.
 The [logical preservation check](evidence/restart-wsl-compact-2026-10-11/PRESERVATION.md)
-is prepared against the 6,300,000 evidence, but has not been executed.
+is prepared against the 6,300,000 evidence. Run it before compaction, then
+qualify the native operation and repeat preservation checks afterward. No new
+replay has started. Storage approval remains valid; do not ask for it again.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
@@ -772,7 +772,7 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | 6,300,000-v3 passed; D: has 55.271 GiB, below the next starting floor. All obsolete D: fixtures are retired. Verified archive plus offline VHD compaction is authorized; archive running | Before another G1 replay |
+| Rehearsal disk capacity | 6,300,000-v3 passed; D: has 55.271 GiB, below the next starting floor. All obsolete D: fixtures are retired. Verified archive plus offline VHD compaction is authorized; archive verified, compaction pending | Before another G1 replay |
 
 Current technical order (efsn):
 
