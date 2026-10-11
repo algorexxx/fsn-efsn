@@ -1,40 +1,45 @@
 # Capacity after verified replay through 6,300,000
 
-**Current observation, 10 October 2026 at 21:58 UTC:** the
-[6,300,000-v3 replay](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
-completed all replay, cold and evidence checks. No replay/observer/node process
-remained at the post-completion review. Working allocation is 27.068 GiB;
-Linux has 28.689 GiB free and D: has 55.271 GiB. The prior successful cleanup
-is preserved below as a dated result; its 62.100 GiB figure is historical.
+**Current observation, 11 October 2026 at 00:20 UTC:** the
+[authorized W: archival and native compaction are complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
+All 77,856 protected database files verify before/after; the 220 GiB virtual disk,
+source and executable identities are preserved. Native compaction reclaimed
+267 MiB, followed by 32 MiB of growth during verification startup. Working
+allocation remains 27.068 GiB. Linux has about 28.70 GiB free; D: has 55.42 GiB.
+The observed filesystem/kernel checks pass. All workers exited and the
+rehearsal disk is stopped/detached. No next replay is prepared or running.
 
 ## Next capacity decision
 
-**Decision received, 11 October 2026:** Peter authorized "Archive to W and compact.
-If the backup is needed, otherwise delete." The [execution scope](evidence/restart-wsl-compact-2026-10-11/spec.md)
-records the exact disk, fresh W: destination, finite archive limits and subsequent
-qualification. Keep the verified disk archive as needed rollback through full
-post-compaction checks. The [cold archive is verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md);
-at 00:02:29 UTC both workers had exited, no distro was running and the original
-220 GiB disk remained detached and unchanged. The next phase may now start its
-read-only preservation checks. Do not repeat the permission question.
+The previous approval, "Archive to W and compact. If the backup is needed,
+otherwise delete," has been carried out. Keep the W: archive as a separate
+complete disk recovery copy of the original backup, current checkpoint and
+evidence; no other separately qualified complete image was established here.
+Deleting it cannot solve the D: shortage. Independent restore/portable-package
+acceptance remains open; whole-image copy equality does not close that gate.
 
+The next decision is to free roughly 10 GiB on D: for useful starting margin,
+or choose a revised storage arrangement. Do not repeat native compaction,
+zero-fill, reduce reserves or run repeated small jobs to bypass the floor.
+Hold dependent work until the capacity evidence changes; do not ask again for
+the already-completed archival/compaction approval.
 
 The existing controller refuses a proposed 6,300,000 to 6,600,000 continuation
 with a 34 GiB sampled ceiling. It would allow 6.932 GiB of working growth and
 require more than 27.932 GiB Linux / 60 GiB D: free. Linux currently passes;
-D: is 4.729 GiB short of the minimum. A practical target is about 65 GiB D: free,
+D: is about 4.581 GiB short of the minimum. A practical target is about 65 GiB D: free,
 allowing more margin than barely clearing the gate. Fresh measurements must
 still pass at launch. No next job is prepared or launched; the 20/50 GiB
 per-batch reserves, preparation margin and finite time limits stay unchanged.
 
 All obsolete fixture roots under D:/FusionRehearsal are already archived and
 retired. Its only remaining roots are Ubuntu and swap. The ext4.vhdx file is
-211,278,626,816 bytes (196.769 GiB); swap is only 37,748,736 bytes (36 MiB).
+211,032,211,456 bytes after verification; swap is only 37,748,736 bytes (36 MiB).
 Deleting swap cannot solve this shortfall. Expanding the 220 GiB virtual capacity
 again would not create host space. No unrelated user folders were inspected
 or proposed for removal.
 
-The earlier choice, now resolved in favor of option 2:
+The earlier choice, resolved in favor of option 2 and now completed:
 
 1. Peter frees about 10 GiB elsewhere on D:, after which the existing controller
    can recheck capacity for the proposed bounded continuation. This avoids a
@@ -47,7 +52,7 @@ The earlier choice, now resolved in favor of option 2:
    explicitly excluded compaction; permission to retire obsolete folders does
    not by itself approve rewriting this protected disk.
 
-### Approved offline-compaction scope
+### Approved offline-compaction scope (completed)
 
 - Exact source/target: D:/FusionRehearsal/Ubuntu/ext4.vhdx. Preserve its 220 GiB
   virtual geometry; no shrinking partition/filesystem capacity, distro removal,
@@ -87,14 +92,12 @@ The earlier choice, now resolved in favor of option 2:
   little space, report that result and hold further testing rather than reduce
   reserves or run repeated tiny jobs.
 
-The [cold archive is now verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md),
-with full source/archive equality, unchanged source inventory and both workers
-exited. Read-only logical preservation checks precede the authorized compaction.
-Trim and compaction have not started. The required rollback copy
-must not be deleted before full post-compaction qualification. The next history range
-still has evidence value; no snapshot-trust waiver or release acceptance follows
-from this capacity pause. All currently passing small startup/refusal fixtures
-remain valid and do not need blanket reruns.
+The [completed operation](evidence/restart-wsl-compact-2026-10-11/RESULTS.md)
+preserves the original backup, working state, recovery and evidence. Its limited
+space gain does not meet the next replay gate. Retain the W: recovery image.
+The next history range still has evidence value; no snapshot-trust waiver or
+release acceptance follows from this capacity hold. All currently passing small
+startup/refusal fixtures remain valid and do not need blanket reruns.
 
 ## Earlier completed archival and retirement
 

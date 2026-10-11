@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 11 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: replay is verified through 6,300,000; cold disk archival to W: is verified; compaction is pending.**
+**Current state: replay is verified through 6,300,000; archive/compaction checks pass, but further replay is held for D: capacity.**
 The [completed v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
 finished automatic verification at 21:24:13 UTC. All seven commands, both cold
 checks and ten additional preservation checks pass. Header, state/tickets,
@@ -11,22 +11,23 @@ the original backup and separate recovery remain preserved. This adds 323,136
 blocks and brings candidate post-legacy coverage to 3,620,000. Earlier failed
 attempts remain failed, with their original evidence and limits intact.
 
-The [post-completion capacity review](restart-storage-capacity-review.md#next-capacity-decision)
-found 27.068 GiB working allocation and 28.689 GiB Linux / 55.271 GiB D: free.
-A proposed next range to 6,600,000 with a 34 GiB sampled ceiling fails the existing
-D: starting floor of more than 60 GiB. No next writer is prepared or launched;
-reserves and finite limits are unchanged. All obsolete D: fixture copies have
-already been archived and retired. More folder cleanup there will not resolve
-this shortfall. Peter has now authorized [cold VHD archival and compaction](evidence/restart-wsl-compact-2026-10-11/spec.md):
-"Archive to W and compact. If the backup is needed, otherwise delete."
-The archive is needed as rollback until the compacted disk is fully qualified.
-The [cold archive is verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md):
-all 211,278,626,816 bytes match, both workers exited and the source remains
-unchanged and detached. Independent checks passed at 00:02:29 UTC on 11 October.
-The [logical preservation check](evidence/restart-wsl-compact-2026-10-11/PRESERVATION.md)
-is prepared against the 6,300,000 evidence. Run it before compaction, then
-qualify the native operation and repeat preservation checks afterward. No new
-replay has started. Storage approval remains valid; do not ask for it again.
+The authorized [W: archive and native compaction are complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
+All 77,856 protected database files verify; source/executable/toolchain identities
+and 220 GiB virtual geometry remain unchanged. The original backup and the
+separate recovery checkpoint are preserved. Retain the W: image as a separate
+complete disk recovery copy; an independent restore/portable backup package
+still needs acceptance. No other qualifying complete image was established here.
+
+Compaction reclaimed only 267 MiB; verification startup used 32 MiB of that.
+Fresh capacity at 00:20:18 UTC is about 28.70 GiB Linux / 55.42 GiB D:, with
+27.068 GiB working allocation. The unchanged controller refuses the proposed
+6,300,000 to 6,600,000 continuation with a 34 GiB ceiling because D: must exceed
+60 GiB. The [capacity decision](restart-storage-capacity-review.md#next-capacity-decision)
+now needs roughly 10 GiB freed on D: for practical margin, or a revised storage
+arrangement. No next job is prepared or running. All storage workers exited;
+FusionRehearsal is stopped and detached. Do not repeat compaction, lower reserves,
+retry the unchanged failed capacity gate or rerun passing small tests while
+waiting for that decision. The prior storage approval was fully acted on.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
@@ -772,12 +773,13 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | 6,300,000-v3 passed; D: has 55.271 GiB, below the next starting floor. All obsolete D: fixtures are retired. Verified archive plus offline VHD compaction is authorized; archive verified, compaction pending | Before another G1 replay |
+| Rehearsal disk capacity | 6,300,000-v3 passed; archive/compaction and preservation pass. D: has 55.42 GiB, below the strict 60 GiB next starting floor. Await additional D: space or a revised storage arrangement | Before another G1 replay |
 
 Current technical order (efsn):
 
-1. G1: preserve the [completed 6,300,000 evidence](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
-   and carry out the [authorized archive/compaction](evidence/restart-wsl-compact-2026-10-11/spec.md).
+1. G1: keep the [completed 6,300,000 evidence](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
+   sealed. Resume history only after additional host space or a revised storage
+   arrangement; the [archive/compaction](evidence/restart-wsl-compact-2026-10-11/RESULTS.md) is complete.
    A 6,300,000 to 6,600,000 continuation is useful, but its proposed 34 GiB
    ceiling fails current D: capacity. Do not lower reserves or launch a tiny
    retry. Preserve backup, separate recovery, completed and failed evidence;

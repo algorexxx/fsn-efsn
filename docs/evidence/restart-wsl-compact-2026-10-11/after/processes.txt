@@ -1,0 +1,50 @@
+    PID ELAPSED COMMAND
+      1       2 /sbin/init
+      2       2 /init
+      8       2 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+     54       1 /usr/lib/systemd/systemd-journald
+    100       1 /usr/lib/systemd/systemd-udevd
+    108       1 (udev-worker)
+    109       1 (udev-worker)
+    110       1 (udev-worker)
+    111       1 (udev-worker)
+    112       1 (udev-worker)
+    113       1 (udev-worker)
+    114       1 (udev-worker)
+    115       1 (udev-worker)
+    116       1 (udev-worker)
+    117       1 (udev-worker)
+    118       1 (udev-worker)
+    119       1 (udev-worker)
+    120       1 (udev-worker)
+    121       1 (udev-worker)
+    122       1 (udev-worker)
+    123       1 (udev-worker)
+    124       1 (udev-worker)
+    125       1 (udev-worker)
+    126       1 (udev-worker)
+    127       1 (udev-worker)
+    128       1 (udev-worker)
+    129       1 (udev-worker)
+    130       1 (udev-worker)
+    131       1 (udev-worker)
+    153       1 /usr/lib/systemd/systemd-resolved
+    154       1 /usr/lib/systemd/systemd-timesyncd
+    163       1 /usr/sbin/cron -f -P
+    164       1 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    170       1 /usr/lib/snapd/snapd
+    171       1 /usr/lib/systemd/systemd-logind
+    173       1 /usr/libexec/wsl-pro-service
+    175       1 /usr/sbin/rsyslogd -n -iNONE
+    181       1 /sbin/agetty -o -p -- \u --noclear - linux
+    196       1 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+    244       1 /usr/lib/systemd/systemd-timedated
+    284       0 /init
+    285       0 /init
+    286       0 timeout --signal=TERM --kill-after=30s 123m python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-wsl-compact-2026-10-11/preservation-check.py after
+    287       0 /bin/login -f
+    331       0 /usr/lib/systemd/systemd --user
+    332       0 (sd-pam)
+    343       0 -bash
+    360       0 python3 /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-wsl-compact-2026-10-11/preservation-check.py after net:[4026531833] mnt:[4026532175]
+    362       0 ps -eo pid,etimes,args

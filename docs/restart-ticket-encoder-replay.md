@@ -18,20 +18,22 @@ Replay took 154.956 minutes by command timestamps and 143.667 minutes by its
 monotonic record; the clock difference is unexplained and both are retained.
 Four transient allocation-read retries recovered within the existing policy.
 
-Closed working allocation is 27.068 GiB. The later capacity review found
-28.689 GiB Linux / 55.271 GiB D: free. The unchanged controller refuses a proposed
-6,300,000 to 6,600,000 continuation with a 34 GiB ceiling because D: must exceed
-60 GiB. No new job was prepared or launched. All old D: fixture copies have
-already been archived and retired; preserve their W: copies and all evidence.
-The [capacity decision](restart-storage-capacity-review.md#next-capacity-decision)
-is now resolved in favor of [verified cold disk archival and compaction](evidence/restart-wsl-compact-2026-10-11/spec.md),
-explicitly authorized by Peter on 11 October. The [cold archive is verified](evidence/restart-wsl-compact-2026-10-11/ARCHIVE-RESULTS.md),
-including full source/archive byte equality and a detached, unchanged source.
-Both workers exited. The next authorized step is the prepared read-only
-preservation check, then native compaction and post-compaction qualification.
-Keep the rollback archive until qualification passes. Do not lower reserves
-or retry unchanged capacity. F12/G1
-and final selected-binary restored startup/recovery/handover acceptance remain open.
+Closed working allocation remains 27.068 GiB. The authorized
+[W: archive and compaction have completed](evidence/restart-wsl-compact-2026-10-11/RESULTS.md),
+including full before/after preservation of 77,856 database files and unchanged
+source/executable/toolchain identities. Retain the verified W: disk image as a
+separate recovery copy. No runtime or release selection changed.
+
+Only 267 MiB was reclaimed by native compaction; verification startup used
+32 MiB of that. Fresh free space is about 28.70 GiB Linux / 55.42 GiB D:.
+The unchanged controller still refuses the proposed 6,300,000 to 6,600,000 range
+with its 34 GiB ceiling because D: must exceed 60 GiB. No next job was prepared
+or launched. All workers exited; FusionRehearsal is stopped and detached.
+The [next storage decision](restart-storage-capacity-review.md#next-capacity-decision)
+is roughly 10 GiB freed on D: for useful margin, or a revised storage arrangement.
+Hold dependent history work. Do not repeat compaction, lower reserves or rerun
+unchanged passing fixtures. F12/G1 and final selected-binary restored
+startup/recovery/handover acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
