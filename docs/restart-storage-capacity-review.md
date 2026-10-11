@@ -14,7 +14,10 @@ geometry are retained. Compaction reclaimed 267 MiB; verification startup used
 
 ## Next capacity decision
 
-The host-space blocker is resolved for the [prepared 6,300,000 to 6,600,000 job](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md).
+The host-space blocker is resolved for the [6,300,000 to 6,600,000 job](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md).
+The hidden dispatcher launched at 21:45:40 UTC from commit `b34152ff`.
+[Replay began at 21:51:47 UTC](evidence/restart-ticket-encoder-job-6600000-2026-10-11/STATUS.md)
+after passing startup preservation and identity checks.
 Its 34 GiB sampled ceiling allows 6.932 GiB growth. Fresh capacity exceeds the
 unchanged Linux >27.932 GiB and D: >60 GiB starting floors. Retain 20/50 GiB
 per-batch reserves, preparation margin and finite stop limits. The controller

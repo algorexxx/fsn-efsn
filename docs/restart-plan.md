@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 11 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: replay is verified through 6,300,000; freed host space permits a prepared continuation toward 6,600,000.**
+**Current state: replay is verified through 6,300,000; continuation toward 6,600,000 is running after restored capacity.**
 The [completed v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
 finished automatic verification at 21:24:13 UTC. All seven commands, both cold
 checks and ten additional preservation checks pass. Header, state/tickets,
@@ -24,6 +24,10 @@ passes at 21:43:20 UTC with about 29.51 GiB Linux / 72.26 GiB D: free and
 resumes 6,300,000 to 6,600,000 with the previously proposed 34 GiB sampled ceiling.
 Keep the unchanged six-hour clean stop, 6h15 Go / 6h30 outer timeouts, 20/50 GiB
 Linux/D: reserves, exact checkpoint/source/executable checks and offline isolation.
+The hidden dispatcher launched at 21:45:40 UTC from commit `b34152ff`.
+[Replay started at 21:51:47 UTC](evidence/restart-ticket-encoder-job-6600000-2026-10-11/STATUS.md)
+after all four startup commands, 13,794 working/1,383 recovery file hashes and
+1,879 prior evidence files passed. Initial allocation and isolation checks pass.
 The capacity block is resolved for this bounded job; full-history storage needs
 are still unproven. No new coverage is claimed before completion and cold checks.
 The completed compaction reclaimed 267 MiB, with 32 MiB reused during verification;
@@ -773,7 +777,7 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Freed host space resolves the next starting gate: 29.51 GiB Linux / 72.26 GiB D: at fresh preflight. Prepared 6,300,000 to 6,600,000 with a 34 GiB ceiling and unchanged reserves | Review again after this bounded G1 replay |
+| Rehearsal disk capacity | Freed host space resolves the next starting gate: 29.51 GiB Linux / 72.26 GiB D: at fresh preflight. Running 6,300,000 to 6,600,000 with a 34 GiB ceiling and unchanged reserves | Review again after this bounded G1 replay |
 
 Current technical order (efsn):
 

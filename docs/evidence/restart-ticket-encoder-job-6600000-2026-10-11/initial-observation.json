@@ -1,0 +1,94 @@
+{
+  "observed_utc": "2026-10-11T21:51:51.207925+00:00",
+  "runtime": "/home/rehearsal/results/restart-ticket-encoder-job-6600000-2026-10-11",
+  "source_commit": "b34152ffead69a95ad839da15e9c6c9f1e2c90e9",
+  "run_record_sha256": "e70976d9f64249e87069055bc5326ef13371a8008f41916bc83e610c5b3eb358",
+  "status_record_sha256": "88d0d971b158bf0d61eb7d79e7071d8d20b328ce66ae1355c4061a269a6f7a0c",
+  "status": {
+    "phase": "replay",
+    "started": "2026-10-11T21:45:45.594573+00:00",
+    "updated": "2026-10-11T21:51:47.580777+00:00",
+    "observed_height": 6300000,
+    "observed_height_is_provisional": true,
+    "target_height": 6600000,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 686
+  },
+  "replay_started": "2026-10-11T21:51:47.538295+00:00",
+  "replay_pid": 686,
+  "process_stat": "686 (timeout) S 367 686 285 34816 285 4194304 79 0 1 0 0 0 0 0 20 0 1 0 34678 3219456 449 18446744073709551615 101989277143040 101989277161105 140728066002640 0 0 0 0 3145728 90119 1 0 0 17 0 0 0 0 0 0 101989277174384 101989277176408 101989917085696 140728066005544 140728066005745 140728066005745 140728066007015 0\n",
+  "process_command": "timeout --kill-after=20s 23400s /home/rehearsal/results/restart-ticket-encoder-job-6600000-2026-10-11/bin/replay-tests -test.run=^TestPreservedHistoryReplay$ -test.v -test.count=1 -test.timeout=22500s ",
+  "startup_commands": [
+    {
+      "name": "observer-build",
+      "started": "2026-10-11T21:47:32.371860+00:00",
+      "finished": "2026-10-11T21:47:37.308898+00:00",
+      "exit": 0
+    },
+    {
+      "name": "observer-build-info",
+      "started": "2026-10-11T21:47:37.324045+00:00",
+      "finished": "2026-10-11T21:47:39.443806+00:00",
+      "exit": 0
+    },
+    {
+      "name": "checkpoint-cold-head",
+      "started": "2026-10-11T21:47:39.449996+00:00",
+      "finished": "2026-10-11T21:47:44.113751+00:00",
+      "exit": 0
+    },
+    {
+      "name": "reference",
+      "started": "2026-10-11T21:48:37.155129+00:00",
+      "finished": "2026-10-11T21:48:41.246237+00:00",
+      "exit": 0
+    }
+  ],
+  "resume_verified": true,
+  "working_files_verified": 13794,
+  "recovery_files_verified": 1383,
+  "previous_files_verified": 1879,
+  "binary_sha256": "b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245",
+  "checkpoint_identity_sha256": "733848a7e2aaed7027305d21aacdd46cf84c48d363bc505c2dc25dd9fb163b11",
+  "startup_capacity_bytes": {
+    "/home/rehearsal/results": 31685177344,
+    "/mnt/d": 77590134784
+  },
+  "latest_size_measurement": {
+    "time": "2026-10-11T21:51:47.574626+00:00",
+    "attempt": 1,
+    "exit": 0,
+    "stdout": "29064523776\t/home/rehearsal/replay/candidate-ticket-encoding-working\n",
+    "stderr": ""
+  },
+  "isolation": {
+    "namespace": "net:[4026532196]",
+    "mount_namespace": "mnt:[4026532195]",
+    "parent_namespace": "net:[4026531833]",
+    "parent_mount_namespace": "mnt:[4026532175]",
+    "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+    "backup_mount": {
+      "target": "/tmp/f12-job-source-frpt62f6",
+      "source": "/dev/sdd[/home/rehearsal/data/efsn/chaindata]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "checkpoint_mount": {
+      "target": "/tmp/f12-job-checkpoint-oz3hndcg",
+      "source": "/dev/sdd[/home/rehearsal/replay/candidate-ticket-encoding-working]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "recovery_mount": {
+      "target": "/tmp/f12-job-recovery-addkxb60",
+      "source": "/dev/sdd[/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    }
+  },
+  "replay_stdout_tail": [
+    "=== RUN   TestPreservedHistoryReplay"
+  ],
+  "replay_stderr_tail": [],
+  "coverage_remains_cold_verified_height": 6300000,
+  "database_files_read_or_hashed_by_this_observation": false
+}
