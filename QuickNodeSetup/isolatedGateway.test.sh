@@ -22,6 +22,8 @@ runTest() (
     FAIL_PULL=false
     FAIL_RPC=false
     FAIL_SOCKET=false
+    FAIL_TRACE=false
+    FAIL_TRACE_SOCKET=false
     PUBLISHED=false
     PORT_BINDINGS='{}'
     CONTAINER_EXISTS=false
@@ -35,6 +37,10 @@ runTest() (
     sleep() { :; }
     curl() {
         printf 'rpc-probe\n' >> "$CALLS"
+        if [[ "$*" == *http://127.0.0.1:9001* ]]; then
+            if [ "$FAIL_TRACE" = true ]; then echo 503; else echo 101; fi
+            return 0
+        fi
         if [ "$FAIL_RPC" = true ]; then echo '{"error":{"code":-1}}'; else echo '{"result":"0x7f93"}'; fi
     }
     askToContinue() { return 0; }
@@ -43,6 +49,7 @@ runTest() (
     systemctl() {
         printf 'systemctl %s\n' "$*" >> "$CALLS"
         if [ "$*" = "start fusion-rpc.socket" ] && [ "$FAIL_SOCKET" = true ]; then return 1; fi
+        if [ "$*" = "start fusion-trace.socket" ] && [ "$FAIL_TRACE_SOCKET" = true ]; then return 1; fi
         if [ "${1:-}" = is-active ]; then echo inactive; return 3; fi
     }
     git() {
@@ -162,6 +169,7 @@ buildFailurePreservesConfiguration() {
 setupLeavesContainerStoppedAndPinned() {
     setupIsolatedGateway
     [ "$(jq -r '.image' "$CONF_FILE")" = sha256:gateway ]
+    grep -q -- '--build-arg SOURCE_REVISION=abc123' "$CALLS"
     grep -qx -- '--pull' "$BASE_DIR/create-args"
     grep -qx -- 'never' "$BASE_DIR/create-args"
     ! grep -qx -- '--publish' "$BASE_DIR/create-args"
@@ -169,7 +177,13 @@ setupLeavesContainerStoppedAndPinned() {
     grep -qx -- '--nodiscover' "$BASE_DIR/create-args"
     grep -qx -- '--bootnodes' "$BASE_DIR/create-args"
     [ "$(grep -A 1 -x -- '--bootnodes' "$BASE_DIR/create-args" | tail -n 1)" = "" ]
-    ! grep -Eq -- '--mine|--autobt|--unlock|--ethstats|40408|fsntx' "$BASE_DIR/create-args"
+    grep -qx -- '--mine=false' "$BASE_DIR/create-args"
+    grep -qx -- '--autobt=false' "$BASE_DIR/create-args"
+    grep -qx -- 'eth,net,web3,fsn,debug' "$BASE_DIR/create-args"
+    grep -qx -- '--ws' "$BASE_DIR/create-args"
+    [ "$(grep -A 1 -x -- '--ws.port' "$BASE_DIR/create-args" | tail -n 1)" = 9001 ]
+    [ "$(grep -A 1 -x -- '--ws.api' "$BASE_DIR/create-args" | tail -n 1)" = debug ]
+    ! grep -Eq -- '--unlock|--ethstats|40408|fsntx|debugadmin|--ws.origins' "$BASE_DIR/create-args"
     ! grep -q 'docker start' "$CALLS"
     [ "$(find "$BASE_DIR/fusion-node" -name 'node.json.before-recovery-*' | wc -l)" -eq 1 ]
 }
@@ -223,6 +237,7 @@ configureRpcPreservesRunningNode() {
     configureIsolatedRpc
     grep -q 'rpc-install' "$CALLS"
     grep -q 'systemctl start fusion-rpc.socket' "$CALLS"
+    grep -q 'systemctl start fusion-trace.socket' "$CALLS"
     ! grep -Eq 'docker (start|stop|rm|create|build)' "$CALLS"
 }
 
@@ -255,9 +270,25 @@ rpcBindFailureIsReported() {
     ! grep -q 'rpc-probe' "$CALLS"
 }
 
+traceProbeFailureClosesEndpoints() {
+    FAIL_TRACE=true
+    if startIsolatedRpc; then return 1; fi
+    [ "$(grep -c 'systemctl stop fusion-rpc.socket fusion-rpc.service' "$CALLS")" -eq 2 ]
+    [ "$(grep -c 'systemctl stop fusion-trace.socket fusion-trace.service' "$CALLS")" -eq 2 ]
+    ! grep -q 'docker stop' "$CALLS"
+}
+
+traceBindFailureClosesEndpoints() {
+    FAIL_TRACE_SOCKET=true
+    if startIsolatedRpc; then return 1; fi
+    [ "$(grep -c 'systemctl stop fusion-rpc.socket fusion-rpc.service' "$CALLS")" -eq 2 ]
+    [ "$(grep -c 'systemctl stop fusion-trace.socket fusion-trace.service' "$CALLS")" -eq 2 ]
+}
+
 stopClosesRpcBeforeNode() {
     stopNode
     [ "$(grep -n 'systemctl stop fusion-rpc.socket' "$CALLS" | cut -d: -f1)" -lt "$(grep -n 'docker stop' "$CALLS" | cut -d: -f1)" ]
+    [ "$(grep -n 'systemctl stop fusion-trace.socket' "$CALLS" | cut -d: -f1)" -lt "$(grep -n 'docker stop' "$CALLS" | cut -d: -f1)" ]
 }
 
 startAcceptsLegacyLoopbackBinding() {
@@ -281,7 +312,8 @@ for test_name in installPreservesExistingData initPreservesExistingData \
     updateDoesNotPullPublicImage legacyUpdatePullFailurePreservesContainer \
     legacyLayoutRequiresManualMigration configureRpcPreservesRunningNode \
     configureRpcRejectsExternalNetwork configureRpcRejectsPublishedPort \
-    rpcProbeFailureClosesEndpoint rpcBindFailureIsReported stopClosesRpcBeforeNode \
+    rpcProbeFailureClosesEndpoint rpcBindFailureIsReported traceProbeFailureClosesEndpoints \
+    traceBindFailureClosesEndpoints stopClosesRpcBeforeNode \
     startAcceptsLegacyLoopbackBinding startRejectsPublicBinding; do
     runTest "$test_name"
 done

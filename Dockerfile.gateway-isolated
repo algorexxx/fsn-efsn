@@ -1,11 +1,13 @@
 ARG BUILDER_IMAGE
 ARG RUNTIME_IMAGE
 FROM ${BUILDER_IMAGE} AS builder
+ARG SOURCE_REVISION
 RUN apk add --no-cache make gcc musl-dev linux-headers
 WORKDIR /efsn
 COPY . .
 RUN go test ./cmd/utils -run '^TestExplicitEmptyBootstrapNodes$' -count=1
-RUN make efsn
+RUN go test -mod=readonly -race -count=1 -timeout=120s ./tests/tracing
+RUN test -n "$SOURCE_REVISION" && GOFLAGS="-mod=readonly -buildvcs=false" go run build/ci.go install -git-commit "$SOURCE_REVISION" ./cmd/efsn
 
 FROM ${RUNTIME_IMAGE}
 COPY --from=builder /efsn/build/bin/efsn /usr/local/bin/efsn

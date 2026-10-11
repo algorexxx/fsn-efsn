@@ -43,7 +43,7 @@ func (n *Node) apis() []rpc.API {
 			Service:   &publicAdminAPI{n},
 			Public:    true,
 		}, {
-			Namespace: "debug",
+			Namespace: "debugadmin",
 			Version:   "1.0",
 			Service:   debug.Handler,
 		}, {

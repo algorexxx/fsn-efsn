@@ -192,6 +192,12 @@ type chainTraceResult struct {
 
 func newTracingNode(t *testing.T) *eth.Ethereum {
 	t.Helper()
+	backend, _ := newTracingBackend(t, &node.Config{})
+	return backend
+}
+
+func newTracingBackend(t *testing.T, nodeConfig *node.Config) (*eth.Ethereum, *node.Node) {
+	t.Helper()
 	key := tracingKey(t)
 	owner := crypto.PubkeyToAddress(key.PublicKey)
 	chainConfig := *params.MainnetChainConfig
@@ -208,13 +214,15 @@ func newTracingNode(t *testing.T) *eth.Ethereum {
 	config.NoPruning = true
 	config.DatabaseCache, config.TrieCleanCache, config.TrieDirtyCache = 16, 16, 0
 	config.TxPool.Journal = ""
-	stack, err := node.New(&node.Config{P2P: p2p.Config{PrivateKey: key, NoDiscovery: true, NoDial: true}})
+	nodeConfig.P2P = p2p.Config{PrivateKey: key, NoDiscovery: true, NoDial: true}
+	stack, err := node.New(nodeConfig)
 	require.NoError(t, err)
 	t.Cleanup(func() { require.NoError(t, stack.Close()) })
 	backend, err := eth.New(stack, &config)
 	require.NoError(t, err)
+	stack.RegisterAPIs(tracers.APIs(backend.APIBackend))
 	require.NoError(t, stack.Start())
-	return backend
+	return backend, stack
 }
 
 func tracingKey(t *testing.T) *ecdsa.PrivateKey {

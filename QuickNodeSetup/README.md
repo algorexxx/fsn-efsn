@@ -62,8 +62,9 @@ recovery artifacts. Do not expose this historical client publicly.
 
 ## Access and checks
 
-A systemd TCP proxy listens on the VM's loopback address, 127.0.0.1:9000.
-The node itself has no published ports and remains on its internal bridge. WebSockets,
+A systemd TCP proxy listens on the VM's loopback address, 127.0.0.1:9000, with a
+separate trace WebSocket endpoint on 127.0.0.1:9001.
+The node itself has no published ports and remains on its internal bridge.
 P2P port publishing, discovery, staking, ticket auto-buy, signing keys and official
 node-stat reporting are not enabled. The internal network and container settings
 are checked before menu-driven starts. Do not attach additional Docker networks or
@@ -87,10 +88,16 @@ does not establish complete history, correct state or a successful recovery.
 From your workstation, tunnel RPC over SSH:
 
 ```bash
-ssh -N -L 9000:127.0.0.1:9000 YOUR_USER@YOUR_VM
+ssh -N -L 9000:127.0.0.1:9000 -L 9001:127.0.0.1:9001 YOUR_USER@YOUR_VM
 ```
 
-The exposed namespaces are `eth,net,web3,fsn`. This is a private non-producing
+The HTTP namespaces are `eth,net,web3,fsn,debug`; WebSocket exposes only `debug`.
+In this gateway build, `debug` contains only `traceBlockByNumber`, `traceBlockByHash`,
+`traceTransaction`, `traceCall`, and the `traceChain` subscription. JavaScript tracers
+are not compiled into the client; use the native `callTracer` for internal calls.
+Administrative debug methods use `debugadmin`, which these endpoints do not expose.
+The file-reading/writing trace methods are not registered.
+This is a private non-producing
 gateway, not a method-filtered public read-only API: `eth` includes transaction
 submission. Do not add public firewall rules for RPC.
 
@@ -146,22 +153,28 @@ image build runs the empty-bootstrap regression test before building efsn.
 Docker may ignore published ports for a container attached only to an internal
 bridge. The manager installs `fusion-rpc.socket`, `fusion-rpc.service`, and a
 root-owned helper using Ubuntu's `/usr/lib/systemd/systemd-socket-proxyd`.
-The socket binds only `127.0.0.1:9000`. The helper checks the running container's
+The HTTP socket binds only `127.0.0.1:9000`; `fusion-trace.socket` and
+`fusion-trace.service` forward `127.0.0.1:9001` to the node's trace WebSocket.
+Existing systemd drop-ins are preserved. A LAN deployment needs a separately
+configured trace socket drop-in with the same approved client restrictions as HTTP.
+The helper checks the running container's
 mode and sole internal network, discovers its current IPv4 address, and forwards
-TCP to port 9000. No second network is attached to efsn. The helper uses Docker's
+TCP to port 9000 or 9001. No second network is attached to efsn. The helper uses Docker's
 privileged socket, so its service runs as root; the interactive manager still
 runs as the normal user. This is TCP forwarding, not authentication or RPC method
 filtering. Only trusted local users and SSH clients should have access.
 
-For an already running historical gateway, update the checkout and choose **R:
+To upgrade a gateway without tracing, stop it, check out this revision, and use
+option 9 to rebuild before starting it. The existing database is retained.
+For an already running tracing gateway, choose **R:
 Configure private RPC**. This installs and verifies the endpoint without stopping
 or rebuilding the node. If Docker really publishes the old port mapping, setup
 refuses the conflicting endpoint; stop the node and use option 9 once to recreate
 it without that mapping. An unused legacy loopback mapping is accepted for this
 migration; public bindings and extra networks are rejected.
 
-Menu-driven starts refresh the proxy target and probe `eth_chainId` before
-reporting RPC ready. Probe failure closes the endpoint and leaves the node running
+Menu-driven starts refresh the proxy targets, probe `eth_chainId`, and verify the
+WebSocket handshake before reporting ready. Probe failure closes both endpoints and leaves the node running
 for diagnosis; a long database recovery can require retrying R after it finishes.
 Menu-driven stop, removal, and recreation close the proxy first. The socket and
 node are not enabled at boot. After reboot, start through the manager. If using
@@ -171,17 +184,19 @@ the target. Do not rely on a saved container IP.
 From Windows or the Fsnex host, use an SSH tunnel:
 
 ```bash
-ssh -N -o ExitOnForwardFailure=yes -L 9000:127.0.0.1:9000 peter@VM_IP
+ssh -N -o ExitOnForwardFailure=yes -L 9000:127.0.0.1:9000 -L 9001:127.0.0.1:9001 peter@VM_IP
 ```
 
-Use `http://127.0.0.1:9000` from that machine while the tunnel runs. A containerized
+Use `http://127.0.0.1:9000` and `ws://127.0.0.1:9001` while the tunnel runs. `traceChain`
+is a `debug_subscribe` subscription named `traceChain`, with start and end block
+numbers and trace options; the start block is excluded. A containerized
 indexer needs its own explicit tunnel/network configuration; its loopback is not
 the host's loopback. No public RPC firewall rule is needed.
 
 On Ubuntu, diagnose with:
 
 ```bash
-sudo systemctl status fusion-rpc.socket fusion-rpc.service
+sudo systemctl status fusion-rpc.socket fusion-rpc.service fusion-trace.socket fusion-trace.service
 sudo journalctl -u fusion-rpc.service -n 50 --no-pager
 sudo ss -ltnp 'sport = :9000'
 ```

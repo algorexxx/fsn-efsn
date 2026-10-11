@@ -24,6 +24,10 @@ docker() {
 ip=172.18.0.9
 [ "$(resolveIsolatedRpcAddress)" = 172.18.0.9 ]
 echo 'PASS proxy resolves changed container address'
+[ "$(resolveIsolatedRpcTarget)" = 172.18.0.9:9000 ]
+[ "$(resolveIsolatedRpcTarget 9001)" = 172.18.0.9:9001 ]
+if resolveIsolatedRpcTarget 22; then exit 1; fi
+echo 'PASS proxy permits only HTTP and trace WebSocket targets'
 running=false
 if resolveIsolatedRpcAddress; then exit 1; fi
 running=true

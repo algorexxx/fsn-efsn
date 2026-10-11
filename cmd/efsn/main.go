@@ -40,7 +40,6 @@ import (
 	"github.com/FusionFoundation/efsn/v5/metrics"
 	"github.com/FusionFoundation/efsn/v5/node"
 	// Force-load the tracer engines to trigger registration
-	_ "github.com/FusionFoundation/efsn/v5/eth/tracers/js"
 	_ "github.com/FusionFoundation/efsn/v5/eth/tracers/native"
 	"github.com/urfave/cli/v2"
 )

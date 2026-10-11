@@ -44,6 +44,7 @@ setupIsolatedGateway() {
     fi
     sudo docker build --file "$repo/Dockerfile.gateway-isolated" \
         --build-arg "BUILDER_IMAGE=$builder" --build-arg "RUNTIME_IMAGE=$runtime" \
+        --build-arg "SOURCE_REVISION=$revision" \
         --label "org.opencontainers.image.revision=$revision" \
         --tag "fusion-local/gateway:$revision" "$repo" || return 1
     image_id="$(sudo docker image inspect -f '{{.Id}}' "fusion-local/gateway:$revision")" || return 1
@@ -72,8 +73,10 @@ setupIsolatedGateway() {
         --mount "type=bind,source=$BASE_DIR/fusion-node/data/efsn/chaindata,target=/fusion-node/data/efsn/chaindata" \
         "$image_id" --datadir /fusion-node/data --syncmode full \
         --maxpeers 0 --nodiscover --bootnodes "" --nat none --port 0 \
-        --http --http.addr 0.0.0.0 --http.port 9000 --http.api eth,net,web3,fsn \
-        --http.vhosts localhost,127.0.0.1 || return 1
+        --mine=false --autobt=false \
+        --http --http.addr 0.0.0.0 --http.port 9000 --http.api eth,net,web3,fsn,debug \
+        --http.vhosts localhost,127.0.0.1 \
+        --ws --ws.addr 0.0.0.0 --ws.port 9001 --ws.api debug || return 1
     mv "$config_tmp" "$CONF_FILE" || return 1
     echo "Gateway prepared and STOPPED. Restore and verify a working copy in:"
     echo "$BASE_DIR/fusion-node/data/efsn/chaindata"
@@ -134,13 +137,17 @@ installIsolatedRpc() {
         return 1
     fi
     sudo install -D -m 755 "$SCRIPT_DIR/fusion-rpc-proxy.sh" /usr/local/libexec/fusion-rpc-proxy.sh || return 1
-    sudo install -m 644 "$SCRIPT_DIR/fusion-rpc.socket" "$SCRIPT_DIR/fusion-rpc.service" /etc/systemd/system/ || return 1
+    sudo install -m 644 "$SCRIPT_DIR/fusion-rpc.socket" "$SCRIPT_DIR/fusion-rpc.service" \
+        "$SCRIPT_DIR/fusion-trace.socket" "$SCRIPT_DIR/fusion-trace.service" /etc/systemd/system/ || return 1
     sudo systemctl daemon-reload || return 1
 }
 
 stopIsolatedRpc() {
     if sudo systemctl cat fusion-rpc.socket >/dev/null 2>&1; then
         sudo systemctl stop fusion-rpc.socket fusion-rpc.service || return 1
+    fi
+    if sudo systemctl cat fusion-trace.socket >/dev/null 2>&1; then
+        sudo systemctl stop fusion-trace.socket fusion-trace.service || return 1
     fi
 }
 
@@ -157,6 +164,10 @@ startIsolatedRpc() {
             http://127.0.0.1:9000 -H 'Content-Type: application/json' \
             --data '{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}' 2>/dev/null) || result=''
         if jq -e '.result == "0x7f93" and .error == null' <<< "$result" >/dev/null 2>&1; then
+            if ! startIsolatedTrace; then
+                stopIsolatedRpc || return 1
+                return 1
+            fi
             echo "Private Fusion RPC verified at http://127.0.0.1:9000"
             return 0
         fi
@@ -165,6 +176,20 @@ startIsolatedRpc() {
     stopIsolatedRpc || return 1
     echo "RPC did not become ready. The node was left running; inspect node logs and journalctl -u fusion-rpc.service."
     return 1
+}
+
+startIsolatedTrace() {
+    local status
+    sudo systemctl reset-failed fusion-trace.service >/dev/null 2>&1 || true
+    sudo systemctl start fusion-trace.socket || return 1
+    status=$(curl --noproxy '*' --silent --http1.1 --max-time 2 --output /dev/null --write-out '%{http_code}' \
+        http://127.0.0.1:9001 -H 'Connection: Upgrade' -H 'Upgrade: websocket' \
+        -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==' || true)
+    if [ "$status" != 101 ]; then
+        echo "Trace WebSocket did not become ready. Rebuild the gateway with tracing support and inspect fusion-trace.service."
+        return 1
+    fi
+    echo "Private Fusion trace WebSocket verified at ws://127.0.0.1:9001"
 }
 
 configureIsolatedRpc() {
@@ -177,8 +202,8 @@ configureIsolatedRpc() {
         echo "Start the isolated gateway before configuring private RPC."
         return 1
     fi
-    if [ -n "$(sudo docker port fusion 9000/tcp 2>/dev/null)" ]; then
-        echo "Docker already publishes port 9000. Stop the node and rerun historical setup to remove that mapping first."
+    if [ -n "$(sudo docker port fusion 9000/tcp 2>/dev/null)" ] || [ -n "$(sudo docker port fusion 9001/tcp 2>/dev/null)" ]; then
+        echo "Docker already publishes an RPC port. Stop the node and rerun historical setup to remove that mapping first."
         return 1
     fi
     installIsolatedRpc || return 1
