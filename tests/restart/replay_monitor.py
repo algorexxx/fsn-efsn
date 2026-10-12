@@ -32,6 +32,9 @@ def validate_configuration(config):
     same = config['checkpoint'] == config['target']
     if same != (config['mode'] == 'resume') or config['target'] == config['recovery_checkpoint']:
         raise ValueError('working target must preserve the recovery checkpoint')
+    if 'storage' in config:
+        import replay_image
+        replay_image.validate_storage(config)
 
 
 def request_stop(helper, reason):
@@ -43,6 +46,9 @@ def request_stop(helper, reason):
 
 
 def require_starting_capacity(config, capacity, existing_bytes):
+    if 'storage' in config:
+        import replay_image
+        return replay_image.require_capacity(config, capacity, existing_bytes)
     if existing_bytes < 0 or existing_bytes >= config['limits']['max_bytes']:
         raise ValueError('existing target leaves no declared growth allowance')
     if config['mode'] == 'copy' and existing_bytes:
@@ -166,10 +172,28 @@ def require_verified_stopped(config, run, verification, attempt_completion):
         raise ValueError('stopped checkpoint STOP identity is required')
 
 
+def check_storage(helper):
+    config = helper.record.get('configuration', {})
+    if 'storage' not in config:
+        return
+    import replay_image
+    entry = {'time':helper.now()}
+    try:
+        entry['free_bytes'] = replay_image.sample_storage(config, helper.record['storage_mount'])
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
+        entry['error'] = repr(error)
+        request_stop(helper, 'image storage check failed: '+str(error))
+    helper.record.setdefault('storage_samples', []).append(entry)
+    helper.save()
+
+
 def run_monitored(helper, command, cwd, env, limits):
     validate_limits(limits)
     if helper.STOP.exists():
         raise FileExistsError('preserve existing stop marker; use a new result directory')
+    check_storage(helper)
+    if helper.STOP.exists():
+        raise RuntimeError('image storage refused before replay')
     entry = {'name':'replay', 'argv':command, 'cwd':str(cwd), 'started':helper.now()}
     start = time.monotonic()
     next_measurement = start
@@ -185,6 +209,7 @@ def run_monitored(helper, command, cwd, env, limits):
                 if time.monotonic()-start >= limits['clean_seconds']:
                     request_stop(helper, 'declared clean-stop allowance reached')
                 if time.monotonic() >= next_measurement:
+                    check_storage(helper)
                     size = helper.allocated_size()
                     if size is None:
                         request_stop(helper, 'size monitor failed all three bounded attempts')

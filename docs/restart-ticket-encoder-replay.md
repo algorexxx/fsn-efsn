@@ -42,10 +42,16 @@ check/cleanup pass. The local checkpoint remains intact and the new image is
 detached. The copy and verification took about 83 minutes; this is not a replay
 speed forecast. No further D: expansion is needed for this step.
 
-Next adapt and qualify the bounded image attachment/resource controller, then
-run a short continuation to measure W: replay throughput and growth. Keep the
-230 GiB local disk and Linux/D:/W: reserves of 20/50/100 GiB. No replay has
-resumed. See the [storage procedure](restart-storage-capacity-review.md).
+The [image-controller qualification](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
+passes eight new and 32 affected monitor tests, actual W: attachment/refusal,
+exception cleanup, reattachment, and real-SIGTERM cleanup. The
+[prepared trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/inputs/spec.md)
+will continue 29,024 blocks to 7,200,000 with a 46 GiB allocation ceiling and
+one-hour cooperative replay limit. Whole-job preparation/verification is bounded
+at five hours. Preflight provenance, identities and local reserves pass; mounted
+capacity and the exact cold inventory remain execution gates. The replay binary
+is unchanged. Keep 20/50/100 GiB Linux/D:/W: running reserves and the local fallback.
+See the [storage procedure](restart-storage-capacity-review.md).
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)

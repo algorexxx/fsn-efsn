@@ -32,6 +32,16 @@ assert r['copy_verified'] == (CONFIG['mode'] == 'copy') and r['resume_verified']
 for name in ['replay_passed','inspect_passed','cold_target_bytes_unchanged','backup_unchanged','baselines_unchanged','selected_unchanged','candidate_unchanged','inputs_unchanged']:
     assert r[name],name
 expected_checks = {'recovery_checkpoint_unchanged','checkpoint_preserved_or_validated_resume','prior_candidate_source_unchanged','prior_replay_binary_unchanged','replay_binary_unchanged','observer_binary_unchanged','observer_overlay_unchanged','imported_runner_unchanged','runner_snapshot_unchanged'}
+if 'storage' in CONFIG:
+    expected_checks.add('local_fallback_metadata_unchanged')
+    assert r['local_fallback_before'] == r['local_fallback_after']
+    assert r['storage_mount'] == json.loads((BUNDLE/'storage-mounted.json').read_text(encoding='utf-8'))
+    assert r['storage_mount']['image'] == CONFIG['storage']['image'] and r['storage_mount']['uuid'] == CONFIG['storage']['uuid']
+    assert r['previous_manifest_sha256'][CONFIG['storage']['migration_bundle']] == CONFIG['storage']['migration_sha256']
+    assert r['storage_samples'] and all('error' not in sample for sample in r['storage_samples'])
+    for sample in r['storage_samples']+[{'free_bytes':r['remaining_bytes']}]:
+        for path,gib in [('/home/rehearsal/results',20),('/mnt/d',50),('/mnt/w',100),(r['target'],20)]:
+            assert sample['free_bytes'][path] > gib*1024**3
 if 'stopped_attempt' in CONFIG:
     expected_checks.add('prior_stop_unchanged')
     failed = BUNDLE.parent/CONFIG['stopped_attempt']
@@ -43,7 +53,7 @@ if 'stopped_attempt' in CONFIG:
     else:
         assert sha(Q/'prior-STOP') == sha(failed/'qualification/STOP') == prior['stop_sha256'] == r['prior_stop_sha256']
 assert set(r['additional_preservation_checks']) == expected_checks and all(r['additional_preservation_checks'].values())
-assert set(r['runner_snapshot_sha256']) == {'replay_job.py','replay_monitor.py','replay_launch.py','replay_verify.py'}
+assert set(r['runner_snapshot_sha256']) == {'replay_job.py','replay_monitor.py','replay_launch.py','replay_verify.py'} | ({'replay_image.py'} if 'storage' in CONFIG else set())
 for name,digest in r['runner_snapshot_sha256'].items():
     assert sha(HERE/name) == digest,name
 assert r['uid'] == 1000 and r['namespace'] != r['parent_namespace'] and r['mount_namespace'] != r['parent_mount_namespace']

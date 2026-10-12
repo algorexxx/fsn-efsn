@@ -17,8 +17,9 @@ full replay or claim network-loss durability.
 
 The [bounded copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 completed and verified at 18:20 UTC. All 22,501 files and the cold endpoint match;
-filesystem check and detach pass. Steps 1–4 below are complete. Controller
-qualification and the bounded replay trial still gate further history:
+filesystem check and detach pass. Steps 1–4 below are complete. The [controller qualification](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
+also passes. Step 6 is the prepared 29,024-block trial to 7,200,000; mounted
+capacity and cold inventory still gate its writer:
 
 1. Create one new sparse raw ext4 working image under a fresh
    `W:/FusionRestart/replay-work-7170976-<run-id>` directory, with a declared

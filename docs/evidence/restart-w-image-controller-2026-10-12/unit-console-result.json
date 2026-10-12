@@ -1,0 +1,17 @@
+{
+  "exit": 0,
+  "tests": 40,
+  "runner_seconds": 3.905,
+  "command": [
+    "wsl.exe",
+    "-d",
+    "FusionRehearsal",
+    "-u",
+    "rehearsal",
+    "--",
+    "bash",
+    "-lc",
+    "cd /mnt/c/Users/Peter/Documents/CODING/fsn-efsn/tests/restart && python3 -B -m unittest replay_image_test replay_monitor_test -v"
+  ],
+  "provenance": "Observed tool output in this turn; all eight image and 32 monitor tests passed. The console output was not redirected to a file. No rerun solely to recreate that log. Signal-handler addition was subsequently tested by check-signal.py; earlier lifecycle controller hash remains preserved."
+}

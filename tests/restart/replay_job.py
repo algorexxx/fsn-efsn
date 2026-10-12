@@ -60,6 +60,16 @@ def prepare(backup,checkpoint,env):
         qualified_manifests = monitor.require_completed_prior(CONFIG,PRIOR)
     assert not r.STOP.exists()
     manifests = dict(prior['previous_manifest_sha256'],**{PRIOR.name:r.sha(PRIOR/'SHA256SUMS')})
+    if 'storage' in CONFIG:
+        storage = CONFIG['storage']
+        manifests[storage['migration_bundle']] = storage['migration_sha256']
+        migrated = json.loads((BUNDLE.parent/storage['migration_bundle']/'verification.json').read_text(encoding='utf-8'))
+        assert migrated['pass'] and migrated['endpoint']['Number'] <= START
+        if migrated['endpoint']['Number'] == START:
+            assert migrated['endpoint'] == prior['endpoint_observations']['cold-details']
+        else:
+            assert prior['configuration']['storage'] == storage
+            assert prior['previous_manifest_sha256'][storage['migration_bundle']] == storage['migration_sha256']
     if 'prior_verification_bundle' in CONFIG:
         manifests.update(qualified_manifests)
     count = 0
@@ -81,6 +91,10 @@ def prepare(backup,checkpoint,env):
     assert r.record['recovery_checkpoint_sha256'] == recovery['target_before_cold_sha256']
     assert RECOVERY.name in manifests
     r.record['runner_snapshot_sha256'] = {name:r.sha(HERE/name) for name in ['replay_job.py','replay_monitor.py','replay_launch.py','replay_verify.py']}
+    if 'storage' in CONFIG:
+        import replay_image
+        r.record['runner_snapshot_sha256']['replay_image.py'] = r.sha(HERE/'replay_image.py')
+        r.record['local_fallback_before'] = r.metadata(replay_image.FALLBACK,'local-fallback-before')
     r.record['backup_before'] = r.metadata(backup,'backup-before')
     assert r.record['backup_before'] == prior['backup_after']
     r.record['baseline_before'] = {name:r.metadata(path,'baseline-'+name+'-before') for name,path in r.BASELINES.items()}
@@ -114,10 +128,10 @@ def prepare(backup,checkpoint,env):
     r.record['copy_started'] = r.now()
     if CONFIG['mode'] == 'copy':
         shutil.copytree(checkpoint,TARGET)
+        assert r.inventory(TARGET) == r.record['checkpoint_before_sha256']
+        assert r.inventory(checkpoint) == r.record['checkpoint_before_sha256']
     else:
-        assert TARGET.exists() and r.inventory(TARGET) == r.record['checkpoint_before_sha256']
-    assert r.inventory(TARGET) == r.record['checkpoint_before_sha256']
-    assert r.inventory(checkpoint) == r.record['checkpoint_before_sha256']
+        assert os.path.samefile(TARGET, checkpoint)
     r.record['copy_finished'] = r.now()
     r.record['copy_verified'] = CONFIG['mode'] == 'copy'
     r.record['resume_verified'] = True
@@ -174,6 +188,10 @@ def finalize(backup,checkpoint):
             checks['prior_stop_unchanged'] = not (PRIOR_RUN/'STOP').exists() and not (failed/'qualification/STOP').exists() and evidence == r.record['prior_stop_evidence_sha256'] == json.loads((RUN/'prior-stop-evidence.json').read_bytes())
         else:
             checks['prior_stop_unchanged'] = r.sha(PRIOR_RUN/'STOP') == r.sha(RUN/'prior-STOP') == r.record.get('prior_stop_sha256')
+    if 'storage' in CONFIG:
+        import replay_image
+        r.record['local_fallback_after'] = r.metadata(replay_image.FALLBACK,'local-fallback-after')
+        checks['local_fallback_metadata_unchanged'] = r.record['local_fallback_before'] == r.record['local_fallback_after']
     r.record['additional_preservation_checks'] = checks
     r.record['backup_unchanged'] = r.record.get('backup_before') == r.record['backup_after']
     r.record['baselines_unchanged'] = r.record.get('baseline_before') == r.record['baseline_after']
@@ -181,6 +199,8 @@ def finalize(backup,checkpoint):
     r.record['candidate_unchanged'] = r.inventory(RUN/'node') == r.record.get('candidate_inventory')
     r.record['inputs_unchanged'] = r.inventory(HERE) == r.record['input_sha256']
     r.record['remaining_bytes'] = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
+    if 'storage' in CONFIG:
+        r.record['remaining_bytes'] = replay_image.sample_storage(CONFIG,r.record['storage_mount'])
     r.record['completed'] = all(r.record.get(name,False) for name in ['replay_passed','inspect_passed','cold_target_bytes_unchanged','backup_unchanged','baselines_unchanged','selected_unchanged','candidate_unchanged','inputs_unchanged']) and all(checks.values()) and not r.record.get('failures')
     r.record['finished'] = r.now()
     r.save()
@@ -214,6 +234,10 @@ if __name__ == '__main__':
         assert not RUN.exists() and not (BUNDLE/'qualification').exists()
         assert TARGET.exists() == (CONFIG['mode'] == 'resume')
         capacity = {p:shutil.disk_usage(p).free for p in ['/home/rehearsal/results','/mnt/d']}
+        if 'storage' in CONFIG:
+            import replay_image
+            mounted = json.loads((BUNDLE/'storage-mounted.json').read_text(encoding='utf-8'))
+            capacity = replay_image.sample_storage(CONFIG,mounted)
         existing_bytes = 0
         if CONFIG['mode'] == 'resume':
             fields = subprocess.check_output(['timeout','--kill-after=2s','15s','du','-sB1',str(TARGET)],text=True).split()
@@ -225,6 +249,8 @@ if __name__ == '__main__':
         (RUN/'tmp').mkdir()
         r.record = dict(mounts,started=r.now(),uid=os.getuid(),namespace=os.readlink('/proc/self/ns/net'),mount_namespace=os.readlink('/proc/self/ns/mnt'),parent_namespace=parent_net,parent_mount_namespace=parent_mount,links=links,target=str(TARGET),capacity_bytes=capacity,input_sha256=r.inventory(HERE),commands=[],size_measurements=[],preservation_marker=Path('/home/rehearsal/results/backup-copy-2026-09-23/verified.txt').read_text(encoding='utf-8'))
         r.record.update(existing_allocated_bytes=existing_bytes,required_capacity_bytes=required_capacity)
+        if 'storage' in CONFIG:
+            r.record['storage_mount'] = mounted
         r.save()
     else:
         r.record = json.loads((RUN/'run.json').read_text(encoding='utf-8'))
