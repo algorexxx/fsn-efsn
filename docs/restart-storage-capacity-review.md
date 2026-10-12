@@ -1,39 +1,43 @@
-# Capacity after verified replay through 6,900,000
+# Capacity decision after 7,170,976
 
-**12 October 2026, 09:38 UTC:** the [6,900,000-v2 job](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
-completed with both cold checks and automatic evidence verification. Closed
-working allocation is 40,776,675,328 bytes (37.976 GiB), up 5.008 GiB across
-276,704 blocks. All protected data and the independent recovery remain intact.
-No additional archival, compaction, deletion or expansion was needed.
+The checkpoint is verified; no replay writer is running. Linux has 21.937
+GiB free and D: has 57.054 GiB. Current closed working allocation is
+44.033 GiB. The host metadata record also shows about 60.6 GiB on C:
+and 3.31 TiB on the expected W: share; the full rehearsal VHD would not fit C:.
+Only swap and Ubuntu remain under D:\FusionRehearsal. All previously identified
+standalone obsolete test fixtures have already been archived and retired.
+No additional disposable D: fixture was identified by this top-level inventory.
+Unrelated personal/Docker/game folders were not inspected or changed.
 
-The [7,200,000 preflight](evidence/restart-ticket-encoder-job-7200000-2026-10-12/preflight-ready-2026-10-12.json)
-passes with no replay/node/observer process. Linux has 30,133,383,168
-bytes (28.064 GiB) free; D: has 64,664,338,432 bytes (60.223 GiB).
-The fresh job declares a 44 GiB sampled ceiling, allowing 6.024 GiB growth.
-Its required starting free space is Linux >27.024 GiB and D: >60 GiB. The D:
-margin above the starting gate is only 0.223 GiB, so the unchanged startup
-gate must pass again; a later capacity refusal must be preserved, not bypassed.
-Running reserves remain Linux20/D50 GiB, with all finite time limits unchanged.
+An illustrative useful continuation to 7,500,000 (329,024 blocks) with a fresh
+53 GiB sampled ceiling would leave 8.967 GiB growth. The unchanged
+controller requires Linux >29.967 GiB and
+D: >60.000 GiB. Both gates currently fail. capacity-review.json
+records the existing helper's refusal; it is not a prepared or launched job.
+The remaining 29,024 blocks to the old endpoint would not solve the capacity
+problem; D: remains below the 60 GiB starting floor even for a tiny range.
+No old limits, reserves, STOP, or evidence were altered.
 
-The next range is bounded to 300,000 new blocks. Scaling recent growth gives
-about 5.43 GiB, leaving approximately 0.59 GiB below the growth allowance. This
-is an estimate, not a bound; the controller stops and preserves evidence if
-capacity or allocation limits are reached. Preparation itself adds no coverage.
-The five controller files and replay executable match the successful prior job.
-No unchanged tests are rerun. The [job was dispatched](evidence/restart-ticket-encoder-job-7200000-2026-10-12/LAUNCH.md)
-at 09:40:14 UTC from `c77429d7`; startup capacity passed again. Actual replay
-began at 09:46:35 UTC. The [10:36 observation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/STATUS.md)
-records a passing 42,679,504,896-byte live allocation sample below 44 GiB,
-without failure or STOP. This is provisional accounting, not a closed endpoint
-measurement. Both cold endpoint checks and final verification remain necessary
-for new coverage.
+A concrete limited continuation option is for Peter to free at least 20 GiB
+more on D: and explicitly approve expanding FusionRehearsal from 230 to 250 GiB.
+The previously approved 230 GiB expansion is complete; it does not authorize
+250 GiB. Reuse the existing preservation/resize/verification procedure only
+after approval, with fresh host capacity, cold locks and before/after identities.
+This would fund further bounded work, not guarantee completion of all history.
 
-The approved 230 GiB geometry remains. No claim is made that all 8,230,080
-remaining blocks fit this disk. Review capacity and evidence value after this
-finite job. Preserve original backup, separate 2,400,000-v2 recovery, baselines,
-failed/sealed evidence and the verified W: image. Earlier compaction gained only
-267 MiB (32 MiB later reused); do not repeat it or prune protected data.
-Independent complete restore/portable-package acceptance remains open.
+Recent net growth was 6.057 GiB per 270,976 blocks. A linear illustration
+over the remaining 7,959,104 blocks is about 178 GiB
+more working storage. Growth varies with historical activity and compaction;
+this is not a measured total requirement. A larger local working volume may
+be a better long-term decision. Extending W: beyond its established cold-archive
+role would need a separately reviewed storage plan; do not run writable LevelDB
+directly on SMB or silently move the protected VHD. Repeating the earlier
+267 MiB compaction gain does not resolve these gates.
+
+Keep the original backup, independent recovery, baseline comparisons, failed
+runs, sealed evidence and verified W: image. Dependent replay is held pending
+the storage decision. No further unchanged small test is needed for this hold.
+F12/G1 and the final acceptance gaps remain open; no trust waiver is inferred.
 
 ## Earlier completed capacity actions
 

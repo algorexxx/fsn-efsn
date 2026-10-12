@@ -1,59 +1,38 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 6,900,000; replay stopped at its allocation limit; cold inspection prepared.**
+Updated 12 October 2026. **Verified through 7,170,976; replay held for a storage decision.**
 The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
-stopped at 12:32 UTC at the unchanged 44 GiB sampled ceiling. Its log proposes
-a saved head of 7,170,976, which is not yet accepted coverage. Failed completion,
-STOP and sealed evidence are preserved; all nine additional preservation checks
-pass. No consensus mismatch is reported. No replay process remains. The
-[separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/README.md)
-is prepared with unchanged read-only checks and finite limits. Its resource
-probe passes above Linux21/D51 GiB; do not resume writing or change the failed
-job's limits. Verify the saved head, then review capacity for meaningful further
-work. The following launch observations are historical, superseded by this stop.
+stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
+failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
+verifies 7,170,976: all five commands and twelve preservation checks pass.
+Exact head, full header/RLP, state/ticket/transaction/receipt commitments, bloom
+and TD match the backup, with 5,031 cold tickets and 160 transactions/receipts.
+No final warm ticket count is available. The inspection preserves 22,501 closed
+working-file hashes, 1,383 separate recovery hashes, protected metadata,
+source/toolchain/executable/replay identity and original STOP; 2,133 prior
+evidence files verify. No consensus mismatch was reported.
 
-The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
-completed with automatic verification at 09:00:57 UTC on 12 October. All seven
-commands, both cold endpoint checks and ten additional preservation checks pass.
-Full header/RLP, state/ticket/transaction/receipt commitments, bloom and TD match
-the backup. Warm/cold ticket counts agree at 5,304, with 12 transactions/receipts.
-The final 19,533 working-file hashes are unchanged across cold inspection; the
-1,383-file separate recovery, protected metadata, source/toolchain/executable,
-replay identity and original failed attempt/STOP remain preserved. Startup
-verified 2,028 prior evidence files; all 57 final manifest entries now verify.
+This adds 270,976 verified blocks: 4,490,976 beyond the legacy boundary and
+7,959,104 still remaining to the 15,130,080 backup tip. F12/G1, final restored
+startup/recovery/handover, independent restore/portable-package acceptance and
+consensus review remain open. The 7,200,000 request is still incomplete; no
+failed job is relabeled and no release selection or node runtime changed.
 
-Coverage adds 276,704 blocks, reaching 4,220,000 post-legacy blocks and leaving
-8,230,080 to the 15,130,080 tip. F12/G1 and final restored-startup/recovery/handover,
-independent restore/portable-package acceptance and consensus review remain open.
-No release selection or node runtime changed.
+The [capacity review](evidence/restart-capacity-after-7170976-2026-10-12/RESULTS.md)
+records 44.033 GiB closed working allocation, 21.937 GiB Linux free
+and 57.054 GiB D: free. Read-only verification passed above its reserves,
+but a further meaningful replay fails both starting gates. All previously
+identified standalone D: fixtures have already been archived/retired. Keep
+the protected backup, independent recovery, baselines, sealed/failed evidence,
+swap and W: image. Do not lower reserves or repeat ineffective compaction.
 
-Closed allocation is 40,776,675,328 bytes (37.976 GiB). All 223 live allocation
-samples and the final closed measurement passed without retries; no vanished
-entry was recorded. The [qualified allocation monitor](evidence/restart-replay-size-monitor-2026-10-12/RESULTS.md)
-retains bounded workers, fail-closed real errors and sampled, non-atomic accounting.
-The earlier failed run and [6,623,296 cold inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md)
-remain dated evidence, as does the separate 6,600,000 verifier follow-up.
-
-The [7,200,000 continuation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/README.md)
-was dispatched from `c77429d7` at 09:40:14 UTC for 300,000 new blocks.
-Its 09:38 UTC capacity/provenance preflight
-passes with no writer and 28.064 GiB Linux / 60.223 GiB D: free, above
-the >27.024/>60 GiB starting gates. A fresh 44 GiB sampled ceiling permits
-6.024 GiB growth. Recent growth implies about 5.43 GiB for this range, but that
-estimate does not guarantee completion. All five controllers and the replay
-executable are unchanged; only the observer height advances. Keep Linux20/D50
-GiB reserves, six-hour clean stop, 6h15 Go / 6h30 outer limits, 20s outer kill
-grace and 30s samples. The startup capacity gate also passed. The
-[10:36 observation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/STATUS.md)
-confirms actual replay since 09:46:35 UTC, after all four startup commands passed.
-Startup verified 19,533 working/1,383 recovery hashes and 2,085 prior evidence
-files, with unchanged executable/replay identity and protected isolation.
-Provisional progress reaches 6,996,128 without failure/STOP/completion; the latest
-42,679,504,896-byte allocation sample passed below 44 GiB. This observation
-reads process and job records only. Both cold endpoint checks and final evidence
-verification remain required before accepting new coverage. Do not
-reduce reserves, change a running job's bounds or expand beyond the approved
-230 GiB disk. Protected backup/recovery and the W: archive remain.
+Dependent replay is held for a substantive storage decision. The concrete
+limited option is freeing at least 20 GiB more on D: and approving a 230 to
+250 GiB expansion, followed by the existing cold preservation and verification
+procedure. That approval has not been given. It would support further bounded
+ranges, not promise the whole remaining history fits. A larger local working
+volume or separately reviewed use of W: are alternatives. No further unchanged
+small test or tiny replay is justified while this capacity hold remains.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
