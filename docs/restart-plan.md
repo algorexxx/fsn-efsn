@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 7,170,976; W-backed checkpoint copy started; replay stopped.**
+**Current state: verified through 7,170,976; W-backed checkpoint copy verified; replay trial preparation next.**
 The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
 stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
 failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
@@ -36,16 +36,17 @@ compaction, reopen/data verification and process-exit WAL recovery. A clean
 unmount/read-only filesystem check and detach passed. This is feasibility,
 not migration, throughput or power-loss qualification; no chain data moved.
 
-The [finite W: copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/spec.md)
-was dispatched at 16:57 UTC for checkpoint 7,170,976, copying into
-a new dedicated W-backed Linux image, retaining the local checkpoint and all
-protected backup/recovery data. See the [storage procedure](restart-storage-capacity-review.md).
-After verified copy and cold-open comparison, a short bounded replay must
-measure this storage layout before larger ranges resume. No further D:
-expansion is planned. The 230 GiB limit and all existing reserves remain;
-replay is stopped while copy/verification and its storage/controller adaptation finish.
-The new image creation and format passed; destination acceptance is pending.
-See the [startup record](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/STARTED.md).
+The [W: checkpoint copy](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
+completed at 18:20 UTC: all 22,501 files match the sealed checkpoint after
+reattachment, both cold reads reproduce its complete endpoint, and filesystem
+check/cleanup pass. The local checkpoint remains intact and the new image is
+detached. The copy and verification took about 83 minutes; this is not a replay
+speed forecast. No further D: expansion is needed for this step.
+
+Next adapt and qualify the bounded image attachment/resource controller, then
+run a short continuation to measure W: replay throughput and growth. Keep the
+230 GiB local disk and Linux/D:/W: reserves of 20/50/100 GiB. No replay has
+resumed. See the [storage procedure](restart-storage-capacity-review.md).
 
 The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
 Their 77,856-file preservation result and 220 GiB geometry remain recorded.

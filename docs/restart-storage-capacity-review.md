@@ -15,9 +15,10 @@ system on D:. It is a disposable loop-backed data image, not the preserved VHD.
 Small synthetic writes were slower; do not extrapolate their timings to the
 full replay or claim network-loss durability.
 
-The [bounded copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/STARTED.md)
-was dispatched at 16:57 UTC. Image creation and formatting passed; copy and cold
-verification remain pending. The following procedure still gates replay:
+The [bounded copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
+completed and verified at 18:20 UTC. All 22,501 files and the cold endpoint match;
+filesystem check and detach pass. Steps 1–4 below are complete. Controller
+qualification and the bounded replay trial still gate further history:
 
 1. Create one new sparse raw ext4 working image under a fresh
    `W:/FusionRestart/replay-work-7170976-<run-id>` directory, with a declared
@@ -48,8 +49,8 @@ verification remain pending. The following procedure still gates replay:
    Do not repeat already-passing consensus tests. No larger replay starts before
    the migrated checkpoint and adapted controller are verified.
 
-The small image fixture is detached. One finite checkpoint-copy job is active;
-no chain replay is running. The canonical
+Both images are detached. The checkpoint copy is verified; no chain replay
+is running while the controller/trial is prepared. The canonical
 verified height remains 7,170,976. This direction removes the current need for
 more D: space; a W: outage may still lose the active trial, so preserve the local
 fallback and prior sealed evidence. It does not change production storage advice.

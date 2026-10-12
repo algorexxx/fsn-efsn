@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 7,170,976; W-backed checkpoint copy started; replay stopped.**
+Updated 12 October 2026. **Verified through 7,170,976; W-backed checkpoint copy verified; replay trial preparation next.**
 The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
 stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
 failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
@@ -35,16 +35,17 @@ compaction, reopen/data verification and process-exit WAL recovery. A clean
 unmount/read-only filesystem check and detach passed. This is feasibility,
 not migration, throughput or power-loss qualification; no chain data moved.
 
-The [finite W: copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/spec.md)
-was dispatched at 16:57 UTC for checkpoint 7,170,976, copying into
-a new dedicated W-backed Linux image, retaining the local checkpoint and all
-protected backup/recovery data. See the [storage procedure](restart-storage-capacity-review.md).
-After verified copy and cold-open comparison, a short bounded replay must
-measure this storage layout before larger ranges resume. No further D:
-expansion is planned. The 230 GiB limit and all existing reserves remain;
-replay is stopped while copy/verification and its storage/controller adaptation finish.
-The new image creation and format passed; destination acceptance is pending.
-See the [startup record](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/STARTED.md).
+The [W: checkpoint copy](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
+completed at 18:20 UTC: all 22,501 files match the sealed checkpoint after
+reattachment, both cold reads reproduce its complete endpoint, and filesystem
+check/cleanup pass. The local checkpoint remains intact and the new image is
+detached. The copy and verification took about 83 minutes; this is not a replay
+speed forecast. No further D: expansion is needed for this step.
+
+Next adapt and qualify the bounded image attachment/resource controller, then
+run a short continuation to measure W: replay throughput and growth. Keep the
+230 GiB local disk and Linux/D:/W: reserves of 20/50/100 GiB. No replay has
+resumed. See the [storage procedure](restart-storage-capacity-review.md).
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
@@ -96,8 +97,8 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Its latest separately verified closed allocation is 34,987,921,408 bytes
-(32.585 GiB) at 6,600,000. The fresh capacity review is recorded above.
+Its latest separately verified closed allocation is 47,280,070,656 bytes
+(44.033 GiB) at 7,170,976. The fresh capacity review is recorded above.
 The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working
 inventories are historical records, not separate retained copies. Another
@@ -156,7 +157,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through separately verified 6,600,000, including 3,920,000 blocks beyond the legacy boundary; baseline separately reaches 3,600,000. | History after 6,600,000 remains open. Original label-related verifier failure and earlier incomplete attempts remain preserved; continuation must qualify the follow-up explicitly. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through separately verified 7,170,976, including 4,490,976 blocks beyond the legacy boundary; baseline separately reaches 3,600,000. | History after 7,170,976 remains open. Original label-related verifier failure and earlier incomplete attempts remain preserved; continuation must qualify the follow-up explicitly. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
