@@ -1,6 +1,17 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 6,900,000; offline replay toward 7,200,000 is running.**
+Updated 12 October 2026. **Verified through 6,900,000; replay stopped at its allocation limit; cold inspection prepared.**
+The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
+stopped at 12:32 UTC at the unchanged 44 GiB sampled ceiling. Its log proposes
+a saved head of 7,170,976, which is not yet accepted coverage. Failed completion,
+STOP and sealed evidence are preserved; all nine additional preservation checks
+pass. No consensus mismatch is reported. No replay process remains. The
+[separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/README.md)
+is prepared with unchanged read-only checks and finite limits. Its resource
+probe passes above Linux21/D51 GiB; do not resume writing or change the failed
+job's limits. Verify the saved head, then review capacity for meaningful further
+work. The following launch observations are historical, superseded by this stop.
+
 The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
 completed with automatic verification at 09:00:57 UTC on 12 October. All seven
 commands, both cold endpoint checks and ten additional preservation checks pass.
