@@ -35,7 +35,8 @@ compaction, reopen/data verification and process-exit WAL recovery. A clean
 unmount/read-only filesystem check and detach passed. This is feasibility,
 not migration, throughput or power-loss qualification; no chain data moved.
 
-The next useful step is a finite copy-and-verify of checkpoint 7,170,976 into
+The [finite W: copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/spec.md)
+is prepared for checkpoint 7,170,976, copying into
 a new dedicated W-backed Linux image, retaining the local checkpoint and all
 protected backup/recovery data. See the [storage procedure](restart-storage-capacity-review.md).
 After verified copy and cold-open comparison, a short bounded replay must
