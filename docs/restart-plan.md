@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 6,900,000; continuation to 7,200,000 dispatched; startup is active.**
+**Current state: verified through 6,900,000; offline replay toward 7,200,000 is running.**
 The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
 completed with automatic verification at 09:00:57 UTC on 12 October. All seven
 commands, both cold endpoint checks and ten additional preservation checks pass.
@@ -34,10 +34,14 @@ estimate does not guarantee completion. All five controllers and the replay
 executable are unchanged; only the observer height advances. Keep Linux20/D50
 GiB reserves, six-hour clean stop, 6h15 Go / 6h30 outer limits, 20s outer kill
 grace and 30s samples. The startup capacity gate also passed. The
-[startup observation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/LAUNCH.md)
-records no failure/STOP/completion, with replay_pid still null; actual block
-replay is not yet established. Full cold endpoint verification remains required.
-Do not
+[10:36 observation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/STATUS.md)
+confirms actual replay since 09:46:35 UTC, after all four startup commands passed.
+Startup verified 19,533 working/1,383 recovery hashes and 2,085 prior evidence
+files, with unchanged executable/replay identity and protected isolation.
+Provisional progress reaches 6,996,128 without failure/STOP/completion; the latest
+42,679,504,896-byte allocation sample passed below 44 GiB. This observation
+reads process and job records only. Both cold endpoint checks and final evidence
+verification remain required before accepting new coverage. Do not
 reduce reserves, change a running job's bounds or expand beyond the approved
 230 GiB disk. Protected backup/recovery and the W: archive remain.
 

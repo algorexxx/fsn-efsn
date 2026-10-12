@@ -1,0 +1,113 @@
+{
+  "observed_utc": "2026-10-12T10:36:52.600161+00:00",
+  "runtime": "/home/rehearsal/results/restart-ticket-encoder-job-7200000-2026-10-12",
+  "source_commit": "c77429d7a23c7b332db987be2f6a61aff0eda66f",
+  "run_record_sha256": "34f297fa87a639f23cbcbbb65f013785b29f0bced9174dfece2cf5194d980a36",
+  "status_record_sha256": "750c480fa3bf4dc9b275567f308e1e0aba99cb6722a08ffaa82ce8b629ff85e2",
+  "status": {
+    "phase": "replay",
+    "started": "2026-10-12T09:40:19.422954+00:00",
+    "updated": "2026-10-12T10:36:40.081723+00:00",
+    "observed_height": 6996128,
+    "observed_height_is_provisional": true,
+    "target_height": 7200000,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 630
+  },
+  "replay_started": "2026-10-12T09:46:35.182015+00:00",
+  "replay_pid": 630,
+  "process_stat": "630 (timeout) S 362 630 280 34816 280 4194304 65 0 15 0 0 0 0 0 20 0 1 0 194490 3219456 462 18446744073709551615 95213221212160 95213221230225 140733578472080 0 0 0 0 3145728 90119 1 0 0 17 0 0 0 0 0 0 95213221243504 95213221245528 95213951901696 140733578480168 140733578480369 140733578480369 140733578481639 0\n",
+  "process_command": "timeout --kill-after=20s 23400s /home/rehearsal/results/restart-ticket-encoder-job-7200000-2026-10-12/bin/replay-tests -test.run=^TestPreservedHistoryReplay$ -test.v -test.count=1 -test.timeout=22500s ",
+  "startup_commands": [
+    {
+      "name": "observer-build",
+      "started": "2026-10-12T09:41:39.880398+00:00",
+      "finished": "2026-10-12T09:41:44.224619+00:00",
+      "exit": 0
+    },
+    {
+      "name": "observer-build-info",
+      "started": "2026-10-12T09:41:44.238484+00:00",
+      "finished": "2026-10-12T09:41:44.240744+00:00",
+      "exit": 0
+    },
+    {
+      "name": "checkpoint-cold-head",
+      "started": "2026-10-12T09:41:44.246992+00:00",
+      "finished": "2026-10-12T09:41:48.336397+00:00",
+      "exit": 0
+    },
+    {
+      "name": "reference",
+      "started": "2026-10-12T09:42:55.484794+00:00",
+      "finished": "2026-10-12T09:43:01.562632+00:00",
+      "exit": 0
+    }
+  ],
+  "resume_verified": true,
+  "working_files_verified": 19533,
+  "recovery_files_verified": 1383,
+  "previous_files_verified": 2085,
+  "binary_sha256": "b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245",
+  "checkpoint_identity_sha256": "733848a7e2aaed7027305d21aacdd46cf84c48d363bc505c2dc25dd9fb163b11",
+  "startup_capacity_bytes": {
+    "/home/rehearsal/results": 30137237504,
+    "/mnt/d": 64664338432
+  },
+  "latest_size_measurement": {
+    "time": "2026-10-12T10:36:40.073911+00:00",
+    "attempt": 1,
+    "exit": 0,
+    "stdout": "42679504896\t/home/rehearsal/replay/candidate-ticket-encoding-working\n",
+    "stderr": "",
+    "method": "stat-blocks-v1",
+    "scanner_stdout": "{\"path\": \"/home/rehearsal/replay/candidate-ticket-encoding-working\", \"allocated_bytes\": 42679504896, \"vanished_entries\": []}\n",
+    "argv": [
+      "timeout",
+      "--kill-after=2s",
+      "15s",
+      "/usr/bin/python3",
+      "-B",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-ticket-encoder-job-7200000-2026-10-12/inputs/replay_monitor.py",
+      "--allocated-size",
+      "/home/rehearsal/replay/candidate-ticket-encoding-working"
+    ]
+  },
+  "isolation": {
+    "namespace": "net:[4026532369]",
+    "mount_namespace": "mnt:[4026532368]",
+    "parent_namespace": "net:[4026531833]",
+    "parent_mount_namespace": "mnt:[4026532348]",
+    "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+    "backup_mount": {
+      "target": "/tmp/f12-job-source-04eva31d",
+      "source": "/dev/sdf[/home/rehearsal/data/efsn/chaindata]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "checkpoint_mount": {
+      "target": "/tmp/f12-job-checkpoint-wdflohf2",
+      "source": "/dev/sdf[/home/rehearsal/replay/candidate-ticket-encoding-working]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "recovery_mount": {
+      "target": "/tmp/f12-job-recovery-40qze42p",
+      "source": "/dev/sdf[/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    }
+  },
+  "replay_stdout_tail": [
+    "    replay_linux_test.go:85: replay progress: height=6990752 root=0x615cb1e0a409024f598e6ebe8e2f2a8ddafe713dc3a5ef31493172fe20354efa",
+    "    replay_linux_test.go:85: replay progress: height=6991520 root=0x08cf5b42e9ce9ae5a33d9b6bee89fab033824fe539d67bccfad48715f8238941",
+    "    replay_linux_test.go:85: replay progress: height=6992288 root=0xed55ef1f789b86f47b6c133d0cd5fb5c2636b2dba5c2e6700246eba2c789af9d",
+    "    replay_linux_test.go:85: replay progress: height=6993056 root=0x9866a08bbdcaa2bb1548d0d88c0c261694da532059c3c11d39fa02fbcb0a80de",
+    "    replay_linux_test.go:85: replay progress: height=6993824 root=0x6285ebe511f2f9bba5b88eef1ace74142b4bf3cd160c842d50899d4f43eaa763",
+    "    replay_linux_test.go:85: replay progress: height=6994592 root=0x16d1dd6c9ec7b850bf93a07b8b7cbabcab268f9fbb35e93c7671c360e25b4270",
+    "    replay_linux_test.go:85: replay progress: height=6995360 root=0x5a4fe58eb140a986a3ab96a806c5c86d90ffc3c1f58720000b84f0a9ca73e041",
+    "    replay_linux_test.go:85: replay progress: height=6996128 root=0x4357d1086cc700471f114e7893086fd44c51937f1e1b47f076b8583ae43ddd7c"
+  ],
+  "replay_stderr_tail": [],
+  "coverage_remains_cold_verified_height": 6900000,
+  "database_files_read_or_hashed_by_this_observation": false
+}
