@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Separately verified through 6,600,000; next replay prepared after expansion.**
+Updated 12 October 2026. **Separately verified through 6,600,000; offline replay toward 6,900,000 is running.**
 The [follow-up evidence verification](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes. Replay and both cold
 checks completed successfully, but the original automatic verifier rejected
 the two filename labels in the observer patch. Its failed completion remains
@@ -36,15 +36,19 @@ The filesystem remains ext4/read-write without recorded storage-error patterns.
 The W: image, original backup, separate recovery and all failed evidence remain.
 
 The [next finite job](evidence/restart-ticket-encoder-job-6900000-2026-10-12/README.md)
-is prepared for 6,600,000 to 6,900,000. Its 05:44 UTC preflight passes with about
+launched from `4736c9a8` at 05:46 UTC for 6,600,000 to 6,900,000. Its 05:44 UTC preflight passes with about
 33.60 GiB Linux / 68.21 GiB D: free, no node/replay/observer process, and exact
 source/patch/prior-evidence checks. The 39 GiB sampled ceiling permits about
 6.415 GiB growth from the 32.585 GiB closed working database. Starting floors
 remain >27.415/>60 GiB; per-batch reserves remain Linux20/D50 GiB. Keep the
 six-hour clean stop, 6h15 Go and 6h30 outer limits. No passing history is rerun.
-Launch/startup observations and full completion verification are still required;
-preparation itself adds no coverage. F12/G1, final selected-binary restored
-startup/recovery/handover and independent restore acceptance remain open.
+The [initial observation](evidence/restart-ticket-encoder-job-6900000-2026-10-12/STATUS.md)
+records actual replay after all four startup commands passed, with 16,672 working
+and 1,383 recovery hashes, 1,941 prior evidence files and unchanged executable/
+replay identity. Isolation and first allocation sample pass, without stop/failure.
+Coverage still requires both cold checks and final evidence verification. F12/G1,
+final selected-binary restored startup/recovery/handover and independent restore
+acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)

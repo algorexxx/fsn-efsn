@@ -6,7 +6,11 @@ before/after checks preserve all 16,672 working-file and 1,383 recovery hashes,
 original-backup/baseline metadata and source/executable/toolchain/replay identity.
 Native WSL resize succeeded directly; the idle-Docker fallback was not needed.
 The filesystem is ext4/read-write with no recorded kernel storage-error patterns.
-This is not an independent restore test or a new full original-backup hash.
+Native WSL resize invoked e2fsck, which optimized 26 inode extent trees and
+reported filesystem modification before resize2fs; that exact output is retained
+in the sealed expansion log. Content preservation checks above passed afterward.
+The separate mounted-health check is not a further fsck. This is not an
+independent restore test or a new full original-backup hash.
 
 The [next-job preflight](evidence/restart-ticket-encoder-job-6900000-2026-10-12/preflight-ready-2026-10-12.json)
 records Linux 36,076,240,896 bytes (33.599 GiB) and D: 73,240,641,536 bytes
@@ -20,7 +24,10 @@ There is no claim that all remaining 8,530,080 blocks fit this expansion.
 The [separate-prior controller qualification](evidence/restart-reverified-prior-controller-2026-10-12/RESULTS.md)
 passes 24 tests. The next prepared inputs explicitly pin the successful separate
 6,600,000 verification and preserve the original label-only verifier failure.
-Preparation adds no history coverage; actual dispatch and startup must be recorded.
+The job [launched and passed startup](evidence/restart-ticket-encoder-job-6900000-2026-10-12/STATUS.md)
+from `4736c9a8` at 05:46 UTC. Historical coverage remains 6,600,000 until the new
+endpoint and evidence verification pass; these capacity figures are preflight,
+not measurements of a completed 6,900,000 replay.
 
 The verified W: VHD archive, original backup, separate recovery and failed runs
 remain. No compaction, deletion, database pruning or release-selection change.

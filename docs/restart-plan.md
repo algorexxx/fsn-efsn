@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 6,600,000; expansion complete and next replay prepared.**
+**Current state: verified through 6,600,000; offline replay toward 6,900,000 is running.**
 The [verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes all seven recorded commands,
 both cold checks and nine preservation checks. The original automatic verifier
 failed because the observer patch used different filename labels in its first
@@ -30,18 +30,21 @@ both manifests. Observer patch labels/source are now checked before long work.
 Only test tooling changed; chain runtime and release selection are unchanged.
 
 The [6,900,000 job](evidence/restart-ticket-encoder-job-6900000-2026-10-12/README.md)
-is prepared with a passing 05:44 UTC preflight: about 33.60 GiB Linux / 68.21 GiB
-D: free, above the >27.415/>60 GiB gates. Its 300,000-block interval has a 39 GiB
+launched from `4736c9a8` at 05:46 UTC, after a passing 05:44 UTC preflight:
+about 33.60 GiB Linux / 68.21 GiB D: free, above the >27.415/>60 GiB gates.
+Its 300,000-block interval has a 39 GiB
 sampled ceiling, unchanged six-hour clean stop / 6h15 Go / 6h30 outer timeouts,
-and 20/50 GiB reserves. Preparation adds no coverage; record actual launch and
-startup status before reporting running. Full cold endpoint checks and final
-evidence verification remain required. Review capacity/value again afterward.
+and 20/50 GiB reserves. The [initial observation](evidence/restart-ticket-encoder-job-6900000-2026-10-12/STATUS.md)
+records actual replay after four passing startup commands, 16,672 working/1,383
+recovery hashes and 1,941 prior evidence files verified, unchanged identity and
+isolated protected views. Full cold endpoint checks and final verification
+remain required before counting new coverage. Review capacity/value afterward.
 
 The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
 Their 77,856-file preservation result and 220 GiB geometry remain recorded.
 Retain the W: image and separate recovery checkpoint. Independent complete
 restore/portable-package acceptance remains open. Do not repeat compaction,
-delete protected data or rerun unchanged small tests while the decision is pending.
+delete protected data or rerun unchanged small tests while this job is healthy.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
