@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 7,170,976; replay held for a storage decision.**
+Updated 12 October 2026. **Verified through 7,170,976; W-backed image feasibility passed; migration pending.**
 The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
 stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
 failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
@@ -26,13 +26,22 @@ identified standalone D: fixtures have already been archived/retired. Keep
 the protected backup, independent recovery, baselines, sealed/failed evidence,
 swap and W: image. Do not lower reserves or repeat ineffective compaction.
 
-Dependent replay is held for a substantive storage decision. The concrete
-limited option is freeing at least 20 GiB more on D: and approving a 230 to
-250 GiB expansion, followed by the existing cold preservation and verification
-procedure. That approval has not been given. It would support further bounded
-ranges, not promise the whole remaining history fits. A larger local working
-volume or separately reviewed use of W: are alternatives. No further unchanged
-small test or tiny replay is justified while this capacity hold remains.
+The user selected investigation of W: on 12 October rather than freeing more
+D: space. The [direct DrvFs test](evidence/restart-w-direct-probe-v2-2026-10-12/RESULTS.md)
+failed during database creation with directory-sync EIO. A separate 256 MiB
+[ext4 image on W:](evidence/restart-w-image-probe-2026-10-12/RESULTS.md) passed
+same-binary local-control and image tests for locking, synchronized writes,
+compaction, reopen/data verification and process-exit WAL recovery. A clean
+unmount/read-only filesystem check and detach passed. This is feasibility,
+not migration, throughput or power-loss qualification; no chain data moved.
+
+The next useful step is a finite copy-and-verify of checkpoint 7,170,976 into
+a new dedicated W-backed Linux image, retaining the local checkpoint and all
+protected backup/recovery data. See the [storage procedure](restart-storage-capacity-review.md).
+After verified copy and cold-open comparison, a short bounded replay must
+measure this storage layout before larger ranges resume. No further D:
+expansion is planned. The 230 GiB limit and all existing reserves remain;
+replay is stopped while its storage/controller adaptation is prepared.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)

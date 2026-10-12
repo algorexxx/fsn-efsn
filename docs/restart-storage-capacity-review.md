@@ -1,5 +1,58 @@
 # Capacity decision after 7,170,976
 
+## Current direction: separate Linux image on W:
+
+12 October 2026. The user prefers W: because freeing more D: space is difficult.
+The 230 to 250 GiB expansion proposal is superseded; no further D: expansion
+was approved or performed.
+
+The [direct-path test](evidence/restart-w-direct-probe-v2-2026-10-12/RESULTS.md)
+failed on directory fsync with EIO. The
+[separate ext4 image test](evidence/restart-w-image-probe-2026-10-12/RESULTS.md)
+passed on the same W: share without changing efsn or its pinned LevelDB library.
+This gives us a measured way to use W: capacity while keeping the WSL operating
+system on D:. It is a disposable loop-backed data image, not the preserved VHD.
+Small synthetic writes were slower; do not extrapolate their timings to the
+full replay or claim network-loss durability.
+
+Next bounded migration procedure (not yet implemented or launched):
+
+1. Create one new sparse raw ext4 working image under a fresh
+   `W:/FusionRestart/replay-work-7170976-<run-id>` directory, with a declared
+   512 GiB virtual ceiling and W: reserve of 100 GiB. This is a capacity ceiling,
+   not a request to write 512 GiB or a guarantee all future replay will fit.
+   Check the actual W: mapping, free space, newly created backing file and
+   exact loop-device identity before formatting. Never reuse an archive image.
+2. Keep one attachment owner and one writer. Use a private mount namespace and
+   the existing network-isolation arrangement. Refuse a missing/wrong W: mount;
+   never silently fall back to a D:-backed directory. Hold the checkpoint's run
+   and database locks, and expose its source through a read-only bind mount.
+3. Copy the 22,501 closed working files from verified checkpoint 7,170,976 into
+   that mounted image. Compare the source and destination against the sealed
+   per-file hashes. Use finite copy/verification deadlines and explicit resource
+   guards; retain failures and partial outputs. The original local checkpoint,
+   original backup, independent recovery, baselines and W: archives stay intact.
+4. Cold-open the destination with the recorded observer and match the exact
+   header, hash, state/ticket/transaction/receipt commitments, TD, ticket count
+   and other endpoint checks. Unmount cleanly, check the filesystem, detach and
+   verify reattachment/reopen. A copied manifest alone is not acceptance.
+5. Adapt only test orchestration/monitoring to the mounted image. Verify image,
+   mount and DB identities, allocation accounting and the finite stop/cleanup
+   path. Preserve Linux/D:/W: free reserves of 20/50/100 GiB and all executable,
+   source and release identities. W: capacity checks supplement rather than
+   replace checks for local logs/builds. No code or sync bypass in efsn.
+6. Run a short bounded continuation from 7,170,976 as a storage/performance trial,
+   then choose subsequent finite ranges from observed throughput and growth.
+   Do not repeat already-passing consensus tests. No larger replay starts before
+   the migrated checkpoint and adapted controller are verified.
+
+The small image fixture is detached and no replay job is running. The canonical
+verified height remains 7,170,976. This direction removes the current need for
+more D: space; a W: outage may still lose the active trial, so preserve the local
+fallback and prior sealed evidence. It does not change production storage advice.
+
+## Earlier capacity decision (superseded by the W: investigation)
+
 The checkpoint is verified; no replay writer is running. Linux has 21.937
 GiB free and D: has 57.054 GiB. Current closed working allocation is
 44.033 GiB. The host metadata record also shows about 60.6 GiB on C:

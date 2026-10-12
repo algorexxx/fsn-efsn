@@ -1,0 +1,34 @@
+{
+  "interfaces": [
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "flags": [
+        "LOOPBACK"
+      ],
+      "mtu": 65536,
+      "qdisc": "noop",
+      "operstate": "DOWN",
+      "linkmode": "DEFAULT",
+      "group": "default",
+      "txqlen": 1000,
+      "link_type": "loopback",
+      "address": "00:00:00:00:00:00",
+      "broadcast": "00:00:00:00:00:00"
+    }
+  ],
+  "mount": {
+    "target": "/mnt/w",
+    "source": "W:",
+    "fstype": "9p",
+    "options": "rw,relatime,aname=drvfs;path=W:;uid=1000;gid=1000;symlinkroot=/mnt/,cache=0x5,access=client,msize=65536,trans=fd,rfd=3,wfd=3"
+  },
+  "free_before": {
+    "/home/rehearsal": 23548973056,
+    "/mnt/d": 61261705216,
+    "/mnt/w": 3644340448256
+  },
+  "binary_sha256": "bc16405e3ddf4738ba80380709d15714a70641fd5054a44e74d08f4174cfb4e6",
+  "parent_netns": "net:[4026531833]",
+  "netns": "net:[4026532369]"
+}
