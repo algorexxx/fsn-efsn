@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 6,623,296; corrected continuation to 6,900,000 prepared.**
+**Current state: verified through 6,623,296; continuation to 6,900,000 dispatched; startup is active.**
 The [6,900,000 attempt](evidence/restart-ticket-encoder-job-6900000-2026-10-12/completion.json)
 stopped safely at 06:05 UTC after three allocation scans failed on disappearing
 LevelDB .ldb files. Its failed completion, STOP and sealed evidence are retained.
@@ -29,13 +29,17 @@ are unchanged. Failed qualification preparation and its corrected interpretation
 are retained alongside the completed v2 evidence.
 
 The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/README.md)
-is prepared for the remaining 276,704 blocks from 6,623,296. At 06:47 UTC its
+was dispatched from `b256ae6b` at 06:49:35 UTC for the remaining 276,704 blocks
+from 6,623,296. The [06:51 startup observation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/LAUNCH.md)
+records an active job without failure/STOP/completion; replay_pid is still null,
+so actual block replay is not yet established by this observation. At 06:47 UTC its
 preflight passed with 33.138 GiB Linux / 66.617 GiB D: free and no writer.
 Keep the 39 GiB sampled ceiling, 30s sampling, Linux20/D50 GiB reserves,
 six-hour clean stop, 6h15 Go / 6h30 outer timeouts and 20s outer kill grace.
 Its approximately 6.032 GiB remaining growth allowance requires Linux >27.032
-GiB and D: >60 GiB to start. Preparation adds no coverage: actual launch/startup,
-both endpoint cold checks and final evidence verification remain required.
+GiB and D: >60 GiB to start. The prepared initial-observation.py can record
+actual replay only after replay_started and a size sample exist. Both endpoint
+cold checks and final evidence verification remain required for new coverage.
 
 The earlier [6,600,000 follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md)
 remains valid with the original filename-label verifier failure unchanged. Its

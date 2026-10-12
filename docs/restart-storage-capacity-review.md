@@ -20,7 +20,9 @@ The [live-scan qualification](evidence/restart-replay-size-monitor-2026-10-12/RE
 passes 32 controller checks and a metadata-only closed comparison. It tolerates
 only disappeared recognized LevelDB filenames, preserving real-error refusal,
 three bounded attempts and all quotas/reserves; closed allocation remains du.
-Actual launch/startup and endpoint verification are still required. Do not
+The job was dispatched from `b256ae6b` at 06:49:35 UTC; its 06:51 observation
+records startup without failures, with actual replay still pending. Final
+endpoint/evidence verification remains required. Do not
 repeat compaction, prune protected data or rerun unrelated passing tests.
 
 The [approved expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md)
