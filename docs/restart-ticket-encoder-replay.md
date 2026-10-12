@@ -1,54 +1,37 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 6,623,296; offline replay toward 6,900,000 is running.**
-The [6,900,000 attempt](evidence/restart-ticket-encoder-job-6900000-2026-10-12/completion.json)
-stopped safely at 06:05 UTC after three allocation scans failed on disappearing
-LevelDB .ldb files. Its failed completion, STOP and sealed evidence are retained.
-No consensus mismatch was reported. The separate [cold inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md)
-passes all five commands and twelve preservation checks. Exact head, full header/RLP,
-state/ticket/transaction/receipt commitments, bloom and TD match the backup at
-6,623,296, with 4,923 cold tickets and 148 transactions/receipts. No final warm
-ticket count is available. It preserves 16,893 closed working-file hashes, 1,383
-recovery hashes, backup/baseline metadata, source/executable/toolchain/identity and
-original STOP; 1,986 prior evidence files verify.
+Updated 12 October 2026. **Verified through 6,900,000; next range awaits capacity preflight.**
+The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
+completed with automatic verification at 09:00:57 UTC on 12 October. All seven
+commands, both cold endpoint checks and ten additional preservation checks pass.
+Full header/RLP, state/ticket/transaction/receipt commitments, bloom and TD match
+the backup. Warm/cold ticket counts agree at 5,304, with 12 transactions/receipts.
+The final 19,533 working-file hashes are unchanged across cold inspection; the
+1,383-file separate recovery, protected metadata, source/toolchain/executable,
+replay identity and original failed attempt/STOP remain preserved. Startup
+verified 2,028 prior evidence files; all 57 final manifest entries now verify.
 
-This adds 23,296 blocks, giving 3,943,296 post-legacy blocks and 8,506,784 still
-remaining to the 15,130,080 tip. F12/G1 and final restored-startup/recovery/handover
-and independent restore/portable-package acceptance remain open.
+Coverage adds 276,704 blocks, reaching 4,220,000 post-legacy blocks and leaving
+8,230,080 to the 15,130,080 tip. F12/G1 and final restored-startup/recovery/handover,
+independent restore/portable-package acceptance and consensus review remain open.
+No release selection or node runtime changed.
 
-The [allocation monitor fix](evidence/restart-replay-size-monitor-2026-10-12/RESULTS.md)
-passes 32 controller tests and exactly matches GNU du on the closed checkpoint:
-35,399,045,120 bytes. Live scans record and tolerate only missing recognized
-LevelDB filenames during metadata traversal; permissions/I/O errors, unknown
-missing entries, symlinks, changed roots and timeouts still fail. Each sample
-remains bounded to 15s plus 2s grace, with three failed attempts triggering STOP.
-Closed allocation retains the existing du helper. Sampled accounting is not a
-hard quota. Only test tooling changed; node executable and release selection
-are unchanged. Failed qualification preparation and its corrected interpretation
-are retained alongside the completed v2 evidence.
+Closed allocation is 40,776,675,328 bytes (37.976 GiB). All 223 live allocation
+samples and the final closed measurement passed without retries; no vanished
+entry was recorded. The [qualified allocation monitor](evidence/restart-replay-size-monitor-2026-10-12/RESULTS.md)
+retains bounded workers, fail-closed real errors and sampled, non-atomic accounting.
+The earlier failed run and [6,623,296 cold inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md)
+remain dated evidence, as does the separate 6,600,000 verifier follow-up.
 
-The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/README.md)
-was dispatched from `b256ae6b` at 06:49:35 UTC for the remaining 276,704 blocks
-from 6,623,296. Actual replay began at 06:55:04 UTC after four passing startup
-commands. The [07:37 observation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/STATUS.md)
-records active replay, provisional progress beyond 6,728,000 and a successful
-34.801 GiB allocation sample, without failure/STOP/completion. Startup verified
-16,893 working-file hashes, 1,383 recovery hashes and 2,028 prior evidence files;
-executable/replay identity and isolated protected views match. At 06:47 UTC its
-preflight passed with 33.138 GiB Linux / 66.617 GiB D: free and no writer.
-Keep the 39 GiB sampled ceiling, 30s sampling, Linux20/D50 GiB reserves,
-six-hour clean stop, 6h15 Go / 6h30 outer timeouts and 20s outer kill grace.
-Its approximately 6.032 GiB remaining growth allowance requires Linux >27.032
-GiB and D: >60 GiB to start. The observation reads process and job records only,
-without hashing the live database. Both endpoint
-cold checks and final evidence verification remain required for new coverage.
-
-The earlier [6,600,000 follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md)
-remains valid with the original filename-label verifier failure unchanged. Its
-separate-provenance qualification and early observer patch/source checks remain.
-The approved [230 GiB expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md)
-is complete. Preserve original backup, independent recovery, W: image, baselines
-and all failed/sealed evidence. Review capacity/value again after this job.
+The next useful history range is 6,900,000 to 7,200,000, subject to a fresh
+capacity/provenance gate before launch. A 44 GiB sampled ceiling would allow
+about 6.024 GiB growth: recent net growth was 5.008 GiB across 276,704 blocks,
+equivalent to about 5.43 GiB over 300,000 if that rate holds. This is a planning
+estimate, not guaranteed growth or permission to exceed the limit. Keep Linux20/
+D50 GiB reserves, six-hour clean stop, 6h15 Go / 6h30 outer limits, 20s outer
+kill grace and 30s allocation sampling. Review actual starting capacity before
+preparing that range for launch; do not reduce reserves or expand beyond the
+approved 230 GiB disk. Protected backup/recovery and the W: archive remain.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
