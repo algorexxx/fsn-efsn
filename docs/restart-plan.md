@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: historical replay is separately verified through 6,600,000; no test is running.**
+**Current state: verified through 6,600,000; expansion complete and next replay prepared.**
 The [verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes all seven recorded commands,
 both cold checks and nine preservation checks. The original automatic verifier
 failed because the observer patch used different filename labels in its first
@@ -18,17 +18,24 @@ This adds 300,000 blocks and brings post-legacy coverage to 3,920,000. Another
 8,530,080 blocks remain to the backup tip; F12/G1 and final restored-startup,
 recovery and handover acceptance remain open.
 
-Fresh capacity at 00:23 UTC is about 24.25 GiB Linux / 67.32 GiB D:, with
-32.585 GiB closed working allocation. Another 300,000-block job to 6,900,000,
-with a proposed 39 GiB ceiling, fails the unchanged Linux >27.415 GiB gate.
-Only about 3.25 GiB remains above the Linux reserve and preparation margin;
-another tiny job is not justified. The [capacity proposal](restart-storage-capacity-review.md)
-is to expand the protected virtual disk from 220 to 230 GiB, pending a user
-decision. Preserve the 20/50 GiB reserves and all finite time/size limits.
-Before any resumed writer, explicitly qualify the separate-verification
-provenance: the existing controller correctly refuses the original failed
-completion. Do not fabricate success, use an unrelated stopped-attempt path,
-or rerun passing history just to alter patch labels.
+Peter approved expansion from 220 to 230 GiB, and the [expansion and preservation checks](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md) pass.
+All 16,672 working and 1,383 recovery files match before/after; protected metadata,
+source, executable and toolchain identities remain unchanged. The filesystem is
+ext4/read-write with no recorded storage-error patterns. No backup was deleted.
+
+The [controller qualification](evidence/restart-reverified-prior-controller-2026-10-12/RESULTS.md)
+passes 24 tests. It accepts only an explicitly pinned follow-up tied to the
+unchanged original failure, completed replay and cold verification; it preserves
+both manifests. Observer patch labels/source are now checked before long work.
+Only test tooling changed; chain runtime and release selection are unchanged.
+
+The [6,900,000 job](evidence/restart-ticket-encoder-job-6900000-2026-10-12/README.md)
+is prepared with a passing 05:44 UTC preflight: about 33.60 GiB Linux / 68.21 GiB
+D: free, above the >27.415/>60 GiB gates. Its 300,000-block interval has a 39 GiB
+sampled ceiling, unchanged six-hour clean stop / 6h15 Go / 6h30 outer timeouts,
+and 20/50 GiB reserves. Preparation adds no coverage; record actual launch and
+startup status before reporting running. Full cold endpoint checks and final
+evidence verification remain required. Review capacity/value again afterward.
 
 The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
 Their 77,856-file preservation result and 220 GiB geometry remain recorded.

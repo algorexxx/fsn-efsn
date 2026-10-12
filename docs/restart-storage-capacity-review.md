@@ -1,54 +1,32 @@
-# Capacity after separately verified replay through 6,600,000
+# Capacity after approved expansion to 230 GiB
 
-**Current observation, 12 October 2026 at 00:23 UTC:** the
-[verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes. The original replay and both cold
-checks succeeded; its automatic-verifier failure concerned only patch filename
-labels and remains sealed. No replay, observer or node process remains.
+**12 October 2026, 05:44 UTC:** the approved [220 to 230 GiB expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md) and its preservation checks pass.
+The exact FusionRehearsal root device reports 246,960,619,520 bytes. Both
+before/after checks preserve all 16,672 working-file and 1,383 recovery hashes,
+original-backup/baseline metadata and source/executable/toolchain/replay identity.
+Native WSL resize succeeded directly; the idle-Docker fallback was not needed.
+The filesystem is ext4/read-write with no recorded kernel storage-error patterns.
+This is not an independent restore test or a new full original-backup hash.
 
-Fresh free capacity is 26,039,566,336 bytes (24.251 GiB) in Linux and
-72,288,534,528 bytes (67.324 GiB) on D:. Closed working allocation is
-34,987,921,408 bytes (32.585 GiB), up 5.517 GiB in 300,000 blocks.
-The proposed next 300,000 blocks to 6,900,000 with a 39 GiB sampled ceiling
-allows 6.415 GiB growth and requires Linux >27.415 GiB / D: >60 GiB.
-The existing gate fails Linux. Only 3.251 GiB remains above the Linux reserve
-and preparation margin; repeating tiny ranges is not justified.
+The [next-job preflight](evidence/restart-ticket-encoder-job-6900000-2026-10-12/preflight-ready-2026-10-12.json)
+records Linux 36,076,240,896 bytes (33.599 GiB) and D: 73,240,641,536 bytes
+(68.211 GiB) free. Working allocation is 34,987,925,504 bytes, 4 KiB above the
+previous closed `du` value; content hashes still match. The 300,000-block range
+to 6,900,000 has a 39 GiB sampled ceiling and about 6.415 GiB growth allowance.
+Linux >27.415 GiB / D: >60 GiB starting gates pass. Keep Linux20/D50 GiB
+reserves and unchanged finite time limits; review capacity before any next job.
+There is no claim that all remaining 8,530,080 blocks fit this expansion.
 
-## Pending capacity decision
+The [separate-prior controller qualification](evidence/restart-reverified-prior-controller-2026-10-12/RESULTS.md)
+passes 24 tests. The next prepared inputs explicitly pin the successful separate
+6,600,000 verification and preserve the original label-only verifier failure.
+Preparation adds no history coverage; actual dispatch and startup must be recorded.
 
-Propose expanding only `D:/FusionRehearsal/Ubuntu/ext4.vhdx`, belonging to
-FusionRehearsal, from 220 to 230 GiB virtual capacity. The earlier explicit
-expansion approval covered 200 to 220 GiB; the further expansion is pending.
-This grows its virtual limit, not immediately its physical allocation. Actual
-host capacity must still pass the 50 GiB reserve and starting gate. No claim
-that the remaining 8,530,080 historical blocks will fit follows from this step.
-
-The reviewable proposed operation is:
-
-1. Reuse the qualified native expansion and preservation procedure. Validate
-   exact distro/disk identity, completed/follow-up evidence, current working and
-   separate recovery inventories, original-backup/baseline metadata and retained
-   executable/source/toolchain identities, under the existing locks/isolation.
-2. Stop and detach the rehearsal disk. Only stop an idle Docker/WSL backend if
-   needed and no unrelated workload is active; otherwise hold that step. Expand
-   this disk alone to 230 GiB. No compaction, deletion, repartitioning or pruning.
-3. Verify actual geometry/filesystem health, working/recovery file hashes and
-   protected metadata/identities afterward. Retain the W: image as recovery and
-   restore any deliberately stopped idle service. Record actual free capacity.
-4. Before any resumed writer, explicitly qualify the separate successful
-   evidence verification without overwriting the original failed completion.
-   The existing controller currently refuses it. Only after this and fresh
-   capacity/inventory checks pass, prepare a new finite range with unchanged
-   20/50 GiB reserves and timeouts. Preserve all failed/sealed evidence.
-
-No expansion or next replay has been launched. Do not lower reserves, repeat
-compaction, delete protected data or rerun passing small tests while waiting.
-The earlier W: archive/compaction is complete, with 77,856 protected files
-verified. Its 267 MiB reclamation (32 MiB later reused) is not worth repeating.
-Independent complete restore/portable-package acceptance remains open.
-
-All obsolete fixture roots under D:/FusionRehearsal were already archived and
-retired. Ubuntu and swap remain; the 36 MiB swap file is not a solution to this
-Linux-capacity shortfall. No unrelated user folders were inspected or selected.
+The verified W: VHD archive, original backup, separate recovery and failed runs
+remain. No compaction, deletion, database pruning or release-selection change.
+Earlier compaction reclaimed only 267 MiB (32 MiB later reused), so repeating it
+is not justified. Obsolete D: fixture roots were already archived and retired;
+Ubuntu and swap remain. Independent complete restore/package acceptance is open.
 
 ## Earlier completed capacity actions
 

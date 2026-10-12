@@ -1,3 +1,6 @@
+import difflib
+import hashlib
+import json
 import os
 from pathlib import Path
 import re
@@ -19,6 +22,7 @@ def validate_configuration(config):
             raise ValueError('invalid path component: '+name)
     if 'stopped_attempt' in config and not re.fullmatch(r'[a-z0-9][a-z0-9-]+', config['stopped_attempt']):
         raise ValueError('invalid stopped attempt path component')
+    validate_prior_followup(config)
     if not 0 < config['start_height'] < config['end_height'] <= 15130080:
         raise ValueError('invalid historical interval')
     if config['mode'] not in ['copy', 'resume']:
@@ -56,6 +60,74 @@ def require_verified_prior(config, completion, verification):
         raise ValueError('prior job must have passed its evidence verifier')
     if completion.get('requested_end') != config['start_height'] or verification.get('end_height') != config['start_height']:
         raise ValueError('prior verified endpoint must equal requested start')
+
+
+def require_observer_change(config, prior_inputs, inputs):
+    original = (prior_inputs/'details_test.go').read_bytes()
+    changed = (inputs/'details_test.go').read_bytes()
+    old = ('const height = uint64('+str(config['start_height'])+')').encode()
+    new = ('const height = uint64('+str(config['end_height'])+')').encode()
+    if original.count(old) != 1 or changed != original.replace(old, new, 1):
+        raise ValueError('observer must change exactly one height literal')
+    expected = ''.join(difflib.unified_diff(original.decode('utf-8').splitlines(True), changed.decode('utf-8').splitlines(True), fromfile='a/details_test.go', tofile='b/details_test.go'))
+    if (inputs/'observer-change.patch').read_bytes() != expected.encode('utf-8'):
+        raise ValueError('observer patch must use the canonical filenames and exact source diff')
+
+
+def validate_prior_followup(config):
+    fields = {'prior_verification_bundle', 'prior_verification_sha256'}
+    present = fields.intersection(config)
+    if not present:
+        return
+    if present != fields or 'stopped_attempt' in config:
+        raise ValueError('separate verification requires both pinned fields and no stopped attempt')
+    if not re.fullmatch(r'[a-z0-9][a-z0-9-]+', config['prior_verification_bundle']) or not re.fullmatch(r'[0-9a-f]{64}', config['prior_verification_sha256']):
+        raise ValueError('invalid separate verification identity')
+    if config['prior_verification_bundle'] == config['prior_bundle']:
+        raise ValueError('verification follow-up must preserve a distinct original attempt')
+
+
+def require_completed_prior(config, prior_directory):
+    validate_prior_followup(config)
+    if prior_directory.name != config['prior_bundle']:
+        raise ValueError('prior directory identity differs')
+    completion = json.loads((prior_directory/'completion.json').read_text(encoding='utf-8'))
+    if 'prior_verification_bundle' not in config:
+        require_verified_prior(config, completion, json.loads((prior_directory/'verification.json').read_text(encoding='utf-8')))
+        return {}
+    followup = prior_directory.parent/config['prior_verification_bundle']
+    require_manifest_files(followup, config['prior_verification_sha256'])
+    review = json.loads((followup/'review.json').read_text(encoding='utf-8'))
+    verification = json.loads((followup/'verification.json').read_text(encoding='utf-8'))
+    require_manifest_files(prior_directory, review['original_manifests_before_and_after']['SHA256SUMS']['sha256'])
+    run = json.loads((prior_directory/'qualification/run.json').read_text(encoding='utf-8'))
+    flags = ['pass', 'original_evidence_unchanged', 'source_change_exactly_one_height_literal', 'patch_difference_exactly_two_filename_headers', 'all_original_verifier_assertions_retained']
+    if any(review.get(name) is not True for name in flags):
+        raise ValueError('separate evidence review is incomplete')
+    if review.get('original_completion') != completion or completion.get('exit') != 1 or completion.get('verified_pass') is not False:
+        raise ValueError('original verifier failure must remain unchanged')
+    if completion.get('job') != config['prior_bundle'] or completion.get('requested_end') != config['start_height'] or verification.get('end_height') != config['start_height'] or verification.get('pass') is not True:
+        raise ValueError('separate verification endpoint or attempt differs')
+    if not all(run.get(name) is True for name in ['completed', 'replay_passed', 'inspect_passed', 'cold_target_bytes_unchanged']) or run.get('failures') or run.get('stop_reason'):
+        raise ValueError('separate verification requires completed replay and cold checks')
+    if (prior_directory/'qualification/STOP').exists() or (prior_directory/'verification.json').exists():
+        raise ValueError('separate verification cannot replace or reinterpret original evidence')
+    if verification.get('endpoint') != run.get('endpoint_observations', {}).get('cold-details') or verification.get('replay_binary_sha256') != run.get('binary_sha256'):
+        raise ValueError('separate verification result differs from recorded execution')
+    if not run.get('target_before_cold_sha256') or not run.get('additional_preservation_checks') or not all(value is True for value in run['additional_preservation_checks'].values()):
+        raise ValueError('separate verification requires preserved checkpoint and identities')
+    return {followup.name: config['prior_verification_sha256']}
+
+
+def require_manifest_files(directory, expected_digest):
+    manifest = directory/'SHA256SUMS'
+    if hashlib.sha256(manifest.read_bytes()).hexdigest() != expected_digest:
+        raise ValueError('evidence manifest identity differs')
+    for line in manifest.read_text(encoding='utf-8').splitlines():
+        digest, relative = line.split(None, 1)
+        path = (directory/relative).resolve()
+        if not path.is_relative_to(directory.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+            raise ValueError('evidence file identity differs: '+relative)
 
 
 def require_verified_stopped(config, run, verification, attempt_completion):

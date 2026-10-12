@@ -1,0 +1,32 @@
+{
+  "started": "2026-10-12T05:42:17.971633+00:00",
+  "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+  "uid": 1000,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "source_sha256": {
+    "tests/restart/replay_dispatch.py": "9bd6379d6efc9c8dfe8687da82ac9c16682c7d55ae65c1ecd479c5aee60d917d",
+    "tests/restart/replay_job.py": "e953eaf70d3c9fb90c17e8034a0d9fe3dde3a422a7b8ec1602cd3c9b7375d98c",
+    "tests/restart/replay_launch.py": "dea16229da5f4cad77065fa13f7baffafc9eba7f665abeb511c6e04959a4de05",
+    "tests/restart/replay_monitor.py": "59909187c1747b6917ce55970d636c77584461fc9432fda8f946a60dfd19f627",
+    "tests/restart/replay_monitor_test.py": "40b07e280107fc1a6ba756bc659ddaae4a22197ec143699992a9e5c19af591c6",
+    "tests/restart/replay_verify.py": "e2da1564bdee090100fff88f91c6f5bfaf9d8599ca4f6b1897a3196ba3732836"
+  },
+  "source_base_commit": "056286ff6734e399e0afaf6483e077817b89439a",
+  "database_opened": false,
+  "scope": "Controller evidence gates, observer preparation, and existing affected monitor checks only",
+  "argv": [
+    "timeout",
+    "--kill-after=5s",
+    "90s",
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "replay_monitor_test"
+  ],
+  "exit": 0,
+  "source_unchanged": true,
+  "finished": "2026-10-12T05:42:20.818930+00:00",
+  "pass": true
+}

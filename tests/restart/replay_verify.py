@@ -70,7 +70,9 @@ assert prior['completed'] and prior['inspect_passed']
 if 'stopped_attempt' not in CONFIG:
     assert all(prior['additional_preservation_checks'].values())
 if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
-    monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
+    qualified_manifests = monitor.require_completed_prior(CONFIG,PRIOR)
+    for name,digest in qualified_manifests.items():
+        assert r['previous_manifest_sha256'][name] == digest
 assert not prior.get('failures') and not prior.get('stop_reason')
 recovery = json.loads((RECOVERY/'qualification/run.json').read_text(encoding='utf-8'))
 assert recovery['completed'] and recovery['inspect_passed'] and RECOVERY.name in r['previous_manifest_sha256']

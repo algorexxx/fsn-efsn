@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Separately verified through 6,600,000; no replay is running.**
+Updated 12 October 2026. **Separately verified through 6,600,000; next replay prepared after expansion.**
 The [follow-up evidence verification](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes. Replay and both cold
 checks completed successfully, but the original automatic verifier rejected
 the two filename labels in the observer patch. Its failed completion remains
@@ -23,20 +23,28 @@ timestamps and 135.611 minutes by monotonic time; that difference is unexplained
 Four transient allocation measurements recovered within the existing policy.
 The most recent unqualified automatic job completion is still the successful
 6,300,000-v3 run; the 6,600,000 coverage rests on the explicit follow-up above.
-The controller's successful-prior gate still refuses the original failed record.
-Before another writer, qualify this separate provenance explicitly; do not fake
-success or apply the STOP/host-reserve inspection path to a label-only failure.
-Future preparation must use the verifier's canonical patch filename labels.
+The ordinary successful-prior gate continues to refuse the original failed
+record. The [qualified controller](evidence/restart-reverified-prior-controller-2026-10-12/RESULTS.md)
+now accepts explicitly pinned separate verification, requiring both file manifests,
+unchanged failure, complete replay/cold/preservation evidence and matching endpoint
+and executable. All 24 checks pass. It retains both manifests for the next final
+verifier and rejects observer patch/source mismatches before lengthy replay.
 
-Closed allocation is 34,987,921,408 bytes (32.585 GiB), a 5.517 GiB increase.
-Fresh capacity at 00:23 UTC is about 24.25 GiB Linux / 67.32 GiB D:. The proposed
-300,000-block continuation to 6,900,000 with a 39 GiB ceiling requires Linux
->27.415 GiB and D: >60 GiB; Linux fails. Only about 3.25 GiB remains above its
-reserve and preparation margin, so another tiny range is not justified.
-The [220 to 230 GiB expansion proposal](restart-storage-capacity-review.md)
-awaits a user decision. No new job or storage mutation is started. Preserve the
-W: image, separate recovery, original backup and failed evidence. F12/G1 and final
-selected-binary restored startup/recovery/handover acceptance remain open.
+Peter approved the [220 to 230 GiB expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md), completed at 05:39 UTC. Before/after working and recovery
+hashes, protected metadata, source/executable/toolchain and replay identity match.
+The filesystem remains ext4/read-write without recorded storage-error patterns.
+The W: image, original backup, separate recovery and all failed evidence remain.
+
+The [next finite job](evidence/restart-ticket-encoder-job-6900000-2026-10-12/README.md)
+is prepared for 6,600,000 to 6,900,000. Its 05:44 UTC preflight passes with about
+33.60 GiB Linux / 68.21 GiB D: free, no node/replay/observer process, and exact
+source/patch/prior-evidence checks. The 39 GiB sampled ceiling permits about
+6.415 GiB growth from the 32.585 GiB closed working database. Starting floors
+remain >27.415/>60 GiB; per-batch reserves remain Linux20/D50 GiB. Keep the
+six-hour clean stop, 6h15 Go and 6h30 outer limits. No passing history is rerun.
+Launch/startup observations and full completion verification are still required;
+preparation itself adds no coverage. F12/G1, final selected-binary restored
+startup/recovery/handover and independent restore acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)

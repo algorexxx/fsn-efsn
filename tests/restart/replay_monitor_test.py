@@ -1,5 +1,6 @@
 import datetime
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -8,6 +9,7 @@ import shutil
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 import replay_monitor as monitor
 
@@ -216,6 +218,100 @@ class ReplayMonitorTests(unittest.TestCase):
             'verification':verified,
             'attempt_completion':json.loads((attempt/'completion.json').read_bytes()),
         }
+
+    def load_followup_fixture(self, copy_files=False):
+        evidence = Path(__file__).resolve().parents[2]/'docs/evidence'
+        prior = evidence/'restart-ticket-encoder-job-6600000-2026-10-11'
+        followup = evidence/'restart-ticket-encoder-6600000-verification-followup-2026-10-12'
+        if copy_files:
+            prior = Path(shutil.copytree(prior, self.root/prior.name))
+            followup = Path(shutil.copytree(followup, self.root/followup.name))
+        config = {'prior_bundle':prior.name, 'start_height':6600000,
+                  'prior_verification_bundle':followup.name,
+                  'prior_verification_sha256':hashlib.sha256((followup/'SHA256SUMS').read_bytes()).hexdigest()}
+        return {'config':config, 'prior_directory':prior}
+
+    def test_followup_accepts_sealed_evidence_without_reclassifying_original_failure(self):
+        fixture = self.load_followup_fixture()
+        original = (fixture['prior_directory']/'completion.json').read_bytes()
+        expected = {fixture['config']['prior_verification_bundle']:fixture['config']['prior_verification_sha256']}
+
+        result = monitor.require_completed_prior(**fixture)
+
+        self.assertEqual(expected, result)
+        self.assertEqual(original, (fixture['prior_directory']/'completion.json').read_bytes())
+        self.assertFalse(json.loads(original)['verified_pass'])
+
+    def test_followup_refuses_missing_identity_wrong_endpoint_and_mixed_stop_path(self):
+        fixture = self.load_followup_fixture()
+        changes = [dict(fixture['config'], start_height=6600001),
+                   dict(fixture['config'], prior_verification_sha256='0'*64),
+                   dict(fixture['config'], prior_verification_bundle='../escape'),
+                   dict(fixture['config'], stopped_attempt='other-attempt'),
+                   {key:value for key,value in fixture['config'].items() if key != 'prior_verification_sha256'}]
+
+        for changed in changes:
+            with self.subTest(configuration=changed), self.assertRaises(ValueError):
+                monitor.require_completed_prior(changed, fixture['prior_directory'])
+
+    def test_followup_refuses_changed_evidence_bytes(self):
+        fixture = self.load_followup_fixture(copy_files=True)
+        completion = fixture['prior_directory']/'completion.json'
+        completion.write_bytes(completion.read_bytes()+b'\n')
+
+        with self.assertRaisesRegex(ValueError, 'evidence file identity differs'):
+            monitor.require_completed_prior(**fixture)
+
+    def test_followup_refuses_incomplete_semantic_proof_even_with_manifest_check_stubbed(self):
+        fixture = self.load_followup_fixture(copy_files=True)
+        prior = fixture['prior_directory']
+        followup = prior.parent/fixture['config']['prior_verification_bundle']
+        mutations = [(followup/'review.json', 'original_evidence_unchanged', False),
+                     (followup/'review.json', 'all_original_verifier_assertions_retained', False),
+                     (followup/'review.json', 'original_completion', {}),
+                     (followup/'verification.json', 'endpoint', {}),
+                     (followup/'verification.json', 'replay_binary_sha256', '0'*64),
+                     (prior/'qualification/run.json', 'completed', False),
+                     (prior/'qualification/run.json', 'failures', ['failed']),
+                     (prior/'qualification/run.json', 'target_before_cold_sha256', {}),
+                     (prior/'qualification/run.json', 'additional_preservation_checks', {'bad':False})]
+
+        for path, key, value in mutations:
+            original = path.read_bytes()
+            changed = json.loads(original)
+            changed[key] = value
+            path.write_text(json.dumps(changed), encoding='utf-8')
+            with self.subTest(path=path.name, key=key), mock.patch.object(monitor, 'require_manifest_files'), self.assertRaises(ValueError):
+                monitor.require_completed_prior(**fixture)
+            path.write_bytes(original)
+
+    def test_followup_refuses_added_stop_or_replacement_verification(self):
+        fixture = self.load_followup_fixture(copy_files=True)
+        prior = fixture['prior_directory']
+
+        for path in [prior/'qualification/STOP', prior/'verification.json']:
+            path.write_text('{}', encoding='utf-8')
+            with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, 'cannot replace or reinterpret'):
+                monitor.require_completed_prior(**fixture)
+            path.unlink()
+
+    def test_observer_patch_is_checked_before_replay(self):
+        prior, changed = self.root/'prior', self.root/'inputs'
+        prior.mkdir()
+        changed.mkdir()
+        config = {'start_height':1, 'end_height':2}
+        (prior/'details_test.go').write_bytes(b'const height = uint64(1)\n')
+        (changed/'details_test.go').write_bytes(b'const height = uint64(2)\n')
+        patch = b'--- a/details_test.go\n+++ b/details_test.go\n@@ -1 +1 @@\n-const height = uint64(1)\n+const height = uint64(2)\n'
+        (changed/'observer-change.patch').write_bytes(patch)
+
+        monitor.require_observer_change(config, prior, changed)
+        (changed/'observer-change.patch').write_bytes(patch.replace(b'a/details', b'prior/details'))
+        with self.assertRaisesRegex(ValueError, 'canonical filenames'):
+            monitor.require_observer_change(config, prior, changed)
+        (changed/'details_test.go').write_bytes(b'const height = uint64(3)\n')
+        with self.assertRaisesRegex(ValueError, 'exactly one height literal'):
+            monitor.require_observer_change(config, prior, changed)
 
 
 if __name__ == '__main__':

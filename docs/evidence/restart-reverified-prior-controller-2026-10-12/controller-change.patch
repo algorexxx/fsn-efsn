@@ -1,0 +1,266 @@
+diff --git a/tests/restart/replay_job.py b/tests/restart/replay_job.py
+index f740694f..fbdac9d0 100644
+--- a/tests/restart/replay_job.py
++++ b/tests/restart/replay_job.py
+@@ -36,6 +36,8 @@ def run_test(name,binary,test,env):
+ 
+ 
+ def prepare(backup,checkpoint,env):
++    prior_inputs = PRIOR/'inputs' if (PRIOR/'inputs').is_dir() else PRIOR
++    monitor.require_observer_change(CONFIG,prior_inputs,HERE)
+     prior = json.loads((PRIOR/'qualification/run.json').read_text(encoding='utf-8'))
+     assert prior['completed'] and prior['inspect_passed'] and prior['binary_sha256'] == REPLAY_SHA
+     if 'stopped_attempt' in CONFIG:
+@@ -55,9 +57,11 @@ def prepare(backup,checkpoint,env):
+     else:
+         assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
+     if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
+-        monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
++        qualified_manifests = monitor.require_completed_prior(CONFIG,PRIOR)
+     assert not r.STOP.exists()
+     manifests = dict(prior['previous_manifest_sha256'],**{PRIOR.name:r.sha(PRIOR/'SHA256SUMS')})
++    if 'prior_verification_bundle' in CONFIG:
++        manifests.update(qualified_manifests)
+     count = 0
+     for name,digest in manifests.items():
+         directory = BUNDLE.parent/name
+@@ -97,10 +101,6 @@ def prepare(backup,checkpoint,env):
+     r.record['binary_sha256'] = REPLAY_SHA
+     shutil.copytree(PRIOR_RUN/'node',RUN/'node')
+     assert r.inventory(RUN/'node') == prior['candidate_inventory']
+-    prior_inputs = PRIOR/'inputs' if (PRIOR/'inputs').is_dir() else PRIOR
+-    original = (prior_inputs/'details_test.go').read_bytes()
+-    assert original.count(('const height = uint64('+str(START)+')').encode()) == 1
+-    assert (HERE/'details_test.go').read_bytes() == original.replace(('const height = uint64('+str(START)+')').encode(),('const height = uint64('+str(END)+')').encode(),1)
+     overlay = {'Replace':{str(RUN/'node/tests/restart/details_test.go'):str(HERE/'details_test.go')}}
+     (RUN/'observer-overlay.json').write_text(json.dumps(overlay,indent=2)+'\n',encoding='utf-8')
+     r.record['observer_overlay_sha256'] = r.sha(RUN/'observer-overlay.json')
+diff --git a/tests/restart/replay_monitor.py b/tests/restart/replay_monitor.py
+index 292a43c2..20e6f2c9 100644
+--- a/tests/restart/replay_monitor.py
++++ b/tests/restart/replay_monitor.py
+@@ -1,3 +1,6 @@
++import difflib
++import hashlib
++import json
+ import os
+ from pathlib import Path
+ import re
+@@ -19,6 +22,7 @@ def validate_configuration(config):
+             raise ValueError('invalid path component: '+name)
+     if 'stopped_attempt' in config and not re.fullmatch(r'[a-z0-9][a-z0-9-]+', config['stopped_attempt']):
+         raise ValueError('invalid stopped attempt path component')
++    validate_prior_followup(config)
+     if not 0 < config['start_height'] < config['end_height'] <= 15130080:
+         raise ValueError('invalid historical interval')
+     if config['mode'] not in ['copy', 'resume']:
+@@ -58,6 +62,74 @@ def require_verified_prior(config, completion, verification):
+         raise ValueError('prior verified endpoint must equal requested start')
+ 
+ 
++def require_observer_change(config, prior_inputs, inputs):
++    original = (prior_inputs/'details_test.go').read_bytes()
++    changed = (inputs/'details_test.go').read_bytes()
++    old = ('const height = uint64('+str(config['start_height'])+')').encode()
++    new = ('const height = uint64('+str(config['end_height'])+')').encode()
++    if original.count(old) != 1 or changed != original.replace(old, new, 1):
++        raise ValueError('observer must change exactly one height literal')
++    expected = ''.join(difflib.unified_diff(original.decode('utf-8').splitlines(True), changed.decode('utf-8').splitlines(True), fromfile='a/details_test.go', tofile='b/details_test.go'))
++    if (inputs/'observer-change.patch').read_bytes() != expected.encode('utf-8'):
++        raise ValueError('observer patch must use the canonical filenames and exact source diff')
++
++
++def validate_prior_followup(config):
++    fields = {'prior_verification_bundle', 'prior_verification_sha256'}
++    present = fields.intersection(config)
++    if not present:
++        return
++    if present != fields or 'stopped_attempt' in config:
++        raise ValueError('separate verification requires both pinned fields and no stopped attempt')
++    if not re.fullmatch(r'[a-z0-9][a-z0-9-]+', config['prior_verification_bundle']) or not re.fullmatch(r'[0-9a-f]{64}', config['prior_verification_sha256']):
++        raise ValueError('invalid separate verification identity')
++    if config['prior_verification_bundle'] == config['prior_bundle']:
++        raise ValueError('verification follow-up must preserve a distinct original attempt')
++
++
++def require_completed_prior(config, prior_directory):
++    validate_prior_followup(config)
++    if prior_directory.name != config['prior_bundle']:
++        raise ValueError('prior directory identity differs')
++    completion = json.loads((prior_directory/'completion.json').read_text(encoding='utf-8'))
++    if 'prior_verification_bundle' not in config:
++        require_verified_prior(config, completion, json.loads((prior_directory/'verification.json').read_text(encoding='utf-8')))
++        return {}
++    followup = prior_directory.parent/config['prior_verification_bundle']
++    require_manifest_files(followup, config['prior_verification_sha256'])
++    review = json.loads((followup/'review.json').read_text(encoding='utf-8'))
++    verification = json.loads((followup/'verification.json').read_text(encoding='utf-8'))
++    require_manifest_files(prior_directory, review['original_manifests_before_and_after']['SHA256SUMS']['sha256'])
++    run = json.loads((prior_directory/'qualification/run.json').read_text(encoding='utf-8'))
++    flags = ['pass', 'original_evidence_unchanged', 'source_change_exactly_one_height_literal', 'patch_difference_exactly_two_filename_headers', 'all_original_verifier_assertions_retained']
++    if any(review.get(name) is not True for name in flags):
++        raise ValueError('separate evidence review is incomplete')
++    if review.get('original_completion') != completion or completion.get('exit') != 1 or completion.get('verified_pass') is not False:
++        raise ValueError('original verifier failure must remain unchanged')
++    if completion.get('job') != config['prior_bundle'] or completion.get('requested_end') != config['start_height'] or verification.get('end_height') != config['start_height'] or verification.get('pass') is not True:
++        raise ValueError('separate verification endpoint or attempt differs')
++    if not all(run.get(name) is True for name in ['completed', 'replay_passed', 'inspect_passed', 'cold_target_bytes_unchanged']) or run.get('failures') or run.get('stop_reason'):
++        raise ValueError('separate verification requires completed replay and cold checks')
++    if (prior_directory/'qualification/STOP').exists() or (prior_directory/'verification.json').exists():
++        raise ValueError('separate verification cannot replace or reinterpret original evidence')
++    if verification.get('endpoint') != run.get('endpoint_observations', {}).get('cold-details') or verification.get('replay_binary_sha256') != run.get('binary_sha256'):
++        raise ValueError('separate verification result differs from recorded execution')
++    if not run.get('target_before_cold_sha256') or not run.get('additional_preservation_checks') or not all(value is True for value in run['additional_preservation_checks'].values()):
++        raise ValueError('separate verification requires preserved checkpoint and identities')
++    return {followup.name: config['prior_verification_sha256']}
++
++
++def require_manifest_files(directory, expected_digest):
++    manifest = directory/'SHA256SUMS'
++    if hashlib.sha256(manifest.read_bytes()).hexdigest() != expected_digest:
++        raise ValueError('evidence manifest identity differs')
++    for line in manifest.read_text(encoding='utf-8').splitlines():
++        digest, relative = line.split(None, 1)
++        path = (directory/relative).resolve()
++        if not path.is_relative_to(directory.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
++            raise ValueError('evidence file identity differs: '+relative)
++
++
+ def require_verified_stopped(config, run, verification, attempt_completion):
+     checks = {'backup_metadata_unchanged', 'baseline_metadata_unchanged',
+               'checkpoint_bytes_unchanged', 'target_bytes_unchanged',
+diff --git a/tests/restart/replay_monitor_test.py b/tests/restart/replay_monitor_test.py
+index 0dc7faf9..7b97c910 100644
+--- a/tests/restart/replay_monitor_test.py
++++ b/tests/restart/replay_monitor_test.py
+@@ -1,5 +1,6 @@
+ import datetime
+ import copy
++import hashlib
+ import json
+ import os
+ from pathlib import Path
+@@ -8,6 +9,7 @@ import shutil
+ import tempfile
+ from types import SimpleNamespace
+ import unittest
++from unittest import mock
+ 
+ import replay_monitor as monitor
+ 
+@@ -217,6 +219,100 @@ class ReplayMonitorTests(unittest.TestCase):
+             'attempt_completion':json.loads((attempt/'completion.json').read_bytes()),
+         }
+ 
++    def load_followup_fixture(self, copy_files=False):
++        evidence = Path(__file__).resolve().parents[2]/'docs/evidence'
++        prior = evidence/'restart-ticket-encoder-job-6600000-2026-10-11'
++        followup = evidence/'restart-ticket-encoder-6600000-verification-followup-2026-10-12'
++        if copy_files:
++            prior = Path(shutil.copytree(prior, self.root/prior.name))
++            followup = Path(shutil.copytree(followup, self.root/followup.name))
++        config = {'prior_bundle':prior.name, 'start_height':6600000,
++                  'prior_verification_bundle':followup.name,
++                  'prior_verification_sha256':hashlib.sha256((followup/'SHA256SUMS').read_bytes()).hexdigest()}
++        return {'config':config, 'prior_directory':prior}
++
++    def test_followup_accepts_sealed_evidence_without_reclassifying_original_failure(self):
++        fixture = self.load_followup_fixture()
++        original = (fixture['prior_directory']/'completion.json').read_bytes()
++        expected = {fixture['config']['prior_verification_bundle']:fixture['config']['prior_verification_sha256']}
++
++        result = monitor.require_completed_prior(**fixture)
++
++        self.assertEqual(expected, result)
++        self.assertEqual(original, (fixture['prior_directory']/'completion.json').read_bytes())
++        self.assertFalse(json.loads(original)['verified_pass'])
++
++    def test_followup_refuses_missing_identity_wrong_endpoint_and_mixed_stop_path(self):
++        fixture = self.load_followup_fixture()
++        changes = [dict(fixture['config'], start_height=6600001),
++                   dict(fixture['config'], prior_verification_sha256='0'*64),
++                   dict(fixture['config'], prior_verification_bundle='../escape'),
++                   dict(fixture['config'], stopped_attempt='other-attempt'),
++                   {key:value for key,value in fixture['config'].items() if key != 'prior_verification_sha256'}]
++
++        for changed in changes:
++            with self.subTest(configuration=changed), self.assertRaises(ValueError):
++                monitor.require_completed_prior(changed, fixture['prior_directory'])
++
++    def test_followup_refuses_changed_evidence_bytes(self):
++        fixture = self.load_followup_fixture(copy_files=True)
++        completion = fixture['prior_directory']/'completion.json'
++        completion.write_bytes(completion.read_bytes()+b'\n')
++
++        with self.assertRaisesRegex(ValueError, 'evidence file identity differs'):
++            monitor.require_completed_prior(**fixture)
++
++    def test_followup_refuses_incomplete_semantic_proof_even_with_manifest_check_stubbed(self):
++        fixture = self.load_followup_fixture(copy_files=True)
++        prior = fixture['prior_directory']
++        followup = prior.parent/fixture['config']['prior_verification_bundle']
++        mutations = [(followup/'review.json', 'original_evidence_unchanged', False),
++                     (followup/'review.json', 'all_original_verifier_assertions_retained', False),
++                     (followup/'review.json', 'original_completion', {}),
++                     (followup/'verification.json', 'endpoint', {}),
++                     (followup/'verification.json', 'replay_binary_sha256', '0'*64),
++                     (prior/'qualification/run.json', 'completed', False),
++                     (prior/'qualification/run.json', 'failures', ['failed']),
++                     (prior/'qualification/run.json', 'target_before_cold_sha256', {}),
++                     (prior/'qualification/run.json', 'additional_preservation_checks', {'bad':False})]
++
++        for path, key, value in mutations:
++            original = path.read_bytes()
++            changed = json.loads(original)
++            changed[key] = value
++            path.write_text(json.dumps(changed), encoding='utf-8')
++            with self.subTest(path=path.name, key=key), mock.patch.object(monitor, 'require_manifest_files'), self.assertRaises(ValueError):
++                monitor.require_completed_prior(**fixture)
++            path.write_bytes(original)
++
++    def test_followup_refuses_added_stop_or_replacement_verification(self):
++        fixture = self.load_followup_fixture(copy_files=True)
++        prior = fixture['prior_directory']
++
++        for path in [prior/'qualification/STOP', prior/'verification.json']:
++            path.write_text('{}', encoding='utf-8')
++            with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, 'cannot replace or reinterpret'):
++                monitor.require_completed_prior(**fixture)
++            path.unlink()
++
++    def test_observer_patch_is_checked_before_replay(self):
++        prior, changed = self.root/'prior', self.root/'inputs'
++        prior.mkdir()
++        changed.mkdir()
++        config = {'start_height':1, 'end_height':2}
++        (prior/'details_test.go').write_bytes(b'const height = uint64(1)\n')
++        (changed/'details_test.go').write_bytes(b'const height = uint64(2)\n')
++        patch = b'--- a/details_test.go\n+++ b/details_test.go\n@@ -1 +1 @@\n-const height = uint64(1)\n+const height = uint64(2)\n'
++        (changed/'observer-change.patch').write_bytes(patch)
++
++        monitor.require_observer_change(config, prior, changed)
++        (changed/'observer-change.patch').write_bytes(patch.replace(b'a/details', b'prior/details'))
++        with self.assertRaisesRegex(ValueError, 'canonical filenames'):
++            monitor.require_observer_change(config, prior, changed)
++        (changed/'details_test.go').write_bytes(b'const height = uint64(3)\n')
++        with self.assertRaisesRegex(ValueError, 'exactly one height literal'):
++            monitor.require_observer_change(config, prior, changed)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/tests/restart/replay_verify.py b/tests/restart/replay_verify.py
+index b078306a..d7297833 100644
+--- a/tests/restart/replay_verify.py
++++ b/tests/restart/replay_verify.py
+@@ -70,7 +70,9 @@ assert prior['completed'] and prior['inspect_passed']
+ if 'stopped_attempt' not in CONFIG:
+     assert all(prior['additional_preservation_checks'].values())
+ if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
+-    monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
++    qualified_manifests = monitor.require_completed_prior(CONFIG,PRIOR)
++    for name,digest in qualified_manifests.items():
++        assert r['previous_manifest_sha256'][name] == digest
+ assert not prior.get('failures') and not prior.get('stop_reason')
+ recovery = json.loads((RECOVERY/'qualification/run.json').read_text(encoding='utf-8'))
+ assert recovery['completed'] and recovery['inspect_passed'] and RECOVERY.name in r['previous_manifest_sha256']

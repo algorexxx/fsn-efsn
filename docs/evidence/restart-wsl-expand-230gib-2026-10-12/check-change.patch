@@ -1,0 +1,82 @@
+--- a/check.py
++++ b/check.py
+@@ -10,8 +10,9 @@
+ 
+ sys.dont_write_bytecode = True
+ HERE = Path(__file__).resolve().parent
+-PRIOR = HERE.parent/'restart-ticket-encoder-stopped-5600032-2026-10-10'
+-ATTEMPT = HERE.parent/'restart-ticket-encoder-job-6300000-2026-10-10'
++PRIOR = HERE.parent/'restart-ticket-encoder-job-6600000-2026-10-11'
++ATTEMPT = PRIOR
++FOLLOWUP = HERE.parent/'restart-ticket-encoder-6600000-verification-followup-2026-10-12'
+ HELPER = HERE.parent/'restart-ticket-encoder-replay-100000-2026-10-08/run.py'
+ spec = importlib.util.spec_from_file_location('sealed_helpers', HELPER)
+ r = importlib.util.module_from_spec(spec)
+@@ -30,8 +31,6 @@
+     links = subprocess.check_output(['ip', '-brief', 'link'], text=True)
+     assert len(links.splitlines()) == 1 and links.startswith('lo ') and 'DOWN' in links
+     record['links'] = links
+-    processes = subprocess.check_output(['ps', '-eo', 'pid,etimes,args'], text=True)
+-    (output/'processes.txt').write_text(processes, encoding='utf-8')
+     for folder in Path('/proc').iterdir():
+         if folder.name.isdigit():
+             try:
+@@ -39,16 +38,20 @@
+             except (FileNotFoundError, ProcessLookupError):
+                 pass
+     count = 0
+-    for bundle in [PRIOR, ATTEMPT]:
++    for bundle in [PRIOR, FOLLOWUP]:
+         for line in (bundle/'SHA256SUMS').read_text(encoding='utf-8').splitlines():
+             digest, name = line.split(None, 1)
+             assert r.sha(bundle/name) == digest, (bundle.name, name)
+             count += 1
+     record['evidence_files_verified'] = count
+     prior = json.loads((PRIOR/'qualification/run.json').read_text(encoding='utf-8'))
+-    verification = json.loads((PRIOR/'verification.json').read_text(encoding='utf-8'))
+-    assert verification['pass'] and verification['cold_verified_height'] == 5600032
+-    assert prior['completed'] and all(prior['preservation_checks'].values())
++    verification = json.loads((FOLLOWUP/'verification.json').read_text(encoding='utf-8'))
++    review = json.loads((FOLLOWUP/'review.json').read_text(encoding='utf-8'))
++    assert review['pass'] and review['original_evidence_unchanged']
++    assert review['original_manifests_before_and_after']['SHA256SUMS']['sha256'] == r.sha(PRIOR/'SHA256SUMS')
++    assert json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')) == review['original_completion']
++    assert verification['pass'] and verification['end_height'] == 6600000
++    assert prior['completed'] and all(prior['additional_preservation_checks'].values())
+     paths = {'backup': Path('/home/rehearsal/data/efsn/chaindata'), **{'baseline-'+h: p for h, p in r.BASELINES.items()}, 'working': Path('/home/rehearsal/replay/candidate-ticket-encoding-working'), 'recovery': Path('/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2')}
+     for path in paths.values():
+         assert path.resolve() == path and path.is_dir() and not path.is_symlink()
+@@ -66,7 +69,7 @@
+     size = int(subprocess.check_output(['blockdev', '--getsize64', source], text=True))
+     record['root_device'] = source
+     record['virtual_disk_bytes'] = size
+-    assert size == (200 if phase == 'before' else 220)*1024**3
++    assert size == (220 if phase == 'before' else 230)*1024**3
+     record['filesystem'] = subprocess.check_output(['df', '-B1', '/'], text=True)
+     subprocess.run(['mount', '--make-rprivate', '/'], check=True)
+     mounts = []
+@@ -82,19 +85,18 @@
+                 assert actual == expected, name
+                 record[name] = actual
+             else:
+-                expected = prior['target_before_cold_sha256'] if name == 'working' else prior['checkpoint_before_sha256']
++                expected = prior['target_before_cold_sha256'] if name == 'working' else prior['recovery_checkpoint_sha256']
+                 assert r.sha(directory/'replay-identity.json') == prior['checkpoint_identity_sha256']
+-                if phase == 'after':
+-                    assert r.inventory(directory) == expected, name
+-                    record[name+'_files_verified'] = len(expected)
++                assert r.inventory(directory) == expected, name
++                record[name+'_files_verified'] = len(expected)
+                 record[name+'_identity_sha256'] = prior['checkpoint_identity_sha256']
+         node = Path('/home/rehearsal/results')/ATTEMPT.name
+         assert r.inventory(r.SELECTED) == prior['selected_inventory']
+         assert r.inventory(node/'node') == prior['candidate_inventory']
+         assert r.sha(node/'bin/replay-tests') == prior['binary_sha256']
+-        assert r.sha(node/'STOP') == prior['stop_sha256']
++        assert not (node/'STOP').exists() and not (PRIOR/'qualification/STOP').exists()
+         assert r.sha(r.TOOLCHAIN/'bin/go') == prior['toolchain']['go_binary_sha256']
+-        record['source_binary_toolchain_stop_unchanged'] = True
++        record['source_binary_toolchain_unchanged_and_no_stop'] = True
+     finally:
+         for directory in reversed(mounts):
+             subprocess.run(['umount', str(directory)], check=True)

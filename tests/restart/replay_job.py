@@ -36,6 +36,8 @@ def run_test(name,binary,test,env):
 
 
 def prepare(backup,checkpoint,env):
+    prior_inputs = PRIOR/'inputs' if (PRIOR/'inputs').is_dir() else PRIOR
+    monitor.require_observer_change(CONFIG,prior_inputs,HERE)
     prior = json.loads((PRIOR/'qualification/run.json').read_text(encoding='utf-8'))
     assert prior['completed'] and prior['inspect_passed'] and prior['binary_sha256'] == REPLAY_SHA
     if 'stopped_attempt' in CONFIG:
@@ -55,9 +57,11 @@ def prepare(backup,checkpoint,env):
     else:
         assert all(prior['additional_preservation_checks'].values()) and not prior.get('failures')
     if 'stopped_attempt' not in CONFIG and (PRIOR/'inputs').is_dir():
-        monitor.require_verified_prior(CONFIG,json.loads((PRIOR/'completion.json').read_text(encoding='utf-8')),json.loads((PRIOR/'verification.json').read_text(encoding='utf-8')))
+        qualified_manifests = monitor.require_completed_prior(CONFIG,PRIOR)
     assert not r.STOP.exists()
     manifests = dict(prior['previous_manifest_sha256'],**{PRIOR.name:r.sha(PRIOR/'SHA256SUMS')})
+    if 'prior_verification_bundle' in CONFIG:
+        manifests.update(qualified_manifests)
     count = 0
     for name,digest in manifests.items():
         directory = BUNDLE.parent/name
@@ -97,10 +101,6 @@ def prepare(backup,checkpoint,env):
     r.record['binary_sha256'] = REPLAY_SHA
     shutil.copytree(PRIOR_RUN/'node',RUN/'node')
     assert r.inventory(RUN/'node') == prior['candidate_inventory']
-    prior_inputs = PRIOR/'inputs' if (PRIOR/'inputs').is_dir() else PRIOR
-    original = (prior_inputs/'details_test.go').read_bytes()
-    assert original.count(('const height = uint64('+str(START)+')').encode()) == 1
-    assert (HERE/'details_test.go').read_bytes() == original.replace(('const height = uint64('+str(START)+')').encode(),('const height = uint64('+str(END)+')').encode(),1)
     overlay = {'Replace':{str(RUN/'node/tests/restart/details_test.go'):str(HERE/'details_test.go')}}
     (RUN/'observer-overlay.json').write_text(json.dumps(overlay,indent=2)+'\n',encoding='utf-8')
     r.record['observer_overlay_sha256'] = r.sha(RUN/'observer-overlay.json')
