@@ -4,7 +4,9 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import subprocess
+import sys
 import time
 
 
@@ -211,7 +213,12 @@ def run_replay(helper, env, limits):
                str(helper.RUN/'bin/replay-tests'), '-test.run=^TestPreservedHistoryReplay$',
                '-test.v', '-test.count=1', '-test.timeout='+str(limits['go_seconds'])+'s']
     env = dict(env, FUSION_RESTART_REPLAY_DIR=str(helper.TARGET), FUSION_RESTART_REPLAY_STOP_FILE=str(helper.STOP))
-    run_monitored(helper, command, helper.RUN/'node/tests/restart', env, limits)
+    closed_measurement = helper.allocated_size
+    helper.allocated_size = lambda: measure_live_allocation(helper)
+    try:
+        run_monitored(helper, command, helper.RUN/'node/tests/restart', env, limits)
+    finally:
+        helper.allocated_size = closed_measurement
     helper.record['replay_passed'] = True
     helper.record['closed_allocated_bytes'] = helper.allocated_size()
     if helper.record['closed_allocated_bytes'] is None:
@@ -223,3 +230,64 @@ def write_atomic(path, data):
     temporary = Path(str(path)+'.tmp')
     temporary.write_text(data, encoding='utf-8')
     os.replace(temporary, path)
+
+
+def allocated_blocks(directory):
+    descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        root = os.fstat(descriptor)
+        allocated = root.st_blocks * 512
+        seen = {(root.st_dev, root.st_ino)}
+        vanished = []
+        with os.scandir(descriptor) as entries:
+            for entry in entries:
+                try:
+                    info = entry.stat(follow_symlinks=False)
+                except FileNotFoundError:
+                    if not re.fullmatch(r'(?:[0-9]+\.(?:ldb|sst|log|tmp)|MANIFEST-[0-9]+)', entry.name):
+                        raise
+                    vanished.append(entry.name)
+                    continue
+                if not stat.S_ISREG(info.st_mode) or info.st_dev != root.st_dev:
+                    raise ValueError('allocation scan requires regular files on the target filesystem')
+                identity = (info.st_dev, info.st_ino)
+                if identity not in seen:
+                    allocated += info.st_blocks * 512
+                    seen.add(identity)
+        final = os.stat(directory, follow_symlinks=False)
+        if (final.st_dev, final.st_ino) != (root.st_dev, root.st_ino):
+            raise ValueError('allocation target directory changed')
+        allocated += max(0, final.st_blocks - root.st_blocks) * 512
+        return {'path':str(directory), 'allocated_bytes':allocated, 'vanished_entries':vanished}
+    finally:
+        os.close(descriptor)
+
+
+def measure_live_allocation(helper):
+    command = ['timeout','--kill-after=2s','15s',sys.executable,'-B',str(Path(__file__).resolve()),'--allocated-size',str(helper.TARGET)]
+    for attempt in range(1,4):
+        measured = subprocess.run(command,capture_output=True,text=True)
+        entry = {'time':helper.now(),'attempt':attempt,'exit':measured.returncode,
+                 'stdout':'','stderr':measured.stderr,'method':'stat-blocks-v1',
+                 'scanner_stdout':measured.stdout,'argv':command}
+        value = None
+        if measured.returncode == 0:
+            try:
+                result = json.loads(measured.stdout)
+                if result['path'] == str(helper.TARGET) and type(result['allocated_bytes']) is int and result['allocated_bytes'] >= 0 and isinstance(result['vanished_entries'],list):
+                    value = result['allocated_bytes']
+                    entry['stdout'] = str(value)+'\t'+str(helper.TARGET)+'\n'
+            except (ValueError,KeyError,TypeError):
+                pass
+        helper.record['size_measurements'].append(entry)
+        helper.save()
+        if value is not None:
+            return value
+        time.sleep(1)
+    return None
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3 or sys.argv[1] != '--allocated-size':
+        raise ValueError('expected --allocated-size and one target directory')
+    print(json.dumps(allocated_blocks(Path(sys.argv[2]))))

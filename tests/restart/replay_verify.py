@@ -159,6 +159,15 @@ for measurement in r['size_measurements']:
     assert measurement['attempt'] == next_attempt
     fields = measurement['stdout'].split()
     valid = measurement['exit'] == 0 and len(fields) == 2 and fields[0].isdigit() and fields[1] == r['target']
+    if measurement.get('method') == 'stat-blocks-v1':
+        assert measurement['argv'] == ['timeout','--kill-after=2s','15s','/usr/bin/python3','-B',str(HERE/'replay_monitor.py'),'--allocated-size',r['target']]
+        if valid:
+            scan = json.loads(measurement['scanner_stdout'])
+            assert scan['path'] == r['target'] and type(scan['allocated_bytes']) is int and scan['allocated_bytes'] == int(fields[0])
+            assert all(re.fullmatch(r'(?:[0-9]+\.(?:ldb|sst|log|tmp)|MANIFEST-[0-9]+)',name) for name in scan['vanished_entries'])
+            assert not measurement['stderr']
+    else:
+        assert 'method' not in measurement
     if valid:
         next_attempt = 1
     else:
@@ -166,6 +175,8 @@ for measurement in r['size_measurements']:
         next_attempt += 1
         assert next_attempt <= 3
 assert next_attempt == 1
+assert any(m.get('method') == 'stat-blocks-v1' for m in r['size_measurements'])
+assert 'method' not in r['size_measurements'][-1]
 result = {'pass':True,'commands':len(commands),'previous_files_verified':previous_files,'started':r['started'],'replay_started':commands[4]['started'],'replay_finished':commands[4]['finished'],'finished':r['finished'],'start_height':START,'end_height':END,'mode':CONFIG['mode'],'recovery_checkpoint':CONFIG['recovery_checkpoint'],'replay_limits':CONFIG['limits'],'endpoint':dict(reference,TicketCount=count),'replay_binary_sha256':REPLAY_SHA,'observer_binary_sha256':r['observer_binary_sha256'],'checkpoint_files_verified':len(r['checkpoint_before_sha256']),'target_files_hashed':len(r['target_before_cold_sha256']),'closed_allocated_bytes':r['closed_allocated_bytes'],'remaining_bytes':r['remaining_bytes'],'legacy_checkpoint_end':2680000,'monitor_retries':monitor_retries}
 (BUNDLE/'verification.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({k:v for k,v in result.items() if k!='endpoint'},indent=2))

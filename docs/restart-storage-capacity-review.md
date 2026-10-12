@@ -1,39 +1,36 @@
-# Capacity after approved expansion to 230 GiB
+# Capacity after the stopped-checkpoint verification
 
-**12 October 2026, 05:44 UTC:** the approved [220 to 230 GiB expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md) and its preservation checks pass.
-The exact FusionRehearsal root device reports 246,960,619,520 bytes. Both
-before/after checks preserve all 16,672 working-file and 1,383 recovery hashes,
-original-backup/baseline metadata and source/executable/toolchain/replay identity.
-Native WSL resize succeeded directly; the idle-Docker fallback was not needed.
-The filesystem is ext4/read-write with no recorded kernel storage-error patterns.
-Native WSL resize invoked e2fsck, which optimized 26 inode extent trees and
-reported filesystem modification before resize2fs; that exact output is retained
-in the sealed expansion log. Content preservation checks above passed afterward.
-The separate mounted-health check is not a further fsck. This is not an
-independent restore test or a new full original-backup hash.
+**12 October 2026, 06:47 UTC:** the approved 230 GiB geometry remains. The
+first 6,900,000 attempt stopped on three live du scans of disappearing .ldb
+files, not a breached reserve or the 39 GiB allocation ceiling. Its saved state
+is now [cold-verified at 6,623,296](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md).
+Working allocation is 35,399,045,120 bytes; both GNU du and the qualified new
+metadata scanner agree under locks. No original backup/recovery data was deleted.
 
-The [next-job preflight](evidence/restart-ticket-encoder-job-6900000-2026-10-12/preflight-ready-2026-10-12.json)
-records Linux 36,076,240,896 bytes (33.599 GiB) and D: 73,240,641,536 bytes
-(68.211 GiB) free. Working allocation is 34,987,925,504 bytes, 4 KiB above the
-previous closed `du` value; content hashes still match. The 300,000-block range
-to 6,900,000 has a 39 GiB sampled ceiling and about 6.415 GiB growth allowance.
-Linux >27.415 GiB / D: >60 GiB starting gates pass. Keep Linux20/D50 GiB
-reserves and unchanged finite time limits; review capacity before any next job.
-There is no claim that all remaining 8,530,080 blocks fit this expansion.
+The fresh [v2 preflight](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/preflight-ready-2026-10-12.json)
+passes with 35,582,185,472 bytes
+(33.138 GiB) free in Linux and 71,529,365,504
+(66.617 GiB) on D:. About 6.032 GiB growth remains under the unchanged
+39 GiB sampled ceiling. Keep Linux >27.032 GiB / D: >60 GiB starting gates,
+Linux20/D50 GiB per-batch reserves and the existing finite time limits. The
+prepared job finishes the original endpoint, at most 276,704 additional blocks.
+No claim is made that all remaining 8,506,784 blocks fit the 230 GiB disk.
 
-The [separate-prior controller qualification](evidence/restart-reverified-prior-controller-2026-10-12/RESULTS.md)
-passes 24 tests. The next prepared inputs explicitly pin the successful separate
-6,600,000 verification and preserve the original label-only verifier failure.
-The job [launched and passed startup](evidence/restart-ticket-encoder-job-6900000-2026-10-12/STATUS.md)
-from `4736c9a8` at 05:46 UTC. Historical coverage remains 6,600,000 until the new
-endpoint and evidence verification pass; these capacity figures are preflight,
-not measurements of a completed 6,900,000 replay.
+The [live-scan qualification](evidence/restart-replay-size-monitor-2026-10-12/RESULTS.md)
+passes 32 controller checks and a metadata-only closed comparison. It tolerates
+only disappeared recognized LevelDB filenames, preserving real-error refusal,
+three bounded attempts and all quotas/reserves; closed allocation remains du.
+Actual launch/startup and endpoint verification are still required. Do not
+repeat compaction, prune protected data or rerun unrelated passing tests.
 
-The verified W: VHD archive, original backup, separate recovery and failed runs
-remain. No compaction, deletion, database pruning or release-selection change.
-Earlier compaction reclaimed only 267 MiB (32 MiB later reused), so repeating it
-is not justified. Obsolete D: fixture roots were already archived and retired;
-Ubuntu and swap remain. Independent complete restore/package acceptance is open.
+The [approved expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md)
+preserved all then-current 16,672 working and 1,383 recovery hashes and protected
+metadata/identities. Native WSL e2fsck optimized 26 inode extent trees before
+resize2fs; filesystem modification and subsequent successful checks are recorded.
+The separate mounted-health check was not another fsck or independent restore.
+The verified W: archive, original backup, separate recovery, baselines and failed
+runs remain. Earlier compaction reclaimed only 267 MiB (32 MiB later reused),
+so repeating it is not justified. Independent complete restore remains open.
 
 ## Earlier completed capacity actions
 

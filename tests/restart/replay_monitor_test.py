@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import sys
 import shutil
+import subprocess
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -312,6 +313,107 @@ class ReplayMonitorTests(unittest.TestCase):
         (changed/'details_test.go').write_bytes(b'const height = uint64(3)\n')
         with self.assertRaisesRegex(ValueError, 'exactly one height literal'):
             monitor.require_observer_change(config, prior, changed)
+
+    @unittest.skipUnless(os.name == 'posix', 'allocated blocks require Linux')
+    def test_quiescent_allocation_matches_du_with_sparse_files_and_hardlinks(self):
+        (self.root/'123.ldb').write_bytes(b'x'*8192)
+        os.link(self.root/'123.ldb',self.root/'456.ldb')
+        with (self.root/'789.log').open('wb') as file:
+            file.truncate(8*1024**2)
+        expected = int(subprocess.check_output(['du','-sB1',str(self.root)],text=True).split()[0])
+
+        actual = monitor.allocated_blocks(self.root)
+
+        self.assertEqual({'path':str(self.root),'allocated_bytes':expected,'vanished_entries':[]}, actual)
+
+    @unittest.skipUnless(os.name == 'posix', 'allocated blocks require Linux')
+    def test_vanished_table_does_not_discard_remaining_allocation(self):
+        (self.root/'retained.ldb').write_bytes(b'x'*8192)
+        expected = int(subprocess.check_output(['du','-sB1',str(self.root)],text=True).split()[0])
+        with os.scandir(self.root) as iterator:
+            entries = list(iterator)
+        missing = mock.Mock()
+        missing.name = '123.ldb'
+        missing.stat.side_effect = FileNotFoundError('removed between enumeration and stat')
+        iterator = mock.MagicMock()
+        iterator.__enter__.return_value = entries+[missing]
+
+        with mock.patch.object(monitor.os,'scandir',return_value=iterator):
+            actual = monitor.allocated_blocks(self.root)
+
+        self.assertEqual({'path':str(self.root),'allocated_bytes':expected,'vanished_entries':['123.ldb']},actual)
+
+    @unittest.skipUnless(os.name == 'posix', 'allocated blocks require Linux')
+    def test_allocation_refuses_unknown_missing_entries_permissions_and_io_errors(self):
+        cases = [('replay-identity.json',FileNotFoundError),('123.ldb',PermissionError),('123.ldb',OSError)]
+
+        for name,error in cases:
+            entry = mock.Mock()
+            entry.name = name
+            entry.stat.side_effect = error('measurement unavailable')
+            iterator = mock.MagicMock()
+            iterator.__enter__.return_value = [entry]
+            with self.subTest(name=name,error=error), mock.patch.object(monitor.os,'scandir',return_value=iterator), self.assertRaises(error):
+                monitor.allocated_blocks(self.root)
+
+    @unittest.skipUnless(os.name == 'posix', 'allocated blocks require Linux')
+    def test_allocation_refuses_nested_directory_and_symlink(self):
+        child = self.root/'child'
+        child.mkdir()
+
+        with self.assertRaisesRegex(ValueError,'regular files'):
+            monitor.allocated_blocks(self.root)
+        child.rmdir()
+        child.symlink_to(self.root,target_is_directory=True)
+        with self.assertRaisesRegex(ValueError,'regular files'):
+            monitor.allocated_blocks(self.root)
+
+    @unittest.skipUnless(os.name == 'posix', 'bounded worker requires Linux')
+    def test_live_allocation_worker_records_raw_result_and_finite_command(self):
+        self.helper.TARGET = self.root
+        self.helper.record['size_measurements'] = []
+        expected = int(subprocess.check_output(['du','-sB1',str(self.root)],text=True).split()[0])
+
+        actual = monitor.measure_live_allocation(self.helper)
+
+        self.assertEqual(expected,actual)
+        self.assertEqual(1,len(self.helper.record['size_measurements']))
+        entry = self.helper.record['size_measurements'][0]
+        self.assertEqual(['timeout','--kill-after=2s','15s'],entry['argv'][:3])
+        self.assertEqual('stat-blocks-v1',entry['method'])
+        self.assertEqual(expected,json.loads(entry['scanner_stdout'])['allocated_bytes'])
+
+    def test_live_allocation_timeouts_stop_after_three_attempts(self):
+        self.helper.TARGET = self.root
+        self.helper.record['size_measurements'] = []
+        unavailable = subprocess.CompletedProcess([],124,stdout='',stderr='timeout')
+
+        with mock.patch.object(monitor.subprocess,'run',return_value=unavailable) as child, mock.patch.object(monitor.time,'sleep'):
+            actual = monitor.measure_live_allocation(self.helper)
+
+        self.assertIsNone(actual)
+        self.assertEqual(3,child.call_count)
+        self.assertEqual([1,2,3],[m['attempt'] for m in self.helper.record['size_measurements']])
+
+    def test_live_allocation_rejects_malformed_or_wrong_target_worker_output(self):
+        self.helper.TARGET = self.root
+        self.helper.record['size_measurements'] = []
+        outputs = ['not json',json.dumps({'path':'wrong','allocated_bytes':4096,'vanished_entries':[]}),json.dumps({'path':str(self.root),'allocated_bytes':True,'vanished_entries':[]})]
+
+        for output in outputs:
+            child = subprocess.CompletedProcess([],0,stdout=output,stderr='')
+            with self.subTest(output=output), mock.patch.object(monitor.subprocess,'run',return_value=child), mock.patch.object(monitor.time,'sleep'):
+                actual = monitor.measure_live_allocation(self.helper)
+            self.assertIsNone(actual)
+
+    def test_replay_failure_restores_closed_measurement_function(self):
+        self.helper.TARGET = self.root
+        original = self.helper.allocated_size
+
+        with mock.patch.object(monitor,'run_monitored',side_effect=RuntimeError('stopped')), self.assertRaisesRegex(RuntimeError,'stopped'):
+            monitor.run_replay(self.helper,{},self.limits)
+
+        self.assertIs(original,self.helper.allocated_size)
 
 
 if __name__ == '__main__':

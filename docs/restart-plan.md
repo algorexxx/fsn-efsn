@@ -1,59 +1,54 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 6,600,000; 6,900,000 attempt stopped; read-only recovery inspection prepared.**
-The latest attempt stopped at 06:05 UTC after three consecutive allocation
-scans failed on disappearing LevelDB .ldb files. The log says stop before block
-6,623,297, but the saved head is not yet cold-verified. All nine preservation
-checks pass and the original failed completion/STOP/manifests remain unchanged.
-No replay writer remains. Fresh free space is about 33.16 GiB Linux / 66.62 GiB
-D:. A [bounded read-only inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/README.md)
-is prepared; accepted coverage stays 6,600,000. Resolve the live measurement race
-and verify the saved state before preparing a new bounded continuation.
+**Current state: verified through 6,623,296; corrected continuation to 6,900,000 prepared.**
+The [6,900,000 attempt](evidence/restart-ticket-encoder-job-6900000-2026-10-12/completion.json)
+stopped safely at 06:05 UTC after three allocation scans failed on disappearing
+LevelDB .ldb files. Its failed completion, STOP and sealed evidence are retained.
+No consensus mismatch was reported. The separate [cold inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md)
+passes all five commands and twelve preservation checks. Exact head, full header/RLP,
+state/ticket/transaction/receipt commitments, bloom and TD match the backup at
+6,623,296, with 4,923 cold tickets and 148 transactions/receipts. No final warm
+ticket count is available. It preserves 16,893 closed working-file hashes, 1,383
+recovery hashes, backup/baseline metadata, source/executable/toolchain/identity and
+original STOP; 1,986 prior evidence files verify.
 
-The [verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes all seven recorded commands,
-both cold checks and nine preservation checks. The original automatic verifier
-failed because the observer patch used different filename labels in its first
-two lines. Its exit-1 completion and sealed evidence remain unchanged. The
-follow-up checks the exact one-literal source change and runs every original
-verifier assertion with those labels corrected, writing only separate results.
-No history was re-executed and no original failure was relabeled as successful.
+This adds 23,296 blocks, giving 3,943,296 post-legacy blocks and 8,506,784 still
+remaining to the 15,130,080 tip. F12/G1 and final restored-startup/recovery/handover
+and independent restore/portable-package acceptance remain open.
 
-Full header/RLP, state/tickets, receipts, bloom and TD match preserved history.
-Warm/cold ticket counts agree at 4,786, with one transaction/receipt at the
-endpoint. The original cold inspection preserved all 16,672 working-file hashes;
-recovery hashes, backup/baseline metadata and source/executable identities pass.
-This adds 300,000 blocks and brings post-legacy coverage to 3,920,000. Another
-8,530,080 blocks remain to the backup tip; F12/G1 and final restored-startup,
-recovery and handover acceptance remain open.
+The [allocation monitor fix](evidence/restart-replay-size-monitor-2026-10-12/RESULTS.md)
+passes 32 controller tests and exactly matches GNU du on the closed checkpoint:
+35,399,045,120 bytes. Live scans record and tolerate only missing recognized
+LevelDB filenames during metadata traversal; permissions/I/O errors, unknown
+missing entries, symlinks, changed roots and timeouts still fail. Each sample
+remains bounded to 15s plus 2s grace, with three failed attempts triggering STOP.
+Closed allocation retains the existing du helper. Sampled accounting is not a
+hard quota. Only test tooling changed; node executable and release selection
+are unchanged. Failed qualification preparation and its corrected interpretation
+are retained alongside the completed v2 evidence.
 
-Peter approved expansion from 220 to 230 GiB, and the [expansion and preservation checks](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md) pass.
-All 16,672 working and 1,383 recovery files match before/after; protected metadata,
-source, executable and toolchain identities remain unchanged. The filesystem is
-ext4/read-write with no recorded storage-error patterns. No backup was deleted.
+The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/README.md)
+is prepared for the remaining 276,704 blocks from 6,623,296. At 06:47 UTC its
+preflight passed with 33.138 GiB Linux / 66.617 GiB D: free and no writer.
+Keep the 39 GiB sampled ceiling, 30s sampling, Linux20/D50 GiB reserves,
+six-hour clean stop, 6h15 Go / 6h30 outer timeouts and 20s outer kill grace.
+Its approximately 6.032 GiB remaining growth allowance requires Linux >27.032
+GiB and D: >60 GiB to start. Preparation adds no coverage: actual launch/startup,
+both endpoint cold checks and final evidence verification remain required.
 
-The [controller qualification](evidence/restart-reverified-prior-controller-2026-10-12/RESULTS.md)
-passes 24 tests. It accepts only an explicitly pinned follow-up tied to the
-unchanged original failure, completed replay and cold verification; it preserves
-both manifests. Observer patch labels/source are now checked before long work.
-Only test tooling changed; chain runtime and release selection are unchanged.
-
-The [6,900,000 job](evidence/restart-ticket-encoder-job-6900000-2026-10-12/README.md)
-launched from `4736c9a8` at 05:46 UTC, after a passing 05:44 UTC preflight:
-about 33.60 GiB Linux / 68.21 GiB D: free, above the >27.415/>60 GiB gates.
-Its 300,000-block interval has a 39 GiB
-sampled ceiling, unchanged six-hour clean stop / 6h15 Go / 6h30 outer timeouts,
-and 20/50 GiB reserves. The [initial observation](evidence/restart-ticket-encoder-job-6900000-2026-10-12/STATUS.md)
-records actual replay after four passing startup commands, 16,672 working/1,383
-recovery hashes and 1,941 prior evidence files verified, unchanged identity and
-isolated protected views. Full cold endpoint checks and final verification
-remain required before counting new coverage. Review capacity/value afterward.
+The earlier [6,600,000 follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md)
+remains valid with the original filename-label verifier failure unchanged. Its
+separate-provenance qualification and early observer patch/source checks remain.
+The approved [230 GiB expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md)
+is complete. Preserve original backup, independent recovery, W: image, baselines
+and all failed/sealed evidence. Review capacity/value again after this job.
 
 The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
 Their 77,856-file preservation result and 220 GiB geometry remain recorded.
 Retain the W: image and separate recovery checkpoint. Independent complete
 restore/portable-package acceptance remains open. Do not repeat compaction,
-delete protected data or rerun unchanged small tests while the stopped checkpoint is being verified.
+delete protected data or rerun unchanged small tests while the next finite job is healthy.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous

@@ -1,0 +1,7 @@
+{
+  "observed": "2026-10-12T06:44:05.276734+00:00",
+  "corrects": "preparation-failure.json",
+  "observation": "After the outer wrapper terminated, final directory inspection found controller-change.patch and logs showing all 32 tests passed in 2.437 seconds. Git had finished near the outer deadline and tests ran before termination. No result.json exists, so the wrapper did not record a completed exit/provenance result. The earlier statement that unittest never started was premature. Preserve both observations and rerun the small qualification with host-created provenance and fresh v2 outputs.",
+  "preparation_script_failure": "Host patch creation refused because controller-change.patch now existed; no file overwritten. The immediate run-v2 invocation failed because preparation had not created it.",
+  "closed_comparison_first_attempt": "PermissionError opening the root-owned run.lock for append; no comparison or database access occurred. The v2 checker uses an existing read-only descriptor with an exclusive flock."
+}
