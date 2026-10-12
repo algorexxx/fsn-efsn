@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 7,170,976; W-backed image feasibility passed; migration pending.**
+Updated 12 October 2026. **Verified through 7,170,976; W-backed checkpoint copy started; replay stopped.**
 The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
 stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
 failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
@@ -36,13 +36,15 @@ unmount/read-only filesystem check and detach passed. This is feasibility,
 not migration, throughput or power-loss qualification; no chain data moved.
 
 The [finite W: copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/spec.md)
-is prepared for checkpoint 7,170,976, copying into
+was dispatched at 16:57 UTC for checkpoint 7,170,976, copying into
 a new dedicated W-backed Linux image, retaining the local checkpoint and all
 protected backup/recovery data. See the [storage procedure](restart-storage-capacity-review.md).
 After verified copy and cold-open comparison, a short bounded replay must
 measure this storage layout before larger ranges resume. No further D:
 expansion is planned. The 230 GiB limit and all existing reserves remain;
-replay is stopped while its storage/controller adaptation is prepared.
+replay is stopped while copy/verification and its storage/controller adaptation finish.
+The new image creation and format passed; destination acceptance is pending.
+See the [startup record](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/STARTED.md).
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)

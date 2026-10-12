@@ -15,7 +15,9 @@ system on D:. It is a disposable loop-backed data image, not the preserved VHD.
 Small synthetic writes were slower; do not extrapolate their timings to the
 full replay or claim network-loss durability.
 
-Next bounded migration procedure (not yet implemented or launched):
+The [bounded copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/STARTED.md)
+was dispatched at 16:57 UTC. Image creation and formatting passed; copy and cold
+verification remain pending. The following procedure still gates replay:
 
 1. Create one new sparse raw ext4 working image under a fresh
    `W:/FusionRestart/replay-work-7170976-<run-id>` directory, with a declared
@@ -46,7 +48,8 @@ Next bounded migration procedure (not yet implemented or launched):
    Do not repeat already-passing consensus tests. No larger replay starts before
    the migrated checkpoint and adapted controller are verified.
 
-The small image fixture is detached and no replay job is running. The canonical
+The small image fixture is detached. One finite checkpoint-copy job is active;
+no chain replay is running. The canonical
 verified height remains 7,170,976. This direction removes the current need for
 more D: space; a W: outage may still lose the active trial, so preserve the local
 fallback and prior sealed evidence. It does not change production storage advice.
