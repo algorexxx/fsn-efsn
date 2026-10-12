@@ -1,6 +1,15 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Separately verified through 6,600,000; offline replay toward 6,900,000 is running.**
+Updated 12 October 2026. **Separately verified through 6,600,000; 6,900,000 attempt stopped; read-only recovery inspection prepared.**
+The latest attempt stopped at 06:05 UTC after three consecutive allocation
+scans failed on disappearing LevelDB .ldb files. The log says stop before block
+6,623,297, but the saved head is not yet cold-verified. All nine preservation
+checks pass and the original failed completion/STOP/manifests remain unchanged.
+No replay writer remains. Fresh free space is about 33.16 GiB Linux / 66.62 GiB
+D:. A [bounded read-only inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/README.md)
+is prepared; accepted coverage stays 6,600,000. Resolve the live measurement race
+and verify the saved state before preparing a new bounded continuation.
+
 The [follow-up evidence verification](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes. Replay and both cold
 checks completed successfully, but the original automatic verifier rejected
 the two filename labels in the observer patch. Its failed completion remains

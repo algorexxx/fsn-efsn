@@ -1,7 +1,16 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 6,600,000; offline replay toward 6,900,000 is running.**
+**Current state: verified through 6,600,000; 6,900,000 attempt stopped; read-only recovery inspection prepared.**
+The latest attempt stopped at 06:05 UTC after three consecutive allocation
+scans failed on disappearing LevelDB .ldb files. The log says stop before block
+6,623,297, but the saved head is not yet cold-verified. All nine preservation
+checks pass and the original failed completion/STOP/manifests remain unchanged.
+No replay writer remains. Fresh free space is about 33.16 GiB Linux / 66.62 GiB
+D:. A [bounded read-only inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/README.md)
+is prepared; accepted coverage stays 6,600,000. Resolve the live measurement race
+and verify the saved state before preparing a new bounded continuation.
+
 The [verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes all seven recorded commands,
 both cold checks and nine preservation checks. The original automatic verifier
 failed because the observer patch used different filename labels in its first
@@ -44,7 +53,7 @@ The authorized [W: archive and native compaction remain complete](evidence/resta
 Their 77,856-file preservation result and 220 GiB geometry remain recorded.
 Retain the W: image and separate recovery checkpoint. Independent complete
 restore/portable-package acceptance remains open. Do not repeat compaction,
-delete protected data or rerun unchanged small tests while this job is healthy.
+delete protected data or rerun unchanged small tests while the stopped checkpoint is being verified.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
