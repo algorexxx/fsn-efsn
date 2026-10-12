@@ -1,37 +1,40 @@
 # Fusion restart launch plan
 
-Updated 11 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: replay is verified through 6,300,000; continuation toward 6,600,000 is running after restored capacity.**
-The [completed v3 job](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
-finished automatic verification at 21:24:13 UTC. All seven commands, both cold
-checks and ten additional preservation checks pass. Header, state/tickets,
-receipts, bloom and TD match the backup, with 4,621 tickets at the endpoint.
-All 13,794 closed working-file hashes remain unchanged during inspection;
-the original backup and separate recovery remain preserved. This adds 323,136
-blocks and brings candidate post-legacy coverage to 3,620,000. Earlier failed
-attempts remain failed, with their original evidence and limits intact.
+Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
+**Current state: historical replay is separately verified through 6,600,000; no test is running.**
+The [verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes all seven recorded commands,
+both cold checks and nine preservation checks. The original automatic verifier
+failed because the observer patch used different filename labels in its first
+two lines. Its exit-1 completion and sealed evidence remain unchanged. The
+follow-up checks the exact one-literal source change and runs every original
+verifier assertion with those labels corrected, writing only separate results.
+No history was re-executed and no original failure was relabeled as successful.
 
-The authorized [W: archive and native compaction are complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
-All 77,856 protected database files verify; source/executable/toolchain identities
-and 220 GiB virtual geometry remain unchanged. The original backup and the
-separate recovery checkpoint are preserved. Retain the W: image as a separate
-complete disk recovery copy; an independent restore/portable backup package
-still needs acceptance. No other qualifying complete image was established here.
+Full header/RLP, state/tickets, receipts, bloom and TD match preserved history.
+Warm/cold ticket counts agree at 4,786, with one transaction/receipt at the
+endpoint. The original cold inspection preserved all 16,672 working-file hashes;
+recovery hashes, backup/baseline metadata and source/executable identities pass.
+This adds 300,000 blocks and brings post-legacy coverage to 3,920,000. Another
+8,530,080 blocks remain to the backup tip; F12/G1 and final restored-startup,
+recovery and handover acceptance remain open.
 
-Peter freed space on D: and rebooted on 11 October. Fresh [capacity preflight](evidence/restart-ticket-encoder-job-6600000-2026-10-11/preflight-ready-2026-10-11.json)
-passes at 21:43:20 UTC with about 29.51 GiB Linux / 72.26 GiB D: free and
-27.068 GiB working allocation. The [prepared continuation](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md)
-resumes 6,300,000 to 6,600,000 with the previously proposed 34 GiB sampled ceiling.
-Keep the unchanged six-hour clean stop, 6h15 Go / 6h30 outer timeouts, 20/50 GiB
-Linux/D: reserves, exact checkpoint/source/executable checks and offline isolation.
-The hidden dispatcher launched at 21:45:40 UTC from commit `b34152ff`.
-[Replay started at 21:51:47 UTC](evidence/restart-ticket-encoder-job-6600000-2026-10-11/STATUS.md)
-after all four startup commands, 13,794 working/1,383 recovery file hashes and
-1,879 prior evidence files passed. Initial allocation and isolation checks pass.
-The capacity block is resolved for this bounded job; full-history storage needs
-are still unproven. No new coverage is claimed before completion and cold checks.
-The completed compaction reclaimed 267 MiB, with 32 MiB reused during verification;
-do not repeat it or rerun unchanged passing small tests. The W: image is retained.
+Fresh capacity at 00:23 UTC is about 24.25 GiB Linux / 67.32 GiB D:, with
+32.585 GiB closed working allocation. Another 300,000-block job to 6,900,000,
+with a proposed 39 GiB ceiling, fails the unchanged Linux >27.415 GiB gate.
+Only about 3.25 GiB remains above the Linux reserve and preparation margin;
+another tiny job is not justified. The [capacity proposal](restart-storage-capacity-review.md)
+is to expand the protected virtual disk from 220 to 230 GiB, pending a user
+decision. Preserve the 20/50 GiB reserves and all finite time/size limits.
+Before any resumed writer, explicitly qualify the separate-verification
+provenance: the existing controller correctly refuses the original failed
+completion. Do not fabricate success, use an unrelated stopped-attempt path,
+or rerun passing history just to alter patch labels.
+
+The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
+Their 77,856-file preservation result and 220 GiB geometry remain recorded.
+Retain the W: image and separate recovery checkpoint. Independent complete
+restore/portable-package acceptance remains open. Do not repeat compaction,
+delete protected data or rerun unchanged small tests while the decision is pending.
 
 This is the current checklist, not permission to sign or launch. The
 [investigation record](restart-investigation-record.md) preserves the previous
@@ -777,16 +780,17 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Freed host space resolves the next starting gate: 29.51 GiB Linux / 72.26 GiB D: at fresh preflight. Running 6,300,000 to 6,600,000 with a 34 GiB ceiling and unchanged reserves | Review again after this bounded G1 replay |
+| Rehearsal disk capacity | Replay through 6,600,000 is separately verified. Linux 24.25 GiB / D: 67.32 GiB free; next 300,000-block range fails the Linux gate. Proposed 220 to 230 GiB virtual-disk expansion, preserving reserves | User decision before another writer |
 
 Current technical order (efsn):
 
-1. G1: keep the [completed 6,300,000 evidence](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
-   sealed. Fresh post-reboot capacity passes for the [6,600,000 continuation](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md).
-   Resume only through its exact checkpoint/identity checks and unchanged
-   controller. Preserve backup, separate recovery, completed and failed evidence.
-   Require both endpoint cold checks and automatic evidence verification, then
-   review capacity and evidence value before another finite range.
+1. G1: preserve the [separately verified 6,600,000 result](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md)
+   and original failed automatic-verifier completion. Resolve the 220 to 230 GiB
+   storage proposal; before any continuation, explicitly qualify this separate
+   verification in the controller and check current cold inventory/identity.
+   No test is running. Keep the original backup, separate recovery, W: image,
+   completed and failed evidence. No repeated tiny range or passing small test
+   is justified while waiting. Review fresh capacity before preparing a new job.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the

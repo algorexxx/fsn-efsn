@@ -1,0 +1,19 @@
+--- a/replay_verify.py
++++ b/replay_verify.py
+@@ -92,7 +92,7 @@
+ assert old.count(old_height) == 1
+ new = old.replace(old_height,new_height,1)
+ assert (HERE/'details_test.go').read_bytes() == new
+-patch = ''.join(difflib.unified_diff(old.decode().splitlines(keepends=True),new.decode().splitlines(keepends=True),fromfile='a/details_test.go',tofile='b/details_test.go'))
++patch = ''.join(difflib.unified_diff(old.decode().splitlines(keepends=True),new.decode().splitlines(keepends=True),fromfile='prior/details_test.go',tofile='inputs/details_test.go'))
+ assert (HERE/'observer-change.patch').read_text(encoding='utf-8') == patch
+ assert sha(Q/'observer-overlay.json') == r['observer_overlay_sha256']
+ overlay = json.loads((Q/'observer-overlay.json').read_text(encoding='utf-8'))
+@@ -165,6 +165,6 @@
+         assert next_attempt <= 3
+ assert next_attempt == 1
+ result = {'pass':True,'commands':len(commands),'previous_files_verified':previous_files,'started':r['started'],'replay_started':commands[4]['started'],'replay_finished':commands[4]['finished'],'finished':r['finished'],'start_height':START,'end_height':END,'mode':CONFIG['mode'],'recovery_checkpoint':CONFIG['recovery_checkpoint'],'replay_limits':CONFIG['limits'],'endpoint':dict(reference,TicketCount=count),'replay_binary_sha256':REPLAY_SHA,'observer_binary_sha256':r['observer_binary_sha256'],'checkpoint_files_verified':len(r['checkpoint_before_sha256']),'target_files_hashed':len(r['target_before_cold_sha256']),'closed_allocated_bytes':r['closed_allocated_bytes'],'remaining_bytes':r['remaining_bytes'],'legacy_checkpoint_end':2680000,'monitor_retries':monitor_retries}
+-(BUNDLE/'verification.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
++(FOLLOWUP_DIR/'verification.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+ print(json.dumps({k:v for k,v in result.items() if k!='endpoint'},indent=2))
+ print(json.dumps({k:v for k,v in result['endpoint'].items() if k not in ['Bloom','HeaderRLP']},indent=2))

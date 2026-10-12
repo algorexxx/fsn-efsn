@@ -1,42 +1,42 @@
 # Candidate historical replay
 
-Updated 11 October 2026. **Verified through 6,300,000; continuation toward 6,600,000 is running.**
-The [v3 completion](evidence/restart-ticket-encoder-job-6300000-v3-2026-10-10/RESULTS.md)
-passed automatic evidence verification at 21:24:13 UTC. All seven commands,
-both cold checks and ten additional preservation checks pass. Header/RLP,
-state/ticket commitments, receipts, bloom and TD match the backup. Warm/cold
-ticket counts agree at 4,621; the endpoint has zero transactions and receipts.
-All 13,794 cold working-file hashes remain unchanged; the 1,383 recovery hashes,
-backup/baseline metadata and source/executable identities are preserved. The
-1,826 preceding evidence files verify. Original input/output/bundle manifests
-were independently rechecked and remain unchanged.
+Updated 12 October 2026. **Separately verified through 6,600,000; no replay is running.**
+The [follow-up evidence verification](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes. Replay and both cold
+checks completed successfully, but the original automatic verifier rejected
+the two filename labels in the observer patch. Its failed completion remains
+sealed. The follow-up proves the actual observer changed only its height literal
+and reruns every original verifier assertion with exactly those labels corrected
+and output redirected to a separate directory. No original input or record was
+edited, no database was reopened, and no passing history was replayed again.
 
-This run adds 323,136 blocks, giving 3,620,000 candidate-executed blocks beyond
-the legacy boundary. The unchanged baseline remains at 3,600,000. Earlier
-failed jobs remain failed; successful continuation does not alter their records.
-Replay took 154.956 minutes by command timestamps and 143.667 minutes by its
-monotonic record; the clock difference is unexplained and both are retained.
-Four transient allocation-read retries recovered within the existing policy.
+All seven commands, nine preservation checks and 1,879 prior evidence files
+verify. Header/RLP, state/ticket/transaction/receipt commitments, bloom and TD
+match the backup at 6,600,000. Warm/cold counts agree at 4,786 tickets; there is
+one transaction/receipt. The original cold inspection preserved all 16,672 target
+hashes, 1,383 recovery hashes, backup/baseline metadata and source/executable/
+toolchain identities. All six original manifest sets reverify before and after
+the follow-up. The unchanged baseline remains at 3,600,000.
 
-Closed working allocation remains 27.068 GiB. The authorized
-[W: archive and compaction have completed](evidence/restart-wsl-compact-2026-10-11/RESULTS.md),
-including full before/after preservation of 77,856 database files and unchanged
-source/executable/toolchain identities. Retain the verified W: disk image as a
-separate recovery copy. No runtime or release selection changed.
+This interval adds 300,000 blocks, giving 3,920,000 beyond the legacy boundary
+and 8,530,080 remaining to the backup tip. Replay took 145.728 minutes by recorded
+timestamps and 135.611 minutes by monotonic time; that difference is unexplained.
+Four transient allocation measurements recovered within the existing policy.
+The most recent unqualified automatic job completion is still the successful
+6,300,000-v3 run; the 6,600,000 coverage rests on the explicit follow-up above.
+The controller's successful-prior gate still refuses the original failed record.
+Before another writer, qualify this separate provenance explicitly; do not fake
+success or apply the STOP/host-reserve inspection path to a label-only failure.
+Future preparation must use the verifier's canonical patch filename labels.
 
-Peter subsequently freed D: space and rebooted. The fresh [6,600,000 preflight](evidence/restart-ticket-encoder-job-6600000-2026-10-11/preflight-ready-2026-10-11.json)
-passes at 21:43:20 UTC with about 29.51 GiB Linux / 72.26 GiB D: free.
-The [prepared job](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md)
-resumes the successful 6,300,000 endpoint and permits up to 300,000 additional
-blocks under a 34 GiB sampled ceiling. The unchanged controller, retained replay
-binary, six-hour clean stop, 6h15/6h30 timeouts and 20/50 GiB reserves remain.
-The hidden dispatcher launched at 21:45:40 UTC from commit `b34152ff`.
-[Replay began at 21:51:47 UTC](evidence/restart-ticket-encoder-job-6600000-2026-10-11/STATUS.md)
-after four passing startup commands, exact working/recovery inventories and
-unchanged identity/source/toolchain. Initial allocation/isolation checks pass. No new coverage is established until both cold checks and the evidence
-verifier pass. The W: recovery image remains; no additional compaction or bulk
-archival is needed for this job. F12/G1 and final selected-binary restored
-startup/recovery/handover acceptance remain open.
+Closed allocation is 34,987,921,408 bytes (32.585 GiB), a 5.517 GiB increase.
+Fresh capacity at 00:23 UTC is about 24.25 GiB Linux / 67.32 GiB D:. The proposed
+300,000-block continuation to 6,900,000 with a 39 GiB ceiling requires Linux
+>27.415 GiB and D: >60 GiB; Linux fails. Only about 3.25 GiB remains above its
+reserve and preparation margin, so another tiny range is not justified.
+The [220 to 230 GiB expansion proposal](restart-storage-capacity-review.md)
+awaits a user decision. No new job or storage mutation is started. Preserve the
+W: image, separate recovery, original backup and failed evidence. F12/G1 and final
+selected-binary restored startup/recovery/handover acceptance remain open.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
@@ -88,9 +88,9 @@ rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundar
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
 The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Its latest verified closed allocation is 29,064,523,776 bytes (27.068 GiB) at
-6,300,000. Verification recorded 30,804,459,520 bytes free in Linux and
-58,641,989,632 bytes on D:; the later review above records fresh capacity. The separate verified 2,400,000 recovery checkpoint
+Its latest separately verified closed allocation is 34,987,921,408 bytes
+(32.585 GiB) at 6,600,000. The fresh capacity review is recorded above.
+The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working
 inventories are historical records, not separate retained copies. Another
 in-place continuation intentionally changes these current working bytes.
@@ -148,7 +148,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through verified completion at 6,300,000, including 3,620,000 blocks beyond the legacy boundary; the unchanged baseline separately reaches 3,600,000. | Candidate history after 6,300,000 remains open; earlier failed attempts stay preserved as incomplete runs. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through separately verified 6,600,000, including 3,920,000 blocks beyond the legacy boundary; baseline separately reaches 3,600,000. | History after 6,600,000 remains open. Original label-related verifier failure and earlier incomplete attempts remain preserved; continuation must qualify the follow-up explicitly. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
@@ -298,15 +298,16 @@ The hourly continuation id is continue-fusion-restart-testing.
 The failed replay dispatcher has exited. Archival/retirement has also completed.
 The cold-inspection dispatcher finished successfully; its host records are
 retained under repo tmp/reserve-inspection-2026-10-10 and in its sealed bundle.
-The latest completed job is restart-ticket-encoder-job-6300000-v3-2026-10-10.
-Its dispatcher exited zero. The next finite job is
-restart-ticket-encoder-job-6600000-2026-10-11, dispatched at 21:45:40 UTC.
-Its runtime status is /home/rehearsal/results/restart-ticket-encoder-job-6600000-2026-10-11/status.json;
-host dispatch logs are under repo tmp/replay-job-6600000-2026-10-11. Inspect its
-completion, verification and resources before further work; no duplicate writer
-or hashing of live LevelDB files. Useful independent work is limited to documented
-acceptance gaps that do not repeat passing checks or compete for large disk
-workloads. Further candidate history and independent
+The latest execution is restart-ticket-encoder-job-6600000-2026-10-11.
+Its replay and two cold checks passed, but the dispatcher exited 1 on the patch
+filename-label verification failure. Its runtime status is
+/home/rehearsal/results/restart-ticket-encoder-job-6600000-2026-10-11/status.json;
+host logs are under repo tmp/replay-job-6600000-2026-10-11. No process remains.
+The [separate verification](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) establishes coverage through 6,600,000
+while preserving that failure. Read its review and capacity records first.
+The next range is held for the protected-disk expansion decision and explicit
+follow-up provenance qualification; do not launch, rewrite the old completion,
+or repeatedly ask the pending storage question. Further history and independent
 consensus review remain open; no snapshot-trust acceptance is inferred.
 
 The independent [reader boundary check](evidence/restart-restored-reader-boundaries-2026-10-09/README.md)

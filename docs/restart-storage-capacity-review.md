@@ -1,41 +1,60 @@
-# Capacity after verified replay through 6,300,000
+# Capacity after separately verified replay through 6,600,000
 
-**Current observation, 11 October 2026 at 21:43 UTC:** Peter freed host space
-and rebooted. The [fresh finite-job preflight](evidence/restart-ticket-encoder-job-6600000-2026-10-11/preflight-ready-2026-10-11.json)
-passes with 31,685,795,840 bytes (29.51 GiB) free in Linux and 77,590,134,784
-bytes (72.26 GiB) free on D:. Working allocation remains 29,064,523,776 bytes
-(27.068 GiB). The rehearsal was stopped/detached before preflight; the verified
-W: image is present. Prior completion and storage evidence manifests reverify.
+**Current observation, 12 October 2026 at 00:23 UTC:** the
+[verification follow-up](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md) passes. The original replay and both cold
+checks succeeded; its automatic-verifier failure concerned only patch filename
+labels and remains sealed. No replay, observer or node process remains.
 
-The [authorized W: archival and native compaction](evidence/restart-wsl-compact-2026-10-11/RESULTS.md)
-remain complete. Their 77,856-file preservation result and unchanged 220 GiB
-geometry are retained. Compaction reclaimed 267 MiB; verification startup used
-32 MiB of that. This earlier operation is not repeated after the reboot.
+Fresh free capacity is 26,039,566,336 bytes (24.251 GiB) in Linux and
+72,288,534,528 bytes (67.324 GiB) on D:. Closed working allocation is
+34,987,921,408 bytes (32.585 GiB), up 5.517 GiB in 300,000 blocks.
+The proposed next 300,000 blocks to 6,900,000 with a 39 GiB sampled ceiling
+allows 6.415 GiB growth and requires Linux >27.415 GiB / D: >60 GiB.
+The existing gate fails Linux. Only 3.251 GiB remains above the Linux reserve
+and preparation margin; repeating tiny ranges is not justified.
 
-## Next capacity decision
+## Pending capacity decision
 
-The host-space blocker is resolved for the [6,300,000 to 6,600,000 job](evidence/restart-ticket-encoder-job-6600000-2026-10-11/README.md).
-The hidden dispatcher launched at 21:45:40 UTC from commit `b34152ff`.
-[Replay began at 21:51:47 UTC](evidence/restart-ticket-encoder-job-6600000-2026-10-11/STATUS.md)
-after passing startup preservation and identity checks.
-Its 34 GiB sampled ceiling allows 6.932 GiB growth. Fresh capacity exceeds the
-unchanged Linux >27.932 GiB and D: >60 GiB starting floors. Retain 20/50 GiB
-per-batch reserves, preparation margin and finite stop limits. The controller
-rechecks capacity and exact checkpoint/source/executable identities at launch.
-Do not infer that all remaining history will fit: review actual growth and
-capacity after the bounded result before proposing another range.
+Propose expanding only `D:/FusionRehearsal/Ubuntu/ext4.vhdx`, belonging to
+FusionRehearsal, from 220 to 230 GiB virtual capacity. The earlier explicit
+expansion approval covered 200 to 220 GiB; the further expansion is pending.
+This grows its virtual limit, not immediately its physical allocation. Actual
+host capacity must still pass the 50 GiB reserve and starting gate. No claim
+that the remaining 8,530,080 historical blocks will fit follows from this step.
 
-The earlier request to free space has been acted on; no new storage decision is
-needed for this job. Keep the W: image as a separate complete disk recovery copy.
-Independent restore/portable-package acceptance remains open. Do not repeat
-compaction, zero-fill, lower reserves or remove protected data to extend a run.
+The reviewable proposed operation is:
 
-All obsolete fixture roots under D:/FusionRehearsal are already archived and
-retired. Its only remaining roots are Ubuntu and swap. The ext4.vhdx file is
-211,032,211,456 bytes after verification; swap is only 37,748,736 bytes (36 MiB).
-Deleting swap was not a solution to the earlier shortfall. Expanding the 220 GiB
-virtual capacity would not create host space. No unrelated user folders were inspected
-or proposed for removal.
+1. Reuse the qualified native expansion and preservation procedure. Validate
+   exact distro/disk identity, completed/follow-up evidence, current working and
+   separate recovery inventories, original-backup/baseline metadata and retained
+   executable/source/toolchain identities, under the existing locks/isolation.
+2. Stop and detach the rehearsal disk. Only stop an idle Docker/WSL backend if
+   needed and no unrelated workload is active; otherwise hold that step. Expand
+   this disk alone to 230 GiB. No compaction, deletion, repartitioning or pruning.
+3. Verify actual geometry/filesystem health, working/recovery file hashes and
+   protected metadata/identities afterward. Retain the W: image as recovery and
+   restore any deliberately stopped idle service. Record actual free capacity.
+4. Before any resumed writer, explicitly qualify the separate successful
+   evidence verification without overwriting the original failed completion.
+   The existing controller currently refuses it. Only after this and fresh
+   capacity/inventory checks pass, prepare a new finite range with unchanged
+   20/50 GiB reserves and timeouts. Preserve all failed/sealed evidence.
+
+No expansion or next replay has been launched. Do not lower reserves, repeat
+compaction, delete protected data or rerun passing small tests while waiting.
+The earlier W: archive/compaction is complete, with 77,856 protected files
+verified. Its 267 MiB reclamation (32 MiB later reused) is not worth repeating.
+Independent complete restore/portable-package acceptance remains open.
+
+All obsolete fixture roots under D:/FusionRehearsal were already archived and
+retired. Ubuntu and swap remain; the 36 MiB swap file is not a solution to this
+Linux-capacity shortfall. No unrelated user folders were inspected or selected.
+
+## Earlier completed capacity actions
+
+Peter's freed D: space after the reboot enabled the 6,300,000 to 6,600,000 job.
+Its 21:43 UTC 11 October preflight passed at about 29.51 GiB Linux / 72.26 GiB D:
+free. Those starting values are historical and superseded by the review above.
 
 The earlier choice, resolved in favor of option 2 and now completed:
 

@@ -1,0 +1,66 @@
+{
+  "reviewed_utc": "2026-10-12T00:23:42.227395+00:00",
+  "verification_followup_passed": true,
+  "original_automatic_verification_still_failed": true,
+  "new_blocks": 300000,
+  "post_legacy_blocks": 3920000,
+  "remaining_blocks_to_backup_tip": 8530080,
+  "replay_wall_seconds": 8743.708719,
+  "replay_monotonic_seconds": 8136.630305815999,
+  "clock_difference_cause": "not established",
+  "closed_allocated_bytes": 34987921408,
+  "interval_growth_bytes": 5923397632,
+  "additional_preservation_checks": {
+    "recovery_checkpoint_unchanged": true,
+    "checkpoint_preserved_or_validated_resume": true,
+    "prior_candidate_source_unchanged": true,
+    "prior_replay_binary_unchanged": true,
+    "replay_binary_unchanged": true,
+    "observer_binary_unchanged": true,
+    "observer_overlay_unchanged": true,
+    "imported_runner_unchanged": true,
+    "runner_snapshot_unchanged": true
+  },
+  "fresh_capacity": {
+    "observed_utc": "2026-10-12T00:23:43.751501+00:00",
+    "matching_processes": [],
+    "free_bytes": {
+      "/home/rehearsal/results": 26039566336,
+      "/mnt/d": 72288534528
+    }
+  },
+  "capacity_probe_argv": [
+    "wsl.exe",
+    "-d",
+    "FusionRehearsal",
+    "-u",
+    "rehearsal",
+    "--",
+    "python3",
+    "-c",
+    "from pathlib import Path\nimport datetime,json,os\nmatches=[]\nfor path in Path('/proc').iterdir():\n    if not path.name.isdigit() or int(path.name)==os.getpid():\n        continue\n    try:\n        executable=(path/'exe').resolve(strict=True)\n        if executable.name in {'replay-tests','observer','efsn'}:\n            matches.append({'pid':int(path.name),'executable':str(executable)})\n    except (OSError,RuntimeError):\n        pass\nprint(json.dumps({'observed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'matching_processes':matches,'free_bytes':{q:os.statvfs(q).f_bavail*os.statvfs(q).f_frsize for q in ('/home/rehearsal/results','/mnt/d')}}))\n"
+  ],
+  "proposed_next_job_not_prepared_or_launched": {
+    "mode": "resume",
+    "start_height": 6600000,
+    "end_height": 6900000,
+    "limits": {
+      "clean_seconds": 21600,
+      "go_seconds": 22500,
+      "outer_seconds": 23400,
+      "max_bytes": 41875931136,
+      "sample_seconds": 30
+    }
+  },
+  "starting_floors_bytes": {
+    "/home/rehearsal/results": 29436588032,
+    "/mnt/d": 64424509440
+  },
+  "capacity_gate": {
+    "passed": false,
+    "reason": "insufficient starting capacity: /home/rehearsal/results"
+  },
+  "controller_sha256": "2006c4c566a435f1772e4da601ec5f74c054b0380dc90de76efe4b2c2f8a3f8e",
+  "continuation_provenance_gate": "Existing controller refuses original failed completion; explicit separately verified qualification support is required before any resumed writer",
+  "database_files_opened_or_hashed_by_this_review": false
+}
