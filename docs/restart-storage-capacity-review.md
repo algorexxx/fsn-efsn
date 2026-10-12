@@ -1,42 +1,33 @@
-# Capacity after the stopped-checkpoint verification
+# Capacity after verified replay through 6,900,000
 
-**12 October 2026, 06:47 UTC:** the approved 230 GiB geometry remains. The
-first 6,900,000 attempt stopped on three live du scans of disappearing .ldb
-files, not a breached reserve or the 39 GiB allocation ceiling. Its saved state
-is now [cold-verified at 6,623,296](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md).
-Working allocation is 35,399,045,120 bytes; both GNU du and the qualified new
-metadata scanner agree under locks. No original backup/recovery data was deleted.
+**12 October 2026, 09:38 UTC:** the [6,900,000-v2 job](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
+completed with both cold checks and automatic evidence verification. Closed
+working allocation is 40,776,675,328 bytes (37.976 GiB), up 5.008 GiB across
+276,704 blocks. All protected data and the independent recovery remain intact.
+No additional archival, compaction, deletion or expansion was needed.
 
-The fresh [v2 preflight](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/preflight-ready-2026-10-12.json)
-passes with 35,582,185,472 bytes
-(33.138 GiB) free in Linux and 71,529,365,504
-(66.617 GiB) on D:. About 6.032 GiB growth remains under the unchanged
-39 GiB sampled ceiling. Keep Linux >27.032 GiB / D: >60 GiB starting gates,
-Linux20/D50 GiB per-batch reserves and the existing finite time limits. The
-prepared job finishes the original endpoint, at most 276,704 additional blocks.
-No claim is made that all remaining 8,506,784 blocks fit the 230 GiB disk.
+The [7,200,000 preflight](evidence/restart-ticket-encoder-job-7200000-2026-10-12/preflight-ready-2026-10-12.json)
+passes with no replay/node/observer process. Linux has 30,133,383,168
+bytes (28.064 GiB) free; D: has 64,664,338,432 bytes (60.223 GiB).
+The fresh job declares a 44 GiB sampled ceiling, allowing 6.024 GiB growth.
+Its required starting free space is Linux >27.024 GiB and D: >60 GiB. The D:
+margin above the starting gate is only 0.223 GiB, so the unchanged startup
+gate must pass again; a later capacity refusal must be preserved, not bypassed.
+Running reserves remain Linux20/D50 GiB, with all finite time limits unchanged.
 
-The [live-scan qualification](evidence/restart-replay-size-monitor-2026-10-12/RESULTS.md)
-passes 32 controller checks and a metadata-only closed comparison. It tolerates
-only disappeared recognized LevelDB filenames, preserving real-error refusal,
-three bounded attempts and all quotas/reserves; closed allocation remains du.
-The job was dispatched from `b256ae6b` at 06:49:35 UTC; its 06:51 observation
-records startup without failures. Actual replay began at 06:55:04 UTC. The
-[07:37 observation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/STATUS.md)
-records a successful 37,367,029,760-byte (34.801 GiB) live allocation sample,
-below the unchanged 39 GiB ceiling, without failure or STOP. This is provisional
-live accounting, not a closed endpoint measurement. Final endpoint/evidence
-verification remains required. Do not
-repeat compaction, prune protected data or rerun unrelated passing tests.
+The next range is bounded to 300,000 new blocks. Scaling recent growth gives
+about 5.43 GiB, leaving approximately 0.59 GiB below the growth allowance. This
+is an estimate, not a bound; the controller stops and preserves evidence if
+capacity or allocation limits are reached. Preparation itself adds no coverage.
+The five controller files and replay executable match the successful prior job.
+No unchanged tests are rerun. Actual dispatch/startup still need observation.
 
-The [approved expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md)
-preserved all then-current 16,672 working and 1,383 recovery hashes and protected
-metadata/identities. Native WSL e2fsck optimized 26 inode extent trees before
-resize2fs; filesystem modification and subsequent successful checks are recorded.
-The separate mounted-health check was not another fsck or independent restore.
-The verified W: archive, original backup, separate recovery, baselines and failed
-runs remain. Earlier compaction reclaimed only 267 MiB (32 MiB later reused),
-so repeating it is not justified. Independent complete restore remains open.
+The approved 230 GiB geometry remains. No claim is made that all 8,230,080
+remaining blocks fit this disk. Review capacity and evidence value after this
+finite job. Preserve original backup, separate 2,400,000-v2 recovery, baselines,
+failed/sealed evidence and the verified W: image. Earlier compaction gained only
+267 MiB (32 MiB later reused); do not repeat it or prune protected data.
+Independent complete restore/portable-package acceptance remains open.
 
 ## Earlier completed capacity actions
 

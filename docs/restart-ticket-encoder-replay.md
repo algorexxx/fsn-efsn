@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 6,900,000; next range awaits capacity preflight.**
+Updated 12 October 2026. **Verified through 6,900,000; next bounded range to 7,200,000 prepared.**
 The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
 completed with automatic verification at 09:00:57 UTC on 12 October. All seven
 commands, both cold endpoint checks and ten additional preservation checks pass.
@@ -23,15 +23,18 @@ retains bounded workers, fail-closed real errors and sampled, non-atomic account
 The earlier failed run and [6,623,296 cold inspection](evidence/restart-ticket-encoder-stopped-6623296-2026-10-12/RESULTS.md)
 remain dated evidence, as does the separate 6,600,000 verifier follow-up.
 
-The next useful history range is 6,900,000 to 7,200,000, subject to a fresh
-capacity/provenance gate before launch. A 44 GiB sampled ceiling would allow
-about 6.024 GiB growth: recent net growth was 5.008 GiB across 276,704 blocks,
-equivalent to about 5.43 GiB over 300,000 if that rate holds. This is a planning
-estimate, not guaranteed growth or permission to exceed the limit. Keep Linux20/
-D50 GiB reserves, six-hour clean stop, 6h15 Go / 6h30 outer limits, 20s outer
-kill grace and 30s allocation sampling. Review actual starting capacity before
-preparing that range for launch; do not reduce reserves or expand beyond the
-approved 230 GiB disk. Protected backup/recovery and the W: archive remain.
+The [7,200,000 continuation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/README.md)
+is prepared for 300,000 new blocks. Its 09:38 UTC capacity/provenance preflight
+passes with no writer and 28.064 GiB Linux / 60.223 GiB D: free, above
+the >27.024/>60 GiB starting gates. A fresh 44 GiB sampled ceiling permits
+6.024 GiB growth. Recent growth implies about 5.43 GiB for this range, but that
+estimate does not guarantee completion. All five controllers and the replay
+executable are unchanged; only the observer height advances. Keep Linux20/D50
+GiB reserves, six-hour clean stop, 6h15 Go / 6h30 outer limits, 20s outer kill
+grace and 30s samples. Starting capacity is checked again at launch. Actual
+dispatch/startup and full cold endpoint verification are still required. Do not
+reduce reserves, change a running job's bounds or expand beyond the approved
+230 GiB disk. Protected backup/recovery and the W: archive remain.
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
