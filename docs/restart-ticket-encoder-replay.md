@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 12 October 2026. **Verified through 7,170,976; W-backed checkpoint copy verified; replay trial preparation next.**
+Updated 12 October 2026. **Verified through 7,170,976; W-backed checkpoint verified; bounded W: trial started.**
 The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
 stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
 failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
@@ -46,10 +46,11 @@ The [image-controller qualification](evidence/restart-w-image-controller-2026-10
 passes eight new and 32 affected monitor tests, actual W: attachment/refusal,
 exception cleanup, reattachment, and real-SIGTERM cleanup. The
 [prepared trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/inputs/spec.md)
-will continue 29,024 blocks to 7,200,000 with a 46 GiB allocation ceiling and
+was dispatched at 19:01 UTC to continue 29,024 blocks to 7,200,000 with a 46 GiB allocation ceiling and
 one-hour cooperative replay limit. Whole-job preparation/verification is bounded
-at five hours. Preflight provenance, identities and local reserves pass; mounted
-capacity and the exact cold inventory remain execution gates. The replay binary
+at five hours. Preflight provenance/identities and mounted capacity pass. The initial
+[status record](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/STARTED.md)
+confirms isolated preparation; the exact cold inventory still precedes replay. The replay binary
 is unchanged. Keep 20/50/100 GiB Linux/D:/W: running reserves and the local fallback.
 See the [storage procedure](restart-storage-capacity-review.md).
 

@@ -18,8 +18,8 @@ full replay or claim network-loss durability.
 The [bounded copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 completed and verified at 18:20 UTC. All 22,501 files and the cold endpoint match;
 filesystem check and detach pass. Steps 1–4 below are complete. The [controller qualification](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
-also passes. Step 6 is the prepared 29,024-block trial to 7,200,000; mounted
-capacity and cold inventory still gate its writer:
+also passes. Step 6 was dispatched at 19:01 UTC for 29,024 blocks to 7,200,000; mounted
+capacity passes, and the cold inventory still gates its writer:
 
 1. Create one new sparse raw ext4 working image under a fresh
    `W:/FusionRestart/replay-work-7170976-<run-id>` directory, with a declared
@@ -50,8 +50,8 @@ capacity and cold inventory still gate its writer:
    Do not repeat already-passing consensus tests. No larger replay starts before
    the migrated checkpoint and adapted controller are verified.
 
-Both images are detached. The checkpoint copy is verified; no chain replay
-is running while the controller/trial is prepared. The canonical
+The synthetic fixture remains detached. The working image is owned by one
+finite trial, initially verifying the closed checkpoint before replay. The canonical
 verified height remains 7,170,976. This direction removes the current need for
 more D: space; a W: outage may still lose the active trial, so preserve the local
 fallback and prior sealed evidence. It does not change production storage advice.

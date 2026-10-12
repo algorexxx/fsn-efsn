@@ -1,0 +1,50 @@
+{
+  "started": "2026-10-12T19:01:22.677074+00:00",
+  "uid": 1000,
+  "namespace": "net:[4026532206]",
+  "parent_namespace": "net:[4026531833]",
+  "mount_namespace": "mnt:[4026532205]",
+  "parent_mount_namespace": "mnt:[4026532195]",
+  "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+  "target": "/home/rehearsal/replay/candidate-ticket-encoding-w",
+  "capacity_bytes": {
+    "/home/rehearsal/results": 23542595584,
+    "/mnt/d": 61248069632,
+    "/mnt/w": 3599208481792,
+    "/home/rehearsal/replay/candidate-ticket-encoding-w": 501002985472
+  },
+  "required_capacity_bytes": {
+    "/home/rehearsal/results": 22548578304,
+    "/mnt/d": 54760833024,
+    "/mnt/w": 110560047104,
+    "/home/rehearsal/replay/candidate-ticket-encoding-w": 24660701184
+  },
+  "existing_allocated_bytes": 47280001024,
+  "storage_mount": {
+    "device_number": "7:0",
+    "directory_identity": [
+      1792,
+      90113
+    ],
+    "image": "/mnt/w/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4",
+    "uuid": "2fb12ac9-9520-4cab-9414-f1041c4d25de",
+    "loop_device": "/dev/loop0"
+  },
+  "backup_mount": {
+    "target": "/tmp/f12-job-source-yuwsbhxr",
+    "source": "/dev/sdd[/home/rehearsal/data/efsn/chaindata]",
+    "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+  },
+  "checkpoint_mount": {
+    "target": "/tmp/f12-job-checkpoint-qawx38e_",
+    "source": "/dev/loop0[/checkpoint]",
+    "options": "ro,relatime"
+  },
+  "recovery_mount": {
+    "target": "/tmp/f12-job-recovery-x4ehniz5",
+    "source": "/dev/sdd[/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2]",
+    "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+  },
+  "observed": "2026-10-12T19:02:30.311864+00:00",
+  "cold_inventory_and_replay_pending": true
+}
