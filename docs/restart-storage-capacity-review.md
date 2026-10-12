@@ -21,8 +21,12 @@ passes 32 controller checks and a metadata-only closed comparison. It tolerates
 only disappeared recognized LevelDB filenames, preserving real-error refusal,
 three bounded attempts and all quotas/reserves; closed allocation remains du.
 The job was dispatched from `b256ae6b` at 06:49:35 UTC; its 06:51 observation
-records startup without failures, with actual replay still pending. Final
-endpoint/evidence verification remains required. Do not
+records startup without failures. Actual replay began at 06:55:04 UTC. The
+[07:37 observation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/STATUS.md)
+records a successful 37,367,029,760-byte (34.801 GiB) live allocation sample,
+below the unchanged 39 GiB ceiling, without failure or STOP. This is provisional
+live accounting, not a closed endpoint measurement. Final endpoint/evidence
+verification remains required. Do not
 repeat compaction, prune protected data or rerun unrelated passing tests.
 
 The [approved expansion](evidence/restart-wsl-expand-230gib-2026-10-12/RESULTS.md)

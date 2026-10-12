@@ -1,0 +1,113 @@
+{
+  "observed_utc": "2026-10-12T07:37:35.002128+00:00",
+  "runtime": "/home/rehearsal/results/restart-ticket-encoder-job-6900000-v2-2026-10-12",
+  "source_commit": "b256ae6b1f89926f0d9a580bf3533ea0730e9527",
+  "run_record_sha256": "0b8d9a8f0a6f48f157866310c05c87b9e6d879bb57f4ca05af6b95aea8db1c23",
+  "status_record_sha256": "c634f58bbc4f5a50d37f7017d902a34e33c01f352f9e8e40867bb1825b98ac89",
+  "status": {
+    "phase": "replay",
+    "started": "2026-10-12T06:49:39.701261+00:00",
+    "updated": "2026-10-12T07:37:09.234826+00:00",
+    "observed_height": 6728384,
+    "observed_height_is_provisional": true,
+    "target_height": 6900000,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 617
+  },
+  "replay_started": "2026-10-12T06:55:04.685796+00:00",
+  "replay_pid": 617,
+  "process_stat": "617 (timeout) S 362 617 278 34816 278 4194304 78 0 3 0 0 0 0 0 20 0 1 0 400966 3219456 449 18446744073709551615 109463639715840 109463639733905 140735655173808 0 0 0 0 3145728 90119 1 0 0 17 2 0 0 0 0 0 109463639747184 109463639749208 109463952261120 140735655176732 140735655176936 140735655176936 140735655178215 0\n",
+  "process_command": "timeout --kill-after=20s 23400s /home/rehearsal/results/restart-ticket-encoder-job-6900000-v2-2026-10-12/bin/replay-tests -test.run=^TestPreservedHistoryReplay$ -test.v -test.count=1 -test.timeout=22500s ",
+  "startup_commands": [
+    {
+      "name": "observer-build",
+      "started": "2026-10-12T06:50:50.872734+00:00",
+      "finished": "2026-10-12T06:50:57.695360+00:00",
+      "exit": 0
+    },
+    {
+      "name": "observer-build-info",
+      "started": "2026-10-12T06:50:57.709129+00:00",
+      "finished": "2026-10-12T06:50:57.711946+00:00",
+      "exit": 0
+    },
+    {
+      "name": "checkpoint-cold-head",
+      "started": "2026-10-12T06:50:57.718583+00:00",
+      "finished": "2026-10-12T06:51:01.788077+00:00",
+      "exit": 0
+    },
+    {
+      "name": "reference",
+      "started": "2026-10-12T06:52:03.489702+00:00",
+      "finished": "2026-10-12T06:52:07.116429+00:00",
+      "exit": 0
+    }
+  ],
+  "resume_verified": true,
+  "working_files_verified": 16893,
+  "recovery_files_verified": 1383,
+  "previous_files_verified": 2028,
+  "binary_sha256": "b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245",
+  "checkpoint_identity_sha256": "733848a7e2aaed7027305d21aacdd46cf84c48d363bc505c2dc25dd9fb163b11",
+  "startup_capacity_bytes": {
+    "/home/rehearsal/results": 35581345792,
+    "/mnt/d": 71529365504
+  },
+  "latest_size_measurement": {
+    "time": "2026-10-12T07:37:09.227193+00:00",
+    "attempt": 1,
+    "exit": 0,
+    "stdout": "37367029760\t/home/rehearsal/replay/candidate-ticket-encoding-working\n",
+    "stderr": "",
+    "method": "stat-blocks-v1",
+    "scanner_stdout": "{\"path\": \"/home/rehearsal/replay/candidate-ticket-encoding-working\", \"allocated_bytes\": 37367029760, \"vanished_entries\": []}\n",
+    "argv": [
+      "timeout",
+      "--kill-after=2s",
+      "15s",
+      "/usr/bin/python3",
+      "-B",
+      "/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/inputs/replay_monitor.py",
+      "--allocated-size",
+      "/home/rehearsal/replay/candidate-ticket-encoding-working"
+    ]
+  },
+  "isolation": {
+    "namespace": "net:[4026532198]",
+    "mount_namespace": "mnt:[4026532197]",
+    "parent_namespace": "net:[4026531833]",
+    "parent_mount_namespace": "mnt:[4026532175]",
+    "links": "lo               DOWN           00:00:00:00:00:00 <LOOPBACK> \n",
+    "backup_mount": {
+      "target": "/tmp/f12-job-source-_z28z4mz",
+      "source": "/dev/sdd[/home/rehearsal/data/efsn/chaindata]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "checkpoint_mount": {
+      "target": "/tmp/f12-job-checkpoint-5gr3xb63",
+      "source": "/dev/sdd[/home/rehearsal/replay/candidate-ticket-encoding-working]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    },
+    "recovery_mount": {
+      "target": "/tmp/f12-job-recovery-q8dg_a_k",
+      "source": "/dev/sdd[/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2]",
+      "options": "ro,relatime,discard,errors=remount-ro,data=ordered"
+    }
+  },
+  "replay_stdout_tail": [
+    "    replay_linux_test.go:85: replay progress: height=6722880 root=0xe7a8080c9a6da4e65b23160c8ef092b8b607e87cf7db10f3232536d240938cf2",
+    "    replay_linux_test.go:85: replay progress: height=6723776 root=0xf0eaab8d0cbcf4a4226e221e09f17e05c42ea768466846dc977732150269be8c",
+    "    replay_linux_test.go:85: replay progress: height=6724672 root=0xb1efd17cf9413b89c22b5668a4debdbf9c11c40cab4fa9d9b60a51032b258417",
+    "    replay_linux_test.go:85: replay progress: height=6725568 root=0xeb33793709c097671d663cee6bdbf438624c3679789e2717fa32194e5d52877a",
+    "    replay_linux_test.go:85: replay progress: height=6726464 root=0xf10662be369dde22fb845c5bf002cee500cf015741cd0b0e4dc33ebcc4f5ba5d",
+    "    replay_linux_test.go:85: replay progress: height=6727488 root=0x69ff51cb1ad812847c43c3c5ad23339426bead8c57babb0601a978cc0f5c5980",
+    "    replay_linux_test.go:85: replay progress: height=6728384 root=0xd815dbc26736de2dab276523f668481e375b857ec3522394ffcb1a442d0205ce",
+    "    replay_linux_test.go:85: replay progress: height=6729280 root=0x0f94955d34c16c4d8ef5fba25b7cd76df2cf68069ec6eb2d78a7ec824dc2f7a5"
+  ],
+  "replay_stderr_tail": [],
+  "coverage_remains_cold_verified_height": 6623296,
+  "database_files_read_or_hashed_by_this_observation": false
+}
