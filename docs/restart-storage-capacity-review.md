@@ -20,7 +20,10 @@ about 5.43 GiB, leaving approximately 0.59 GiB below the growth allowance. This
 is an estimate, not a bound; the controller stops and preserves evidence if
 capacity or allocation limits are reached. Preparation itself adds no coverage.
 The five controller files and replay executable match the successful prior job.
-No unchanged tests are rerun. Actual dispatch/startup still need observation.
+No unchanged tests are rerun. The [job was dispatched](evidence/restart-ticket-encoder-job-7200000-2026-10-12/LAUNCH.md)
+at 09:40:14 UTC from `c77429d7`; startup capacity passed again. The observed
+startup has no failure/STOP, but actual replay is not yet established. Both
+cold endpoint checks and final verification remain necessary for new coverage.
 
 The approved 230 GiB geometry remains. No claim is made that all 8,230,080
 remaining blocks fit this disk. Review capacity and evidence value after this

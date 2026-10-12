@@ -1,7 +1,7 @@
 # Fusion restart launch plan
 
 Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 6,900,000; next bounded range to 7,200,000 prepared.**
+**Current state: verified through 6,900,000; continuation to 7,200,000 dispatched; startup is active.**
 The [6,900,000-v2 continuation](evidence/restart-ticket-encoder-job-6900000-v2-2026-10-12/RESULTS.md)
 completed with automatic verification at 09:00:57 UTC on 12 October. All seven
 commands, both cold endpoint checks and ten additional preservation checks pass.
@@ -25,15 +25,19 @@ The earlier failed run and [6,623,296 cold inspection](evidence/restart-ticket-e
 remain dated evidence, as does the separate 6,600,000 verifier follow-up.
 
 The [7,200,000 continuation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/README.md)
-is prepared for 300,000 new blocks. Its 09:38 UTC capacity/provenance preflight
+was dispatched from `c77429d7` at 09:40:14 UTC for 300,000 new blocks.
+Its 09:38 UTC capacity/provenance preflight
 passes with no writer and 28.064 GiB Linux / 60.223 GiB D: free, above
 the >27.024/>60 GiB starting gates. A fresh 44 GiB sampled ceiling permits
 6.024 GiB growth. Recent growth implies about 5.43 GiB for this range, but that
 estimate does not guarantee completion. All five controllers and the replay
 executable are unchanged; only the observer height advances. Keep Linux20/D50
 GiB reserves, six-hour clean stop, 6h15 Go / 6h30 outer limits, 20s outer kill
-grace and 30s samples. Starting capacity is checked again at launch. Actual
-dispatch/startup and full cold endpoint verification are still required. Do not
+grace and 30s samples. The startup capacity gate also passed. The
+[startup observation](evidence/restart-ticket-encoder-job-7200000-2026-10-12/LAUNCH.md)
+records no failure/STOP/completion, with replay_pid still null; actual block
+replay is not yet established. Full cold endpoint verification remains required.
+Do not
 reduce reserves, change a running job's bounds or expand beyond the approved
 230 GiB disk. Protected backup/recovery and the W: archive remain.
 
