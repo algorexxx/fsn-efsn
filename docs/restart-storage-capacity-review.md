@@ -5,7 +5,9 @@
 passed through 7,500,000, with inner verification, outer filesystem/unmount/
 detach and host exit all successful. The subsequent actual-state check finds
 no test process, image attachment or target mount directory. Preserve the
-qualified migration and controller evidence; the next proposed range is 7,800,000.
+qualified migration and controller evidence. The [next range to 7,800,000](evidence/restart-ticket-encoder-w-7800000-2026-10-13/STARTED.md)
+is running from 10:10 UTC; actual mounted capacity/isolation pass and the closed
+starting inventory is being checked before replay.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
@@ -14,7 +16,7 @@ through the qualified ext4 image without changing efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
 Closed live database allocation is 49.512 GiB. The next 300,000-block range to
-7,800,000 proposes a fresh 60 GiB sampled ceiling, about 10.488 GiB for growth.
+7,800,000 uses a fresh 60 GiB sampled ceiling, about 10.488 GiB for growth.
 The completed range grew 4.890 GiB and took about 3.5 replay hours plus 69 minutes
 of preparation/verification. Keep six-hour clean replay, 6h15m Go, 6h30m replay
 outer and eight-hour whole-job caps. These measurements support the next bounded

@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 13 October 2026. **Verified through 7,500,000; next W-backed range is 7,800,000.**
+Updated 13 October 2026. **Verified through 7,500,000; W-backed continuation to 7,800,000 started.**
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-7500000-2026-10-13/RESULTS.md)
 passed inner verification at 09:46 UTC and completed image detach/host exit at
 09:47 UTC. All seven commands, ten preservation checks and five manifest reviews
@@ -18,10 +18,12 @@ and their STOP records remain preserved; no release selection changed.
 Replay took about 209.2 wall-clock minutes (209.0 monotonic), with about 69.2
 additional minutes for preparation, verification and cleanup. These observations
 are not a full-history ETA. Closed allocation is 49.512 GiB, growing 4.890 GiB.
-The next justified range is 7,500,000–7,800,000, with a fresh 60 GiB sampled
-ceiling, unchanged six-hour clean replay and eight-hour whole-job caps. This
+The next [range to 7,800,000](evidence/restart-ticket-encoder-w-7800000-2026-10-13/STARTED.md)
+was dispatched at 10:10 UTC with a fresh 60 GiB sampled ceiling, unchanged
+six-hour clean replay and eight-hour whole-job caps. This
 retains time margin for later workload while amortizing slow W: verification.
-Fresh capacity and exact cold inventory must pass before another writer starts.
+Actual mounted capacity and isolation pass. The running job checks the closed
+starting inventory before replay; one image owner only.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
@@ -81,9 +83,10 @@ previously manifested files verify. Input/output/bundle manifests were independe
 rechecked. Candidate history includes 1,820,000 blocks beyond the legacy boundary;
 F12/G1 remain open. The unchanged baseline remains at 3,600,000.
 
-The working database is /home/rehearsal/replay/candidate-ticket-encoding-working.
-Its latest separately verified closed allocation is 47,280,070,656 bytes
-(44.033 GiB) at 7,170,976. The fresh capacity review is recorded above.
+The active working database is the W-backed image described above. The local
+/home/rehearsal/replay/candidate-ticket-encoding-working directory is the retained
+fallback at 7,170,976: 47,280,070,656 bytes (44.033 GiB). It is not the current
+replay target. The latest capacity review is recorded above.
 The separate verified 2,400,000 recovery checkpoint
 and earlier stopped 2,356,032 attempt/STOP remain unchanged. Prior working
 inventories are historical records, not separate retained copies. Another
@@ -142,7 +145,7 @@ Three different questions must remain separate:
 | Question | Existing evidence | What remains unproven |
 | --- | --- | --- |
 | Is the saved data internally consistent? | The [complete-data checks](restart-integrity-investigation.md) cover all 15,130,081 stored blocks including genesis, their parent/body/receipt/TD structure, and all reachable current account/storage/code state. | They do not re-execute every transaction or independently validate all historical ticket choices. |
-| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through separately verified 7,170,976, including 4,490,976 blocks beyond the legacy boundary; baseline separately reaches 3,600,000. | History after 7,170,976 remains open. Original label-related verifier failure and earlier incomplete attempts remain preserved; continuation must qualify the follow-up explicitly. |
+| Can the proposed client reproduce historical transitions? | The encoder candidate executes from genesis through separately verified 7,500,000, including 4,820,000 blocks beyond the legacy boundary; baseline separately reaches 3,600,000. | History after 7,500,000 remains open. Original label-related verifier failure and earlier incomplete attempts remain preserved; continuation must qualify the follow-up explicitly. |
 | Can the reviewed software safely restart from the accepted snapshot? | Complete-state recovery and operational fixtures exist; the encoder has vector, synthetic and integration evidence. | Final selected-candidate restored startup, identity refusal, recovery/handover and acceptance are still required. Full history replay alone cannot close these. |
 
 The replay has a concrete purpose. The modern compiler's default gzip changed
