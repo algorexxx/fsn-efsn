@@ -1,0 +1,28 @@
+{
+  "checked": "2026-10-13T10:05:31.562122+00:00",
+  "pass": true,
+  "scope": "Pre-dispatch loop guard only; no database or attachment operation",
+  "cases": [
+    {
+      "case": "empty",
+      "expected_allowed": true,
+      "observed_allowed": true
+    },
+    {
+      "case": "observed Docker ISO",
+      "expected_allowed": true,
+      "observed_allowed": true
+    },
+    {
+      "case": "replay image rw",
+      "expected_allowed": false,
+      "observed_allowed": false
+    },
+    {
+      "case": "replay image ro",
+      "expected_allowed": false,
+      "observed_allowed": false
+    }
+  ],
+  "controller_snapshots_changed": false
+}
