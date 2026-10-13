@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 13 October 2026. **Verified through 7,200,000; next W: continuation being prepared.**
+Updated 13 October 2026. **Verified through 7,200,000; 7,500,000 continuation prepared.**
 The [W-backed trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/RESULTS.md)
 completed verification and detached cleanly at 20:28 UTC on 12 October. All seven
 commands, eleven preservation checks and five manifest reviews pass. Both cold
@@ -19,7 +19,7 @@ The W: storage trial passed. Replay took about 22.1 minutes by wall timestamps
 (20.3 by its monotonic timer), with about 65 additional minutes for preparation
 and cold verification. Those timings are observations, not a full-history ETA.
 Closed allocation is 44.622 GiB, growing about 0.589 GiB. The next justified
-range is 7,200,000–7,500,000 with a 54 GiB sampled ceiling, six-hour clean replay
+[range to 7,500,000](evidence/restart-ticket-encoder-w-7500000-2026-10-13/inputs/spec.md) is prepared with a 54 GiB sampled ceiling, six-hour clean replay
 limit and eight-hour whole-job cap. This gives room for useful history while
 amortizing the slower W: verification. Preserve the 20/50/100 GiB Linux/D:/W:
 running reserves and verify mounted capacity and exact inventory before writing.
@@ -30,6 +30,9 @@ remain the storage basis. Keep the local 7,170,976 fallback, original backup,
 independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
 archives. No further D: expansion or deletion is needed. One image owner and
 one writer only; do not hash live LevelDB or the mounted image.
+Fresh preflight validates prior inner/outer completion, unchanged controllers,
+observer-only endpoint change and local/W: reserves. Actual mounted capacity
+and the closed inventory remain writer gates.
 See the [storage procedure](restart-storage-capacity-review.md).
 
 The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
