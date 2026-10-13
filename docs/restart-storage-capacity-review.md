@@ -1,60 +1,38 @@
-# Capacity decision after 7,170,976
+# W-backed replay capacity after 7,200,000
 
-## Current direction: separate Linux image on W:
+13 October 2026. The user selected W: to avoid further D: expansion. The
+[verified migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md),
+[image-controller checks](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
+and [historical trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/RESULTS.md)
+pass. The current working image is detached and verified at 7,200,000.
 
-12 October 2026. The user prefers W: because freeing more D: space is difficult.
-The 230 to 250 GiB expansion proposal is superseded; no further D: expansion
-was approved or performed.
+Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
+UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
+and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
+through the qualified ext4 image, without modifying efsn or the pinned library.
+Do not substitute or mount the cold full-VHD archive for this purpose.
 
-The [direct-path test](evidence/restart-w-direct-probe-v2-2026-10-12/RESULTS.md)
-failed on directory fsync with EIO. The
-[separate ext4 image test](evidence/restart-w-image-probe-2026-10-12/RESULTS.md)
-passed on the same W: share without changing efsn or its pinned LevelDB library.
-This gives us a measured way to use W: capacity while keeping the WSL operating
-system on D:. It is a disposable loop-backed data image, not the preserved VHD.
-Small synthetic writes were slower; do not extrapolate their timings to the
-full replay or claim network-loss durability.
+Closed live database allocation is 44.622 GiB. The next 300,000-block range to
+7,500,000 has a proposed 54 GiB sampled ceiling, about 9.38 GiB for further
+growth. Replay gets six hours clean-stop, 6h15m Go and 6h30m outer limits. The
+whole job gets eight hours for slow W: preparation and closed verification.
+The short trial's timings/growth motivate these bounds but are not forecasts.
 
-The [bounded copy job](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
-completed and verified at 18:20 UTC. All 22,501 files and the cold endpoint match;
-filesystem check and detach pass. Steps 1–4 below are complete. The [controller qualification](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
-also passes. Step 6 was dispatched at 19:01 UTC for 29,024 blocks to 7,200,000; mounted
-capacity passes, and the cold inventory still gates its writer:
+Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
+101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus
+that growth. Running reserves remain 20 GiB Linux/image, 50 GiB D: and 100 GiB W:.
+Record host mapping, exact image identity, mounted capacity and closed starting
+inventory. Keep one attachment owner/writer, read-only protected views, private
+network namespace, exact executables and finite stop/cleanup paths. Account for
+both live database allocation and backing-share space; old sparse-image extents
+may remain allocated when LevelDB deletes files.
 
-1. Create one new sparse raw ext4 working image under a fresh
-   `W:/FusionRestart/replay-work-7170976-<run-id>` directory, with a declared
-   512 GiB virtual ceiling and W: reserve of 100 GiB. This is a capacity ceiling,
-   not a request to write 512 GiB or a guarantee all future replay will fit.
-   Check the actual W: mapping, free space, newly created backing file and
-   exact loop-device identity before formatting. Never reuse an archive image.
-2. Keep one attachment owner and one writer. Use a private mount namespace and
-   the existing network-isolation arrangement. Refuse a missing/wrong W: mount;
-   never silently fall back to a D:-backed directory. Hold the checkpoint's run
-   and database locks, and expose its source through a read-only bind mount.
-3. Copy the 22,501 closed working files from verified checkpoint 7,170,976 into
-   that mounted image. Compare the source and destination against the sealed
-   per-file hashes. Use finite copy/verification deadlines and explicit resource
-   guards; retain failures and partial outputs. The original local checkpoint,
-   original backup, independent recovery, baselines and W: archives stay intact.
-4. Cold-open the destination with the recorded observer and match the exact
-   header, hash, state/ticket/transaction/receipt commitments, TD, ticket count
-   and other endpoint checks. Unmount cleanly, check the filesystem, detach and
-   verify reattachment/reopen. A copied manifest alone is not acceptance.
-5. Adapt only test orchestration/monitoring to the mounted image. Verify image,
-   mount and DB identities, allocation accounting and the finite stop/cleanup
-   path. Preserve Linux/D:/W: free reserves of 20/50/100 GiB and all executable,
-   source and release identities. W: capacity checks supplement rather than
-   replace checks for local logs/builds. No code or sync bypass in efsn.
-6. Run a short bounded continuation from 7,170,976 as a storage/performance trial,
-   then choose subsequent finite ranges from observed throughput and growth.
-   Do not repeat already-passing consensus tests. No larger replay starts before
-   the migrated checkpoint and adapted controller are verified.
-
-The synthetic fixture remains detached. The working image is owned by one
-finite trial, initially verifying the closed checkpoint before replay. The canonical
-verified height remains 7,170,976. This direction removes the current need for
-more D: space; a W: outage may still lose the active trial, so preserve the local
-fallback and prior sealed evidence. It does not change production storage advice.
+Retain the original backup, local verified 7,170,976 fallback, independent
+2,400,000 recovery, baselines, archives and all failed/sealed evidence. No further
+D: expansion or deletion is required for this range. A failed job or storage
+outage requires inspection and a verified checkpoint before resuming. Require
+inner verification, outer storage completion, host exit and actual detach;
+review and seal the final outer records separately from the inner automatic seal.
 
 ## Earlier capacity decision (superseded by the W: investigation)
 

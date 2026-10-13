@@ -1,58 +1,35 @@
 # Fusion restart launch plan
 
-Updated 12 October 2026. Working branch: `codex/restart-investigation-wip`.
-**Current state: verified through 7,170,976; W-backed checkpoint verified; bounded W: trial started.**
-The [7,200,000 attempt](evidence/restart-ticket-encoder-job-7200000-2026-10-12/RESULTS.md)
-stopped at 12:32 UTC at its unchanged 44 GiB sampled allocation limit. Its
-failed completion and STOP remain sealed. The [separate cold inspection](evidence/restart-ticket-encoder-stopped-7170976-2026-10-12/RESULTS.md)
-verifies 7,170,976: all five commands and twelve preservation checks pass.
-Exact head, full header/RLP, state/ticket/transaction/receipt commitments, bloom
-and TD match the backup, with 5,031 cold tickets and 160 transactions/receipts.
-No final warm ticket count is available. The inspection preserves 22,501 closed
-working-file hashes, 1,383 separate recovery hashes, protected metadata,
-source/toolchain/executable/replay identity and original STOP; 2,133 prior
-evidence files verify. No consensus mismatch was reported.
+Updated 13 October 2026. **Verified through 7,200,000; next W: continuation being prepared.**
+The [W-backed trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/RESULTS.md)
+completed verification and detached cleanly at 20:28 UTC on 12 October. All seven
+commands, eleven preservation checks and five manifest reviews pass. Both cold
+readers match the complete backup endpoint, with 5,053 tickets and 30 transactions/
+receipts; warm/cold ticket counts agree. The result preserves 22,859 closed target
+hashes, 1,383 separate recovery hashes, backup/baseline/local-fallback metadata,
+and unchanged executable/source/toolchain/replay identities. No mismatch was reported.
 
-This adds 270,976 verified blocks: 4,490,976 beyond the legacy boundary and
-7,959,104 still remaining to the 15,130,080 backup tip. F12/G1, final restored
-startup/recovery/handover, independent restore/portable-package acceptance and
-consensus review remain open. The 7,200,000 request is still incomplete; no
-failed job is relabeled and no release selection or node runtime changed.
+This adds 29,024 blocks and brings candidate coverage beyond the legacy boundary
+to 4,520,000 blocks. There are 7,930,080 blocks remaining to backup tip 15,130,080.
+F12/G1, final restored startup/recovery/handover, independent restore/portable
+package acceptance and consensus review remain open. The earlier failed local
+7,200,000 attempt and its STOP remain preserved; no release selection changed.
 
-The [capacity review](evidence/restart-capacity-after-7170976-2026-10-12/RESULTS.md)
-records 44.033 GiB closed working allocation, 21.937 GiB Linux free
-and 57.054 GiB D: free. Read-only verification passed above its reserves,
-but a further meaningful replay fails both starting gates. All previously
-identified standalone D: fixtures have already been archived/retired. Keep
-the protected backup, independent recovery, baselines, sealed/failed evidence,
-swap and W: image. Do not lower reserves or repeat ineffective compaction.
+The W: storage trial passed. Replay took about 22.1 minutes by wall timestamps
+(20.3 by its monotonic timer), with about 65 additional minutes for preparation
+and cold verification. Those timings are observations, not a full-history ETA.
+Closed allocation is 44.622 GiB, growing about 0.589 GiB. The next justified
+range is 7,200,000–7,500,000 with a 54 GiB sampled ceiling, six-hour clean replay
+limit and eight-hour whole-job cap. This gives room for useful history while
+amortizing the slower W: verification. Preserve the 20/50/100 GiB Linux/D:/W:
+running reserves and verify mounted capacity and exact inventory before writing.
 
-The user selected investigation of W: on 12 October rather than freeing more
-D: space. The [direct DrvFs test](evidence/restart-w-direct-probe-v2-2026-10-12/RESULTS.md)
-failed during database creation with directory-sync EIO. A separate 256 MiB
-[ext4 image on W:](evidence/restart-w-image-probe-2026-10-12/RESULTS.md) passed
-same-binary local-control and image tests for locking, synchronized writes,
-compaction, reopen/data verification and process-exit WAL recovery. A clean
-unmount/read-only filesystem check and detach passed. This is feasibility,
-not migration, throughput or power-loss qualification; no chain data moved.
-
-The [W: checkpoint copy](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
-completed at 18:20 UTC: all 22,501 files match the sealed checkpoint after
-reattachment, both cold reads reproduce its complete endpoint, and filesystem
-check/cleanup pass. The local checkpoint remains intact and the new image is
-detached. The copy and verification took about 83 minutes; this is not a replay
-speed forecast. No further D: expansion is needed for this step.
-
-The [image-controller qualification](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
-passes eight new and 32 affected monitor tests, actual W: attachment/refusal,
-exception cleanup, reattachment, and real-SIGTERM cleanup. The
-[prepared trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/inputs/spec.md)
-was dispatched at 19:01 UTC to continue 29,024 blocks to 7,200,000 with a 46 GiB allocation ceiling and
-one-hour cooperative replay limit. Whole-job preparation/verification is bounded
-at five hours. Preflight provenance/identities and mounted capacity pass. The initial
-[status record](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/STARTED.md)
-confirms isolated preparation; the exact cold inventory still precedes replay. The replay binary
-is unchanged. Keep 20/50/100 GiB Linux/D:/W: running reserves and the local fallback.
+The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
+and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
+remain the storage basis. Keep the local 7,170,976 fallback, original backup,
+independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
+archives. No further D: expansion or deletion is needed. One image owner and
+one writer only; do not hash live LevelDB or the mounted image.
 See the [storage procedure](restart-storage-capacity-review.md).
 
 The authorized [W: archive and native compaction remain complete](evidence/restart-wsl-compact-2026-10-11/RESULTS.md).
