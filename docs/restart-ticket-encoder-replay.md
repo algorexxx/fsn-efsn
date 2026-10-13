@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 14 October 2026. **Verified through 8,100,000; next bounded range is 8,400,000.**
+Updated 14 October 2026. **Verified through 8,100,000; W-backed continuation to 8,400,000 started.**
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-8100000-2026-10-13/RESULTS.md)
 passed inner verification at 21:30 UTC on 13 October and image detach/host exit
 at 21:31 UTC. All seven commands, ten preservation checks and five manifest
@@ -20,11 +20,11 @@ Replay took about 199.8 wall-clock minutes (190.5 monotonic), with about
 116.1 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
 ETA. Closed allocation is 59.117 GiB, growing 4.094 GiB. The next range
-is [prepared to 8,400,000](evidence/restart-ticket-encoder-w-8400000-2026-10-14/README.md)
-with 300,000 blocks, a fresh 71 GiB sampled ceiling and unchanged six-hour clean
-replay/eight-hour whole-job caps. Fresh capacity/provenance preflight passes at
-22:33 UTC on 13 October; actual mounted capacity and cold starting inventory
-remain required.
+[to 8,400,000](evidence/restart-ticket-encoder-w-8400000-2026-10-14/STARTED.md)
+was dispatched at 22:33 UTC on 13 October with 300,000 blocks, a fresh 71 GiB
+sampled ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
+Actual mounted capacity/isolation pass; the job is checking the closed starting
+inventory before its single replay writer.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)

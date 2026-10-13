@@ -5,8 +5,9 @@
 passed through 8,100,000, with inner verification, outer filesystem/unmount/
 detach and host exit successful at 21:31 UTC on 13 October. The subsequent
 actual-state check finds no test process, image attachment or target directory.
-Preserve the qualified migration/controller evidence. The next proposed range
-is to 8,400,000.
+Preserve the qualified migration/controller evidence. The [range to 8,400,000](evidence/restart-ticket-encoder-w-8400000-2026-10-14/STARTED.md)
+started at 22:33 UTC on 13 October. Actual mounted capacity/isolation pass; its
+closed starting inventory is being checked before replay.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
