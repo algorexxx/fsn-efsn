@@ -20,9 +20,11 @@ Replay took about 199.8 wall-clock minutes (190.5 monotonic), with about
 116.1 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
 ETA. Closed allocation is 59.117 GiB, growing 4.094 GiB. The next range
-will keep 300,000 blocks, a fresh 71 GiB sampled ceiling and unchanged six-hour
-clean replay/eight-hour whole-job caps. Fresh capacity, exact image identity
-and cold starting inventory must pass before the next writer.
+is [prepared to 8,400,000](evidence/restart-ticket-encoder-w-8400000-2026-10-14/README.md)
+with 300,000 blocks, a fresh 71 GiB sampled ceiling and unchanged six-hour clean
+replay/eight-hour whole-job caps. Fresh capacity/provenance preflight passes at
+22:33 UTC on 13 October; actual mounted capacity and cold starting inventory
+remain required.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
