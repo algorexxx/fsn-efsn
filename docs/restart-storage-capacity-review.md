@@ -1,13 +1,12 @@
-# W-backed replay capacity after 7,800,000
+# W-backed replay capacity after 8,100,000
 
-13 October 2026. The user selected W: to avoid further D: expansion. The
-[latest continuation](evidence/restart-ticket-encoder-w-7800000-2026-10-13/RESULTS.md)
-passed through 7,800,000, with inner verification, outer filesystem/unmount/
-detach and host exit successful. The subsequent actual-state check finds no
-test process, image attachment or target mount directory. Preserve the qualified
-migration and controller evidence. The [range to 8,100,000](evidence/restart-ticket-encoder-w-8100000-2026-10-13/STARTED.md)
-started at 16:15 UTC; actual mounted capacity/isolation pass and its closed
-starting inventory is being checked before replay.
+14 October 2026. The user selected W: to avoid further D: expansion. The
+[latest continuation](evidence/restart-ticket-encoder-w-8100000-2026-10-13/RESULTS.md)
+passed through 8,100,000, with inner verification, outer filesystem/unmount/
+detach and host exit successful at 21:31 UTC on 13 October. The subsequent
+actual-state check finds no test process, image attachment or target directory.
+Preserve the qualified migration/controller evidence. The next proposed range
+is to 8,400,000.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
@@ -15,14 +14,15 @@ and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
 through the qualified ext4 image without changing efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
-Closed live database allocation is 55.023 GiB. The next 300,000-block range to
-8,100,000 uses a fresh 67 GiB sampled ceiling, about 11.977 GiB for growth.
-The completed range grew 5.511 GiB and took about four replay hours plus 99
-minutes of preparation/verification. Keep six-hour clean replay, 6h15m Go,
-6h30m replay outer and eight-hour whole-job caps. These observations support
-the next bounded range, not an all-history time or storage forecast. Fresh local
-free space at 16:10 UTC is 22.302 GiB Linux / 56.524 GiB D:; the last W: observation
-is about 3.18 TiB. Fresh host and mounted capacity gates remain required.
+Closed live database allocation is 59.117 GiB. The next 300,000-block range to
+8,400,000 uses a fresh 71 GiB sampled ceiling, about 11.883 GiB for growth.
+The completed range grew 4.094 GiB and took about 199.8 replay minutes plus
+116.1 minutes outside replay by wall timestamps. Keep six-hour clean replay,
+6h15m Go, 6h30m replay outer and eight-hour whole-job caps. These observations
+support the next bounded range, not an all-history time or storage forecast.
+Fresh local free space at 22:15 UTC on 13 October is
+22.241 GiB Linux / 56.524 GiB D:; the last W: observation is about
+3.15 TiB. Fresh host and mounted capacity gates remain required.
 
 Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
 101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus
