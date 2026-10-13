@@ -4,7 +4,10 @@
 [verified migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md),
 [image-controller checks](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
 and [historical trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/RESULTS.md)
-pass. The current working image is detached and verified at 7,200,000.
+pass. The current working image is verified at 7,200,000 and attached to one
+[finite continuation](evidence/restart-ticket-encoder-w-7500000-2026-10-13/STARTED.md),
+dispatched at 05:08 UTC. Actual mounted capacity passes; closed-inventory
+verification precedes replay.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
@@ -13,7 +16,7 @@ through the qualified ext4 image, without modifying efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
 Closed live database allocation is 44.622 GiB. The next 300,000-block range to
-7,500,000 has a proposed 54 GiB sampled ceiling, about 9.38 GiB for further
+7,500,000 uses a 54 GiB sampled ceiling, about 9.38 GiB for further
 growth. Replay gets six hours clean-stop, 6h15m Go and 6h30m outer limits. The
 whole job gets eight hours for slow W: preparation and closed verification.
 The short trial's timings/growth motivate these bounds but are not forecasts.
