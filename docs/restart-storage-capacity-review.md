@@ -1,41 +1,39 @@
-# W-backed replay capacity after 7,200,000
+# W-backed replay capacity after 7,500,000
 
 13 October 2026. The user selected W: to avoid further D: expansion. The
-[verified migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md),
-[image-controller checks](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
-and [historical trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/RESULTS.md)
-pass. The current working image is verified at 7,200,000 and attached to one
-[finite continuation](evidence/restart-ticket-encoder-w-7500000-2026-10-13/STARTED.md),
-dispatched at 05:08 UTC. Actual mounted capacity passes; closed-inventory
-verification precedes replay.
+[latest continuation](evidence/restart-ticket-encoder-w-7500000-2026-10-13/RESULTS.md)
+passed through 7,500,000, with inner verification, outer filesystem/unmount/
+detach and host exit all successful. The subsequent actual-state check finds
+no test process, image attachment or target mount directory. Preserve the
+qualified migration and controller evidence; the next proposed range is 7,800,000.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
 and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
-through the qualified ext4 image, without modifying efsn or the pinned library.
+through the qualified ext4 image without changing efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
-Closed live database allocation is 44.622 GiB. The next 300,000-block range to
-7,500,000 uses a 54 GiB sampled ceiling, about 9.38 GiB for further
-growth. Replay gets six hours clean-stop, 6h15m Go and 6h30m outer limits. The
-whole job gets eight hours for slow W: preparation and closed verification.
-The short trial's timings/growth motivate these bounds but are not forecasts.
+Closed live database allocation is 49.512 GiB. The next 300,000-block range to
+7,800,000 proposes a fresh 60 GiB sampled ceiling, about 10.488 GiB for growth.
+The completed range grew 4.890 GiB and took about 3.5 replay hours plus 69 minutes
+of preparation/verification. Keep six-hour clean replay, 6h15m Go, 6h30m replay
+outer and eight-hour whole-job caps. These measurements support the next bounded
+range but do not forecast all-history time or storage.
 
 Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
 101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus
 that growth. Running reserves remain 20 GiB Linux/image, 50 GiB D: and 100 GiB W:.
-Record host mapping, exact image identity, mounted capacity and closed starting
-inventory. Keep one attachment owner/writer, read-only protected views, private
-network namespace, exact executables and finite stop/cleanup paths. Account for
-both live database allocation and backing-share space; old sparse-image extents
-may remain allocated when LevelDB deletes files.
+Record host mapping, exact image identity, actual mounted capacity and cold
+starting inventory before the writer. Keep one attachment owner, protected
+read-only views, private network namespace, exact executables and finite limits.
+Account for both live database allocation and backing-share space; old sparse
+image extents may remain allocated when LevelDB deletes files.
 
-Retain the original backup, local verified 7,170,976 fallback, independent
-2,400,000 recovery, baselines, archives and all failed/sealed evidence. No further
-D: expansion or deletion is required for this range. A failed job or storage
-outage requires inspection and a verified checkpoint before resuming. Require
-inner verification, outer storage completion, host exit and actual detach;
-review and seal the final outer records separately from the inner automatic seal.
+Retain original backup, local 7,170,976 fallback, independent 2,400,000 recovery,
+baselines, archives and all failed/sealed evidence. No further D: expansion or
+deletion is needed for this range. A failed job or storage outage requires
+inspection and a verified checkpoint before resuming. Review final outer records
+separately from the inner automatic seal; never rewrite a completed seal.
 
 ## Earlier capacity decision (superseded by the W: investigation)
 

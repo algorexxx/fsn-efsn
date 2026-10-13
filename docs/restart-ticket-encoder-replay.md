@@ -1,40 +1,35 @@
 # Candidate historical replay
 
-Updated 13 October 2026. **Verified through 7,200,000; W-backed continuation to 7,500,000 started.**
-The [W-backed trial](evidence/restart-ticket-encoder-w-trial-7200000-2026-10-12/RESULTS.md)
-completed verification and detached cleanly at 20:28 UTC on 12 October. All seven
-commands, eleven preservation checks and five manifest reviews pass. Both cold
-readers match the complete backup endpoint, with 5,053 tickets and 30 transactions/
-receipts; warm/cold ticket counts agree. The result preserves 22,859 closed target
-hashes, 1,383 separate recovery hashes, backup/baseline/local-fallback metadata,
-and unchanged executable/source/toolchain/replay identities. No mismatch was reported.
+Updated 13 October 2026. **Verified through 7,500,000; next W-backed range is 7,800,000.**
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-7500000-2026-10-13/RESULTS.md)
+passed inner verification at 09:46 UTC and completed image detach/host exit at
+09:47 UTC. All seven commands, ten preservation checks and five manifest reviews
+pass. Both cold readers match the complete backup endpoint, with 5,248 tickets
+and six transactions/receipts; warm/cold ticket counts agree. The result preserves
+25,362 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+fallback metadata and unchanged executable/source/toolchain identities.
 
-This adds 29,024 blocks and brings candidate coverage beyond the legacy boundary
-to 4,520,000 blocks. There are 7,930,080 blocks remaining to backup tip 15,130,080.
+This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
+to 4,820,000 blocks. There are 7,630,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
-package acceptance and consensus review remain open. The earlier failed local
-7,200,000 attempt and its STOP remain preserved; no release selection changed.
+package acceptance and consensus review remain open. Earlier failed attempts
+and their STOP records remain preserved; no release selection changed.
 
-The W: storage trial passed. Replay took about 22.1 minutes by wall timestamps
-(20.3 by its monotonic timer), with about 65 additional minutes for preparation
-and cold verification. Those timings are observations, not a full-history ETA.
-Closed allocation is 44.622 GiB, growing about 0.589 GiB. The next justified
-[range to 7,500,000](evidence/restart-ticket-encoder-w-7500000-2026-10-13/inputs/spec.md) was dispatched at 05:08 UTC with a 54 GiB sampled ceiling, six-hour clean replay
-limit and eight-hour whole-job cap. This gives room for useful history while
-amortizing the slower W: verification. Preserve the 20/50/100 GiB Linux/D:/W:
-running reserves and verify mounted capacity and exact inventory before writing.
+Replay took about 209.2 wall-clock minutes (209.0 monotonic), with about 69.2
+additional minutes for preparation, verification and cleanup. These observations
+are not a full-history ETA. Closed allocation is 49.512 GiB, growing 4.890 GiB.
+The next justified range is 7,500,000–7,800,000, with a fresh 60 GiB sampled
+ceiling, unchanged six-hour clean replay and eight-hour whole-job caps. This
+retains time margin for later workload while amortizing slow W: verification.
+Fresh capacity and exact cold inventory must pass before another writer starts.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
 remain the storage basis. Keep the local 7,170,976 fallback, original backup,
 independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
-archives. No further D: expansion or deletion is needed. One image owner and
-one writer only; do not hash live LevelDB or the mounted image.
-Fresh preflight validates prior inner/outer completion, unchanged controllers,
-observer-only endpoint change and local/W: reserves. Actual mounted capacity
-passes at startup; the closed inventory still precedes replay.
-The [startup record](evidence/restart-ticket-encoder-w-7500000-2026-10-13/STARTED.md)
-confirms one isolated job with no reported failure.
+archives. No further D: expansion or deletion is needed for the proposed range.
+One image owner and one writer only; do not hash live LevelDB or the mounted
+image. Preserve 20/50/100 GiB Linux/D:/W: running reserves and exact executables.
 See the [storage procedure](restart-storage-capacity-review.md).
 
 Earlier checkpoints and failed attempts remain preserved:
