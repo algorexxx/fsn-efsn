@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 15 October 2026. **Verified through 9,600,000; next bounded range is 9,900,000.**
+Updated 15 October 2026. **Verified through 9,600,000; W-backed continuation to 9,900,000 started.**
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-9600000-2026-10-14/RESULTS.md)
 passed inner verification and image detach/host exit by 23:38 UTC on 14 October.
 All seven commands, ten preservation checks and five manifest reviews pass.
@@ -19,8 +19,11 @@ Replay took about 126.1 wall-clock minutes (118.0 monotonic), with about
 110.4 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
 ETA. Closed allocation is 77.342 GiB, growing 2.578 GiB. The next justified
-range is 9,600,000-9,900,000, with a fresh 90 GiB sampled ceiling and unchanged
-six-hour clean replay/eight-hour whole-job caps. No writer is currently running.
+range [to 9,900,000](evidence/restart-ticket-encoder-w-9900000-2026-10-15/STARTED.md)
+was dispatched at 23:49 UTC on 14 October, with a fresh 90 GiB sampled ceiling
+and unchanged six-hour clean replay/eight-hour whole-job caps. Actual mounted
+capacity/isolation pass; the job is checking its closed starting inventory
+before replay. Startup allocation matches the prior closed measurement.
 Startup allocation matched the prior closed measurement, and all 38,445 starting
 hashes matched. The earlier supplemental 4 KiB discrepancy remains preserved;
 its cause is unestablished. No content check was waived.
