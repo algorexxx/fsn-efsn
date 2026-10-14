@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 14 October 2026. **Verified through 8,700,000; next range is 9,000,000.**
+Updated 14 October 2026. **Verified through 8,700,000; W-backed continuation to 9,000,000 started.**
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-8700000-2026-10-14/RESULTS.md)
 passed inner verification and image detach/host exit at 09:04 UTC. All seven
 commands, ten preservation checks and five manifest reviews pass. Both cold
@@ -18,10 +18,12 @@ and their STOP records remain preserved; no release selection changed.
 Replay took about 182.2 wall-clock minutes (178.2 monotonic), with about
 101.8 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 67.302 GiB, growing 3.941 GiB. The next justified range
-is 8,700,000-9,000,000 with a fresh 79 GiB sampled ceiling and unchanged six-hour
-clean replay/eight-hour whole-job caps. Fresh preflight and actual mounted
-capacity/isolation must pass before its single replay writer.
+ETA. Closed allocation is 67.302 GiB, growing 3.941 GiB. The next range
+[to 9,000,000](evidence/restart-ticket-encoder-w-9000000-2026-10-14/STARTED.md)
+was dispatched at 09:28 UTC with 300,000 blocks, a fresh 79 GiB sampled ceiling
+and unchanged six-hour clean replay/eight-hour whole-job caps. Actual mounted
+capacity/isolation pass; the job is checking the closed starting inventory
+before its single replay writer.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
