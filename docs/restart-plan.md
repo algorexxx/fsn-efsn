@@ -1,29 +1,27 @@
 # Fusion restart launch plan
 
-Updated 14 October 2026. **Verified through 8,700,000; W-backed continuation to 9,000,000 started.**
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-8700000-2026-10-14/RESULTS.md)
-passed inner verification and image detach/host exit at 09:04 UTC. All seven
+Updated 14 October 2026. **Verified through 9,000,000; next W-backed range is 9,300,000.**
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-9000000-2026-10-14/RESULTS.md)
+passed inner verification and image detach/host exit at 14:14 UTC. All seven
 commands, ten preservation checks and five manifest reviews pass. Both cold
-readers match the complete backup endpoint, with 3,848 tickets and 258
+readers match the complete backup endpoint, with 3,710 tickets and 10
 transactions/receipts; warm/cold ticket counts agree. The result preserves
-34,479 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+36,557 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 6,020,000 blocks. There are 6,430,080 blocks remaining to backup tip 15,130,080.
+to 6,320,000 blocks. There are 6,130,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 182.2 wall-clock minutes (178.2 monotonic), with about
-101.8 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 189.7 wall-clock minutes (184.8 monotonic), with about
+96.5 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 67.302 GiB, growing 3.941 GiB. The next range
-[to 9,000,000](evidence/restart-ticket-encoder-w-9000000-2026-10-14/STARTED.md)
-was dispatched at 09:28 UTC with 300,000 blocks, a fresh 79 GiB sampled ceiling
-and unchanged six-hour clean replay/eight-hour whole-job caps. Actual mounted
-capacity/isolation pass; the job is checking the closed starting inventory
-before its single replay writer.
+ETA. Closed allocation is 71.286 GiB, growing 3.984 GiB. The next proposed range
+to 9,300,000 keeps 300,000 blocks, a fresh 83 GiB sampled ceiling and unchanged
+six-hour clean replay/eight-hour whole-job caps. Actual mounted capacity,
+isolation and the closed starting inventory must pass before the next writer.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
