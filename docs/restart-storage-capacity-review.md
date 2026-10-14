@@ -5,9 +5,12 @@
 passed through 9,000,000, with inner verification, outer filesystem/unmount/
 detach and host exit successful at 14:14 UTC. The actual-state check at 14:26 UTC
 finds no test process, image attachment or target directory. Preserve the qualified
-migration/controller evidence. The next justified range is 9,000,000-9,300,000;
-fresh host and mounted capacity, isolation and cold starting inventory must pass
-before its single writer.
+migration/controller evidence. The [range to 9,300,000](evidence/restart-ticket-encoder-w-9300000-2026-10-14/STARTED.md)
+started at 14:30 UTC. Actual mounted capacity/isolation pass; its closed starting
+inventory is being checked before replay. Startup allocation is 4 KiB above the
+prior closed measurement; its cause remains unestablished and is recorded with
+the failed supplemental capture. The frozen controller's exact prior file-hash
+gate remains mandatory before replay. No capacity limit or content check changed.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
@@ -16,7 +19,7 @@ through the qualified ext4 image without changing efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
 Closed database allocation is 71.286 GiB. The next 300,000-block range to
-9,300,000 proposes a fresh 83 GiB sampled ceiling, about 11.714 GiB for growth.
+9,300,000 uses a fresh 83 GiB sampled ceiling, about 11.714 GiB for growth.
 The completed range grew 3.984 GiB and took about 189.7 replay minutes plus
 96.5 minutes outside replay by wall timestamps. Keep six-hour clean replay,
 6h15m Go, 6h30m replay outer and eight-hour whole-job caps. These observations

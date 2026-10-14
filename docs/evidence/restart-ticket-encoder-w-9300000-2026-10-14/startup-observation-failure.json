@@ -1,0 +1,14 @@
+{
+  "recorded": "2026-10-14T14:32:39.271348+00:00",
+  "failed_script": "capture-startup.py",
+  "failed_script_sha256": "cd77465b740390402168861bcf49a2cc8f111fe6f80565051b4252fec632d2a3",
+  "exception": "AssertionError",
+  "assertion": "record['existing_allocated_bytes'] == 76542504960",
+  "expected_prior_allocation": 76542504960,
+  "observed_startup_allocation": 76542509056,
+  "difference_bytes": 4096,
+  "startup_observation_file_created": false,
+  "source": "Tool output from the first startup capture, followed by a read of the existing run record.",
+  "cause_established": false,
+  "disposition": "Preserve this failed supplemental observation. Allocation equality is not a file-content guarantee; capture both measurements and retain the unchanged controller gate requiring exact prior file hashes before replay. No runtime input, limit, identity or content check changed."
+}
