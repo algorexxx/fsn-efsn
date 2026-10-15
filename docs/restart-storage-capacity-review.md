@@ -5,9 +5,10 @@
 passed through 9,900,000, with inner verification, outer filesystem/unmount/
 detach and host exit successful by 04:02 UTC. The actual-state check at 04:49 UTC
 finds no test process, image attachment or target directory. Preserve the qualified
-migration/controller evidence. The next justified range is 9,900,000-10,200,000;
-no writer is currently running. The completed run matched all 39,752 starting
-file hashes. Its startup allocation matched the prior closed measurement.
+migration/controller evidence. The [range to 10,200,000](evidence/restart-ticket-encoder-w-10200000-2026-10-15/STARTED.md)
+started at 04:52 UTC. Actual mounted capacity/isolation pass; its closed starting
+inventory is being checked before replay. Startup allocation matches the prior
+closed measurement. The completed run matched all 39,752 starting file hashes.
 The earlier supplemental 4 KiB discrepancy remains preserved; its cause is
 unestablished. No frozen content checks changed.
 
