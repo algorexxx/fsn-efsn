@@ -5,11 +5,12 @@
 passed through 10,800,000, with inner verification, outer filesystem/unmount/
 detach and host exit successful by 19:17 UTC. The actual-state check at 20:04 UTC
 finds no test process, loop attachment or target directory. Preserve the qualified
-migration/controller evidence. The next justified range is 10,800,000-11,100,000,
-subject to fresh preflight. The completed run's startup allocation matched the
-prior closed measurement and all 44,060 starting hashes matched. Earlier allocation
-differences and the failed supplemental assertion remain preserved; their cause
-remains unestablished. No content check changed.
+migration/controller evidence. The [range to 11,100,000](evidence/restart-ticket-encoder-w-11100000-2026-10-15/STARTED.md)
+started at 20:08 UTC. Actual mounted capacity/isolation pass; its starting file
+inventory is being checked before replay. Startup allocation matches the prior
+closed measurement. The completed run matched all 44,060 starting hashes.
+Earlier allocation differences and the failed supplemental assertion remain
+preserved; their cause remains unestablished. No content check changed.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling

@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 15 October 2026. **Verified through 10,800,000.**
+Updated 15 October 2026. **Verified through 10,800,000; W-backed continuation to 11,100,000 started.**
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-10800000-2026-10-15/RESULTS.md)
 passed inner verification and image detach/host exit by 19:17 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
@@ -19,11 +19,14 @@ Replay took about 162.7 wall-clock minutes (153.8 monotonic), with about
 143.0 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
 ETA. Closed allocation is 88.792 GiB, growing 3.106 GiB. The next justified
-range is 10,800,000-11,100,000, subject to fresh capacity and identity checks,
-with a new 101 GiB sampled ceiling and unchanged six-hour clean replay/eight-hour
-whole-job caps. Startup allocation matched the prior closed measurement and all
-44,060 starting hashes matched. Earlier allocation differences and the failed
-supplemental assertion remain preserved. No content check was changed or waived.
+range [to 11,100,000](evidence/restart-ticket-encoder-w-11100000-2026-10-15/STARTED.md)
+was dispatched at 20:08 UTC, with a fresh 101 GiB sampled ceiling and unchanged
+six-hour clean replay/eight-hour whole-job caps. Actual mounted capacity/isolation
+pass; the job is checking its closed starting inventory before replay. Startup
+allocation matches the prior closed measurement. Exact file hashes remain
+required before the writer. The completed run matched all 44,060 starting hashes.
+Earlier allocation differences and the failed supplemental assertion remain
+preserved. No content check was changed or waived.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
