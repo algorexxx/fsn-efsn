@@ -6,9 +6,11 @@ passed through 10,500,000, with inner verification, outer filesystem/unmount/
 detach and host exit successful by 13:09 UTC. The actual-state check at 14:05 UTC
 finds no test process, replay-image attachment or target directory. An unrelated
 Docker read-only ISO remains attached. Preserve the qualified migration/controller
-evidence. The next range to 10,800,000 is not yet launched; host/mounted capacity
-and closed starting inventory must pass first. All 42,373 starting hashes matched
-despite a 4,096-byte startup allocation difference; its cause remains unestablished.
+evidence. The [range to 10,800,000](evidence/restart-ticket-encoder-w-10800000-2026-10-15/STARTED.md)
+started at 14:10 UTC. Actual mounted capacity/isolation pass; its starting file
+inventory is being checked before replay. Startup allocation matches the prior
+closed measurement. The completed run matched all 42,373 starting hashes despite
+a 4,096-byte startup allocation difference; its cause remains unestablished.
 The earlier failed allocation assertion remains preserved. No content check changed.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
