@@ -1,34 +1,29 @@
 # Candidate historical replay
 
-Updated 15 October 2026. **Verified through 10,500,000; W-backed continuation to 10,800,000 started.**
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-10500000-2026-10-15/RESULTS.md)
-passed inner verification and image detach/host exit by 13:09 UTC.
+Updated 15 October 2026. **Verified through 10,800,000.**
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-10800000-2026-10-15/RESULTS.md)
+passed inner verification and image detach/host exit by 19:17 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 3,069 tickets and
-one transaction/receipt; warm/cold ticket counts agree. The result preserves
-44,060 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+Both cold readers match the complete backup endpoint, with 2,164 tickets and
+270 transactions/receipts; warm/cold ticket counts agree. The result preserves
+45,562 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 7,820,000 blocks. There are 4,630,080 blocks remaining to backup tip 15,130,080.
+to 8,120,000 blocks. There are 4,330,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 122.4 wall-clock minutes (118.7 monotonic), with about
-131.8 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 162.7 wall-clock minutes (153.8 monotonic), with about
+143.0 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 85.687 GiB, growing 3.113 GiB. The next justified
-range [to 10,800,000](evidence/restart-ticket-encoder-w-10800000-2026-10-15/STARTED.md)
-was dispatched at 14:10 UTC, with a fresh 98 GiB sampled ceiling and unchanged
-six-hour clean replay/eight-hour whole-job caps. Actual mounted capacity/isolation
-pass; the job is checking its closed starting inventory before replay. Startup
-allocation matches the prior closed measurement. Exact file hashes remain
-required before the writer.
-The completed run's startup allocation was 4,096 bytes above the preceding closed
-measurement; its cause remains unestablished. All 42,373 starting hashes matched,
-including this review's comparison of saved maps. The earlier failed allocation
-assertion remains preserved. No content check was changed or waived.
+ETA. Closed allocation is 88.792 GiB, growing 3.106 GiB. The next justified
+range is 10,800,000-11,100,000, subject to fresh capacity and identity checks,
+with a new 101 GiB sampled ceiling and unchanged six-hour clean replay/eight-hour
+whole-job caps. Startup allocation matched the prior closed measurement and all
+44,060 starting hashes matched. Earlier allocation differences and the failed
+supplemental assertion remain preserved. No content check was changed or waived.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
@@ -37,7 +32,6 @@ independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
 archives. No further D: expansion or deletion is needed for the proposed range.
 One image owner and one writer only; do not hash live LevelDB or the mounted
 image. Preserve 20/50/100 GiB Linux/D:/W: running reserves and exact executables.
-See the [storage procedure](restart-storage-capacity-review.md).
 
 Earlier checkpoints and failed attempts remain preserved:
 The [6,300,000 attempt](evidence/restart-ticket-encoder-job-6300000-2026-10-10/RESULTS.md)
