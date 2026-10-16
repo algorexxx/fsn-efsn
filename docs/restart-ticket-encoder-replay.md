@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 16 October 2026. **Verified through 11,700,000; continuation to 12,000,000 is justified pending fresh preflight.**
+Updated 16 October 2026. **Verified through 11,700,000; continuation to 12,000,000 started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-11700000-2026-10-16/RESULTS.md)
 passed inner verification and image detach/host exit by 14:46 UTC.
@@ -29,6 +29,13 @@ capacity and exact cold starting inventory must pass before the next writer.
 Startup allocation matched the prior closed measurement, and all 49,313 starting
 hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
+
+The [continuation to 12,000,000](evidence/restart-ticket-encoder-w-12000000-2026-10-16/STARTED.md)
+was dispatched at 15:34 UTC. Actual mounted identity, isolated namespaces and
+capacity checks pass; startup allocation equals the prior closed checkpoint.
+It is checking the closed 11,700,000 inventory before its single replay writer.
+Startup adds no verified blocks. Controller snapshots, protection gates and
+finite time limits are unchanged; all earlier refused/failed records remain sealed.
 
 The [preflight refusal](evidence/restart-ticket-encoder-w-11700000-2026-10-16/preflight-refusal-1/FAILURE.md)
 remains in the 74-file automatic seal. It caught observer line-ending changes

@@ -9,6 +9,13 @@ hashes matched; startup allocation matched the preceding closed measurement.
 Earlier discrepancies, preflight refusal and monitoring interruption/recovery
 remain sealed. Their histories and unchanged content gates remain documented.
 
+The [continuation to 12,000,000](evidence/restart-ticket-encoder-w-12000000-2026-10-16/STARTED.md)
+was dispatched at 15:34 UTC. Actual mounted identity, isolated namespaces and
+capacity checks pass; startup allocation equals the prior closed checkpoint.
+It is checking the closed 11,700,000 inventory before its single replay writer.
+Startup adds no verified blocks. Controller snapshots, protection gates and
+finite time limits are unchanged; all earlier refused/failed records remain sealed.
+
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
 and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
