@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 16 October 2026. **Verified through 12,000,000; continuation to 12,300,000 is justified pending fresh preflight.**
+Updated 16 October 2026. **Verified through 12,000,000; bounded continuation to 12,300,000 has started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-12000000-2026-10-16/RESULTS.md)
 passed inner verification and image detach/host exit by 20:50 UTC.
@@ -30,6 +30,15 @@ writer. Startup allocation matched the prior closed measurement, and all 51,371
 starting hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
 
+The [bounded continuation toward 12,300,000](evidence/restart-ticket-encoder-w-12300000-2026-10-16/STARTED.md)
+was dispatched once at 21:38:57 UTC from prepared commit `1d871122`.
+Mounted startup at 21:39:10 UTC passes image identity, isolation and all capacity
+floors. Host PID 30736 is alive with empty error logs; the job is checking the
+closed 12,000,000 inventory before its single replay writer. Startup allocation
+matches the prior closed 108,973,027,328 bytes. The exact content gate still must
+pass before replay. No new blocks are verified by this startup observation.
+Keep the 114 GiB sampled ceiling and all time/reserve limits unchanged.
+
 The [preflight refusal](evidence/restart-ticket-encoder-w-11700000-2026-10-16/preflight-refusal-1/FAILURE.md)
 remains in its original 74-file automatic seal. It caught observer line-ending
 changes before attachment or replay; byte-preserving correction and repeated
@@ -43,7 +52,7 @@ The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-1
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
 remain the storage basis. Keep the local 7,170,976 fallback, original backup,
 independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
-archives. No further D: expansion or deletion is needed for the proposed range.
+archives. No further D: expansion or deletion is needed for this range.
 One image owner and one writer only; do not hash live LevelDB or the mounted
 image. Preserve 20/50/100 GiB Linux/D:/W: running reserves and exact executables.
 See the [storage procedure](restart-storage-capacity-review.md).
