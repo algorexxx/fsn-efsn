@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 16 October 2026. **Verified through 11,400,000; the next bounded range is 11,700,000.**
+Updated 16 October 2026. **Verified through 11,400,000; continuation to 11,700,000 started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/RESULTS.md)
 passed inner verification and image detach/host exit by 07:55 UTC.
@@ -29,6 +29,15 @@ inventory must pass before the next writer. Startup allocation matched the
 prior closed measurement, and all 46,997 starting hashes matched exactly.
 Earlier allocation differences and the failed supplemental assertion remain
 preserved. No content check was changed or waived.
+
+The [continuation to 11,700,000](evidence/restart-ticket-encoder-w-11700000-2026-10-16/STARTED.md)
+was dispatched at 08:33 UTC. Actual mounted identity, isolated namespaces and
+capacity checks pass; startup allocation equals the prior closed checkpoint.
+It is checking the closed 11,400,000 inventory before its single replay writer.
+Startup adds no verified blocks. The preserved preflight refusal caught an
+observer line-ending preparation error; byte-preserving correction and repeated
+preflight passed before the single dispatch. Frozen controller checks and finite
+limits are unchanged.
 
 The [monitoring interruption](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
 and [recovered access](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
