@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 16 October 2026. **Verified through 11,100,000.**
+Updated 16 October 2026. **Verified through 11,100,000; W-backed continuation to 11,400,000 started.**
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
 passed inner verification and image detach/host exit by 00:54 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
@@ -19,11 +19,14 @@ Replay took about 143.6 wall-clock minutes (133.5 monotonic), with about
 141.9 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
 ETA. Closed allocation is 91.514 GiB, growing 2.722 GiB. The next justified
-range is 11,100,000-11,400,000, subject to fresh capacity and identity checks,
-with a new 104 GiB sampled ceiling and unchanged six-hour clean replay/eight-hour
-whole-job caps. Startup allocation matched the prior closed measurement and all
-45,562 starting hashes matched. Earlier allocation differences and the failed
-supplemental assertion remain preserved. No content check was changed or waived.
+range [to 11,400,000](evidence/restart-ticket-encoder-w-11400000-2026-10-16/STARTED.md)
+was dispatched at 01:16 UTC, with a fresh 104 GiB sampled ceiling and unchanged
+six-hour clean replay/eight-hour whole-job caps. Actual mounted capacity/isolation
+pass; the job is checking its closed starting inventory before replay. Startup
+allocation matches the prior closed measurement. Exact file hashes remain
+required before the writer. The completed run matched all 45,562 starting hashes.
+Earlier allocation differences and the failed supplemental assertion remain
+preserved. No content check was changed or waived.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
