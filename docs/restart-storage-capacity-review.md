@@ -1,5 +1,12 @@
 # W-backed replay capacity after 11,100,000
 
+**02:18 UTC monitoring interruption:** two WSL status attempts timed out;
+the host dispatcher remains alive but current test progress is unknown.
+[Host evidence](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
+records low available RAM and about 4 GiB free on C:, without establishing a cause.
+No completion is available. User assistance freeing RAM is requested before
+rechecking; do not launch another writer or force a WSL restart.
+
 16 October 2026. The user selected W: to avoid further D: expansion. The
 [latest continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
 passed through 11,100,000, with inner verification, outer filesystem/unmount/

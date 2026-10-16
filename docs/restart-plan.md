@@ -1,6 +1,14 @@
 # Fusion restart launch plan
 
-Updated 16 October 2026. **Verified through 11,100,000; W-backed continuation to 11,400,000 started.**
+Updated 16 October 2026. **Verified through 11,100,000; continuation to 11,400,000 has unknown runtime status.**
+
+**02:18 UTC monitoring interruption:** two WSL status attempts timed out;
+the host dispatcher remains alive but current test progress is unknown.
+[Host evidence](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
+records low available RAM and about 4 GiB free on C:, without establishing a cause.
+No completion is available. User assistance freeing RAM is requested before
+rechecking; do not launch another writer or force a WSL restart.
+
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
 passed inner verification and image detach/host exit by 00:54 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
