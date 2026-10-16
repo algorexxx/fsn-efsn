@@ -1,26 +1,13 @@
-# W-backed replay capacity after 11,100,000
-
-**06:17 UTC monitoring recovered:** WSL status access succeeds again. Replay
-passed at 11,400,000 at 05:47 UTC; the existing cold inspection is making read
-progress, with running disk reserves intact. Completion and outer cleanup
-remain pending, so 11,100,000 remains the verified checkpoint.
-[Recovery observation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
-preserves the earlier monitoring failure without attributing its cause. No
-forced restart or duplicate writer occurred. The earlier request to free RAM
-is no longer blocking monitoring; await this job's verification and cleanup.
+# W-backed replay capacity after 11,400,000
 
 16 October 2026. The user selected W: to avoid further D: expansion. The
-[latest continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
-passed through 11,100,000, with inner verification, outer filesystem/unmount/
-detach and host exit successful by 00:54 UTC. The actual-state check at 01:13 UTC
-finds no test process, replay-image attachment or target directory. An unrelated
-Docker read-only ISO remains attached. Preserve the qualified migration/controller
-evidence. The [range to 11,400,000](evidence/restart-ticket-encoder-w-11400000-2026-10-16/STARTED.md)
-started at 01:16 UTC. Actual mounted capacity/isolation passed; its starting file
-inventory subsequently verified before replay. Startup allocation matches the prior
-closed measurement. The completed run matched all 45,562 starting hashes.
-Earlier allocation differences and the failed supplemental assertion remain
-preserved; their cause remains unestablished. No content check changed.
+[latest continuation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/RESULTS.md)
+passed through 11,400,000, including inner verification, outer filesystem/
+unmount/detach and host exit by 07:55 UTC. The actual-state check at 08:26 UTC
+finds no test process, loop attachment or target directory. The prior monitoring
+interruption and recovered access remain sealed; no forced restart occurred.
+Its cause is unestablished. All 46,997 starting hashes matched; closed allocation
+matched the prior measurement at startup. Earlier discrepancies remain preserved.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
@@ -28,13 +15,14 @@ and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
 through the qualified ext4 image without changing efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
-Closed database allocation is 91.514 GiB. The next 300,000-block range to
-11,400,000 uses a fresh 104 GiB sampled ceiling, about 12.486 GiB for growth.
-The completed range grew 2.722 GiB and took about 143.6 replay minutes plus
-141.9 minutes outside replay by wall timestamps. Keep six-hour clean replay,
-6h15m Go, 6h30m replay outer and eight-hour whole-job caps. These observations
-support the next bounded range, not an all-history time or storage forecast.
-Fresh local free space at 01:13 UTC is 22.338 GiB Linux / 53.007 GiB D:;
+Closed database allocation is 95.369 GiB. The next 300,000-block range to
+11,700,000 uses a fresh 108 GiB sampled ceiling, about 12.631 GiB for growth.
+The completed range grew 3.855 GiB and took about 199.5 replay minutes plus
+199.1 minutes outside replay by wall timestamps. Keep six-hour clean replay,
+6h15m Go, 6h30m replay outer and eight-hour whole-job caps. About 81 minutes
+remained under that whole-job cap; do not increase the range or time limits.
+These observations support the next bounded range, not an all-history forecast.
+Fresh local free space at 08:26 UTC is 22.282 GiB Linux / 53.816 GiB D:;
 the last W: observation is about 3.02 TiB. Fresh host and mounted capacity
 gates remain required.
 

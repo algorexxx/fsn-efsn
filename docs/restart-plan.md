@@ -1,42 +1,40 @@
 # Fusion restart launch plan
 
-Updated 16 October 2026. **Verified through 11,100,000; replay reached 11,400,000, with cold verification pending.**
+Updated 16 October 2026. **Verified through 11,400,000; the next bounded range is 11,700,000.**
 
-**06:17 UTC monitoring recovered:** WSL status access succeeds again. Replay
-passed at 11,400,000 at 05:47 UTC; the existing cold inspection is making read
-progress, with running disk reserves intact. Completion and outer cleanup
-remain pending, so 11,100,000 remains the verified checkpoint.
-[Recovery observation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
-preserves the earlier monitoring failure without attributing its cause. No
-forced restart or duplicate writer occurred. The earlier request to free RAM
-is no longer blocking monitoring; await this job's verification and cleanup.
-
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
-passed inner verification and image detach/host exit by 00:54 UTC.
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/RESULTS.md)
+passed inner verification and image detach/host exit by 07:55 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 4,865 tickets and
-one transaction/receipt; warm/cold ticket counts agree. The result preserves
-46,997 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+Both cold readers match the complete backup endpoint, with 4,769 tickets and
+zero transactions/receipts; warm/cold ticket counts agree. The result preserves
+49,313 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
+The actual-state check at 08:26 UTC finds no test process or image attachment.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 8,420,000 blocks. There are 4,030,080 blocks remaining to backup tip 15,130,080.
+to 8,720,000 blocks. There are 3,730,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 143.6 wall-clock minutes (133.5 monotonic), with about
-141.9 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 199.5 wall-clock minutes (186.8 monotonic), with about
+199.1 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 91.514 GiB, growing 2.722 GiB. The next justified
-range [to 11,400,000](evidence/restart-ticket-encoder-w-11400000-2026-10-16/STARTED.md)
-was dispatched at 01:16 UTC, with a fresh 104 GiB sampled ceiling and unchanged
-six-hour clean replay/eight-hour whole-job caps. Actual mounted capacity/isolation
-passed at launch; the starting inventory subsequently verified before replay. Startup
-allocation matches the prior closed measurement. Exact file hashes remain
-required before the writer. The completed run matched all 45,562 starting hashes.
+ETA. Closed allocation is 95.369 GiB, growing 3.855 GiB. The next justified
+range is 11,400,000-11,700,000: keep 300,000 blocks, a fresh 108 GiB sampled
+ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
+This run left about 81 minutes under the whole-job cap; do not increase the
+range or time limits. Fresh host/mounted capacity and exact cold starting
+inventory must pass before the next writer. Startup allocation matched the
+prior closed measurement, and all 46,997 starting hashes matched exactly.
 Earlier allocation differences and the failed supplemental assertion remain
 preserved. No content check was changed or waived.
+
+The [monitoring interruption](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
+and [recovered access](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
+remain sealed. WSL access returned without a forced restart or duplicate writer;
+low memory was observed but the cause remains unestablished. Final verification
+passed. The earlier memory request no longer blocks monitoring.
 
 The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-12/RESULTS.md)
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
