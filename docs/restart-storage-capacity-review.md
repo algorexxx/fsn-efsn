@@ -1,11 +1,13 @@
 # W-backed replay capacity after 11,100,000
 
-**02:18 UTC monitoring interruption:** two WSL status attempts timed out;
-the host dispatcher remains alive but current test progress is unknown.
-[Host evidence](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
-records low available RAM and about 4 GiB free on C:, without establishing a cause.
-No completion is available. User assistance freeing RAM is requested before
-rechecking; do not launch another writer or force a WSL restart.
+**06:17 UTC monitoring recovered:** WSL status access succeeds again. Replay
+passed at 11,400,000 at 05:47 UTC; the existing cold inspection is making read
+progress, with running disk reserves intact. Completion and outer cleanup
+remain pending, so 11,100,000 remains the verified checkpoint.
+[Recovery observation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
+preserves the earlier monitoring failure without attributing its cause. No
+forced restart or duplicate writer occurred. The earlier request to free RAM
+is no longer blocking monitoring; await this job's verification and cleanup.
 
 16 October 2026. The user selected W: to avoid further D: expansion. The
 [latest continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
@@ -14,8 +16,8 @@ detach and host exit successful by 00:54 UTC. The actual-state check at 01:13 UT
 finds no test process, replay-image attachment or target directory. An unrelated
 Docker read-only ISO remains attached. Preserve the qualified migration/controller
 evidence. The [range to 11,400,000](evidence/restart-ticket-encoder-w-11400000-2026-10-16/STARTED.md)
-started at 01:16 UTC. Actual mounted capacity/isolation pass; its starting file
-inventory is being checked before replay. Startup allocation matches the prior
+started at 01:16 UTC. Actual mounted capacity/isolation passed; its starting file
+inventory subsequently verified before replay. Startup allocation matches the prior
 closed measurement. The completed run matched all 45,562 starting hashes.
 Earlier allocation differences and the failed supplemental assertion remain
 preserved; their cause remains unestablished. No content check changed.

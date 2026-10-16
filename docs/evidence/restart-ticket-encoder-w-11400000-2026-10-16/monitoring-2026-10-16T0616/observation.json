@@ -1,0 +1,97 @@
+{
+  "job": "restart-ticket-encoder-w-11400000-2026-10-16",
+  "observation_kind": "Recovered read-only WSL status access; cold verification in progress",
+  "host_checked": "2026-10-16T06:16:39.9010679Z",
+  "host_boot_time": "2026-10-11T21:36:26.5000000Z",
+  "host_dispatcher": {
+    "pid": 87064,
+    "alive": true,
+    "started": "2026-10-16T01:16:31.5188328Z"
+  },
+  "free_physical_memory_kib": 2074988,
+  "total_physical_memory_kib": 33363020,
+  "host_free_bytes": {
+    "C:": 5403627520,
+    "D:": 56415408128
+  },
+  "w_mapping": {
+    "remote_path": "\\\\192.168.1.250\\mnemosyne1",
+    "status": 0
+  },
+  "wsl_checked": "2026-10-16T06:17:02.579272Z",
+  "wsl_probe_exit": 0,
+  "status": {
+    "phase": "replay",
+    "updated": "2026-10-16T05:47:56.980780Z",
+    "observed_height": 11400000,
+    "observed_height_is_provisional": true,
+    "completed": false,
+    "stop_reason": null,
+    "failures": [],
+    "replay_pid": 701
+  },
+  "run": {
+    "resume_verified": true,
+    "previous_files_verified": 3059,
+    "binary_sha256": "b673229c4383efe2bdcdb8fae85606343f0823a3603b3f6a51c7e82e6d98f245",
+    "observer_binary_sha256": "dcc3376b5c8202f0fd0267cd8e6a4503a3ac5b35f3748614289092159058b3a6",
+    "replay_finished": "2026-10-16T05:47:56.544324Z",
+    "replay_exit": 0,
+    "commands_finished_with_exit_zero": [
+      "observer-build",
+      "observer-build-info",
+      "checkpoint-cold-head",
+      "reference",
+      "replay"
+    ],
+    "resource_samples": 372
+  },
+  "replay_result": {
+    "height": 11400000,
+    "hash": "0xb3c644d3b564774124099d43beb4ba78a0d6397f92531cebe57a26c37e0fa7c6",
+    "root": "0x130f74bd50410c34926d1faf43f04a8a92da3b29397d5169ce6ad2ae76f274cd",
+    "ticket_commitment": "0xfd69f2d39a3295cf1ab1c98836a9c165e72ba2cb3b33985e1417a508daf57b4c",
+    "tickets": 4769,
+    "test": "TestPreservedHistoryReplay",
+    "test_result": "PASS",
+    "reported_seconds": 11205.24,
+    "provisional_until_cold_verification_and_cleanup": true
+  },
+  "inspect_process": {
+    "checked": "2026-10-16T06:17:27.480451Z",
+    "pid": 4405,
+    "phase": "inspect",
+    "uid": 1000,
+    "state": "D (disk sleep)",
+    "vm_rss_kib": 82696,
+    "mount_namespace": "mnt:[4026532208]",
+    "network_namespace": "net:[4026532209]",
+    "five_second_io_delta": {
+      "rchar": 120225491,
+      "wchar": 0,
+      "syscr": 116,
+      "syscw": 0,
+      "read_bytes": 119566336,
+      "write_bytes": 0,
+      "cancelled_write_bytes": 0
+    },
+    "free_bytes": {
+      "/home/rehearsal/results": 23922966528,
+      "/mnt/d": 56415408128,
+      "/mnt/w": 3316982412288,
+      "/home/rehearsal/replay/candidate-ticket-encoding-w": 445881360384
+    }
+  },
+  "completion_records_present": {
+    "completion.json": false,
+    "verification.json": false,
+    "storage-completion.json": false,
+    "host-run.json": false
+  },
+  "host_output_and_error_logs_bytes": 0,
+  "last_verified_height": 11100000,
+  "new_writer_started": false,
+  "forced_restart_performed": false,
+  "database_files_opened_or_hashed_by_this_monitoring_check": false,
+  "prior_monitoring_failure_cause_established": false
+}

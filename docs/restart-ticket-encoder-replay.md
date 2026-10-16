@@ -1,13 +1,15 @@
 # Candidate historical replay
 
-Updated 16 October 2026. **Verified through 11,100,000; continuation to 11,400,000 has unknown runtime status.**
+Updated 16 October 2026. **Verified through 11,100,000; replay reached 11,400,000, with cold verification pending.**
 
-**02:18 UTC monitoring interruption:** two WSL status attempts timed out;
-the host dispatcher remains alive but current test progress is unknown.
-[Host evidence](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
-records low available RAM and about 4 GiB free on C:, without establishing a cause.
-No completion is available. User assistance freeing RAM is requested before
-rechecking; do not launch another writer or force a WSL restart.
+**06:17 UTC monitoring recovered:** WSL status access succeeds again. Replay
+passed at 11,400,000 at 05:47 UTC; the existing cold inspection is making read
+progress, with running disk reserves intact. Completion and outer cleanup
+remain pending, so 11,100,000 remains the verified checkpoint.
+[Recovery observation](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
+preserves the earlier monitoring failure without attributing its cause. No
+forced restart or duplicate writer occurred. The earlier request to free RAM
+is no longer blocking monitoring; await this job's verification and cleanup.
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-11100000-2026-10-15/RESULTS.md)
 passed inner verification and image detach/host exit by 00:54 UTC.
@@ -30,7 +32,7 @@ ETA. Closed allocation is 91.514 GiB, growing 2.722 GiB. The next justified
 range [to 11,400,000](evidence/restart-ticket-encoder-w-11400000-2026-10-16/STARTED.md)
 was dispatched at 01:16 UTC, with a fresh 104 GiB sampled ceiling and unchanged
 six-hour clean replay/eight-hour whole-job caps. Actual mounted capacity/isolation
-pass; the job is checking its closed starting inventory before replay. Startup
+passed at launch; the starting inventory subsequently verified before replay. Startup
 allocation matches the prior closed measurement. Exact file hashes remain
 required before the writer. The completed run matched all 45,562 starting hashes.
 Earlier allocation differences and the failed supplemental assertion remain
