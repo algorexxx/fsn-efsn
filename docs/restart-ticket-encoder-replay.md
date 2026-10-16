@@ -1,47 +1,40 @@
 # Candidate historical replay
 
-Updated 16 October 2026. **Verified through 11,700,000; continuation to 12,000,000 started.**
+Updated 16 October 2026. **Verified through 12,000,000; continuation to 12,300,000 is justified pending fresh preflight.**
 
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-11700000-2026-10-16/RESULTS.md)
-passed inner verification and image detach/host exit by 14:46 UTC.
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-12000000-2026-10-16/RESULTS.md)
+passed inner verification and image detach/host exit by 20:50 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 4,581 tickets and
+Both cold readers match the complete backup endpoint, with 5,054 tickets and
 one transaction/receipt; warm/cold ticket counts agree. The result preserves
-51,371 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+52,179 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
-The actual-state check at 15:29 UTC finds no test process or image attachment.
+The actual-state check at 21:33 UTC finds no test process or image attachment.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 9,020,000 blocks. There are 3,430,080 blocks remaining to backup tip 15,130,080.
+to 9,320,000 blocks. There are 3,130,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 189.5 wall-clock minutes (184.4 monotonic), with about
-183.6 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 123.1 wall-clock minutes (117.0 monotonic), with about
+192.3 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 99.830 GiB, growing 4.461 GiB. The next justified
-range is 11,700,000-12,000,000: keep 300,000 blocks, a fresh 112 GiB sampled
+ETA. Closed allocation is 101.489 GiB, growing 1.659 GiB. The next justified
+range is 12,000,000-12,300,000: keep 300,000 blocks, a fresh 114 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
-This run left about 107 minutes under the whole-job cap, the preceding range
-about 81 minutes; do not increase the range or time limits. Fresh host/mounted
-capacity and exact cold starting inventory must pass before the next writer.
-Startup allocation matched the prior closed measurement, and all 49,313 starting
-hashes matched exactly. Earlier allocation differences and the failed
+This run left about 165 minutes under the whole-job cap; recent ranges left
+as little as 81 minutes. Do not increase the range or time limits. Fresh host/
+mounted capacity and exact cold starting inventory must pass before the next
+writer. Startup allocation matched the prior closed measurement, and all 51,371
+starting hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
 
-The [continuation to 12,000,000](evidence/restart-ticket-encoder-w-12000000-2026-10-16/STARTED.md)
-was dispatched at 15:34 UTC. Actual mounted identity, isolated namespaces and
-capacity checks pass; startup allocation equals the prior closed checkpoint.
-It is checking the closed 11,700,000 inventory before its single replay writer.
-Startup adds no verified blocks. Controller snapshots, protection gates and
-finite time limits are unchanged; all earlier refused/failed records remain sealed.
-
 The [preflight refusal](evidence/restart-ticket-encoder-w-11700000-2026-10-16/preflight-refusal-1/FAILURE.md)
-remains in the 74-file automatic seal. It caught observer line-ending changes
-before attachment or replay; byte-preserving correction and repeated preflight
-passed before the single dispatch. Frozen controller checks and limits stayed
-unchanged. The earlier [monitoring interruption](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
+remains in its original 74-file automatic seal. It caught observer line-ending
+changes before attachment or replay; byte-preserving correction and repeated
+preflight passed before that single dispatch. Frozen controller checks and limits
+stayed unchanged. The earlier [monitoring interruption](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0218/README.md)
 and [recovered access](evidence/restart-ticket-encoder-w-11400000-2026-10-16/monitoring-2026-10-16T0616/README.md)
 remain sealed. WSL returned without a forced restart or duplicate writer; the
 cause remains unestablished and the old memory request no longer blocks work.
