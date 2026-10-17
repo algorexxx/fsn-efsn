@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 17 October 2026 UTC. **Verified through 13,200,000; next bounded range is 13,200,000-13,500,000.**
+Updated 17 October 2026 UTC. **Verified through 13,200,000; bounded continuation to 13,500,000 has started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-13200000-2026-10-17/RESULTS.md)
 passed evidence verification, image detach and host exit by 22:43 UTC.
@@ -25,12 +25,21 @@ range is 13,200,000-13,500,000: keep 300,000 blocks, a fresh 118 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
 This run left about 134 minutes under the whole-job cap; recent ranges left
 as little as 81 minutes. Do not increase the range or time limits. Fresh host/
-mounted capacity and exact cold starting inventory must pass before the next
-writer. Startup allocation matched the prior closed measurement, and all 54,324
-starting hashes matched exactly. Earlier allocation differences and the failed
+mounted capacity passed at startup; exact cold starting inventory must still
+pass before the writer. In the completed run, startup allocation matched the
+prior closed measurement and all 54,324 starting hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
 
-The [preflight refusal for this range](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
+The [next bounded continuation](evidence/restart-ticket-encoder-w-13500000-2026-10-17/STARTED.md)
+was dispatched once at 22:50:36 UTC from prepared commit
+`ca64525da735aaaa793691d28af4464d25116b4f`; host PID 113196 is alive.
+Mounted startup at 22:50:48 UTC passed image identity, private namespace and
+actual capacity gates, observed at 22:51:05 UTC. Allocation matches the prior
+closed measurement; exact cold starting hashes must still pass before replay.
+The job is preparing the 13,200,000-13,500,000 range with a 118 GiB sampled
+ceiling and unchanged finite limits. No additional blocks are yet verified.
+
+The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
 checks remain in the 74-file automatic seal. Correcting that filename and
 regenerating the input seal/runner pin passed unchanged preflights before the
