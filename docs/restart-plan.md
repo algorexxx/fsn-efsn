@@ -1,46 +1,40 @@
 # Fusion restart launch plan
 
-Updated 17 October 2026. **Verified through 12,900,000; bounded continuation to 13,200,000 has started.**
+Updated 17 October 2026 UTC. **Verified through 13,200,000; next bounded range is 13,200,000-13,500,000.**
 
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-12900000-2026-10-17/RESULTS.md)
-passed inner verification and image detach/host exit by 16:32 UTC.
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-13200000-2026-10-17/RESULTS.md)
+passed evidence verification, image detach and host exit by 22:43 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 4,486 tickets and
-one transaction/receipt; warm/cold ticket counts agree. The result preserves
-54,324 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+Both cold readers match the complete backup endpoint, with 3,921 tickets and
+two transactions/receipts; warm/cold ticket counts agree. The result preserves
+54,351 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
-The actual-state check at 16:48 UTC finds no test process or image attachment.
+The actual-state check at 22:47 UTC finds no test process or image attachment.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 10,220,000 blocks. There are 2,230,080 blocks remaining to backup tip 15,130,080.
+to 10,520,000 blocks. There are 1,930,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 80.6 wall-clock minutes (78.1 monotonic), with about
-266.4 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 68.8 wall-clock minutes (65.5 monotonic), with about
+277.1 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 105.075 GiB, growing 0.876 GiB. The next justified
-range is 12,900,000-13,200,000: keep 300,000 blocks, a fresh 118 GiB sampled
+ETA. Closed allocation is 105.640 GiB, growing 0.564 GiB. The next justified
+range is 13,200,000-13,500,000: keep 300,000 blocks, a fresh 118 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
-This run left about 133 minutes under the whole-job cap; recent ranges left
+This run left about 134 minutes under the whole-job cap; recent ranges left
 as little as 81 minutes. Do not increase the range or time limits. Fresh host/
-mounted capacity passed at dispatch; exact cold starting inventory must still
-pass before the writer. In the completed run, startup allocation matched the
-prior closed measurement and all 54,009 starting hashes matched exactly. Earlier allocation differences and the failed
+mounted capacity and exact cold starting inventory must pass before the next
+writer. Startup allocation matched the prior closed measurement, and all 54,324
+starting hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
 
-The [next bounded continuation](evidence/restart-ticket-encoder-w-13200000-2026-10-17/STARTED.md)
-was dispatched once at 16:56:18 UTC from prepared commit
-`fa3f656b4ff0f3816a1e7e428506a4be10b5b9b5`; host PID 213744 is alive.
-Mounted startup at 16:56:29 UTC passed image identity, private namespace and
-actual capacity gates, observed at 16:56:48 UTC. Allocation matches the prior
-closed measurement; exact cold starting hashes must still pass before replay.
-The job is preparing the 12,900,000-13,200,000 range with a 118 GiB sampled
-ceiling and unchanged finite limits. No additional blocks are yet verified.
-The [initial preparation refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
-was a misnamed patch, caught before attachment; its records remain sealed.
-The filename was corrected and unchanged preflights passed before dispatch.
+The [preflight refusal for this range](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
+caught a misnamed observer patch before image attachment. Original inputs and
+checks remain in the 74-file automatic seal. Correcting that filename and
+regenerating the input seal/runner pin passed unchanged preflights before the
+single dispatch. No controller or acceptance gate changed.
 
 The [preflight refusal](evidence/restart-ticket-encoder-w-11700000-2026-10-16/preflight-refusal-1/FAILURE.md)
 remains in its original 74-file automatic seal. It caught observer line-ending
