@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 17 October 2026. **Verified through 12,900,000; next bounded range is 12,900,000-13,200,000.**
+Updated 17 October 2026. **Verified through 12,900,000; bounded continuation to 13,200,000 has started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-12900000-2026-10-17/RESULTS.md)
 passed inner verification and image detach/host exit by 16:32 UTC.
@@ -25,10 +25,22 @@ range is 12,900,000-13,200,000: keep 300,000 blocks, a fresh 118 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
 This run left about 133 minutes under the whole-job cap; recent ranges left
 as little as 81 minutes. Do not increase the range or time limits. Fresh host/
-mounted capacity and exact cold starting inventory must pass before the next
-writer. Startup allocation matched the prior closed measurement, and all 54,009
-starting hashes matched exactly. Earlier allocation differences and the failed
+mounted capacity passed at dispatch; exact cold starting inventory must still
+pass before the writer. In the completed run, startup allocation matched the
+prior closed measurement and all 54,009 starting hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
+
+The [next bounded continuation](evidence/restart-ticket-encoder-w-13200000-2026-10-17/STARTED.md)
+was dispatched once at 16:56:18 UTC from prepared commit
+`fa3f656b4ff0f3816a1e7e428506a4be10b5b9b5`; host PID 213744 is alive.
+Mounted startup at 16:56:29 UTC passed image identity, private namespace and
+actual capacity gates, observed at 16:56:48 UTC. Allocation matches the prior
+closed measurement; exact cold starting hashes must still pass before replay.
+The job is preparing the 12,900,000-13,200,000 range with a 118 GiB sampled
+ceiling and unchanged finite limits. No additional blocks are yet verified.
+The [initial preparation refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
+was a misnamed patch, caught before attachment; its records remain sealed.
+The filename was corrected and unchanged preflights passed before dispatch.
 
 The [preflight refusal](evidence/restart-ticket-encoder-w-11700000-2026-10-16/preflight-refusal-1/FAILURE.md)
 remains in its original 74-file automatic seal. It caught observer line-ending
