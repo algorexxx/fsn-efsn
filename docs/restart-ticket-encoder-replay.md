@@ -1,6 +1,6 @@
 # Candidate historical replay
 
-Updated 17 October 2026. **Verified through 12,600,000; next bounded range is 12,600,000-12,900,000.**
+Updated 17 October 2026. **Verified through 12,600,000; bounded continuation to 12,900,000 has started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-12600000-2026-10-17/RESULTS.md)
 passed inner verification and image detach/host exit by 09:55 UTC.
@@ -29,6 +29,15 @@ mounted capacity and exact cold starting inventory must pass before the next
 writer. Startup allocation matched the prior closed measurement, and all 53,110
 starting hashes matched exactly. Earlier allocation differences and the failed
 supplemental assertion remain preserved. No content check was changed or waived.
+
+The [bounded continuation toward 12,900,000](evidence/restart-ticket-encoder-w-12900000-2026-10-17/STARTED.md)
+was dispatched once at 10:44:38 UTC from prepared commit `f427a7e6`.
+Mounted startup at 10:45:03 UTC passes image identity, isolation and all capacity
+floors. Host PID 122820 is alive with empty error logs; the job is checking the
+closed 12,600,000 inventory before its single replay writer. Startup allocation
+matches the prior closed 111,883,128,832 bytes. The exact content gate still must
+pass before replay. No new blocks are verified by this startup observation.
+Keep the 117 GiB sampled ceiling and all time/reserve limits unchanged.
 
 The [preflight refusal](evidence/restart-ticket-encoder-w-11700000-2026-10-16/preflight-refusal-1/FAILURE.md)
 remains in its original 74-file automatic seal. It caught observer line-ending
