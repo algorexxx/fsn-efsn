@@ -1,44 +1,35 @@
 # Fusion restart launch plan
 
-Updated 18 October 2026 UTC. **Verified through 13,800,000; bounded continuation to 14,100,000 has started.**
+Updated 18 October 2026 UTC. **Verified through 14,100,000; the next bounded range is 14,100,000-14,400,000.**
 
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-13800000-2026-10-18/RESULTS.md)
-passed evidence verification, image detach and host exit by 12:29 UTC.
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-14100000-2026-10-18/RESULTS.md)
+passed evidence verification, image detach and host exit by 18:20 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 4,218 tickets and
-two transactions/receipts; warm/cold ticket counts agree. The result preserves
-55,063 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+Both cold readers match the complete backup endpoint, with 1,715 tickets and
+one transaction/receipt; warm/cold ticket counts agree. The result preserves
+55,207 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
-The actual-state check at 13:02 UTC finds no test process or image attachment.
+The actual-state check at 19:10 UTC finds no test process or image attachment.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 11,120,000 blocks. There are 1,330,080 blocks remaining to backup tip 15,130,080.
+to 11,420,000 blocks. There are 1,030,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 59.3 wall-clock minutes (58.3 monotonic), with about
-328.3 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 51.5 wall-clock minutes (48.9 monotonic), with about
+262.1 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 106.600 GiB, growing 0.367 GiB. The next justified
-range is 13,800,000-14,100,000: keep 300,000 blocks, a fresh 119 GiB sampled
+ETA. Closed allocation is 106.986 GiB, growing 0.385 GiB. The next justified
+range is 14,100,000-14,400,000: keep 300,000 blocks, a fresh 119 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
-This run left about 92 minutes under the whole-job cap; recent ranges left
+This run left about 166 minutes under the whole-job cap; recent ranges left
 as little as 81 minutes. Do not increase the range or time limits. Revalidate
 host/mounted capacity and exact cold starting inventory before the next writer.
 In the completed run, startup allocation matched the prior closed measurement
-and all 54,852 starting hashes matched exactly. Earlier allocation differences
+and all 55,063 starting hashes matched exactly. Earlier allocation differences
 and the failed supplemental assertion remain preserved. No content check was
 changed or waived.
-
-The [next bounded continuation](evidence/restart-ticket-encoder-w-14100000-2026-10-18/STARTED.md)
-was dispatched once at 13:05:57 UTC from prepared commit
-`0b662d09af6b150f66e2a503682cfb10e4e68cb1`; host PID 99992 is alive.
-Mounted startup at 13:06:10 UTC passed image identity, private namespace and
-actual capacity gates, observed at 13:06:47 UTC. Allocation matches the prior
-closed measurement; exact cold starting hashes must still pass before replay.
-The job is preparing the 13,800,000-14,100,000 range with a 119 GiB sampled
-ceiling and unchanged finite time limits. No additional blocks are yet verified.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
