@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 18 October 2026 UTC. **Verified through 13,500,000; the next bounded range is 13,800,000.**
+Updated 18 October 2026 UTC. **Verified through 13,500,000; bounded continuation to 13,800,000 has started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-13500000-2026-10-17/RESULTS.md)
 passed evidence verification, image detach and host exit by 04:56 UTC.
@@ -30,6 +30,15 @@ In the completed run, startup allocation matched the prior closed measurement
 and all 54,351 starting hashes matched exactly. Earlier allocation differences
 and the failed supplemental assertion remain preserved. No content check was
 changed or waived.
+
+The [next bounded continuation](evidence/restart-ticket-encoder-w-13800000-2026-10-18/STARTED.md)
+was dispatched once at 06:00:49 UTC from prepared commit
+`2041f820144d75bf46c50d8506b2d7b08f5f6182`; host PID 209556 is alive.
+Mounted startup at 06:01:00 UTC passed image identity, private namespace and
+actual capacity gates, observed at 06:01:35 UTC. Allocation matches the prior
+closed measurement; exact cold starting hashes must still pass before replay.
+The job is preparing the 13,500,000-13,800,000 range with a 119 GiB sampled
+ceiling and unchanged finite time limits. No additional blocks are yet verified.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
