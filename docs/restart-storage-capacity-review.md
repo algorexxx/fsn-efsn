@@ -9,6 +9,15 @@ hashes matched; startup allocation matched the preceding closed measurement.
 Earlier discrepancies, both preflight refusals and monitoring interruption/recovery
 remain sealed. Their histories and unchanged content gates remain documented.
 
+The [14,100,000 continuation](evidence/restart-ticket-encoder-w-14100000-2026-10-18/STARTED.md)
+was dispatched once at 13:05:57 UTC; mounted startup at 13:06:10 UTC passed
+actual capacity and identity gates. Observed free space at 13:06:47 UTC is
+21.797 GiB Linux / 52.896 GiB D: / 2.903 TiB W: / 404.028 GiB
+image filesystem. Startup allocation matches the prior closed measurement.
+The 119 GiB sampled ceiling leaves 12.400 GiB growth headroom; unchanged exact
+cold starting inventory must pass before replay. No time limit, controller or
+acceptance gate changed. Earlier refusals remain sealed in their original bundles.
+
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
 and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
@@ -24,8 +33,8 @@ remained under that whole-job cap; recent ranges left as little as 81 minutes.
 Do not increase the range or time limits. These observations support the next
 bounded range, not an all-history forecast. Fresh local free space at 13:02 UTC
 is 21.797 GiB Linux / 52.896 GiB D:; the last W: observation is about 2.90 TiB.
-Revalidate host and actual mounted capacity before the next writer; the exact
-cold starting inventory must pass unchanged.
+Fresh host and mounted capacity gates passed by 13:07 UTC; the exact cold
+starting inventory gate remains pending before replay.
 
 Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
 101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus
