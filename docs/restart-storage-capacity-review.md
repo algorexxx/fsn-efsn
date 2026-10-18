@@ -1,22 +1,13 @@
-# W-backed replay capacity after 13,200,000
+# W-backed replay capacity after 13,500,000
 
-17 October 2026 UTC. The user selected W: to avoid further D: expansion. The
-[latest continuation](evidence/restart-ticket-encoder-w-13200000-2026-10-17/RESULTS.md)
-passed through 13,200,000, including evidence verification, outer filesystem/
-unmount/detach and host exit by 22:43 UTC. The actual-state check at 22:47 UTC
-finds no test process, loop attachment or target directory. All 54,324 starting
+18 October 2026 UTC. The user selected W: to avoid further D: expansion. The
+[latest continuation](evidence/restart-ticket-encoder-w-13500000-2026-10-17/RESULTS.md)
+passed through 13,500,000, including evidence verification, outer filesystem/
+unmount/detach and host exit by 04:56 UTC. The actual-state check at 05:57 UTC
+finds no test process, loop attachment or target directory. All 54,351 starting
 hashes matched; startup allocation matched the preceding closed measurement.
 Earlier discrepancies, both preflight refusals and monitoring interruption/recovery
 remain sealed. Their histories and unchanged content gates remain documented.
-
-The [13,500,000 continuation](evidence/restart-ticket-encoder-w-13500000-2026-10-17/STARTED.md)
-was dispatched once at 22:50:36 UTC; mounted startup at 22:50:48 UTC passed
-actual capacity and identity gates. Observed free space at 22:51:05 UTC is
-21.920 GiB Linux / 52.991 GiB D: / 2.904 TiB W: / 404.989 GiB
-image filesystem. Startup allocation matches the prior closed measurement.
-The 118 GiB sampled ceiling leaves 12.360 GiB growth headroom; unchanged exact
-cold starting inventory must pass before replay. No limit, controller or
-acceptance gate changed. Earlier refusals remain sealed in their original bundles.
 
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
@@ -24,17 +15,17 @@ and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
 through the qualified ext4 image without changing efsn or the pinned library.
 Do not substitute or mount the cold full-VHD archive for this purpose.
 
-Closed database allocation is 105.640 GiB. The next 300,000-block range to
-13,500,000 uses a fresh 118 GiB sampled ceiling, about 12.360 GiB for growth.
-The completed range grew 0.564 GiB and took about 68.8 replay minutes plus
-277.1 minutes outside replay by wall timestamps. Keep six-hour clean replay,
-6h15m Go, 6h30m replay outer and eight-hour whole-job caps. About 134 minutes
+Closed database allocation is 106.233 GiB. The next 300,000-block range to
+13,800,000 uses a fresh 119 GiB sampled ceiling, about 12.767 GiB for growth.
+The completed range grew 0.594 GiB and took about 62.3 replay minutes plus
+302.6 minutes outside replay by wall timestamps. Keep six-hour clean replay,
+6h15m Go, 6h30m replay outer and eight-hour whole-job caps. About 115 minutes
 remained under that whole-job cap; recent ranges left as little as 81 minutes.
 Do not increase the range or time limits. These observations support the next
-bounded range, not an all-history forecast. Fresh local free space at 22:47 UTC
-is 21.920 GiB Linux / 52.996 GiB D:; the last W: observation is about 2.90 TiB.
-Fresh host and mounted capacity gates passed by 22:51 UTC; the exact cold
-starting inventory gate remains pending before replay.
+bounded range, not an all-history forecast. Fresh local free space at 05:57 UTC
+is 21.855 GiB Linux / 52.953 GiB D:; the last W: observation is about 2.90 TiB.
+Fresh host/mounted capacity and exact cold starting inventory must pass before
+the next writer.
 
 Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
 101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus

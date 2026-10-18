@@ -1,43 +1,35 @@
 # Candidate historical replay
 
-Updated 17 October 2026 UTC. **Verified through 13,200,000; bounded continuation to 13,500,000 has started.**
+Updated 18 October 2026 UTC. **Verified through 13,500,000; the next bounded range is 13,800,000.**
 
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-13200000-2026-10-17/RESULTS.md)
-passed evidence verification, image detach and host exit by 22:43 UTC.
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-13500000-2026-10-17/RESULTS.md)
+passed evidence verification, image detach and host exit by 04:56 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 3,921 tickets and
+Both cold readers match the complete backup endpoint, with 3,647 tickets and
 two transactions/receipts; warm/cold ticket counts agree. The result preserves
-54,351 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+54,852 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
-The actual-state check at 22:47 UTC finds no test process or image attachment.
+The actual-state check at 05:57 UTC finds no test process or image attachment.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 10,520,000 blocks. There are 1,930,080 blocks remaining to backup tip 15,130,080.
+to 10,820,000 blocks. There are 1,630,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 68.8 wall-clock minutes (65.5 monotonic), with about
-277.1 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 62.3 wall-clock minutes (58.4 monotonic), with about
+302.6 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 105.640 GiB, growing 0.564 GiB. The next justified
-range is 13,200,000-13,500,000: keep 300,000 blocks, a fresh 118 GiB sampled
+ETA. Closed allocation is 106.233 GiB, growing 0.594 GiB. The next justified
+range is 13,500,000-13,800,000: keep 300,000 blocks, a fresh 119 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
-This run left about 134 minutes under the whole-job cap; recent ranges left
-as little as 81 minutes. Do not increase the range or time limits. Fresh host/
-mounted capacity passed at startup; exact cold starting inventory must still
-pass before the writer. In the completed run, startup allocation matched the
-prior closed measurement and all 54,324 starting hashes matched exactly. Earlier allocation differences and the failed
-supplemental assertion remain preserved. No content check was changed or waived.
-
-The [next bounded continuation](evidence/restart-ticket-encoder-w-13500000-2026-10-17/STARTED.md)
-was dispatched once at 22:50:36 UTC from prepared commit
-`ca64525da735aaaa793691d28af4464d25116b4f`; host PID 113196 is alive.
-Mounted startup at 22:50:48 UTC passed image identity, private namespace and
-actual capacity gates, observed at 22:51:05 UTC. Allocation matches the prior
-closed measurement; exact cold starting hashes must still pass before replay.
-The job is preparing the 13,200,000-13,500,000 range with a 118 GiB sampled
-ceiling and unchanged finite limits. No additional blocks are yet verified.
+This run left about 115 minutes under the whole-job cap; recent ranges left
+as little as 81 minutes. Do not increase the range or time limits. Revalidate
+host/mounted capacity and exact cold starting inventory before the next writer.
+In the completed run, startup allocation matched the prior closed measurement
+and all 54,351 starting hashes matched exactly. Earlier allocation differences
+and the failed supplemental assertion remain preserved. No content check was
+changed or waived.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
