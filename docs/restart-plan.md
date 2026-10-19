@@ -1,45 +1,35 @@
 # Fusion restart launch plan
 
-Updated 19 October 2026 UTC. **Verified through 14,400,000; the bounded continuation toward 14,700,000 has started.**
+Updated 19 October 2026 UTC. **Verified through 14,700,000; the next bounded range is 14,700,000-15,000,000.**
 
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-14400000-2026-10-18/RESULTS.md)
-passed evidence verification, image detach and host exit by 01:00 UTC.
+The [300,000-block continuation](evidence/restart-ticket-encoder-w-14700000-2026-10-19/RESULTS.md)
+passed evidence verification, image detach and host exit by 07:03 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 1,879 tickets and
+Both cold readers match the complete backup endpoint, with 848 tickets and
 one transaction/receipt; warm/cold ticket counts agree. The result preserves
-55,504 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
+55,695 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
 fallback metadata and unchanged executable/source/toolchain identities.
-The actual-state check at 01:20 UTC finds no test process or image attachment.
+The actual-state check at 07:19 UTC finds no test process or image attachment.
 
 This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 11,720,000 blocks. There are 730,080 blocks remaining to backup tip 15,130,080.
+to 12,020,000 blocks. There are 430,080 blocks remaining to backup tip 15,130,080.
 F12/G1, final restored startup/recovery/handover, independent restore/portable
 package acceptance and consensus review remain open. Earlier failed attempts
 and their STOP records remain preserved; no release selection changed.
 
-Replay took about 42.0 wall-clock minutes (39.1 monotonic), with about
-301.2 additional wall-clock minutes for preparation, verification and cleanup.
+Replay took about 25.6 wall-clock minutes (23.2 monotonic), with about
+313.9 additional wall-clock minutes for preparation, verification and cleanup.
 Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 107.287 GiB, growing 0.301 GiB. The next justified
-range is 14,400,000-14,700,000: keep 300,000 blocks, a fresh 120 GiB sampled
+ETA. Closed allocation is 107.572 GiB, growing 0.285 GiB. The next justified
+range is 14,700,000-15,000,000: keep 300,000 blocks, a fresh 120 GiB sampled
 ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
-This run left about 137 minutes under the whole-job cap; recent ranges left
-as little as 81 minutes. Do not increase the range or time limits. The new job
-passed host/mounted capacity; its exact cold starting inventory is pending.
+This run left about 140 minutes under the whole-job cap; recent ranges left
+as little as 81 minutes. Do not increase the range or time limits. Revalidate
+host/mounted capacity and exact cold starting inventory before the next writer.
 In the completed run, startup allocation matched the prior closed measurement
-and all 55,207 starting hashes matched exactly. Earlier allocation differences
+and all 55,504 starting hashes matched exactly. Earlier allocation differences
 and the failed supplemental assertion remain preserved. No content check was
 changed or waived.
-
-The [next bounded continuation](evidence/restart-ticket-encoder-w-14700000-2026-10-19/STARTED.md)
-was dispatched once at 01:23:11 UTC. Mounted startup at 01:23:26 UTC and the
-01:24:01 UTC observation pass the private namespace, loopback-down, image/UUID
-and actual capacity gates. Startup allocation equals the verified 14,400,000
-closed measurement. The job is preparing; exact starting file hashes must still
-pass before replay, and no additional blocks are verified by this startup.
-The 120 GiB ceiling, finite stop limits, protected checkpoints and reserves
-remain unchanged. Wait for verified completion and outer cleanup before
-reviewing the next range; no parallel writer or live LevelDB hashing.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
