@@ -1,45 +1,42 @@
 # Fusion restart launch plan
 
-Updated 19 October 2026 UTC. **Verified through 15,000,000; the final continuation toward backup tip 15,130,080 has started.**
+Updated 19 October 2026 UTC. **Candidate replay is verified through backup tip 15,130,080; no historical range remains.**
 
-The [300,000-block continuation](evidence/restart-ticket-encoder-w-15000000-2026-10-19/RESULTS.md)
-passed evidence verification, image detach and host exit by 13:17 UTC.
+The [final 130,080-block continuation](evidence/restart-ticket-encoder-w-15130080-2026-10-19/RESULTS.md)
+passed evidence verification, image detach and host exit by 19:52 UTC.
 All seven commands, ten preservation checks and five manifest reviews pass.
-Both cold readers match the complete backup endpoint, with 520 tickets and
-one transaction/receipt; warm/cold ticket counts agree. The result preserves
-55,796 closed target hashes, 1,383 separate recovery hashes, backup/baseline/local
-fallback metadata and unchanged executable/source/toolchain identities.
-The actual-state check at 13:38 UTC finds no test process or image attachment.
+Both cold readers match the complete backup tip, with 491 tickets and one
+transaction/receipt; warm/cold counts agree. The result preserves 55,903 closed
+target hashes, 1,383 separate recovery hashes, backup/baseline/local fallback
+metadata and executable/source/toolchain identities. All 3,829 prior evidence
+files verify. The 20:43 UTC actual-state check finds no test process or image
+attachment. The final evidence and late outer records have separate seals.
 
-This adds 300,000 blocks and brings candidate coverage beyond the legacy boundary
-to 12,320,000 blocks. There are 130,080 blocks remaining to backup tip 15,130,080.
-F12/G1, final restored startup/recovery/handover, independent restore/portable
-package acceptance and consensus review remain open. Earlier failed attempts
-and their STOP records remain preserved; no release selection changed.
+Candidate execution now covers 12,450,080 blocks beyond the legacy boundary.
+The existing shortcuts through 2,680,000 remain relevant; reaching the tip does
+not independently validate every early consensus rule or establish global
+canonicality. F12/G1 remain open for independent codec/consensus review and the
+accepted-parent/trust record. Final selected-candidate startup/recovery/handover
+and independent complete restore/portable-package acceptance remain open.
+All failed/refused records remain preserved; release selection is unchanged.
 
-Replay took about 15.9 wall-clock minutes (15.6 monotonic), with about
-337.8 additional wall-clock minutes for preparation, verification and cleanup.
-Clock differences remain recorded and unexplained; this is not a full-history
-ETA. Closed allocation is 107.826 GiB, growing 0.254 GiB. The next justified
-range is the final 130,080 blocks, 15,000,000-15,130,080, with a fresh 120 GiB
-sampled ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
-This run left about 126 minutes under the whole-job cap; recent ranges left
-as little as 81 minutes. The new job passed host/mounted capacity; its exact
-cold starting inventory remains pending. In the completed run, startup
-allocation matched the prior closed measurement and all 55,695 starting hashes
-matched exactly. Earlier allocation differences and the failed supplemental
-assertion remain preserved. No content check was changed or waived.
+Replay took about 9.1 wall-clock minutes (8.6 monotonic), with about 360.5
+additional wall-clock minutes for preparation, verification and cleanup.
+The unexplained clock differences remain recorded. Closed allocation is about
+107.93 GiB, growing 0.102 GiB. All sampled reserves pass. Startup allocation
+and all 55,796 starting hashes match the preceding verified checkpoint.
+Earlier allocation differences and failed supplemental assertions remain
+preserved; no content check was changed or waived.
 
-The [final bounded continuation](evidence/restart-ticket-encoder-w-15130080-2026-10-19/STARTED.md)
-was dispatched once at 13:41:51 UTC. Mounted startup at 13:42:02 UTC and the
-13:42:51 UTC observation pass the private namespace, loopback-down, image/UUID
-and actual capacity gates. Startup allocation equals the verified 15,000,000
-closed measurement. The job is preparing; exact starting file hashes must still
-pass before replay, and no additional blocks are verified by this startup.
-The final 130,080-block range ends at backup tip 15,130,080. The 120 GiB ceiling,
-finite stop limits, protected checkpoints and reserves remain unchanged.
-Wait for verified completion and outer cleanup, then review the remaining
-acceptance gaps; no parallel writer or live LevelDB hashing.
+The next useful test is full writable restored startup and fresh restart using
+the retained unselected guard/encoder on a disposable complete backup copy.
+Keep this final replay checkpoint untouched. Linux/D: space cannot accommodate
+that copy; W: image/backing capacity can, subject to fresh gates and finite
+copy, verification and runtime limits. Reuse the qualified storage and isolation
+helpers where applicable. The trusted test-only mainnet anchor must remain
+separate from production selection. Do not repeat unchanged small refusal,
+synthetic pruning or read-only backup checks. Recovery/handover acceptance
+still requires its own evidence; historical replay does not close it.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
@@ -60,7 +57,7 @@ The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-1
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
 remain the storage basis. Keep the local 7,170,976 fallback, original backup,
 independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
-archives. No further D: expansion or deletion is needed for this range.
+archives. No further D: expansion or deletion is needed for the proposed W: copy.
 One image owner and one writer only; do not hash live LevelDB or the mounted
 image. Preserve 20/50/100 GiB Linux/D:/W: running reserves and exact executables.
 See the [storage procedure](restart-storage-capacity-review.md).
@@ -238,7 +235,7 @@ or question about test value needs Peter; do not infer release approval.
 
 | Gate | Evidence already available | Remaining boundary |
 | --- | --- | --- |
-| G1 History and preservation | Complete structural/current-state checks; baseline replay to 3,600,000; complete local package/restore | Accepted history and trust record before final construction |
+| G1 History and preservation | Complete structural/current-state checks; encoder candidate replay to backup tip 15,130,080 with legacy shortcuts retained; baseline to 3,600,000; complete local package/restore | Accepted history and trust record before final construction |
 | G2 Client and supported operation | P1–P17 candidates; anchor, crash, discovery and purchase regressions | Reviewed release candidate |
 | G3 Recovery and custody | Complete-state test-key bridge, separate imports, signing journal and command interruption checks | Approved real artifacts before public activation |
 | G4 Supervised launch and response | SSH and self-hosted fsn-stats selected; optional observer diagnostics available | Rehearsed manual checks and operator response before public use |
@@ -815,17 +812,18 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Replay through 6,600,000 is separately verified. Linux 24.25 GiB / D: 67.32 GiB free; next 300,000-block range fails the Linux gate. Proposed 220 to 230 GiB virtual-disk expansion, preserving reserves | User decision before another writer |
+| Rehearsal disk capacity | Final W: replay checkpoint about 107.93 GiB, image free about 402.7 GiB; Linux 21.48 GiB / D: 52.68 GiB free at post-completion check | Fresh capacity and one image owner before a distinct disposable W: backup copy; preserve all checkpoints and archives |
 
 Current technical order (efsn):
 
-1. G1: preserve the [separately verified 6,600,000 result](evidence/restart-ticket-encoder-6600000-verification-followup-2026-10-12/RESULTS.md)
-   and original failed automatic-verifier completion. Resolve the 220 to 230 GiB
-   storage proposal; before any continuation, explicitly qualify this separate
-   verification in the controller and check current cold inventory/identity.
-   No test is running. Keep the original backup, separate recovery, W: image,
-   completed and failed evidence. No repeated tiny range or passing small test
-   is justified while waiting. Review fresh capacity before preparing a new job.
+1. G1/G2: preserve the [verified backup-tip replay](evidence/restart-ticket-encoder-w-15130080-2026-10-19/RESULTS.md).
+   No further historical range is justified. Qualify full writable restored
+   startup and restart on a disposable complete backup copy under the retained
+   unselected guard/encoder and test-only mainnet anchor. Keep the final replay
+   checkpoint, original backup, separate recovery, local fallback and all failed
+   evidence. Review exact source/shortcut limits and obtain independent
+   consensus and accepted-parent/trust review before selecting a release.
+   Keep finite limits, storage reserves and offline isolation.
 2. G2/G5/G7: qualify the [selected candidate](restart-release-selection.md) against
    the [frozen release matrix](restart-release-matrix.md), close the recorded
    findings and pin CI/build-image inputs, then complete the

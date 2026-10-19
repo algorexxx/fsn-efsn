@@ -62,16 +62,17 @@ replay comparator, not an accepted production solution.
    RLP inputs show no encoding-cost increase against the legacy comparator in
    five bounded rounds. This does not qualify the production CLI recovery
    workflow or the full suite.
-4. **Candidate historical replay through 3,600,000 is complete.** The
-   [900,000-block job](evidence/restart-ticket-encoder-job-3600000-2026-10-09/verification.json) passes all seven commands, both cold checks and
-   automatic evidence verification. It extends candidate assurance to 920,000
-   blocks beyond the legacy boundary and matches the baseline endpoint.
-   The separate 2,400,000 recovery checkpoint and original stopped attempt are
-   preserved. Further in-place replay is blocked by D: capacity below the unchanged
-   starting floor; see the [runner/capacity policy](restart-ticket-encoder-replay.md#next-engineering-work).
-   Prefer one candidate pass with the baseline retained for diagnosis.
-   Further history remains open; this does not replace all-history qualification,
-   recover 17 missing exported samples or qualify later source changes.
+4. **Candidate historical replay reaches backup tip 15,130,080.** The
+   [final continuation](evidence/restart-ticket-encoder-w-15130080-2026-10-19/RESULTS.md)
+   passes all seven commands, both cold checks, automatic evidence verification
+   and image cleanup. It brings candidate execution beyond the legacy boundary
+   to 12,450,080 blocks; legacy shortcuts through 2,680,000 remain explicit
+   acceptance limits. The final checkpoint, separate recovery, original backup,
+   local fallback, baseline and all failed evidence are preserved. No additional
+   history range or unchanged baseline rerun is justified. Independent review,
+   accepted-parent/trust limits and full writable restored startup/recovery remain
+   open. This result does not recover 17 missing exported samples, qualify later
+   source changes or change release selection.
 5. Obtain independent codec/consensus and maintenance review before selection.
    If a historical mismatch is found, stop and resolve its cause; do not add an
    activation boundary by assumption. A byte-compatible implementation should
