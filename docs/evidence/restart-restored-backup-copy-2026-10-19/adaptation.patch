@@ -1,0 +1,220 @@
+--- a/launch.py
++++ b/launch.py
+@@ -13,9 +13,9 @@
+ import time
+ 
+ HERE = Path(__file__).resolve().parent
+-SOURCE = Path('/home/rehearsal/replay/candidate-ticket-encoding-working')
+-DEST = Path('/mnt/w/FusionRestart/replay-work-7170976-2026-10-12')
+-IMAGE = DEST / 'replay.ext4'
++SOURCE = Path('/home/rehearsal/data/efsn/chaindata')
++DEST = Path('/mnt/w/FusionRestart/restored-backup-2026-10-19')
++IMAGE = DEST / 'startup.ext4'
+ BEGIN = time.monotonic()
+ 
+ def now():
+@@ -42,7 +42,7 @@
+ 
+ def capacity():
+     result = {p: shutil.disk_usage(p).free for p in ['/home/rehearsal', '/mnt/d', '/mnt/w']}
+-    for path, gib in [('/home/rehearsal', 20), ('/mnt/d', 50), ('/mnt/w', 612)]:
++    for path, gib in [('/home/rehearsal', 20), ('/mnt/d', 50), ('/mnt/w', 356)]:
+         assert result[path] > gib * 1024**3, (path, result[path])
+     return result
+ 
+@@ -65,6 +65,7 @@
+     assert mount['target'] == '/mnt/w' and mount['source'] == 'W:' and mount['fstype'] == '9p'
+     assert SOURCE.resolve() == SOURCE and SOURCE.is_dir() and not DEST.exists()
+     assert DEST.parent.resolve() == DEST.parent and DEST.parent.is_dir()
++    assert not json.loads(subprocess.check_output(['losetup', '--list', '--json'], text=True))['loopdevices'], 'another image is attached'
+     locks = [open(str(SOURCE) + '.run.lock', 'a'), open('/home/rehearsal/replay/w-image-migration.run.lock', 'a')]
+     for lock in locks:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+@@ -72,11 +73,15 @@
+     fcntl.flock(database_lock, fcntl.LOCK_SH | fcntl.LOCK_NB)
+     processes = subprocess.check_output(['ps', '-eo', 'pid,comm'], text=True)
+     assert not re.search(r'^\s*\d+\s+(?:efsn|replay-tests|observer|storage-probe)\s*$', processes, re.M)
++    initial = capacity()
++    assert initial['/home/rehearsal'] > 21 * 1024**3 and initial['/mnt/d'] > 51 * 1024**3
+     save('environment.json', {'started': now(), 'mount': mount, 'interfaces': links,
+           'netns': os.readlink('/proc/self/ns/net'), 'parent_netns': sys.argv[2],
+-          'free_before': capacity(), 'image_virtual_bytes': 512 * 1024**3,
++          'free_before': capacity(), 'image_virtual_bytes': 256 * 1024**3,
+           'source': str(SOURCE), 'image': str(IMAGE), 'processes': processes})
+     inputs()
++    from worker import expected
++    expected()
+     source_view = Path(tempfile.mkdtemp(prefix='w-copy-source-'))
+     image_view = Path(tempfile.mkdtemp(prefix='w-copy-image-'))
+     source_mounted, image_mounted, device = False, False, None
+@@ -86,7 +91,7 @@
+         command('source-readonly', ['mount', '-o', 'remount,bind,ro', str(source_view)])
+         DEST.mkdir()
+         with IMAGE.open('xb') as file:
+-            file.truncate(512 * 1024**3)
++            file.truncate(256 * 1024**3)
+             file.flush()
+             os.fsync(file.fileno())
+         save('image-created.json', {'path': str(IMAGE), 'bytes': IMAGE.stat().st_size,
+@@ -114,7 +119,7 @@
+                            'verify', str(source_view), str(image_view / 'checkpoint')], 12720)
+         inputs()
+         assert json.loads((HERE / 'verification.json').read_text())['pass']
+-        save('migration.json', {'pass': True, 'height': 7170976, 'image': str(IMAGE), 'uuid': uuid,
++        save('migration.json', {'pass': True, 'height': 15130080, 'image': str(IMAGE), 'uuid': uuid,
+                                'checkpoint_subdirectory': 'checkpoint', 'source_retained': str(SOURCE),
+                                'finished': now(), 'elapsed_seconds': time.monotonic() - BEGIN})
+     finally:
+@@ -132,6 +137,7 @@
+ assert os.getuid() == 0
+ if len(sys.argv) == 1:
+     inputs()
++    assert json.loads((HERE / 'copy-controls.json').read_text(encoding='utf-8'))['pass']
+     assert not (HERE / 'completion.json').exists() and not (HERE / 'environment.json').exists()
+     os.execvp('unshare', ['unshare', '--mount', '--', 'python3', '-B', str(__file__), 'mount', os.readlink('/proc/self/ns/mnt')])
+ elif sys.argv[1] == 'mount':
+--- a/worker.py
++++ b/worker.py
+@@ -12,8 +12,10 @@
+ import time
+ 
+ HERE = Path(__file__).resolve().parent
+-PRIOR = HERE.parent / 'restart-ticket-encoder-stopped-7170976-2026-10-12'
+-PRIOR_SHA = 'd7bad96b8fbe3f0b30f7aee4878e205d314cf1bcdb350440c92e2337c2baefcf'
++PRIOR = HERE.parent / 'restart-ticket-encoder-w-15130080-2026-10-19'
++PRIOR_SHA = 'b1744c7a0965b39c48d320f11d4a942f94cd7d33a1ab520ca93b4ce532047663'
++BACKUP_SHA = 'a41ebd5f4f250cbb22b7c0d9ac484b7b1a503d6bc6ff7ff57cec97915cbe88c6'
++DESTINATION = None
+ HELPER = HERE.parents[2] / 'tests/restart/snapshot_package.py'
+ assert hashlib.sha256(HELPER.read_bytes()).hexdigest() == 'c5e44d9dbb53b74bc2f36ea78a24ae5dcff89dfee77a4a292e8e27cdea87bf35'
+ spec = importlib.util.spec_from_file_location('snapshot_helpers', HELPER)
+@@ -30,6 +32,9 @@
+     free = {p: shutil.disk_usage(p).free for p in ['/home/rehearsal', '/mnt/d', '/mnt/w']}
+     for path, gib in [('/home/rehearsal', 20), ('/mnt/d', 50), ('/mnt/w', 100)]:
+         assert free[path] > gib * 1024**3, ('reserve reached', path, free[path])
++    if DESTINATION is not None:
++        free[str(DESTINATION.parent)] = shutil.disk_usage(DESTINATION.parent).free
++        assert free[str(DESTINATION.parent)] > 20 * 1024**3, 'image reserve reached'
+     record = {'time': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'phase': phase,
+               'files': count, 'bytes': total_bytes, 'free_bytes': free, 'elapsed_seconds': time.monotonic() - START}
+     with (HERE / 'progress.jsonl').open('a', encoding='utf-8') as file:
+@@ -51,10 +56,31 @@
+     for line in (PRIOR / 'SHA256SUMS').read_text(encoding='utf-8').splitlines():
+         digest, relative = line.split(None, 1)
+         assert helper.digest(PRIOR / relative) == digest, relative
++    assert helper.digest(PRIOR / 'REPORT_SHA256SUMS') == '856f1b9963a46e2294865d6989f0b33dd1b4cd9d20bd29c95601697ecfdee58c'
++    for line in (PRIOR / 'REPORT_SHA256SUMS').read_text(encoding='utf-8').splitlines():
++        digest, relative = line.split(None, 1)
++        assert helper.digest(PRIOR / relative) == digest, relative
+     prior = helper.read_json(PRIOR / 'qualification/run.json')
+-    assert prior['completed'] and prior['inspect_passed'] and helper.read_json(PRIOR / 'verification.json')['pass']
+-    assert prior['inspection_height'] == 7170976 and len(prior['target_before_cold_sha256']) == 22501
+-    return prior
++    verified = helper.read_json(PRIOR / 'verification.json')
++    assert prior['completed'] and verified['pass'] and verified['end_height'] == 15130080
++    assert helper.read_json(PRIOR / 'completion.json')['verified_pass']
++    outer = helper.read_json(PRIOR / 'storage-completion.json')
++    assert outer['exit'] == 0 and outer['detached'] and outer['mounts_removed']
++    manifest = HERE / 'backup-SHA256SUMS'
++    assert helper.digest(manifest) == BACKUP_SHA
++    hashes = {}
++    for line in manifest.read_text(encoding='utf-8').splitlines():
++        digest, relative = line.split(None, 1)
++        assert re.fullmatch(r'[0-9a-f]{64}', digest) and relative.startswith('./')
++        name = relative[2:]
++        assert helper.FILE_NAME.fullmatch(name) and name not in hashes
++        hashes[name] = digest
++    assert len(hashes) == 56107
++    return {'target_before_cold_sha256': hashes, 'binary_sha256': verified['replay_binary_sha256'],
++            'observer_binary_sha256': verified['observer_binary_sha256'],
++            'endpoint_observations': {'cold-details': verified['endpoint']}, 'inspection_height': 15130080,
++            'responses_sha256': prior['candidate_inventory']['docs/evidence/restart-2026-09-23/responses.json']}
++
+ 
+ def copy(source, destination, prior):
+     assert os.statvfs(source).f_flag & os.ST_RDONLY
+@@ -91,7 +117,7 @@
+     status('copied', len(before), total, True)
+     helper.write_json(HERE / 'copy-result.json', {'completed': True, 'source_hashes_match_sealed_inventory': True,
+                        'source_metadata_unchanged': True, 'files': len(before), 'bytes': total,
+-                       'prior_manifest_sha256': PRIOR_SHA, 'destination': str(destination)})
++                       'prior_manifest_sha256': PRIOR_SHA, 'original_backup_manifest_sha256': BACKUP_SHA, 'destination': str(destination)})
+ 
+ def verify(source, destination, prior):
+     assert os.statvfs(source).f_flag & os.ST_RDONLY
+@@ -105,19 +131,29 @@
+         status('verify-after-reattach', count, total)
+     runtime = Path('/home/rehearsal/results')
+     observer = runtime / PRIOR.name / 'bin/observer'
+-    replay = runtime / 'restart-ticket-encoder-job-7200000-2026-10-12/bin/replay-tests'
++    replay = runtime / PRIOR.name / 'bin/replay-tests'
+     assert helper.digest(observer) == prior['observer_binary_sha256']
+     assert helper.digest(replay) == prior['binary_sha256']
+-    env = dict(os.environ, FUSION_RESTART_INSPECT_REPLAY_DIR=str(destination),
+-               FUSION_RESTART_INSPECT_REPLAY_HEIGHT='7170976', GOMAXPROCS='2')
++    cwd = runtime / PRIOR.name / 'node/tests/restart'
++    responses = cwd.parent.parent / 'docs/evidence/restart-2026-09-23/responses.json'
++    assert helper.digest(responses) == prior['responses_sha256']
++    env = {k:v for k,v in os.environ.items() if not k.startswith(('GO', 'FUSION_', 'F12_'))}
++    env.update(FUSION_RESTART_CHAINDATA=str(source), FUSION_RESTART_FULL_AUDIT='1',
++               FUSION_RESTART_INSPECT_REPLAY_DIR=str(destination),
++               FUSION_RESTART_INSPECT_REPLAY_HEIGHT='15130080', GOMAXPROCS='1',
++               GOPROXY='off', GOSUMDB='off', GOTOOLCHAIN='local')
+     for name, binary, test in [('cold-head', replay, 'TestPreservedReplayHeadReadOnly'),
+                                 ('cold-details', observer, 'TestCandidateReplayColdDetails')]:
+         args = ['timeout', '--kill-after=10s', '5m', str(binary), '-test.run=^' + test + '$',
+                 '-test.v', '-test.count=1', '-test.timeout=4m']
+         with (HERE / (name + '.stdout.txt')).open('xb') as output, (HERE / (name + '.stderr.txt')).open('xb') as error:
+-            result = subprocess.run(args, stdout=output, stderr=error, env=env)
+-        helper.write_json(HERE / (name + '.json'), {'argv': args, 'exit': result.returncode})
++            result = subprocess.run(args, cwd=cwd, stdout=output, stderr=error, env=env)
++        helper.write_json(HERE / (name + '.json'), {'argv': args, 'cwd': str(cwd), 'exit': result.returncode})
+         assert result.returncode == 0, name
++        log = (HERE / (name + '.stdout.txt')).read_text(encoding='utf-8')
++        assert '--- SKIP:' not in log and ('--- PASS: ' + test + ' (') in log, name
++        if name == 'cold-head':
++            assert 'closed replay matched: height=15130080 ' in log
+     output = (HERE / 'cold-details.stdout.txt').read_text(encoding='utf-8')
+     matches = re.findall(r'candidate endpoint observation: (\{.*\})', output)
+     assert len(matches) == 1
+@@ -126,6 +162,7 @@
+     assert files(source) == before and files(destination) == before
+     assert helper.digest(observer) == prior['observer_binary_sha256']
+     assert helper.digest(replay) == prior['binary_sha256']
++    assert helper.digest(responses) == prior['responses_sha256']
+     status('verified', len(before), total, True)
+     helper.write_json(HERE / 'verification.json', {'pass': True, 'files': len(before), 'bytes': total,
+                       'destination_hashes_match_sealed_inventory': True, 'source_metadata_unchanged': True,
+@@ -136,6 +173,8 @@
+     assert os.getuid() == 1000 and len(sys.argv) == 4
+     interfaces = json.loads(subprocess.check_output(['ip', '-j', 'link', 'show'], text=True))
+     assert len(interfaces) == 1 and interfaces[0]['ifname'] == 'lo' and 'UP' not in interfaces[0]['flags']
++    os.nice(10)
++    DESTINATION = Path(sys.argv[3])
+     status(sys.argv[1] + '-start', force=True)
+     prior = expected()
+     assert sys.argv[1] in ['copy', 'verify']
+--- a/check-copy.py
++++ b/check-copy.py
+@@ -63,7 +63,8 @@
+         assert worker.files(source) == worker.files(destination)
+     passed.append(name)
+ assert {p.name: worker.helper.digest(p) for p in source.iterdir()} == hashes
+-assert worker.expected()['inspection_height'] == 7170976
++worker.HERE = HERE
++assert worker.expected()['inspection_height'] == 15130080
+ worker.helper.write_json(HERE / 'copy-controls.json', {'pass': True, 'cases': passed,
+-    'fixture': str(fixture), 'source_unchanged': True, 'sealed_prior_verified': True,
++    'fixture': str(fixture), 'source_unchanged': True, 'sealed_prior_verified': True, 'original_backup_manifest_verified': True,
+     'scope': 'synthetic source-copy fidelity/hash mismatch/existing-target guards; capacity status not exercised'})
+--- a/run-host.ps1
++++ b/run-host.ps1
+@@ -5,7 +5,7 @@
+ if ($copyMapping.RemotePath -ne '\\192.168.1.250\mnemosyne1' -or $copyMapping.Status -ne 'OK') { throw 'Unexpected W: mapping' }
+ $copyStart = [DateTimeOffset]::UtcNow.ToString('o')
+ $copyMapping | Select-Object LocalPath,RemotePath,Status | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $copyRoot 'mapping.json') -Encoding utf8
+-$copyArgs = @('-d','FusionRehearsal','-u','root','--','timeout','--kill-after=20s','18000s','python3','-B','/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-w-checkpoint-copy-7170976-2026-10-12/launch.py')
++$copyArgs = @('-d','FusionRehearsal','-u','root','--','timeout','--kill-after=20s','28800s','python3','-B','/mnt/c/Users/Peter/Documents/CODING/fsn-efsn/docs/evidence/restart-restored-backup-copy-2026-10-19/launch.py')
+ & wsl.exe @copyArgs 1> (Join-Path $copyRoot 'host.stdout.txt') 2> (Join-Path $copyRoot 'host.stderr.txt')
+ $copyExit = $LASTEXITCODE
+ @{started=$copyStart;finished=[DateTimeOffset]::UtcNow.ToString('o');exit=$copyExit;argv=$copyArgs} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $copyRoot 'host-run.json') -Encoding utf8

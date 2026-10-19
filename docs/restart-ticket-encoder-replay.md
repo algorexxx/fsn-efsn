@@ -30,13 +30,20 @@ preserved; no content check was changed or waived.
 
 The next useful test is full writable restored startup and fresh restart using
 the retained unselected guard/encoder on a disposable complete backup copy.
-Keep this final replay checkpoint untouched. Linux/D: space cannot accommodate
-that copy; W: image/backing capacity can, subject to fresh gates and finite
-copy, verification and runtime limits. Reuse the qualified storage and isolation
-helpers where applicable. The trusted test-only mainnet anchor must remain
-separate from production selection. Do not repeat unchanged small refusal,
-synthetic pruning or read-only backup checks. Recovery/handover acceptance
-still requires its own evidence; historical replay does not close it.
+The [finite fixture-copy job](evidence/restart-restored-backup-copy-2026-10-19/PREPARED.md)
+is prepared: a separate 256 GiB W: image, original 56,107-file hash manifest,
+read-only source, copy/fsync, detach/reattach and complete destination hash check,
+then actual cold-head/detail checks. Adapted copy controls and fresh capacity,
+identity and idle-state preflight pass. The final replay image stays detached.
+The eight-hour job cap, 3.5-hour cooperative phase limits, private offline
+namespaces and 20/50/100/20 GiB Linux/D:/W:/image reserves remain explicit.
+No writer has yet been dispatched for this prepared copy.
+
+After verified copy completion and clean detach, qualify writable startup and
+fresh restart separately, with the trusted test-only mainnet anchor. Preserve
+production selection. Do not repeat unchanged small refusal, synthetic pruning
+or read-only backup checks. Recovery/handover acceptance still requires its own
+evidence; historical replay does not close it.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
@@ -57,7 +64,7 @@ The [verified W: migration](evidence/restart-w-checkpoint-copy-7170976-2026-10-1
 and [qualified controller](evidence/restart-w-image-controller-2026-10-12/RESULTS.md)
 remain the storage basis. Keep the local 7,170,976 fallback, original backup,
 independent 2,400,000 recovery, baselines, failed/sealed evidence and cold W:
-archives. No further D: expansion or deletion is needed for the proposed W: copy.
+archives. No further D: expansion or deletion is needed for the separate W: copy.
 One image owner and one writer only; do not hash live LevelDB or the mounted
 image. Preserve 20/50/100 GiB Linux/D:/W: running reserves and exact executables.
 
