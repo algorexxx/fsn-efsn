@@ -9,6 +9,16 @@ hashes matched; startup allocation matched the preceding closed measurement.
 Earlier discrepancies, both preflight refusals and monitoring interruption/recovery
 remain sealed. Their histories and unchanged content gates remain documented.
 
+The [next bounded continuation](evidence/restart-ticket-encoder-w-14700000-2026-10-19/STARTED.md)
+was dispatched once at 01:23:11 UTC. Mounted startup at 01:23:26 UTC and the
+01:24:01 UTC observation pass the private namespace, loopback-down, image/UUID
+and actual capacity gates. Startup allocation equals the verified 14,400,000
+closed measurement. The job is preparing; exact starting file hashes must still
+pass before replay, and no additional blocks are verified by this startup.
+The 120 GiB ceiling, finite stop limits, protected checkpoints and reserves
+remain unchanged. Wait for verified completion and outer cleanup before
+reviewing the next range; no parallel writer or live LevelDB hashing.
+
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
 and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
@@ -22,10 +32,10 @@ The completed range grew 0.301 GiB and took about 42.0 replay minutes plus
 6h15m Go, 6h30m replay outer and eight-hour whole-job caps. About 137 minutes
 remained under that whole-job cap; recent ranges left as little as 81 minutes.
 Do not increase the range or time limits. These observations support the next
-bounded range, not an all-history forecast. Fresh local free space at 01:20 UTC
-is 21.668 GiB Linux / 51.235 GiB D:; the last W: observation is about 2.90 TiB.
-Revalidate host and actual mounted capacity before the next writer; the exact
-cold starting inventory must pass unchanged.
+bounded range, not an all-history forecast. The new job's mounted free space at
+01:23 UTC is 21.662 GiB Linux / 51.235 GiB D:, about 2.90 TiB W:,
+and 403.341 GiB in the image. Host and mounted capacity checks pass;
+the exact cold starting inventory must still pass before replay.
 
 Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
 101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus
