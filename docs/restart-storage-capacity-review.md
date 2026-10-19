@@ -9,6 +9,17 @@ hashes matched; startup allocation matched the preceding closed measurement.
 Earlier discrepancies, both preflight refusals and monitoring interruption/recovery
 remain sealed. Their histories and unchanged content gates remain documented.
 
+The [final bounded continuation](evidence/restart-ticket-encoder-w-15130080-2026-10-19/STARTED.md)
+was dispatched once at 13:41:51 UTC. Mounted startup at 13:42:02 UTC and the
+13:42:51 UTC observation pass the private namespace, loopback-down, image/UUID
+and actual capacity gates. Startup allocation equals the verified 15,000,000
+closed measurement. The job is preparing; exact starting file hashes must still
+pass before replay, and no additional blocks are verified by this startup.
+The final 130,080-block range ends at backup tip 15,130,080. The 120 GiB ceiling,
+finite stop limits, protected checkpoints and reserves remain unchanged.
+Wait for verified completion and outer cleanup, then review the remaining
+acceptance gaps; no parallel writer or live LevelDB hashing.
+
 Use only `W:/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4`,
 UUID `2fb12ac9-9520-4cab-9414-f1041c4d25de`, with its 512 GiB virtual ceiling
 and `checkpoint` database. Direct DrvFs LevelDB failed directory fsync; continue
@@ -22,10 +33,10 @@ minutes plus 337.8 minutes outside replay by wall timestamps. Keep six-hour
 clean replay, 6h15m Go, 6h30m replay outer and eight-hour whole-job caps.
 About 126 minutes remained under that whole-job cap; recent ranges left as
 little as 81 minutes. The smaller final range reaches the preserved backup tip.
-These observations are not a duration or growth guarantee. Fresh local free
-space at 13:38 UTC is 21.536 GiB Linux / 52.320 GiB D:; the final
-job sample reported about 2.90 TiB W: and 402.802 GiB in the image.
-Revalidate host/mounted capacity and exact cold starting inventory before replay.
+These observations are not a duration or growth guarantee. The new job's mounted
+free space at 13:42 UTC is 21.536 GiB Linux / 52.350 GiB D:, about
+2.90 TiB W: and 402.802 GiB in the image. Host and mounted capacity checks
+pass; exact cold starting inventory must still pass before replay.
 
 Require local preparation free space above 21 GiB Linux and 51 GiB D:, W: above
 101 GiB plus remaining declared growth, and image filesystem above 21 GiB plus

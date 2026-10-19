@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 19 October 2026 UTC. **Verified through 15,000,000; final 130,080-block continuation is next.**
+Updated 19 October 2026 UTC. **Verified through 15,000,000; the final continuation toward backup tip 15,130,080 has started.**
 
 The [300,000-block continuation](evidence/restart-ticket-encoder-w-15000000-2026-10-19/RESULTS.md)
 passed evidence verification, image detach and host exit by 13:17 UTC.
@@ -24,11 +24,22 @@ ETA. Closed allocation is 107.826 GiB, growing 0.254 GiB. The next justified
 range is the final 130,080 blocks, 15,000,000-15,130,080, with a fresh 120 GiB
 sampled ceiling and unchanged six-hour clean replay/eight-hour whole-job caps.
 This run left about 126 minutes under the whole-job cap; recent ranges left
-as little as 81 minutes. Revalidate host/mounted capacity and the exact cold
-starting inventory before the next writer. In the completed run, startup
+as little as 81 minutes. The new job passed host/mounted capacity; its exact
+cold starting inventory remains pending. In the completed run, startup
 allocation matched the prior closed measurement and all 55,695 starting hashes
 matched exactly. Earlier allocation differences and the failed supplemental
 assertion remain preserved. No content check was changed or waived.
+
+The [final bounded continuation](evidence/restart-ticket-encoder-w-15130080-2026-10-19/STARTED.md)
+was dispatched once at 13:41:51 UTC. Mounted startup at 13:42:02 UTC and the
+13:42:51 UTC observation pass the private namespace, loopback-down, image/UUID
+and actual capacity gates. Startup allocation equals the verified 15,000,000
+closed measurement. The job is preparing; exact starting file hashes must still
+pass before replay, and no additional blocks are verified by this startup.
+The final 130,080-block range ends at backup tip 15,130,080. The 120 GiB ceiling,
+finite stop limits, protected checkpoints and reserves remain unchanged.
+Wait for verified completion and outer cleanup, then review the remaining
+acceptance gaps; no parallel writer or live LevelDB hashing.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
