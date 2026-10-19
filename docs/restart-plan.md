@@ -31,13 +31,18 @@ preserved; no content check was changed or waived.
 The next useful test is full writable restored startup and fresh restart using
 the retained unselected guard/encoder on a disposable complete backup copy.
 The [finite fixture-copy job](evidence/restart-restored-backup-copy-2026-10-19/PREPARED.md)
-is prepared: a separate 256 GiB W: image, original 56,107-file hash manifest,
+was dispatched once at 20:55:35 UTC: a separate 256 GiB W: image, original
+56,107-file hash manifest,
 read-only source, copy/fsync, detach/reattach and complete destination hash check,
 then actual cold-head/detail checks. Adapted copy controls and fresh capacity,
 identity and idle-state preflight pass. The final replay image stays detached.
 The eight-hour job cap, 3.5-hour cooperative phase limits, private offline
 namespaces and 20/50/100/20 GiB Linux/D:/W:/image reserves remain explicit.
-No writer has yet been dispatched for this prepared copy.
+The [startup record](evidence/restart-restored-backup-copy-2026-10-19/STARTED.md)
+passes source read-only, image identity, capacity and offline namespace gates.
+Copy/verification is in progress; no completed fixture or writable startup is
+claimed. Inspect this job's completion, verification and resource records before
+any dependent work; do not launch a duplicate image owner.
 
 After verified copy completion and clean detach, qualify writable startup and
 fresh restart separately, with the trusted test-only mainnet anchor. Preserve
