@@ -1,0 +1,212 @@
+--- docs\evidence\restart-restored-backup-copy-2026-10-19\launch.py
++++ docs\evidence\restart-restored-backup-startup-2026-10-20\launch.py
+@@ -42,7 +42,7 @@
+ 
+ def capacity():
+     result = {p: shutil.disk_usage(p).free for p in ['/home/rehearsal', '/mnt/d', '/mnt/w']}
+-    for path, gib in [('/home/rehearsal', 20), ('/mnt/d', 50), ('/mnt/w', 356)]:
++    for path, gib in [('/home/rehearsal', 20), ('/mnt/d', 50), ('/mnt/w', 101)]:
+         assert result[path] > gib * 1024**3, (path, result[path])
+     return result
+ 
+@@ -57,72 +57,103 @@
+ def interrupted(signum, frame):
+     raise TimeoutError('finite job interrupted by signal ' + str(signum))
+ 
+-def migrate():
++
++def protected():
++    from worker import copy, digest
++    records = {}
++    for path in [SOURCE, Path('/home/rehearsal/replay/candidate-ticket-encoding-working'),
++                 Path('/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2')]:
++        rows = copy.files(path)
++        records[str(path)] = {'files': len(rows), 'metadata_sha256':
++                              hashlib.sha256(json.dumps(rows, sort_keys=True).encode()).hexdigest()}
++    final_image = Path('/mnt/w/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4')
++    stat = final_image.stat()
++    records[str(final_image)] = {'size': stat.st_size, 'mtime_ns': stat.st_mtime_ns}
++    return records
++
++
++def phase(name, source_view, target, image_view, seconds):
++    command(name, ['runuser', '-u', 'rehearsal', '--', 'python3', '-B', str(HERE / 'worker.py'),
++                   name, str(source_view), str(target), str(image_view)], seconds)
++
++
++def qualify():
+     assert os.readlink('/proc/self/ns/net') != sys.argv[2]
+     links = json.loads(subprocess.check_output(['ip', '-j', 'link', 'show'], text=True))
+     assert len(links) == 1 and links[0]['ifname'] == 'lo' and 'UP' not in links[0]['flags']
+-    mount = json.loads(subprocess.check_output(['findmnt', '-J', '-o', 'TARGET,SOURCE,FSTYPE,OPTIONS', '-T', '/mnt/w'], text=True))['filesystems'][0]
++    mount = json.loads(subprocess.check_output(['findmnt', '-J', '-o', 'TARGET,SOURCE,FSTYPE,OPTIONS',
++                                               '-T', '/mnt/w'], text=True))['filesystems'][0]
+     assert mount['target'] == '/mnt/w' and mount['source'] == 'W:' and mount['fstype'] == '9p'
+-    assert SOURCE.resolve() == SOURCE and SOURCE.is_dir() and not DEST.exists()
+-    assert DEST.parent.resolve() == DEST.parent and DEST.parent.is_dir()
+-    assert not json.loads(subprocess.check_output(['losetup', '--list', '--json'], text=True))['loopdevices'], 'another image is attached'
++    assert IMAGE.resolve() == IMAGE and IMAGE.is_file() and IMAGE.stat().st_size == 256 * 1024**3
++    assert SOURCE.resolve() == SOURCE and SOURCE.is_dir()
+     locks = [open(str(SOURCE) + '.run.lock', 'a'), open('/home/rehearsal/replay/w-image-migration.run.lock', 'a')]
+     for lock in locks:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+     database_lock = (SOURCE / 'LOCK').open('rb')
+     fcntl.flock(database_lock, fcntl.LOCK_SH | fcntl.LOCK_NB)
++    assert not json.loads(subprocess.check_output(['losetup', '--list', '--json'], text=True))['loopdevices']
+     processes = subprocess.check_output(['ps', '-eo', 'pid,comm'], text=True)
+     assert not re.search(r'^\s*\d+\s+(?:efsn|replay-tests|observer|storage-probe)\s*$', processes, re.M)
+     initial = capacity()
+     assert initial['/home/rehearsal'] > 21 * 1024**3 and initial['/mnt/d'] > 51 * 1024**3
++    inputs()
++    from worker import identities
++    identity = identities()
++    preserved = protected()
+     save('environment.json', {'started': now(), 'mount': mount, 'interfaces': links,
+-          'netns': os.readlink('/proc/self/ns/net'), 'parent_netns': sys.argv[2],
+-          'free_before': capacity(), 'image_virtual_bytes': 256 * 1024**3,
+-          'source': str(SOURCE), 'image': str(IMAGE), 'processes': processes})
+-    inputs()
+-    from worker import expected
+-    expected()
+-    source_view = Path(tempfile.mkdtemp(prefix='w-copy-source-'))
+-    image_view = Path(tempfile.mkdtemp(prefix='w-copy-image-'))
+-    source_mounted, image_mounted, device = False, False, None
++                              'netns': os.readlink('/proc/self/ns/net'), 'parent_netns': sys.argv[2],
++                              'free_before': initial, 'image': str(IMAGE), 'identities': identity,
++                              'protected_before': preserved, 'processes': processes})
++    source_view = Path(tempfile.mkdtemp(prefix='startup-source-'))
++    image_view = Path(tempfile.mkdtemp(prefix='startup-image-'))
++    source_mounted, image_mounted, target_mounted, device = False, False, False, None
++    target = image_view / 'runtime/efsn/chaindata'
+     try:
+         command('source-bind', ['mount', '--bind', str(SOURCE), str(source_view)])
+         source_mounted = True
+         command('source-readonly', ['mount', '-o', 'remount,bind,ro', str(source_view)])
+-        DEST.mkdir()
+-        with IMAGE.open('xb') as file:
+-            file.truncate(256 * 1024**3)
+-            file.flush()
+-            os.fsync(file.fileno())
+-        save('image-created.json', {'path': str(IMAGE), 'bytes': IMAGE.stat().st_size,
+-                                    'created': now(), 'free_bytes': capacity()})
+-        device = attach('attach')
+-        command('format', ['mkfs.ext4', '-F', '-m', '0', '-N', '1048576', '-E',
+-                           'nodiscard,lazy_itable_init=0,lazy_journal_init=0', str(device)], 1200)
+-        uuid = command('uuid', ['blkid', '-s', 'UUID', '-o', 'value', device]).strip()
+-        assert re.fullmatch(r'[0-9a-f-]{36}', uuid)
++        device = attach('attach-initial-readonly', True)
++        uuid = command('uuid-initial', ['blkid', '-s', 'UUID', '-o', 'value', device]).strip()
++        assert uuid == '0b18a87d-e8ee-413f-b37f-01eec39b0c48'
++        command('mount-initial-readonly', ['mount', '-t', 'ext4', '-o', 'ro,noload', device, str(image_view)])
++        image_mounted = True
++        assert not (image_view / 'runtime').exists()
++        phase('prehash', source_view, image_view / 'checkpoint', image_view, 12720)
++        command('unmount-initial', ['umount', str(image_view)])
++        image_mounted = False
++        command('detach-initial', ['losetup', '--detach', device])
++        device = None
++        device = attach('attach-writable')
++        assert command('uuid-writable', ['blkid', '-s', 'UUID', '-o', 'value', device]).strip() == uuid
++        command('filesystem-before-write', ['e2fsck', '-f', '-n', device], 1200)
+         command('mount-write', ['mount', '-t', 'ext4', device, str(image_view)])
+         image_mounted = True
+-        os.chown(image_view, 1000, 1000)
+-        command('copy', ['runuser', '-u', 'rehearsal', '--', 'python3', '-B', str(HERE / 'worker.py'),
+-                         'copy', str(source_view), str(image_view / 'checkpoint')], 12720)
++        target.mkdir(mode=0o700, parents=True)
++        for directory in [image_view / 'runtime', target.parent, target]:
++            os.chown(directory, 1000, 1000)
++        command('datadir-bind', ['mount', '--bind', str(image_view / 'checkpoint'), str(target)])
++        target_mounted = True
++        phase('cli', source_view, image_view / 'runtime', image_view, 1500)
++        command('datadir-unmount', ['umount', str(target)])
++        target_mounted = False
+         command('unmount-write', ['umount', str(image_view)])
+         image_mounted = False
+-        command('filesystem-check', ['e2fsck', '-f', '-n', device], 1200)
++        command('filesystem-after-write', ['e2fsck', '-f', '-n', device], 1200)
+         command('detach-write', ['losetup', '--detach', device])
+         device = None
+-        device = attach('reattach-readonly', True)
+-        assert command('uuid-reattached', ['blkid', '-s', 'UUID', '-o', 'value', device]).strip() == uuid
+-        command('mount-readonly', ['mount', '-t', 'ext4', '-o', 'ro,noload', device, str(image_view)])
++        device = attach('reattach-cold', True)
++        assert command('uuid-cold', ['blkid', '-s', 'UUID', '-o', 'value', device]).strip() == uuid
++        command('mount-cold', ['mount', '-t', 'ext4', '-o', 'ro,noload', device, str(image_view)])
+         image_mounted = True
+-        command('verify', ['runuser', '-u', 'rehearsal', '--', 'python3', '-B', str(HERE / 'worker.py'),
+-                           'verify', str(source_view), str(image_view / 'checkpoint')], 12720)
++        phase('cold', source_view, image_view / 'checkpoint', image_view, 12720)
++        assert protected() == preserved and identities() == identity
+         inputs()
+-        assert json.loads((HERE / 'verification.json').read_text())['pass']
+-        save('migration.json', {'pass': True, 'height': 15130080, 'image': str(IMAGE), 'uuid': uuid,
+-                               'checkpoint_subdirectory': 'checkpoint', 'source_retained': str(SOURCE),
+-                               'finished': now(), 'elapsed_seconds': time.monotonic() - BEGIN})
++        save('acceptance.json', {'pass': True, 'finished': now(), 'protected_unchanged': preserved,
++                                 'elapsed_seconds': time.monotonic() - BEGIN, 'uuid': uuid,
++                                 'original_backup_retained': True, 'selected_release_changed': False})
+     finally:
++        if target_mounted:
++            command('cleanup-datadir-unmount', ['umount', str(target)])
+         if image_mounted:
+             command('cleanup-image-unmount', ['umount', str(image_view)])
+         if device:
+@@ -132,29 +163,32 @@
+         source_view.rmdir()
+         image_view.rmdir()
+         save('cleanup.json', {'finished': now(), 'mounts_removed': True, 'loop_detached': True,
+-                             'free_bytes': {p: shutil.disk_usage(p).free for p in ['/home/rehearsal', '/mnt/d', '/mnt/w']}})
++                              'protected_metadata_unchanged': protected() == preserved,
++                              'free_bytes': capacity()})
+ 
+-assert os.getuid() == 0
+-if len(sys.argv) == 1:
+-    inputs()
+-    assert json.loads((HERE / 'copy-controls.json').read_text(encoding='utf-8'))['pass']
+-    assert not (HERE / 'completion.json').exists() and not (HERE / 'environment.json').exists()
+-    os.execvp('unshare', ['unshare', '--mount', '--', 'python3', '-B', str(__file__), 'mount', os.readlink('/proc/self/ns/mnt')])
+-elif sys.argv[1] == 'mount':
+-    assert os.readlink('/proc/self/ns/mnt') != sys.argv[2]
+-    subprocess.run(['mount', '--make-rprivate', '/'], check=True)
+-    old = json.loads(subprocess.check_output(['findmnt', '-J', '-o', 'TARGET', '-T', '/mnt/w'], text=True))['filesystems'][0]
+-    assert old['target'] == '/'
+-    subprocess.run(['mount', '-t', 'drvfs', 'W:', '/mnt/w', '-o', 'uid=1000,gid=1000'], check=True)
+-    try:
+-        result = subprocess.run(['unshare', '--net', '--', 'python3', '-B', str(__file__), 'migrate', os.readlink('/proc/self/ns/net')])
+-    finally:
+-        subprocess.run(['umount', '/mnt/w'], check=True)
+-    save('completion.json', {'finished': now(), 'exit': result.returncode, 'verified_pass': result.returncode == 0,
+-                             'automatic_replay': False})
+-    sys.exit(result.returncode)
+-elif sys.argv[1] == 'migrate':
+-    signal.signal(signal.SIGTERM, interrupted)
+-    migrate()
+-else:
+-    raise RuntimeError('unknown mode')
++
++if __name__ == '__main__':
++    assert os.getuid() == 0
++    if len(sys.argv) == 1:
++        inputs()
++        assert not (HERE / 'completion.json').exists() and not (HERE / 'environment.json').exists()
++        assert json.loads((HERE / 'controls.json').read_text(encoding='utf-8'))['pass']
++        os.execvp('unshare', ['unshare', '--mount', '--', 'python3', '-B', str(__file__), 'mount', os.readlink('/proc/self/ns/mnt')])
++    elif sys.argv[1] == 'mount':
++        assert os.readlink('/proc/self/ns/mnt') != sys.argv[2]
++        subprocess.run(['mount', '--make-rprivate', '/'], check=True)
++        old = json.loads(subprocess.check_output(['findmnt', '-J', '-o', 'TARGET', '-T', '/mnt/w'], text=True))['filesystems'][0]
++        assert old['target'] == '/'
++        subprocess.run(['mount', '-t', 'drvfs', 'W:', '/mnt/w', '-o', 'uid=1000,gid=1000'], check=True)
++        try:
++            result = subprocess.run(['unshare', '--net', '--', 'python3', '-B', str(__file__), 'qualify', os.readlink('/proc/self/ns/net')])
++        finally:
++            subprocess.run(['umount', '/mnt/w'], check=True)
++        save('completion.json', {'finished': now(), 'exit': result.returncode, 'verified_pass': result.returncode == 0,
++                                 'automatic_replay': False})
++        sys.exit(result.returncode)
++    elif sys.argv[1] == 'qualify':
++        signal.signal(signal.SIGTERM, interrupted)
++        qualify()
++    else:
++        raise RuntimeError('unknown mode')

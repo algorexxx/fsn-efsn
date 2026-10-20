@@ -39,13 +39,19 @@ preserved. The new disposable 256 GiB W: image has about 145.42 GiB free.
 
 The next useful test is full writable restored startup and fresh restart using
 the retained unselected guard/encoder on this complete backup copy, with normal
-pruning and the trusted test-only mainnet anchor. Prepare and seal that finite
-job separately. Keep private offline namespaces, one image owner/writer and
-20/50/100/20 GiB Linux/D:/W:/image running reserves. No further copy, historical
+pruning and the trusted test-only mainnet anchor. The
+[bounded startup/restart job](evidence/restart-restored-backup-startup-2026-10-20/PREPARED.md)
+is prepared: unchanged CLI and 1,208 retained source files, source-derived test
+profile and parser controls pass. Fresh idle-state and capacity preflight pass.
+It checks every starting hash read-only, then runs two separate CLI processes
+with ten-minute limits and validates clean pruning shutdown. Closed post-startup
+hashes and both actual cold readers follow detach/reattach. The whole-job cap is
+eight hours; private offline namespaces, one image owner/writer and
+20/50/100/20 GiB Linux/D:/W:/image running reserves remain explicit. Inspect its
+completion/verification before any dependent work. No further copy, historical
 range or repetition of unchanged small tests is justified.
 
-After verified copy completion and clean detach, qualify writable startup and
-fresh restart separately, with the trusted test-only mainnet anchor. Preserve
+The fixture-copy completion does not close writable startup or recovery. Preserve
 production selection. Do not repeat unchanged small refusal, synthetic pruning
 or read-only backup checks. Recovery/handover acceptance still requires its own
 evidence; historical replay does not close it.
