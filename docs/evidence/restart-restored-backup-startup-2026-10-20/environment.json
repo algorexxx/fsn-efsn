@@ -1,0 +1,61 @@
+{
+  "started": "2026-10-20T02:02:58.328178+00:00",
+  "mount": {
+    "target": "/mnt/w",
+    "source": "W:",
+    "fstype": "9p",
+    "options": "rw,relatime,aname=drvfs;path=W:;uid=1000;gid=1000;symlinkroot=/mnt/,cache=0x5,access=client,msize=65536,trans=fd,rfd=3,wfd=3"
+  },
+  "interfaces": [
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "flags": [
+        "LOOPBACK"
+      ],
+      "mtu": 65536,
+      "qdisc": "noop",
+      "operstate": "DOWN",
+      "linkmode": "DEFAULT",
+      "group": "default",
+      "txqlen": 1000,
+      "link_type": "loopback",
+      "address": "00:00:00:00:00:00",
+      "broadcast": "00:00:00:00:00:00"
+    }
+  ],
+  "netns": "net:[4026532196]",
+  "parent_netns": "net:[4026531833]",
+  "free_before": {
+    "/home/rehearsal": 23054217216,
+    "/mnt/d": 56586686464,
+    "/mnt/w": 3078467523584
+  },
+  "image": "/mnt/w/FusionRestart/restored-backup-2026-10-19/startup.ext4",
+  "identities": {
+    "cli_sha256": "07aa74a3f58132e5ff1465152402d5ea3b01738c0017af5dfd5672a75a2550cd",
+    "source_files": 1208,
+    "source_inventory_sha256": "c751561c34e4a6546e3882880cbc64aafa221135772a6879cb0f799d7f992a4c",
+    "copy_manifest_sha256": "583a515b708a24fc835a7dbe41eb23b2db0d1d230f0a261bd684575095236069",
+    "profile_sha256": "b4e8a1ff9317a60d12a8c2d686f31646e5e2ffc71c3ff7e5bbbf431add7548c8"
+  },
+  "protected_before": {
+    "/home/rehearsal/data/efsn/chaindata": {
+      "files": 56107,
+      "metadata_sha256": "19819afda24a00f2c8e23dc5c458ae1c18d05318a06ee94a9fbcd98de2e67a06"
+    },
+    "/home/rehearsal/replay/candidate-ticket-encoding-working": {
+      "files": 22501,
+      "metadata_sha256": "90681f318b857f0c54dd9c3fdc4b0223826926b99bc794f14a077278c24fef52"
+    },
+    "/home/rehearsal/replay/candidate-ticket-encoding-2400000-v2": {
+      "files": 1383,
+      "metadata_sha256": "f26f221d830a2bb4ed14ccef6ed36d8d5a607679d12243bcd613f5a5b92f7f4b"
+    },
+    "/mnt/w/FusionRestart/replay-work-7170976-2026-10-12/replay.ext4": {
+      "size": 549755813888,
+      "mtime_ns": 1792439480656228300
+    }
+  },
+  "processes": "    PID COMMAND\n      1 systemd\n      2 init-systemd(Fu\n      8 init\n     51 systemd-journal\n     97 systemd-udevd\n    107 (udev-worker)\n    108 (udev-worker)\n    109 (udev-worker)\n    110 (udev-worker)\n    111 (udev-worker)\n    112 (udev-worker)\n    113 (udev-worker)\n    114 (udev-worker)\n    115 (udev-worker)\n    116 (udev-worker)\n    117 (udev-worker)\n    118 (udev-worker)\n    119 (udev-worker)\n    120 (udev-worker)\n    121 (udev-worker)\n    122 (udev-worker)\n    123 (udev-worker)\n    124 (udev-worker)\n    125 (udev-worker)\n    126 (udev-worker)\n    127 (udev-worker)\n    129 (udev-worker)\n    130 (udev-worker)\n    131 (udev-worker)\n    153 systemd-resolve\n    154 systemd-timesyn\n    160 cron\n    161 dbus-daemon\n    167 snapd\n    169 systemd-logind\n    172 wsl-pro-service\n    175 rsyslogd\n    191 agetty\n    198 unattended-upgr\n    239 systemd-timedat\n    276 SessionLeader\n    277 Relay(278)\n    278 timeout\n    279 login\n    312 systemd\n    313 (sd-pam)\n    324 bash\n    341 python3\n    347 python3\n    351 ps\n"
+}

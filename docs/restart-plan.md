@@ -41,8 +41,11 @@ The next useful test is full writable restored startup and fresh restart using
 the retained unselected guard/encoder on this complete backup copy, with normal
 pruning and the trusted test-only mainnet anchor. The
 [bounded startup/restart job](evidence/restart-restored-backup-startup-2026-10-20/PREPARED.md)
-is prepared: unchanged CLI and 1,208 retained source files, source-derived test
-profile and parser controls pass. Fresh idle-state and capacity preflight pass.
+was [dispatched once at 02:02:50 UTC](evidence/restart-restored-backup-startup-2026-10-20/STARTED.md)
+on 20 October. Unchanged CLI and 1,208 retained source files, source-derived test
+profile, parser controls and fresh idle-state/capacity preflight pass. Initial
+read-only source/image attachment, exact UUID and offline namespace gates pass;
+the job is in its pre-write hash phase. Writable acceptance is not yet claimed.
 It checks every starting hash read-only, then runs two separate CLI processes
 with ten-minute limits and validates clean pruning shutdown. Closed post-startup
 hashes and both actual cold readers follow detach/reattach. The whole-job cap is
