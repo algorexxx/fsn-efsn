@@ -55,8 +55,13 @@ accepted-parent/trust and final portable-package/clean-host acceptance remain
 open. The next useful bounded test is the candidate recovery command and
 three-block handover on complete account state, using existing compact-state
 operator helpers and public test keys. The [bounded complete-state operator job](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/PREPARED.md)
-is prepared with unchanged helper bodies, pinned candidate recovery source and
-three small disposable C: fixtures; no image attachment is needed. Earlier candidate recovery regressions
+was [dispatched once at 05:06:20 UTC](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/STARTED.md)
+from `6d223c20`. Offline namespace, one-owner/read-only-source gates, current
+reserves and exact identities pass; it is building the actual recovery command.
+All new build/data files use C:, with three compact fixtures and a one-hour outer
+cap. No image is attached. Inspect completion/resource records before dependent
+work; do not duplicate writers or hash live fixtures. No recovery acceptance is
+yet claimed. Earlier candidate recovery regressions
 used sparse fixtures; earlier complete-state operator evidence used the legacy
 encoder/toolchain. Reuse that evidence for comparison. Do not repeat the complete
 backup copy, unchanged identity-refusal/pruning tests or historical replay.
