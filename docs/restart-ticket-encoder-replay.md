@@ -54,7 +54,9 @@ test-only mainnet anchor. Release selection, independent codec/consensus review,
 accepted-parent/trust and final portable-package/clean-host acceptance remain
 open. The next useful bounded test is the candidate recovery command and
 three-block handover on complete account state, using existing compact-state
-operator helpers and public test keys. Earlier candidate recovery regressions
+operator helpers and public test keys. The [bounded complete-state operator job](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/PREPARED.md)
+is prepared with unchanged helper bodies, pinned candidate recovery source and
+three small disposable C: fixtures; no image attachment is needed. Earlier candidate recovery regressions
 used sparse fixtures; earlier complete-state operator evidence used the legacy
 encoder/toolchain. Reuse that evidence for comparison. Do not repeat the complete
 backup copy, unchanged identity-refusal/pruning tests or historical replay.
