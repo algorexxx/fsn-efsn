@@ -52,19 +52,24 @@ separately; no job acceptance condition changed. Clock differences remain explic
 This is qualification of the retained unselected guard/encoder with the trusted
 test-only mainnet anchor. Release selection, independent codec/consensus review,
 accepted-parent/trust and final portable-package/clean-host acceptance remain
-open. The next useful bounded test is the candidate recovery command and
-three-block handover on complete account state, using existing compact-state
-operator helpers and public test keys. The [bounded complete-state operator job](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/PREPARED.md)
-was [dispatched once at 05:06:20 UTC](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/STARTED.md)
-from `6d223c20`. Offline namespace, one-owner/read-only-source gates, current
-reserves and exact identities pass; it is building the actual recovery command.
-All new build/data files use C:, with three compact fixtures and a one-hour outer
-cap. No image is attached. Inspect completion/resource records before dependent
-work; do not duplicate writers or hash live fixtures. No recovery acceptance is
-yet claimed. Earlier candidate recovery regressions
-used sparse fixtures; earlier complete-state operator evidence used the legacy
-encoder/toolchain. Reuse that evidence for comparison. Do not repeat the complete
-backup copy, unchanged identity-refusal/pruning tests or historical replay.
+open. The [candidate complete-state recovery command and handover](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/RESULTS.md)
+passed at 05:14:46 UTC, including separate record/artifact verification. All three
+actual command stages and twelve fresh import/cold processes passed. All eleven
+reference artifacts match sealed legacy results; the owner-by-owner ledger audit
+passes. Three compact copies matched the 230-file source, and 764 closed fixture
+hashes are preserved. All fifteen capacity samples and finite limits pass.
+The 05:53 UTC post-state check finds no test process, mount or image attachment.
+A supplemental PowerShell timestamp-type comparison falsely reported changed
+image metadata; both the original record and typed UTC-tick correction are
+preserved. Sizes and timestamps match; no image content was read.
+
+The next useful bounded test is approved-signing interruption, refusal and
+credential-lock behavior under the candidate encoder and modern toolchain. The
+existing candidate regressions cover lower-level guard/journal behavior; earlier
+approved interruption tests used the legacy selection. Reuse those helpers and
+public test keys, preserving exact runtime identities and finite offline limits.
+Do not repeat complete-backup copy/startup, unchanged identity-refusal/pruning
+tests or historical replay. Release selection and independent review remain open.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
@@ -847,8 +852,9 @@ Current technical order (efsn):
 1. G1/G2: preserve the [verified backup-tip replay](evidence/restart-ticket-encoder-w-15130080-2026-10-19/RESULTS.md).
    No further historical range is justified. Complete-backup writable startup
    and restart now pass for the unselected guard/encoder and test-only anchor.
-   Qualify the candidate recovery command and handover on complete account state
-   using the existing compact fixture/operator workflow. Keep the final replay
+   Candidate recovery command and complete-account-state handover now pass.
+   Qualify the remaining approved-signing interruption/refusal boundary on the
+   same encoder/toolchain using existing public-key test helpers. Keep the final replay
    checkpoint, original backup, separate recovery, local fallback and all failed
    evidence. Review exact source/shortcut limits and obtain independent
    consensus and accepted-parent/trust review before selecting a release.

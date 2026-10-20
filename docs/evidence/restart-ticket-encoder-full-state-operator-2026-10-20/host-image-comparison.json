@@ -1,0 +1,26 @@
+{
+  "images": {
+    "W:\\FusionRestart\\restored-backup-2026-10-19\\startup.ext4": {
+      "pass": true,
+      "actual_length": 274877906944,
+      "actual_ticks": 639280629503161287,
+      "expected_utc": "2026-10-20T03:15:50.3161287Z",
+      "parsed_expected_type": "System.DateTime",
+      "expected_length": 274877906944,
+      "actual_utc": "2026-10-20T03:15:50.3161287Z",
+      "expected_ticks": 639280629503161287
+    },
+    "W:\\FusionRestart\\replay-work-7170976-2026-10-12\\replay.ext4": {
+      "pass": true,
+      "actual_length": 549755813888,
+      "actual_ticks": 639280362806562283,
+      "expected_utc": "2026-10-19T19:51:20.6562283Z",
+      "parsed_expected_type": "System.DateTime",
+      "expected_length": 549755813888,
+      "actual_utc": "2026-10-19T19:51:20.6562283Z",
+      "expected_ticks": 639280362806562283
+    }
+  },
+  "checked": "2026-10-20T05:57:46.9701199+00:00",
+  "explanation": "Preserves host-post-state.json. Its supplemental string-versus-DateTime comparison returned false after ConvertFrom-Json converted timestamps automatically. Typed UTC-tick and length comparisons below confirm unchanged image metadata; no image content was read."
+}

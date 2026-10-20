@@ -1,0 +1,22 @@
+=== RUN   TestFullStateRecoveryOperator
+    full_state_operator_test.go:22: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+    full_state_operator_test.go:22: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+    full_state_operator_test.go:22: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+    full_state_operator_test.go:22: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+    full_state_operator_test.go:22: synthetic parent=0x5c374b29049a080e62442c3cd9fcf056967b6d4fc07f43ad857349d20f9085c5 root=0x5c16feaed0c954346a0979268bf99c6d69975b37b5e1a3c217ed71c65ddcb531 tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3 transferredLiquid=3225543308109480158626 nonce=233427 reassignedTickets=2 changedAccounts=3
+    full_state_operator_test.go:22: donation substitution debit=credit=12020102000000000000000 nonce=0 changedAccounts=2 syntheticParent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa
+=== RUN   TestFullStateRecoveryOperator/reference
+=== NAME  TestFullStateRecoveryOperator
+    full_state_operator_test.go:46: reference stage=1 hash=0x7e16c5dabebb465314f9d48ba24bbb2cb836768a5264d5193329b46fd69af3da root=0xdfab33d93bdcb5e278b642a8894bd8422ca0a47bd86e111f117bd00c3500ad59 tickets=485 changedAccounts=8
+    full_state_operator_test.go:46: reference stage=2 hash=0x9aaa779dad8d3883bff738d99f6a3c360812f658ccffd4778a6a4aa0c9ec862a root=0xf19455dbbd7f131bcb9179c591c967d614470d07d0814fb74b52ac458f201be8 tickets=480 changedAccounts=2
+    full_state_operator_test.go:46: reference stage=3 hash=0x94ed041a999c47e4a3797f3f33067e3cdf011add53b786832f3ad334d9727345 root=0xea437527f99ff52f682abfe458941f2a4a56b8023d8fd7f3d4e99dd7efaf6cf4 tickets=1 changedAccounts=2
+    full_state_operator_test.go:48: accounted block=1 height=15130081 accounts=8 temporalBoundaries=1014 tickets=485 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=false
+    full_state_operator_test.go:48: accounted block=2 height=15130082 accounts=2 temporalBoundaries=4 tickets=480 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_operator_test.go:48: accounted block=3 height=15130083 accounts=2 temporalBoundaries=4 tickets=1 feeWei=42448000000000 rewardWei=312500000000000000; preserved other assets/code/storage/notation; retired account unchanged=true
+    full_state_operator_test.go:48: all future FSN rights conserved owner-by-owner across liquid balances, time locks and tickets, except ordinary rewards/fees and first-retreat penalties; blocks=3 totalRewardWei=937500000000000000; no database opened
+    full_state_operator_test.go:49: stage=1: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree
+    full_state_operator_test.go:49: stage=2: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree
+    full_state_operator_test.go:49: stage=3: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree
+--- PASS: TestFullStateRecoveryOperator (116.96s)
+    --- PASS: TestFullStateRecoveryOperator/reference (1.25s)
+PASS
