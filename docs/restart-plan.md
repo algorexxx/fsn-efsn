@@ -70,6 +70,12 @@ approved interruption tests used the legacy selection. Reuse those helpers and
 public test keys, preserving exact runtime identities and finite offline limits.
 Do not repeat complete-backup copy/startup, unchanged identity-refusal/pruning
 tests or historical replay. Release selection and independent review remain open.
+The [bounded approved-signing interruption job](evidence/restart-ticket-encoder-approved-cuts-2026-10-20/PREPARED.md)
+was [dispatched once at 06:04:22 UTC](evidence/restart-ticket-encoder-approved-cuts-2026-10-20/STARTED.md)
+from `69ddf421`. The initial source/evidence/isolation/reserve gates pass; its
+race-enabled harness is building. It uses retained small synthetic fixtures on
+C: and a 40-minute outer limit. Inspect completion/resource records before any
+dependent work; no interruption acceptance is yet claimed.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
