@@ -37,27 +37,27 @@ finite phase limits. The 01:53 UTC actual-state check finds no owner or attachme
 The original backup, protected final replay image and separate recovery remain
 preserved. The new disposable 256 GiB W: image has about 145.42 GiB free.
 
-The next useful test is full writable restored startup and fresh restart using
-the retained unselected guard/encoder on this complete backup copy, with normal
-pruning and the trusted test-only mainnet anchor. The
-[bounded startup/restart job](evidence/restart-restored-backup-startup-2026-10-20/PREPARED.md)
-was [dispatched once at 02:02:50 UTC](evidence/restart-restored-backup-startup-2026-10-20/STARTED.md)
-on 20 October. Unchanged CLI and 1,208 retained source files, source-derived test
-profile, parser controls and fresh idle-state/capacity preflight pass. Initial
-read-only source/image attachment, exact UUID and offline namespace gates pass;
-the job is in its pre-write hash phase. Writable acceptance is not yet claimed.
-It checks every starting hash read-only, then runs two separate CLI processes
-with ten-minute limits and validates clean pruning shutdown. Closed post-startup
-hashes and both actual cold readers follow detach/reattach. The whole-job cap is
-eight hours; private offline namespaces, one image owner/writer and
-20/50/100/20 GiB Linux/D:/W:/image running reserves remain explicit. Inspect its
-completion/verification before any dependent work. No further copy, historical
-range or repetition of unchanged small tests is justified.
+The [complete-backup writable startup and restart](evidence/restart-restored-backup-startup-2026-10-20/RESULTS.md)
+finished with verified acceptance, clean detach and host exit at 04:26:33 UTC.
+The independent record review passes. All 56,107 starting hashes matched the
+sealed backup; both actual CLI processes retained the exact tip with normal
+pruning and clean state commits. All 56,168 closed post-startup hashes are
+preserved, and both actual cold readers match the complete endpoint. The 1,208
+source files, executable identities and protected metadata remain unchanged.
+All 271 resource samples and finite limits pass. The 04:54 UTC actual-state check
+finds no test process, test/ext4 loop or matching mount. Unrelated read-only Docker
+ISO loops and the failed supplemental global-loop assertion are recorded
+separately; no job acceptance condition changed. Clock differences remain explicit.
 
-The fixture-copy completion does not close writable startup or recovery. Preserve
-production selection. Do not repeat unchanged small refusal, synthetic pruning
-or read-only backup checks. Recovery/handover acceptance still requires its own
-evidence; historical replay does not close it.
+This is qualification of the retained unselected guard/encoder with the trusted
+test-only mainnet anchor. Release selection, independent codec/consensus review,
+accepted-parent/trust and final portable-package/clean-host acceptance remain
+open. The next useful bounded test is the candidate recovery command and
+three-block handover on complete account state, using existing compact-state
+operator helpers and public test keys. Earlier candidate recovery regressions
+used sparse fixtures; earlier complete-state operator evidence used the legacy
+encoder/toolchain. Reuse that evidence for comparison. Do not repeat the complete
+backup copy, unchanged identity-refusal/pruning tests or historical replay.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
@@ -833,14 +833,15 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Final W: replay checkpoint about 107.93 GiB, image free about 402.7 GiB; Linux 21.48 GiB / D: 52.68 GiB free at post-completion check | Fresh capacity and one image owner before a distinct disposable W: backup copy; preserve all checkpoints and archives |
+| Rehearsal disk capacity | Final W: replay checkpoint about 107.93 GiB, image free about 402.7 GiB; Linux 21.48 GiB / D: 52.68 GiB free at post-completion check | Complete-backup copy and writable startup now verified; use three compact disposable copies for recovery acceptance, with fresh capacity checks; preserve all checkpoints and archives |
 
 Current technical order (efsn):
 
 1. G1/G2: preserve the [verified backup-tip replay](evidence/restart-ticket-encoder-w-15130080-2026-10-19/RESULTS.md).
-   No further historical range is justified. Qualify full writable restored
-   startup and restart on a disposable complete backup copy under the retained
-   unselected guard/encoder and test-only mainnet anchor. Keep the final replay
+   No further historical range is justified. Complete-backup writable startup
+   and restart now pass for the unselected guard/encoder and test-only anchor.
+   Qualify the candidate recovery command and handover on complete account state
+   using the existing compact fixture/operator workflow. Keep the final replay
    checkpoint, original backup, separate recovery, local fallback and all failed
    evidence. Review exact source/shortcut limits and obtain independent
    consensus and accepted-parent/trust review before selecting a release.
