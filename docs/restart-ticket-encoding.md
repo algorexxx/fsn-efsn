@@ -1,6 +1,6 @@
 # Historical ticket encoding compatibility
 
-9 October 2026. F12 remains a release hold. This narrows the next technical
+20 October 2026. F12 remains a release hold. This narrows the next technical
 work under G1/G2; it does not change the agreed restart or ticket economics.
 
 Fusion hashes compressed ticket bytes in both the ticket account's code and
@@ -70,14 +70,21 @@ replay comparator, not an accepted production solution.
    acceptance limits. The final checkpoint, separate recovery, original backup,
    local fallback, baseline and all failed evidence are preserved. No additional
    history range or unchanged baseline rerun is justified. Independent review,
-   accepted-parent/trust limits and full writable restored startup/recovery remain
-   open. This result does not recover 17 missing exported samples, qualify later
-   source changes or change release selection.
-5. Obtain independent codec/consensus and maintenance review before selection.
+   accepted-parent/trust limits and final release selection remain open. This result
+   does not recover 17 missing exported samples, qualify later source changes or change release selection.
+5. **Bounded restored startup and recovery follow-ups complete.** The
+   [complete-backup writable startup/restart](evidence/restart-restored-backup-startup-2026-10-20/RESULTS.md)
+   passes on the retained guard/encoder with a test-only trusted anchor, reusing
+   the prior identity-refusal cases. The [complete-state recovery command](evidence/restart-ticket-encoder-full-state-operator-2026-10-20/RESULTS.md)
+   reproduces all eleven legacy reference artifacts. The [approved-signing cuts](evidence/restart-ticket-encoder-approved-cuts-2026-10-20/RESULTS.md)
+   pass nine completed and two uncertain cuts, changed-approval refusals and
+   credential locks. Evidence and disposable fixtures remain preserved.
+6. Obtain independent codec/consensus and maintenance review before selection.
    If a historical mismatch is found, stop and resolve its cause; do not add an
    activation boundary by assumption. A byte-compatible implementation should
    preserve existing rules, not create a new encoding fork.
 
-No production correction or activation height is selected. F11's distinct
-rollback disposition and F12's empty/mispointed-datadir startup safeguard remain
-open in the [launch plan](restart-plan.md) and [findings ledger](restart-release-findings.md).
+No additional unchanged local test is queued; recurring continuation stops at
+this review boundary. No production correction or activation height is selected.
+F11's distinct rollback disposition, F12's independent review and final trusted
+package/profile acceptance remain open in the [launch plan](restart-plan.md) and [findings ledger](restart-release-findings.md).

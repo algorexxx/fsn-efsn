@@ -1,0 +1,45 @@
+=== RUN   TestApprovedOfflineProcessCuts
+=== RUN   TestApprovedOfflineProcessCuts/completion
+    recovery_approval_test.go:82: approved stage=1 cut=completion: exact recovery without another callback; independent cold ledgers agree
+    recovery_approval_test.go:82: approved stage=2 cut=completion: exact recovery without another callback; independent cold ledgers agree
+    recovery_approval_test.go:82: approved stage=3 cut=completion: exact recovery without another callback; independent cold ledgers agree
+=== RUN   TestApprovedOfflineProcessCuts/export
+    recovery_approval_test.go:82: approved stage=1 cut=export: exact recovery without another callback; independent cold ledgers agree
+    recovery_approval_test.go:82: approved stage=2 cut=export: exact recovery without another callback; independent cold ledgers agree
+    recovery_approval_test.go:82: approved stage=3 cut=export: exact recovery without another callback; independent cold ledgers agree
+=== RUN   TestApprovedOfflineProcessCuts/import
+    recovery_approval_test.go:82: approved stage=1 cut=import: exact recovery without another callback; independent cold ledgers agree
+    recovery_approval_test.go:82: approved stage=2 cut=import: exact recovery without another callback; independent cold ledgers agree
+    recovery_approval_test.go:82: approved stage=3 cut=import: exact recovery without another callback; independent cold ledgers agree
+=== RUN   TestApprovedOfflineProcessCuts/reservation
+    recovery_approval_test.go:71: kill-after=reservation: repeat signing and export refused; chain bytes unchanged
+=== RUN   TestApprovedOfflineProcessCuts/signature
+    recovery_approval_test.go:71: kill-after=signature: repeat signing and export refused; chain bytes unchanged
+--- PASS: TestApprovedOfflineProcessCuts (34.13s)
+    --- PASS: TestApprovedOfflineProcessCuts/completion (10.11s)
+    --- PASS: TestApprovedOfflineProcessCuts/export (10.33s)
+    --- PASS: TestApprovedOfflineProcessCuts/import (10.69s)
+    --- PASS: TestApprovedOfflineProcessCuts/reservation (1.47s)
+    --- PASS: TestApprovedOfflineProcessCuts/signature (1.52s)
+=== RUN   TestApprovedOfflineRefusals
+=== RUN   TestApprovedOfflineRefusals/policy_executable
+=== RUN   TestApprovedOfflineRefusals/policy_config
+=== RUN   TestApprovedOfflineRefusals/purchase_owner
+=== RUN   TestApprovedOfflineRefusals/parent
+=== RUN   TestApprovedOfflineRefusals/purchase_bytes
+=== RUN   TestApprovedOfflineRefusals/unsigned_bytes
+=== RUN   TestApprovedOfflineRefusals/policy_quota
+=== RUN   TestApprovedOfflineRefusals/policy_parent
+--- PASS: TestApprovedOfflineRefusals (2.66s)
+    --- PASS: TestApprovedOfflineRefusals/policy_executable (0.09s)
+    --- PASS: TestApprovedOfflineRefusals/policy_config (0.10s)
+    --- PASS: TestApprovedOfflineRefusals/purchase_owner (0.10s)
+    --- PASS: TestApprovedOfflineRefusals/parent (0.22s)
+    --- PASS: TestApprovedOfflineRefusals/purchase_bytes (0.20s)
+    --- PASS: TestApprovedOfflineRefusals/unsigned_bytes (0.23s)
+    --- PASS: TestApprovedOfflineRefusals/policy_quota (0.09s)
+    --- PASS: TestApprovedOfflineRefusals/policy_parent (0.08s)
+=== RUN   TestKeystorePreflightLocksAndUncertain
+    recovery_operator_test.go:91: credential validation holds both locks; wrong password permits a later attempt; unfinished signature refuses key access
+--- PASS: TestKeystorePreflightLocksAndUncertain (1.57s)
+PASS

@@ -11,6 +11,17 @@ decision owner. Independent consensus and code-review assignees are not yet
 named; their approval must be recorded before the applicable hold is cleared.
 No human review or acceptance is inferred from a test pass.
 
+**20 October F12/G1 status:** the [canonical plan](restart-plan.md) now records
+verified candidate replay through backup tip 15,130,080, complete-backup writable
+startup/restart, complete-state recovery command/handover, and approved-signing
+interruption/refusal acceptance. The existing startup-identity refusal evidence
+is retained. All currently authorized useful local testing is complete; no
+additional test is queued. The dated entries below retain their original scope.
+F12 remains a release hold for independent codec/consensus/maintenance review,
+accepted-parent/trust limits, explicit source selection and final trusted
+package/profile acceptance. Early shortcuts and seventeen unavailable sampled
+blobs remain explicit. F5/F10/F11 and other release holds are unchanged.
+
 | ID / affected rows | Finding and consequence | Disposition | Status / evidence needed to close |
 | --- | --- | --- | --- |
 | F1 — R1/R2/R3/R4 | Legacy `miner`, `core`, `core/rawdb`, broad `eth`, console and JS-tracer tests have obsolete APIs or removed symbols and cannot all compile. State tests now compile but expose inherited runtime failures tracked under F11. RPC `TestServer` lacks its testdata directory. Missing coverage can conceal regressions. | Treat as test-porting/coverage work. Keep focused passing tests and original failure logs. Two core/types fixture repairs now pass the complete package on D1 and the text experiment; production code is unchanged. Do not modify runtime APIs just to satisfy obsolete Ethereum tests or claim `go test ./...` passes. | Open review hold: repair the remaining relevant tests or document exact exclusions and replacement assertions on the selected compiler. Independent reviewer must approve the resulting coverage. |

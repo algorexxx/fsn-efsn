@@ -63,19 +63,27 @@ A supplemental PowerShell timestamp-type comparison falsely reported changed
 image metadata; both the original record and typed UTC-tick correction are
 preserved. Sizes and timestamps match; no image content was read.
 
-The next useful bounded test is approved-signing interruption, refusal and
-credential-lock behavior under the candidate encoder and modern toolchain. The
-existing candidate regressions cover lower-level guard/journal behavior; earlier
-approved interruption tests used the legacy selection. Reuse those helpers and
-public test keys, preserving exact runtime identities and finite offline limits.
-Do not repeat complete-backup copy/startup, unchanged identity-refusal/pruning
-tests or historical replay. Release selection and independent review remain open.
-The [bounded approved-signing interruption job](evidence/restart-ticket-encoder-approved-cuts-2026-10-20/PREPARED.md)
-was [dispatched once at 06:04:22 UTC](evidence/restart-ticket-encoder-approved-cuts-2026-10-20/STARTED.md)
-from `69ddf421`. The initial source/evidence/isolation/reserve gates pass; its
-race-enabled harness is building. It uses retained small synthetic fixtures on
-C: and a 40-minute outer limit. Inspect completion/resource records before any
-dependent work; no interruption acceptance is yet claimed.
+The [candidate approved-signing interruption/refusal run](evidence/restart-ticket-encoder-approved-cuts-2026-10-20/RESULTS.md)
+passed at 06:08:52 UTC, including preservation, cleanup and separate
+record/artifact verification. Three top-level tests and thirteen subtests pass:
+nine completed cuts recover exact bytes without another signer callback, two
+uncertain cuts refuse signing/export, eight changed approvals refuse, and
+credential validation retains both locks. Seven small synthetic cases and 348
+closed-file hashes remain preserved. All nine resource samples pass. The
+06:09:58 UTC actual-state check finds no test process, mount, loop or held owner
+lock; protected image metadata is unchanged.
+
+**The currently authorized useful local testing is complete. No further test is
+queued; the recurring continuation automation has been deleted.** Candidate replay,
+restored startup/identity refusal, complete-account-state recovery and approved signing
+interruption now have their bounded evidence. Do not rerun unchanged passing
+fixtures. The next work requires independent codec/consensus and maintenance
+review, the accepted-parent/trust decision (including shortcuts through 2,680,000
+and 17 unavailable sampled blobs), and explicit release/source selection.
+Final trusted package/clean-host acceptance and real-address, timing, funding and
+key-custody review remain separate. F5/F10/F11 and the other release holds remain
+recorded; no production activation, real-key signing, public mining, network
+contact or release-selection change is authorized by these results.
 
 The [preceding range's preflight refusal](evidence/restart-ticket-encoder-w-13200000-2026-10-17/preflight-refusal-1/FAILURE.md)
 caught a misnamed observer patch before image attachment. Original inputs and
@@ -380,8 +388,9 @@ locate or re-establish that separate package before closing G1 preservation.
   is complete for seven available samples; 17 requested blobs were unavailable.
   The [encoder-only candidate](restart-ticket-encoding.md) passes its bounded
   encoding, expiry, state/cache, build, genesis startup and affected
-  regression/cost checks. Complete [candidate history](restart-ticket-encoder-replay.md)
-  and independent review. The current
+  regression/cost checks. The [candidate history](restart-ticket-encoder-replay.md), restored startup
+  and bounded recovery follow-ups are complete. Obtain independent review
+  and explicit source selection. The current
   Go 1.27.1 artifacts are blocked from release; successful same-compiler fixtures
   do not close this difference. Keep the registered genesis and backup unchanged.
 - [x] Close the bounded [unknown-heavier automatic-sync gap](restart-automatic-sync.md):
@@ -851,7 +860,7 @@ The last two items are post-bootstrap milestones; the first two precede release.
 | Independent participation | Kit ready before release, real operators join after recovery | G7 |
 | Domains/organization/hosts/build image | Public choices and final image unselected; Go 1.27.1 selected for qualification | G2/G5 |
 | Accepted residual risks | Written, case-specific review; no implicit waivers | G8 |
-| Rehearsal disk capacity | Final W: replay checkpoint about 107.93 GiB, image free about 402.7 GiB; Linux 21.48 GiB / D: 52.68 GiB free at post-completion check | Complete-backup copy and writable startup now verified; use three compact disposable copies for recovery acceptance, with fresh capacity checks; preserve all checkpoints and archives |
+| Rehearsal disk capacity | Final W: replay checkpoint about 107.93 GiB, image free about 402.7 GiB; Linux 21.47 GiB / D: 50.95 GiB / C: 242.53 GiB free at 20 October post-completion check | Complete-backup copy/startup and bounded recovery acceptance verified; no additional allocation or cleanup justified; preserve all checkpoints and archives |
 
 Current technical order (efsn):
 
@@ -859,8 +868,9 @@ Current technical order (efsn):
    No further historical range is justified. Complete-backup writable startup
    and restart now pass for the unselected guard/encoder and test-only anchor.
    Candidate recovery command and complete-account-state handover now pass.
-   Qualify the remaining approved-signing interruption/refusal boundary on the
-   same encoder/toolchain using existing public-key test helpers. Keep the final replay
+   Approved-signing interruption/refusal also passes. The currently authorized
+   useful local testing is complete; obtain independent review and explicit
+   release decisions before new dependent qualification. Keep the final replay
    checkpoint, original backup, separate recovery, local fallback and all failed
    evidence. Review exact source/shortcut limits and obtain independent
    consensus and accepted-parent/trust review before selecting a release.
