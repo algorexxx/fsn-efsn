@@ -1,6 +1,6 @@
 # Fusion restart launch plan
 
-Updated 19 October 2026 UTC. **Candidate replay is verified through backup tip 15,130,080; no historical range remains.**
+Updated 20 October 2026 UTC. **Candidate replay is verified through backup tip 15,130,080; no historical range remains.**
 
 The [final 130,080-block continuation](evidence/restart-ticket-encoder-w-15130080-2026-10-19/RESULTS.md)
 passed evidence verification, image detach and host exit by 19:52 UTC.
@@ -28,21 +28,21 @@ and all 55,796 starting hashes match the preceding verified checkpoint.
 Earlier allocation differences and failed supplemental assertions remain
 preserved; no content check was changed or waived.
 
+The [complete fixture copy](evidence/restart-restored-backup-copy-2026-10-19/RESULTS.md)
+finished and verified at 01:03:29 UTC on 20 October. All 56,107 files /
+117,170,022,674 bytes match the original sealed backup manifest both during copy
+and after detach/reattach. Both actual cold readers pass at the exact backup tip.
+The independent record review passes, including all 463 reserve samples and
+finite phase limits. The 01:53 UTC actual-state check finds no owner or attachment.
+The original backup, protected final replay image and separate recovery remain
+preserved. The new disposable 256 GiB W: image has about 145.42 GiB free.
+
 The next useful test is full writable restored startup and fresh restart using
-the retained unselected guard/encoder on a disposable complete backup copy.
-The [finite fixture-copy job](evidence/restart-restored-backup-copy-2026-10-19/PREPARED.md)
-was dispatched once at 20:55:35 UTC: a separate 256 GiB W: image, original
-56,107-file hash manifest,
-read-only source, copy/fsync, detach/reattach and complete destination hash check,
-then actual cold-head/detail checks. Adapted copy controls and fresh capacity,
-identity and idle-state preflight pass. The final replay image stays detached.
-The eight-hour job cap, 3.5-hour cooperative phase limits, private offline
-namespaces and 20/50/100/20 GiB Linux/D:/W:/image reserves remain explicit.
-The [startup record](evidence/restart-restored-backup-copy-2026-10-19/STARTED.md)
-passes source read-only, image identity, capacity and offline namespace gates.
-Copy/verification is in progress; no completed fixture or writable startup is
-claimed. Inspect this job's completion, verification and resource records before
-any dependent work; do not launch a duplicate image owner.
+the retained unselected guard/encoder on this complete backup copy, with normal
+pruning and the trusted test-only mainnet anchor. Prepare and seal that finite
+job separately. Keep private offline namespaces, one image owner/writer and
+20/50/100/20 GiB Linux/D:/W:/image running reserves. No further copy, historical
+range or repetition of unchanged small tests is justified.
 
 After verified copy completion and clean detach, qualify writable startup and
 fresh restart separately, with the trusted test-only mainnet anchor. Preserve
