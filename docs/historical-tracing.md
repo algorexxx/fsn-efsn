@@ -6,8 +6,15 @@ RPC produces those: they are not in blocks, receipts or logs.
 
 **Status: the `debug` API works, but tracing any block older than the node's
 most recent saved state fails. Replaying history breaks on block 2 with a
-consensus error. The likely cause is one line in `eth/state_accessor.go` (below).
-That fix has not been built or tested.**
+consensus error. The cause is one line in `eth/state_accessor.go` (below).**
+
+**Fixed on 11 October 2026** in Fusion-Community/efsn `feature/historical-tracing`
+(`aae15bf`, one commit on `develop`): the proposed line below plus integration
+regressions in `tests/tracing`. The regressions fail without the fix and pass with
+it; read-only mainnet probes trace blocks 256 and 4096 and replay from stored
+block 3001, and baseline and fixed code import blocks 1–4096 identically. Its
+commit message has the full validation. Full-history tracing has not been run.
+The sections below are the investigation as it stood before the fix.
 
 ## What was enabled
 
