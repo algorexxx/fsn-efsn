@@ -1,0 +1,1 @@
+/home/rehearsal/final-bin/efsn --help 2>&1 | grep -E -- "--(datadir|port|nodiscover|bootnodes|unlock|password|mine|autobt|syncmode|gcmode|networkid|nat|netrestrict|maxpeers|ipcpath|http|lightkdf|nodekey|miner\.|etherbase|txpool\.journal|verbosity|cache|ethstats|identity|checkpoints|nousb|metrics)" | head -60

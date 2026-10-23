@@ -1,0 +1,420 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 704B done
+#1 WARN: FromAsCasing: 'as' and 'FROM' keywords' casing do not match (line 2)
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/alpine:latest
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/golang:1.27.3-alpine
+#3 DONE 1.5s
+
+#2 [internal] load metadata for docker.io/library/alpine:latest
+#2 DONE 1.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 205B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [builder 1/4] FROM docker.io/library/golang:1.27.3-alpine@sha256:d530cf60723abf1ffae0cd16bb546b379ec0550d2f3815e5b16ed69dbc00fba4
+#6 resolve docker.io/library/golang:1.27.3-alpine@sha256:d530cf60723abf1ffae0cd16bb546b379ec0550d2f3815e5b16ed69dbc00fba4 0.0s done
+#6 DONE 0.2s
+
+#7 [stage-1 1/5] FROM docker.io/library/alpine:latest@sha256:71e9b7bae160ba167fa17414401b94cbcdaf3c32feeab9298bd794a2a0614c35
+#7 resolve docker.io/library/alpine:latest@sha256:71e9b7bae160ba167fa17414401b94cbcdaf3c32feeab9298bd794a2a0614c35 0.0s done
+#7 sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 0B / 3.85MB 0.2s
+#7 sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 3.85MB / 3.85MB 0.3s done
+#7 extracting sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788
+#7 extracting sha256:7b229517ed222597277036d94892173207d01a731ab3a88eeb1de2e963a2c788 0.1s done
+#7 DONE 0.6s
+
+#8 [stage-1 2/5] RUN apk add --no-cache ca-certificates
+#8 0.747 (1/1) Installing ca-certificates (20261020-r0)
+#8 0.788 Executing busybox-1.37.0-r31.trigger
+#8 0.792 Executing ca-certificates-20261020-r0.trigger
+#8 0.822 OK: 8415 KiB in 17 packages
+#8 DONE 0.9s
+
+#6 [builder 1/4] FROM docker.io/library/golang:1.27.3-alpine@sha256:d530cf60723abf1ffae0cd16bb546b379ec0550d2f3815e5b16ed69dbc00fba4
+#6 sha256:c8e3100880d834be60a9562375f4c5018b2cb26d64591bd0060aa3a80b935f43 126B / 126B 0.1s done
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 18.87MB / 71.15MB 1.2s
+#6 sha256:c012d78a862fe59ae6789c91f982ea68a882c9c44bbde97013914458dcdd9c4c 244.47kB / 244.47kB 0.4s done
+#6 extracting sha256:c012d78a862fe59ae6789c91f982ea68a882c9c44bbde97013914458dcdd9c4c 0.1s done
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 26.21MB / 71.15MB 1.5s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 32.51MB / 71.15MB 1.8s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 36.70MB / 71.15MB 2.1s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 44.04MB / 71.15MB 2.4s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 49.28MB / 71.15MB 2.6s
+#6 ...
+
+#5 [internal] load build context
+#5 transferring context: 21.07MB 3.0s done
+#5 DONE 3.1s
+
+#6 [builder 1/4] FROM docker.io/library/golang:1.27.3-alpine@sha256:d530cf60723abf1ffae0cd16bb546b379ec0550d2f3815e5b16ed69dbc00fba4
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 60.82MB / 71.15MB 3.0s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 66.06MB / 71.15MB 3.3s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 71.15MB / 71.15MB 3.6s
+#6 sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 71.15MB / 71.15MB 3.6s done
+#6 extracting sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b
+#6 extracting sha256:82e0bb27ae78502103ed383ed33346f88a83943fb7bd93977850d5890ee8fb3b 1.7s done
+#6 DONE 5.6s
+
+#6 [builder 1/4] FROM docker.io/library/golang:1.27.3-alpine@sha256:d530cf60723abf1ffae0cd16bb546b379ec0550d2f3815e5b16ed69dbc00fba4
+#6 extracting sha256:c8e3100880d834be60a9562375f4c5018b2cb26d64591bd0060aa3a80b935f43 0.0s done
+#6 extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 0.0s done
+#6 DONE 5.6s
+
+#9 [builder 2/4] RUN apk add --no-cache make gcc musl-dev linux-headers
+#9 0.518 ( 1/16) Installing libgcc (15.2.0-r5)
+#9 0.535 ( 2/16) Installing jansson (2.15.0-r0)
+#9 0.547 ( 3/16) Installing libstdc++ (15.2.0-r5)
+#9 0.626 ( 4/16) Installing zstd-libs (1.5.7-r2)
+#9 0.662 ( 5/16) Installing binutils (2.45.1-r1)
+#9 0.903 ( 6/16) Installing libgcc-static (15.2.0-r5)
+#9 1.072 ( 7/16) Installing libgomp (15.2.0-r5)
+#9 1.094 ( 8/16) Installing libatomic (15.2.0-r5)
+#9 1.105 ( 9/16) Installing gmp (6.3.0-r4)
+#9 1.131 (10/16) Installing isl26 (0.26-r2)
+#9 1.212 (11/16) Installing mpfr4 (4.2.2-r0)
+#9 1.243 (12/16) Installing mpc1 (1.3.1-r1)
+#9 1.257 (13/16) Installing gcc (15.2.0-r5)
+#9 5.417 (14/16) Installing linux-headers (7.0.0-r1)
+#9 5.614 (15/16) Installing make (4.4.1-r4)
+#9 5.635 (16/16) Installing musl-dev (1.2.6-r3)
+#9 5.912 Executing busybox-1.37.0-r31.trigger
+#9 5.918 OK: 205.2 MiB in 33 packages
+#9 DONE 6.0s
+
+#10 [builder 3/4] ADD . /efsn
+#10 DONE 0.1s
+
+#11 [builder 4/4] RUN cd /efsn && make efsn
+#11 0.159 env GO111MODULE=on go run build/ci.go install ./cmd/efsn
+#11 0.198 go: downloading github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v0.3.0
+#11 0.198 go: downloading golang.org/x/crypto v0.12.0
+#11 0.236 go: downloading github.com/go-stack/stack v1.8.0
+#11 0.747 go: downloading github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.1
+#11 1.017 go: downloading github.com/Azure/azure-sdk-for-go/sdk/internal v0.8.3
+#11 1.249 go: downloading golang.org/x/net v0.10.0
+#11 1.503 go: downloading golang.org/x/text v0.12.0
+#11 13.83 >>> /usr/local/go/bin/go install -v ./cmd/efsn
+#11 13.85 go: downloading github.com/naoina/toml v0.1.2-0.20170918210437-9fafd6967416
+#11 13.85 go: downloading github.com/urfave/cli/v2 v2.11.1
+#11 13.85 go: downloading github.com/olekukonko/tablewriter v0.0.5
+#11 13.87 go: downloading golang.org/x/crypto v0.12.0
+#11 14.01 go: downloading github.com/deckarep/golang-set v1.8.0
+#11 14.10 go: downloading github.com/fsnotify/fsnotify v1.6.0
+#11 14.11 go: downloading github.com/google/uuid v1.2.0
+#11 14.19 go: downloading github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible
+#11 14.20 go: downloading github.com/golang/protobuf v1.5.2
+#11 14.27 go: downloading github.com/karalabe/usb v0.0.2
+#11 14.43 go: downloading github.com/dop251/goja v0.0.0-20230122112309-96b1610dd4f7
+#11 14.61 go: downloading github.com/mattn/go-colorable v0.1.8
+#11 14.63 go: downloading github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7
+#11 14.64 go: downloading github.com/VictoriaMetrics/fastcache v1.6.0
+#11 14.79 go: downloading github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d
+#11 14.79 go: downloading github.com/golang/snappy v0.0.4
+#11 14.82 go: downloading github.com/prometheus/tsdb v0.7.1
+#11 14.83 go: downloading github.com/mattn/go-isatty v0.0.12
+#11 14.83 go: downloading github.com/davecgh/go-spew v1.1.1
+#11 14.84 go: downloading github.com/go-stack/stack v1.8.0
+#11 14.86 go: downloading github.com/golang-jwt/jwt/v4 v4.5.2
+#11 14.87 go: downloading github.com/rs/cors v1.7.0
+#11 14.87 go: downloading golang.org/x/sys v0.11.0
+#11 14.95 go: downloading github.com/gorilla/websocket v1.5.0
+#11 15.22 go: downloading github.com/holiman/bloomfilter/v2 v2.0.3
+#11 15.24 go: downloading github.com/mattn/go-runewidth v0.0.9
+#11 15.26 go: downloading github.com/naoina/go-stringutil v0.1.0
+#11 15.26 go: downloading github.com/holiman/uint256 v1.2.0
+#11 15.28 go: downloading github.com/influxdata/influxdb-client-go/v2 v2.4.0
+#11 15.33 go: downloading github.com/influxdata/influxdb v1.8.3
+#11 15.38 go: downloading github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
+#11 15.47 go: downloading github.com/huin/goupnp v1.0.3
+#11 15.55 go: downloading github.com/jackpal/go-nat-pmp v1.0.2
+#11 15.55 go: downloading google.golang.org/protobuf v1.26.0
+#11 15.86 go: downloading github.com/fatih/color v1.7.0
+#11 15.86 go: downloading github.com/cpuguy83/go-md2man/v2 v2.0.2
+#11 15.86 go: downloading github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673
+#11 15.94 go: downloading github.com/dlclark/regexp2 v1.7.0
+#11 16.07 go: downloading golang.org/x/text v0.12.0
+#11 17.13 go: downloading github.com/cespare/xxhash/v2 v2.1.1
+#11 17.13 go: downloading github.com/tklauser/go-sysconf v0.3.10
+#11 17.14 go: downloading github.com/pkg/errors v0.9.1
+#11 17.17 go: downloading golang.org/x/net v0.10.0
+#11 17.32 go: downloading github.com/go-sourcemap/sourcemap v2.1.3+incompatible
+#11 17.33 go: downloading github.com/russross/blackfriday/v2 v2.1.0
+#11 17.37 go: downloading github.com/influxdata/line-protocol v0.0.0-20210311194329-9aa0e372d097
+#11 17.38 go: downloading github.com/deepmap/oapi-codegen v1.8.2
+#11 17.41 go: downloading gopkg.in/yaml.v2 v2.4.0
+#11 17.45 go: downloading golang.org/x/sync v0.3.0
+#11 17.47 go: downloading github.com/tklauser/numcpus v0.4.0
+#11 18.06 google.golang.org/protobuf/internal/flags
+#11 18.06 google.golang.org/protobuf/internal/set
+#11 18.06 container/ring
+#11 18.08 golang.org/x/crypto/sha3
+#11 18.08 github.com/go-stack/stack
+#11 18.08 container/heap
+#11 18.09 github.com/FusionFoundation/efsn/v5/common/math
+#11 18.10 github.com/FusionFoundation/efsn/v5/log
+#11 18.11 github.com/FusionFoundation/efsn/v5/common/mclock
+#11 18.17 github.com/deckarep/golang-set
+#11 18.17 github.com/FusionFoundation/efsn/v5/event
+#11 18.25 golang.org/x/sys/unix
+#11 18.28 github.com/google/uuid
+#11 18.29 github.com/FusionFoundation/efsn/v5/common
+#11 18.34 golang.org/x/crypto/pbkdf2
+#11 18.35 golang.org/x/crypto/scrypt
+#11 18.37 hash/fnv
+#11 18.41 google.golang.org/protobuf/internal/detrand
+#11 18.46 google.golang.org/protobuf/internal/errors
+#11 18.49 google.golang.org/protobuf/encoding/protowire
+#11 18.54 google.golang.org/protobuf/internal/pragma
+#11 18.56 google.golang.org/protobuf/reflect/protoreflect
+#11 18.58 github.com/FusionFoundation/efsn/v5/params
+#11 18.67 google.golang.org/protobuf/internal/version
+#11 18.76 google.golang.org/protobuf/internal/encoding/messageset
+#11 18.77 github.com/fsnotify/fsnotify
+#11 18.79 google.golang.org/protobuf/internal/strs
+#11 18.84 google.golang.org/protobuf/internal/encoding/text
+#11 18.86 google.golang.org/protobuf/internal/genid
+#11 18.88 google.golang.org/protobuf/internal/order
+#11 18.92 google.golang.org/protobuf/reflect/protoregistry
+#11 18.93 google.golang.org/protobuf/runtime/protoiface
+#11 18.94 google.golang.org/protobuf/internal/encoding/defval
+#11 18.96 google.golang.org/protobuf/internal/descfmt
+#11 18.98 google.golang.org/protobuf/proto
+#11 18.99 google.golang.org/protobuf/internal/descopts
+#11 19.11 google.golang.org/protobuf/encoding/prototext
+#11 19.11 google.golang.org/protobuf/internal/filedesc
+#11 19.26 github.com/FusionFoundation/efsn/v5/common/fdlimit
+#11 19.28 github.com/FusionFoundation/efsn/v5/ethdb
+#11 19.31 github.com/shirou/gopsutil/internal/common
+#11 19.42 google.golang.org/protobuf/internal/encoding/tag
+#11 19.47 google.golang.org/protobuf/internal/impl
+#11 19.48 github.com/tklauser/numcpus
+#11 19.50 github.com/tklauser/go-sysconf
+#11 19.54 github.com/shirou/gopsutil/cpu
+#11 19.58 text/tabwriter
+#11 19.61 runtime/pprof
+#11 19.90 github.com/FusionFoundation/efsn/v5/metrics
+#11 20.43 github.com/syndtr/goleveldb/leveldb/util
+#11 20.46 github.com/syndtr/goleveldb/leveldb/cache
+#11 20.47 google.golang.org/protobuf/internal/filetype
+#11 20.52 github.com/syndtr/goleveldb/leveldb/comparer
+#11 20.53 google.golang.org/protobuf/runtime/protoimpl
+#11 20.54 github.com/syndtr/goleveldb/leveldb/storage
+#11 20.57 google.golang.org/protobuf/types/descriptorpb
+#11 20.68 github.com/syndtr/goleveldb/leveldb/errors
+#11 20.69 google.golang.org/protobuf/reflect/protodesc
+#11 20.70 github.com/golang/protobuf/protoc-gen-go/descriptor
+#11 20.73 github.com/syndtr/goleveldb/leveldb/filter
+#11 20.74 github.com/syndtr/goleveldb/leveldb/iterator
+#11 20.80 github.com/syndtr/goleveldb/leveldb/journal
+#11 20.83 github.com/syndtr/goleveldb/leveldb/memdb
+#11 20.87 github.com/syndtr/goleveldb/leveldb/opt
+#11 20.87 github.com/golang/protobuf/proto
+#11 20.90 github.com/golang/snappy
+#11 20.94 github.com/syndtr/goleveldb/leveldb/table
+#11 21.04 github.com/syndtr/goleveldb/leveldb
+#11 21.17 github.com/FusionFoundation/efsn/v5/accounts/usbwallet/internal/trezor
+#11 21.43 github.com/FusionFoundation/efsn/v5/ethdb/memorydb
+#11 21.46 encoding/csv
+#11 21.50 github.com/mattn/go-runewidth
+#11 21.51 github.com/karalabe/usb
+#11 21.53 github.com/olekukonko/tablewriter
+#11 21.59 github.com/pkg/errors
+#11 21.62 github.com/prometheus/tsdb/fileutil
+#11 21.63 github.com/FusionFoundation/efsn/v5/ethdb/leveldb
+#11 21.65 github.com/FusionFoundation/efsn/v5/internal/logjson/internal/json
+#11 21.69 github.com/FusionFoundation/efsn/v5/internal/ticketgzip/internal/flate
+#11 21.70 encoding/gob
+#11 21.78 github.com/FusionFoundation/efsn/v5/internal/ticketgzip
+#11 21.80 github.com/FusionFoundation/efsn/v5/common/prque
+#11 21.86 github.com/cespare/xxhash/v2
+#11 21.88 github.com/FusionFoundation/efsn/v5/internal/logjson
+#11 21.89 github.com/hashicorp/golang-lru/simplelru
+#11 21.90 github.com/VictoriaMetrics/fastcache
+#11 21.91 github.com/hashicorp/golang-lru
+#11 21.97 github.com/FusionFoundation/efsn/v5/p2p/netutil
+#11 22.02 github.com/gorilla/websocket
+#11 22.02 golang.org/x/sys/cpu
+#11 22.11 github.com/FusionFoundation/efsn/v5/crypto/blake2b
+#11 22.21 github.com/FusionFoundation/efsn/v5/crypto/bn256/cloudflare
+#11 22.25 github.com/holiman/bloomfilter/v2
+#11 22.35 github.com/holiman/uint256
+#11 22.35 github.com/FusionFoundation/efsn/v5/rpc
+#11 22.36 github.com/FusionFoundation/efsn/v5/crypto/bn256
+#11 22.37 golang.org/x/crypto/ripemd160
+#11 22.39 os/signal
+#11 22.44 github.com/peterh/liner
+#11 22.47 github.com/FusionFoundation/efsn/v5/common/bitutil
+#11 22.50 html
+#11 22.55 github.com/FusionFoundation/efsn/v5/console/prompt
+#11 22.56 github.com/russross/blackfriday/v2
+#11 22.63 github.com/xrash/smetrics
+#11 22.67 expvar
+#11 22.71 github.com/FusionFoundation/efsn/v5/metrics/prometheus
+#11 22.78 github.com/mattn/go-isatty
+#11 22.82 github.com/mattn/go-colorable
+#11 22.85 internal/profile
+#11 22.88 github.com/FusionFoundation/efsn/v5/metrics/exp
+#11 22.90 github.com/cpuguy83/go-md2man/v2/md2man
+#11 22.94 github.com/urfave/cli/v2
+#11 22.98 runtime/trace
+#11 23.06 golang.org/x/sync/errgroup
+#11 23.07 net/http/pprof
+#11 23.08 github.com/huin/goupnp/httpu
+#11 23.13 github.com/huin/goupnp/scpd
+#11 23.15 github.com/huin/goupnp/soap
+#11 23.15 github.com/huin/goupnp/ssdp
+#11 23.23 github.com/jackpal/go-nat-pmp
+#11 23.23 github.com/huin/goupnp
+#11 23.28 github.com/golang-jwt/jwt/v4
+#11 23.37 github.com/huin/goupnp/dcps/internetgateway1
+#11 23.41 github.com/FusionFoundation/efsn/v5/internal/flags
+#11 23.48 github.com/FusionFoundation/efsn/v5/internal/debug
+#11 23.50 github.com/huin/goupnp/dcps/internetgateway2
+#11 23.55 github.com/rs/cors
+#11 23.56 github.com/davecgh/go-spew/spew
+#11 23.61 github.com/FusionFoundation/efsn/v5/les/flowcontrol
+#11 23.65 github.com/influxdata/influxdb-client-go/v2/internal/http
+#11 23.66 github.com/influxdata/influxdb-client-go/v2/log
+#11 23.70 github.com/influxdata/influxdb-client-go/v2/internal/log
+#11 23.72 github.com/influxdata/influxdb-client-go/v2/api/http
+#11 23.75 github.com/influxdata/influxdb-client-go/v2/api/query
+#11 23.77 github.com/FusionFoundation/efsn/v5/p2p/nat
+#11 23.79 github.com/influxdata/line-protocol
+#11 23.80 github.com/deepmap/oapi-codegen/pkg/types
+#11 23.84 gopkg.in/yaml.v2
+#11 23.84 github.com/deepmap/oapi-codegen/pkg/runtime
+#11 23.99 github.com/influxdata/influxdb-client-go/v2/api/write
+#11 24.00 github.com/influxdata/influxdb-client-go/v2/internal/gzip
+#11 24.03 embed
+#11 24.03 github.com/influxdata/influxdb-client-go/v2/internal/write
+#11 24.07 net/http/cookiejar
+#11 24.08 github.com/influxdata/influxdb/pkg/escape
+#11 24.11 github.com/influxdata/influxdb/models
+#11 24.13 golang.org/x/net/publicsuffix
+#11 24.16 github.com/shirou/gopsutil/mem
+#11 24.22 github.com/dlclark/regexp2/syntax
+#11 24.26 github.com/influxdata/influxdb-client-go/v2/domain
+#11 24.30 github.com/influxdata/influxdb/client
+#11 24.38 github.com/go-sourcemap/sourcemap/internal/base64vlq
+#11 24.40 github.com/go-sourcemap/sourcemap
+#11 24.44 github.com/dop251/goja/file
+#11 24.48 github.com/dop251/goja/token
+#11 24.49 github.com/dop251/goja/unistring
+#11 24.51 github.com/dop251/goja/ast
+#11 24.51 github.com/dlclark/regexp2
+#11 24.55 github.com/dop251/goja/ftoa/internal/fast
+#11 24.59 github.com/dop251/goja/ftoa
+#11 24.65 golang.org/x/text/unicode/rangetable
+#11 24.69 golang.org/x/text/internal/tag
+#11 24.70 golang.org/x/text/internal/language
+#11 24.74 github.com/dop251/goja/parser
+#11 24.88 golang.org/x/text/internal/language/compact
+#11 24.96 golang.org/x/text/language
+#11 24.97 golang.org/x/text/transform
+#11 25.01 golang.org/x/text/unicode/norm
+#11 25.10 golang.org/x/text/internal
+#11 25.12 hash/maphash
+#11 25.15 github.com/fatih/color
+#11 25.20 github.com/FusionFoundation/efsn/v5/internal/jsre/deps
+#11 25.21 github.com/FusionFoundation/efsn/v5/internal/web3ext
+#11 25.22 github.com/FusionFoundation/efsn/v5/eth/tracers/js/internal/tracers
+#11 25.23 golang.org/x/text/cases
+#11 25.26 golang.org/x/text/internal/colltab
+#11 25.32 golang.org/x/text/collate
+#11 25.42 github.com/naoina/go-stringutil
+#11 25.49 github.com/naoina/toml/ast
+#11 25.51 github.com/naoina/toml
+#11 26.27 github.com/dop251/goja
+#11 26.30 github.com/influxdata/influxdb-client-go/v2/api
+#11 26.49 github.com/influxdata/influxdb-client-go/v2
+#11 26.57 github.com/FusionFoundation/efsn/v5/metrics/influxdb
+#11 28.97 github.com/FusionFoundation/efsn/v5/internal/jsre
+#11 29.10 github.com/FusionFoundation/efsn/v5/crypto/secp256k1
+#11 29.17 github.com/FusionFoundation/efsn/v5/crypto
+#11 29.20 github.com/FusionFoundation/efsn/v5/crypto/ecies
+#11 29.20 github.com/FusionFoundation/efsn/v5/p2p/discover
+#11 29.20 github.com/FusionFoundation/efsn/v5/core/types
+#11 29.20 github.com/FusionFoundation/efsn/v5/p2p/discv5
+#11 29.24 github.com/FusionFoundation/efsn/v5/accounts/abi
+#11 29.49 github.com/FusionFoundation/efsn/v5
+#11 29.49 github.com/FusionFoundation/efsn/v5/core/rawdb
+#11 29.49 github.com/FusionFoundation/efsn/v5/core/vm
+#11 29.51 github.com/FusionFoundation/efsn/v5/core/bloombits
+#11 29.52 github.com/FusionFoundation/efsn/v5/accounts
+#11 29.58 github.com/FusionFoundation/efsn/v5/accounts/usbwallet
+#11 29.59 github.com/FusionFoundation/efsn/v5/accounts/keystore
+#11 29.73 github.com/FusionFoundation/efsn/v5/p2p
+#11 29.77 github.com/FusionFoundation/efsn/v5/console
+#11 29.83 github.com/FusionFoundation/efsn/v5/trie
+#11 29.91 github.com/FusionFoundation/efsn/v5/eth/tracers/logger
+#11 30.00 github.com/FusionFoundation/efsn/v5/node
+#11 30.10 github.com/FusionFoundation/efsn/v5/core/state
+#11 30.23 github.com/FusionFoundation/efsn/v5/consensus
+#11 30.23 github.com/FusionFoundation/efsn/v5/consensus/misc
+#11 30.23 github.com/FusionFoundation/efsn/v5/eth/downloader
+#11 30.26 github.com/FusionFoundation/efsn/v5/eth/fetcher
+#11 30.26 github.com/FusionFoundation/efsn/v5/consensus/datong
+#11 30.40 github.com/FusionFoundation/efsn/v5/core
+#11 30.81 github.com/FusionFoundation/efsn/v5/eth/gasprice
+#11 30.81 github.com/FusionFoundation/efsn/v5/miner
+#11 30.81 github.com/FusionFoundation/efsn/v5/eth/filters
+#11 30.81 github.com/FusionFoundation/efsn/v5/internal/ethapi
+#11 30.91 github.com/FusionFoundation/efsn/v5/light
+#11 30.97 github.com/FusionFoundation/efsn/v5/eth/ethconfig
+#11 31.15 github.com/FusionFoundation/efsn/v5/eth/tracers
+#11 31.15 github.com/FusionFoundation/efsn/v5/eth
+#11 31.24 github.com/FusionFoundation/efsn/v5/eth/tracers/js
+#11 31.24 github.com/FusionFoundation/efsn/v5/eth/tracers/native
+#11 31.24 github.com/FusionFoundation/efsn/v5/ethclient
+#11 31.43 github.com/FusionFoundation/efsn/v5/les
+#11 31.75 github.com/FusionFoundation/efsn/v5/ethstats
+#11 31.84 github.com/FusionFoundation/efsn/v5/cmd/utils
+#11 31.99 github.com/FusionFoundation/efsn/v5/cmd/efsn
+#11 34.16 Done building.
+#11 34.16 Run "/efsn/build/bin/efsn" to launch efsn.
+#11 DONE 34.2s
+
+#12 [stage-1 3/5] COPY --from=builder /efsn/build/bin/efsn /usr/local/bin/
+#12 DONE 0.1s
+
+#13 [stage-1 4/5] COPY ./docker-entrypoint.sh /usr/local/bin
+#13 DONE 0.1s
+
+#14 [stage-1 5/5] RUN chmod a+x /usr/local/bin/docker-entrypoint.sh   && ln -s /usr/local/bin/docker-entrypoint.sh / # Needed for backwards compatability
+#14 DONE 0.2s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 1.1s done
+#15 exporting manifest sha256:4e7893b371ba8bb5cd187b8463693304eb7b6111d8739284b8a69896e9e185e1 0.0s done
+#15 exporting config sha256:fc0cceb6fcc0be5dcba44ad5f98504dd9b3cbab8a97839bfc3272545a25aed63 0.0s done
+#15 exporting attestation manifest sha256:e84dfbba2b241590128869fbc9ff5ed1a23f92bfffd062ef37e081ec5f74c2c5 0.0s done
+#15 exporting manifest list sha256:3cb98b9fd211123c5c5609189ceee45fa3f15c2404967793f4f44d1630a44c68 0.0s done
+#15 naming to docker.io/library/efsn-restart:5c40e6c done
+#15 unpacking to docker.io/library/efsn-restart:5c40e6c
+#15 unpacking to docker.io/library/efsn-restart:5c40e6c 0.2s done
+#15 DONE 1.5s
+
+ [33m1 warning found (use docker --debug to expand):
+[0m - FromAsCasing: 'as' and 'FROM' keywords' casing do not match (line 2)
+exit=0
+Commands for Fusion efsn:
+-e value    Reporting name of a ethstats service
+-u value    Account to unlock
+-a          Auto buy tickets
+-tn         Connect to testnet
+total 42448
+drwxr-xr-x    1 root     root          4096 Oct 22 13:45 .
+drwxr-xr-x    1 root     root          4096 Oct 21 21:52 ..
+-rwxr-xr-x    1 root     root          2647 Oct 22 13:43 docker-entrypoint.sh
+-rwxr-xr-x    1 root     root      43453104 Oct 22 13:45 efsn

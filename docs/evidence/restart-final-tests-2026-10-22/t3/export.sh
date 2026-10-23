@@ -1,0 +1,1 @@
+cd ~/efsn-final && git archive --format=tar HEAD > /mnt/c/Users/Peter/AppData/Local/Temp/claude/C--Users-Peter-Documents-CODING-fsn-efsn/a8ea1c11-81b9-474d-b4c3-dda6b28fadac/scratchpad/t3/final.tar && git rev-parse HEAD
