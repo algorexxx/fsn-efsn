@@ -64,8 +64,10 @@ wherever earlier versions were pushed.
 | Explorer node | fsnexrebirth VM (`192.168.1.212`), at home | The explorer's RPC and trace node. Restart release plus the historical-tracing fix its trace endpoint depends on (`feature/historical-tracing`, [historical-tracing.md](historical-tracing.md)), `--nodiscover`, static peers A, B and `bn2`. No port forward. Stays local: the explorer's tracing and backfill make many calls per block, which a WAN round trip and the VPS's two cores would slow down, and the `debug` API must not be exposed on an internet host. |
 | VPS | Contabo Storage VPS 10: 2 vCPU, 4 GB RAM, 300 GB SSD, 200 Mbit/s, about €4.40/month on a 24-month term. EU region. | Hosts both slots below. UFW: deny incoming except SSH (keys only) and the two P2P ports. Holds no wallet keys and has no access into the home network. |
 | Bootnode slot 1 `bn1.fsnex.net` | VPS | `bootnode -nodekey bn1.key -addr :40407 -nat extip:<VPS IP>` as a systemd service. UDP 40407 open. |
-| Bootnode slot 2 `bn2.fsnex.net` | VPS | Full efsn node on the restart release, `--port 40408 --nat extip:<VPS IP>`, TCP+UDP 40408 open, as a systemd service. `trusted-nodes.json` lists A, B and the explorer node so they always get a slot. Its database is an rsync of a stopped producer's copy after the recovery import: a sync from genesis would take over a week (T1's ~23 blocks/s). Back up its `nodekey`. |
+| Bootnode slot 2 `bn2.fsnex.net` | VPS | Full efsn node on the restart release, `--port 40408 --nat extip:<VPS IP>`, TCP+UDP 40408 open, as a systemd service. `trusted-nodes.json` lists A, B and the explorer node so they always get a slot. Starts from the backup database uploaded before launch, then imports `recovery.rlp` like the producers. |
 | DNS | Simply.com (fsnex.net) | A records for `bn1`/`bn2`, both the VPS IP, TTL about 300 s. |
+
+The VPS's setup, database and checks are in [restart-vps.md](restart-vps.md).
 
 If the VPS is down, A, B and the explorer carry on through their static peers,
 and nodes that have run for a while reconnect to one another from their own
@@ -75,7 +77,7 @@ Outside nodes only fall behind until it is back, and new nodes cannot bootstrap.
 **Keys:**
 - **Wallet keys:** producer wallets and the recovery signing keys stay offline except where needed. The recovery signing follows the tool's journal procedure.
 - **Never sign two different blocks on the same parent.** Fusion deletes a ticket from a miner reported for it.
-- **Node keys** (`bn1.key`, the `bn2` node's `nodekey`, the explorer's and each producer's `nodekey`) are backed up. The bootnode keys define the slots in every release.
+- **Node keys** (`bn1.key`, `bn2.key`, the explorer's and each producer's `nodekey`) are backed up. The bootnode keys define the slots in every release.
 
 ## 5. Pre-launch testing
 
@@ -105,8 +107,8 @@ skip seal verification.
 
 1. **Freeze:** review, push and merge the branches in the order above. Run T1–T3 on the merged source.
 2. **Bootnodes:**
-   1. Generate `bn1.key` and read its enode ID: `bootnode -genkey bn1.key`, then `bootnode -nodekey bn1.key -writeaddress`.
-   2. Start the `bn2` node once on the VPS and read its enode ID from `admin.nodeInfo.enode`.
+   1. Generate `bn1.key` and `bn2.key` and read their enode IDs: `bootnode -genkey bn1.key`, then `bootnode -nodekey bn1.key -writeaddress`; the same for `bn2.key`.
+   2. Upload the backup database to the VPS ([restart-vps.md](restart-vps.md#4-database)).
    3. Set the DNS records.
 3. **Recovery blocks:** with `tools/restart-recovery` rebased onto the merged source and built from there (the bare branch lacks the frozen encoders, so its Go 1.27.3 build would produce blocks every node rejects), on a stopped copy of the backup database:
    1. Build the three blocks: the purchase block timestamped while the signer's tickets were valid, the timestamp-jump block, and the cleanup block.
@@ -124,7 +126,7 @@ skip seal verification.
    1. Import the recovery blocks into producers A and B (restored database). `efsn import` fails in v5.0.3 (it opens chaindata twice: "resource temporarily unavailable"), so start each node with `--nodiscover --maxpeers 0` and no mining, run `admin.importChain("recovery.rlp")`, then restart it with mining. This worked in the T2 smoke test.
    2. Start both with static peers to each other.
    3. Confirm blocks and automatic purchases on both.
-   4. Copy a stopped producer's database to the VPS, then start the `bn2` node and the `bn1` bootnode there and the explorer node at home.
+   4. Import the recovery blocks into the VPS node the same way, then start the `bn2` node and the `bn1` bootnode there and the explorer node at home.
    5. Confirm `bn2` and the explorer follow the producers' head.
 6. **Publish:**
    - the release;
@@ -157,7 +159,8 @@ skip seal verification.
 
 - **Push:** push the branches (rewritten ones need `--force`).
 - **Bootnode IDs:** the `bn1` and `bn2` enode IDs, and the VPS IP.
-- **VPS:** order the Contabo Storage VPS 10; T3 needs it.
+- **VPS:** order the Contabo Storage VPS 10; T3 needs it. Setup in [restart-vps.md](restart-vps.md).
+- **Recovery blocks over P2P:** T2 imports the recovery blocks into every node by hand (`t2-soak-claudedev.sh`, `import_recovery` for a, b, x and j). No test has a node at the stalled tip receive them from peers, which is how a community node upgrading its own old database would get them. Either the release notes tell operators to import `recovery.rlp`, or a test covers the P2P path first.
 - **Recovery hashes:** available only after signing.
 - **Testing:** paused on 22 October to move to a dedicated Ubuntu VM. T1 stopped cleanly at block 7,376,672 with no mismatch so far; its image `W:\FusionRestart\t1-final-replay-2026-10-22\replay.ext4` (now `/mnt/fusion/t1/replay.ext4` on `claudedev`) resumes from there (`t1-resume.sh`). Scripts and logs: `docs/evidence/restart-final-tests-2026-10-22/`. T2 smoke test (27 min, unprivileged, loopback) passed: the recovery blocks imported on every node, 118 blocks were produced by both producers with a purchase in every block, and a fresh node joined via the bootnode. The 48 h soak needs root (W: image, network namespaces).
 - **Tools branch test data:** `tests/restart/testdata` on `tools/restart-recovery` lacks the genesis observation (id 2) and `context.rlp`, so its full-state tests cannot run from the branch as-is.
