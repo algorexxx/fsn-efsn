@@ -131,8 +131,13 @@ while [ $(date +%s) -lt $EV_END ] && [ ! -e $MNT/STOP ]; do
     sleep 30; log "rival restarted on pinned build: r@15130081=$(js r "eth.getBlock(15130081) ? eth.getBlock(15130081).hash : 'none'") $(status r)"
   fi
   if [ $now -ge $NEXT_CHECK ]; then
-    head=$(js a "eth.blockNumber"); to=$((head - 5))
-    [ $to -gt $LAST_CHECKED ] && { log "hourly a: $(check_blocks a $((LAST_CHECKED + 1)) $to)"; LAST_CHECKED=$to; }
+    head=$(js x "eth.blockNumber")
+    if [[ $head =~ ^[0-9]+$ ]]; then
+      to=$((head - 5))
+      [ $to -gt $LAST_CHECKED ] && { log "hourly x: $(check_blocks x $((LAST_CHECKED + 1)) $to)"; LAST_CHECKED=$to; }
+    else
+      log "hourly check skipped: x answered '$head'"
+    fi
     log "free: $(df -h --output=avail / $MNT | tail -2 | tr -s ' \n' ' ') mem: $(free -m | awk '/Mem/ {print $7"MiB avail"}')"
     NEXT_CHECK=$((now + CHECK))
   fi
@@ -141,9 +146,9 @@ while [ $(date +%s) -lt $EV_END ] && [ ! -e $MNT/STOP ]; do
 done
 
 # ---------- final checks ----------
-head=$(js a "eth.blockNumber"); to=$((head - 5))
+head=$(js x "eth.blockNumber"); [[ $head =~ ^[0-9]+$ ]] || head=0; to=$((head - 5))
 {
-  echo "T2 soak summary $(stamp) scale=$SCALE duration=$(( $(date +%s) - T0 ))s head(a)=$head"
+  echo "T2 soak summary $(stamp) scale=$SCALE duration=$(( $(date +%s) - T0 ))s head(x)=$head"
   echo "pins@15130081 / 15130083 per node (expect $PIN81 / $PIN83):"
   for r in a b x j k r; do running $r && echo "  $r: $(js $r "eth.getBlock(15130081).hash + ' ' + eth.getBlock(15130083).hash")"; done
   echo "agreement hash@$to:"
