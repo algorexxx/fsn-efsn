@@ -30,7 +30,8 @@ activation height.
 | Automatic ticket buying | Minimal fix: a 5-second retry, a pool check instead of the per-block cache, and a resend of the pending purchase to peers (`feature/autobuy-retry`). |
 | Recovery tool | The full rehearsed tool on `tools/restart-recovery`, a never-merged branch on Fusion-Community, tagged at the commit used for signing. |
 | Discovery | Minimal fixes (`fix/p2p-discovery`), including "skip an unresolvable bootnode instead of exiting": the old `bn1`–`bn4.fusionnetwork.io` names no longer resolve, so stock v5.0.3 nodes exit at startup. |
-| Bootnodes | Two slots, each = DNS name + dedicated node key, movable to another machine later: `bn1.fsnex.net` (discovery-only `bootnode` on a small Contabo VPS) and `bn2.fsnex.net` (the FSNEX explorer's full node). Producers peer statically and do not depend on them. |
+| Bootnodes | Two slots, each = DNS name + port + dedicated node key, movable to another machine later. Both start on one Contabo VPS: `bn1.fsnex.net:40407` (discovery-only `bootnode`) and `bn2.fsnex.net:40408` (a full node, the network's public peer). Producers peer statically and do not depend on them. |
+| Home exposure | Nothing at home accepts P2P connections: no port forward, and the producers and the explorer node run `--nodiscover` and dial out to static peers. The VPS is the public face, so the home IP is never advertised and a flood hits the VPS, not the home line. A second VPS at Contabo would likely share its host and its provider, so it adds little; independence comes from handing slots to community operators (section 7). |
 | JWT / test-fixture branch | Optional scanner hygiene; the JWT handler is never enabled in efsn. |
 | F5 / F11 | Unchanged; recorded as known issues and future hard-fork candidates. |
 
@@ -58,16 +59,23 @@ wherever earlier versions were pushed.
 
 | Role | Machine | Notes |
 | --- | --- | --- |
-| Producer A (Peter's wallet) | Peter's server | Restart release, restored database, `--mine --autobt`, static peer to B and to the explorer node. |
+| Producer A (Peter's wallet) | Peter's server | Restart release, restored database, `--mine --autobt --nodiscover`, static peers B, the explorer node and `bn2`. |
 | Producer B (backup wallet) | Peter's server (separate host preferred) | Same as A, with the backup wallet. |
-| Bootnode slot 1 `bn1.fsnex.net` | Contabo VPS, smallest size | `bootnode -nodekey bn1.key -addr :40407 -nat extip:<VPS IP>` as a systemd service. TCP+UDP 40407 open. |
-| Bootnode slot 2 `bn2.fsnex.net` | FSNEX explorer server (217.211.35.199) | Explorer's efsn node on the restart release, `--nat extip:217.211.35.199`, port 40407 open. Back up its `nodekey`. |
-| DNS | Simply.com (fsnex.net) | A records for `bn1`/`bn2`, TTL about 300 s. |
+| Explorer node | FSNEX explorer server, at home | Restart release, `--nodiscover`, static peers A, B and `bn2`. No port forward. |
+| VPS | Contabo Storage VPS 10: 2 vCPU, 4 GB RAM, 300 GB SSD, 200 Mbit/s, about €4.40/month on a 24-month term. EU region. | Hosts both slots below. UFW: deny incoming except SSH (keys only) and the two P2P ports. Holds no wallet keys and has no access into the home network. |
+| Bootnode slot 1 `bn1.fsnex.net` | VPS | `bootnode -nodekey bn1.key -addr :40407 -nat extip:<VPS IP>` as a systemd service. UDP 40407 open. |
+| Bootnode slot 2 `bn2.fsnex.net` | VPS | Full efsn node on the restart release, `--port 40408 --nat extip:<VPS IP>`, TCP+UDP 40408 open, as a systemd service. `trusted-nodes.json` lists A, B and the explorer node so they always get a slot. Its database is an rsync of a stopped producer's copy after the recovery import: a sync from genesis would take over a week (T1's ~23 blocks/s). Back up its `nodekey`. |
+| DNS | Simply.com (fsnex.net) | A records for `bn1`/`bn2`, both the VPS IP, TTL about 300 s. |
+
+If the VPS is down, A, B and the explorer carry on through their static peers,
+and nodes that have run for a while reconnect to one another from their own
+discovery databases ([restart-discovery-cache.md](restart-discovery-cache.md)).
+Outside nodes only fall behind until it is back, and new nodes cannot bootstrap.
 
 **Keys:**
 - **Wallet keys:** producer wallets and the recovery signing keys stay offline except where needed. The recovery signing follows the tool's journal procedure.
 - **Never sign two different blocks on the same parent.** Fusion deletes a ticket from a miner reported for it.
-- **Node keys** (`bn1.key`, the explorer's `nodekey`, each producer's `nodekey`) are backed up. The bootnode keys define the slots in every release.
+- **Node keys** (`bn1.key`, the `bn2` node's `nodekey`, the explorer's and each producer's `nodekey`) are backed up. The bootnode keys define the slots in every release.
 
 ## 5. Pre-launch testing
 
@@ -87,7 +95,7 @@ none of them has run as a whole, on real data or for longer than minutes.
 | --- | --- | --- | --- | --- |
 | T1 | Replay blocks 7,170,976 → 15,130,080 from the existing fallback database, with the final release source built on Go 1.27.3. | Exercises the final consensus code and compiler on 8 million real blocks, including every post-London and FSN-call receipt (the JSON encoder) and the check point lookups. | Tip header, state root, ticket commitment and receipts match the preserved backup at 15,130,080; no errors. | About 4 days unattended at the measured ~23 blocks/s (CPU-bound, one core), plus a 45-minute copy of the fallback database. Codex's own segmented replay of this range also took days. |
 | T2 | Full dress rehearsal on a private network built from a copy of the real backup, with the stalled owners' tickets re-owned to public test keys (Codex's full-state fixture method). | Exercises the actual launch sequence with the final binaries: recovery tool, pinned hashes, two producers, buying, discovery, joining and refusal of a rival chain. | Recovery blocks import on every node; both producers sustain production and buy every block for 48 h. A restarted or `kill -9`'d producer resumes. A 30-minute partition heals. A fresh node joins via the bootnode from a snapshot. A node holding a rival pre-restart chain is refused and rewinds. | Setup about 1 day; 48 h soak. |
-| T3 | Package check on clean machines: the release Docker image and binary on the Contabo VPS (as `bn1`) and one fresh host. | Confirms the artifacts people will download, the flags, NAT/ports and outside discovery. | A fresh host finds peers through `bn1.fsnex.net`/`bn2.fsnex.net` alone and syncs. | A few hours. |
+| T3 | Package check on clean machines: the release Docker image and binary on the Contabo VPS (as `bn1` and `bn2`) and one fresh host. | Confirms the artifacts people will download, the flags, NAT/ports and outside discovery. | A fresh host finds peers through `bn1.fsnex.net`/`bn2.fsnex.net` alone and syncs. | A few hours. |
 
 T2 uses a rehearsal build with the rehearsal's own recovery hashes pinned. Do not
 use the custom check point file for this: it raises `LastCheckPoint` and would
@@ -98,7 +106,7 @@ skip seal verification.
 1. **Freeze:** review, push and merge the branches in the order above. Run T1–T3 on the merged source.
 2. **Bootnodes:**
    1. Generate `bn1.key` and read its enode ID: `bootnode -genkey bn1.key`, then `bootnode -nodekey bn1.key -writeaddress`.
-   2. Read the explorer node's enode ID from `admin.nodeInfo.enode`.
+   2. Start the `bn2` node once on the VPS and read its enode ID from `admin.nodeInfo.enode`.
    3. Set the DNS records.
 3. **Recovery blocks:** with `tools/restart-recovery` rebased onto the merged source and built from there (the bare branch lacks the frozen encoders, so its Go 1.27.3 build would produce blocks every node rejects), on a stopped copy of the backup database:
    1. Build the three blocks: the purchase block timestamped while the signer's tickets were valid, the timestamp-jump block, and the cleanup block.
@@ -108,7 +116,7 @@ skip seal verification.
    5. Tag the tool commit.
 4. **Release commit:**
    - add the recovery block hashes to `mainnetCheckPoints`;
-   - replace `MainnetBootnodes` with `enode://<bn1 id>@bn1.fsnex.net:40407` and `enode://<explorer id>@bn2.fsnex.net:40407`;
+   - replace `MainnetBootnodes` with `enode://<bn1 id>@bn1.fsnex.net:40407` and `enode://<bn2 id>@bn2.fsnex.net:40408`;
    - bump the version.
 
    Then build the binaries and Docker images with Go 1.27.3.
@@ -116,7 +124,8 @@ skip seal verification.
    1. Import the recovery blocks into producers A and B (restored database). `efsn import` fails in v5.0.3 (it opens chaindata twice: "resource temporarily unavailable"), so start each node with `--nodiscover --maxpeers 0` and no mining, run `admin.importChain("recovery.rlp")`, then restart it with mining. This worked in the T2 smoke test.
    2. Start both with static peers to each other.
    3. Confirm blocks and automatic purchases on both.
-   4. Start the explorer node and the `bn1` bootnode.
+   4. Copy a stopped producer's database to the VPS, then start the `bn2` node and the `bn1` bootnode there and the explorer node at home.
+   5. Confirm `bn2` and the explorer follow the producers' head.
 6. **Publish:**
    - the release;
    - the database snapshot (with a trusted manifest);
@@ -134,7 +143,8 @@ skip seal verification.
 
 ## 7. After launch
 
-- **Bootnode slots:** hand them to community operators by moving the key file and the DNS record. Retire one only after the current release lists 2–3 other reliably run entries.
+- **Outside monitoring:** from the VPS, check the public sites and `bn2`'s head and peer count. The home monitoring VM reaches the sites through the router, so it cannot see the home connection or a port forward fail.
+- **Bootnode slots:** hand them to community operators by moving the key file and the DNS record. The new host must listen on the slot's port. Retire one only after the current release lists 2–3 other reliably run entries.
 - **Neutral domain:** register a community domain with multiple admins and a long registration, then add its names in a later release.
 - **Follow-ups:**
   - re-resolving bootnode hostnames periodically;
@@ -146,7 +156,8 @@ skip seal verification.
 ## 8. Open items
 
 - **Push:** push the branches (rewritten ones need `--force`).
-- **Bootnode IDs:** the `bn1` and explorer enode IDs, and the VPS IP.
+- **Bootnode IDs:** the `bn1` and `bn2` enode IDs, and the VPS IP.
+- **VPS:** order the Contabo Storage VPS 10; T3 needs it.
 - **Recovery hashes:** available only after signing.
 - **Testing:** paused on 22 October to move to a dedicated Ubuntu VM. T1 stopped cleanly at block 7,376,672 with no mismatch so far; its image `W:\FusionRestart\t1-final-replay-2026-10-22\replay.ext4` (now `/mnt/fusion/t1/replay.ext4` on `claudedev`) resumes from there (`t1-resume.sh`). Scripts and logs: `docs/evidence/restart-final-tests-2026-10-22/`. T2 smoke test (27 min, unprivileged, loopback) passed: the recovery blocks imported on every node, 118 blocks were produced by both producers with a purchase in every block, and a fresh node joined via the bootnode. The 48 h soak needs root (W: image, network namespaces).
 - **Tools branch test data:** `tests/restart/testdata` on `tools/restart-recovery` lacks the genesis observation (id 2) and `context.rlp`, so its full-state tests cannot run from the branch as-is.
