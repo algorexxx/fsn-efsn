@@ -1,0 +1,42 @@
+2026-10-23T20:29:20Z operator: three recovery blocks with the real fsn-recovery
+2026-10-23T20:29:23Z verified copy /home/peter/t2/work/operator/reference
+2026-10-23T20:29:27Z verified copy /home/peter/t2/work/operator/working
+2026-10-23T20:29:30Z verified copy /home/peter/t2/work/operator/verifier
+    full_state_operator_test.go:46: reference stage=1 hash=0xd2cfe5bb26551cda5c04ced4598a72944daa12da6962f256c376ca5bfa6b9586 root=0x7a65e243f6e50dbaa5c5e53205745dfd4121cc62d0e506cf1d3f04b56b6cbcaa tickets=485 changedAccounts=8
+    full_state_operator_test.go:46: reference stage=2 hash=0x25b2f389e8d70f6442c90fd707ed1f5699c4e7b549d66a5a027a18bcf6bb68a6 root=0xf28f077a5ccb085fd51c82db6c229758cd93b8aecb152abdd58860d79514e8ed tickets=480 changedAccounts=2
+    full_state_operator_test.go:46: reference stage=3 hash=0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db root=0x6c963d6845dea290ca2674e0d799ee9c0181e9c192fbdd06817cf8945dfa8f2d tickets=1 changedAccounts=2
+    full_state_operator_test.go:49: stage=1: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree
+    full_state_operator_test.go:49: stage=2: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree
+    full_state_operator_test.go:49: stage=3: actual review/prepare/init/sign/export commands; wrong password leaves no reservation; repeat needs no key; exact independent block and cold ledgers agree
+--- PASS: TestFullStateRecoveryOperator (47.56s)
+PASS
+2026-10-23T20:30:18Z seeds
+2026-10-23T20:30:21Z verified copy /home/peter/t2/work/seeds/a/efsn
+genuine ancestry installed blocks=90000
+T2-SEED parent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 number=15130080 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3
+2026-10-23T20:30:39Z verified copy /home/peter/t2/work/seeds/b/efsn
+genuine ancestry installed blocks=90000
+T2-SEED parent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 number=15130080 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3
+2026-10-23T20:30:56Z verified copy /home/peter/t2/work/seeds/x/efsn
+genuine ancestry installed blocks=90000
+T2-SEED parent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 number=15130080 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3
+2026-10-23T20:31:14Z verified copy /home/peter/t2/work/seeds/j/efsn
+genuine ancestry installed blocks=90000
+T2-SEED parent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 number=15130080 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3
+2026-10-23T20:31:30Z verified copy /home/peter/t2/work/seeds/r/efsn
+genuine ancestry installed blocks=90000
+T2-SEED parent=0xe463e592a96c93420fbf155824b4ee95ba418ee29312637e8dd08eea43951458 number=15130080 root=0x450331936bd2612adb4e4aec236796cd25d18a3518c5f33985da421ea6bd59aa tickets=0x7ddb42f1edd476fbe4176f6251cb817669320e9bedec051f1487dec5ba06d4b3
+T2-RIVAL first=0x9f9403b8d2e91453c316a3a1182aa6887570930e2124649b80cd250f47804c8f head=15130143 hash=0xf6a46c966308006eef74605864c7fda5562c86762493fdf06aa7a6b304bd46e1 td=63370514765
+bd101c836db182b876e716e6980a87bea11aa8a2711c1b6bc9588607facfa2dc  /home/peter/t2/work/recovery.rlp
+88a9e69290d08106f8bb750e32e4a7038061f32aab32320a9bc22be24504d710  /home/peter/t2/bin/bootnode
+e94ad0ec46108cbebd0c68939f98021b897ed3d9c77003c8227fd49c21d03211  /home/peter/t2/bin/efsn
+c276fab1d61f598de93e9b68760a035ea027e246f0f794f0da6dea25e2becee3  /home/peter/t2/bin/efsn-rival
+f424695f8e898f7da6b3858fec7b76fc5c879624ad348451cacaba1a2648d688  /home/peter/t2/bin/fsn-recovery
+82833317d330f859dbdcbca4e43358f024372ea8af7c0b0b26f11fdaa271f7a5  /home/peter/t2/bin/t2-harness.test
+557M	/home/peter/t2/work/seeds/a
+557M	/home/peter/t2/work/seeds/b
+557M	/home/peter/t2/work/seeds/j
+548M	/home/peter/t2/work/seeds/r
+557M	/home/peter/t2/work/seeds/x
+1.5G	/home/peter/t2/work/operator
+2026-10-23T20:31:47Z prep done
