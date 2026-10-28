@@ -4,15 +4,15 @@
 # Run as root after the soak, e.g.: sudo systemd-run --unit=t2-rival-early bash /home/peter/t2/t2-rival-early-claudedev.sh
 set -uo pipefail
 T2=/home/peter/t2
-BIN=/home/peter/t2/bin
+BIN=${T2_BIN:-/home/peter/t2/bin}
 SEEDS=$T2/work/seeds
 IMGDIR=/var/lib/t2-rehearsal
 IMG=$IMGDIR/t2.ext4
 MNT=/mnt/t2
-EXPECT_EFSN=e94ad0ec46108cbebd0c68939f98021b897ed3d9c77003c8227fd49c21d03211
+EXPECT_EFSN=${T2_EXPECT_EFSN:-e94ad0ec46108cbebd0c68939f98021b897ed3d9c77003c8227fd49c21d03211}
 EXPECT_RIVAL=c276fab1d61f598de93e9b68760a035ea027e246f0f794f0da6dea25e2becee3
 EXPECT_RECOVERY=bd101c836db182b876e716e6980a87bea11aa8a2711c1b6bc9588607facfa2dc
-PHASE1=600
+PHASE1=180
 PHASE2=300
 REFUSALS='check point failed|reorganization below check point refused|check point mismatch'
 
@@ -97,7 +97,7 @@ while [ $(date +%s) -lt $END2 ]; do
   log "phase 2 | a: $(status a) | r: $(status r) @81=$(echo $R81B | cut -c1-12)"
   [ "$R81B" = $PIN81 ] && [ "$(js r eth.blockNumber)" -ge "$(( $(js a eth.blockNumber) - 2 ))" ] 2>/dev/null && break
 done
-R_REWIND=$(refusals r)
+R_REWIND=$(grep -c "check point mismatch" $RUN/r/node.log)
 log "phase 2 end: r@81=$R81B a=$(status a) r=$(status r) rewind lines on r=$R_REWIND"
 grep -h -E "$REFUSALS" $RUN/r/node.log | head -3 | tee -a $RUN/events.log
 
@@ -107,3 +107,4 @@ result "producers kept the pinned recovery block 15130081" $([ "$A81" = $PIN81 ]
 result "producers logged refusals of the rival chain (a=$A_REF b=$B_REF)" $([ $((A_REF + B_REF)) -gt 0 ] && echo 1 || echo 0)
 result "rival node stayed on its own chain while on the rival build" $([ "$R81" = "$RIVAL_FIRST" ] && echo 1 || echo 0)
 result "rival node on the pinned build follows the restarted chain" $([ "$R81B" = $PIN81 ] && echo 1 || echo 0)
+result "rival node on the pinned build rewound at startup (check point mismatch lines=$R_REWIND)" $([ $R_REWIND -gt 0 ] && echo 1 || echo 0)

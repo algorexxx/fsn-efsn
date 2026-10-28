@@ -46,3 +46,25 @@ rival chain.
 - `soak-console-all-attempts.log`: all soak attempts, including the two stopped by script bugs (in_ns `$!`,
   hourly check reading killed producer A), both fixed in the claudedev scripts.
 - `prep.log`: rebuilding the operator blocks, seeds and rival chain.
+
+## Fixes and re-checks, 28 October
+
+Three efsn changes came out of these results, each tested on the T2 build (`~/t2/src-node` with the
+change applied, `efsn` 82866815) against the unchanged binary:
+
+- **`fix/restart-double-seal` (new branch).** In `t2-crash-restart-claudedev.sh` producer A is killed
+  after 15 minutes and comes back on 15,130,083 instead of 15,130,154 with either binary. The fixed
+  node refused to seal 15,130,084 the moment it restarted ("refusing to seal block 15130084: this node
+  already sealed block 15130154"), ten seconds before its sync started; no node logged a double block.
+  The unchanged binary's sync won the race this time, so the control shows the stale restart but not
+  the double block itself.
+- **`feature/restart-checkpoints`, third commit.** With the three-minute rival test the unchanged
+  binary passed the five original checks (`rival-early-3min-unfixed.log`), but its restarted rival
+  node logged no "check point mismatch" and stayed on the rival chain for about 100 seconds: the check
+  point table was loaded after the chain was opened. With the fix it rewound at startup (three
+  mismatch lines) and all six checks pass.
+- **`feature/autobuy-retry`, third commit.** A's failing purchases now log "Automatic ticket purchase
+  failed ... not enough time lock or asset balance". A in these fixtures can buy only right after its
+  own blocks, so the warning recurs each time it runs dry again (24 times in 22 minutes).
+
+`fix-checks.log` holds the three runs (control, fixed crash test, fixed rival test).

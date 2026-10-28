@@ -1,0 +1,151 @@
+=== crash-restart, unfixed binary (control)
+2026-10-28T10:35:54Z T2 crash-restart start run=/mnt/t2/crash-restart-20261028T103554Z efsn=e94ad0ec46108cbe run_for=900s
+2026-10-28T10:35:54Z network up: t2-r t2-k t2-j t2-x t2-b t2-a t2-bn t2hub 
+2026-10-28T10:36:13Z recovery import a: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T10:36:14Z recovery import b: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T10:36:15Z recovery import x: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T10:36:16Z bootnode pid 3670017 enode://8e36a0fbe2b54b4f7d654358bff52bfca305890a76cddbf0e10fa30843d61dd6afb9a335ee93797ac1351597ce8039d78f996f8fbf66903faa19681357092377@10.77.0.10:30400
+2026-10-28T10:36:16Z started a pid 3670024 efsn --unlock 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --password /mnt/t2/crash-restart-20261028T103554Z/a/password.txt --mine --miner.etherbase 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --autobt
+2026-10-28T10:36:16Z started b pid 3670036 efsn --unlock 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf --password /mnt/t2/crash-restart-20261028T103554Z/b/password.txt --mine --miner.etherbase 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf --autobt
+2026-10-28T10:36:16Z started x pid 3670048 efsn 
+2026-10-28T10:36:16Z status | a: Fatal: Unable to attach to remote efsn: dial unix /mnt/t2/crash-restart-20261028T103554Z/a/efsn.ipc: connect: no such file or directory | b: Fatal: Unable to attach to remote efsn: dial unix /mnt/t2/crash-restart-20261028T103554Z/b/efsn.ipc: connect: no such file or directory | x: Fatal: Unable to attach to remote efsn: dial unix /mnt/t2/crash-restart-20261028T103554Z/x/efsn.ipc: connect: no such file or directory
+2026-10-28T10:37:16Z status | a: "15130088 0xf1453e4c848b6403 2 1 2 0x2b5ad5c4" | b: "15130088 0xf1453e4c848b6403 2 1 2 0x2b5ad5c4" | x: "15130088 0xf1453e4c848b6403 2 1 2 0x2b5ad5c4"
+2026-10-28T10:38:17Z status | a: "15130093 0x677380114d25b853 2 2 1 0x7e5f4552" | b: "15130093 0x677380114d25b853 2 2 1 0x7e5f4552" | x: "15130093 0x677380114d25b853 2 2 1 0x7e5f4552"
+2026-10-28T10:39:17Z status | a: "15130098 0xfc794eaf5963c854 2 1 2 0x2b5ad5c4" | b: "15130098 0xfc794eaf5963c854 2 1 2 0x2b5ad5c4" | x: "15130098 0xfc794eaf5963c854 2 1 2 0x2b5ad5c4"
+2026-10-28T10:40:18Z status | a: "15130102 0x539ff64864ea9478 2 1 2 0x2b5ad5c4" | b: "15130102 0x539ff64864ea9478 2 1 2 0x2b5ad5c4" | x: "15130102 0x539ff64864ea9478 2 1 2 0x2b5ad5c4"
+2026-10-28T10:41:18Z status | a: "15130107 0x498da3382dcd8d8d 2 1 2 0x2b5ad5c4" | b: "15130107 0x498da3382dcd8d8d 2 1 2 0x2b5ad5c4" | x: "15130107 0x498da3382dcd8d8d 2 1 2 0x2b5ad5c4"
+2026-10-28T10:42:19Z status | a: "15130112 0xd92d1e1702aa1fb5 2 2 1 0x7e5f4552" | b: "15130112 0xd92d1e1702aa1fb5 2 2 1 0x7e5f4552" | x: "15130112 0xd92d1e1702aa1fb5 2 2 1 0x7e5f4552"
+2026-10-28T10:43:19Z status | a: "15130116 0x53dcf576492824f7 2 2 1 0x7e5f4552" | b: "15130116 0x53dcf576492824f7 2 2 1 0x7e5f4552" | x: "15130116 0x53dcf576492824f7 2 2 1 0x7e5f4552"
+2026-10-28T10:44:20Z status | a: "15130121 0x76f308219d83bc4c 2 2 1 0x7e5f4552" | b: "15130121 0x76f308219d83bc4c 2 2 1 0x7e5f4552" | x: "15130121 0x76f308219d83bc4c 2 2 1 0x7e5f4552"
+2026-10-28T10:45:20Z status | a: "15130126 0x4f8c7e01abae4886 2 2 1 0x7e5f4552" | b: "15130126 0x4f8c7e01abae4886 2 2 1 0x7e5f4552" | x: "15130126 0x4f8c7e01abae4886 2 2 1 0x7e5f4552"
+2026-10-28T10:46:21Z status | a: "15130130 0x5d9f473058a95644 2 2 1 0x7e5f4552" | b: "15130130 0x5d9f473058a95644 2 2 1 0x7e5f4552" | x: "15130130 0x5d9f473058a95644 2 2 1 0x7e5f4552"
+2026-10-28T10:47:21Z status | a: "15130135 0xb6243223ffaf1d49 2 1 2 0x2b5ad5c4" | b: "15130135 0xb6243223ffaf1d49 2 1 2 0x2b5ad5c4" | x: "15130135 0xb6243223ffaf1d49 2 1 2 0x2b5ad5c4"
+2026-10-28T10:48:22Z status | a: "15130140 0x54b2dcb1050ea80a 2 1 2 0x2b5ad5c4" | b: "15130140 0x54b2dcb1050ea80a 2 1 2 0x2b5ad5c4" | x: "15130140 0x54b2dcb1050ea80a 2 1 2 0x2b5ad5c4"
+2026-10-28T10:49:22Z status | a: "15130144 0xd386db36928df225 2 2 1 0x7e5f4552" | b: "15130144 0xd386db36928df225 2 2 1 0x7e5f4552" | x: "15130144 0xd386db36928df225 2 2 1 0x7e5f4552"
+2026-10-28T10:50:23Z status | a: "15130149 0xe73e64792f07078a 2 1 2 0x2b5ad5c4" | b: "15130149 0xe73e64792f07078a 2 1 2 0x2b5ad5c4" | x: "15130149 0xe73e64792f07078a 2 1 2 0x2b5ad5c4"
+2026-10-28T10:51:24Z EVENT kill -9 producer A at head 15130154 after sealing 37 blocks: "15130154 0x2cd86c89d7994b9e 2 1 2 0x2b5ad5c4"
+/home/peter/t2/lib2-claudedev.sh: line 113: 3670024 Killed                  bg_in_ns $r $bin --datadir $d --identity t2-$r --port $PORT --nat extip:$(ip_of $r) --netrestrict $NET.0/24 --nodekey $d/nodekey.key --bootnodes "$BOOTNODES" --maxpeers 10 --syncmode full --cache 128 --ipcpath $d/efsn.ipc --verbosity 3 "$@" >> $d/node.log 2>&1
+2026-10-28T10:51:25Z stopped a (KILL)
+2026-10-28T10:52:25Z started a pid 3681403 efsn --unlock 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --password /mnt/t2/crash-restart-20261028T103554Z/a/password.txt --mine --miner.etherbase 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --autobt
+2026-10-28T10:52:45Z A restarted on head 15130083 (it was at 15130154)
+2026-10-28T10:52:45Z status | a: "15130159 0x96ba7c4ece2db9c9 2 0 1 0x7e5f4552" | b: "15130159 0x96ba7c4ece2db9c9 2 0 1 0x7e5f4552" | x: "15130159 0x96ba7c4ece2db9c9 2 0 1 0x7e5f4552"
+2026-10-28T10:53:16Z status | a: "15130161 0xee3ce20859310bed 2 0 2 0x2b5ad5c4" | b: "15130161 0xee3ce20859310bed 2 0 2 0x2b5ad5c4" | x: "15130161 0xee3ce20859310bed 2 0 2 0x2b5ad5c4"
+2026-10-28T10:53:46Z status | a: "15130164 0xf386843f025186be 2 1 1 0x7e5f4552" | b: "15130164 0xf386843f025186be 2 1 1 0x7e5f4552" | x: "15130164 0xf386843f025186be 2 1 1 0x7e5f4552"
+2026-10-28T10:54:17Z status | a: "15130166 0x61b6d4a9e6c08a1e 2 0 2 0x2b5ad5c4" | b: "15130166 0x61b6d4a9e6c08a1e 2 0 2 0x2b5ad5c4" | x: "15130166 0x61b6d4a9e6c08a1e 2 0 2 0x2b5ad5c4"
+2026-10-28T10:54:47Z status | a: "15130168 0x3548736aa6695e2f 2 0 2 0x2b5ad5c4" | b: "15130168 0x3548736aa6695e2f 2 0 2 0x2b5ad5c4" | x: "15130168 0x3548736aa6695e2f 2 0 2 0x2b5ad5c4"
+2026-10-28T10:55:18Z status | a: "15130171 0x6274718996f45985 2 1 1 0x7e5f4552" | b: "15130171 0x6274718996f45985 2 1 1 0x7e5f4552" | x: "15130171 0x6274718996f45985 2 1 1 0x7e5f4552"
+2026-10-28T10:55:48Z status | a: "15130173 0xa5aa0cddfa0e417a 2 1 1 0x7e5f4552" | b: "15130173 0xa5aa0cddfa0e417a 2 1 1 0x7e5f4552" | x: "15130173 0xa5aa0cddfa0e417a 2 1 1 0x7e5f4552"
+2026-10-28T10:56:19Z status | a: "15130175 0x82345f6b6b9460fc 2 1 1 0x7e5f4552" | b: "15130175 0x82345f6b6b9460fc 2 1 1 0x7e5f4552" | x: "15130176 0x40daeb12a26d89fe 2 0 2 0x2b5ad5c4"
+2026-10-28T10:56:49Z status | a: "15130178 0xab8df7a851df4b27 2 0 2 0x2b5ad5c4" | b: "15130178 0xab8df7a851df4b27 2 0 2 0x2b5ad5c4" | x: "15130178 0xab8df7a851df4b27 2 0 2 0x2b5ad5c4"
+2026-10-28T10:57:20Z status | a: "15130180 0x269d32d8a56c8791 2 0 2 0x2b5ad5c4" | b: "15130180 0x269d32d8a56c8791 2 0 2 0x2b5ad5c4" | x: "15130180 0x269d32d8a56c8791 2 0 2 0x2b5ad5c4"
+2026-10-28T10:57:50Z end: x="15130183 0x6a6fccca8d2062a8 2 1 1 0x7e5f4552" a="15130183 0x6a6fccca8d2062a8 2 1 1 0x7e5f4552" refused seals on a=0 multiple-block lines=0 purchase-failure warnings on a=0
+2026-10-28T10:57:50Z PASS A restarted on an older head than it had reached (15130083 < 15130154)
+2026-10-28T10:57:50Z PASS no node logged a second block by the same miner on one parent (0)
+2026-10-28T10:57:50Z FAIL A refused to seal below its own last block before syncing (0)
+2026-10-28T10:57:50Z PASS A follows the network head again (a=15130183 x=15130183)
+2026-10-28T10:57:50Z cleanup
+2026-10-28T10:57:51Z stopped x (TERM)
+2026-10-28T10:57:52Z stopped b (TERM)
+2026-10-28T10:57:53Z stopped a (TERM)
+2026-10-28T10:57:56Z network removed
+2026-10-28T10:57:56Z image unmounted and detached
+=== crash-restart, fixed binary
+2026-10-28T10:57:57Z T2 crash-restart start run=/mnt/t2/crash-restart-20261028T105757Z efsn=82866815d23b8b0d run_for=900s
+2026-10-28T10:57:57Z network up: t2-r t2-k t2-j t2-x t2-b t2-a t2-bn t2hub 
+2026-10-28T10:58:23Z recovery import a: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T10:58:25Z recovery import b: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T10:58:26Z recovery import x: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T10:58:26Z bootnode pid 3685930 enode://b1acee280dd41748fbe39e7e622aebdb09b8f472384edbf632c70c493dd5b4d2acceb2950820ca4b99a8ee4fb206c584837aef7efcf6edee1eb93e201d81699c@10.77.0.10:30400
+2026-10-28T10:58:26Z started a pid 3685937 efsn --unlock 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --password /mnt/t2/crash-restart-20261028T105757Z/a/password.txt --mine --miner.etherbase 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --autobt
+2026-10-28T10:58:26Z started b pid 3685949 efsn --unlock 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf --password /mnt/t2/crash-restart-20261028T105757Z/b/password.txt --mine --miner.etherbase 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf --autobt
+2026-10-28T10:58:26Z started x pid 3685961 efsn 
+2026-10-28T10:58:27Z status | a: Fatal: Unable to attach to remote efsn: dial unix /mnt/t2/crash-restart-20261028T105757Z/a/efsn.ipc: connect: no such file or directory | b: "15130083 0x1d68db766979da52 2 1 0 0x2b5ad5c4" | x: "15130083 0x1d68db766979da52 2 1 0 0x2b5ad5c4"
+2026-10-28T10:59:27Z status | a: "15130088 0xc5f6fe43816fed4d 2 1 2 0x2b5ad5c4" | b: "15130088 0xc5f6fe43816fed4d 2 1 2 0x2b5ad5c4" | x: "15130088 0xc5f6fe43816fed4d 2 1 2 0x2b5ad5c4"
+2026-10-28T11:00:28Z status | a: "15130094 0xe8181622ac213e5a 2 1 2 0x2b5ad5c4" | b: "15130094 0xe8181622ac213e5a 2 1 2 0x2b5ad5c4" | x: "15130094 0xe8181622ac213e5a 2 1 2 0x2b5ad5c4"
+2026-10-28T11:01:28Z status | a: "15130098 0x5f7c534e4de58780 2 2 1 0x7e5f4552" | b: "15130098 0x5f7c534e4de58780 2 2 1 0x7e5f4552" | x: "15130098 0x5f7c534e4de58780 2 2 1 0x7e5f4552"
+2026-10-28T11:02:29Z status | a: "15130103 0x9cb1378c3cafc897 2 2 1 0x7e5f4552" | b: "15130103 0x9cb1378c3cafc897 2 2 1 0x7e5f4552" | x: "15130103 0x9cb1378c3cafc897 2 2 1 0x7e5f4552"
+2026-10-28T11:03:29Z status | a: "15130107 0x1282d9a73c9f9197 2 2 1 0x7e5f4552" | b: "15130107 0x1282d9a73c9f9197 2 2 1 0x7e5f4552" | x: "15130107 0x1282d9a73c9f9197 2 2 1 0x7e5f4552"
+2026-10-28T11:04:30Z status | a: "15130112 0xa1c54861e4f924aa 2 1 2 0x2b5ad5c4" | b: "15130112 0xa1c54861e4f924aa 2 1 2 0x2b5ad5c4" | x: "15130112 0xa1c54861e4f924aa 2 1 2 0x2b5ad5c4"
+2026-10-28T11:05:30Z status | a: "15130117 0xe0debd99eb5c172b 2 2 1 0x7e5f4552" | b: "15130117 0xe0debd99eb5c172b 2 2 1 0x7e5f4552" | x: "15130117 0xe0debd99eb5c172b 2 2 1 0x7e5f4552"
+2026-10-28T11:06:31Z status | a: "15130121 0xbaba5a27a30816d8 2 1 2 0x2b5ad5c4" | b: "15130121 0xbaba5a27a30816d8 2 1 2 0x2b5ad5c4" | x: "15130121 0xbaba5a27a30816d8 2 1 2 0x2b5ad5c4"
+2026-10-28T11:07:31Z status | a: "15130126 0xf4f54f6d030cd9e2 2 1 2 0x2b5ad5c4" | b: "15130126 0xf4f54f6d030cd9e2 2 1 2 0x2b5ad5c4" | x: "15130126 0xf4f54f6d030cd9e2 2 1 2 0x2b5ad5c4"
+2026-10-28T11:08:32Z status | a: "15130131 0x00b54f6d17a898c7 2 1 2 0x2b5ad5c4" | b: "15130131 0x00b54f6d17a898c7 2 1 2 0x2b5ad5c4" | x: "15130131 0x00b54f6d17a898c7 2 1 2 0x2b5ad5c4"
+2026-10-28T11:09:32Z status | a: "15130135 0x6aa3bb5cf3542374 2 1 2 0x2b5ad5c4" | b: "15130135 0x6aa3bb5cf3542374 2 1 2 0x2b5ad5c4" | x: "15130135 0x6aa3bb5cf3542374 2 1 2 0x2b5ad5c4"
+2026-10-28T11:10:33Z status | a: "15130140 0x66f67d2522eaf60e 2 2 1 0x7e5f4552" | b: "15130140 0x66f67d2522eaf60e 2 2 1 0x7e5f4552" | x: "15130140 0x66f67d2522eaf60e 2 2 1 0x7e5f4552"
+2026-10-28T11:11:33Z status | a: "15130145 0x1ff8dadd32e9fad4 2 2 1 0x7e5f4552" | b: "15130145 0x1ff8dadd32e9fad4 2 2 1 0x7e5f4552" | x: "15130145 0x1ff8dadd32e9fad4 2 2 1 0x7e5f4552"
+2026-10-28T11:12:34Z status | a: "15130149 0x5e1c1128512f3364 2 1 2 0x2b5ad5c4" | b: "15130149 0x5e1c1128512f3364 2 1 2 0x2b5ad5c4" | x: "15130149 0x5e1c1128512f3364 2 1 2 0x2b5ad5c4"
+2026-10-28T11:13:34Z EVENT kill -9 producer A at head 15130154 after sealing 39 blocks: "15130154 0xcd6af0ad2bbc4c96 2 1 2 0x2b5ad5c4"
+/home/peter/t2/lib2-claudedev.sh: line 113: 3685937 Killed                  bg_in_ns $r $bin --datadir $d --identity t2-$r --port $PORT --nat extip:$(ip_of $r) --netrestrict $NET.0/24 --nodekey $d/nodekey.key --bootnodes "$BOOTNODES" --maxpeers 10 --syncmode full --cache 128 --ipcpath $d/efsn.ipc --verbosity 3 "$@" >> $d/node.log 2>&1
+2026-10-28T11:13:35Z stopped a (KILL)
+2026-10-28T11:14:36Z started a pid 3695829 efsn --unlock 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --password /mnt/t2/crash-restart-20261028T105757Z/a/password.txt --mine --miner.etherbase 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --autobt
+2026-10-28T11:14:56Z A restarted on head 15130083 (it was at 15130154)
+2026-10-28T11:14:56Z status | a: "15130158 0xe7bd33a32d958bc4 2 0 1 0x7e5f4552" | b: "15130158 0xe7bd33a32d958bc4 2 0 1 0x7e5f4552" | x: "15130158 0xe7bd33a32d958bc4 2 0 1 0x7e5f4552"
+2026-10-28T11:15:27Z status | a: "15130161 0x61471e04dae0dad5 2 0 1 0x7e5f4552" | b: "15130161 0x61471e04dae0dad5 2 0 1 0x7e5f4552" | x: "15130161 0x61471e04dae0dad5 2 0 1 0x7e5f4552"
+2026-10-28T11:15:57Z status | a: "15130163 0x456b3827f09142cc 2 0 1 0x7e5f4552" | b: "15130163 0x456b3827f09142cc 2 0 1 0x7e5f4552" | x: "15130163 0x456b3827f09142cc 2 0 1 0x7e5f4552"
+2026-10-28T11:16:27Z status | a: "15130166 0x1c7813a2f43e4338 2 0 1 0x7e5f4552" | b: "15130166 0x1c7813a2f43e4338 2 0 1 0x7e5f4552" | x: "15130166 0x1c7813a2f43e4338 2 0 1 0x7e5f4552"
+2026-10-28T11:16:58Z status | a: "15130168 0xa6beb1435ca64b21 2 0 1 0x7e5f4552" | b: "15130168 0xa6beb1435ca64b21 2 0 1 0x7e5f4552" | x: "15130168 0xa6beb1435ca64b21 2 0 1 0x7e5f4552"
+2026-10-28T11:17:28Z status | a: "15130171 0x4c7ae63b800df9eb 2 0 1 0x7e5f4552" | b: "15130171 0x4c7ae63b800df9eb 2 0 1 0x7e5f4552" | x: "15130171 0x4c7ae63b800df9eb 2 0 1 0x7e5f4552"
+2026-10-28T11:17:59Z status | a: "15130173 0x9c0fb3e81449b270 2 0 1 0x7e5f4552" | b: "15130173 0x9c0fb3e81449b270 2 0 1 0x7e5f4552" | x: "15130173 0x9c0fb3e81449b270 2 0 1 0x7e5f4552"
+2026-10-28T11:18:29Z status | a: "15130175 0x0410c062d66d7b03 2 0 1 0x7e5f4552" | b: "15130175 0x0410c062d66d7b03 2 0 1 0x7e5f4552" | x: "15130175 0x0410c062d66d7b03 2 0 1 0x7e5f4552"
+2026-10-28T11:19:00Z status | a: "15130178 0xf652d4ffc268d40d 2 0 1 0x7e5f4552" | b: "15130178 0xf652d4ffc268d40d 2 0 1 0x7e5f4552" | x: "15130178 0xf652d4ffc268d40d 2 0 1 0x7e5f4552"
+2026-10-28T11:19:30Z status | a: "15130180 0xbc223658f10d3c9f 2 0 1 0x7e5f4552" | b: "15130180 0xbc223658f10d3c9f 2 0 1 0x7e5f4552" | x: "15130180 0xbc223658f10d3c9f 2 0 1 0x7e5f4552"
+2026-10-28T11:20:01Z end: x="15130182 0xe79ca679d4d5f68f 2 0 1 0x7e5f4552" a="15130182 0xe79ca679d4d5f68f 2 0 1 0x7e5f4552" refused seals on a=1 multiple-block lines=0 purchase-failure warnings on a=24
+WARN [10-28|10:59:12.174] Automatic ticket purchase failed         account=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF err="not enough time lock or asset balance"
+WARN [10-28|10:59:37.174] Automatic ticket purchase failed         account=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF err="not enough time lock or asset balance"
+WARN [10-28|10:59:57.173] Automatic ticket purchase failed         account=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF err="not enough time lock or asset balance"
+WARN [10-28|11:00:17.174] Automatic ticket purchase failed         account=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF err="not enough time lock or asset balance"
+WARN [10-28|11:00:57.174] Automatic ticket purchase failed         account=0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF err="not enough time lock or asset balance"
+2026-10-28T11:20:01Z PASS A restarted on an older head than it had reached (15130083 < 15130154)
+2026-10-28T11:20:01Z PASS no node logged a second block by the same miner on one parent (0)
+2026-10-28T11:20:01Z PASS A refused to seal below its own last block before syncing (1)
+2026-10-28T11:20:01Z PASS A follows the network head again (a=15130182 x=15130182)
+2026-10-28T11:20:01Z cleanup
+2026-10-28T11:20:02Z stopped x (TERM)
+2026-10-28T11:20:03Z stopped b (TERM)
+2026-10-28T11:20:04Z stopped a (TERM)
+2026-10-28T11:20:06Z network removed
+2026-10-28T11:20:07Z image unmounted and detached
+=== rival-early, fixed binary
+2026-10-28T11:20:08Z T2 rival-early start run=/mnt/t2/rival-early-20261028T112008Z efsn=82866815d23b8b0d rival=c276fab1d61f598d rival@15130081=0x9f9403b8d2e91453c316a3a1182aa6887570930e2124649b80cd250f47804c8f
+2026-10-28T11:20:08Z network up: t2-r t2-k t2-j t2-x t2-b t2-a t2-bn t2hub 
+2026-10-28T11:20:32Z recovery import a: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T11:20:33Z recovery import b: importChain=true head=15130083 0x1d68db766979da529fcaf9a8f8f217bcf08f6e3705eb348febd2d28ca83a78db
+2026-10-28T11:20:33Z bootnode pid 3700207 enode://706cf91ebd552e8f8ae808fe0c4eeabaee9c4bf7aaa40f9e4ed280356e5d2cf11345e830c4cbc328d96c429e7b7ba60817e8c76aa309958bcdae4d12febab679@10.77.0.10:30400
+2026-10-28T11:20:33Z started a pid 3700214 efsn --unlock 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --password /mnt/t2/rival-early-20261028T112008Z/a/password.txt --mine --miner.etherbase 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF --autobt
+2026-10-28T11:20:33Z started b pid 3700226 efsn --unlock 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf --password /mnt/t2/rival-early-20261028T112008Z/b/password.txt --mine --miner.etherbase 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf --autobt
+2026-10-28T11:21:03Z started r pid 3700577 efsn-rival 
+2026-10-28T11:21:19Z rival joins: a="15130087 0xe7b77f17bd6b39d8 2 1 2 0x2b5ad5c4" td=63370514642 | r="15130143 0xf6a46c966308006e 2 1 0 0x2b5ad5c4" td=63370514765
+2026-10-28T11:21:20Z phase 1 | a: "15130087 0xe7b77f17bd6b39d8 2 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26 | b: "15130087 0xe7b77f17bd6b39d8 2 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26 | r: "15130143 0xf6a46c966308006e 2 1 0 0x2b5ad5c4" @81=0x9f9403b8d2 td=63370514765
+2026-10-28T11:21:51Z phase 1 | a: "15130089 0x7ba9b253a849644e 2 2 1 0x7e5f4552" @81=0xd2cfe5bb26 | b: "15130089 0x7ba9b253a849644e 2 2 1 0x7e5f4552" @81=0xd2cfe5bb26 | r: "15130143 0xf6a46c966308006e 2 1 0 0x2b5ad5c4" @81=0x9f9403b8d2 td=63370514765
+2026-10-28T11:22:22Z phase 1 | a: "15130092 0x3052ebec2cbdee38 2 2 1 0x7e5f4552" @81=0xd2cfe5bb26 | b: "15130092 0x3052ebec2cbdee38 2 2 1 0x7e5f4552" @81=0xd2cfe5bb26 | r: "15130143 0xf6a46c966308006e 2 1 0 0x2b5ad5c4" @81=0x9f9403b8d2 td=63370514765
+2026-10-28T11:22:53Z phase 1 | a: "15130095 0xce3b5cb999919594 2 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26 | b: "15130095 0xce3b5cb999919594 2 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26 | r: "15130143 0xf6a46c966308006e 2 1 0 0x2b5ad5c4" @81=0x9f9403b8d2 td=63370514765
+2026-10-28T11:23:24Z phase 1 | a: "15130097 0xa508ce6982fe18ec 1 2 1 0x7e5f4552" @81=0xd2cfe5bb26 | b: "15130097 0xa508ce6982fe18ec 1 2 1 0x7e5f4552" @81=0xd2cfe5bb26 | r: "15130143 0xf6a46c966308006e 0 1 0 0x2b5ad5c4" @81=0x9f9403b8d2 td=63370514765
+2026-10-28T11:23:56Z phase 1 | a: "15130099 0x6e85380bf13a33d8 2 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26 | b: "15130099 0x6e85380bf13a33d8 2 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26 | r: "15130143 0xf6a46c966308006e 2 1 0 0x2b5ad5c4" @81=0x9f9403b8d2 td=63370514765
+2026-10-28T11:24:26Z phase 1 end: a@81=0xd2cfe5bb26551cda5c04ced4598a72944daa12da6962f256c376ca5bfa6b9586 b@81=0xd2cfe5bb26551cda5c04ced4598a72944daa12da6962f256c376ca5bfa6b9586 r@81=0x9f9403b8d2e91453c316a3a1182aa6887570930e2124649b80cd250f47804c8f refusals a=26 b=26 rival-heavier-at-join=1
+INFO [10-28|11:21:13.874] check point failed, block hash mismatch  number=15,130,081 have="9f9403…804c8f" want="d2cfe5…6b9586"
+WARN [10-28|11:21:13.874] Synchronisation failed, dropping peer    peer=400ed18aa4fb217b err="retrieved hash chain is invalid: check point failed, block hash mismatch: number=15130081, have 0x9f9403b8d2e91453c316a3a1182aa6887570930e2124649b80cd250f47804c8f, want 0xd2cfe5bb26551cda5c04ced4598a72944daa12da6962f256c376ca5bfa6b9586"
+INFO [10-28|11:21:23.865] check point failed, block hash mismatch  number=15,130,081 have="9f9403…804c8f" want="d2cfe5…6b9586"
+WARN [10-28|11:21:23.865] Synchronisation failed, dropping peer    peer=400ed18aa4fb217b err="retrieved hash chain is invalid: check point failed, block hash mismatch: number=15130081, have 0x9f9403b8d2e91453c316a3a1182aa6887570930e2124649b80cd250f47804c8f, want 0xd2cfe5bb26551cda5c04ced4598a72944daa12da6962f256c376ca5bfa6b9586"
+INFO [10-28|11:21:43.866] check point failed, block hash mismatch  number=15,130,081 have="9f9403…804c8f" want="d2cfe5…6b9586"
+grep: write error: Broken pipe
+2026-10-28T11:24:27Z stopped r (TERM)
+2026-10-28T11:24:27Z started r pid 3703262 efsn 
+2026-10-28T11:24:48Z phase 2 | a: "15130103 0x011acbec3db99ebf 1 1 2 0x2b5ad5c4" | r: "15130080 0xe463e592a96c9342 0 0 2 0x0b5d3768" @81=none
+2026-10-28T11:25:08Z phase 2 | a: "15130105 0x4f10e384529c38bd 1 2 1 0x7e5f4552" | r: "15130080 0xe463e592a96c9342 1 0 2 0x0b5d3768" @81=none
+2026-10-28T11:25:28Z phase 2 | a: "15130106 0x5d49ace0a24508e8 1 1 2 0x2b5ad5c4" | r: "15130106 0x5d49ace0a24508e8 1 1 2 0x2b5ad5c4" @81=0xd2cfe5bb26
+2026-10-28T11:25:29Z phase 2 end: r@81=0xd2cfe5bb26551cda5c04ced4598a72944daa12da6962f256c376ca5bfa6b9586 a="15130107 0xc5c65eac0854f782 2 1 2 0x2b5ad5c4" r="15130107 0xc5c65eac0854f782 2 1 2 0x2b5ad5c4" rewind lines on r=3
+ERROR[10-28|11:24:27.622] check point mismatch                     number=15,130,083 hash="ae7cef…5fc74d" want="1d68db…3a78db"
+ERROR[10-28|11:24:27.622] check point mismatch                     number=15,130,081 hash="9f9403…804c8f" want="d2cfe5…6b9586"
+ERROR[10-28|11:24:27.622] check point mismatch                     number=15,130,082 hash="394d8f…920462" want="25b2f3…bb68a6"
+2026-10-28T11:25:29Z PASS rival chain heavier than the restarted chain when it joined (63370514765 > 63370514642)
+2026-10-28T11:25:29Z PASS producers kept the pinned recovery block 15130081
+2026-10-28T11:25:29Z PASS producers logged refusals of the rival chain (a=26 b=26)
+2026-10-28T11:25:29Z PASS rival node stayed on its own chain while on the rival build
+2026-10-28T11:25:29Z PASS rival node on the pinned build follows the restarted chain
+2026-10-28T11:25:29Z PASS rival node on the pinned build rewound at startup (check point mismatch lines=3)
+2026-10-28T11:25:29Z cleanup
+2026-10-28T11:25:30Z stopped r (TERM)
+2026-10-28T11:25:31Z stopped b (TERM)
+2026-10-28T11:25:32Z stopped a (TERM)
+2026-10-28T11:25:34Z network removed
+2026-10-28T11:25:35Z image unmounted and detached

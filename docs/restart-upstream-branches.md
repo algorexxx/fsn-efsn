@@ -10,6 +10,7 @@ develop
 ├─ fix/ticket-encoding-compat ─ fix/fsn-log-json-compat ─ build/go-toolchain
 ├─ fix/jwt-and-test-fixtures            (optional)
 ├─ fix/p2p-discovery
+├─ fix/restart-double-seal
 └─ fix/chain-consistency ─┬─ feature/restart-checkpoints
                           ├─ feature/autobuy-retry
                           └─ tools/restart-recovery   (never merged; tag at signing)
@@ -23,8 +24,9 @@ develop
 | `fix/jwt-and-test-fixtures` | develop | 2 | +3 / −3 | Optional (scanner hygiene) |
 | `fix/p2p-discovery` | develop | 5 | +12 / −3 | High for the restart |
 | `fix/chain-consistency` | develop | 8 | +94 / −99 | High |
-| `feature/restart-checkpoints` | fix/chain-consistency | 2 | +37 / −17 | Critical for the restart |
-| `feature/autobuy-retry` | fix/chain-consistency | 2 | +41 / −33 | High |
+| `feature/restart-checkpoints` | fix/chain-consistency | 3 | +48 / −27 | Critical for the restart |
+| `feature/autobuy-retry` | fix/chain-consistency | 3 | +51 / −34 | High |
+| `fix/restart-double-seal` | develop | 1 | +32 | High for the restart |
 | `tools/restart-recovery` | fix/chain-consistency | 4 | +1,506 (separate binary) | Critical for the restart operation, never merged |
 
 The restart node changes (excluding the copied Go encoders and tests) total
@@ -266,6 +268,15 @@ Compatible descendants keep ordinary fork choice.
 - A unit test of the checkpoint lookups and the reorg guard.
 - An integration test: a heavier rival branch is refused at the pinned height on block and header import, and a node on the rival branch rewinds at startup. Without this branch the rival is imported.
 
+**Third commit (28 October), `cmd/efsn: load the check points before opening the chain`.** The
+startup rewind never ran in the real binary: efsn filled in the check point table in `startNode`,
+after `makeFullNode` had already opened the chain and run the check against an empty table. The
+integration test missed it because it initialises the table itself. The T2 rival test showed it: a
+rival node restarted on the pinned build stayed on its chain until fork choice moved it. The commit
+moves the network selection and `InitCheckPoints` to the start of `makeFullNode`; the restarted rival
+node then rewinds as it opens the chain. The chain subcommands (`import` and others) now enforce the
+table too.
+
 **PR message.**
 
 > **consensus/datong: enforce pinned check points above LastCheckPoint**
@@ -300,6 +311,11 @@ purchase again at most every 5 s.
 - A real-miner integration test: a sole producer with one ticket and a failed first submission mines the retry and the next purchase in consecutive blocks. It fails on the old buyer with "no submission".
 - An explicit-replacement test that the old per-block cache refused.
 
+**Third commit (28 October), `internal/ethapi: log why an automatic ticket purchase fails`.** The
+buyer discarded the purchase error, so a producer without spendable funds stopped buying with nothing
+in its log (T2 soak, producer A). It now logs a warning whenever the reason changes. A producer that
+can buy only right after its own blocks logs it each time it runs dry again.
+
 **PR message.**
 
 > **internal/ethapi: retry automatic ticket purchases between blocks**
@@ -310,6 +326,27 @@ purchase again at most every 5 s.
 > validation change.
 >
 > 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+## 8b. `fix/restart-double-seal` (on develop)
+
+**Summary.** A producer killed with `kill -9` restarts on the last head whose state reached disk,
+which with the default GC mode can be far behind (T2: 1,668 blocks). It then begins sealing at once
+and, if that seal is delivered before the sync starts, signs a second block on a parent it already
+signed on; nodes report that with `ReportIllegal`, which deletes the miner's tickets. DaTong now
+records the highest block number it hands to the miner and refuses to seal at or below it, so the
+restarted producer syncs first.
+
+**Importance: High for the restart.** **If skipped:** a crashed producer can lose its tickets by
+double-signing after restart, and with few producers the chain depends on it.
+
+**Consensus / existing nodes.** None: only the local miner's behaviour changes. A sole node that
+lost its newest blocks cannot seal below its recorded height again.
+
+**Tests:** a unit test that a restarted engine refuses heights it sealed before (it seals without
+the change). The T2 crash test (`t2-crash-restart-claudedev.sh`): on restart the guard refused
+block 15,130,084 ten seconds before the sync started, and no node logged a double block.
 
 ---
 
@@ -343,8 +380,9 @@ the rehearsed journal that prevents exactly that is kept.
 1. Any order: `fix/ticket-encoding-compat`, `fix/p2p-discovery`, `fix/chain-consistency`.
 2. After its parent: `fix/fsn-log-json-compat` → `build/go-toolchain`. Coordinate the CI change with the historical-tracing PR.
 3. After `fix/chain-consistency`: `feature/restart-checkpoints` and `feature/autobuy-retry`, in either order.
-4. `fix/jwt-and-test-fixtures` is optional.
-5. Restart release:
+4. `fix/restart-double-seal`, any time.
+5. `fix/jwt-and-test-fixtures` is optional.
+6. Restart release:
    1. Rebase `tools/restart-recovery` onto the release commit, build the recovery blocks and tag the tool.
    2. Add the recovery block hashes to `mainnetCheckPoints`.
    3. Replace the default bootnodes.
